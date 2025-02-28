@@ -705,14 +705,14 @@ exports.commands = (0, commands_1.commandList)({
                         case 1:
                             _c.sent();
                             count = team.data().buildings.size;
-                            team.data().buildings.each(function (b) { return !(b.block instanceof CoreBlock); }, function (b) { return b.tile.remove(); });
+                            team.data().buildings.each(function (b) { return !((b.block instanceof CoreBlock) || (b.block instanceof LogicBlock) || (b.block instanceof MemoryBlock) || (b.block instanceof MessageBlock) || (b.block instanceof SwitchBlock)); }, function (b) { return b.tile.remove(); });
                             outputSuccess(f(templateObject_40 || (templateObject_40 = __makeTemplateObject(["Killed ", " buildings on ", "."], ["Killed ", " buildings on ", "."])), count, team));
                             return [3 /*break*/, 4];
                         case 2: return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "This will kill [scarlet]every building[] except cores.", { confirmText: "[orange]Kill buildings[]" })];
                         case 3:
                             _c.sent();
                             count = Groups.build.size();
-                            Groups.build.each(function (b) { return !(b.block instanceof CoreBlock); }, function (b) { return b.tile.remove(); });
+                            Groups.build.each(function (b) { return !((b.block instanceof CoreBlock) || (b.block instanceof LogicBlock) || (b.block instanceof MemoryBlock) || (b.block instanceof MessageBlock) || (b.block instanceof SwitchBlock)); }, function (b) { return b.tile.remove(); });
                             outputSuccess(f(templateObject_41 || (templateObject_41 = __makeTemplateObject(["Killed ", " buildings."], ["Killed ", " buildings."])), count));
                             _c.label = 4;
                         case 4: return [2 /*return*/];
