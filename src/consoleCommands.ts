@@ -5,7 +5,7 @@ This file contains all the console commands, which can be run through the server
 
 import * as api from "./api";
 import { consoleCommandList, fail } from "./commands";
-import { Mode } from "./config";
+import { localIPAddress, Mode } from "./config";
 import * as globals from "./globals";
 import { Gamemode, mapRepoURLs } from "./config";
 import { maxTime } from "./globals";
@@ -71,7 +71,7 @@ export const commands = consoleCommandList({
 	all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}
 	joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times`
 + (fishP ? `
-	USID: &c${fishP.usid}&fr
+	USID: &c${fishP.usid()}&fr
 	Rank: &c${fishP.rank.name}&fr
 	Marked: ${fishP.marked() ? `&runtil ${formatTimeRelative(fishP.unmarkTime)}` : fishP.autoflagged ? "&rautoflagged" : "&gfalse"}&fr
 	Muted: &c${f.boolBad(fishP.muted)}&fr`
@@ -93,7 +93,7 @@ export const commands = consoleCommandList({
 				outputString.push(
 `Info for player &c"${player.cleanedName}" &lk(${player.name})&fr
 	UUID: &c"${playerInfo.id}"&fr
-	USID: &c${player.usid ? `"${player.usid}"` : "unknown"}&fr
+	USID: &c${player.usid() ? `"${player.usid()}"` : "unknown"}&fr
 	all names used: ${playerInfo.names.map((n:string) => `&c"${n}"&fr`).items.join(', ')}
 	all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}
 	joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times
@@ -332,7 +332,7 @@ export const commands = consoleCommandList({
 				let total = 0;
 				for(const [uuid, fishP] of Object.entries(FishPlayer.cachedPlayers)){
 					total ++;
-					fishP.usid = null;
+					fishP.setUSID(undefined);
 				}
 				FishPlayer.saveAll();
 				output(`Removed ${total} stored USIDs.`);
@@ -352,9 +352,19 @@ export const commands = consoleCommandList({
 					? `Player ${args.player} has joined the server, but their info was not cached, most likely because they have no rank, so there is no stored USID.`
 					: `Unknown player ${args.player}`
 				);
-			const oldusid = player.usid;
-			player.usid = null;
+			if(player.ranksAtLeast("admin")) fail(`Please use the approveauth command instead.`);
+			const oldusid = player.usid();
+			player.setUSID(undefined);
 			outputSuccess(`Removed the usid of player ${player.name}/${player.uuid} (was ${oldusid})`);
+		}
+	},
+	approveauth: {
+		args: ["usid:string"],
+		description: `Sets the USID of a player.`,
+		handler({args, outputSuccess, f}){
+			const player = FishPlayer.lastAuthKicked ?? fail(`No authorization failures have occurred since the last restart.`);
+			player.setUSID(args.usid);
+			outputSuccess(f`Set USID for player ${player} to ${args.usid}.`);
 		}
 	},
 	update: {

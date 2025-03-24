@@ -6,6 +6,7 @@
 		"types": ["node", "jasmine"],
 		"composite": false,
 		"declaration": false,
+		"lib": ["ESNext"],
 	},
 	"references": [{"path": ".."}],
 	"include": [

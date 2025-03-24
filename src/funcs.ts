@@ -276,3 +276,20 @@ export function random(arg0: unknown, arg1?: number): any {
 	}
 }
 
+export function getIPAddress(fallback:string = "127.0.0.1"):string {
+	return Packages.java.util.Collections.list(
+		Packages.java.net.NetworkInterface.getNetworkInterfaces()
+	)
+		.stream()
+		.filter((i:any) => i.isUp() && !i.isLoopback())
+		.findFirst()
+		.orElse(null)
+		?.getInterfaceAddresses()
+		.stream()
+		.map((s:any) => s.getAddress())
+		.filter((a:any) => a instanceof Packages.java.net.Inet4Address)
+		.findFirst()
+		.orElse(null)
+		?.getHostAddress() ?? fallback;
+}
+

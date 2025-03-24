@@ -6,7 +6,7 @@ This file contains configurable constants.
 import type { PermType } from "./commands";
 import { ipPattern, ipPortPattern, uuidPattern } from "./globals";
 import { Rank } from "./ranks";
-import { random } from './funcs';
+import { getIPAddress, random } from './funcs';
 
 
 
@@ -348,3 +348,5 @@ export const rules = [
 	`Failure to follow these rules will result in consequences: likely a Marked Griefer tag for any game disruption, mute for broken chat rules, and bans for repeated offenses or bypasses.`
 ].map(r => `[white]${r}`);
 //#endregion
+
+export const localIPAddress = getIPAddress();

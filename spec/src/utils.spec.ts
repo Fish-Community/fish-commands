@@ -1,4 +1,4 @@
-import { capitalizeText } from "../../build/scripts/funcs.js";
+import { capitalizeText, getIPAddress } from "../../build/scripts/funcs.js";
 import { formatTime } from "../../build/scripts/utils.js";
 import { maxTime } from "../../build/scripts/globals.js";
 
@@ -11,6 +11,12 @@ describe("capitalizeText", () => {
     expect(capitalizeText("fish community")).toEqual("Fish Community");
     expect(capitalizeText("fish community is nice")).toEqual("Fish Community is Nice");
     expect(capitalizeText("the fish community")).toEqual("The Fish Community");
+  });
+});
+
+describe("getIPAddress", () => {
+  it("should return the correct address from the available network interfaces", () => {
+    expect(getIPAddress()).toEqual("1.2.3.4");
   });
 });
 

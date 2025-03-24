@@ -50,6 +50,7 @@ exports.parseError = parseError;
 exports.tagProcessor = tagProcessor;
 exports.tagProcessorPartial = tagProcessorPartial;
 exports.random = random;
+exports.getIPAddress = getIPAddress;
 var storedValues = {};
 /**
  * Stores the output of a function and returns that value
@@ -356,4 +357,13 @@ function random(arg0, arg1) {
     else if (arg0 instanceof Array) {
         return arg0[Math.floor(Math.random() * arg0.length)];
     }
+}
+function getIPAddress(fallback) {
+    var _a, _b, _c;
+    if (fallback === void 0) { fallback = "127.0.0.1"; }
+    return (_c = (_b = (_a = Packages.java.util.Collections.list(Packages.java.net.NetworkInterface.getNetworkInterfaces())
+        .stream()
+        .filter(function (i) { return i.isUp() && !i.isLoopback(); })
+        .findFirst()
+        .orElse(null)) === null || _a === void 0 ? void 0 : _a.getInterfaceAddresses().stream().map(function (s) { return s.getAddress(); }).filter(function (a) { return a instanceof Packages.java.net.Inet4Address; }).findFirst().orElse(null)) === null || _b === void 0 ? void 0 : _b.getHostAddress()) !== null && _c !== void 0 ? _c : fallback;
 }

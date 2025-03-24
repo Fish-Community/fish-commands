@@ -112,7 +112,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var _loop_1 = function (playerInfo) {
                 var fishP = players_1.FishPlayer.getById(playerInfo.id);
                 outputString.push("Trace info for player &y".concat(playerInfo.id, "&fr / &c\"").concat(Strings.stripColors(playerInfo.lastName), "\" &lk(").concat(playerInfo.lastName, ")&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times")
-                    + (fishP ? "\n\tUSID: &c".concat(fishP.usid, "&fr\n\tRank: &c").concat(fishP.rank.name, "&fr\n\tMarked: ").concat(fishP.marked() ? "&runtil ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime)) : fishP.autoflagged ? "&rautoflagged" : "&gfalse", "&fr\n\tMuted: &c").concat(f.boolBad(fishP.muted), "&fr")
+                    + (fishP ? "\n\tUSID: &c".concat(fishP.usid(), "&fr\n\tRank: &c").concat(fishP.rank.name, "&fr\n\tMarked: ").concat(fishP.marked() ? "&runtil ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime)) : fishP.autoflagged ? "&rautoflagged" : "&gfalse", "&fr\n\tMuted: &c").concat(f.boolBad(fishP.muted), "&fr")
                         : ""));
             };
             try {
@@ -143,7 +143,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var outputString = [""];
             var _loop_2 = function (player) {
                 var playerInfo = admins.getInfo(player.uuid);
-                outputString.push("Info for player &c\"".concat(player.cleanedName, "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid ? "\"".concat(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
+                outputString.push("Info for player &c\"".concat(player.cleanedName, "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid() ? "\"".concat(player.usid(), "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
             };
             try {
                 for (var infoList_2 = __values(infoList), infoList_2_1 = infoList_2.next(); !infoList_2_1.done; infoList_2_1 = infoList_2.next()) {
@@ -422,7 +422,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     for (var _c = __values(Object.entries(players_1.FishPlayer.cachedPlayers)), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var _e = __read(_d.value, 2), uuid = _e[0], fishP = _e[1];
                         total++;
-                        fishP.usid = null;
+                        fishP.setUSID(undefined);
                     }
                 }
                 catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -450,9 +450,22 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 (_c = players_1.FishPlayer.getById(args.player)) !== null && _c !== void 0 ? _c : (0, commands_1.fail)(admins.getInfoOptional(args.player)
                     ? "Player ".concat(args.player, " has joined the server, but their info was not cached, most likely because they have no rank, so there is no stored USID.")
                     : "Unknown player ".concat(args.player));
-            var oldusid = player.usid;
-            player.usid = null;
+            if (player.ranksAtLeast("admin"))
+                (0, commands_1.fail)("Please use the approveauth command instead.");
+            var oldusid = player.usid();
+            player.setUSID(undefined);
             outputSuccess("Removed the usid of player ".concat(player.name, "/").concat(player.uuid, " (was ").concat(oldusid, ")"));
+        }
+    },
+    approveauth: {
+        args: ["usid:string"],
+        description: "Sets the USID of a player.",
+        handler: function (_a) {
+            var _b;
+            var args = _a.args, outputSuccess = _a.outputSuccess, f = _a.f;
+            var player = (_b = players_1.FishPlayer.lastAuthKicked) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("No authorization failures have occurred since the last restart.");
+            player.setUSID(args.usid);
+            outputSuccess(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Set USID for player ", " to ", "."], ["Set USID for player ", " to ", "."])), player, args.usid));
         }
     },
     update: {
@@ -543,7 +556,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
         handler: function (_a) {
             var args = _a.args, f = _a.f, outputSuccess = _a.outputSuccess;
             if (args.player.hasPerm("blockTrolling"))
-                (0, commands_1.fail)(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Operation aborted: Player ", " is insufficiently trollable."], ["Operation aborted: Player ", " is insufficiently trollable."])), args.player));
+                (0, commands_1.fail)(f(templateObject_6 || (templateObject_6 = __makeTemplateObject(["Operation aborted: Player ", " is insufficiently trollable."], ["Operation aborted: Player ", " is insufficiently trollable."])), args.player));
             var oldName = args.player.name;
             args.player.player.name = args.player.prefixedName = args.newname;
             args.player.shouldUpdateName = false;
@@ -575,10 +588,10 @@ exports.commands = (0, commands_1.consoleCommandList)({
             if (args.player.marked()) {
                 //overload: overwrite stoptime
                 if (!args.time)
-                    (0, commands_1.fail)(f(templateObject_6 || (templateObject_6 = __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player));
+                    (0, commands_1.fail)(f(templateObject_7 || (templateObject_7 = __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player));
                 var previousTime = (0, utils_1.formatTime)(args.player.unmarkTime - Date.now());
                 args.player.updateStopTime(args.time);
-                outputSuccess(f(templateObject_7 || (templateObject_7 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
+                outputSuccess(f(templateObject_8 || (templateObject_8 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
                 return;
             }
             var time = (_b = args.time) !== null && _b !== void 0 ? _b : 604800000;
@@ -757,4 +770,4 @@ exports.commands = (0, commands_1.consoleCommandList)({
         },
     },
 });
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8;

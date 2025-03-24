@@ -232,7 +232,7 @@ export interface FishPlayerData {
 	highlight: string | null;
 	rainbow: { speed:number; } | null;
 	history: PlayerHistoryEntry[];
-	usid: string | null;
+	usid: string | Partial<Record<string, string>> | null;
 	chatStrictness: "chat" | "strict";
 	lastJoined: number;
 	firstJoined: number;

@@ -54,4 +54,75 @@ class Fi {
   }
 }
 
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi});
+const Collections = {
+  list<T>(e:Enumeration<T>){
+    return new ArrayList(e.items);
+  }
+};
+class Enumeration<T> {
+  constructor(public items:T[]){}
+}
+class ArrayList<T> {
+  constructor(public items:T[]){}
+  stream(){
+    return new Stream(this.items);
+  }
+}
+class NetworkInterface {
+  constructor(
+    public interfaceAddresses: InterfaceAddress[],
+    public loopback = false,
+    public up = true,
+  ){}
+  getInterfaceAddresses(){ return new ArrayList(this.interfaceAddresses); }
+  isUp(){ return this.up; }
+  isLoopback(){ return this.loopback; }
+  static getNetworkInterfaces(){
+    return new Enumeration([
+      new NetworkInterface([new InterfaceAddress(new Inet6Address("0:0:0:0:0:0:0:1")), new InterfaceAddress(new Inet4Address("127.0.0.1"))], true), //loopback
+      new NetworkInterface([new InterfaceAddress(new Inet6Address("fe80:0:0:0:216:3eff:feaa:b35c")), new InterfaceAddress(new Inet4Address("1.2.3.4"))]), //eth0
+    ]);
+  }
+}
+class Stream<T> {
+  iterator: IteratorObject<T, undefined>;
+  constructor(items:T[]){
+    this.iterator = items.values();
+  }
+  map<U>(operation:(item:T) => U){
+    (this as never as Stream<U>).iterator = this.iterator.map(operation);
+    return this as never as Stream<U>;
+  }
+  filter(operation:(item:T) => boolean){
+    this.iterator = this.iterator.filter(operation);
+    return this;
+  }
+  findFirst(){
+    return new Optional<T>(this.iterator.next()?.value ?? null);
+  }
+}
+class Optional<T> {
+  constructor(public item:T | null){}
+  orElse<U>(value:U){
+    return this.item ?? value;
+  }
+}
+class InterfaceAddress {
+  constructor(public address: InetAddress){}
+  getAddress(){ return this.address; }
+}
+class InetAddress {
+  constructor(public hostAddress: string){}
+  getHostAddress(){ return this.hostAddress; }
+}
+class Inet4Address extends InetAddress {}
+class Inet6Address extends InetAddress {}
+
+const Packages = {
+  java: {
+    net: { NetworkInterface, Inet4Address },
+    util: { Collections }
+  }
+};
+
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages});
