@@ -560,7 +560,7 @@ export const commands = commandList({
 					{ confirmText: "[orange]Kill buildings[]" },
 				);
 				const count = team.data().buildings.size;
-				team.data().buildings.each(b => !(b.block instanceof CoreBlock), b => b.tile.remove());
+				team.data().buildings.each(b => !((b.block instanceof CoreBlock) || (b.block instanceof LogicBlock) || (b.block instanceof MemoryBlock) || (b.block instanceof MessageBlock) || (b.block instanceof SwitchBlock)), b => b.tile.remove());
 				outputSuccess(f`Killed ${count} buildings on ${team}.`);
 			} else {
 				await Menu.confirmDangerous(sender,
@@ -568,7 +568,7 @@ export const commands = commandList({
 					{ confirmText: "[orange]Kill buildings[]" },
 				);
 				const count = Groups.build.size();
-				Groups.build.each(b => !(b.block instanceof CoreBlock), b => b.tile.remove());
+				Groups.build.each(b => !((b.block instanceof CoreBlock) || (b.block instanceof LogicBlock) || (b.block instanceof MemoryBlock) || (b.block instanceof MessageBlock) || (b.block instanceof SwitchBlock)), b => b.tile.remove());
 				outputSuccess(f`Killed ${count} buildings.`);
 			}
 		}
