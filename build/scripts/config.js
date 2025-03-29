@@ -77,7 +77,7 @@ exports.bannedWords = {
     ]),
     /** Names: banned only in names. */
     names: processBannedWordList([
-        "sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]",
+        "sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐",
         globals_1.uuidPattern, globals_1.ipPattern, globals_1.ipPortPattern
     ]),
     /** autoWhack: new players saying one of these words will be automatically stopped and muted. */
