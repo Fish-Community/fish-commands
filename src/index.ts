@@ -12,7 +12,7 @@ import { FishEvents, fishPlugin, fishState, ipJoins, tileHistory } from "/global
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
+import { addToTileHistory, fishCommandsRootDirPath, foolifyChat, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
 
 
 Events.on(EventType.ConnectionEvent, (e) => {
@@ -148,7 +148,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 
 	// Mute muted players
 	Vars.netServer.admins.addChatFilter((player, message) => processChat(player, message));
-
+	Vars.netServer.admins.addChatFilter((p, message) => foolifyChat(message));
 	// Action filters
 	Vars.netServer.admins.addActionFilter((action:PlayerAction) => {
 		const player = action.player;
