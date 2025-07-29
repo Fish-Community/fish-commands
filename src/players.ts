@@ -17,6 +17,7 @@ import { escapeStringColorsClient, escapeStringColorsServer } from '/funcs';
 import { crash } from '/funcs';
 import { StringIO } from '/funcs';
 import { setToArray } from '/funcs';
+import { LanguageCode } from "./locales";
 
 
 export class FishPlayer {
@@ -95,6 +96,7 @@ export class FishPlayer {
 	unmarkTime: number;
 	rank: Rank;
 	flags: Set<RoleFlag>;
+	lang: LanguageCode; // ISO 639 Language String
 	highlight: string | null;
 	rainbow: {
 		speed: number;
@@ -146,6 +148,7 @@ export class FishPlayer {
 		this.cleanedName = escapeStringColorsServer(Strings.stripColors(this.name));
 		this.rank = Rank.getByName(rank) ?? Rank.player;
 		this.flags = new Set(flags.map(RoleFlag.getByName).filter((f):f is RoleFlag => f != null));
+		this.lang = "EN";
 		this.usidMapping = typeof usid === "string" ? {[localIPAddress]: usid} : (usid ?? {});
 		this.chatStrictness = chatStrictness;
 		this.stats = stats ?? {

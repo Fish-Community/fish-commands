@@ -21,6 +21,7 @@ var commands_1 = require("/commands");
 var consoleCommands_1 = require("/consoleCommands");
 var globals_1 = require("/globals");
 var memberCommands_1 = require("/memberCommands");
+var locales_1 = require("/locales");
 var menus = require("/menus");
 var packetHandlers_1 = require("/packetHandlers");
 var playerCommands_1 = require("/playerCommands");
@@ -158,6 +159,7 @@ Events.on(EventType.ServerLoadEvent, function (e) {
     commands.register(playerCommands_1.commands, clientHandler, serverHandler);
     commands.register(memberCommands_1.commands, clientHandler, serverHandler);
     commands.register(packetHandlers_1.commands, clientHandler, serverHandler);
+    commands.register(locales_1.commands, clientHandler, serverHandler);
     commands.registerConsole(consoleCommands_1.commands, serverHandler);
     (0, packetHandlers_1.loadPacketHandlers)();
     commands.initialize();

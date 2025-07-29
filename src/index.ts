@@ -9,6 +9,7 @@ import { handleTapEvent } from '/commands';
 import { commands as consoleCommands } from "/consoleCommands";
 import { FishEvents, fishPlugin, fishState, ipJoins, tileHistory } from "/globals";
 import { commands as memberCommands } from '/memberCommands';
+import { commands as localesCommands} from '/locales'
 import * as menus from "/menus";
 import { loadPacketHandlers, commands as packetHandlerCommands } from '/packetHandlers';
 import { commands as playerCommands } from '/playerCommands';
@@ -155,6 +156,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 	commands.register(playerCommands, clientHandler, serverHandler);
 	commands.register(memberCommands, clientHandler, serverHandler);
 	commands.register(packetHandlerCommands, clientHandler, serverHandler);
+	commands.register(localesCommands, clientHandler, serverHandler);
 	commands.registerConsole(consoleCommands, serverHandler);
 	loadPacketHandlers();
 	

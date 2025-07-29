@@ -114,6 +114,7 @@ var FishPlayer = /** @class */ (function () {
         this.cleanedName = (0, funcs_2.escapeStringColorsServer)(Strings.stripColors(this.name));
         this.rank = (_s = ranks_1.Rank.getByName(rank)) !== null && _s !== void 0 ? _s : ranks_1.Rank.player;
         this.flags = new Set(flags.map(ranks_1.RoleFlag.getByName).filter(function (f) { return f != null; }));
+        this.lang = "EN";
         this.usidMapping = typeof usid === "string" ? (_b = {}, _b[config_1.localIPAddress] = usid, _b) : (usid !== null && usid !== void 0 ? usid : {});
         this.chatStrictness = chatStrictness;
         this.stats = stats !== null && stats !== void 0 ? stats : {
