@@ -7,10 +7,12 @@ exports.commands = exports.validLanguageCodes = void 0;
 exports.isLanguageCode = isLanguageCode;
 exports.localize = localize;
 exports.localizef = localizef;
+exports.ENlocalize = ENlocalize;
+exports.ENlocalizef = ENlocalizef;
 var commands_1 = require("./commands");
 var funcs_1 = require("./funcs");
+var ranks_1 = require("./ranks");
 var utils_1 = require("./utils");
-//
 var Locales = [
     {
         info: {
@@ -21,10 +23,14 @@ var Locales = [
             quickfox: "The quick brown fox jumps over the lazy dog"
         },
         definitions: {
-            commandLangDescription: "View or set language preferences",
-            commandLangNoLangCodeFound: "Language ${args.language} not found.",
             commandLangChangeSuccess: "Language now set to ${lang}.",
-            commandLangInfo: "Your Current Language is Set to ${lang}. To change it, type [yellow]/lang [language][]."
+            commandLangInfo: "Your Current Language is Set to ${lang}. To change it, type [red]/lang [language][].",
+            commandLangNoLangCodeFound: "Language ${args.language} not found.",
+            commandSetLangNoLangCodeFound: "Language ${args.language} not found.",
+            commandSetLangFailNotFound: "Player ${target} not found",
+            commandSetLangFailPerm: "You do not have permission to change the language of other players.",
+            commandSetLangSuccess: "Successfully Set ${target}'s language to ${lang}.",
+            commandSetLangLanguageChanged: "Your language has been forcfully set to ${lang}"
         }
     },
     {
@@ -35,10 +41,7 @@ var Locales = [
             maintainer: "JurorNo9",
             quickfox: "ethay uickqay ownbray oxfay umpsjay overyay ethay azylay ogday"
         },
-        definitions: {
-            tip1: "hello",
-            tip2: "bye",
-        }
+        definitions: {}
     }
 ];
 exports.validLanguageCodes = Locales.map(function (l) { return l.info.code; });
@@ -63,6 +66,30 @@ function localizef(code, key, params) {
         return params[match] !== undefined ? String(params[match]) : "[missing:".concat(match, "]");
     });
 }
+function getKeyFromEnglishTemplate(template) {
+    var enDefinitions = localeMap["EN"].definitions;
+    for (var key in enDefinitions) {
+        if (enDefinitions[key] === template) {
+            return key;
+        }
+    }
+    return undefined;
+}
+function ENlocalize(code, englishTemplate) {
+    var key = getKeyFromEnglishTemplate(englishTemplate);
+    if (!key) {
+        (0, funcs_1.crash)("Could not find matching key for English template: \"".concat(englishTemplate, "\""));
+    }
+    return localize(code, key);
+}
+function ENlocalizef(code, englishTemplate, params) {
+    if (params === void 0) { params = {}; }
+    var key = getKeyFromEnglishTemplate(englishTemplate);
+    if (!key) {
+        (0, funcs_1.crash)("Could not find matching key for English template: \"".concat(englishTemplate, "\""));
+    }
+    return localizef(code, key, params);
+}
 exports.commands = (0, commands_1.commandList)({
     language: {
         args: ['language:string?'],
@@ -72,14 +99,31 @@ exports.commands = (0, commands_1.commandList)({
             var args = _a.args, sender = _a.sender;
             if (args.language) {
                 if (!isLanguageCode(args.language))
-                    (0, commands_1.fail)(localizef(sender.lang, "commandLangDescription"));
+                    (0, commands_1.fail)(ENlocalizef(sender.lang, "Language ${lang} not found.", { lang: sender.lang }));
                 sender.lang = args.language;
+                (0, utils_1.outputSuccess)(ENlocalizef(sender.lang, "Language now set to ${lang}.", { lang: sender.lang }), sender);
                 return;
             }
             else {
-                (0, utils_1.outputMessage)(localizef(sender.lang, "commandLangInfo", { lang: sender.lang }), sender);
+                (0, utils_1.outputMessage)(ENlocalizef(sender.lang, "Your Current Language is Set to ${lang}. To change it, type [red]/lang [language][].", { lang: sender.lang }), sender);
                 return;
             }
         }),
     },
+    setlanguage: {
+        args: ['target:player', "language:string"],
+        description: "Set the language of another fish player",
+        perm: commands_1.Perm.none,
+        handler: function (_a) {
+            var sender = _a.sender, args = _a.args;
+            if (sender.ranksAtLeast(ranks_1.Rank.mod) && sender.canModerate(args.target, true)) {
+                if (!isLanguageCode(args.language))
+                    (0, commands_1.fail)(localizef(sender.lang, "commandSetLangNoLangCodeFound", { lang: sender.lang }));
+                args.target.lang = args.language;
+                (0, utils_1.outputSuccess)(localizef(sender.lang, "commandSetLangSuccess", { target: args.target.name, lang: args.language }), sender);
+                (0, utils_1.outputMessage)(localizef(sender.lang, "commandSetLangLanguageChanged", { lang: args.language }), args.target);
+            }
+            (0, commands_1.fail)(localizef(sender.lang, "commandSetLangFailPerm"));
+        }
+    }
 });

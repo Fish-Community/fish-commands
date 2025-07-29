@@ -16,16 +16,7 @@ export type TranslationBundle = {
         maintainer: string; // Contributers responsible for maintaining said translation
         quickfox: string; // Debug string used for testing
     };
-    definitions: {
-        commandLangDescription:string
-        commandLangNoLangCodeFound:string
-        commandLangChangeSuccess:string
-        commandSetLangNoLangCodeFound:string
-        commandSetLangDescription:string
-        commandSetLangSuccess:string
-        commandSetLangFail:string
-        commandSetLangLanguageChanged:string
-    }
+    definitions: Record<string, string>;
 };
 
 
@@ -58,6 +49,7 @@ const Locales = [
             quickfox:"ethay uickqay ownbray oxfay umpsjay overyay ethay azylay ogday"
         },
         definitions:{
+
         }
     }
 ] as const;
@@ -88,6 +80,29 @@ export function localizef( code: LanguageCode, key: DefinitionKey, params: Recor
     params[match] !== undefined ? String(params[match]) : `[missing:${match}]`
   );
 }
+function getKeyFromEnglishTemplate(template: string): DefinitionKey | undefined {
+    const enDefinitions = localeMap["EN"].definitions;
+    for (const key in enDefinitions) {
+        if (enDefinitions[key as DefinitionKey] === template) {
+            return key as DefinitionKey;
+        }
+    }
+    return undefined;
+}
+export function ENlocalize(code: LanguageCode, englishTemplate: string): string {
+    const key = getKeyFromEnglishTemplate(englishTemplate);
+    if (!key) {
+        crash(`Could not find matching key for English template: "${englishTemplate}"`);
+    }
+    return localize(code, key);
+}
+export function ENlocalizef(code: LanguageCode, englishTemplate: string, params: Record<string, string | number> = {}): string {
+    const key = getKeyFromEnglishTemplate(englishTemplate);
+    if (!key) {
+        crash(`Could not find matching key for English template: "${englishTemplate}"`);
+    }
+    return localizef(code, key, params);
+}
 
 export const commands = commandList({
     language:{
@@ -96,11 +111,12 @@ export const commands = commandList({
         perm: Perm.none,
         handler:(({args, sender}) =>{
             if(args.language){
-                if(!isLanguageCode(args.language)) fail(localizef(sender.lang, "commandLangNoLangCodeFound", {lang:sender.lang}),)
+                if(!isLanguageCode(args.language)) fail(ENlocalizef(sender.lang, "Language ${lang} not found.", {lang:sender.lang}),)
                 sender.lang = args.language;
+                outputSuccess(ENlocalizef(sender.lang,"Language now set to ${lang}.", {lang:sender.lang}),sender);
                 return;
             } else {
-                outputMessage(localizef(sender.lang, "commandLangInfo", {lang:sender.lang}), sender);
+                outputMessage(ENlocalizef(sender.lang, "Your Current Language is Set to ${lang}. To change it, type [red]/lang [language][].", {lang:sender.lang}), sender);
                 return;
             }
         }),
