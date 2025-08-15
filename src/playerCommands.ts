@@ -142,6 +142,82 @@ export const commands = commandList({
 		}
 	},
 
+    aoelog: command(() => {
+		let p1 : [number,number] | null = null;
+		let p2 : [number,number] | null = null;
+		let stage = 0;
+		return {
+			args: ['amount:number?'],
+			description: 'tilelog, but aoe',
+			perm: Perm.none,
+			handler({args, output, outputSuccess, currentTapMode, handleTaps}){
+				if(currentTapMode === "off"){
+					handleTaps("on");
+					outputSuccess(`aoelog mode on`)
+				} else {
+					handleTaps("off");
+					outputSuccess(`aoelog mode off`)
+				}
+				p1 = null;
+				p2 = null;
+				stage = 0;
+			},
+			
+			tapped({tile, x, y, output, sender, admins, handleTaps}){
+				if(!p2 && p1){
+					p2 = [x, y];
+					output(`okie dokie registered 2nd point at ${x}, ${y}`);
+				} 
+				if(!p1 && p2){fail("sorry dev has skillissue");}
+				if(!p1) {
+					p1 = [x, y];
+			        output(`okie dokie 1st point registered at ${x},${y}`);
+				}
+				if(p2 && p1) {
+					stage = 3
+					let sx = Math.abs(p1[0]- p2[0]);
+					let sy = Math.abs(p1[1]- p2[1]);
+					if(sx > 100 || sy > 100){fail("sorry but your selection's too big"); handleTaps("off")}
+					let minX = Math.min(p1[0], p2[0]);
+					let maxX = Math.max(p1[0], p2[0]);
+					let minY = Math.min(p1[1], p2[1]);
+					let maxY = Math.max(p1[1], p2[1]);
+					let tileData: {action: string, uuid: string | null, time: number, type: string}[] = [];
+					for (let i = minX; i <= maxX; i++) {
+						for (let j = minY; j <= maxY; j++) {
+							let pos = `${i},${j}`;
+							if (tileHistory[pos]) {
+								const data = StringIO.read(tileHistory[pos]!, str =>
+									str.readArray(d => ({
+										action: d.readString(2) ?? "??",
+										uuid: d.readString(3) ?? "??",
+										time: d.readNumber(16),
+										type: d.readString(2) ?? "??",
+									}), 1)
+								);
+								data.forEach(entry => {
+									output(
+										`[yellow]Tile history for tile (${i}, ${j}):\n` +
+										(uuidPattern.test(entry.uuid)
+											? (sender.hasPerm("viewUUIDs")
+												? `[yellow]${admins.getInfoOptional(entry.uuid)?.plainLastName()}[lightgray](${entry.uuid})[yellow] ${entry.action} a [cyan]${entry.type}[] ${formatTimeRelative(entry.time)}`
+												: `[yellow]${admins.getInfoOptional(entry.uuid)?.plainLastName()} ${entry.action} a [cyan]${entry.type}[] ${formatTimeRelative(entry.time)}`)
+											: `[yellow]${entry.uuid}[yellow] ${entry.action} a [cyan]${entry.type}[] ${formatTimeRelative(entry.time)}`
+										)
+									);
+								});
+							}
+						}
+					}
+
+				p1 = null;
+				p2 = null;
+				handleTaps("off")
+				};
+			},
+		};
+	}),
+
 	afk: {
 		args: [],
 		description: 'Toggles your afk status.',
@@ -153,6 +229,7 @@ export const commands = commandList({
 			else outputSuccess(`You are no longer marked as AFK.`);
 		},
 	},
+
 	vanish: {
 		args: ['target:player?'],
 		description: `Toggles visibility of your rank and flags.`,

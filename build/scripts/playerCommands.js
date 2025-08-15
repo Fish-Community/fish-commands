@@ -224,7 +224,95 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     : "[yellow]".concat(e.uuid, "[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
             }).join('\n'));
         }
-    }, afk: {
+    }, aoelog: (0, commands_1.command)(function () {
+        var p1 = null;
+        var p2 = null;
+        var stage = 0;
+        return {
+            args: ['amount:number?'],
+            description: 'tilelog, but aoe',
+            perm: commands_1.Perm.none,
+            handler: function (_a) {
+                var args = _a.args, output = _a.output, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps;
+                if (currentTapMode === "off") {
+                    handleTaps("on");
+                    outputSuccess("aoelog mode on");
+                }
+                else {
+                    handleTaps("off");
+                    outputSuccess("aoelog mode off");
+                }
+                p1 = null;
+                p2 = null;
+                stage = 0;
+            },
+            tapped: function (_a) {
+                var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, sender = _a.sender, admins = _a.admins, handleTaps = _a.handleTaps;
+                if (!p2 && p1) {
+                    p2 = [x, y];
+                    output("okie dokie registered 2nd point at ".concat(x, ", ").concat(y));
+                }
+                if (!p1 && p2) {
+                    (0, commands_1.fail)("sorry dev has skillissue");
+                }
+                if (!p1) {
+                    p1 = [x, y];
+                    output("okie dokie 1st point registered at ".concat(x, ",").concat(y));
+                }
+                if (p2 && p1) {
+                    stage = 3;
+                    var sx = Math.abs(p1[0] - p2[0]);
+                    var sy = Math.abs(p1[1] - p2[1]);
+                    if (sx > 100 || sy > 100) {
+                        (0, commands_1.fail)("sorry but your selection's too big");
+                        handleTaps("off");
+                    }
+                    var minX = Math.min(p1[0], p2[0]);
+                    var maxX = Math.max(p1[0], p2[0]);
+                    var minY = Math.min(p1[1], p2[1]);
+                    var maxY = Math.max(p1[1], p2[1]);
+                    var tileData = [];
+                    var _loop_1 = function (i) {
+                        var _loop_2 = function (j) {
+                            var pos = "".concat(i, ",").concat(j);
+                            if (globals_1.tileHistory[pos]) {
+                                var data = funcs_1.StringIO.read(globals_1.tileHistory[pos], function (str) {
+                                    return str.readArray(function (d) {
+                                        var _a, _b, _c;
+                                        return ({
+                                            action: (_a = d.readString(2)) !== null && _a !== void 0 ? _a : "??",
+                                            uuid: (_b = d.readString(3)) !== null && _b !== void 0 ? _b : "??",
+                                            time: d.readNumber(16),
+                                            type: (_c = d.readString(2)) !== null && _c !== void 0 ? _c : "??",
+                                        });
+                                    }, 1);
+                                });
+                                data.forEach(function (entry) {
+                                    var _a, _b;
+                                    output("[yellow]Tile history for tile (".concat(i, ", ").concat(j, "):\n") +
+                                        (globals_1.uuidPattern.test(entry.uuid)
+                                            ? (sender.hasPerm("viewUUIDs")
+                                                ? "[yellow]".concat((_a = admins.getInfoOptional(entry.uuid)) === null || _a === void 0 ? void 0 : _a.plainLastName(), "[lightgray](").concat(entry.uuid, ")[yellow] ").concat(entry.action, " a [cyan]").concat(entry.type, "[] ").concat((0, utils_1.formatTimeRelative)(entry.time))
+                                                : "[yellow]".concat((_b = admins.getInfoOptional(entry.uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName(), " ").concat(entry.action, " a [cyan]").concat(entry.type, "[] ").concat((0, utils_1.formatTimeRelative)(entry.time)))
+                                            : "[yellow]".concat(entry.uuid, "[yellow] ").concat(entry.action, " a [cyan]").concat(entry.type, "[] ").concat((0, utils_1.formatTimeRelative)(entry.time))));
+                                });
+                            }
+                        };
+                        for (var j = minY; j <= maxY; j++) {
+                            _loop_2(j);
+                        }
+                    };
+                    for (var i = minX; i <= maxX; i++) {
+                        _loop_1(i);
+                    }
+                    p1 = null;
+                    p2 = null;
+                    handleTaps("off");
+                }
+                ;
+            },
+        };
+    }), afk: {
         args: [],
         description: 'Toggles your afk status.',
         perm: commands_1.Perm.none,
