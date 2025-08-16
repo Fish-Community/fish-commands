@@ -201,7 +201,7 @@ export const commands = commandList({
 				else if(!p2){p2 = [x, y]; output(`okie dokie 2nd point registered at ${x}, ${y}`);
 					let sx = Math.abs(p1[0]- p2[0]);
 					let sy = Math.abs(p1[1]- p2[1]);
-					if(sx > 100 || sy > 100){fail("selection too big, please don't make the servers overheat");}
+					if(sx > 100 || sy > 100){fail("selection too big, please don't fry the servers");}
 					handleArea(p1, p2)
 				}	
 				if(!args.persist && p2){handleTaps("off"); currentTapMode = "off"; output("[#00FF00]aoelog off")}
