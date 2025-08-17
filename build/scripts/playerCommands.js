@@ -238,11 +238,11 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 var args = _a.args, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps;
                 if (currentTapMode === "off") {
                     handleTaps("on");
-                    outputSuccess("aoelog mode on");
+                    outputSuccess("Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog again to disable.");
                 }
                 else {
                     handleTaps("off");
-                    outputSuccess("aoelog mode off");
+                    outputSuccess("Aoelog disabled.");
                 }
                 if (args.action && !allowedActions.includes(args.action))
                     (0, commands_1.fail)("Invalid action. Allowed actions: ".concat(allowedActions.join(", ")));
@@ -299,24 +299,20 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 }
                 if (!p1) {
                     p1 = [x, y];
-                    output("okie dokie 1st point registered at ".concat(x, ",").concat(y));
+                    output("1st point set at (".concat(x, ",").concat(y, ")"));
                 }
                 else if (!p2) {
                     p2 = [x, y];
-                    output("okie dokie 2nd point registered at ".concat(x, ", ").concat(y));
+                    output("2nd point set at (".concat(x, ", ").concat(y, ")"));
                     var width = Math.abs(p1[0] - p2[0]);
                     var height = Math.abs(p1[1] - p2[1]);
-                    if (width > 100 || height > 100)
-                        (0, commands_1.fail)("selection too big, please don't fry the servers");
+                    if (width > 50 || height > 50)
+                        (0, commands_1.fail)("Selection too large: width/height cannot be more than 50.");
                     handleArea(p1, p2);
                     if (!args.persist)
                         handleTaps("off");
                     p1 = null;
                     p2 = null;
-                }
-                if (!args.persist && p2) {
-                    handleTaps("off");
-                    output("[#00FF00]aoelog off");
                 }
             },
         };
