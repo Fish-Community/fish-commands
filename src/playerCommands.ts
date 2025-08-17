@@ -149,7 +149,7 @@ export const commands = commandList({
 			"built", "broke", "rotated", "killed", "configured", "pay-dropped", "picked up", "controlled"
 		];
 		return {
-			args: ['persist:boolean?', 'amount:string?', 'action:string?'],
+			args: ['persist:boolean?', 'amount:number?', 'action:string?'],
 			description: 'Checks the history of all tiles in the selected region. Can be filtered by action.',
 			perm: Perm.none,
 			handler({args, outputSuccess, currentTapMode, handleTaps}) {
@@ -162,20 +162,19 @@ export const commands = commandList({
 				}
 				if(args.action && !allowedActions.includes(args.action))
 					fail(`Invalid action. Allowed actions: ${allowedActions.join(", ")}`);
-
-				if(args.amount && Math.floor(Math.abs(Number(args.amount))) > 100) fail(`Limit cannot be greater than 100.`);
+				if(args.amount && args.amount > 100) fail(`Limit cannot be greater than 100.`);
 				p1 = null;
 				p2 = null;
 			},
-			tapped({x, y, output, sender, admins, handleTaps, args, currentTapMode}) {
+			tapped({x, y, output, sender, admins, handleTaps, args}) {
 				function handleArea(p1: [number, number], p2: [number, number]){
 					const minX = Math.min(p1[0], p2[0]);
 					const maxX = Math.max(p1[0], p2[0]);
 					const minY = Math.min(p1[1], p2[1]);
 					const maxY = Math.max(p1[1], p2[1]);
 					let limitTiles = 0;
-					const amount = Math.floor(Math.abs(Number(args.amount))) || 10;
-					outer: 
+					const amount = args.amount != null ? Math.floor(Math.abs(args.amount)) : 10;
+					outer:
 					for(let i = minX; i <= maxX; i ++){
 						for(let j = minY; j <= maxY; j ++){
 							const tileData = tileHistory[`${i},${j}`];
@@ -187,6 +186,7 @@ export const commands = commandList({
 								type: d.readString(2) ?? "??",
 							}), 1));
 							if(args.action) history = history.filter(e => e.action === args.action);
+							if(history.length == 0) continue;
 							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e => {
 								if(uuidPattern.test(e.uuid)){
 									if(sender.hasPerm("viewUUIDs"))
@@ -198,6 +198,8 @@ export const commands = commandList({
 							if(limitTiles === amount) break outer;
 						}
 					}
+					if(limitTiles === amount)
+						output(`Displaying first ${limitTiles} entries. To show other entries, increase the limit or select a smaller area.`);
 				}
 				if(!p1){
 					p1 = [x, y];
@@ -209,12 +211,10 @@ export const commands = commandList({
 					const height = Math.abs(p1[1] - p2[1]);
 					if(width > 100 || height > 100) fail("selection too big, please don't fry the servers");
 					handleArea(p1, p2);
+					if(!args.persist) handleTaps("off");
+					p1 = null;
+					p2 = null;
 				}	
-				if(!args.persist && p2){
-					handleTaps("off");
-					currentTapMode = "off";
-					output("[#00FF00]aoelog off");
-				}
 			},
 		};
 	}),
