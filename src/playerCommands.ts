@@ -142,69 +142,79 @@ export const commands = commandList({
 		}
 	},
 
-    aoelog: command(() => {
-		let p1 : [number,number] | null = null;
-		let p2 : [number,number] | null = null;
-		const allowedActions = ["built","broke","rotated","killed","configured","pay-dropped","picked up","controlled"];
-		let args = ['persist:boolean?', 'amount:string?', 'action:string?'] as const;
+	aoelog: command(() => {
+		let p1: [number,number] | null = null;
+		let p2: [number,number] | null = null;
+		const allowedActions = [
+			"built", "broke", "rotated", "killed", "configured", "pay-dropped", "picked up", "controlled"
+		];
 		return {
-			args,
-			description: 'tilelog, but aoe, along with 3 headaches',
+			args: ['persist:boolean?', 'amount:string?', 'action:string?'],
+			description: 'Checks the history of all tiles in the selected region. Can be filtered by action.',
 			perm: Perm.none,
 			handler({args, outputSuccess, currentTapMode, handleTaps}) {
 				if(currentTapMode === "off") {
 					handleTaps("on");
-					outputSuccess(`aoelog mode on`)
+					outputSuccess(`aoelog mode on`);
 				} else {
 					handleTaps("off");
-					outputSuccess(`aoelog mode off`)
+					outputSuccess(`aoelog mode off`);
 				}
-				if(args.action && !allowedActions.includes(args.action)) {
+				if(args.action && !allowedActions.includes(args.action))
 					fail(`Invalid action. Allowed actions: ${allowedActions.join(", ")}`);
-				}
+
+				if(args.amount && Math.floor(Math.abs(Number(args.amount))) > 100) fail(`Limit cannot be greater than 100.`);
 				p1 = null;
 				p2 = null;
 			},
 			tapped({x, y, output, sender, admins, handleTaps, args, currentTapMode}) {
-				function handleArea(p1: [number, number], p2:[number, number]) {
-					let minX = Math.min(p1[0], p2[0]);
-					let maxX = Math.max(p1[0], p2[0]);
-					let minY = Math.min(p1[1], p2[1]);
-					let maxY = Math.max(p1[1], p2[1]);
+				function handleArea(p1: [number, number], p2: [number, number]){
+					const minX = Math.min(p1[0], p2[0]);
+					const maxX = Math.max(p1[0], p2[0]);
+					const minY = Math.min(p1[1], p2[1]);
+					const maxY = Math.max(p1[1], p2[1]);
 					let limitTiles = 0;
-					let amount = Math.floor(Math.abs(Number(args.amount))) || 10;
+					const amount = Math.floor(Math.abs(Number(args.amount))) || 10;
 					outer: 
-						for (let i = minX; i <= maxX; i++){
-							for (let j = minY; j <= maxY; j++){
-							 const tileData = tileHistory[`${i},${j}`];
-            				if (!tileData) continue;
+					for(let i = minX; i <= maxX; i ++){
+						for(let j = minY; j <= maxY; j ++){
+							const tileData = tileHistory[`${i},${j}`];
+							if(!tileData) continue;
 							let history = StringIO.read(tileHistory[`${i},${j}`]!, str => str.readArray(d => ({
 								action: d.readString(2) ?? "??",
 								uuid: d.readString(3) ?? "??",
 								time: d.readNumber(16),
 								type: d.readString(2) ?? "??",
 							}), 1));
-							if(args.action) {history = history.filter(e => e.action === args.action)};
-							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e =>
-								uuidPattern.test(e.uuid)
-								? (sender.hasPerm("viewUUIDs")
-								? `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()}[lightgray](${e.uuid})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
-								: `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
-								: `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
-							).join('\n'));
-							limitTiles++;
-							if (limitTiles === amount) {break outer};
+							if(args.action) history = history.filter(e => e.action === args.action);
+							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e => {
+								if(uuidPattern.test(e.uuid)){
+									if(sender.hasPerm("viewUUIDs"))
+										return `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()}[lightgray](${e.uuid})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
+									else return `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
+								} else return `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
+							}).join('\n'));
+							limitTiles ++;
+							if(limitTiles === amount) break outer;
 						}
 					}
-				};
-				if(!p1){p1 = [x, y]; output(`okie dokie 1st point registered at ${x},${y}`);}
-				else if(!p2){p2 = [x, y]; output(`okie dokie 2nd point registered at ${x}, ${y}`);
-					let sx = Math.abs(p1[0]- p2[0]);
-					let sy = Math.abs(p1[1]- p2[1]);
-					if(sx > 100 || sy > 100){fail("selection too big, please don't fry the servers");}
-					handleArea(p1, p2)
+				}
+				if(!p1){
+					p1 = [x, y];
+					output(`okie dokie 1st point registered at ${x},${y}`);
+				} else if(!p2){
+					p2 = [x, y];
+					output(`okie dokie 2nd point registered at ${x}, ${y}`);
+					const width = Math.abs(p1[0] - p2[0]);
+					const height = Math.abs(p1[1] - p2[1]);
+					if(width > 100 || height > 100) fail("selection too big, please don't fry the servers");
+					handleArea(p1, p2);
 				}	
-				if(!args.persist && p2){handleTaps("off"); currentTapMode = "off"; output("[#00FF00]aoelog off")}
+				if(!args.persist && p2){
+					handleTaps("off");
+					currentTapMode = "off";
+					output("[#00FF00]aoelog off");
+				}
 			},
 		};
 	}),
