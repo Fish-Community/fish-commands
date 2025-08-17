@@ -54,6 +54,7 @@ export const bannedWords: {
 		/\bc(u)m\b/, ["semen", "sement", "horsemen", "housemen", "defensemen", "those", "menders"],
 		["porn", "maporn"],
 		"ur gay", "your gay", "youre gay", "you're gay",
+		"gooning", "gooner", "loli", "anal", "cunny"
 	]),
 	/** Strict: banned in names and for players with a chat strictness level of 'strict'. */
 	strict: processBannedWordList([
