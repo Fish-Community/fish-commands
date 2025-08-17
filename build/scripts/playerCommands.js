@@ -225,24 +225,22 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }).join('\n'));
         }
     }, aoelog: (0, commands_1.command)(function () {
-        var p1 = null;
-        var p2 = null;
         var allowedActions = [
             "built", "broke", "rotated", "killed", "configured", "pay-dropped", "picked up", "controlled"
         ];
+        var cachedPointMap = Object.create(null);
         return {
             args: ['persist:boolean?', 'amount:number?', 'action:string?'],
             description: 'Checks the history of all tiles in the selected region. Can be filtered by action.',
             perm: commands_1.Perm.none,
             handler: function (_a) {
-                var args = _a.args, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps;
+                var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps;
                 if (currentTapMode === "off" || args.action || args.amount) {
                     if (args.action && !allowedActions.includes(args.action))
                         (0, commands_1.fail)("Invalid action. Allowed actions: ".concat(allowedActions.join(", ")));
                     if (args.amount && args.amount > 100)
                         (0, commands_1.fail)("Limit cannot be greater than 100.");
-                    p1 = null;
-                    p2 = null;
+                    cachedPointMap[sender.uuid] = undefined;
                     handleTaps("on");
                     outputSuccess("Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog with no arguments to disable.");
                 }
@@ -303,12 +301,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     if (limitTiles == amount)
                         output("Displaying first ".concat(limitTiles, " entries. To show other entries, increase the limit or select a smaller area."));
                 }
+                var p1 = cachedPointMap[sender.uuid];
                 if (!p1) {
-                    p1 = [x, y];
+                    cachedPointMap[sender.uuid] = [x, y];
                     output("1st point set at (".concat(x, ",").concat(y, ")"));
                 }
-                else if (!p2) {
-                    p2 = [x, y];
+                else {
+                    var p2 = [x, y];
                     output("2nd point set at (".concat(x, ", ").concat(y, ")"));
                     var width = Math.abs(p1[0] - p2[0]);
                     var height = Math.abs(p1[1] - p2[1]);
@@ -317,8 +316,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     handleArea(p1, p2);
                     if (!args.persist)
                         handleTaps("off");
-                    p1 = null;
-                    p2 = null;
                 }
             },
         };

@@ -143,23 +143,21 @@ export const commands = commandList({
 	},
 
 	aoelog: command(() => {
-		let p1: [number,number] | null = null;
-		let p2: [number,number] | null = null;
 		const allowedActions = [
 			"built", "broke", "rotated", "killed", "configured", "pay-dropped", "picked up", "controlled"
 		];
+		const cachedPointMap = Object.create(null) as Partial<Record<string, [number, number]>>;
 		return {
 			args: ['persist:boolean?', 'amount:number?', 'action:string?'],
 			description: 'Checks the history of all tiles in the selected region. Can be filtered by action.',
 			perm: Perm.none,
-			handler({args, outputSuccess, currentTapMode, handleTaps}) {
+			handler({args, sender, outputSuccess, currentTapMode, handleTaps}) {
 				if(currentTapMode === "off" || args.action || args.amount) {
 					if(args.action && !allowedActions.includes(args.action))
 						fail(`Invalid action. Allowed actions: ${allowedActions.join(", ")}`);
 					if(args.amount && args.amount > 100) fail(`Limit cannot be greater than 100.`);
 
-					p1 = null;
-					p2 = null;
+					cachedPointMap[sender.uuid] = undefined;
 					handleTaps("on");
 					outputSuccess(`Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog with no arguments to disable.`);
 				} else {
@@ -206,19 +204,18 @@ export const commands = commandList({
 					if(limitTiles == amount)
 						output(`Displaying first ${limitTiles} entries. To show other entries, increase the limit or select a smaller area.`);
 				}
+				const p1 = cachedPointMap[sender.uuid];
 				if(!p1){
-					p1 = [x, y];
+					cachedPointMap[sender.uuid] = [x, y];
 					output(`1st point set at (${x},${y})`);
-				} else if(!p2){
-					p2 = [x, y];
+				} else {
+					const p2 = [x, y] as [number, number];
 					output(`2nd point set at (${x}, ${y})`);
 					const width = Math.abs(p1[0] - p2[0]);
 					const height = Math.abs(p1[1] - p2[1]);
 					if(width > 50 || height > 50) fail("Selection too large: width/height cannot be more than 50.");
 					handleArea(p1, p2);
 					if(!args.persist) handleTaps("off");
-					p1 = null;
-					p2 = null;
 				}	
 			},
 		};
