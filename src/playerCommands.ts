@@ -153,20 +153,21 @@ export const commands = commandList({
 			description: 'Checks the history of all tiles in the selected region. Can be filtered by action.',
 			perm: Perm.none,
 			handler({args, outputSuccess, currentTapMode, handleTaps}) {
-				if(currentTapMode === "off") {
+				if(currentTapMode === "off" || args.action || args.amount) {
+					if(args.action && !allowedActions.includes(args.action))
+						fail(`Invalid action. Allowed actions: ${allowedActions.join(", ")}`);
+					if(args.amount && args.amount > 100) fail(`Limit cannot be greater than 100.`);
+
+					p1 = null;
+					p2 = null;
 					handleTaps("on");
-					outputSuccess(`Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog again to disable.`);
+					outputSuccess(`Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog with no arguments to disable.`);
 				} else {
 					handleTaps("off");
 					outputSuccess(`Aoelog disabled.`);
 				}
-				if(args.action && !allowedActions.includes(args.action))
-					fail(`Invalid action. Allowed actions: ${allowedActions.join(", ")}`);
-				if(args.amount && args.amount > 100) fail(`Limit cannot be greater than 100.`);
-				p1 = null;
-				p2 = null;
 			},
-			tapped({x, y, output, sender, admins, handleTaps, args}) {
+			tapped({x, y, output, outputFail, sender, admins, handleTaps, args}) {
 				function handleArea(p1: [number, number], p2: [number, number]){
 					const minX = Math.min(p1[0], p2[0]);
 					const maxX = Math.max(p1[0], p2[0]);
@@ -198,7 +199,11 @@ export const commands = commandList({
 							if(limitTiles === amount) break outer;
 						}
 					}
-					if(limitTiles === amount)
+					if(limitTiles == 0){
+						if(args.action) outputFail(`There is no recorded history for the selected region matching the provided filters.`);
+						else outputFail(`There is no recorded history for the selected region.`);
+					}
+					if(limitTiles == amount)
 						output(`Displaying first ${limitTiles} entries. To show other entries, increase the limit or select a smaller area.`);
 				}
 				if(!p1){

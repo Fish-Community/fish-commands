@@ -236,23 +236,23 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             perm: commands_1.Perm.none,
             handler: function (_a) {
                 var args = _a.args, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps;
-                if (currentTapMode === "off") {
+                if (currentTapMode === "off" || args.action || args.amount) {
+                    if (args.action && !allowedActions.includes(args.action))
+                        (0, commands_1.fail)("Invalid action. Allowed actions: ".concat(allowedActions.join(", ")));
+                    if (args.amount && args.amount > 100)
+                        (0, commands_1.fail)("Limit cannot be greater than 100.");
+                    p1 = null;
+                    p2 = null;
                     handleTaps("on");
-                    outputSuccess("Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog again to disable.");
+                    outputSuccess("Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog with no arguments to disable.");
                 }
                 else {
                     handleTaps("off");
                     outputSuccess("Aoelog disabled.");
                 }
-                if (args.action && !allowedActions.includes(args.action))
-                    (0, commands_1.fail)("Invalid action. Allowed actions: ".concat(allowedActions.join(", ")));
-                if (args.amount && args.amount > 100)
-                    (0, commands_1.fail)("Limit cannot be greater than 100.");
-                p1 = null;
-                p2 = null;
             },
             tapped: function (_a) {
-                var x = _a.x, y = _a.y, output = _a.output, sender = _a.sender, admins = _a.admins, handleTaps = _a.handleTaps, args = _a.args;
+                var x = _a.x, y = _a.y, output = _a.output, outputFail = _a.outputFail, sender = _a.sender, admins = _a.admins, handleTaps = _a.handleTaps, args = _a.args;
                 function handleArea(p1, p2) {
                     var minX = Math.min(p1[0], p2[0]);
                     var maxX = Math.max(p1[0], p2[0]);
@@ -294,7 +294,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                 break outer;
                         }
                     }
-                    if (limitTiles === amount)
+                    if (limitTiles == 0) {
+                        if (args.action)
+                            outputFail("There is no recorded history for the selected region matching the provided filters.");
+                        else
+                            outputFail("There is no recorded history for the selected region.");
+                    }
+                    if (limitTiles == amount)
                         output("Displaying first ".concat(limitTiles, " entries. To show other entries, increase the limit or select a smaller area."));
                 }
                 if (!p1) {
