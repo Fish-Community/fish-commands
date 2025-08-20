@@ -278,7 +278,7 @@ class Events {
 
 const zeroDataEvents = ['WinEvent', 'LoseEvent', 'ResizeEvent', 'MapMakeEvent', 'MapPublishEvent', 'SaveWriteEvent', 'ClientCreateEvent', 'ServerLoadEvent', 'DisposeEvent', 'PlayEvent', 'ResetEvent', 'HostEvent', 'WaveEvent', 'TurnEvent', 'LineConfirmEvent', 'TurretAmmoDeliverEvent', 'CoreItemDeliverEvent', 'BlockInfoEvent', 'ContentInitEvent', 'AtlasPackEvent', 'ModContentLoadEvent', 'ClientLoadEvent', 'MusicRegisterEvent', 'FileTreeInitEvent', 'WorldLoadEvent', 'WorldLoadBeginEvent', 'WorldLoadEndEvent'];
 const EventType = {
-  ...zeroDataEvents.map(name => Object.assign(class {}, {name})),
+  ...zeroDataEvents.map(name => Object.defineProperty(class {}, 'name', { value: name })),
   ConnectionEvent: class {
     constructor(public connection: NetConnection){}
   },
@@ -311,4 +311,44 @@ const EventType = {
   },
 };
 
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, EventType});
+const Timer = {
+  schedule(func:() => unknown, delaySeconds:number, intervalSeconds?:number, repeatCount?:number):TimerTask {
+    let interval: ReturnType<typeof setInterval> | null = null;
+    let timeout = setTimeout(() => {
+      if(intervalSeconds){
+        let repeats = 0;
+        interval = setInterval(() => {
+          if(repeatCount != undefined && repeats < repeatCount){
+            clearInterval(interval!);
+            return;
+          }
+          repeats ++;
+          func();
+        }, intervalSeconds * 1000);
+      } else {
+        func();
+      }
+    }, delaySeconds * 1000);
+    return {cancel(){
+      if(interval != null) clearInterval(interval);
+      clearTimeout(timeout);
+    }};
+  }
+};
+
+class EffectCallPacket2 {
+	effect:Effect | null = null;
+	x:number = 0;
+	y:number = 0;
+	rotation:number = 0;
+	color:Color | null = null;
+	data:any = null;
+}
+class LabelReliableCallPacket {
+	message:string | null = null;
+	duration:number = 0;
+	worldx:number = 0;
+	worldy:number = 0;
+}
+
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket});
