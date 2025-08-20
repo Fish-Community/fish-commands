@@ -44,7 +44,7 @@ export class FishPlayer {
 	
 	//Transients
 	player:mindustryPlayer | null = null;
-	pet:string = "";
+	pet:number | null = null;
 	watch:boolean = false;
 	/** Front-to-back queue of menus to show. */
 	activeMenus: {

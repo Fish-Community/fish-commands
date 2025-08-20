@@ -68,7 +68,7 @@ var FishPlayer = /** @class */ (function () {
         var _p, _q, _r, _s;
         //Transients
         this.player = null;
-        this.pet = "";
+        this.pet = null;
         this.watch = false;
         /** Front-to-back queue of menus to show. */
         this.activeMenus = [];

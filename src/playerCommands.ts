@@ -347,14 +347,15 @@ export const commands = commandList({
 				sender.watch = false;
 			} else if(args.player){
 				sender.watch = true;
-				const stayX = sender.unit()?.x;
-				const stayY = sender.unit()?.y;
+				const senderUnit = sender.unit();
+				const stayX = senderUnit?.x;
+				const stayY = senderUnit?.y;
 				const target = args.player.player!;
 				const watch = () => {
 					if(sender.watch && target.unit()){
 						// Self.X+(172.5-Self.X)/10
 						Call.setCameraPosition(sender.con, target.unit()!.x, target.unit()!.y);
-						sender.unit()?.set?.(stayX, stayY);
+						if(senderUnit) sender.unit()?.set?.(stayX!, stayY!);
 						Timer.schedule(() => watch(), 0.1, 0.1, 0);
 					} else {
 						Call.setCameraPosition(sender.con, stayX, stayY);

@@ -18,7 +18,7 @@ exports.commands = (0, commands_1.commandList)({
                 var pet_1 = Groups.unit.find(function (u) { return u.id === sender.pet; });
                 if (pet_1)
                     pet_1.kill();
-                sender.pet = "";
+                sender.pet = null;
                 outputSuccess("Your pet has been removed.");
                 return;
             }
@@ -26,11 +26,11 @@ exports.commands = (0, commands_1.commandList)({
                 (0, commands_1.fail)("Name cannot be more than 500 characters.");
             if (Strings.stripColors(args.name).length > 70)
                 (0, commands_1.fail)("Name cannot be more than 70 characters, not including color tags.");
-            if (sender.pet !== '') {
+            if (sender.pet !== null) {
                 var pet_2 = Groups.unit.find(function (u) { return u.id === sender.pet; });
                 if (pet_2)
                     pet_2.kill();
-                sender.pet = '';
+                sender.pet = null;
             }
             var unit = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("You do not have a unit for the pet to follow.");
             var pet = UnitTypes.merui.spawn(sender.team(), unit.x, unit.y);

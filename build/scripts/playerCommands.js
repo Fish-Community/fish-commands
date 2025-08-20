@@ -439,7 +439,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: "Watch/unwatch a player.",
         perm: commands_1.Perm.none,
         handler: function (_a) {
-            var _b, _c;
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail;
             if (sender.watch) {
                 outputSuccess("No longer watching a player.");
@@ -447,15 +446,17 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }
             else if (args.player) {
                 sender.watch = true;
-                var stayX_1 = (_b = sender.unit()) === null || _b === void 0 ? void 0 : _b.x;
-                var stayY_1 = (_c = sender.unit()) === null || _c === void 0 ? void 0 : _c.y;
+                var senderUnit_1 = sender.unit();
+                var stayX_1 = senderUnit_1 === null || senderUnit_1 === void 0 ? void 0 : senderUnit_1.x;
+                var stayY_1 = senderUnit_1 === null || senderUnit_1 === void 0 ? void 0 : senderUnit_1.y;
                 var target_1 = args.player.player;
                 var watch_1 = function () {
                     var _a, _b;
                     if (sender.watch && target_1.unit()) {
                         // Self.X+(172.5-Self.X)/10
                         Call.setCameraPosition(sender.con, target_1.unit().x, target_1.unit().y);
-                        (_b = (_a = sender.unit()) === null || _a === void 0 ? void 0 : _a.set) === null || _b === void 0 ? void 0 : _b.call(_a, stayX_1, stayY_1);
+                        if (senderUnit_1)
+                            (_b = (_a = sender.unit()) === null || _a === void 0 ? void 0 : _a.set) === null || _b === void 0 ? void 0 : _b.call(_a, stayX_1, stayY_1);
                         Timer.schedule(function () { return watch_1(); }, 0.1, 0.1, 0);
                     }
                     else {

@@ -514,7 +514,29 @@ interface PlayerAction {
 }
 type ActionType = any;
 const ActionType:Record<string, ActionType>;
-type Unit = Record<string, any>;
+type Unit = {
+	health: number;
+	shield: number;
+	maxHealth: number;
+	type: UnitType;
+	x: number;
+	y: number;
+	team: Team;
+	dead: boolean;
+	spawnedByCore: boolean;
+	added: boolean;
+	id: number;
+	kill():void;
+	add():void;
+	isAdded():boolean;
+	set(x: number, y:number):void;
+	approach(vec: Vec2):void;
+	hasPayload: undefined | (() => boolean);
+	getPlayer():Player | null;
+	resetController():void;
+	apply(effect:StatusEffect, ticks:number):void;
+	clearStatuses():void;
+};
 type NetConnection = any;
 class Command {
 	text:string;
