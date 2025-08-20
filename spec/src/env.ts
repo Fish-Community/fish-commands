@@ -45,7 +45,7 @@ class ObjectIntMap<K> {
 }
 
 class Seq<T> {
-  constructor(public items:T[]){}
+  constructor(public items:T[] = []){}
 }
 
 class Fi {
@@ -225,13 +225,6 @@ class ByteArrayOutputStream extends OutputStream {
   }
 }
 
-const Packages = {
-  java: {
-    net: { NetworkInterface, Inet4Address },
-    util: { Collections }
-  }
-};
-
 
 const triggerNames = ["shock", "cannotUpgrade", "openConsole", "blastFreeze", "impactPower", "blastGenerator", "shockwaveTowerUse", "forceProjectorBreak", "thoriumReactorOverheat", "neoplasmReact", "fireExtinguish", "acceleratorUse", "newGame", "tutorialComplete", "flameAmmo", "resupplyTurret", "turretCool", "enablePixelation", "exclusionDeath", "suicideBomb", "openWiki", "teamCoreDamage", "socketConfigChanged", "update", "beforeGameUpdate", "afterGameUpdate", "unitCommandChange", "unitCommandPosition", "unitCommandAttack", "importMod", "draw", "drawOver", "preDraw", "postDraw", "uiDrawBegin", "uiDrawEnd", "universeDrawBegin", "universeDraw", "universeDrawEnd"];
 const Trigger = Object.fromEntries(triggerNames.map(k => [k, {__brand: 'trigger'} as Trigger]));
@@ -278,7 +271,7 @@ class Events {
 
 const zeroDataEvents = ['WinEvent', 'LoseEvent', 'ResizeEvent', 'MapMakeEvent', 'MapPublishEvent', 'SaveWriteEvent', 'ClientCreateEvent', 'ServerLoadEvent', 'DisposeEvent', 'PlayEvent', 'ResetEvent', 'HostEvent', 'WaveEvent', 'TurnEvent', 'LineConfirmEvent', 'TurretAmmoDeliverEvent', 'CoreItemDeliverEvent', 'BlockInfoEvent', 'ContentInitEvent', 'AtlasPackEvent', 'ModContentLoadEvent', 'ClientLoadEvent', 'MusicRegisterEvent', 'FileTreeInitEvent', 'WorldLoadEvent', 'WorldLoadBeginEvent', 'WorldLoadEndEvent'];
 const EventType = {
-  ...zeroDataEvents.map(name => Object.defineProperty(class {}, 'name', { value: name })),
+  ...Object.fromEntries(zeroDataEvents.map(name => [name, Object.defineProperty(class {}, 'name', { value: name })])),
   ConnectionEvent: class {
     constructor(public connection: NetConnection){}
   },
@@ -350,5 +343,158 @@ class LabelReliableCallPacket {
 	worldx:number = 0;
 	worldy:number = 0;
 }
+class CommandHandler {
+  constructor(public prefix: string){}
+}
+class Rules {
+	constructor(){}
+	mode(){
+    throw new Error('unimplemented');
+  }
+	getClass(){
+    return Rules;
+  }
+	defaultTeam = Team.derelict;
+	waveTeam = Team.crux;
+	waves = true;
+	waitEnemies = false;
+	env = 233;
+	fog = false
+	pvpAutoPause = true;
+	placeRangeCheck = false;
+	onlyDepositCore = false;
+	attackMode = true;
+	pvp = false;
+}
+class Color {
+	constructor(public r:number, public g:number, public b:number, public a:number = 1){}
+  static valueOf(hexCodes:string){
+    if(hexCodes.startsWith('#')) hexCodes = hexCodes.slice(1);
+    return new Color(...(hexCodes.split(/(?<=^(?:.{2}|.{4}|.{6}))/g).map(x => parseInt(x, 16)) as [number, number, number, number?]));
+  }
+  cpy(){
+    return new Color(this.r, this.g, this.b, this.a);
+  }
+}
+const Pal = {
+  accent: Color.valueOf("ffd37f"),
+};
+class Team {
+	static all = new Array<Team>();
+	static baseTeams = new Array<Team>();
 
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket});
+	static derelict = new Team(0, "derelict", Color.valueOf("4d4e58"));
+  static sharded = new Team(1, "sharded", Pal.accent.cpy());
+  static crux = new Team(2, "crux", Color.valueOf("f25555"));
+  static malis = new Team(3, "malis", Color.valueOf("a27ce5"));
+  static green = new Team(4, "green", Color.valueOf("54d67d"));
+  static blue = new Team(5, "blue", Color.valueOf("6c87fd"));
+  static neoplastic = new Team(6, "neoplastic", Color.valueOf("e05438"));
+  constructor(public id: number, public name: string, public color: Color){
+    Team.all.push(this);
+    Team.baseTeams[id] = this;
+  }
+	active(){
+    return true;
+  }
+	data(){
+    return {};
+  }
+	coloredName():string {
+    return `[#${this.color.toString()}]${this.name}`;
+  }
+	static get(index:number){
+    return Team.all[index] ?? (() => {
+      throw new Error('array index out of bounds');
+    });
+  }
+	cores(){
+    return new Seq();
+  }
+}
+class Administration {
+
+}
+class MMap {
+  
+}
+class ServerControl {
+  static instance = new ServerControl();
+
+  handler = new CommandHandler("");
+}
+const Vars = {
+	logic: {
+		skipWave(){}
+	},
+	netServer: {
+		admins: new Administration(),
+		clientCommands: new CommandHandler("/"),
+		kickAll(kickReason:any){},
+		addPacketHandler(name:string, handler:(player:mindustryPlayer, content:string) => unknown){},
+		currentlyKicking: null,
+		votesRequired(){
+      return 2 + (Groups.player.size() > 4 ? 1 : 0);
+    },
+	},
+	net: {
+		send(object:any, reliable:boolean){},
+	},
+	mods: {
+		getScripts(){
+      return {};
+    },
+	},
+	maps: {
+    setNextMapOverride(map:MMap){},
+    all():Seq<MMap> {
+      return new Seq();
+    },
+    customMaps():Seq<MMap> {
+      return new Seq();
+    },
+    byName(name:string):MMap | null {
+      return new MMap();
+    },
+    reload(){},
+    saveMap(baseTags:MapTags):MMap {
+      return new MMap();
+    },
+  },
+	state: {
+		rules: new Rules(),
+		set(state:State){},
+		gameOver: false,
+		wave: 0,
+		map: new MMap(),
+		isMenu(){
+      return false;
+    },
+		wavetime: 0,
+		enemies: 1,
+		/** Time in ticks, 60/s */
+		tick: 0,
+	},
+	saveExtension: "msav",
+	saveDirectory: new Fi('/saves'),
+	modDirectory: new Fi('/mods'),
+	customMapDirectory: new Fi('/maps'),
+	content: {
+
+  },
+	tilesize: 8,
+	world: {
+
+  },
+};
+const Packages = {
+  java: {
+    net: { NetworkInterface, Inet4Address },
+    util: { Collections }
+  },
+  mindustry: {
+    gen: { Map: MMap }
+  }
+};
+
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl});

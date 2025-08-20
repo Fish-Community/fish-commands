@@ -271,6 +271,11 @@ class Color {
 	static valueOf(string:string):Color;
 	static valueOf(color:Color, hex:string):Color;
 	static HSVtoRGB(hue:number, saturation:number, value:number):Color;
+	r: number;
+	g: number;
+	b: number;
+	a: number;
+  cpy():Color;
 	rand():Color;
 }
 const Version: {
