@@ -224,7 +224,102 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     : "[yellow]".concat(e.uuid, "[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
             }).join('\n'));
         }
-    }, afk: {
+    }, aoelog: (0, commands_1.command)(function () {
+        var allowedActions = [
+            "built", "broke", "rotated", "killed", "configured", "pay-dropped", "picked up", "controlled"
+        ];
+        var cachedPointMap = Object.create(null);
+        return {
+            args: ['persist:boolean?', 'amount:number?', 'action:string?'],
+            description: 'Checks the history of all tiles in the selected region. Can be filtered by action.',
+            perm: commands_1.Perm.none,
+            handler: function (_a) {
+                var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps;
+                if (currentTapMode === "off" || args.action || args.amount) {
+                    if (args.action && !allowedActions.includes(args.action))
+                        (0, commands_1.fail)("Invalid action. Allowed actions: ".concat(allowedActions.join(", ")));
+                    if (args.amount && args.amount > 100)
+                        (0, commands_1.fail)("Limit cannot be greater than 100.");
+                    cachedPointMap[sender.uuid] = undefined;
+                    handleTaps("on");
+                    outputSuccess("Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog with no arguments to disable.");
+                }
+                else {
+                    handleTaps("off");
+                    outputSuccess("Aoelog disabled.");
+                }
+            },
+            tapped: function (_a) {
+                var x = _a.x, y = _a.y, output = _a.output, outputFail = _a.outputFail, sender = _a.sender, admins = _a.admins, handleTaps = _a.handleTaps, args = _a.args;
+                function handleArea(p1, p2) {
+                    var minX = Math.min(p1[0], p2[0]);
+                    var maxX = Math.max(p1[0], p2[0]);
+                    var minY = Math.min(p1[1], p2[1]);
+                    var maxY = Math.max(p1[1], p2[1]);
+                    var limitTiles = 0;
+                    var amount = args.amount != null ? Math.floor(Math.abs(args.amount)) : 10;
+                    outer: for (var i = minX; i <= maxX; i++) {
+                        for (var j = minY; j <= maxY; j++) {
+                            var tileData = globals_1.tileHistory["".concat(i, ",").concat(j)];
+                            if (!tileData)
+                                continue;
+                            var history = funcs_1.StringIO.read(globals_1.tileHistory["".concat(i, ",").concat(j)], function (str) { return str.readArray(function (d) {
+                                var _a, _b, _c;
+                                return ({
+                                    action: (_a = d.readString(2)) !== null && _a !== void 0 ? _a : "??",
+                                    uuid: (_b = d.readString(3)) !== null && _b !== void 0 ? _b : "??",
+                                    time: d.readNumber(16),
+                                    type: (_c = d.readString(2)) !== null && _c !== void 0 ? _c : "??",
+                                });
+                            }, 1); });
+                            if (args.action)
+                                history = history.filter(function (e) { return e.action === args.action; });
+                            if (history.length == 0)
+                                continue;
+                            output("[yellow]Tile history for tile (".concat(i, ", ").concat(j, "):\n") + history.map(function (e) {
+                                var _a, _b;
+                                if (globals_1.uuidPattern.test(e.uuid)) {
+                                    if (sender.hasPerm("viewUUIDs"))
+                                        return "[yellow]".concat((_a = admins.getInfoOptional(e.uuid)) === null || _a === void 0 ? void 0 : _a.plainLastName(), "[lightgray](").concat(e.uuid, ")[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
+                                    else
+                                        return "[yellow]".concat((_b = admins.getInfoOptional(e.uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName(), " ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
+                                }
+                                else
+                                    return "[yellow]".concat(e.uuid, "[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
+                            }).join('\n'));
+                            limitTiles++;
+                            if (limitTiles === amount)
+                                break outer;
+                        }
+                    }
+                    if (limitTiles == 0) {
+                        if (args.action)
+                            outputFail("There is no recorded history for the selected region matching the provided filters.");
+                        else
+                            outputFail("There is no recorded history for the selected region.");
+                    }
+                    if (limitTiles == amount)
+                        output("Displaying first ".concat(limitTiles, " entries. To show other entries, increase the limit or select a smaller area."));
+                }
+                var p1 = cachedPointMap[sender.uuid];
+                if (!p1) {
+                    cachedPointMap[sender.uuid] = [x, y];
+                    output("1st point set at (".concat(x, ",").concat(y, ")"));
+                }
+                else {
+                    var p2 = [x, y];
+                    output("2nd point set at (".concat(x, ", ").concat(y, ")"));
+                    var width = Math.abs(p1[0] - p2[0]);
+                    var height = Math.abs(p1[1] - p2[1]);
+                    if (width > 50 || height > 50)
+                        (0, commands_1.fail)("Selection too large: width/height cannot be more than 50.");
+                    handleArea(p1, p2);
+                    if (!args.persist)
+                        handleTaps("off");
+                }
+            },
+        };
+    }), afk: {
         args: [],
         description: 'Toggles your afk status.',
         perm: commands_1.Perm.none,

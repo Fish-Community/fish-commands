@@ -142,6 +142,85 @@ export const commands = commandList({
 		}
 	},
 
+	aoelog: command(() => {
+		const allowedActions = [
+			"built", "broke", "rotated", "killed", "configured", "pay-dropped", "picked up", "controlled"
+		];
+		const cachedPointMap = Object.create(null) as Partial<Record<string, [number, number]>>;
+		return {
+			args: ['persist:boolean?', 'amount:number?', 'action:string?'],
+			description: 'Checks the history of all tiles in the selected region. Can be filtered by action.',
+			perm: Perm.none,
+			handler({args, sender, outputSuccess, currentTapMode, handleTaps}) {
+				if(currentTapMode === "off" || args.action || args.amount) {
+					if(args.action && !allowedActions.includes(args.action))
+						fail(`Invalid action. Allowed actions: ${allowedActions.join(", ")}`);
+					if(args.amount && args.amount > 100) fail(`Limit cannot be greater than 100.`);
+
+					cachedPointMap[sender.uuid] = undefined;
+					handleTaps("on");
+					outputSuccess(`Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog with no arguments to disable.`);
+				} else {
+					handleTaps("off");
+					outputSuccess(`Aoelog disabled.`);
+				}
+			},
+			tapped({x, y, output, outputFail, sender, admins, handleTaps, args}) {
+				function handleArea(p1: [number, number], p2: [number, number]){
+					const minX = Math.min(p1[0], p2[0]);
+					const maxX = Math.max(p1[0], p2[0]);
+					const minY = Math.min(p1[1], p2[1]);
+					const maxY = Math.max(p1[1], p2[1]);
+					let limitTiles = 0;
+					const amount = args.amount != null ? Math.floor(Math.abs(args.amount)) : 10;
+					outer:
+					for(let i = minX; i <= maxX; i ++){
+						for(let j = minY; j <= maxY; j ++){
+							const tileData = tileHistory[`${i},${j}`];
+							if(!tileData) continue;
+							let history = StringIO.read(tileHistory[`${i},${j}`]!, str => str.readArray(d => ({
+								action: d.readString(2) ?? "??",
+								uuid: d.readString(3) ?? "??",
+								time: d.readNumber(16),
+								type: d.readString(2) ?? "??",
+							}), 1));
+							if(args.action) history = history.filter(e => e.action === args.action);
+							if(history.length == 0) continue;
+							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e => {
+								if(uuidPattern.test(e.uuid)){
+									if(sender.hasPerm("viewUUIDs"))
+										return `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()}[lightgray](${e.uuid})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
+									else return `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
+								} else return `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
+							}).join('\n'));
+							limitTiles ++;
+							if(limitTiles === amount) break outer;
+						}
+					}
+					if(limitTiles == 0){
+						if(args.action) outputFail(`There is no recorded history for the selected region matching the provided filters.`);
+						else outputFail(`There is no recorded history for the selected region.`);
+					}
+					if(limitTiles == amount)
+						output(`Displaying first ${limitTiles} entries. To show other entries, increase the limit or select a smaller area.`);
+				}
+				const p1 = cachedPointMap[sender.uuid];
+				if(!p1){
+					cachedPointMap[sender.uuid] = [x, y];
+					output(`1st point set at (${x},${y})`);
+				} else {
+					const p2 = [x, y] as [number, number];
+					output(`2nd point set at (${x}, ${y})`);
+					const width = Math.abs(p1[0] - p2[0]);
+					const height = Math.abs(p1[1] - p2[1]);
+					if(width > 50 || height > 50) fail("Selection too large: width/height cannot be more than 50.");
+					handleArea(p1, p2);
+					if(!args.persist) handleTaps("off");
+				}	
+			},
+		};
+	}),
+
 	afk: {
 		args: [],
 		description: 'Toggles your afk status.',
@@ -153,6 +232,7 @@ export const commands = commandList({
 			else outputSuccess(`You are no longer marked as AFK.`);
 		},
 	},
+
 	vanish: {
 		args: ['target:player?'],
 		description: `Toggles visibility of your rank and flags.`,
