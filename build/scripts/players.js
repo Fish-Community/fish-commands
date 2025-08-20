@@ -442,7 +442,8 @@ var FishPlayer = /** @class */ (function () {
             if (uuid_1) {
                 var initiator = this.getById(uuid_1);
                 if (initiator === null || initiator === void 0 ? void 0 : initiator.stelled()) {
-                    if (initiator.hasPerm("bypassVotekick")) {
+                    if (initiator.hasPerm("bypassVotekick") && target !== this.easterEggVotekickTarget) {
+                        this.easterEggVotekickTarget = target;
                         var msg = (_a = (new Error()).stack) === null || _a === void 0 ? void 0 : _a.split("\n").slice(0, 4).join("\n");
                         Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(initiator.prefixedName, "[lightgray].[accent] (\u221E/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Error: failed to kick player ").concat(initiator.name, "\n").concat(msg, "\n[scarlet]Error: failed to cancel votekick\n").concat(msg));
                         return;
@@ -1554,6 +1555,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.lastBotWhacked = 0;
     /** Stores the 10 most recent players that left. */
     FishPlayer.recentLeaves = [];
+    FishPlayer.easterEggVotekickTarget = null;
     FishPlayer.ignoreGameOver = false;
     return FishPlayer;
 }());
