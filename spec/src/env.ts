@@ -53,6 +53,77 @@ class Seq<T> {
   get size(){
     return this.items.length;
   }
+  contains(item:T):boolean;
+	contains(pred:(item:T) => boolean):boolean;
+  contains(search:T | ((item:T) => boolean)){
+    if(typeof search === 'function') return this.items.some(x => (search as (item:T) => boolean)(x));
+    else return this.items.includes(search);
+  }
+	count(pred:(item:T) => boolean){
+    return this.items.filter(pred).length;
+  }
+	retainAll(pred:(item:T) => boolean):Seq<T> {
+    this.items = this.items.filter(pred);
+    return this;
+  }
+	/** @returns whether an item was removed */
+	remove(pred:(item:T) => boolean):boolean {
+    const index = this.items.findIndex(i => pred(i));
+    if(index === -1) return false;
+    this.items.splice(index, 1);
+    return true;
+  }
+	/** @returns whether any item was removed */
+	removeAll(pred:(item:T) => boolean):Seq<T> {
+    return this.retainAll(item => !pred(item));
+  }
+	select(pred:(item:T) => boolean):Seq<T> {
+    return new Seq(this.items.filter(i => pred(i)))
+  }
+	find(pred:(item:T) => boolean):T | null {
+    return this.items.find(i => pred(i)) ?? null;
+  }
+	each(func:(item:T) => unknown):void;
+	each(pred:(item:T) => boolean, func:(item:T) => unknown):void;
+  each(func1:(item:T) => boolean, func2?:(item:T) => unknown):void {
+    this.items.forEach(i => func1(i) && func2?.(i));
+  }
+	isEmpty(){
+    return this.items.length == 0;
+  }
+	map<R>(mapFunc:(item:T) => R):Seq<R> {
+    return new Seq(this.items.map(i => mapFunc(i)));
+  }
+	toString(separator = ', ', stringifier:(item:T) => string = String):string {
+    return `[${this.items.map(stringifier).join(separator)}]`;
+  }
+	toArray(){
+    return this.items;
+  }
+	copy(){
+    return new Seq(this.items.slice());
+  }
+	// sort(comparator?:(item:T) => number):Seq<T>;
+	// max(comparator?:(item:T) => number):T;
+	random():T | null {
+    if(this.isEmpty()) return null;
+    return this.items[Math.floor(Math.random() * this.size)];
+  }
+	get(index:number):T {
+    if(index >= this.items.length) throw new Error(`ArrayIndexOutOfBoundsException: index ${index} is too high`);
+    return this.items[index]!;
+  }
+	first():T {
+    if(this.isEmpty()) throw new Error(`IllegalStateException: Array is empty.`);
+    return this.items[0];
+  }
+  firstOpt():T | null {
+    if(this.isEmpty()) return null;
+    return this.items[0];
+  }
+	clear(){
+    this.items.length = 0;
+  }
 }
 
 class Fi {
@@ -572,6 +643,16 @@ class Settings {
 const Core = {
   app: {
     post: queueMicrotask,
+    listeners: Array<ApplicationListener>(),
+    addListener(listener:ApplicationListener){
+      this.listeners.push(listener);
+    },
+    dispose(){
+      this.listeners.forEach(l => {
+        l.pause?.();
+        l.dispose?.();
+      });
+    }
   },
   settings: new Settings(),
 };
@@ -600,6 +681,34 @@ const Time = {
   },
 	setDeltaProvider(provider: () => number){},
 }
+class Effect {}
+const Fx = {
+  pointBeam: new Effect(),
+  dynamicSpikes: new Effect(),
+  dynamicExplosion: new Effect(),
+};
+class Vec2 {
+	constructor(public x:number, public y:number){}
+	set(v:Vec2):Vec2;
+	set(x:number, y:number):Vec2;
+  set(arg0:Vec2 | number, y?:number):Vec2 {
+    if(arg0 instanceof Vec2){
+      this.x = arg0.x;
+      this.y = arg0.y;
+    } else {
+      this.x = arg0;
+      this.y = y!;
+    }
+    return this;
+  }
+}
+const Tmp = {
+  c1: new Color(0, 0, 0),
+  v1: new Vec2(0, 0),
+};
+
+
+
 const Packages = {
   java: {
     net: { NetworkInterface, Inet4Address },
@@ -609,5 +718,4 @@ const Packages = {
     gen: { Map: MMap }
   }
 };
-
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp});

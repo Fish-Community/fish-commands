@@ -286,6 +286,15 @@ const Version: {
 	revision: number;
 };
 const Pal: Record<"orangeSpark" | "adminChat" | "logicBlocks" | "vent" | "lightishGray" | "darkishGray" | "thoriumPink" | "shadow" | "boostFrom" | "sapBullet" | "darkestGray" | "lightishOrange" | "placing" | "unitBack" | "lightFlame" | "bar" | "freeze" | "plastanium" | "plastaniumFront" | "breakInvalid" | "boostTo" | "logicControl" | "surge" | "redLight" | "darkMetal" | "powerLight" | "meltdownHit" | "reactorPurple" | "darkerMetal" | "logicUnits" | "plastaniumBack" | "vent2" | "techBlue" | "darkPyraFlame" | "turretHeat" | "logicOperations" | "bulletYellow" | "negativeStat" | "accentBack" | "items" | "plasticBurn" | "shield" | "missileYellowBack" | "logicIo" | "darkerGray" | "lightPyraFlame" | "regen" | "range" | "redSpark" | "logicWorld" | "lighterOrange" | "remove" | "noplace" | "gray" | "engine" | "lightOrange" | "heal" | "freezeBack" | "rubble" | "place" | "power" | "coalBlack" | "missileYellow" | "metalGrayDark" | "neoplasmOutline" | "slagOrange" | "plasticSmoke" | "berylShot" | "sapBulletBack" | "stat" | "powerBar" | "redDust" | "sap" | "ammo" | "placeRotate" | "darkOutline" | "lightTrail" | "muddy" | "stoneGray" | "health" | "darkestMetal" | "darkFlame" | "suppress" | "redderDust" | "spore" | "accent" | "command" | "reactorPurple2" | "lancerLaser" | "bulletYellowBack" | "removeBack" | "neoplasm1" | "tungstenShot" | "neoplasm2" | "unitFront" | "neoplasmMid", Color>;
+type ApplicationListener = Partial<{
+	init(): void;
+	update(): void;
+	pause(): void;
+	resume(): void;
+	dispose(): void;
+	exit(): void;
+}>;
+
 const Core: {
 	settings: {
 		get<T = unknown>(key:string, defaultValue?:T):T;
@@ -303,14 +312,7 @@ const Core: {
 		exit():void;
 		getJavaHeap():number;
 		listeners: any[];
-		addListener(listener:Partial<{
-			init():void;
-			update():void;
-			pause():void;
-			resume():void;
-			dispose():void;
-			exit():void;
-		}>):void;
+		addListener(listener:ApplicationListener):void;
 	}
 	graphics: {
 		getFramesPerSecond():number;
@@ -430,8 +432,7 @@ class Seq<T> {
 	retainAll(pred:(item:T) => boolean):Seq<T>;
 	/** @returns whether an item was removed */
 	remove(pred:(item:T) => boolean):boolean;
-	/** @returns whether any item was removed */
-	removeAll(pred:(item:T) => boolean):boolean;
+	removeAll(pred:(item:T) => boolean):Seq<T>;
 	select(pred:(item:T) => boolean):Seq<T>;
 	find(pred:(item:T) => boolean):T | null;
 	each(func:(item:T) => unknown):void;
