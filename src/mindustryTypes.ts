@@ -715,6 +715,17 @@ class LabelReliableCallPacket {
 	worldx:number;
 	worldy:number;
 }
+class ConnectPacket {
+	version: number;
+	versionType: string;
+	mods: Seq<string>;
+	name: string;
+	locale: string;
+	uuid: string;
+	usid: string;
+	mobile: boolean;
+	color: number;
+}
 
 type ByteBuffer = {
 	put(bytes:number[]):void;
@@ -743,6 +754,10 @@ const OS: {
 	 * @throws RuntimeException
 	 */
 	exec(...command:string[]):string;
+};
+const Trigger: Record<'shock'|'cannotUpgrade'|'openConsole'|'blastFreeze'|'impactPower'|'blastGenerator'|'shockwaveTowerUse'|'forceProjectorBreak'|'thoriumReactorOverheat'|'neoplasmReact'|'fireExtinguish'|'acceleratorUse'|'newGame'|'tutorialComplete'|'flameAmmo'|'resupplyTurret'|'turretCool'|'enablePixelation'|'exclusionDeath'|'suicideBomb'|'openWiki'|'teamCoreDamage'|'socketConfigChanged'|'update'|'beforeGameUpdate'|'afterGameUpdate'|'unitCommandChange'|'unitCommandPosition'|'unitCommandAttack'|'importMod'|'draw'|'drawOver'|'preDraw'|'postDraw'|'uiDrawBegin'|'uiDrawEnd'|'universeDrawBegin'|'universeDraw'|'universeDrawEnd', Trigger>;
+type Trigger = {
+	__brand: 'trigger';
 };
 
 class WorldReloader {

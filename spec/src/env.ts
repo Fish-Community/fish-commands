@@ -1,3 +1,4 @@
+/// <reference types="../../build/scripts/mindustryTypes.d.ts" />;
 
 class Pattern {
   private constructor(public string:string){}
@@ -231,4 +232,83 @@ const Packages = {
   }
 };
 
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages});
+
+const triggerNames = ["shock", "cannotUpgrade", "openConsole", "blastFreeze", "impactPower", "blastGenerator", "shockwaveTowerUse", "forceProjectorBreak", "thoriumReactorOverheat", "neoplasmReact", "fireExtinguish", "acceleratorUse", "newGame", "tutorialComplete", "flameAmmo", "resupplyTurret", "turretCool", "enablePixelation", "exclusionDeath", "suicideBomb", "openWiki", "teamCoreDamage", "socketConfigChanged", "update", "beforeGameUpdate", "afterGameUpdate", "unitCommandChange", "unitCommandPosition", "unitCommandAttack", "importMod", "draw", "drawOver", "preDraw", "postDraw", "uiDrawBegin", "uiDrawEnd", "universeDrawBegin", "universeDraw", "universeDrawEnd"];
+const Trigger = Object.fromEntries(triggerNames.map(k => [k, {__brand: 'trigger'} as Trigger]));
+
+class Events {
+	static events = new Map<{}, Array<(...args:any[]) => void>>();
+
+	/** Handle an event by FooEvent. */
+	static on<T extends {}>(type:T, listener: (obj:T) => void):void {
+    const array = this.events.get(type) ?? (() => {
+      const array: Array<(obj:any) => void> = [];
+      this.events.set(type, array);
+      return array;
+    })();
+		array.push(listener);
+	}
+
+	/** Handle an event by Trigger. */
+	static run(type: Trigger, listener: () => {}):void {
+    const array = this.events.get(type) ?? (() => {
+      const array: Array<(obj:any) => void> = [];
+      this.events.set(type, array);
+      return array;
+    })();
+		array.push(listener);
+	}
+
+	static remove<T extends {}>(type:T, listener: (obj:T) => void):void {
+    const array = this.events.get(type);
+    if(array){
+      this.events.set(type, array.filter(l => l !== listener));
+    }
+	}
+
+	static fire(type:Trigger | Event):void {
+    if('__brand' in type && type.__brand === 'trigger') this.events.get(type)?.forEach(l => l());
+    else this.events.get(type.constructor)?.forEach(l => l(type));
+	}
+
+	static clear():void {
+		this.events.clear();
+	}
+}
+
+const zeroDataEvents = ['WinEvent', 'LoseEvent', 'ResizeEvent', 'MapMakeEvent', 'MapPublishEvent', 'SaveWriteEvent', 'ClientCreateEvent', 'ServerLoadEvent', 'DisposeEvent', 'PlayEvent', 'ResetEvent', 'HostEvent', 'WaveEvent', 'TurnEvent', 'LineConfirmEvent', 'TurretAmmoDeliverEvent', 'CoreItemDeliverEvent', 'BlockInfoEvent', 'ContentInitEvent', 'AtlasPackEvent', 'ModContentLoadEvent', 'ClientLoadEvent', 'MusicRegisterEvent', 'FileTreeInitEvent', 'WorldLoadEvent', 'WorldLoadBeginEvent', 'WorldLoadEndEvent'];
+const EventType = {
+  ...zeroDataEvents.map(name => Object.assign(class {}, {name})),
+  ConnectionEvent: class {
+    constructor(public connection: NetConnection){}
+  },
+  ConnectPacketEvent: class {
+    constructor(public connection: NetConnection, public packet: ConnectPacket){}
+  },
+  PlayerConnect: class {
+    constructor(public player: Player){}
+  },
+  PlayerJoin: class {
+    constructor(public player: Player){}
+  },
+  PlayerLeave: class {
+    constructor(public player: Player){}
+  },
+  UnitChangeEvent: class {
+    constructor(public player: Player, public unit: Unit){}
+  },
+  PlayerChatEvent: class {
+    constructor(public player: Player, public message: string){}
+  },
+  TapEvent: class {
+    constructor(public player: Player, public tile: Tile){}
+  },
+  GameOverEvent: class {
+    constructor(public team: Team){}
+  },
+  SaveLoadEvent: class {
+    constructor(public isMap: boolean){}
+  },
+};
+
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, EventType});
