@@ -1,5 +1,7 @@
 /// <reference types="../../build/scripts/mindustryTypes.d.ts" />;
 
+import * as path from "node:path";
+
 class Pattern {
   private constructor(public string:string){}
   regex = new RegExp(this.string);
@@ -126,9 +128,39 @@ class Seq<T> {
   }
 }
 
+const Directory = Symbol('Directory');
+const FakeFilesystem: Record<string, string | typeof Directory> = Object.setPrototypeOf({
+  "/mods/fish-commands": Directory,
+}, null);
+
 class Fi {
   constructor(public path:string){}
   exists(){
+    return this.path in FakeFilesystem;
+  }
+  child(name:string){
+    return new Fi(path.join(this.path, name));
+  }
+  absolutePath(){
+    return this.path;
+  }
+  file(){
+    return new JavaFile(this.path);
+  }
+}
+const Paths = {
+  get(path:string):Path {
+    return new Path(path);
+  }
+};
+class Path {
+  constructor(public path:string){}
+}
+class JavaFile {
+  constructor(public path:string){}
+}
+const Files = {
+  isSymbolicLink(path:Path){
     return false;
   }
 }
@@ -706,16 +738,25 @@ const Tmp = {
   c1: new Color(0, 0, 0),
   v1: new Vec2(0, 0),
 };
+const Threads = {
+  //Cannot be accurately implemented in JS
+  daemon(runnable:() => {}){
+    queueMicrotask(runnable);
+  }
+};
 
 
 
 const Packages = {
   java: {
     net: { NetworkInterface, Inet4Address },
-    util: { Collections }
+    util: { Collections },
+    nio: {
+      file: { Path, Paths, File: JavaFile, Files },
+    }
   },
   mindustry: {
     gen: { Map: MMap }
   }
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads});

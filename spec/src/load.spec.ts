@@ -2,4 +2,8 @@
 import '../plugin/index';
 
 
-Events.fire(new EventType.ServerLoadEvent());
+describe('fish-commands', () => {
+  it('should load', () => {
+    Events.fire(new EventType.ServerLoadEvent());
+  });
+});
