@@ -46,6 +46,13 @@ class ObjectIntMap<K> {
 
 class Seq<T> {
   constructor(public items:T[] = []){}
+  add(item:T){
+    this.items.push(item);
+    return this;
+  }
+  get size(){
+    return this.items.length;
+  }
 }
 
 class Fi {
@@ -343,13 +350,55 @@ class LabelReliableCallPacket {
 	worldx:number = 0;
 	worldy:number = 0;
 }
+class CommandRunner<T> {
+  constructor(public accept: (args:string[], parameter: T) => void){}
+}
 class CommandHandler {
+  commands = new Map<string, Command>();
   constructor(public prefix: string){}
+  removeCommand(name:string){
+    this.commands.delete(name);
+  }
+  register<T>(text:string, params:string, description:string, runner:CommandRunner<T>){
+
+  }
+  static CommandRunner = CommandRunner;
+}
+class Gamemode {
+  static all: Gamemode[] = [];
+  
+  static survival = new Gamemode("survival");
+  static sandbox = new Gamemode("sandbox");
+  static attack = new Gamemode("attack");
+  static pvp = new Gamemode("pvp");
+  static editor = new Gamemode("editor", true);
+  
+  constructor(
+    public _name: string,
+    public hidden = false,
+    private rules: ((rules:Rules) => void) | null = null,
+    private validator: ((map:MMap) => boolean) | null = null,
+  ){
+    Gamemode.all.push(this);
+  }
+  name(){
+    return this._name;
+  }
 }
 class Rules {
 	constructor(){}
 	mode(){
-    throw new Error('unimplemented');
+    if(this.pvp){
+      return Gamemode.pvp;
+    }else if(this.editor){
+      return Gamemode.editor;
+    }else if(this.attackMode){
+      return Gamemode.attack;
+    }else if(this.infiniteResources){
+      return Gamemode.sandbox;
+    }else{
+      return Gamemode.survival;
+    }
   }
 	getClass(){
     return Rules;
@@ -365,6 +414,8 @@ class Rules {
 	onlyDepositCore = false;
 	attackMode = true;
 	pvp = false;
+  infiniteResources = false;
+  editor = false;
 }
 class Color {
 	constructor(public r:number, public g:number, public b:number, public a:number = 1){}
@@ -412,8 +463,17 @@ class Team {
     return new Seq();
   }
 }
+type ChatFilter = (player:Player, message:string) => string | null;
+type ActionFilter = (action:PlayerAction) => boolean;
 class Administration {
-
+  chatFilters = new Seq<ChatFilter>();
+  actionFilters = new Seq<ActionFilter>();
+  addChatFilter(filter:ChatFilter){
+    this.chatFilters.add(filter);
+  }
+  addActionFilter(filter:ActionFilter){
+    this.actionFilters.add(filter);
+  }
 }
 class MMap {
   
@@ -487,6 +547,59 @@ const Vars = {
 
   },
 };
+class Settings {
+  values = Object.create(null) as Record<string, unknown>;
+  getString(key:string){
+    const value = this.values[key];
+    if(value != null && typeof value !== 'string') throw new Error('ClassCastException: cannot convert value to string');
+    return value;
+  }
+  get(key:string, defaultValue:string | null = null):unknown {
+    return this.values[key] ?? defaultValue;
+  }
+  getBytes(key:string, defaultValue:number[] | null = null):number[] | null {
+    const value = this.values[key] ?? defaultValue;
+    if(value != null && !Array.isArray(value)) throw new Error('ClassCastException: cannot convert value to byte[]');
+    return value;
+  }
+  has(key:string){
+    return key in this.values;
+  }
+  put(key:string, value:unknown){
+    this.values[key] = value;
+  }
+}
+const Core = {
+  app: {
+    post: queueMicrotask,
+  },
+  settings: new Settings(),
+};
+const Log = {
+  info(...args:unknown[]){
+    console.log('[I] ', ...args);
+  },
+  warn(...args:unknown[]){
+    console.log('[W] ', ...args);
+  },
+  err(...args:unknown[]){
+    console.error('[E] ', ...args);
+  },
+};
+const Menus = {
+  menuListeners: new Seq<BuiltinMenuListener>(),
+  registerMenu(listener:BuiltinMenuListener){
+    this.menuListeners.add(listener);
+    return this.menuListeners.size - 1;
+  }
+};
+const programStart = Date.now();
+const Time = {
+	millis(){
+    return Date.now() - programStart;
+  },
+	setDeltaProvider(provider: () => number){},
+}
 const Packages = {
   java: {
     net: { NetworkInterface, Inet4Address },
@@ -497,4 +610,4 @@ const Packages = {
   }
 };
 
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode});
