@@ -44,9 +44,6 @@ jobs:
           version: 9
           run_install: true
       - name: Typescript Compile
-        # Only run this if the commit wasn't created by the fish bot
-        # If it was, this check has already been completed
-        if: github.actor_id != env.FISH_BOT_ACTOR_ID
         run: pnpm run build
       - name: Check for modified files in build directory
         id: git-check
