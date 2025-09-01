@@ -52,6 +52,7 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 
 	start(player:FishPlayer, newVote:number, data:SessionData){
 		if(data === null) crash(`Cannot start vote: data not provided`);
+		if(player.afk()) player.afk() = false
 		this.session = {
 			timer: Timer.schedule(() => this._checkVote(false), this.voteTime / 1000),
 			votes: new Map(),
@@ -62,6 +63,7 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 
 	vote(player:FishPlayer, newVote:number, data:SessionData | null){
 		if(!this.session) return this.start(player, newVote, data!);
+		if(player.afk()) player.afk() = false
 		const oldVote = this.session.votes.get(player.uuid);
 		this.session.votes.set(player.uuid, newVote);
 		if(oldVote == null) this.fire("player vote", [player, newVote]);
