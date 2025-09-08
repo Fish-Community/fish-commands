@@ -142,7 +142,7 @@ var VoteManager = /** @class */ (function (_super) {
         var _this = this;
         if (!this.session)
             return [];
-        return players_1.FishPlayer.getAllOnline().filter(function (p) { return _this.isEligible(p, _this.session.data); });
+        return players_1.FishPlayer.getAllOnline().filter(function (p) { return _this.isEligible(p, _this.session.data) || _this.session.votes.has(p.uuid); });
     };
     VoteManager.prototype.messageEligibleVoters = function (message) {
         this.getEligibleVoters().forEach(function (p) { return p.sendMessage(message); });

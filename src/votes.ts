@@ -109,7 +109,7 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 
 	getEligibleVoters():FishPlayer[] {
 		if(!this.session) return [];
-		return FishPlayer.getAllOnline().filter(p => this.isEligible(p, this.session!.data));
+		return FishPlayer.getAllOnline().filter(p => this.isEligible(p, this.session!.data) || this.session!.votes.has(p.uuid));
 	}
 	messageEligibleVoters(message:string){
 		this.getEligibleVoters().forEach(p => p.sendMessage(message));
