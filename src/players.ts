@@ -429,6 +429,24 @@ ${msg}`
 					Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
 					Vars.netServer.currentlyKicking = null;
 					return;
+				} else if(initiator?.hasPerm("immediatelyVotekickNewPlayers") && target.firstJoin() && !target.hasPerm("bypassVotekick")){
+					Call.sendMessage(
+`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (${Vars.netServer.votesRequired()}/${Vars.netServer.votesRequired()})
+[scarlet]Vote passed.`
+					);
+					target.kick(Packets.KickReason.vote, 1800_000);
+					Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
+					Vars.netServer.currentlyKicking = null;
+					return;
+				} else if(target.firstJoin() && !target.hasPerm("bypassVotekick") && !target.ranksAtLeast("trusted")){
+					//Increase votes by 1, from 1 to 2
+					Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(2));
+					voted.put("__server__", 1);
+					Call.sendMessage(
+`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (2/${Vars.netServer.votesRequired()})
+[lightgray]Type[orange] /vote <y/n>[] to agree.`
+					);
+					return;
 				}
 			}
 		}
