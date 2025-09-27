@@ -454,6 +454,20 @@ var FishPlayer = /** @class */ (function () {
                     Vars.netServer.currentlyKicking = null;
                     return;
                 }
+                else if ((initiator === null || initiator === void 0 ? void 0 : initiator.hasPerm("immediatelyVotekickNewPlayers")) && target.firstJoin() && !target.hasPerm("bypassVotekick")) {
+                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (").concat(Vars.netServer.votesRequired(), "/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Vote passed."));
+                    target.kick(Packets.KickReason.vote, 1800000);
+                    Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
+                    Vars.netServer.currentlyKicking = null;
+                    return;
+                }
+                else if (target.firstJoin() && !target.hasPerm("bypassVotekick") && !target.ranksAtLeast("trusted")) {
+                    //Increase votes by 1, from 1 to 2
+                    Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(2));
+                    voted.put("__server__", 1);
+                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (2/").concat(Vars.netServer.votesRequired(), ")\n[lightgray]Type[orange] /vote <y/n>[] to agree."));
+                    return;
+                }
             }
         }
         if (target.hasPerm("bypassVotekick")) {
