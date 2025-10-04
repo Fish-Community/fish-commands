@@ -201,8 +201,9 @@ export const commands = commandList({
 						if(args.action) outputFail(`There is no recorded history for the selected region matching the provided filters.`);
 						else outputFail(`There is no recorded history for the selected region.`);
 					}
-					if(limitTiles == amount)
-						output(`Displaying first ${limitTiles} entries. To show other entries, increase the limit or select a smaller area.`);
+					if(limitTiles == amount){
+						output(`Displaying first ${limitTiles} entries. To show other entries, increase the limit or select a smaller area.`)
+					}
 				}
 				const p1 = cachedPointMap[sender.uuid];
 				if(!p1){
@@ -215,6 +216,8 @@ export const commands = commandList({
 					const height = Math.abs(p1[1] - p2[1]);
 					if(width > 50 || height > 50) fail("Selection too large: width/height cannot be more than 50.");
 					handleArea(p1, p2);
+					p1 = null;
+					p2 = null;
 					if(!args.persist) handleTaps("off");
 				}	
 			},
