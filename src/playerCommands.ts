@@ -215,6 +215,7 @@ export const commands = commandList({
 					const height = Math.abs(p1[1] - p2[1]);
 					if(width > 50 || height > 50) fail("Selection too large: width/height cannot be more than 50.");
 					handleArea(p1, p2);
+					cachedPointMap[sender.uuid] = undefined;
 					if(!args.persist) handleTaps("off");
 				}	
 			},

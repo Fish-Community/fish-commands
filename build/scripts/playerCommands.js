@@ -314,6 +314,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     if (width > 50 || height > 50)
                         (0, commands_1.fail)("Selection too large: width/height cannot be more than 50.");
                     handleArea(p1, p2);
+                    cachedPointMap[sender.uuid] = undefined;
                     if (!args.persist)
                         handleTaps("off");
                 }
