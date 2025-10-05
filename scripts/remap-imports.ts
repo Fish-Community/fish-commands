@@ -6,6 +6,7 @@ Script to remap imports from '/filename' to './filename.js'.
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+//haha script goes brrrrr
 (async function main(){
   process.chdir(path.join(__dirname, '..'));
   await fs.rm('spec/plugin', { recursive: true, force: true });
