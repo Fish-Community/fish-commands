@@ -215,6 +215,7 @@ var Perm = /** @class */ (function () {
         sandbox: Perm.mod,
     });
     Perm.voteOtherTeams = new Perm("voteOtherTeams", "trusted");
+    Perm.immediatelyVotekickNewPlayers = new Perm("immediatelyVotekickNewPlayers", "trusted");
     return Perm;
 }());
 exports.Perm = Perm;

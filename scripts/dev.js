@@ -57,8 +57,10 @@ if (!node_fs_1.default.existsSync(devServerDirectory)) {
         recursive: false
     });
     console.log(`Finding latest server jar...`);
-    fetch(`https://api.github.com/repos/Anuken/Mindustry/releases/latest`).then(r => r.json()).then(r => {
-        const file = r.assets.find(a => a.name == "server-release.jar") ?? fail(`Could not find the server-release.jar file in the latest release`);
+    fetch(`https://api.github.com/repos/Anuken/Mindustry/releases`).then(r => r.json()).then(r => {
+        const release = r[0];
+        console.log(`Using version ${release.tag_name}`);
+        const file = release.assets.find(a => a.name == "server-release.jar") ?? fail(`Could not find the server-release.jar file in the latest release`);
         console.log(`Downloading latest server jar from ${file.browser_download_url}...`);
         return resolveRedirect(file.browser_download_url);
     }).then(downloadURL => {

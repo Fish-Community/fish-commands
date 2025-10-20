@@ -16,16 +16,16 @@ export const commands = commandList({
 			if(!args.name){
 				const pet = Groups.unit.find(u => u.id === sender.pet);
 				if(pet) pet.kill();
-				sender.pet = "";
+				sender.pet = null;
 				outputSuccess("Your pet has been removed.");
 				return;
 			}
 			if(args.name.length > 500) fail(`Name cannot be more than 500 characters.`);
 			if(Strings.stripColors(args.name).length > 70) fail(`Name cannot be more than 70 characters, not including color tags.`);
-			if(sender.pet !== ''){
+			if(sender.pet !== null){
 				const pet = Groups.unit.find(u => u.id === sender.pet);
 				if(pet) pet.kill();
-				sender.pet = '';
+				sender.pet = null;
 			}
 			const unit = sender.unit() ?? fail(`You do not have a unit for the pet to follow.`);
 			const pet = UnitTypes.merui.spawn(sender.team(), unit.x, unit.y);

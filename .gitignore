@@ -7,6 +7,7 @@ build/scripts/*.d.ts
 build/scripts/client.js
 build/scripts/client.d.js
 spec/build
+spec/plugin
 scripts/client.js
 scripts/client.ts
 dev-server

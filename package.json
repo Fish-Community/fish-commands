@@ -9,7 +9,7 @@
 		"watch": "tsc --watch",
 		"build": "tsc -p tsconfig.json",
 		"dev": "node scripts/dev.js",
-		"test": "tsc -b spec && jasmine"
+		"test": "tsc -b src && node scripts/remap-imports.js && tsc -p spec jasmine"
 	},
 	"keywords": [],
 	"author": "",
@@ -17,7 +17,7 @@
 	"devDependencies": {
 		"@types/jasmine": "^5.1.5",
 		"@types/node": "^22.10.9",
-		"esbuild": "^0.23.1",
+		"esbuild": "^0.25.9",
 		"jasmine": "^5.5.0",
 		"typescript": "^5.7.3"
 	}

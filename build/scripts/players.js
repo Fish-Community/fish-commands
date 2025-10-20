@@ -68,7 +68,7 @@ var FishPlayer = /** @class */ (function () {
         var _p, _q, _r, _s;
         //Transients
         this.player = null;
-        this.pet = "";
+        this.pet = null;
         this.watch = false;
         /** Front-to-back queue of menus to show. */
         this.activeMenus = [];
@@ -443,14 +443,31 @@ var FishPlayer = /** @class */ (function () {
                 var initiator = this.getById(uuid_1);
                 if (initiator === null || initiator === void 0 ? void 0 : initiator.stelled()) {
                     if (initiator.hasPerm("bypassVotekick")) {
-                        var msg = (_a = (new Error()).stack) === null || _a === void 0 ? void 0 : _a.split("\n").slice(0, 4).join("\n");
-                        Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(initiator.prefixedName, "[lightgray].[accent] (\u221E/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Error: failed to kick player ").concat(initiator.name, "\n").concat(msg, "\n[scarlet]Error: failed to cancel votekick\n").concat(msg));
+                        if (target !== this.easterEggVotekickTarget) {
+                            this.easterEggVotekickTarget = target;
+                            var msg = (_a = (new Error()).stack) === null || _a === void 0 ? void 0 : _a.split("\n").slice(0, 4).join("\n");
+                            Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(initiator.prefixedName, "[lightgray].[accent] (\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t[scarlet]Error: failed to kick player ").concat(initiator.name, "\n\t").concat(msg, "\n\t[scarlet]Error: failed to cancel votekick\n\t").concat(msg));
+                        }
                         return;
                     }
                     Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(initiator.prefixedName, "[lightgray].[accent] (\u221E/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Vote passed."));
                     initiator.kick("You are not allowed to votekick other players while marked.", 2);
                     Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
                     Vars.netServer.currentlyKicking = null;
+                    return;
+                }
+                else if ((initiator === null || initiator === void 0 ? void 0 : initiator.hasPerm("immediatelyVotekickNewPlayers")) && target.firstJoin() && !target.hasPerm("bypassVotekick")) {
+                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (").concat(Vars.netServer.votesRequired(), "/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Vote passed."));
+                    target.kick(Packets.KickReason.vote, 1800000);
+                    Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
+                    Vars.netServer.currentlyKicking = null;
+                    return;
+                }
+                else if (target.firstJoin() && !target.hasPerm("bypassVotekick") && !target.ranksAtLeast("trusted")) {
+                    //Increase votes by 1, from 1 to 2
+                    Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(2));
+                    voted.put("__server__", 1);
+                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (2/").concat(Vars.netServer.votesRequired(), ")\n[lightgray]Type[orange] /vote <y/n>[] to agree."));
                     return;
                 }
             }
@@ -1554,6 +1571,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.lastBotWhacked = 0;
     /** Stores the 10 most recent players that left. */
     FishPlayer.recentLeaves = [];
+    FishPlayer.easterEggVotekickTarget = null;
     FishPlayer.ignoreGameOver = false;
     return FishPlayer;
 }());

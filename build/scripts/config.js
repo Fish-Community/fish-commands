@@ -60,7 +60,7 @@ exports.bannedWords = {
         "re" + "tard",
         'kill yourself', 'kill urself', /\bkys\b/,
         "kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", //nazi-related words
-        ["co" + "ck", "cockroach", "poppycock"],
+        ["co" + "ck", "cockroach", "poppycock", "cocktail"],
         "iamasussyimposter",
         ["cu" + "nt", "scunthorpe"],
         ["penis", "peniston"],
@@ -70,6 +70,7 @@ exports.bannedWords = {
         /\bc(u)m\b/, ["semen", "sement", "horsemen", "housemen", "defensemen", "those", "menders"],
         ["porn", "maporn"],
         "ur gay", "your gay", "youre gay", "you're gay",
+        "gooning", "gooner", "loli", /\banal\b/, "cunny"
     ]),
     /** Strict: banned in names and for players with a chat strictness level of 'strict'. */
     strict: processBannedWordList([

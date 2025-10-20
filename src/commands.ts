@@ -119,6 +119,7 @@ export class Perm {
 		sandbox: Perm.mod,
 	});
 	static voteOtherTeams = new Perm("voteOtherTeams", "trusted");
+	static immediatelyVotekickNewPlayers = new Perm("immediatelyVotekickNewPlayers", "trusted");
 
 	check:(fishP:FishPlayer) => boolean;
 	constructor(

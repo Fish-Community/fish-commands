@@ -34,7 +34,7 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 	constructor(
 		public voteTime:number,
 		public goal:["fractionOfVoters", number] | ["absolute", number] = ["fractionOfVoters", 0.50001],
-		public isEligible:(fishP:FishPlayer, data: SessionData) => boolean = () => true
+		public isEligible:(fishP:FishPlayer, data: SessionData) => boolean = (fishP) => !fishP.afk()
 	){
 		super();
 		if(goal[0] == "fractionOfVoters"){
@@ -109,7 +109,7 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 
 	getEligibleVoters():FishPlayer[] {
 		if(!this.session) return [];
-		return FishPlayer.getAllOnline().filter(p => this.isEligible(p, this.session!.data));
+		return FishPlayer.getAllOnline().filter(p => this.isEligible(p, this.session!.data) || this.session!.votes.has(p.uuid));
 	}
 	messageEligibleVoters(message:string){
 		this.getEligibleVoters().forEach(p => p.sendMessage(message));

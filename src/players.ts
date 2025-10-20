@@ -44,7 +44,7 @@ export class FishPlayer {
 	
 	//Transients
 	player:mindustryPlayer | null = null;
-	pet:string = "";
+	pet:number | null = null;
 	watch:boolean = false;
 	/** Front-to-back queue of menus to show. */
 	activeMenus: {
@@ -395,6 +395,7 @@ export class FishPlayer {
 		this.recentLeaves.unshift(fishP);
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
 	}
+	static easterEggVotekickTarget: FishPlayer | null = null;
 	static validateVotekickSession(){
 		if(!Vars.netServer.currentlyKicking) return;
 		const target = this.get(Reflect.get(Vars.netServer.currentlyKicking, "target"));
@@ -409,14 +410,17 @@ export class FishPlayer {
 				const initiator = this.getById(uuid);
 				if(initiator?.stelled()){
 					if(initiator.hasPerm("bypassVotekick")){
-						const msg = (new Error()).stack?.split("\n").slice(0, 4).join("\n");
-						Call.sendMessage(
-`[scarlet]Server[lightgray] has voted on kicking[orange] ${initiator.prefixedName}[lightgray].[accent] (\u221E/${Vars.netServer.votesRequired()})
-[scarlet]Error: failed to kick player ${initiator.name}
-${msg}
-[scarlet]Error: failed to cancel votekick
-${msg}`
-						);
+						if(target !== this.easterEggVotekickTarget){
+							this.easterEggVotekickTarget = target;
+							const msg = (new Error()).stack?.split("\n").slice(0, 4).join("\n");
+							Call.sendMessage(
+	`[scarlet]Server[lightgray] has voted on kicking[orange] ${initiator.prefixedName}[lightgray].[accent] (\u221E/${Vars.netServer.votesRequired()})
+	[scarlet]Error: failed to kick player ${initiator.name}
+	${msg}
+	[scarlet]Error: failed to cancel votekick
+	${msg}`
+							);
+						}
 						return;
 					}
 					Call.sendMessage(
@@ -426,6 +430,24 @@ ${msg}`
 					initiator.kick("You are not allowed to votekick other players while marked.", 2);
 					Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
 					Vars.netServer.currentlyKicking = null;
+					return;
+				} else if(initiator?.hasPerm("immediatelyVotekickNewPlayers") && target.firstJoin() && !target.hasPerm("bypassVotekick")){
+					Call.sendMessage(
+`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (${Vars.netServer.votesRequired()}/${Vars.netServer.votesRequired()})
+[scarlet]Vote passed.`
+					);
+					target.kick(Packets.KickReason.vote, 1800_000);
+					Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
+					Vars.netServer.currentlyKicking = null;
+					return;
+				} else if(target.firstJoin() && !target.hasPerm("bypassVotekick") && !target.ranksAtLeast("trusted")){
+					//Increase votes by 1, from 1 to 2
+					Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(2));
+					voted.put("__server__", 1);
+					Call.sendMessage(
+`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (2/${Vars.netServer.votesRequired()})
+[lightgray]Type[orange] /vote <y/n>[] to agree.`
+					);
 					return;
 				}
 			}

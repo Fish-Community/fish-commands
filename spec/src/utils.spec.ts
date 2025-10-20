@@ -1,6 +1,6 @@
-import { capitalizeText, getIPAddress } from "../../build/scripts/funcs.js";
-import { formatTime } from "../../build/scripts/utils.js";
-import { maxTime } from "../../build/scripts/globals.js";
+import { capitalizeText, getIPAddress } from "../plugin/funcs.js";
+import { formatTime } from "../plugin/utils.js";
+import { maxTime } from "../plugin/globals.js";
 
 describe("capitalizeText", () => {
   it("should work", () => {

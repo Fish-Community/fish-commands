@@ -271,6 +271,11 @@ class Color {
 	static valueOf(string:string):Color;
 	static valueOf(color:Color, hex:string):Color;
 	static HSVtoRGB(hue:number, saturation:number, value:number):Color;
+	r: number;
+	g: number;
+	b: number;
+	a: number;
+  cpy():Color;
 	rand():Color;
 }
 const Version: {
@@ -281,6 +286,15 @@ const Version: {
 	revision: number;
 };
 const Pal: Record<"orangeSpark" | "adminChat" | "logicBlocks" | "vent" | "lightishGray" | "darkishGray" | "thoriumPink" | "shadow" | "boostFrom" | "sapBullet" | "darkestGray" | "lightishOrange" | "placing" | "unitBack" | "lightFlame" | "bar" | "freeze" | "plastanium" | "plastaniumFront" | "breakInvalid" | "boostTo" | "logicControl" | "surge" | "redLight" | "darkMetal" | "powerLight" | "meltdownHit" | "reactorPurple" | "darkerMetal" | "logicUnits" | "plastaniumBack" | "vent2" | "techBlue" | "darkPyraFlame" | "turretHeat" | "logicOperations" | "bulletYellow" | "negativeStat" | "accentBack" | "items" | "plasticBurn" | "shield" | "missileYellowBack" | "logicIo" | "darkerGray" | "lightPyraFlame" | "regen" | "range" | "redSpark" | "logicWorld" | "lighterOrange" | "remove" | "noplace" | "gray" | "engine" | "lightOrange" | "heal" | "freezeBack" | "rubble" | "place" | "power" | "coalBlack" | "missileYellow" | "metalGrayDark" | "neoplasmOutline" | "slagOrange" | "plasticSmoke" | "berylShot" | "sapBulletBack" | "stat" | "powerBar" | "redDust" | "sap" | "ammo" | "placeRotate" | "darkOutline" | "lightTrail" | "muddy" | "stoneGray" | "health" | "darkestMetal" | "darkFlame" | "suppress" | "redderDust" | "spore" | "accent" | "command" | "reactorPurple2" | "lancerLaser" | "bulletYellowBack" | "removeBack" | "neoplasm1" | "tungstenShot" | "neoplasm2" | "unitFront" | "neoplasmMid", Color>;
+type ApplicationListener = Partial<{
+	init(): void;
+	update(): void;
+	pause(): void;
+	resume(): void;
+	dispose(): void;
+	exit(): void;
+}>;
+
 const Core: {
 	settings: {
 		get<T = unknown>(key:string, defaultValue?:T):T;
@@ -298,14 +312,7 @@ const Core: {
 		exit():void;
 		getJavaHeap():number;
 		listeners: any[];
-		addListener(listener:Partial<{
-			init():void;
-			update():void;
-			pause():void;
-			resume():void;
-			dispose():void;
-			exit():void;
-		}>):void;
+		addListener(listener:ApplicationListener):void;
 	}
 	graphics: {
 		getFramesPerSecond():number;
@@ -425,8 +432,7 @@ class Seq<T> {
 	retainAll(pred:(item:T) => boolean):Seq<T>;
 	/** @returns whether an item was removed */
 	remove(pred:(item:T) => boolean):boolean;
-	/** @returns whether any item was removed */
-	removeAll(pred:(item:T) => boolean):boolean;
+	removeAll(pred:(item:T) => boolean):Seq<T>;
 	select(pred:(item:T) => boolean):Seq<T>;
 	find(pred:(item:T) => boolean):T | null;
 	each(func:(item:T) => unknown):void;
@@ -508,7 +514,29 @@ interface PlayerAction {
 }
 type ActionType = any;
 const ActionType:Record<string, ActionType>;
-type Unit = Record<string, any>;
+type Unit = {
+	health: number;
+	shield: number;
+	maxHealth: number;
+	type: UnitType;
+	x: number;
+	y: number;
+	team: Team;
+	dead: boolean;
+	spawnedByCore: boolean;
+	added: boolean;
+	id: number;
+	kill():void;
+	add():void;
+	isAdded():boolean;
+	set(x: number, y:number):void;
+	approach(vec: Vec2):void;
+	hasPayload: undefined | (() => boolean);
+	getPlayer():Player | null;
+	resetController():void;
+	apply(effect:StatusEffect, ticks:number):void;
+	clearStatuses():void;
+};
 type NetConnection = any;
 class Command {
 	text:string;
@@ -715,6 +743,17 @@ class LabelReliableCallPacket {
 	worldx:number;
 	worldy:number;
 }
+class ConnectPacket {
+	version: number;
+	versionType: string;
+	mods: Seq<string>;
+	name: string;
+	locale: string;
+	uuid: string;
+	usid: string;
+	mobile: boolean;
+	color: number;
+}
 
 type ByteBuffer = {
 	put(bytes:number[]):void;
@@ -743,6 +782,10 @@ const OS: {
 	 * @throws RuntimeException
 	 */
 	exec(...command:string[]):string;
+};
+const Trigger: Record<'shock'|'cannotUpgrade'|'openConsole'|'blastFreeze'|'impactPower'|'blastGenerator'|'shockwaveTowerUse'|'forceProjectorBreak'|'thoriumReactorOverheat'|'neoplasmReact'|'fireExtinguish'|'acceleratorUse'|'newGame'|'tutorialComplete'|'flameAmmo'|'resupplyTurret'|'turretCool'|'enablePixelation'|'exclusionDeath'|'suicideBomb'|'openWiki'|'teamCoreDamage'|'socketConfigChanged'|'update'|'beforeGameUpdate'|'afterGameUpdate'|'unitCommandChange'|'unitCommandPosition'|'unitCommandAttack'|'importMod'|'draw'|'drawOver'|'preDraw'|'postDraw'|'uiDrawBegin'|'uiDrawEnd'|'universeDrawBegin'|'universeDraw'|'universeDrawEnd', Trigger>;
+type Trigger = {
+	__brand: 'trigger';
 };
 
 class WorldReloader {
