@@ -31,7 +31,7 @@ Contributors:
 
 [<img width=100 alt="Jurorno9" src="https://github.com/Jurorno9.png">](https://github.com/Jurorno9/)
 [<img width=100 alt="Dart25" src="https://github.com/Dart25.png">](https://github.com/Dart25/)
-[<img width=100 alt="kenos1" src="https://github.com/kenos1.png">](https://github.com/kenos1/)
+[<img width=100 alt="juni-purr" src="https://github.com/juni-purr.png">](https://github.com/juni-purr/)
 [<img width=100 alt="omnerom" src="https://github.com/omnerom.png">](https://github.com/omnerom/)
 
 [<img width=100 alt="Darthscion" src="https://github.com/Darthscion55.png">](https://github.com/Darthscion55/)
