@@ -558,6 +558,8 @@ Available types:[yellow]
 			const Ohnos = {
 				enabled: true,
 				ohnos: new Array<Unit>(),
+				/** Anti-spam tracking: playerUUID -> {count, lastUsed, warnings} */
+				spamTracker: new Map<string, {count: number, lastUsed: number, warnings: number}>(),
 				makeOhno(team:Team, x:number, y:number){
 					const ohno = UnitTypes.atrax.create(team);
 					ohno.set(x, y);
@@ -578,10 +580,43 @@ Available types:[yellow]
 				amount(){
 					return this.ohnos.length;
 				},
+				checkSpam(player: FishPlayer): void {
+					const now = Date.now();
+					const playerData = this.spamTracker.get(player.uuid) || {count: 0, lastUsed: 0, warnings: 0};
+					
+					if (now - playerData.lastUsed > 30000) {
+						playerData.count = 0;
+						playerData.warnings = 0;
+					}
+					
+					playerData.count++;
+					playerData.lastUsed = now;
+					this.spamTracker.set(player.uuid, playerData);
+					
+					if (playerData.count >= 15) {
+						player.sendMessage("[red]You have been kicked for /ohno spam. You can rejoin in 5 minutes.");
+						Call.sendMessage(`[yellow]${player.name}[red] has been kicked for /ohno spam.`);
+						FishPlayer.messageStaff(`[yellow]Alert: Player [cyan]${player.cleanedName}[] was kicked for /ohno spam (${playerData.count} attempts in 30 seconds).`);
+						player.kick(`Kicked for spamming /ohno command (${playerData.count} attempts in 30 seconds). You can rejoin in 5 minutes.`, 5 * 60 * 1000);
+						fail("Player kicked for spam");
+					} else if (playerData.count >= 10) {
+						player.sendMessage("[orange]WARNING: Stop spamming /ohno or you will be kicked!");
+					} else if (playerData.count >= 5) {
+						player.sendMessage("[yellow]Warning: Please don't spam /ohno. Continued spam will result in punishment.");
+					}
+				},
 			};
 			Events.on(EventType.GameOverEvent, (e) => {
 				Ohnos.killAll();
 			});
+			Timer.schedule(() => {
+				const now = Date.now();
+				for (const [uuid, data] of Ohnos.spamTracker.entries()) {
+					if (now - data.lastUsed > 300000) {
+						Ohnos.spamTracker.delete(uuid);
+					}
+				}
+			}, 60, 60);
 			return Ohnos;
 		},
 		requirements: [
@@ -590,11 +625,17 @@ Available types:[yellow]
 		],
 		handler({sender, data:Ohnos}){
 			if(!Ohnos.enabled) fail(`Ohnos have been temporarily disabled.`);
+			
 			Ohnos.updateLength();
-			if(
+			const maxReached = (
 				Ohnos.ohnos.length >= (Groups.player.size() + 1) ||
 				sender.team().data().countType(UnitTypes.alpha) >= Units.getCap(sender.team())
-			) fail(`Sorry, the max number of ohno units has been reached.`);
+			);
+			
+			if (maxReached) {
+				Ohnos.checkSpam(sender);
+				fail(`Sorry, the max number of ohno units has been reached.`);
+			}
 			if(nearbyEnemyTile((sender.unit()!), 6) != null) fail(`Too close to an enemy building!`);
 			if(!UnitTypes.alpha.supportsEnv(Vars.state.rules.env)) fail(`Ohnos cannot survive in this map.`);
 	

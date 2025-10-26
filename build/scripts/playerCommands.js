@@ -645,6 +645,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var Ohnos = {
                 enabled: true,
                 ohnos: new Array(),
+                /** Anti-spam tracking: playerUUID -> {count, lastUsed, warnings} */
+                spamTracker: new Map(),
                 makeOhno: function (team, x, y) {
                     var ohno = UnitTypes.atrax.create(team);
                     ohno.set(x, y);
@@ -665,10 +667,53 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 amount: function () {
                     return this.ohnos.length;
                 },
+                checkSpam: function (player) {
+                    var now = Date.now();
+                    var playerData = this.spamTracker.get(player.uuid) || { count: 0, lastUsed: 0, warnings: 0 };
+                    if (now - playerData.lastUsed > 30000) {
+                        playerData.count = 0;
+                        playerData.warnings = 0;
+                    }
+                    playerData.count++;
+                    playerData.lastUsed = now;
+                    this.spamTracker.set(player.uuid, playerData);
+                    if (playerData.count >= 15) {
+                        player.sendMessage("[red]You have been kicked for /ohno spam. You can rejoin in 5 minutes.");
+                        Call.sendMessage("[yellow]".concat(player.name, "[red] has been kicked for /ohno spam."));
+                        players_1.FishPlayer.messageStaff("[yellow]Alert: Player [cyan]".concat(player.cleanedName, "[] was kicked for /ohno spam (").concat(playerData.count, " attempts in 30 seconds)."));
+                        player.kick("Kicked for spamming /ohno command (".concat(playerData.count, " attempts in 30 seconds). You can rejoin in 5 minutes."), 5 * 60 * 1000);
+                        (0, commands_1.fail)("Player kicked for spam");
+                    }
+                    else if (playerData.count >= 10) {
+                        player.sendMessage("[orange]WARNING: Stop spamming /ohno or you will be kicked!");
+                    }
+                    else if (playerData.count >= 5) {
+                        player.sendMessage("[yellow]Warning: Please don't spam /ohno. Continued spam will result in punishment.");
+                    }
+                },
             };
             Events.on(EventType.GameOverEvent, function (e) {
                 Ohnos.killAll();
             });
+            Timer.schedule(function () {
+                var e_1, _a;
+                var now = Date.now();
+                try {
+                    for (var _b = __values(Ohnos.spamTracker.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                        var _d = __read(_c.value, 2), uuid = _d[0], data = _d[1];
+                        if (now - data.lastUsed > 300000) {
+                            Ohnos.spamTracker.delete(uuid);
+                        }
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+            }, 60, 60);
             return Ohnos;
         },
         requirements: [
@@ -680,9 +725,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if (!Ohnos.enabled)
                 (0, commands_1.fail)("Ohnos have been temporarily disabled.");
             Ohnos.updateLength();
-            if (Ohnos.ohnos.length >= (Groups.player.size() + 1) ||
-                sender.team().data().countType(UnitTypes.alpha) >= Units.getCap(sender.team()))
+            var maxReached = (Ohnos.ohnos.length >= (Groups.player.size() + 1) ||
+                sender.team().data().countType(UnitTypes.alpha) >= Units.getCap(sender.team()));
+            if (maxReached) {
+                Ohnos.checkSpam(sender);
                 (0, commands_1.fail)("Sorry, the max number of ohno units has been reached.");
+            }
             if ((0, utils_1.nearbyEnemyTile)((sender.unit()), 6) != null)
                 (0, commands_1.fail)("Too close to an enemy building!");
             if (!UnitTypes.alpha.supportsEnv(Vars.state.rules.env))
@@ -1194,7 +1242,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: "Displays v8 poll results.",
         requirements: [commands_1.Req.cooldownGlobal(10000)],
         handler: function (_a) {
-            var e_1, _b;
+            var e_2, _b;
             var output = _a.output;
             var totals = [0, 0, 0, 0, 0];
             try {
@@ -1205,12 +1253,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     }
                 }
             }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
             finally {
                 try {
                     if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
                 }
-                finally { if (e_1) throw e_1.error; }
+                finally { if (e_2) throw e_2.error; }
             }
             output("Poll not viewed: ".concat(totals[0], "\nPoll canceled: ").concat(totals[1], "\nI won't or can't update to v8: ").concat(totals[2], "\nI will update to v8 if Fish updates to v8: ").concat(totals[3], "\nI have already updated to v8: ").concat(totals[4]));
         }
