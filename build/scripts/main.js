@@ -46,7 +46,7 @@ String.raw = function(callSite){
 }
 const Arrayfrom = Array.from;
 Array.from = function(iterable, mapfn){
-	if(mapfn) throw new Error(`Array.from does not work with mapfn due to incorrectly generating sparse arrays. Please use Array(length).fill().map() instead.`);
+	if(mapfn) return Arrayfrom(iterable).map(mapfn);
 	return Arrayfrom(iterable);
 }
 //Fix rhino regex

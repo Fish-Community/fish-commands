@@ -11,3 +11,4 @@ spec/plugin
 scripts/client.js
 scripts/client.ts
 dev-server
+/.kiro
