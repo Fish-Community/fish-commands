@@ -5,10 +5,10 @@ This file contains all the console commands, which can be run through the server
 
 import * as api from "/api";
 import { consoleCommandList, fail } from "/commands";
-import { localIPAddress, Mode } from "/config";
+import { FishServer, localIPAddress, Mode } from "/config";
 import * as globals from "/globals";
 import { Gamemode, mapRepoURLs } from "/config";
-import { maxTime } from "/globals";
+import { ipPortPattern, maxTime } from "/globals";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { fishState, ipPattern, tileHistory, uuidPattern } from "/globals";
@@ -666,5 +666,23 @@ ${FishPlayer.mapPlayers(p =>
 				.then((changed) => outputSuccess(changed ? `Maps were updated.` : `Map update completed, already up to date.`))
 				.catch((message) => outputFail(`Map update failed: ${message}`));
 		},
+	},
+	switchall: {
+		args: ["server:string"],
+		description: "Forces all currently online players to another server.",
+		handler({args}){
+			if(ipPortPattern.test(args.server)){
+				Groups.player.each(target => {
+					//direct connect
+					Call.connect(target.con, ...args.server.split(":"));
+				});
+			} else {
+				const server = FishServer.byName(args.server)
+					?? fail(`Unknown server ${args.server}. Valid options: ${FishServer.all.map(s => s.name).join(", ")}`);
+				Groups.player.each(target => {
+					Call.connect(target.con, server.ip, server.port);
+				});
+			}
+		}
 	},
 });

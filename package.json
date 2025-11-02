@@ -9,7 +9,7 @@
 		"watch": "tsc --watch",
 		"build": "tsc -p tsconfig.json",
 		"dev": "node scripts/dev.js",
-		"test": "tsc -b src && node scripts/remap-imports.js && tsc -p spec jasmine"
+		"test": "tsc -p tsconfig.json && node scripts/remap-imports.js && tsc -p spec && jasmine"
 	},
 	"keywords": [],
 	"author": "",

@@ -34,6 +34,15 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 var api = require("/api");
@@ -789,6 +798,26 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 .then(function (changed) { return outputSuccess(changed ? "Maps were updated." : "Map update completed, already up to date."); })
                 .catch(function (message) { return outputFail("Map update failed: ".concat(message)); });
         },
+    },
+    switchall: {
+        args: ["server:string"],
+        description: "Forces all currently online players to another server.",
+        handler: function (_a) {
+            var _b;
+            var args = _a.args;
+            if (globals_1.ipPortPattern.test(args.server)) {
+                Groups.player.each(function (target) {
+                    //direct connect
+                    Call.connect.apply(Call, __spreadArray([target.con], __read(args.server.split(":")), false));
+                });
+            }
+            else {
+                var server_1 = (_b = config_1.FishServer.byName(args.server)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Unknown server ".concat(args.server, ". Valid options: ").concat(config_1.FishServer.all.map(function (s) { return s.name; }).join(", ")));
+                Groups.player.each(function (target) {
+                    Call.connect(target.con, server_1.ip, server_1.port);
+                });
+            }
+        }
     },
 });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8;
