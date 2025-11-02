@@ -439,6 +439,7 @@ export const commands = consoleCommandList({
 		args: ["time:number?"],
 		description: "Restarts the server.",
 		handler({args}){
+			fishState.restartLoopTask?.cancel();
 			if(Gamemode.pvp()){
 				if(Groups.player.isEmpty()){
 					Log.info(`Restarting immediately as no players are online.`);
@@ -459,6 +460,17 @@ export const commands = consoleCommandList({
 				Log.info(`Restarting in ${time} seconds...`);
 				serverRestartLoop(time);
 			}
+		}
+	},
+	restartcancel: {
+		args: [],
+		description: "Cancels a planned server restart.",
+		handler({outputSuccess}){
+			const task = fishState.restartLoopTask ?? fail(`No restart scheduled.`);
+			Call.sendMessage(`[scarlet]Aborting...`);
+			task.cancel();
+			Call.sendMessage(`[scarlet]Server restart canceled.`);
+			outputSuccess("Canceled restart.");
 		}
 	},
 	rename: {

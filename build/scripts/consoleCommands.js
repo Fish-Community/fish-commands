@@ -563,8 +563,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
         args: ["time:number?"],
         description: "Restarts the server.",
         handler: function (_a) {
-            var _b;
+            var _b, _c;
             var args = _a.args;
+            (_b = globals_2.fishState.restartLoopTask) === null || _b === void 0 ? void 0 : _b.cancel();
             if (config_2.Gamemode.pvp()) {
                 if (Groups.player.isEmpty()) {
                     Log.info("Restarting immediately as no players are online.");
@@ -582,13 +583,26 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 }
             }
             else {
-                var time = (_b = args.time) !== null && _b !== void 0 ? _b : 60;
+                var time = (_c = args.time) !== null && _c !== void 0 ? _c : 60;
                 if (time < 0 || time > 100)
                     (0, commands_1.fail)("Invalid time: out of valid range.");
                 Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 15 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---");
                 Log.info("Restarting in ".concat(time, " seconds..."));
                 (0, utils_1.serverRestartLoop)(time);
             }
+        }
+    },
+    restartcancel: {
+        args: [],
+        description: "Cancels a planned server restart.",
+        handler: function (_a) {
+            var _b;
+            var outputSuccess = _a.outputSuccess;
+            var task = (_b = globals_2.fishState.restartLoopTask) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("No restart scheduled.");
+            Call.sendMessage("[scarlet]Aborting...");
+            task.cancel();
+            Call.sendMessage("[scarlet]Server restart canceled.");
+            outputSuccess("Canceled restart.");
         }
     },
     rename: {
