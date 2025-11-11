@@ -992,15 +992,17 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		});
 
 		return {
-			args: [],
+			args: ["force:boolean?"],
 			description: "Vote to surrender to the enemy team.",
 			perm: Perm.play,
 			requirements: [Req.mode("pvp"), Req.teamAlive],
 			data: { managers },
-			handler({ sender }){
+			handler({ sender, args: {force} }){
+				const manager = managers[sender.team().id];
+				if(sender.hasPerm("admin") && force != undefined) manager.forceVote(force);
 				if(sender.ranksAtLeast("mod")) Req.cooldown(5_000);
 				else Req.cooldown(20_000);
-				managers[sender.team().id].vote(sender, 1, 0);
+				manager.vote(sender, 1, 0);
 			},
 		};
 	}),

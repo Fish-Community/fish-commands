@@ -1057,18 +1057,21 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             managers[previous.id].unvote(fishP);
         });
         return {
-            args: [],
+            args: ["force:boolean?"],
             description: "Vote to surrender to the enemy team.",
             perm: commands_1.Perm.play,
             requirements: [commands_1.Req.mode("pvp"), commands_1.Req.teamAlive],
             data: { managers: managers },
             handler: function (_a) {
-                var sender = _a.sender;
+                var sender = _a.sender, force = _a.args.force;
+                var manager = managers[sender.team().id];
+                if (sender.hasPerm("admin") && force != undefined)
+                    manager.forceVote(force);
                 if (sender.ranksAtLeast("mod"))
                     commands_1.Req.cooldown(5000);
                 else
                     commands_1.Req.cooldown(20000);
-                managers[sender.team().id].vote(sender, 1, 0);
+                manager.vote(sender, 1, 0);
             },
         };
     }), stats: {
