@@ -61,6 +61,7 @@ const Vars: {
 	}
 	net: {
 		send(object:any, reliable:boolean):void;
+		closeServer():void;
 	}
 	mods: {
 		getScripts(): Scripts;

@@ -323,6 +323,8 @@ export function serverRestartLoop(sec:number):void {
 		Log.info(`Restarting...`);
 		const file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
 		Vars.netServer.kickAll(Packets.KickReason.serverRestarting);
+		Vars.net.closeServer();
+		Vars.state.set(State.menu);
 		Core.app.post(() => {
 			SaveIO.save(file);
 			Core.app.exit();
