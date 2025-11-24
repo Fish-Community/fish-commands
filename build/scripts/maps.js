@@ -89,7 +89,7 @@ var FinishedMapRun = /** @class */ (function (_super) {
     FinishedMapRun.prototype.outcome = function () {
         if (config_1.Gamemode.pvp()) {
             if (this.winTeam === Team.derelict) {
-                if (this.duration() > 1200000)
+                if (this.duration() > funcs_1.Duration.minutes(20))
                     return ["rtv", "late rtv"];
                 else
                     return ["rtv", "early rtv"];
@@ -101,7 +101,7 @@ var FinishedMapRun = /** @class */ (function (_super) {
             if (this.success)
                 return ["win", "win"];
             else if (this.winTeam === Team.derelict) {
-                if (this.duration() > 180000)
+                if (this.duration() > funcs_1.Duration.minutes(3))
                     return ["loss", "late rtv"];
                 else
                     return ["rtv", "early rtv"];

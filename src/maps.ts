@@ -4,7 +4,7 @@ Unfinished.
 */
 
 import { FFunction } from '/commands';
-import { computeStatistics } from '/funcs';
+import { computeStatistics, Duration } from '/funcs';
 import { FishEvents } from '/globals';
 import { dataClass, serialize } from '/io';
 import { formatTime, formatTimeShort, match } from '/utils';
@@ -30,13 +30,13 @@ export class FinishedMapRun extends dataClass<FinishedMapRunData>() {
 	outcome(){
 		if(Gamemode.pvp()){
 			if(this.winTeam === Team.derelict) {
-				if(this.duration() > 1200_000) return ["rtv", "late rtv"] as const;
+				if(this.duration() > Duration.minutes(20)) return ["rtv", "late rtv"] as const;
 				else return ["rtv", "early rtv"] as const;
 			} else return ["win", "win"] as const;
 		} else {
 			if(this.success) return ["win", "win"] as const;
 			else if(this.winTeam === Team.derelict){
-				if(this.duration() > 180_000) return ["loss", "late rtv"] as const;
+				if(this.duration() > Duration.minutes(3)) return ["loss", "late rtv"] as const;
 				else return ["rtv", "early rtv"] as const;
 			} else return ["loss", "loss"] as const;
 		}
