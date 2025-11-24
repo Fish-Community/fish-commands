@@ -13,7 +13,7 @@ import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals
 import { Menu } from '/menus';
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
-import { addToTileHistory, applyEffectMode, formatTime, formatTimeRelative, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -1019,6 +1019,15 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 			else Call.effect(Fx.dynamicExplosion, x * 8, y * 8, Math.max(radius, 8) / 7, Color.white);
 			Damage.damage(team, x * 8, y * 8, radius * 8, damage, true, air, ground);
 			outputSuccess(`Created an explosion at (${x}, ${y}).`);
+		}
+	},
+	memorycorruption: {
+		args: [],
+		description: "Triggers a fake memory corruption prank.",
+		perm: Perm.mod,
+		requirements: [Req.cooldownGlobal(1800_000)],
+		handler(){
+			definitelyRealMemoryCorruption();
 		}
 	}
 });
