@@ -90,7 +90,7 @@ export class Perm {
 	static seeErrorMessages = new Perm("seeErrorMessages", "admin");
 	static viewUUIDs = new Perm("viewUUIDs", "admin");
 	static blockTrolling = new Perm("blockTrolling", fishP => fishP.rank === Rank.pi);
-	static visualEffects = new Perm("visualEffects", fishP => (!fishP.stelled() && !fishP.hasFlag("no_effects")) || fishP.ranksAtLeast("mod"));
+	static visualEffects = new Perm("visualEffects", fishP => (!fishP.stelled() || fishP.ranksAtLeast("mod")) && !fishP.hasFlag("no_effects"));
 	static bulkVisualEffects = new Perm("bulkVisualEffects", fishP => (
 		(fishP.hasFlag("developer") || fishP.hasFlag("illusionist") || fishP.hasFlag("member")) && !fishP.stelled())
 		|| fishP.ranksAtLeast("mod")
