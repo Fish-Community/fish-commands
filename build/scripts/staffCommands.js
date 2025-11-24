@@ -147,7 +147,7 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             var _b, _c, _d;
             var args = _a.args, outputSuccess = _a.outputSuccess, f = _a.f, sender = _a.sender;
-            if (!sender.hasPerm("admin") && args.duration && args.duration > 3600000 * 6)
+            if (!sender.hasPerm("admin") && args.duration && args.duration > funcs_1.Duration.hours(6))
                 (0, commands_1.fail)("Maximum kick duration is 6 hours.");
             var reason = (_b = args.reason) !== null && _b !== void 0 ? _b : "A staff member did not like your actions.";
             var duration = (_c = args.duration) !== null && _c !== void 0 ? _c : 60000;
@@ -328,9 +328,9 @@ exports.commands = (0, commands_1.commandList)({
                             return [4 /*yield*/, menus_1.Menu.menu("Stop", "Select stop time", ["2 days", "7 days", "30 days", "forever"], sender)];
                         case 3:
                             _c = (_d.time = _e.apply(void 0, [_h.sent(), {
-                                    "2 days": 172800000,
-                                    "7 days": 604800000,
-                                    "30 days": 2592000000,
+                                    "2 days": funcs_1.Duration.days(2),
+                                    "7 days": funcs_1.Duration.days(7),
+                                    "30 days": funcs_1.Duration.days(30),
                                     "forever": globals_1.maxTime - Date.now() - 10000,
                                 }]));
                             _h.label = 4;
@@ -487,7 +487,7 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             var _b;
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (args.time > 36000000)
+            if (args.time > funcs_1.Duration.hours(10))
                 (0, commands_1.fail)("Time must be less than 10 hours.");
             var unit = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("You must be in a unit to use this command.");
             var timeRemaining = args.time / 1000;
@@ -510,7 +510,7 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.admin,
         handler: function (_a) {
             var args = _a.args, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (args.time > 36000000)
+            if (args.time > funcs_1.Duration.hours(10))
                 (0, commands_1.fail)("Time must be less than 10 hours.");
             var timeRemaining = args.time / 1000;
             globals_1.fishState.labels.push(Timer.schedule(function () {
@@ -1057,7 +1057,7 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.trusted,
         handler: function (_a) {
             var output = _a.output, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail;
-            commands_1.Req.cooldownGlobal(config_1.Gamemode.testsrv() ? 15000 : 300000);
+            commands_1.Req.cooldownGlobal(config_1.Gamemode.testsrv() ? 15000 : funcs_1.Duration.minutes(5));
             output("Updating maps... (this may take a while)");
             (0, files_1.updateMaps)()
                 .then(function (changed) {
@@ -1234,7 +1234,7 @@ exports.commands = (0, commands_1.commandList)({
         args: [],
         description: "Triggers a fake memory corruption prank.",
         perm: commands_1.Perm.mod,
-        requirements: [commands_1.Req.cooldownGlobal(1800000)],
+        requirements: [commands_1.Req.cooldownGlobal(funcs_1.Duration.minutes(30))],
         handler: function () {
             (0, utils_1.definitelyRealMemoryCorruption)();
         }

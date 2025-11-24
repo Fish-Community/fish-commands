@@ -15,7 +15,7 @@ import { fishState, ipPattern, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
-import { escapeStringColorsServer, setToArray } from '/funcs';
+import { Duration, escapeStringColorsServer, setToArray } from '/funcs';
 
 
 export const commands = consoleCommandList({
@@ -518,7 +518,7 @@ Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, 
 				return;
 			}
 
-			const time = args.time ?? 604800000;
+			const time = args.time ?? Duration.months(1);
 			if(time + Date.now() > maxTime) fail(`Error: time too high.`);
 			args.player.stop("console", time, args.message ?? undefined);
 			logAction('stopped', "console", args.player, args.message ?? undefined, time);
@@ -567,9 +567,9 @@ Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, 
 				if(p.ranksAtLeast("mod")) numStaff ++;
 			});
 			const uptimeColor =
-				uptime < 2 * 24 * 3600_000 ? "" :
-				uptime < 5 * 24 * 3600_000 ? "&ly" :
-				uptime < 9 * 24 * 3600_000 ? "&y" :
+				uptime < Duration.days(2) ? "" :
+				uptime < Duration.days(5) ? "&ly" :
+				uptime < Duration.days(9) ? "&y" :
 				"&br";
 			output(`
 Status:
@@ -620,7 +620,7 @@ ${FishPlayer.mapPlayers(p =>
 						!data ||
 						data.timesJoined == 1 ||
 						(data.timesJoined < 10 &&
-							(Date.now() - player.lastJoined) > (30 * 86400 * 1000)
+							(Date.now() - player.lastJoined) > Duration.months(1)
 						)
 					);
 				});

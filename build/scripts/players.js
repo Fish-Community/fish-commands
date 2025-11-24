@@ -457,7 +457,7 @@ var FishPlayer = /** @class */ (function () {
                 }
                 else if ((initiator === null || initiator === void 0 ? void 0 : initiator.hasPerm("immediatelyVotekickNewPlayers")) && target.firstJoin() && !target.hasPerm("bypassVotekick")) {
                     Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (").concat(Vars.netServer.votesRequired(), "/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Vote passed."));
-                    target.kick(Packets.KickReason.vote, 1800000);
+                    target.kick(Packets.KickReason.vote, funcs_1.Duration.minutes(30));
                     Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
                     Vars.netServer.currentlyKicking = null;
                     return;
@@ -812,7 +812,7 @@ var FishPlayer = /** @class */ (function () {
             this.sendMessage(config_1.text.welcomeMessage());
             //show tips
             var showAd = false;
-            if (Date.now() - this.lastShownAd > 86400000) {
+            if (Date.now() - this.lastShownAd > funcs_1.Duration.days(1)) {
                 this.lastShownAd = Date.now();
                 this.showAdNext = true;
             }
@@ -1073,7 +1073,7 @@ var FishPlayer = /** @class */ (function () {
         return false;
     };
     FishPlayer.shouldWhackFlaggedPlayers = function () {
-        return (Date.now() - this.lastBotWhacked) < 300000; //5 minutes
+        return (Date.now() - this.lastBotWhacked) < funcs_1.Duration.minutes(5); //5 minutes
     };
     FishPlayer.whackFlaggedPlayers = function () {
         this.forEachPlayer(function (p) {
@@ -1086,9 +1086,9 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.onBotWhack = function () {
         this.antiBotModePersist = true;
-        if (Date.now() - this.lastBotWhacked > 3600000) //1 hour since last bot whack
+        if (Date.now() - this.lastBotWhacked > funcs_1.Duration.hours(1))
             api.sendModerationMessage("!!! <@&1040193678817378305> Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**"));
-        else if (Date.now() - this.lastBotWhacked > 600000) //10 minutes
+        else if (Date.now() - this.lastBotWhacked > funcs_1.Duration.minutes(10))
             api.sendModerationMessage("!!! Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**"));
         this.lastBotWhacked = Date.now();
         this.whackFlaggedPlayers();
@@ -1310,7 +1310,7 @@ var FishPlayer = /** @class */ (function () {
             this.sendMessage(message
                 ? "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]".concat(message, "[]")
                 : "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.");
-            if (duration < 3600000) {
+            if (duration < funcs_1.Duration.hours(1)) {
                 //less than one hour
                 this.sendMessage("[yellow]Your mark will expire in ".concat((0, utils_1.formatTime)(duration), "."));
             }

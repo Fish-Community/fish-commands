@@ -164,11 +164,11 @@ export const Req = {
 		({args, sender}:{args:Partial<Record<T, FishPlayer>>, sender:FishPlayer}) =>
 			(args[argName] == undefined || sender.canModerate(args[argName], !allowSameRank, minimumLevel, allowSelfIfUnauthorized)
 				|| fail(`You do not have permission to perform moderation actions on this player.`)),
-	cooldown: (durationMS:number) => ({lastUsedSuccessfullySender}:FishCommandHandlerData<never, unknown>) =>
+	cooldown: (durationMS:number) => ({lastUsedSuccessfullySender}:Pick<FishCommandHandlerData<never, unknown>, "lastUsedSuccessfullySender">) =>
 		Date.now() - lastUsedSuccessfullySender >= durationMS
 			|| fail(`This command was run recently and is on cooldown.`),
-	cooldownGlobal: (durationMS:number) => ({lastUsedSuccessfullySender}:FishCommandHandlerData<never, unknown>) =>
-		Date.now() - lastUsedSuccessfullySender >= durationMS
+	cooldownGlobal: (durationMS:number) => ({lastUsedSuccessfully}:Pick<FishCommandHandlerData<never, unknown>, "lastUsedSuccessfully">) =>
+		Date.now() - lastUsedSuccessfully >= durationMS
 			|| fail(`This command was run recently and is on cooldown.`),
 	gameRunning: () =>
 		!Vars.state.gameOver

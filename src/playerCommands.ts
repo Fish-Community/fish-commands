@@ -6,7 +6,7 @@ This file contains most in-game chat commands that can be run by untrusted playe
 import * as api from '/api';
 import { command, commandList, fail, formatArg, Perm, Req } from '/commands';
 import { FishServer, Gamemode, rules, text } from '/config';
-import { capitalizeText, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from '/funcs';
+import { capitalizeText, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from '/funcs';
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from '/globals';
 import { FMap } from '/maps';
 import { Menu } from '/menus';
@@ -651,7 +651,7 @@ Available types:[yellow]
 		requirements: [Req.mode("attack")],
 		handler({args, sender, lastUsedSuccessfullySender, lastUsedSuccessfully, outputSuccess, f}){
 			if(args.player){
-				if(Date.now() - lastUsedSuccessfullySender < 20000) fail(`This command was used recently and is on cooldown.`);
+				Req.cooldown(20_000)({lastUsedSuccessfullySender});
 				if(!sender.hasPerm("trusted")) fail(`You do not have permission to show popups to other players, please run /void with no arguments to send a chat message to everyone.`);
 				if(args.player !== sender && args.player.hasPerm("blockTrolling")) fail(`Target player is insufficiently trollable.`);
 				Menu.menu("\uf83f [scarlet]WARNING[] \uf83f",
@@ -665,7 +665,7 @@ Please stop attacking and [lime]build defenses[] first!`,
 				logAction("showed void warning", sender, args.player);
 				outputSuccess(f`Warned ${args.player} about power voids with a popup message.`);
 			} else {
-				if(Date.now() - lastUsedSuccessfully < 10000) fail(`This command was used recently and is on cooldown.`);
+				Req.cooldownGlobal(10_000)({lastUsedSuccessfully});
 				Call.sendMessage(
 `[white]Don't break the Power Void (\uf83f), it's a trap!
 Power voids disable anything they are connected to. If you break it, [scarlet]you will get attacked[] by enemy units.
@@ -745,7 +745,7 @@ Please stop attacking and [lime]build defenses[] first!`
 		description: "Vote to start the next wave.",
 		perm: Perm.play,
 		init: () => ({
-			manager: new VoteManager<number>(1.5 * 60_000)
+			manager: new VoteManager<number>(Duration.minutes(1.5))
 				.on("success", (t) => skipWaves(t.session!.data, true))
 				.on("vote passed", () => Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'))
 				.on("vote failed", () => Call.sendMessage('VNW: [red]Vote failed.'))
@@ -802,7 +802,7 @@ Please stop attacking and [lime]build defenses[] first!`
 		description: 'Rock the vote to change map.',
 		perm: Perm.play,
 		init: () => ({
-			manager: new VoteManager(1.5 * 60_000, Gamemode.hexed() ? ["fractionOfVoters", 1] : undefined) //Require unanimity in Hexed, as it is often 1 v everyone
+			manager: new VoteManager(Duration.minutes(1.5), Gamemode.hexed() ? ["fractionOfVoters", 1] : undefined) //Require unanimity in Hexed, as it is often 1 v everyone
 				.on("success", () => neutralGameover())
 				.on("vote passed", () => Call.sendMessage(`RTV: [green]Vote has passed, changing map.`))
 				.on("vote failed", () => Call.sendMessage(`RTV: [red]Vote failed.`))
@@ -878,7 +878,7 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		let lastVoteCount = 0;
 		let lastVoteTime = 0;
 		let voteEndTime = -1;
-		const voteDuration = 1.5 * 60000; // 1.5 mins
+		const voteDuration = Duration.minutes(1.5);
 		let task: TimerTask | null = null;
 
 		function resetVotes(){
@@ -912,7 +912,7 @@ ${getMapData().map(({key:map, value:votes}) =>
 			if(voteEndTime == -1) return; //aborted somehow
 			if(votes.size == 0) return; //no votes?
 
-			if(votes.size + 2 <= lastVoteCount && (Date.now() - lastVoteTime) < 600_000){
+			if(votes.size + 2 <= lastVoteCount && (Date.now() - lastVoteTime) < Duration.minutes(10)){
 				//If the number of votes is 2 less than the previous number of votes for a vote in the past 10 minutes, abor
 				Call.sendMessage("[cyan]Next Map Vote: [scarlet]Vote aborted because a previous vote had significantly higher turnout");
 				resetVotes();
@@ -959,7 +959,7 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 				
 				votes.set(sender, map);
 				if(voteEndTime == -1){
-					if((Date.now() - lastVoteTime) < 60_000) fail(`Please wait 1 minute before starting a new map vote.`);
+					if((Date.now() - lastVoteTime) < Duration.minutes(1)) fail(`Please wait 1 minute before starting a new map vote.`);
 					startVote();
 					Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] started a map vote, and voted for [yellow]${map.name()}[cyan]. Use [white]/nextmap ${map.plainName()}[] to add your vote, or run [white]/maps[] to see other available maps.`);
 				} else {
@@ -972,7 +972,7 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 	surrender: command(() => {
 		const prefix = "[orange]Surrender[white]: ";
 		const managers = Team.all.map(team =>
-			new VoteManager<number>(1.5 * 60_000, ["fractionOfVoters", Gamemode.hexed() ? 1 : 3/4], p => p.team() == team && !p.afk())
+			new VoteManager<number>(Duration.minutes(1.5), ["fractionOfVoters", Gamemode.hexed() ? 1 : 3/4], p => p.team() == team && !p.afk())
 				.on("success", () => team.cores().copy().each(c => c.kill()))
 				.on("vote passed", () => Call.sendMessage(
 					prefix + `Team ${team.coloredName()} has voted to forfeit this match.`

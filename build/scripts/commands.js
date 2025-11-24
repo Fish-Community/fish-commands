@@ -245,8 +245,8 @@ exports.Req = {
             || fail("This command was run recently and is on cooldown.");
     }; },
     cooldownGlobal: function (durationMS) { return function (_a) {
-        var lastUsedSuccessfullySender = _a.lastUsedSuccessfullySender;
-        return Date.now() - lastUsedSuccessfullySender >= durationMS
+        var lastUsedSuccessfully = _a.lastUsedSuccessfully;
+        return Date.now() - lastUsedSuccessfully >= durationMS
             || fail("This command was run recently and is on cooldown.");
     }; },
     gameRunning: function () {
