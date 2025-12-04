@@ -87,11 +87,7 @@ const Vars: {
 	tilesize: 8;
 	world: World;
 };
-class State {
-	static paused: State;
-	static playing: State;
-	static menu: State;
-}
+type State = {__state: ""};
 type Scripts = any;
 type CommandHandler = any;
 const CommandHandler: CommandHandler;
@@ -346,7 +342,7 @@ const Time: {
 	setDeltaProvider(provider: () => number):void;
 }
 const GameState: {
-	State: Record<"playing" | "paused", any>;
+	State: Record<"playing" | "paused" | "menu", any>;
 }
 class HttpRequest {
 	submit(func:(response:HttpResponse) => void):void;

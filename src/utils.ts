@@ -324,7 +324,7 @@ export function serverRestartLoop(sec:number):void {
 		const file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
 		Vars.netServer.kickAll(Packets.KickReason.serverRestarting);
 		Vars.net.closeServer();
-		Vars.state.set(State.menu);
+		Vars.state.set(GameState.State.menu);
 		Core.app.post(() => {
 			SaveIO.save(file);
 			Core.app.exit();
