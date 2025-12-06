@@ -156,7 +156,7 @@ exports.heuristics = {
     /** Will trip if more than this many blocks are broken within 25 seconds of joining. */
     blocksBrokenAfterJoin: 40,
 };
-exports.stopAntiEvadeTime = 1800000; //30 minutes
+exports.stopAntiEvadeTime = funcs_1.Duration.minutes(30);
 exports.Mode = {
     localDebug: new Fi("config/.debug").exists(),
     isChristmas: new Date().getMonth() == 11,

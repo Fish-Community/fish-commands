@@ -5,6 +5,7 @@ This file contains the definitions for ranks and role flags.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoleFlag = exports.Rank = void 0;
+var funcs_1 = require("/funcs");
 /** Each player has one rank, which is used to determine their prefix, permissions, and which other players they can perform moderation actions on. */
 var Rank = /** @class */ (function () {
     function Rank(name, 
@@ -43,9 +44,9 @@ var Rank = /** @class */ (function () {
     Rank.player = new Rank("player", 0, "Ordinary players.", "", "&lk[p]&fr", "");
     Rank.active = new Rank("active", 1, "Assigned automatically to players who have played for some time.", "[black]<[forest]\uE800[]>[]", "&lk[a]&fr", "[forest]", {
         joins: 50,
-        playtime: 24 * 60 * 60 * 1000, //24 hours
+        playtime: funcs_1.Duration.hours(24),
         blocksPlaced: 5000,
-        timeSinceFirstJoin: 24 * 60 * 60 * 1000 * 7, //7 days
+        timeSinceFirstJoin: funcs_1.Duration.days(7),
     });
     Rank.trusted = new Rank("trusted", 2, "Trusted players who have gained the trust of a mod or admin.", "[black]<[#E67E22]\uE813[]>[]", "&y[T]&fr", "[#E67E22]");
     Rank.mod = new Rank("mod", 3, "Moderators who can mute, stop, and kick players.", "[black]<[#6FFC7C]\uE817[]>[]", "&lg[M]&fr", "[#6FFC7C]");
