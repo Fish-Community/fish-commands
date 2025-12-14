@@ -233,7 +233,7 @@ export function isImpersonator(name:string, isAdmin:boolean):false | string {
 		"admin", "moderator", "staff", "owner",
 		[">|||>", "Name contains >|||> which is reserved for the server owner"],
 		"\uE817", "\uE82C", "\uE88E", "\uE813",
-		[/^<.{1,3}>/, "Name contains a prefix such as <a> which is used for role prefixes"],
+		[/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
 		[(replacedText) => !isAdmin && adminNames.includes(replacedText.replace(/ /g, "")), "One of our admins uses this name"]
 	]);
 	for(const [check, message] of filters){
