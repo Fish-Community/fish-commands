@@ -345,7 +345,7 @@ exports.rules = [
     "# 6: [blue]Impersonating people or ranks is prohibited.",
     "# 7: [purple]Talking about controversial or sensitive topics is not allowed in-game. Hate symbols, such as swastikas, are not permitted.",
     "# 8: [pink]No uncomfortable trolling or intentionally causing chaos. This includes any actions or messages that create an unpleasant atmosphere.",
-    "Failure to follow these rules will result in consequences: likely a [yellow]\u26A0[scarlet]Marked Griefer[yellow]\u26A0[white] tag for any game disruption, mute for broken chat rules, and bans for repeated offenses or bypasses."
+    "Failure to follow these rules will result in consequences: likely a ".concat(exports.prefixes.marked, " tag for any game disruption, mute for broken chat rules, and bans for repeated offenses or bypasses.")
 ].map(function (r) { return "[white]".concat(r); });
 //#endregion
 exports.localIPAddress = (0, funcs_1.getIPAddress)();
