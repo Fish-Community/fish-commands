@@ -7,7 +7,7 @@ What kind of changes do you want to make?
 
 You can make these changes entirely through the Github website. You will need a Github account.
 
-1. Open the file that you want to edit. If you are unsure of which file to edit, try using Github's search feature.
+1. Open the file that you want to edit. If you are unsure of which file to edit, try using Github's search feature. For this step, do not edit the files in `build/scripts/`, instead, **edit the .ts file** in `src/`.
 2. Click the edit icon in the toolbar. If Github tells you to create a fork, do that.
 3. Make your change, then click "Commit changes..."
 4. Write a message, then click Propose changes.
