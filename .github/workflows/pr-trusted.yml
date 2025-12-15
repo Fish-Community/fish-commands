@@ -5,6 +5,7 @@ on:
     types: [opened, reopened, synchronize]
     paths:
       - 'src/**.ts'
+      - 'src/main.js'
     branches:
       - 'master'
 jobs:
@@ -45,6 +46,8 @@ jobs:
           run_install: true
       - name: Typescript Compile
         run: pnpm run build
+      - name: Copy main.js
+        run: cp src/main.js build/scripts/main.js
       - name: Check for modified files in build directory
         id: git-check
         # Returns 0 if files changed, and 1 if no files changed
