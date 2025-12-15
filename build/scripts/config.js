@@ -338,14 +338,14 @@ exports.tips = {
 };
 exports.rules = [
     "# 1: [red]No griefing. This refers to intentionally hurting your own team in any way.",
-    "# 2: [orange]Do not build or send pornographic images, flashing images, or gore, and do not be horny or a creep in chat; there are minors here.",
-    "# 3: [yellow]Do not harass other people, be respectful. We do not tolerate racism, anti-LGBTQ+, or any other forms of bigotry.",
-    "# 4: [green]Spamming is prohibited. Be careful when globally messaging staff in-game. Misuse may result in a mute.",
-    "# 5: [#00D8D8]Do not impersonate players, or ranks.",
-    "# 6: [blue]Talking about controversial or sensitive topics is not allowed in-game. Building symbols of hate, such as swastikas, is prohibited.",
-    "# 7: [purple]Do not votekick someone without a good reason, and consider asking first before votekicking. Avoid votekicking if there's an active staff member in the server; just tell them instead.",
-    "# 8: [pink]No trolling or intentionally causing chaos. This includes any actions or messages that disrupt the community or create an unpleasant atmosphere.",
-    "Failure to follow these rules will result in consequences: likely a Marked Griefer tag for any game disruption, mute for broken chat rules, and bans for repeated offenses or bypasses."
+    "# 2: [orange]False votekicking isn't allowed. Avoid votekicking if there's an active staff member in the server.",
+    "# 3: [yellow]Gore, pornography, suggestive content and jokes, and flashing images aren't allowed here. Being horny and a creep in chat will result in a ban.",
+    "# 4: [green]Do not harass other people. We have zero tolerance for any bigotry. Please respect everyone.",
+    "# 5: [#00D8D8]Spamming is prohibited. Be reasonable with messaging staff in-game. Misuse may result in a mute.",
+    "# 6: [blue]Impersonating people or ranks is prohibited.",
+    "# 7: [purple]Talking about controversial or sensitive topics is not allowed in-game. Hate symbols, such as swastikas, are not permitted.",
+    "# 8: [pink]No uncomfortable trolling or intentionally causing chaos. This includes any actions or messages that create an unpleasant atmosphere.",
+    "Failure to follow these rules will result in consequences: likely a [yellow]\u26A0[scarlet]Marked Griefer[yellow]\u26A0[white] tag for any game disruption, mute for broken chat rules, and bans for repeated offenses or bypasses."
 ].map(function (r) { return "[white]".concat(r); });
 //#endregion
 exports.localIPAddress = (0, funcs_1.getIPAddress)();
