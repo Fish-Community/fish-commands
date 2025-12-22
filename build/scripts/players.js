@@ -867,7 +867,7 @@ var FishPlayer = /** @class */ (function () {
         return new this(JSON.parse(fishPlayerData), player);
     };
     FishPlayer.read = function (version, fishPlayerData, player) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+        var _a, _b, _c;
         switch (version) {
             case 0:
             case 1:
@@ -875,9 +875,12 @@ var FishPlayer = /** @class */ (function () {
             case 3:
             case 4:
             case 5:
-                (0, funcs_3.crash)("Version ".concat(version, " is not longer supported, this should not be possible"));
             case 6:
             case 7:
+            case 8:
+            case 9:
+                (0, funcs_3.crash)("Version ".concat(version, " is not longer supported, this should not be possible"));
+            case 10:
                 return new this({
                     uuid: (_a = fishPlayerData.readString(2)) !== null && _a !== void 0 ? _a : (0, funcs_3.crash)("Failed to deserialize FishPlayer: UUID was null."),
                     name: (_b = fishPlayerData.readString(2)) !== null && _b !== void 0 ? _b : "Unnamed player [ERROR]",
@@ -895,102 +898,6 @@ var FishPlayer = /** @class */ (function () {
                     }),
                     rainbow: (function (n) { return n == 0 ? null : { speed: n }; })(fishPlayerData.readNumber(2)),
                     rank: (_c = fishPlayerData.readString(2)) !== null && _c !== void 0 ? _c : "",
-                    flags: fishPlayerData.readArray(function (str) { return str.readString(2); }, 2).filter(function (s) { return s != null; }),
-                    usid: fishPlayerData.readString(2),
-                    chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
-                    lastJoined: fishPlayerData.readNumber(15),
-                    stats: {
-                        blocksBroken: fishPlayerData.readNumber(10),
-                        blocksPlaced: fishPlayerData.readNumber(10),
-                        timeInGame: fishPlayerData.readNumber(15),
-                        chatMessagesSent: fishPlayerData.readNumber(7),
-                        gamesFinished: fishPlayerData.readNumber(5),
-                        gamesWon: fishPlayerData.readNumber(5),
-                    }
-                }, player);
-            case 8:
-                return new this({
-                    uuid: (_d = fishPlayerData.readString(2)) !== null && _d !== void 0 ? _d : (0, funcs_3.crash)("Failed to deserialize FishPlayer: UUID was null."),
-                    name: (_e = fishPlayerData.readString(2)) !== null && _e !== void 0 ? _e : "Unnamed player [ERROR]",
-                    muted: fishPlayerData.readBool(),
-                    autoflagged: fishPlayerData.readBool(),
-                    unmarkTime: fishPlayerData.readNumber(13),
-                    highlight: fishPlayerData.readString(2),
-                    history: fishPlayerData.readArray(function (str) {
-                        var _a, _b;
-                        return ({
-                            action: (_a = str.readString(2)) !== null && _a !== void 0 ? _a : "null",
-                            by: (_b = str.readString(2)) !== null && _b !== void 0 ? _b : "null",
-                            time: str.readNumber(15)
-                        });
-                    }),
-                    rainbow: (function (n) { return n == 0 ? null : { speed: n }; })(fishPlayerData.readNumber(2)),
-                    rank: (_f = fishPlayerData.readString(2)) !== null && _f !== void 0 ? _f : "",
-                    flags: fishPlayerData.readArray(function (str) { return str.readString(2); }, 2).filter(function (s) { return s != null; }),
-                    usid: fishPlayerData.readString(2),
-                    chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
-                    lastJoined: fishPlayerData.readNumber(15),
-                    stats: {
-                        blocksBroken: fishPlayerData.readNumber(10),
-                        blocksPlaced: fishPlayerData.readNumber(10),
-                        timeInGame: fishPlayerData.readNumber(15),
-                        chatMessagesSent: fishPlayerData.readNumber(7),
-                        gamesFinished: fishPlayerData.readNumber(5),
-                        gamesWon: fishPlayerData.readNumber(5),
-                    },
-                    showRankPrefix: fishPlayerData.readBool(),
-                }, player);
-            case 9:
-                return new this({
-                    uuid: (_g = fishPlayerData.readString(2)) !== null && _g !== void 0 ? _g : (0, funcs_3.crash)("Failed to deserialize FishPlayer: UUID was null."),
-                    name: (_h = fishPlayerData.readString(2)) !== null && _h !== void 0 ? _h : "Unnamed player [ERROR]",
-                    muted: fishPlayerData.readBool(),
-                    autoflagged: fishPlayerData.readBool(),
-                    unmarkTime: fishPlayerData.readNumber(13),
-                    highlight: fishPlayerData.readString(2),
-                    history: fishPlayerData.readArray(function (str) {
-                        var _a, _b;
-                        return ({
-                            action: (_a = str.readString(2)) !== null && _a !== void 0 ? _a : "null",
-                            by: (_b = str.readString(2)) !== null && _b !== void 0 ? _b : "null",
-                            time: str.readNumber(15)
-                        });
-                    }),
-                    rainbow: (function (n) { return n == 0 ? null : { speed: n }; })(fishPlayerData.readNumber(2)),
-                    rank: (_j = fishPlayerData.readString(2)) !== null && _j !== void 0 ? _j : "",
-                    flags: fishPlayerData.readArray(function (str) { return str.readString(2); }, 2).filter(function (s) { return s != null; }),
-                    usid: fishPlayerData.readString(2),
-                    chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
-                    lastJoined: fishPlayerData.readNumber(15),
-                    firstJoined: fishPlayerData.readNumber(15),
-                    stats: {
-                        blocksBroken: fishPlayerData.readNumber(10),
-                        blocksPlaced: fishPlayerData.readNumber(10),
-                        timeInGame: fishPlayerData.readNumber(15),
-                        chatMessagesSent: fishPlayerData.readNumber(7),
-                        gamesFinished: fishPlayerData.readNumber(5),
-                        gamesWon: fishPlayerData.readNumber(5),
-                    },
-                    showRankPrefix: fishPlayerData.readBool(),
-                }, player);
-            case 10:
-                return new this({
-                    uuid: (_k = fishPlayerData.readString(2)) !== null && _k !== void 0 ? _k : (0, funcs_3.crash)("Failed to deserialize FishPlayer: UUID was null."),
-                    name: (_l = fishPlayerData.readString(2)) !== null && _l !== void 0 ? _l : "Unnamed player [ERROR]",
-                    muted: fishPlayerData.readBool(),
-                    autoflagged: fishPlayerData.readBool(),
-                    unmarkTime: fishPlayerData.readNumber(13),
-                    highlight: fishPlayerData.readString(2),
-                    history: fishPlayerData.readArray(function (str) {
-                        var _a, _b;
-                        return ({
-                            action: (_a = str.readString(2)) !== null && _a !== void 0 ? _a : "null",
-                            by: (_b = str.readString(2)) !== null && _b !== void 0 ? _b : "null",
-                            time: str.readNumber(15)
-                        });
-                    }),
-                    rainbow: (function (n) { return n == 0 ? null : { speed: n }; })(fishPlayerData.readNumber(2)),
-                    rank: (_m = fishPlayerData.readString(2)) !== null && _m !== void 0 ? _m : "",
                     flags: fishPlayerData.readArray(function (str) { return str.readString(2); }, 2).filter(function (s) { return s != null; }),
                     usid: fishPlayerData.readString(2),
                     chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
