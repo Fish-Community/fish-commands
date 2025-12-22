@@ -6,7 +6,7 @@ This file contains configurable constants.
 import type { PermType } from "/commands";
 import { ipPattern, ipPortPattern, uuidPattern } from "/globals";
 import { Rank } from "/ranks";
-import { getIPAddress, random } from '/funcs';
+import { Duration, getIPAddress, random } from '/funcs';
 
 
 
@@ -138,7 +138,7 @@ export const heuristics = {
 	/** Will trip if more than this many blocks are broken within 25 seconds of joining. */
 	blocksBrokenAfterJoin: 40,
 };
-export const stopAntiEvadeTime = 1800000; //30 minutes
+export const stopAntiEvadeTime = Duration.minutes(30);
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
 	isChristmas: new Date().getMonth() == 11,
