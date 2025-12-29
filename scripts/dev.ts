@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import https from "node:https";
 import { execSync, spawnSync } from "node:child_process";
+import { Octokit } from "@octokit/rest";
 
 
 function fail(message:string):never {
@@ -55,25 +56,26 @@ if(!fs.existsSync(devServerDirectory)){
 		recursive: false
 	});
 	console.log(`Finding latest server jar...`);
-	fetch(`https://api.github.com/repos/Anuken/Mindustry/releases`).then(r => r.json()).then(r => {
-		const release = r[0];
-		console.log(`Using version ${release.tag_name}`);
-		const file = release.assets.find(a => a.name == "server-release.jar") ?? fail(`Could not find the server-release.jar file in the latest release`);
-		console.log(`Downloading latest server jar from ${file.browser_download_url}...`);
-		return resolveRedirect(file.browser_download_url);
-	}).then(downloadURL => {
-		return downloadFile(downloadURL, path.join(devServerDirectory, "server-release.jar"))
-	}).catch(e => fail(`Failed to download the file: ${e}`)).then(() => {
-		console.log(`Linking fish-commands...`);
-		const modsFolder = path.join(devServerDirectory, "config", "mods");
-		fs.mkdirSync(modsFolder, { recursive: true });
-		const fishCommandsFolder = path.join(modsFolder, "fish-commands");
-		const buildFolder = path.join(fcRootDirectory, "build");
-		fs.symlinkSync(buildFolder, fishCommandsFolder);
-		fs.writeFileSync(path.join(devServerDirectory, "config", ".debug"), "");
-		console.log(`Successfully set up the development environment.`);
-		runServer();
-	});
+	const octokit = new Octokit();
+	const [release] = (await octokit.repos.listReleases({
+		owner: 'Anuken',
+		repo: 'Mindustry',
+	})).data;
+	console.log(`Using version ${release.tag_name}`);
+	const file = release.assets.find(a => a.name == "server-release.jar")
+		?? fail(`Could not find the server-release.jar file in the latest release`);
+	console.log(`Downloading latest server jar from ${file.browser_download_url}...`);
+	const downloadURL = await resolveRedirect(file.browser_download_url);
+	await downloadFile(downloadURL, path.join(devServerDirectory, "server-release.jar"));
+	console.log(`Linking fish-commands...`);
+	const modsFolder = path.join(devServerDirectory, "config", "mods");
+	fs.mkdirSync(modsFolder, { recursive: true });
+	const fishCommandsFolder = path.join(modsFolder, "fish-commands");
+	const buildFolder = path.join(fcRootDirectory, "build");
+	fs.symlinkSync(buildFolder, fishCommandsFolder);
+	fs.writeFileSync(path.join(devServerDirectory, "config", ".debug"), "");
+	console.log(`Successfully set up the development environment.`);
+	runServer();
 } else {
 	runServer();
 }

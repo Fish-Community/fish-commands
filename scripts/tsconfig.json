@@ -1,10 +1,11 @@
 {
 	"compilerOptions": {
 		"lib": ["ES2023", "DOM"], //for fetch()
+		"strict": true,
 		"target": "ES2023",
 		"skipLibCheck": true,
-		"module": "CommonJS",
-		"esModuleInterop": true,
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
 	},
 	"include": [
 		"./**.ts"

@@ -107,7 +107,7 @@ var Metrics = function () {
         /**
          * Weeks are numbered starting at the week of 4 May 2025.
          * A value is taken every 4 minutes, for a total of 15 readings per hour.
-         */
+        */
         _a.weeks = __runInitializers(_a, _static_weeks_initializers, Array(_a.weekNumber() + 1).fill(0).map(function () { return _a.newWeek(); })),
         (function () {
             __runInitializers(_a, _static_weeks_extraInitializers);
