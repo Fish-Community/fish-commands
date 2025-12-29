@@ -950,7 +950,8 @@ var FishPlayer = /** @class */ (function () {
         out.writeNumber(this.pollResponse, 1);
     };
     /** Saves cached FishPlayers to JSON in Core.settings. */
-    FishPlayer.saveAll = function () {
+    FishPlayer.saveAll = function (forceSaveSettings) {
+        if (forceSaveSettings === void 0) { forceSaveSettings = true; }
         var out = new funcs_4.StringIO();
         out.writeNumber(this.saveVersion, 2);
         out.writeArray(Object.entries(this.cachedPlayers), function (_a) {
@@ -964,7 +965,8 @@ var FishPlayer = /** @class */ (function () {
             Core.settings.put("fish-playerdata-part-".concat(i), string.slice(0, this.chunkSize));
             string = string.slice(this.chunkSize);
         }
-        Core.settings.manualSave();
+        if (forceSaveSettings)
+            Core.settings.manualSave();
     };
     /** Does not include stats */
     FishPlayer.prototype.hasData = function () {
@@ -1247,7 +1249,6 @@ var FishPlayer = /** @class */ (function () {
         if (this.unmarkTime > globals.maxTime)
             this.unmarkTime = globals.maxTime;
         api.addStopped(this.uuid, this.unmarkTime);
-        FishPlayer.saveAll();
         //Set unmark timer
         var oldUnmarkTime = this.unmarkTime;
         Timer.schedule(function () {
@@ -1290,7 +1291,6 @@ var FishPlayer = /** @class */ (function () {
         api.free(this.uuid);
         FishPlayer.removePunishedIP(this.ip());
         FishPlayer.removePunishedUUID(this.uuid);
-        FishPlayer.saveAll();
         if (this.connected()) {
             this.addHistoryEntry({
                 action: 'freed',

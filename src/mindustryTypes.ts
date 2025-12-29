@@ -343,6 +343,7 @@ class TimerTask {
 }
 const Time: {
 	millis(): number;
+	timeSinceMillis(millis: number): number;
 	setDeltaProvider(provider: () => number):void;
 };
 const GameState: {

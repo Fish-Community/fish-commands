@@ -180,7 +180,7 @@ Events.on(EventType.ServerLoadEvent, function (e) {
     Core.app.addListener({
         dispose: function () {
             globals_1.FishEvents.fire("saveData", []);
-            players_1.FishPlayer.saveAll();
+            players_1.FishPlayer.saveAll(false);
             Log.info("Saved on exit.");
         }
     });

@@ -880,7 +880,7 @@ We apologize for the inconvenience.`
 		out.writeNumber(this.pollResponse, 1);
 	}
 	/** Saves cached FishPlayers to JSON in Core.settings. */
-	static saveAll(){
+	static saveAll(forceSaveSettings = true){
 		const out = new StringIO();
 		out.writeNumber(this.saveVersion, 2);
 		out.writeArray(
@@ -895,7 +895,7 @@ We apologize for the inconvenience.`
 			Core.settings.put(`fish-playerdata-part-${i}`, string.slice(0, this.chunkSize));
 			string = string.slice(this.chunkSize);
 		}
-		Core.settings.manualSave();
+		if(forceSaveSettings) Core.settings.manualSave();
 	}
 	/** Does not include stats */
 	hasData(){
@@ -1141,7 +1141,6 @@ We apologize for the inconvenience.`
 		this.unmarkTime = Date.now() + time;
 		if(this.unmarkTime > globals.maxTime) this.unmarkTime = globals.maxTime;
 		api.addStopped(this.uuid, this.unmarkTime);
-		FishPlayer.saveAll();
 		//Set unmark timer
 		const oldUnmarkTime = this.unmarkTime;
 		Timer.schedule(() => {
@@ -1184,7 +1183,6 @@ We apologize for the inconvenience.`
 		api.free(this.uuid);
 		FishPlayer.removePunishedIP(this.ip());
 		FishPlayer.removePunishedUUID(this.uuid);
-		FishPlayer.saveAll();
 		if(this.connected()){
 			this.addHistoryEntry({
 				action: 'freed',

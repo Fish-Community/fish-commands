@@ -179,7 +179,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 	Core.app.addListener({
 		dispose(){
 			FishEvents.fire("saveData", []);
-			FishPlayer.saveAll();
+			FishPlayer.saveAll(false);
 			Log.info("Saved on exit.");
 		}
 	});
