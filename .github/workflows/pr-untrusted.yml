@@ -28,3 +28,6 @@ jobs:
       - name: Run Tests
         # this also runs tsc
         run: pnpm run test
+      - name: Run Linter
+        # lint does not require co
+        run: pnpm run lint

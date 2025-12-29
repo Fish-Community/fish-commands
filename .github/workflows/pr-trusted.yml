@@ -48,12 +48,14 @@ jobs:
         run: pnpm run build
       - name: Copy main.js
         run: cp src/main.js build/scripts/main.js
+      - name: Run linter
+        run: pnpm run lint:fix
       - name: Check for modified files in build directory
         id: git-check
         # Returns 0 if files changed, and 1 if no files changed
         run: |
           git add build/scripts
-          echo "committed=$(git commit -m "Automated TypeScript compile" > /dev/null; echo $?)" >> $GITHUB_OUTPUT
+          echo "committed=$(git commit -m "Automated TypeScript compile / lint" > /dev/null; echo $?)" >> $GITHUB_OUTPUT
       - name: Push changes
         # Do not create an infinite loop of workflows
         if: github.actor_id != env.FISH_BOT_ACTOR_ID && steps.git-check.outputs.committed == '0'

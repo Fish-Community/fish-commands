@@ -8,6 +8,8 @@
 		"attach": "node scripts/attach.js",
 		"watch": "tsc --watch",
 		"build": "tsc -p tsconfig.json",
+		"lint": "eslint",
+		"lint:fix": "eslint --fix",
 		"dev": "node scripts/dev.js",
 		"test": "tsc -p tsconfig.json && node scripts/remap-imports.js && tsc -p spec && jasmine"
 	},
