@@ -742,6 +742,7 @@ function handleTapEvent(event) {
 function register(commands, clientHandler, serverHandler) {
     var e_3, _a;
     var _loop_1 = function (name, _data) {
+        //Invoke thunk if necessary
         var data = typeof _data == "function" ? _data() : _data;
         //Process the args
         var processedCmdArgs = data.args.map(processArgString);
@@ -772,10 +773,10 @@ function register(commands, clientHandler, serverHandler) {
                     (0, utils_1.outputFail)(output.error, sender);
                     return;
                 }
-                //Recursively resolve unresolved args (such as players that need to be determined through a menu)
+                //Resolve missing args (such as players that need to be determined through a menu)
                 // let it float, the then() handler cannot crash
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                resolveArgsRecursive(output.processedArgs, output.unresolvedArgs, fishSender).then(function (resolvedArgs) { return __awaiter(_this, void 0, void 0, function () {
+                resolveMissingArgs(output.processedArgs, output.unresolvedArgs, fishSender).then(function (resolvedArgs) { return __awaiter(_this, void 0, void 0, function () {
                     var usageData, failed, args_1, err_1;
                     var _a, _b;
                     return __generator(this, function (_c) {
@@ -866,7 +867,6 @@ function register(commands, clientHandler, serverHandler) {
 function registerConsole(commands, serverHandler) {
     var e_4, _a;
     var _loop_2 = function (name, data) {
-        //Cursed for of loop due to lack of object.entries
         //Process the args
         var processedCmdArgs = data.args.map(processArgString);
         serverHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
@@ -918,42 +918,56 @@ function registerConsole(commands, serverHandler) {
         finally { if (e_4) throw e_4.error; }
     }
 }
-/** Recursively resolves args. This function is necessary to handle cases such as a command that accepts multiple players that all need to be selected through menus. */
-function resolveArgsRecursive(processedArgs, unresolvedArgs, sender) {
+/** Resolves missing args. This function is necessary to handle cases such as a command that accepts multiple players that all need to be selected through menus. */
+function resolveMissingArgs(processedArgs, unresolvedArgs, sender) {
     return __awaiter(this, void 0, void 0, function () {
-        var argToResolve, optionsList_1, option;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var unresolvedArgs_1, unresolvedArgs_1_1, argToResolve, optionsList, option, e_5_1;
+        var e_5, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    if (!(unresolvedArgs.length == 0)) return [3 /*break*/, 1];
-                    return [2 /*return*/, processedArgs];
+                    _b.trys.push([0, 6, 7, 8]);
+                    unresolvedArgs_1 = __values(unresolvedArgs), unresolvedArgs_1_1 = unresolvedArgs_1.next();
+                    _b.label = 1;
                 case 1:
-                    argToResolve = unresolvedArgs.shift();
-                    optionsList_1 = [];
-                    //TODO Dubious implementation
-                    switch (argToResolve.type) {
-                        case "player":
-                            Groups.player.each(function (player) { return optionsList_1.push(player); });
-                            break;
-                        default: (0, funcs_4.crash)("Unable to resolve arg of type ".concat(argToResolve.type));
-                    }
-                    return [4 /*yield*/, menus_1.Menu.menu("Select a player", "Select a player for the argument \"".concat(argToResolve.name, "\""), optionsList_1, sender, {
+                    if (!!unresolvedArgs_1_1.done) return [3 /*break*/, 5];
+                    argToResolve = unresolvedArgs_1_1.value;
+                    if (!(argToResolve.type === "player")) return [3 /*break*/, 3];
+                    optionsList = (0, funcs_1.setToArray)(Groups.player);
+                    return [4 /*yield*/, menus_1.Menu.menu("Select a player", "Select a player for the argument \"".concat(argToResolve.name, "\""), optionsList, sender, {
                             includeCancel: true,
                             optionStringifier: function (player) { return Strings.stripColors(player.name).length >= 3 ?
                                 player.name
                                 : (0, funcs_3.escapeStringColorsClient)(player.name); }
                         })];
                 case 2:
-                    option = _a.sent();
+                    option = _b.sent();
                     processedArgs[argToResolve.name] = players_1.FishPlayer.get(option);
-                    return [4 /*yield*/, resolveArgsRecursive(processedArgs, unresolvedArgs, sender)];
-                case 3: return [2 /*return*/, _a.sent()];
+                    return [3 /*break*/, 4];
+                case 3:
+                    (0, funcs_4.crash)("Unable to resolve arg of type ".concat(argToResolve.type));
+                    _b.label = 4;
+                case 4:
+                    unresolvedArgs_1_1 = unresolvedArgs_1.next();
+                    return [3 /*break*/, 1];
+                case 5: return [3 /*break*/, 8];
+                case 6:
+                    e_5_1 = _b.sent();
+                    e_5 = { error: e_5_1 };
+                    return [3 /*break*/, 8];
+                case 7:
+                    try {
+                        if (unresolvedArgs_1_1 && !unresolvedArgs_1_1.done && (_a = unresolvedArgs_1.return)) _a.call(unresolvedArgs_1);
+                    }
+                    finally { if (e_5) throw e_5.error; }
+                    return [7 /*endfinally*/];
+                case 8: return [2 /*return*/, processedArgs];
             }
         });
     });
 }
 function initialize() {
-    var e_5, _a, e_6, _b;
+    var e_6, _a, e_7, _b;
     if (initialized) {
         (0, funcs_4.crash)("Already initialized commands.");
     }
@@ -964,12 +978,12 @@ function initialize() {
                 command_1.data = command_1.init();
         }
     }
-    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+    catch (e_6_1) { e_6 = { error: e_6_1 }; }
     finally {
         try {
             if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
         }
-        finally { if (e_5) throw e_5.error; }
+        finally { if (e_6) throw e_6.error; }
     }
     try {
         for (var _f = __values(Object.entries(exports.allCommands)), _g = _f.next(); !_g.done; _g = _f.next()) {
@@ -978,12 +992,12 @@ function initialize() {
                 command_2.data = command_2.init();
         }
     }
-    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+    catch (e_7_1) { e_7 = { error: e_7_1 }; }
     finally {
         try {
             if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
         }
-        finally { if (e_6) throw e_6.error; }
+        finally { if (e_7) throw e_7.error; }
     }
     initialized = true;
 }

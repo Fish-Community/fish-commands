@@ -11,7 +11,7 @@ import { FishPlayer } from "/players";
 import { Rank, RankName, RoleFlag } from "/ranks";
 import type { ClientCommandHandler, CommandArg, FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData, Formattable, PartialFormatString, SelectEnumClassKeys, ServerCommandHandler, TagFunction } from "/types";
 import { formatModeName, getBlock, getItem, getMap, getTeam, getUnitType, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
-import { tagProcessorPartial } from '/funcs';
+import { setToArray, tagProcessorPartial } from '/funcs';
 import { parseError } from '/funcs';
 import { escapeStringColorsClient, escapeStringColorsServer } from '/funcs';
 import { crash } from '/funcs';
@@ -576,6 +576,7 @@ export function register(commands:Record<string, FishCommandData<string, any> | 
 
 	for(const [name, _data] of Object.entries(commands)){
 
+		//Invoke thunk if necessary
 		const data = typeof _data == "function" ? _data() : _data;
 
 		//Process the args
@@ -613,10 +614,10 @@ export function register(commands:Record<string, FishCommandData<string, any> | 
 					return;
 				}
 				
-				//Recursively resolve unresolved args (such as players that need to be determined through a menu)
+				//Resolve missing args (such as players that need to be determined through a menu)
 				// let it float, the then() handler cannot crash
 				// eslint-disable-next-line @typescript-eslint/no-floating-promises
-				resolveArgsRecursive(output.processedArgs, output.unresolvedArgs, fishSender).then(async (resolvedArgs) => {
+				resolveMissingArgs(output.processedArgs, output.unresolvedArgs, fishSender).then(async (resolvedArgs) => {
 					//Run the command handler
 					const usageData = fishSender.getUsageData(name);
 					let failed = false;
@@ -669,7 +670,6 @@ export function register(commands:Record<string, FishCommandData<string, any> | 
 						usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();
 					}
 				});
-				
 			}})
 		);
 		allCommands[name] = data;
@@ -679,7 +679,6 @@ export function register(commands:Record<string, FishCommandData<string, any> | 
 export function registerConsole(commands:Record<string, FishConsoleCommandData<string, any>>, serverHandler:ServerCommandHandler){
 
 	for(const [name, data] of Object.entries(commands)){
-		//Cursed for of loop due to lack of object.entries
 
 		//Process the args
 		const processedCmdArgs = data.args.map(processArgString);
@@ -732,28 +731,23 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 	}
 }
 
-/** Recursively resolves args. This function is necessary to handle cases such as a command that accepts multiple players that all need to be selected through menus. */
-async function resolveArgsRecursive(processedArgs: Record<string, FishCommandArgType>, unresolvedArgs:CommandArg[], sender:FishPlayer){
-	//TODO this does not need to be recursive now that we have async, just use a loop
-	if(unresolvedArgs.length == 0){
-		return processedArgs;
-	} else {
-		const argToResolve = unresolvedArgs.shift()!;
-		const optionsList:mindustryPlayer[] = [];
-		//TODO Dubious implementation
-		switch(argToResolve.type){
-			case "player": Groups.player.each(player => optionsList.push(player)); break;
-			default: crash(`Unable to resolve arg of type ${argToResolve.type}`);
-		}
-		const option = await Menu.menu(`Select a player`, `Select a player for the argument "${argToResolve.name}"`, optionsList, sender, {
-			includeCancel: true,
-			optionStringifier: player => Strings.stripColors(player.name).length >= 3 ?
-				player.name
-			: escapeStringColorsClient(player.name)
-		});
-		processedArgs[argToResolve.name] = FishPlayer.get(option);
-		return await resolveArgsRecursive(processedArgs, unresolvedArgs, sender);
+/** Resolves missing args. This function is necessary to handle cases such as a command that accepts multiple players that all need to be selected through menus. */
+async function resolveMissingArgs(processedArgs: Record<string, FishCommandArgType>, unresolvedArgs:CommandArg[], sender:FishPlayer){
+	for(const argToResolve of unresolvedArgs){
+		//TODO support other arg types
+		//we have text input menu now
+		if(argToResolve.type === "player"){
+			const optionsList = setToArray(Groups.player);
+			const option = await Menu.menu(`Select a player`, `Select a player for the argument "${argToResolve.name}"`, optionsList, sender, {
+				includeCancel: true,
+				optionStringifier: player => Strings.stripColors(player.name).length >= 3 ?
+					player.name
+				: escapeStringColorsClient(player.name)
+			});
+			processedArgs[argToResolve.name] = FishPlayer.get(option);
+		} else crash(`Unable to resolve arg of type ${argToResolve.type}`);
 	}
+	return processedArgs;
 }
 
 export function initialize(){
