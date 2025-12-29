@@ -91,6 +91,7 @@ exports.handleTapEvent = handleTapEvent;
 exports.register = register;
 exports.registerConsole = registerConsole;
 exports.initialize = initialize;
+exports.reset = reset;
 var config_1 = require("/config");
 var globals_1 = require("/globals");
 var menus_1 = require("/menus");
@@ -1000,5 +1001,37 @@ function initialize() {
         finally { if (e_7) throw e_7.error; }
     }
     initialized = true;
+}
+function reset() {
+    var e_8, _a, e_9, _b;
+    initialized = false;
+    try {
+        for (var _c = __values(Object.entries(exports.allConsoleCommands)), _d = _c.next(); !_d.done; _d = _c.next()) {
+            var _e = __read(_d.value, 2), key = _e[0], command_3 = _e[1];
+            if (command_3.init)
+                command_3.data = undefined;
+        }
+    }
+    catch (e_8_1) { e_8 = { error: e_8_1 }; }
+    finally {
+        try {
+            if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+        }
+        finally { if (e_8) throw e_8.error; }
+    }
+    try {
+        for (var _f = __values(Object.entries(exports.allCommands)), _g = _f.next(); !_g.done; _g = _f.next()) {
+            var _h = __read(_g.value, 2), key = _h[0], command_4 = _h[1];
+            if (command_4.init)
+                command_4.data = undefined;
+        }
+    }
+    catch (e_9_1) { e_9 = { error: e_9_1 }; }
+    finally {
+        try {
+            if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+        }
+        finally { if (e_9) throw e_9.error; }
+    }
 }
 var templateObject_1;

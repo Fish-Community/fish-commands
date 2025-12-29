@@ -27,6 +27,23 @@ class Pattern {
 	}
 }
 
+class ObjectMap<K, V> {
+	map = new Map<K, V>;
+	get(key:K){ return this.map.get(key); }
+	containsKey(key:K){ return this.map.has(key); }
+	set(key:K, value:V){ return this.map.set(key, value); }
+	get size(){ return this.map.size; }
+	clear(){ this.map.clear(); }
+	put(key:K, value:V){ this.map.set(key, value); }
+	entries(){
+		const entries = this.map.entries();
+		return Object.assign(entries, {
+			toArray(){
+				return new Seq([...entries].map(e => ({ key: e[0], value: e[1] })));
+			}
+		});
+	}
+}
 class ObjectIntMap<K> {
 	map = new Map<K, number>;
 	get(key:K){ return this.map.get(key); }
@@ -574,14 +591,35 @@ class Team {
 }
 type ChatFilter = (player:Player, message:string) => string | null;
 type ActionFilter = (action:PlayerAction) => boolean;
+class PlayerInfo {
+	constructor(
+		public id:string,
+	){}
+}
 class Administration {
 	chatFilters = new Seq<ChatFilter>();
 	actionFilters = new Seq<ActionFilter>();
+	playerInfo = new ObjectMap<string, PlayerInfo>();
 	addChatFilter(filter:ChatFilter){
 		this.chatFilters.add(filter);
 	}
 	addActionFilter(filter:ActionFilter){
 		this.actionFilters.add(filter);
+	}
+	getCreateInfo(id:string){
+		if(this.playerInfo.containsKey(id)){
+			return this.playerInfo.get(id);
+		} else {
+			const info = new PlayerInfo(id);
+			this.playerInfo.put(id, info);
+			return info;
+		}
+	}
+	getInfo(id:string){
+		return this.getCreateInfo(id);
+	}
+	getInfoOptional(id:string){
+		return this.playerInfo.get(id);
 	}
 }
 class MMap {
@@ -750,7 +788,60 @@ const Threads = {
 		queueMicrotask(runnable);
 	}
 };
-
+const Strings = {
+	stripColors(str:string){
+		let out = "";
+		for(let i = 0; i < str.length;){
+			const c = str.charAt(i);
+			if(c == '['){
+				const length = Strings.parseColorMarkup(str, i + 1, str.length);
+				if(length >= 0){
+					i += length + 2;
+				} else {
+					out += c;
+					i++;
+				}
+			} else {
+				out += c;
+				i++;
+			}
+		}
+		return out;
+	},
+	parseColorMarkup(str:string, start:number, end:number){
+		if(start >= end) return -1; // String ended with "[".
+		switch(str.charAt(start)){
+			case '#':
+				// Parse hex color RRGGBBAA where AA is optional and defaults to 0xFF if less than 6 chars are used.
+				for(let i = start + 1; i < end; i++){
+					const ch = str.charAt(i);
+					if(ch == ']'){
+						if(i < start + 2 || i > start + 9) break; // Illegal number of hex digits.
+						return i - start;
+					}
+					if(!(ch >= '0' && ch <= '9' || ch >= 'a' && ch <= 'f' || ch >= 'A' && ch <= 'F')){
+						break; // Unexpected character in hex color.
+					}
+				}
+				return -1;
+			case '[': // "[[" is an escaped left square bracket.
+				return -2;
+			case ']': // "[]" is a "pop" color tag.
+				//pop the color stack here if needed
+				return 0;
+		}
+		// Parse named color.
+		for(let i = start + 1; i < end; i++){
+			const ch = str.charAt(i);
+			if(ch != ']') continue;
+			// const namedColor = Colors.get(str.slice(start, i));
+			// if(namedColor == null) return -1; // Unknown color name.
+			//namedColor is the result color here
+			return i - start;
+		}
+		return -1; // Unclosed color tag.
+	},
+};
 
 
 const Packages = {
@@ -765,4 +856,4 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings});

@@ -762,3 +762,12 @@ export function initialize(){
 	}
 	initialized = true;
 }
+export function reset(){
+	initialized = false;
+	for(const [key, command] of Object.entries(allConsoleCommands)){
+		if(command.init) command.data = undefined;
+	}
+	for(const [key, command] of Object.entries(allCommands)){
+		if(command.init) command.data = undefined;
+	}
+}

@@ -469,6 +469,7 @@ class ObjectSet<T> {
 class ObjectMap<K, V> {
 	put(key:K, value:V):void;
 	get(key:K):V;
+	containsKey(key:K):boolean;
 	remove(key:K):V | null;
 	clear():void;
 	size:number;

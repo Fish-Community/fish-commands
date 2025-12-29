@@ -256,14 +256,14 @@ export type PlayerHistoryEntry = {
 }
 
 export type ClientCommandHandler = {
-	register(name:string, args:string, description:string, runner:(args:string[], player:mindustryPlayer) => unknown):void;
+	register(name:string, args:string, description:string, runner:CommandRunner<mindustryPlayer>):void;
 	removeCommand(name:string):void;
 }
 
 export type ServerCommandHandler = {
 	/** Executes a server console command. */
 	handleMessage(command:string):void;
-	register(name:string, args:string, description:string, runner:(args:string[], player:mindustryPlayer) => unknown):void;
+	register(name:string, args:string, description:string, runner:CommandRunner<null>):void;
 	removeCommand(name:string):void;
 }
 
