@@ -22,7 +22,7 @@ import { setToArray } from '/funcs';
 export class FishPlayer {
 	static cachedPlayers:Record<string, FishPlayer> = {};
 	static readonly maxHistoryLength = 5;
-	static readonly saveVersion = 10;
+	static readonly saveVersion = 11;
 	static readonly chunkSize = 50000;
 
 	//Static transients
@@ -115,21 +115,12 @@ export class FishPlayer {
 		gamesWon: number;
 	};
 	showRankPrefix:boolean;
-	/**
-	 * 0: unknown
-	 * 1: refused / cancelled poll
-	 * 2: I won't or can't update to v8
-	 * 3: I will update to v8 if Fish updates to v8
-	 * 4: I have already updated to v8
-	 */
-	pollResponse: 0 | 1 | 2 | 3 | 4;
 
 	//TODO: fix this absolute mess of a constructor! I don't remember why this exists
 	constructor({
 		uuid, name, muted = false, autoflagged = false, unmarkTime: unmarked = -1,
 		highlight = null, history = [], rainbow = null, rank = "player", flags = [], usid,
 		chatStrictness = "chat", lastJoined, firstJoined, stats, showRankPrefix = true,
-		pollResponse = 0,
 	}:Partial<FishPlayerData>, player:mindustryPlayer | null){
 		this.uuid = uuid ?? player?.uuid() ?? crash(`Attempted to create FishPlayer with no UUID`);
 		this.name = name ?? player?.name ?? "Unnamed player [ERROR]";
@@ -157,7 +148,6 @@ export class FishPlayer {
 			gamesWon: 0,
 		};
 		this.showRankPrefix = showRankPrefix;
-		this.pollResponse = pollResponse;
 	}
 
 	//#region getplayer
@@ -778,10 +768,9 @@ We apologize for the inconvenience.`
 				this.showAdNext = false;
 				showAd = true;
 			}
-			const showV8migration = Version.number === 7;
-			const messagePool = showV8migration ? tips.v8migration : showAd ? tips.ads : (Mode.isChristmas && Math.random() > 0.6) ? tips.christmas : tips.normal;
+			const messagePool = showAd ? tips.ads : (Mode.isChristmas && Math.random() > 0.6) ? tips.christmas : tips.normal;
 			const messageText = messagePool[Math.floor(Math.random() * messagePool.length)];
-			const message = showV8migration ? messageText : showAd ? `[gold]${messageText}[]` : `[gold]Tip: ${messageText}[]`;
+			const message = showAd ? `[gold]${messageText}[]` : `[gold]Tip: ${messageText}[]`;
 
 			//Delay sending the message so it doesn't get lost in the spam of messages that usually occurs when you join
 			Timer.schedule(() => this.sendMessage(message), 3);
@@ -811,12 +800,45 @@ We apologize for the inconvenience.`
 	static readLegacy(fishPlayerData:string, player:mindustryPlayer | null){
 		return new this(JSON.parse(fishPlayerData), player);
 	}
-	static read(version:number, fishPlayerData:StringIO, player:mindustryPlayer | null){
+	static read(version:number, fishPlayerData:StringIO, player:mindustryPlayer | null):FishPlayer {
 		switch(version){
 			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
 				crash(`Version ${version} is not longer supported, this should not be possible`);
 				break;
-			case 10:
+			case 10: {
+				const fishP = new this({
+					uuid: fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null."),
+					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
+					muted: fishPlayerData.readBool(),
+					autoflagged: fishPlayerData.readBool(),
+					unmarkTime: fishPlayerData.readNumber(13),
+					highlight: fishPlayerData.readString(2),
+					history: fishPlayerData.readArray(str => ({
+						action: str.readString(2) ?? "null",
+						by: str.readString(2) ?? "null",
+						time: str.readNumber(15)
+					})),
+					rainbow: (n => n == 0 ? null : {speed: n})(fishPlayerData.readNumber(2)),
+					rank: fishPlayerData.readString(2) ?? "",
+					flags: fishPlayerData.readArray(str => str.readString(2), 2).filter((s):s is string => s != null),
+					usid: fishPlayerData.readString(2),
+					chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+					lastJoined: fishPlayerData.readNumber(15),
+					firstJoined: fishPlayerData.readNumber(15),
+					stats: {
+						blocksBroken: fishPlayerData.readNumber(10),
+						blocksPlaced: fishPlayerData.readNumber(10),
+						timeInGame: fishPlayerData.readNumber(15),
+						chatMessagesSent: fishPlayerData.readNumber(7),
+						gamesFinished: fishPlayerData.readNumber(5),
+						gamesWon: fishPlayerData.readNumber(5),
+					},
+					showRankPrefix: fishPlayerData.readBool(),
+				}, player);
+				fishPlayerData.readNumber(1); //discard pollResponse
+				return fishP;
+			}
+			case 11:
 				return new this({
 					uuid: fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null."),
 					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
@@ -845,7 +867,6 @@ We apologize for the inconvenience.`
 						gamesWon: fishPlayerData.readNumber(5),
 					},
 					showRankPrefix: fishPlayerData.readBool(),
-					pollResponse: fishPlayerData.readNumber(1) as 0 | 1 | 2 | 3 | 4,
 				}, player);
 			default: crash(`Unknown save version ${version}`);
 		}
@@ -877,7 +898,6 @@ We apologize for the inconvenience.`
 		out.writeNumber(this.stats.gamesFinished, 5, true);
 		out.writeNumber(this.stats.gamesWon, 5, true);
 		out.writeBool(this.showRankPrefix);
-		out.writeNumber(this.pollResponse, 1);
 	}
 	/** Saves cached FishPlayers to JSON in Core.settings. */
 	static saveAll(forceSaveSettings = true){

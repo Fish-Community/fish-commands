@@ -79,17 +79,6 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 var api = require("/api");
@@ -1170,70 +1159,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             reloader.end();
             Call.sendMessage("[orange]Player ".concat(sender.cleanedName, " changed the gamemode to ").concat(args.mode));
             outputSuccess("Changed mode to ".concat(args.mode));
-        }
-    }, v8upgrade: {
-        args: [],
-        perm: commands_1.Perm.none,
-        description: "Provides instructions to update to v8.",
-        handler: function (_a) {
-            var sender = _a.sender;
-            menus_1.Menu.menu("V8 Migration Information", "Where did you download Mindustry?", sender.con.mobile ? [
-                "Google Play Store",
-                "Apple App Store",
-                "itch.io",
-                "F-Droid (APK)",
-            ] : [
-                "Steam",
-                "itch.io",
-                "GitHub",
-                "Foo's Client",
-                "MindustryLauncher",
-            ], sender, { onCancel: 'reject', includeCancel: true }).then(function (response) {
-                var message = (0, utils_1.match)(response, {
-                    "Google Play Store": "It is possible to update by selecting the \"Join the beta\" option in the app's page, and then updating the game. It is also possible to switch back to v7 by leaving the beta program.",
-                    "Foo's Client": "It is easy to switch between v7 and v8 by simply clicking the button on the title screen.",
-                    "GitHub": "It is easy to update by downloading the Mindustry.jar file from the latest \"pre-release\" release. It is also easy to switch back to v7, by running your current Mindustry.jar file.",
-                    "itch.io": "It is easy to update by downloading the file marked \"unstable\". It is also easy to switch back to v7, by opening your existing installation of the game.",
-                    "F-Droid (APK)": "It is easy to update by downloading the latest release from F-Droid.",
-                    "Apple App Store": "It is possible to update to v8 by installing the TestFlight app and then using this link https://testflight.apple.com/join/79Azm1hZ to join the beta.",
-                    "Steam": "It is possible to update to v8 by right-clicking Mindustry in your library, selecting Properties -> Betas and selecting v8 beta. You can also switch back to v7 using this method.",
-                    "MindustryLauncher": "It is easy to update to v8 by specifying the version as \"v149\" or \"foo-v8-latest\" with the --version flag."
-                });
-                sender.sendMessage("[coral]V8 Migration[] for [accent]".concat(response, "[]: ").concat(message));
-            });
-        }
-    }, v8pollresults: {
-        args: [],
-        perm: commands_1.Perm.mod,
-        description: "Displays v8 poll results.",
-        requirements: [commands_1.Req.cooldownGlobal(10000)],
-        handler: function (_a) {
-            var e_1, _b;
-            var output = _a.output;
-            var totals = [0, 0, 0, 0, 0];
-            try {
-                for (var _c = __values(Object.values(players_1.FishPlayer.cachedPlayers)), _d = _c.next(); !_d.done; _d = _c.next()) {
-                    var player = _d.value;
-                    if (player.info().timesJoined >= 10) {
-                        totals[player.pollResponse]++;
-                    }
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            output("Poll not viewed: ".concat(totals[0], "\nPoll canceled: ").concat(totals[1], "\nI won't or can't update to v8: ").concat(totals[2], "\nI will update to v8 if Fish updates to v8: ").concat(totals[3], "\nI have already updated to v8: ").concat(totals[4]));
-        }
-    }, highscore: {
-        args: [],
-        perm: commands_1.Perm.none,
-        description: 'This command was moved to /mapinfo.',
-        handler: function () {
-            (0, commands_1.fail)("This command was moved to /mapinfo.");
         }
     } }));
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18;

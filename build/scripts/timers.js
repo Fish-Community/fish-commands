@@ -73,14 +73,12 @@ function initializeTimers() {
         }, 5, 2);
     //Tip
     Timer.schedule(function () {
-        var showV8migration = Version.number === 7 && Math.random() < 0.5;
         var showAd = Math.random() < 0.10; //10% chance every 15 minutes
-        var messagePool = showV8migration ? config.tips.v8migration :
-            showAd ? config.tips.ads :
-                (config.Mode.isChristmas && Math.random() > 0.5) ? config.tips.christmas :
-                    config.tips.normal;
+        var messagePool = showAd ? config.tips.ads :
+            (config.Mode.isChristmas && Math.random() > 0.5) ? config.tips.christmas :
+                config.tips.normal;
         var messageText = messagePool[Math.floor(Math.random() * messagePool.length)];
-        var message = showV8migration ? messageText : showAd ? "[gold]".concat(messageText, "[]") : "[gold]Tip: ".concat(messageText, "[]");
+        var message = showAd ? "[gold]".concat(messageText, "[]") : "[gold]Tip: ".concat(messageText, "[]");
         Call.sendMessage(message);
     }, 60, 15 * 60);
     //State check

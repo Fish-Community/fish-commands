@@ -50,15 +50,13 @@ export function initializeTimers(){
 		}, 5, 2);
 	//Tip
 	Timer.schedule(() => {
-		const showV8migration = Version.number === 7 && Math.random() < 0.5;
 		const showAd = Math.random() < 0.10; //10% chance every 15 minutes
 		const messagePool =
-			showV8migration ? config.tips.v8migration :
 			showAd ? config.tips.ads :
 			(config.Mode.isChristmas && Math.random() > 0.5) ? config.tips.christmas :
 			config.tips.normal;
 		const messageText = messagePool[Math.floor(Math.random() * messagePool.length)];
-		const message = showV8migration ? messageText : showAd ? `[gold]${messageText}[]` : `[gold]Tip: ${messageText}[]`;
+		const message = showAd ? `[gold]${messageText}[]` : `[gold]Tip: ${messageText}[]`;
 		Call.sendMessage(message);
 	}, 60, 15 * 60);
 	//State check

@@ -347,9 +347,6 @@ export const tips = {
 	staff: [
 
 	],
-	v8migration: [
-		`[coral]Announcement: Fish has updated to Mindustry v8. This server will remain on v7 temporarily, but it will also be upgraded in 1 week.\n[white]To learn how to update your game, run [accent]/v8upgrade[].`
-	],
 };
 export const rules = [
 	`# 1: [red]No griefing. This refers to intentionally hurting your own team in any way.`,

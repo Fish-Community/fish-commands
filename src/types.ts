@@ -246,7 +246,6 @@ export type FishPlayerData = {
 		gamesWon: number;
 	};
 	showRankPrefix: boolean;
-	pollResponse: 0 | 1 | 2 | 3 | 4;
 }
 
 export type PlayerHistoryEntry = {
