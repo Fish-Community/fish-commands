@@ -178,7 +178,7 @@ export const commands = commandList({
 						for(let j = minY; j <= maxY; j ++){
 							const tileData = tileHistory[`${i},${j}`];
 							if(!tileData) continue;
-							let history = StringIO.read(tileHistory[`${i},${j}`]!, str => str.readArray(d => ({
+							let history = StringIO.read(tileHistory[`${i},${j}`], str => str.readArray(d => ({
 								action: d.readString(2) ?? "??",
 								uuid: d.readString(3) ?? "??",
 								time: d.readNumber(16),
@@ -434,9 +434,7 @@ export const commands = commandList({
 					);
 				} else fail(`Command "${args.name}" does not exist.`);
 			} else {
-				const commands: {
-					[P in 'player' | 'mod' | 'admin' | 'member']: string[];
-				} = {
+				const commands: Record<'player' | 'mod' | 'admin' | 'member', string[]> = {
 					player: [],
 					mod: [],
 					admin: [],
@@ -458,10 +456,11 @@ export const commands = commandList({
 					case 'member':
 						output(`${Perm.member.color}-- Member commands --\n` + formatList(commands.member, Perm.member.color));
 						break;
-					default:
+					default: {
 						const pageNumber = args.name != undefined ? parseInt(args.name) : 1;
 						const page = chunkedPlayerCommands[pageNumber - 1] ?? fail(`"${args.name}" is an invalid page number.`);
 						output(`[sky]-- Commands page [lightgrey]${pageNumber}/${chunkedPlayerCommands.length}[sky] --\n` + formatList(page, '[sky]'));
+					}
 				}
 			}
 		},
@@ -694,7 +693,7 @@ Please stop attacking and [lime]build defenses[] first!`
 			if(!sender.hasPerm("mod")) sender.changedTeam = true;
 			sender.setTeam(team);
 			outputSuccess(f`Changed your team to ${team}.`);
-			if(reason) logAction(`changed team to ${team.name} on ${escapeTextDiscord(Vars.state.map.plainName())} with reason ${escapeTextDiscord(reason)}`, sender)
+			if(reason) logAction(`changed team to ${team.name} on ${escapeTextDiscord(Vars.state.map.plainName())} with reason ${escapeTextDiscord(reason)}`, sender);
 		},
 	},
 
@@ -756,7 +755,9 @@ Please stop attacking and [lime]build defenses[] first!`
 		requirements: [Req.cooldown(3000), Req.mode("survival"), Req.gameRunning],
 		async handler({sender, data:{manager}}){
 
-			if(!manager.session as boolean){ //Disable narrowing
+			//Disable narrowing, this is async
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+			if(!manager.session as boolean){
 				const option = await Menu.menu(
 					"Start a Next Wave Vote",
 					"Select the amount of waves you would like to skip.",
@@ -766,7 +767,7 @@ Please stop attacking and [lime]build defenses[] first!`
 						includeCancel: true,
 						optionStringifier: n => `${n} waves`
 					}
-				)
+				);
 				if(manager.session){
 					//Someone else started a vote
 					if(manager.session.data != option) fail(`Someone else started a vote with a different number of waves to skip.`);
@@ -936,7 +937,7 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 [green]Picking random winner: [yellow]${winner.name()}`
 				);
 			} else {
-				winner = highestVotedMaps.get(0)!.key;
+				winner = highestVotedMaps.get(0).key;
 				Call.sendMessage(`[green]Map voting complete! The next map will be [yellow]${winner.name()} [green]with [yellow]${highestVoteCount}[green] votes.`);
 			}
 			Vars.maps.setNextMapOverride(winner);
@@ -1059,7 +1060,7 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 					["Map information", () => FMap.getCreate(m).displayStats(f)!] as const
 				).toArray(), {
 					startPage: Vars.maps.customMaps().toArray().indexOf(Vars.state.map),
-				})
+				});
 			}
 		}
 	},

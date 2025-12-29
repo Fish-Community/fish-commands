@@ -18,7 +18,7 @@ export type NumberRepresentation = "i8" | "i16" | "i32" | "i64" | "u8" | "u16" |
 export type SerializablePrimitive = string | number | boolean | Team;
 export type SerializableDataClassConstructor<ClassInstance extends {}> = new (data:SerializableData<ClassInstance>) => ClassInstance;
 
-export type Serializable = SerializablePrimitive | Array<Serializable> | {
+export type Serializable = SerializablePrimitive | Serializable[] | {
 	[index: string]: Serializable;
 } | DataClass<Serializable>;
 
@@ -28,7 +28,7 @@ export type PrimitiveSchema<T extends SerializablePrimitive> =
 	T extends boolean ? ["boolean"] :
 	T extends Team ? ["team"] :
 never;
-export type ArraySchema<T extends Array<Serializable>> =
+export type ArraySchema<T extends Serializable[]> =
 	["array", length:number extends T["length"] ? NumberRepresentation & `u${string}` | number : T["length"], element:Schema<T[number]>];
 export type ObjectSchema<T extends Record<string, Serializable>> =
 	["object", children:Array<keyof T extends infer KT extends keyof T ? KT extends unknown ? [KT, Schema<T[KT]>] : never : never>];
@@ -42,7 +42,7 @@ export type VersionSchema<T extends Serializable> = ["version", number:number, r
 
 export type Schema<T extends Serializable, AllowVersion = true> = (
 	T extends SerializablePrimitive ? PrimitiveSchema<T> :
-	T extends Array<Serializable> ? ArraySchema<T> :
+	T extends Serializable[] ? ArraySchema<T> :
 	T extends infer ClassInstance extends DataClass<Serializable> ? DataClassSchema<ClassInstance> :
 	T extends Record<string, Serializable> ? ObjectSchema<T> :
 never) | (AllowVersion extends true ? VersionSchema<T> : never);
@@ -135,7 +135,7 @@ export class Serializer<T extends Serializable> {
 				}
 				break;
 			case 'class':
-				for(const [key, childSchema] of schema[2] as [string, Schema<Serializable>][]){
+				for(const [key, childSchema] of schema[2] as Array<[string, Schema<Serializable>]>){
 					//correspondence
 					this.writeNode<Serializable[]>(childSchema as ArraySchema<Serializable[]>, value[key], output);
 				}
@@ -149,6 +149,7 @@ export class Serializer<T extends Serializable> {
 						(value as Serializable[]).length = schema[1];
 					}
 				}
+				// eslint-disable-next-line @typescript-eslint/prefer-for-of
 				for(let i = 0; i < (value as Serializable[]).length; i ++){
 					this.writeNode(schema[2], (value as Serializable[])[i], output);
 				}
@@ -169,9 +170,10 @@ export class Serializer<T extends Serializable> {
 				switch(schema[1]){
 					case 'u8': return input.readUnsignedByte();
 					case 'u16': return input.readUnsignedShort();
-					case 'u32':
+					case 'u32': {
 						const value = input.readInt(); //Java does not support unsigned ints
 						return value < 0 ? value + 2**32 : value;
+					}
 					case 'i8': return input.readByte();
 					case 'i16': return input.readShort();
 					case 'i32': return input.readInt();
@@ -179,23 +181,27 @@ export class Serializer<T extends Serializable> {
 					case 'f32': return input.readFloat();
 					case 'f64': return input.readDouble();
 				}
+				schema[1] satisfies never;
+				break;
 			case 'boolean':
 				return input.readBoolean();
 			case 'team':
 				return Team.all[input.readByte()];
-			case 'object':
+			case 'object': {
 				const output:Record<string, Serializable> = {};
 				for(const [key, childSchema] of schema[1]){
 					output[key] = this.readNode<Serializable>(childSchema, input);
 				}
 				return output;
-			case 'class':
+			}
+			case 'class': {
 				const classData:Record<string, Serializable> = {};
-				for(const [key, childSchema] of schema[2] as [string, Schema<Serializable>][]){
+				for(const [key, childSchema] of schema[2] as Array<[string, Schema<Serializable>]>){
 					classData[key] = this.readNode<Serializable>(childSchema, input);
 				}
 				return new schema[1](classData);
-			case 'array':
+			}
+			case 'array': {
 				const length = typeof schema[1] === "number" ?
 					schema[1]
 				: this.readNode<number>(["number", schema[1]], input);
@@ -204,10 +210,12 @@ export class Serializer<T extends Serializable> {
 					array[i] = this.readNode<Serializable>(schema[2], input);
 				}
 				return array;
-			case 'version':
+			}
+			case 'version': {
 				const version = input.readByte();
 				if(version !== schema[1]) crash(`Expected version ${schema[1]}, but read ${version}`);
 				return this.readNode<Data>(schema[2], input);
+			}
 		}
 	}
 }
@@ -247,7 +255,8 @@ export function serialize<T extends Serializable>(
 	fixer?: (raw:T) => T,
 ){
 	return function decorate<
-		This extends { [P in Name]: T }, Name extends string | symbol
+		This extends Record<Name, T>, Name extends string | symbol
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	>(_: unknown, {addInitializer, access, name}:ClassFieldDecoratorContext<This, T> & {
 		name: Name;
 		static: true;

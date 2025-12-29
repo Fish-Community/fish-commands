@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/array-type */
 /*
 Copyright © BalaM314, 2025. All Rights Reserved.
 This file contains the menu system.
@@ -173,7 +174,7 @@ export const Menu = {
 	}:MenuConfirmProps = {}){
 		return Menu.confirm(target, description, { cancelText, confirmText, ...rest });
 	},
-	buttons<TButtonData extends unknown, TCancelBehavior extends MenuCancelOption>(
+	buttons<TButtonData, TCancelBehavior extends MenuCancelOption>(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:{ data: TButtonData; text: string; }[][],
 		cfg: Omit<MenuOptions<TButtonData, TCancelBehavior>, "optionStringifier" | "columns"> = {},
@@ -183,7 +184,7 @@ export const Menu = {
 			optionStringifier: o => o.text,
 		}).then(o => o?.data as TButtonData | (TCancelBehavior extends "null" ? null : never));
 	},
-	pages<TOption extends unknown, TCancelBehavior extends MenuCancelOption>(
+	pages<TOption, TCancelBehavior extends MenuCancelOption>(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:{ data: TOption; text: string; }[][][],
 		cfg: Pick<MenuOptions<TOption, TCancelBehavior>, "onCancel">,
@@ -216,8 +217,8 @@ export const Menu = {
 		showPage(0);
 		return promise;
 	},
-	textPages<TOption extends unknown, TCancelBehavior extends MenuCancelOption>(
-		this:void, target:FishPlayer, pages:(readonly [title:string, description:() => string])[],
+	textPages<TOption, TCancelBehavior extends MenuCancelOption>(
+		this:void, target:FishPlayer, pages:Array<readonly [title:string, description:() => string]>,
 		cfg: Pick<MenuOptions<TOption, TCancelBehavior>, "onCancel"> & {
 			/** Index or title of the initial page. */
 			startPage?: number | string;
@@ -265,7 +266,7 @@ export const Menu = {
 		showPage(index);
 		return promise;
 	},
-	scroll<TOption extends unknown, TCancelBehavior extends MenuCancelOption>(
+	scroll<TOption, TCancelBehavior extends MenuCancelOption>(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:{ data: TOption; text: string; }[][],
 		cfg: Pick<MenuOptions<TOption, TCancelBehavior>, "onCancel" | "columns"> & {
@@ -316,9 +317,9 @@ export const Menu = {
 		showPage(Math.min(cfg.x ?? 0, width - cols), Math.min(cfg.y ?? 0, height - rows));
 		return promise;
 	},
-	pagedListButtons<TButtonData extends unknown, MenuCancelBehavior extends MenuCancelOption = "ignore">(
+	pagedListButtons<TButtonData, MenuCancelBehavior extends MenuCancelOption = "ignore">(
 		this:void, target:FishPlayer, title:string, description:string,
-		options:{ data: TButtonData; text: string; }[],
+		options:Array<{ data: TButtonData; text: string; }>,
 		{ rowsPerPage = 10, columns = 3, ...cfg }: Pick<MenuOptions<TButtonData, MenuCancelBehavior>, "columns" | "onCancel"> & {
 			/** @default 10 */
 			rowsPerPage?:number;
@@ -329,7 +330,7 @@ export const Menu = {
 		if(pages.length <= 1) return Menu.buttons(target, title, description, pages[0] ?? [], cfg);
 		return Menu.pages(target, title, description, pages, cfg);
 	},
-	pagedList<TButtonData extends unknown, MenuCancelBehavior extends MenuCancelOption = "ignore">(
+	pagedList<TButtonData, MenuCancelBehavior extends MenuCancelOption = "ignore">(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:TButtonData[],
 		{ rowsPerPage = 10, columns = 3, optionStringifier = String, ...cfg }: Pick<MenuOptions<TButtonData, MenuCancelBehavior>, "columns" | "onCancel" | "optionStringifier"> & {
@@ -344,6 +345,6 @@ export const Menu = {
 		if(pages.length <= 1) return Menu.buttons(target, title, description, pages[0] ?? [], cfg);
 		return Menu.pages(target, title, description, pages, cfg);
 	}
-}
+};
 
 export { registeredListeners as listeners };

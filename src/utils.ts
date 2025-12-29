@@ -17,7 +17,7 @@ export function memoizeChatFilter(impl:(arg:string) => string){
 	let lastCleanedInput:string | null = null;
 	let lastOutput:string | null = null;
 	return function memoized(input:string):string {
-		let cleanedInput = removeFoosChars(input);
+		const cleanedInput = removeFoosChars(input);
 		if(cleanedInput === lastCleanedInput) return lastOutput!;
 		lastCleanedInput = cleanedInput;
 		return lastOutput = impl(input);
@@ -41,7 +41,7 @@ export function formatTime(time:number){
 		hours && `${hours} hour${hours != 1 ? "s" : ""}`,
 		minutes && `${minutes} minute${minutes != 1 ? "s" : ""}`,
 		(seconds || time < 1000) && `${seconds} second${seconds != 1 ? "s" : ""}`,
-	].filter(Boolean).join(", ")
+	].filter(Boolean).join(", ");
 }
 
 export function formatTimeShort(time:number){
@@ -61,7 +61,7 @@ export function formatTimeShort(time:number){
 		hours && `${hours}h`,
 		minutes && `${minutes}m`,
 		(seconds || time < 1000) && `${seconds}s`,
-	].filter(Boolean).join(" ")
+	].filter(Boolean).join(" ");
 }
 
 //TODO move this data to be right next to Mode
@@ -98,7 +98,7 @@ export function formatTimeRelative(time:number, raw?:boolean){
 export function getColor(input:string):Color | null {
 	try {
 		if(input.includes(',')){
-			let formattedColor = input.split(',');
+			const formattedColor = input.split(',');
 			const col = {
 				r: Number(formattedColor[0]),
 				g: Number(formattedColor[1]),
@@ -123,11 +123,11 @@ export function nearbyEnemyTile(unit:Unit, dist:number):Building | null {
 	//because the indexer is buggy
 	if(dist > 10) crash(`nearbyEnemyTile(): dist (${dist}) is too high!`);
 
-	let x = Math.floor(unit.x / Vars.tilesize);
-	let y = Math.floor(unit.y / Vars.tilesize);
+	const x = Math.floor(unit.x / Vars.tilesize);
+	const y = Math.floor(unit.y / Vars.tilesize);
 	for(let i = -dist; i <= dist; i ++){
 		for(let j = -dist; j <= dist; j ++){
-			let build = Vars.world.build(x + i, y + j);
+			const build = Vars.world.build(x + i, y + j);
 			if(build && build.team != unit.team && build.team != Team.derelict) return build;
 		}
 	}
@@ -151,9 +151,9 @@ export function getTeam(team:string):Team | string {
 
 /** Attempts to parse an Item from the input. */
 export function getItem(item:string):Item | string {
-	let temp: Item;
-	if(item in Items && (temp = Items[item as keyof typeof Items]) instanceof Item) return temp;
-	else if(temp = Vars.content.items().find(t => t.name.includes(item.toLowerCase()))!) return temp;
+	let temp: Item | null;
+	if(item in Items && (temp = Items[item]) instanceof Item) return temp;
+	else if((temp = Vars.content.items().find(t => t.name.includes(item.toLowerCase())))) return temp;
 	return `"${item}" is not a valid item.`;
 }
 
@@ -162,7 +162,7 @@ export function getItem(item:string):Item | string {
  * @param wordList "chat" is least strict, followed by "strict", and "name" is most strict.
  * @returns a
  */
-export function matchFilter(input:string, wordList = "chat" as "chat" | "strict" | "name", aggressive = false):false | string | [string] {
+export function matchFilter(input:string, wordList = "chat" as "chat" | "strict" | "name", aggressive = false):false | string {
 	const currentBannedWords = [
 		wordList == "name" ? bannedWords.normal.filter(w => w[0] !== "uwu") : bannedWords.normal,
 		(wordList == "strict" || wordList == "name") && bannedWords.strict,
@@ -182,7 +182,7 @@ export function matchFilter(input:string, wordList = "chat" as "chat" | "strict"
 						banned === uuidPattern ? `a Mindustry UUID` :
 						banned === ipPattern || banned === ipPortPattern ? `an IP address` :
 						//parsing regex with regex, massive hack
-						banned instanceof RegExp ? banned.source.replace(/\\b|\(\?\<\!.+?\)|\(\?\!.+?\)/g, "") :
+						banned instanceof RegExp ? banned.source.replace(/\\b|\(\?<!.+?\)|\(\?!.+?\)/g, "") :
 						banned
 					);
 			}
@@ -201,10 +201,8 @@ export function cleanText(text:string, applyAntiEvasion = false){
 	let replacedText =
 		multiCharSubstitutions.reduce((acc, [from, to]) => acc.replace(from, to),
 			Strings.stripColors(removeFoosChars(text))
-			.split("").map(c => substitutions[c] ?? c).join("")
-		)
-		.toLowerCase()
-		.trim();
+				.split("").map(c => substitutions[c] ?? c).join("")
+		).toLowerCase().trim();
 	if(applyAntiEvasion){
 		replacedText = replacedText.replace(new RegExp(`[^a-zA-Z0-9]`, "gi"), "");
 	}
@@ -215,19 +213,19 @@ export function isImpersonator(name:string, isAdmin:boolean):false | string {
 	const replacedText = cleanText(name);
 	const antiEvasionText = cleanText(name, true);
 	//very clean code i know
-	const filters:[check:Boolf<string>, message:string][] = (
-		(input: (string | [string | RegExp | Boolf<string>, string])[]) =>
-		input.map(i =>
-			Array.isArray(i) ? [
-				typeof i[0] == "string" ? replacedText => replacedText.includes(<string>i[0]) :
-				i[0] instanceof RegExp ? replacedText => (<RegExp>i[0]).test(replacedText) :
-				i[0],
-				i[1]
-			] : [
-				replacedText => replacedText.includes(i),
-				`Name contains disallowed ${i.length == 1 ? "icon" : "word"} '${i}'`
-			]
-		)
+	const filters:Array<[check:Boolf<string>, message:string]> = (
+		(input: Array<string | [string | RegExp | Boolf<string>, string]>) =>
+			input.map(i =>
+				Array.isArray(i) ? [
+					typeof i[0] == "string" ? replacedText => replacedText.includes((i[0] as string)) :
+					i[0] instanceof RegExp ? replacedText => (i[0] as RegExp).test(replacedText) :
+					i[0],
+					i[1]
+				] : [
+					replacedText => replacedText.includes(i),
+					`Name contains disallowed ${i.length == 1 ? "icon" : "word"} '${i}'`
+				]
+			)
 	)([
 		[/\bserver\b/, "Name contains disallowed word 'server'"],
 		"admin", "moderator", "staff", "owner",
@@ -263,7 +261,7 @@ export function logAction(action:string, by?:FishPlayer | string, to?:FishPlayer
 	}
 	if(to){ //overload 3
 		let name:string, uuid:string, ip:string;
-		let actor:string = typeof by === "string" ? by : escapeTextDiscord(Strings.stripColors(by.name));
+		const actor:string = typeof by === "string" ? by : escapeTextDiscord(Strings.stripColors(by.name));
 		if(to instanceof FishPlayer){
 			name = escapeTextDiscord(to.name);
 			uuid = to.uuid;
@@ -295,13 +293,13 @@ export function logAction(action:string, by?:FishPlayer | string, to?:FishPlayer
 
 /** @returns the number of milliseconds. */
 export function parseTimeString(str:string):number | null {
-	const formats = (<[RegExp, number][]>[
+	const formats = ([
 		[/(\d+)s/, 1],
 		[/(\d+)m/, 60],
 		[/(\d+)h/, 3600],
 		[/(\d+)d/, 86400],
 		[/(\d+)w/, 604800]
-	]).map(([regex, mult]) => [Pattern.compile(regex.source), mult] as const);
+	] as Array<[RegExp, number]>).map(([regex, mult]) => [Pattern.compile(regex.source), mult] as const);
 	if(str == "forever") return (maxTime - Date.now() - 10000);
 	for(const [pattern, mult] of formats){
 		//rhino regex doesn't work
@@ -339,8 +337,8 @@ export function isBuildable(block:Block){
 export function getUnitType(type:string):UnitType | string {
 	validUnits ??= Vars.content.units().select((u:UnitType) => !(u instanceof MissileUnitType || u.internal));
 	let temp;
-	if(temp = validUnits!.find(u => u.name == type)) return temp;
-	else if(temp = validUnits!.find((t:UnitType) => t.name.includes(type.toLowerCase()))) return temp;
+	if((temp = validUnits.find(u => u.name == type))) return temp;
+	else if((temp = validUnits.find((t:UnitType) => t.name.includes(type.toLowerCase())))) return temp;
 	return `"${type}" is not a valid unit type.`;
 }
 
@@ -350,7 +348,7 @@ export function getMap(name:string):MMap | "none" | "multiple" {
 	const mode = Vars.state.rules.mode();
 	const maps = Vars.maps.all() /*.select(m => mode.valid(m))*/; //this doesn't work...
 	
-	const filters:((m:MMap) => boolean)[] = [
+	const filters:Array<(m:MMap) => boolean> = [
 		//m => m.name() === name, //exact match
 		m => m.name().replace(/ /g, "_") === name, //exact match with spaces replaced
 		m => m.name().replace(/ /g, "_").toLowerCase() === name.toLowerCase(), //exact match with spaces replaced ignoring case
@@ -363,7 +361,7 @@ export function getMap(name:string):MMap | "none" | "multiple" {
 	
 	for(const filter of filters){
 		const matchingMaps = maps.select(filter);
-		if(matchingMaps.size == 1) return matchingMaps.get(0)!;
+		if(matchingMaps.size == 1) return matchingMaps.get(0);
 		else if(matchingMaps.size > 1) return "multiple";
 		//if empty, go to next filter
 	}
@@ -384,8 +382,8 @@ export function getBlock(block:string, filter:"buildable" | "air" | "all"):Block
 	} satisfies Record<string, (b:Block) => boolean>)[filter];
 	let out:Block | null;
 	if(block in Blocks && Blocks[block] instanceof Block && check(Blocks[block])) return Blocks[block];
-	else if(out = Vars.content.blocks().find(t => t.name.includes(block.toLowerCase()) && check(t))) return out!;
-	else if(out = Vars.content.blocks().find(t => t.name.replace(/-/g, "").includes(block.toLowerCase().replace(/ /g, "")) && check(t))) return out!;
+	else if((out = Vars.content.blocks().find(t => t.name.includes(block.toLowerCase()) && check(t)))) return out;
+	else if((out = Vars.content.blocks().find(t => t.name.replace(/-/g, "").includes(block.toLowerCase().replace(/ /g, "")) && check(t)))) return out;
 	else if(block.includes("airblast")) return Blocks.blastDrill;
 	return `"${block}" is not a valid block.`;
 }
@@ -407,7 +405,7 @@ export function logErrors<T extends (...args:any[]) => unknown>(message:string, 
 		try {
 			return func(...args);
 		} catch(err){
-			Log.err(message)
+			Log.err(message);
 			Log.err(parseError(err));
 		}
 	} as T;
@@ -419,8 +417,14 @@ export function definitelyRealMemoryCorruption(){
 	api.sendModerationMessage(`Activated memory corruption prank on server ${Vars.state.rules.mode().name()}`);
 	let t1f = false;
 	let t2f = false;
-	fishState.corruption_t1 = Timer.schedule(() => Vars.state.rules.defaultTeam.data().cores.first().items.set(Items.dormantCyst, (t1f = t1f !== true) ? 69 : 420), 0, 0.4, 600);
-	fishState.corruption_t2 = Timer.schedule(() => Vars.state.rules.defaultTeam.data().cores.first().items.set(Items.fissileMatter, (t2f = t2f !== true) ? 999 : 123), 0, 1.5, 200);
+	fishState.corruption_t1 = Timer.schedule(() => {
+		t1f = !t1f;
+		Vars.state.rules.defaultTeam.items()?.set(Items.dormantCyst, t1f ? 69 : 420);
+	}, 0, 0.4, 600);
+	fishState.corruption_t2 = Timer.schedule(() => {
+		t2f = !t2f;
+		Vars.state.rules.defaultTeam.items()?.set(Items.fissileMatter, t2f ? 999 : 123);
+	}, 0, 1.5, 200);
 	const hexString = Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, "0");
 	Call.sendMessage("[scarlet]Error: internal server error.");
 	Call.sendMessage(`[scarlet]Error: memory corruption: mindustry.world.modules.ItemModule@${hexString}`);
@@ -455,7 +459,9 @@ export function logHTrip(player:FishPlayer, name:string, message?:string){
 	api.sendModerationMessage(`Player \`${player.cleanedName}\` (\`${player.uuid}\`/\`${player.ip()}\`) tripped **${name}**${message ? `: ${message}` : ""}\n**Server:** ${Gamemode.name()}`);
 }
 
-export function setType<T>(input:unknown):asserts input is T {}
+export function setType<T>(input:unknown):asserts input is T {
+	//does not do any checking
+}
 
 export function untilForever(){
 	return (maxTime - Date.now() - 10000);
@@ -466,9 +472,9 @@ export function colorNumber(number:number, getColor:(number:number) => string, s
 }
 
 export function getAntiBotInfo(side:"client" | "server"){
-	let color = side == "client" ? "[acid]" : "&ly";
-	let True = side == "client" ? "[red]true[]" : "&lrtrue";
-	let False = side == "client" ? "[green]false[]" : "&gfalse";
+	const color = side == "client" ? "[acid]" : "&ly";
+	const True = side == "client" ? "[red]true[]" : "&lrtrue";
+	const False = side == "client" ? "[green]false[]" : "&gfalse";
 	return (
 `${color}Flag count(last 1 minute period): ${FishPlayer.flagCount}
 ${color}Autobanning flagged players: ${FishPlayer.shouldWhackFlaggedPlayers() ? True : False}
@@ -574,7 +580,7 @@ const replacements = ([
 
 let foolCounter = 0;
 export const foolifyChat = memoizeChatFilter(function foolifyChat(message:string){
-	let cleanedMessage = removeFoosChars(message);
+	const cleanedMessage = removeFoosChars(message);
 	setShuffle: {
 		if(foolCounter < 5){
 			//Skip the next 5 messages no matter what
@@ -603,6 +609,7 @@ export const foolifyChat = memoizeChatFilter(function foolifyChat(message:string
 	}
 	if(Math.random() < 0.02){
 		return cleanedMessage.split("").reverse().join("");
+	// eslint-disable-next-line no-dupe-else-if
 	} else if(Math.random() < 0.02){
 		return "[scarlet]I really hope everyone is having a fun time :} <3";
 	} else if(Math.random() < 0.005){
@@ -614,6 +621,7 @@ export const foolifyChat = memoizeChatFilter(function foolifyChat(message:string
 
 export const addToTileHistory = logErrors("Error while saving a tilelog entry", (e:any) => {
 
+	// eslint-disable-next-line prefer-const
 	let tile:Tile, uuid:string, action:string, type:string, time:number = Date.now();
 	if(e instanceof EventType.BlockBuildBeginEvent){
 		tile = e.tile;
@@ -676,7 +684,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		if(e.carrier.isPlayer()) return; //This event would have been handled by actionfilter
 		const controller = e.carrier.controller();
 		if(!(controller instanceof LogicAI)) return;
-		uuid = `${e.carrier.type.name} controlled by ${controller.controller.block.name} at ${controller.controller.tileX()},${controller.controller.tileY()} last accessed by ${e.carrier.getControllerName()}`
+		uuid = `${e.carrier.type.name} controlled by ${controller.controller.block.name} at ${controller.controller.tileX()},${controller.controller.tileY()} last accessed by ${e.carrier.getControllerName()}`;
 		if(e.build){
 			tile = e.build.tile;
 			type = e.build.block.name;
@@ -764,7 +772,7 @@ export function getHash(file: Fi, algorithm: string = "SHA-1"): string | undefin
 			(byte & 0xFF).toString(16).padStart(2, "0")
 		).join("");
 	} catch (e) {
-		Log.err(`Cannot generate ${algorithm}, ${e}`);
+		Log.err(`Cannot generate ${algorithm}, ${String(e)}`);
 		return undefined;
 	}
 }

@@ -43,7 +43,7 @@ export function getStopped(uuid:string, callback: (unmark:any) => unknown, callb
 	function fail(err:string){
 		Log.err(`[API] Network error when trying to call api.getStopped()`);
 		if(err) Log.err(err);
-		if(callbackError) callbackError(err)
+		if(callbackError) callbackError(err);
 		else callback(null);
 	}
 
@@ -64,13 +64,16 @@ export function getStopped(uuid:string, callback: (unmark:any) => unknown, callb
 	});
 }
 
-let cachedIps:Record<string, boolean | undefined> = {};
+const cachedIps:Record<string, boolean | undefined> = {};
 /** Make an API request to see if an IP is likely VPN. */
 export function isVpn(ip:string, callback: (isVpn:boolean) => unknown, callbackError?: (errorMessage:Throwable) => unknown){
 	if(ip in cachedIps) return callback(cachedIps[ip]!);
 	Http.get(`http://ip-api.com/json/${ip}?fields=proxy,hosting`, (res) => {
 		const data = res.getResultAsString();
-		const json = JSON.parse(data);
+		const json = JSON.parse(data) as {
+			proxy: boolean;
+			hosting: boolean;
+		};
 		const isVpn = json.proxy || json.hosting;
 		cachedIps[ip] = isVpn;
 		FishPlayer.stats.numIpsChecked ++;
@@ -141,7 +144,7 @@ export function ban(data:{ip?:string; uuid?:string;}, callback:(status:string) =
 	req.timeout = 10000;
 	req.error(() => Log.err(`[API] Network error when trying to call api.ban(${data.ip}, ${data.uuid})`));
 	req.submit((response) => {
-		let str = response.getResultAsString();
+		const str = response.getResultAsString();
 		if(!str.length) return Log.err(`[API] Network error(empty response) when trying to call api.ban()`);
 		callback(JSON.parse(str).data);
 	});
@@ -156,7 +159,7 @@ export function unban(data:{ip?:string; uuid?:string;}, callback:(status:string,
 	req.timeout = 10000;
 	req.error(() => Log.err(`[API] Network error when trying to call api.ban({${data.ip}, ${data.uuid}})`));
 	req.submit((response) => {
-		let str = response.getResultAsString();
+		const str = response.getResultAsString();
 		if(!str.length) return Log.err(`[API] Network error(empty response) when trying to call api.unban()`);
 		const parsedData = JSON.parse(str);
 		callback(parsedData.status, parsedData.error);

@@ -347,7 +347,7 @@ function processArgs(args, processedCmdArgs, allowMenus) {
             }
             //Deserialize the arg
             switch (cmdArg.type) {
-                case "player":
+                case "player": {
                     var output = players_1.FishPlayer.getOneByString(args[i]);
                     if (output == "none")
                         return { error: "Player \"".concat(args[i], "\" not found.") };
@@ -355,6 +355,7 @@ function processArgs(args, processedCmdArgs, allowMenus) {
                         return { error: "Name \"".concat(args[i], "\" could refer to more than one player.") };
                     outputArgs[cmdArg.name] = output;
                     break;
+                }
                 case "offlinePlayer":
                     if (globals_1.uuidPattern.test(args[i])) {
                         var player = players_1.FishPlayer.getById(args[i]);
@@ -366,21 +367,22 @@ function processArgs(args, processedCmdArgs, allowMenus) {
                         outputArgs[cmdArg.name] = players_1.FishPlayer.getFromInfo(Vars.netServer.admins.getInfo(args[i].split("create:")[1]));
                     }
                     else {
-                        var output_1 = players_1.FishPlayer.getOneOfflineByName(args[i]);
-                        if (output_1 == "none")
+                        var output = players_1.FishPlayer.getOneOfflineByName(args[i]);
+                        if (output == "none")
                             return { error: "Player \"".concat(args[i], "\" not found.") };
-                        else if (output_1 == "multiple")
+                        else if (output == "multiple")
                             return { error: "Name \"".concat(args[i], "\" could refer to more than one player. Try specifying by ID.") };
-                        outputArgs[cmdArg.name] = output_1;
+                        outputArgs[cmdArg.name] = output;
                     }
                     break;
-                case "team":
+                case "team": {
                     var team = (0, utils_1.getTeam)(args[i]);
                     if (typeof team == "string")
                         return { error: team };
                     outputArgs[cmdArg.name] = team;
                     break;
-                case "number":
+                }
+                case "number": {
                     var number = Number(args[i]);
                     if (isNaN(number)) {
                         if (/\(\d+,/.test(args[i]))
@@ -392,12 +394,14 @@ function processArgs(args, processedCmdArgs, allowMenus) {
                     }
                     outputArgs[cmdArg.name] = number;
                     break;
-                case "time":
+                }
+                case "time": {
                     var milliseconds = (0, utils_1.parseTimeString)(args[i]);
                     if (milliseconds == null)
                         return { error: "Invalid time string \"".concat(args[i], "\"") };
                     outputArgs[cmdArg.name] = milliseconds;
                     break;
+                }
                 case "string":
                     outputArgs[cmdArg.name] = args[i];
                     break;
@@ -426,24 +430,26 @@ function processArgs(args, processedCmdArgs, allowMenus) {
                         default: return { error: "Argument ".concat(args[i], " is not a boolean. Try \"true\" or \"false\".") };
                     }
                     break;
-                case "block":
+                case "block": {
                     var block = (0, utils_1.getBlock)(args[i], "air");
                     if (typeof block == "string")
                         return { error: block };
                     outputArgs[cmdArg.name] = block;
                     break;
-                case "unittype":
+                }
+                case "unittype": {
                     var unit = (0, utils_1.getUnitType)(args[i]);
                     if (typeof unit == "string")
                         return { error: unit };
                     outputArgs[cmdArg.name] = unit;
                     break;
+                }
                 case "uuid":
                     if (!globals_1.uuidPattern.test(args[i]))
                         return { error: "Invalid uuid string \"".concat(args[i], "\"") };
                     outputArgs[cmdArg.name] = args[i];
                     break;
-                case "map":
+                case "map": {
                     var map = (0, utils_1.getMap)(args[i]);
                     if (map == "none")
                         return { error: "Map \"".concat(args[i], "\" not found.") };
@@ -451,7 +457,8 @@ function processArgs(args, processedCmdArgs, allowMenus) {
                         return { error: "Name \"".concat(args[i], "\" could refer to more than one map. Be more specific.") };
                     outputArgs[cmdArg.name] = map;
                     break;
-                case "rank":
+                }
+                case "rank": {
                     var ranks = ranks_1.Rank.getByInput(args[i]);
                     if (ranks.length == 0)
                         return { error: "Unknown rank \"".concat(args[i], "\"") };
@@ -459,7 +466,8 @@ function processArgs(args, processedCmdArgs, allowMenus) {
                         return { error: "Ambiguous rank \"".concat(args[i], "\"") };
                     outputArgs[cmdArg.name] = ranks[0];
                     break;
-                case "roleflag":
+                }
+                case "roleflag": {
                     var roleflags = ranks_1.RoleFlag.getByInput(args[i]);
                     if (roleflags.length == 0)
                         return { error: "Unknown role flag \"".concat(args[i], "\"") };
@@ -467,12 +475,14 @@ function processArgs(args, processedCmdArgs, allowMenus) {
                         return { error: "Ambiguous role flag \"".concat(args[i], "\"") };
                     outputArgs[cmdArg.name] = roleflags[0];
                     break;
-                case "item":
+                }
+                case "item": {
                     var item = (0, utils_1.getItem)(args[i]);
                     if (typeof item === "string")
                         return { error: item };
                     outputArgs[cmdArg.name] = item;
                     break;
+                }
                 default:
                     cmdArg.type;
                     (0, funcs_4.crash)("impossible");
@@ -763,6 +773,8 @@ function register(commands, clientHandler, serverHandler) {
                     return;
                 }
                 //Recursively resolve unresolved args (such as players that need to be determined through a menu)
+                // let it float, the then() handler cannot crash
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 resolveArgsRecursive(output.processedArgs, output.unresolvedArgs, fishSender).then(function (resolvedArgs) { return __awaiter(_this, void 0, void 0, function () {
                     var usageData, failed, args_1, err_1;
                     var _a, _b;

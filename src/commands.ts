@@ -129,7 +129,7 @@ export class Perm {
 	){
 		if(typeof check == "string"){
 			if(Rank.getByName(check) == null) crash(`Invalid perm ${name}: invalid rank name ${check}`);
-			this.check = fishP => fishP.ranksAtLeast(check as RankName);
+			this.check = fishP => fishP.ranksAtLeast(check);
 		} else {
 			this.check = check;
 		}
@@ -161,7 +161,7 @@ export const Req = {
 		!Gamemode[mode]()
 			|| fail(`This command is disabled in ${formatModeName(mode)}`),
 	moderate: <T extends string>(argName:T, allowSameRank:boolean = false, minimumLevel:PermType = "mod", allowSelfIfUnauthorized = false) =>
-		({args, sender}:{args:{[K in T]?: FishPlayer;}, sender:FishPlayer}) =>
+		({args, sender}:{args:Partial<Record<T, FishPlayer>>, sender:FishPlayer}) =>
 			(args[argName] == undefined || sender.canModerate(args[argName], !allowSameRank, minimumLevel, allowSelfIfUnauthorized)
 				|| fail(`You do not have permission to perform moderation actions on this player.`)),
 	cooldown: (durationMS:number) => ({lastUsedSuccessfullySender}:FishCommandHandlerData<never, unknown>) =>
@@ -205,9 +205,9 @@ export function formatArg(a:string){
 
 /** Joins multi-word arguments that have been groups with quotes. Ex: turns [`"a`, `b"`] into [`a b`]*/
 function joinArgs(rawArgs:string[]){
-	let outputArgs = [];
+	const outputArgs = [];
 	let groupedArg:string[] | null = null;
-	for(let arg of rawArgs){
+	for(const arg of rawArgs){
 		if(arg.startsWith(`"`) && groupedArg == null){
 			groupedArg = [];
 		}
@@ -235,8 +235,8 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 } | {
 	error: string;
 }{
-	let outputArgs:Record<string, FishCommandArgType> = {};
-	let unresolvedArgs:CommandArg[] = [];
+	const outputArgs:Record<string, FishCommandArgType> = {};
+	const unresolvedArgs:CommandArg[] = [];
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
 		if(!(i in args) || args[i] === ""){
 			//if the arg was not provided or it was empty
@@ -251,12 +251,13 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 
 		//Deserialize the arg
 		switch(cmdArg.type){
-			case "player":
+			case "player": {
 				const output = FishPlayer.getOneByString(args[i]);
 				if(output == "none") return {error: `Player "${args[i]}" not found.`};
 				else if(output == "multiple") return {error: `Name "${args[i]}" could refer to more than one player.`};
 				outputArgs[cmdArg.name] = output;
 				break;
+			}
 			case "offlinePlayer":
 				if(uuidPattern.test(args[i])){
 					const player = FishPlayer.getById(args[i]);
@@ -275,12 +276,13 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 					outputArgs[cmdArg.name] = output;
 				}
 				break;
-			case "team":
+			case "team": {
 				const team = getTeam(args[i]);
 				if(typeof team == "string") return {error: team};
 				outputArgs[cmdArg.name] = team;
 				break;
-			case "number":
+			}
+			case "number": {
 				let number = Number(args[i]);
 				if(isNaN(number)){
 					if(/\(\d+,/.test(args[i]))
@@ -293,11 +295,13 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 				}
 				outputArgs[cmdArg.name] = number;
 				break;
-			case "time":
+			}
+			case "time": {
 				const milliseconds = parseTimeString(args[i]);
 				if(milliseconds == null) return {error: `Invalid time string "${args[i]}"`};
 				outputArgs[cmdArg.name] = milliseconds;
 				break;
+			}
 			case "string":
 				outputArgs[cmdArg.name] = args[i];
 				break;
@@ -308,43 +312,49 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 					default: return {error: `Argument ${args[i]} is not a boolean. Try "true" or "false".`};
 				}
 				break;
-			case "block":
+			case "block": {
 				const block = getBlock(args[i], "air");
 				if(typeof block == "string") return {error: block};
 				outputArgs[cmdArg.name] = block;
 				break;
-			case "unittype":
+			}
+			case "unittype": {
 				const unit = getUnitType(args[i]);
 				if(typeof unit == "string") return {error: unit};
 				outputArgs[cmdArg.name] = unit;
 				break;
+			}
 			case "uuid":
 				if(!uuidPattern.test(args[i])) return {error: `Invalid uuid string "${args[i]}"`};
 				outputArgs[cmdArg.name] = args[i];
 				break;
-			case "map":
+			case "map": {
 				const map = getMap(args[i]);
 				if(map == "none") return {error: `Map "${args[i]}" not found.`};
 				else if(map == "multiple") return {error: `Name "${args[i]}" could refer to more than one map. Be more specific.`};
 				outputArgs[cmdArg.name] = map;
 				break;
-			case "rank":
+			}
+			case "rank": {
 				const ranks = Rank.getByInput(args[i]);
 				if(ranks.length == 0) return {error:`Unknown rank "${args[i]}"`};
 				if(ranks.length > 1) return {error:`Ambiguous rank "${args[i]}"`};
 				outputArgs[cmdArg.name] = ranks[0];
 				break;
-			case "roleflag":
+			}
+			case "roleflag": {
 				const roleflags = RoleFlag.getByInput(args[i]);
 				if(roleflags.length == 0) return {error:`Unknown role flag "${args[i]}"`};
 				if(roleflags.length > 1) return {error:`Ambiguous role flag "${args[i]}"`};
 				outputArgs[cmdArg.name] = roleflags[0];
 				break;
-			case "item":
+			}
+			case "item": {
 				const item = getItem(args[i]);
 				if(typeof item === "string") return { error: item };
 				outputArgs[cmdArg.name] = item;
 				break;
+			}
 			default: cmdArg.type satisfies never; crash("impossible");
 		}
 	}
@@ -362,8 +372,8 @@ const outputFormatter_server = tagProcessorPartial<Formattable, string | null>((
 	} else if(chunk instanceof Error){
 		return `&r${escapeStringColorsServer(chunk.toString())}&fr`;
 	} else if(chunk instanceof Player){
-		const player = chunk as mindustryPlayer; //not sure why this is necessary, typescript randomly converts any to unknown
-		return `&cPlayer#${player.id} (${escapeStringColorsServer(Strings.stripColors(player.name))})&fr`
+		const player = chunk; //not sure why this is necessary, typescript randomly converts any to unknown
+		return `&cPlayer#${player.id} (${escapeStringColorsServer(Strings.stripColors(player.name))})&fr`;
 	} else if(typeof chunk == "string"){
 		if(uuidPattern.test(chunk)){
 			return `&b${chunk}&fr`;
@@ -482,10 +492,10 @@ const f_server = Object.assign(outputFormatter_server, processedFFunctions[1]);
 declare class _FAKE_CommandError { //oh god no why
 	data: string | PartialFormatString;
 }
-export const CommandError = (function(){}) as unknown as typeof _FAKE_CommandError;
+export const CommandError = (function(){/*empty*/}) as unknown as typeof _FAKE_CommandError;
 Object.setPrototypeOf(CommandError.prototype, Error.prototype);
 export function fail(message:string | PartialFormatString):never {
-	let err = new Error(typeof message == "string" ? message : "");
+	const err = new Error(typeof message == "string" ? message : "");
 	//oh no it's even worse now because i have to smuggle a function through here
 	(err as any).data = message;
 	Object.setPrototypeOf(err, CommandError.prototype);
@@ -564,9 +574,9 @@ export function handleTapEvent(event:EventType["TapEvent"]){
  **/
 export function register(commands:Record<string, FishCommandData<string, any> | (() => FishCommandData<string, any>)>, clientHandler:ClientCommandHandler, serverHandler:ServerCommandHandler){
 
-	for(let [name, _data] of Object.entries(commands)){
+	for(const [name, _data] of Object.entries(commands)){
 
-		let data = typeof _data == "function" ? _data() : _data;
+		const data = typeof _data == "function" ? _data() : _data;
 
 		//Process the args
 		const processedCmdArgs = data.args.map(processArgString);
@@ -604,6 +614,8 @@ export function register(commands:Record<string, FishCommandData<string, any> | 
 				}
 				
 				//Recursively resolve unresolved args (such as players that need to be determined through a menu)
+				// let it float, the then() handler cannot crash
+				// eslint-disable-next-line @typescript-eslint/no-floating-promises
 				resolveArgsRecursive(output.processedArgs, output.unresolvedArgs, fishSender).then(async (resolvedArgs) => {
 					//Run the command handler
 					const usageData = fishSender.getUsageData(name);
@@ -722,11 +734,12 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 
 /** Recursively resolves args. This function is necessary to handle cases such as a command that accepts multiple players that all need to be selected through menus. */
 async function resolveArgsRecursive(processedArgs: Record<string, FishCommandArgType>, unresolvedArgs:CommandArg[], sender:FishPlayer){
+	//TODO this does not need to be recursive now that we have async, just use a loop
 	if(unresolvedArgs.length == 0){
 		return processedArgs;
 	} else {
 		const argToResolve = unresolvedArgs.shift()!;
-		let optionsList:mindustryPlayer[] = [];
+		const optionsList:mindustryPlayer[] = [];
 		//TODO Dubious implementation
 		switch(argToResolve.type){
 			case "player": Groups.player.each(player => optionsList.push(player)); break;

@@ -880,6 +880,7 @@ var FishPlayer = /** @class */ (function () {
             case 8:
             case 9:
                 (0, funcs_3.crash)("Version ".concat(version, " is not longer supported, this should not be possible"));
+                break;
             case 10:
                 return new this({
                     uuid: (_a = fishPlayerData.readString(2)) !== null && _a !== void 0 ? _a : (0, funcs_3.crash)("Failed to deserialize FishPlayer: UUID was null."),

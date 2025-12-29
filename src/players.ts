@@ -33,7 +33,7 @@ export class FishPlayer {
 	};
 	static lastAuthKicked:FishPlayer | null = null;
 	//If a new account joins from one of these IPs, the IP gets banned.
-	static punishedIPs = [] as [ip:string, uuid:string, expiryTime:number][];
+	static punishedIPs = [] as Array<[ip:string, uuid:string, expiryTime:number]>;
 	static flagCount = 0;
 	static playersJoinedRecent = 0;
 	static antiBotModePersist = false;
@@ -47,9 +47,9 @@ export class FishPlayer {
 	pet:number | null = null;
 	watch:boolean = false;
 	/** Front-to-back queue of menus to show. */
-	activeMenus: {
+	activeMenus: Array<{
 		callback: (option:number) => void;
-	}[] = [];
+	}> = [];
 	tileId = false;
 	tilelog:null | "once" | "persist" = null;
 	trail: {
@@ -215,7 +215,7 @@ export class FishPlayer {
 		const players = this.getAllOnline();
 		let matchingPlayers:FishPlayer[];
 
-		const filters:((p:FishPlayer) => boolean)[] = [
+		const filters:Array<(p:FishPlayer) => boolean> = [
 			p => p.uuid === str,
 			p => p.player!.id.toString() === str,
 			p => p.name.toLowerCase() === str.toLowerCase(),
@@ -238,7 +238,7 @@ export class FishPlayer {
 		const players = setToArray(Groups.player);
 		let matchingPlayers:mindustryPlayer[];
 
-		const filters:((p:mindustryPlayer) => boolean)[] = [
+		const filters:Array<(p:mindustryPlayer) => boolean> = [
 			p => p.name === str,
 			// p => Strings.stripColors(p.name) === str,
 			p => Strings.stripColors(p.name).toLowerCase() === str.toLowerCase(),
@@ -257,7 +257,7 @@ export class FishPlayer {
 	}
 	//This method exists only because there is no easy way to turn an entitygroup into an array
 	static getAllOnline(){
-		let players:FishPlayer[] = [];
+		const players:FishPlayer[] = [];
 		Groups.player.each((p:mindustryPlayer) => {
 			const fishP = FishPlayer.get(p);
 			if(fishP.connected()) players.push(fishP);
@@ -278,7 +278,7 @@ export class FishPlayer {
 		const players = Object.values(this.cachedPlayers);
 		let matchingPlayers:FishPlayer[];
 
-		const filters:((p:FishPlayer) => boolean)[] = [
+		const filters:Array<(p:FishPlayer) => boolean> = [
 			p => p.uuid === str,
 			p => p.connected() && p.player!.id.toString() === str,
 			p => p.name.toLowerCase() === str.toLowerCase(),
@@ -302,7 +302,7 @@ export class FishPlayer {
 	//Contains methods that handle an event and must be called by other code (usually through Events.on).
 	/** Must be run on PlayerConnectEvent. */
 	static onPlayerConnect(player:mindustryPlayer){
-		let fishPlayer = this.cachedPlayers[player.uuid()] ??= this.createFromPlayer(player);
+		const fishPlayer = this.cachedPlayers[player.uuid()] ??= this.createFromPlayer(player);
 		const previousJoin = fishPlayer.lastJoined;
 		fishPlayer.updateSavedInfoFromPlayer(player);
 		if(fishPlayer.validate()){
@@ -337,7 +337,7 @@ export class FishPlayer {
 	}
 	/** Must be run on PlayerJoinEvent. */
 	static onPlayerJoin(player:mindustryPlayer){
-		let fishPlayer = this.cachedPlayers[player.uuid()] ??= (() => {
+		const fishPlayer = this.cachedPlayers[player.uuid()] ??= (() => {
 			Log.err(`onPlayerJoin: no fish player was created? ${player.uuid()}`);
 			return this.createFromPlayer(player);
 		})();
@@ -364,7 +364,7 @@ export class FishPlayer {
 	}
 	/** Must be run on PlayerLeaveEvent. */
 	static onPlayerLeave(player:mindustryPlayer){
-		let fishP = this.cachedPlayers[player.uuid()];
+		const fishP = this.cachedPlayers[player.uuid()];
 		if(!fishP) return;
 
 		if(
@@ -532,7 +532,7 @@ export class FishPlayer {
 		});
 	}
 	static mapPlayers<T>(func:(player:FishPlayer) => T):T[]{
-		let out:T[] = [];
+		const out:T[] = [];
 		Groups.player.each(player => {
 			if(player == null){
 				Log.err(".FINDTAG. Groups.player.each() returned a null player???");
@@ -699,12 +699,12 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 			this.kick(
 `[scarlet]"${this.name}[scarlet]" is not an allowed name because it contains a banned word.
 
-If you are unable to change it, please download Mindustry from Steam or itch.io.`
-			, 1);
+If you are unable to change it, please download Mindustry from Steam or itch.io.`,
+			1);
 		} else if(Strings.stripColors(this.name).trim().length == 0){
 			this.kick(
-`[scarlet]"${escapeStringColorsClient(this.name)}[scarlet]" is not an allowed name because it is empty. Please change it.`
-			, 1);
+`[scarlet]"${escapeStringColorsClient(this.name)}[scarlet]" is not an allowed name because it is empty. Please change it.`,
+			1);
 		} else {
 			return true;
 		}
@@ -779,7 +779,7 @@ We apologize for the inconvenience.`
 				showAd = true;
 			}
 			const showV8migration = Version.number === 7;
-			let messagePool = showV8migration ? tips.v8migration : showAd ? tips.ads : (Mode.isChristmas && Math.random() > 0.6) ? tips.christmas : tips.normal;
+			const messagePool = showV8migration ? tips.v8migration : showAd ? tips.ads : (Mode.isChristmas && Math.random() > 0.6) ? tips.christmas : tips.normal;
 			const messageText = messagePool[Math.floor(Math.random() * messagePool.length)];
 			const message = showV8migration ? messageText : showAd ? `[gold]${messageText}[]` : `[gold]Tip: ${messageText}[]`;
 
@@ -815,6 +815,7 @@ We apologize for the inconvenience.`
 		switch(version){
 			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
 				crash(`Version ${version} is not longer supported, this should not be possible`);
+				break;
 			case 10:
 				return new this({
 					uuid: fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null."),
@@ -880,7 +881,7 @@ We apologize for the inconvenience.`
 	}
 	/** Saves cached FishPlayers to JSON in Core.settings. */
 	static saveAll(){
-		let out = new StringIO();
+		const out = new StringIO();
 		out.writeNumber(this.saveVersion, 2);
 		out.writeArray(
 			Object.entries(this.cachedPlayers),
@@ -888,7 +889,7 @@ We apologize for the inconvenience.`
 			6
 		);
 		let string = out.string;
-		let numKeys = Math.ceil(string.length / this.chunkSize);
+		const numKeys = Math.ceil(string.length / this.chunkSize);
 		Core.settings.put('fish-subkeys', Packages.java.lang.Integer(numKeys));
 		for(let i = 1; i <= numKeys; i ++){
 			Core.settings.put(`fish-playerdata-part-${i}`, string.slice(0, this.chunkSize));
@@ -931,7 +932,7 @@ We apologize for the inconvenience.`
 		}
 	}
 	static loadAllLegacy(jsonString:string){
-		for(let [key, value] of Object.entries(JSON.parse(jsonString) as Record<string, unknown>)){
+		for(const [key, value] of Object.entries(JSON.parse(jsonString) as Record<string, unknown>)){
 			if(value instanceof Object){
 				let rank = "player";
 				if("mod" in value && value.mod) rank = "mod";
@@ -976,7 +977,7 @@ We apologize for the inconvenience.`
 		this.whackFlaggedPlayers();
 	}
 	position():string {
-		return `(${Math.floor(this.player!.x / 8)}, ${Math.floor(this.player!.y / 8)})`
+		return `(${Math.floor(this.player!.x / 8)}, ${Math.floor(this.player!.y / 8)})`;
 	}
 	connected():boolean {
 		return this.player != null && !this.con.hasDisconnected;
@@ -1018,7 +1019,7 @@ We apologize for the inconvenience.`
 	setTeam(team:Team):void {
 		const oldTeam = this.player!.team();
 		this.player!.team(team);
-		globals.FishEvents.fire("playerTeamChange", [this, oldTeam])
+		globals.FishEvents.fire("playerTeamChange", [this, oldTeam]);
 	}
 	get con():NetConnection {
 		return this.player?.con;
@@ -1142,7 +1143,7 @@ We apologize for the inconvenience.`
 		api.addStopped(this.uuid, this.unmarkTime);
 		FishPlayer.saveAll();
 		//Set unmark timer
-		let oldUnmarkTime = this.unmarkTime;
+		const oldUnmarkTime = this.unmarkTime;
 		Timer.schedule(() => {
 			//Use of this is safe because arrow functions do not create a new this context
 			if(this.unmarkTime === oldUnmarkTime && this.connected()){

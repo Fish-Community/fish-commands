@@ -23,7 +23,7 @@ function fetchGithubContents() {
                 resolve(JSON.parse(res.getResultAsString()));
             }
             catch (e) {
-                reject("Failed to parse GitHub repository contents: ".concat(e));
+                reject("Failed to parse GitHub repository contents: ".concat(String(e)));
             }
         }, function () { return reject("Network error while fetching github repository contents"); });
     });
@@ -71,7 +71,7 @@ function updateMaps() {
         //filter only valid mindustry maps
         var mapList = listing
             .filter(function (entry) { return entry.type == 'file'; })
-            .filter(function (entry) { return /\.msav$/.test(entry.name); });
+            .filter(function (entry) { return entry.name.endsWith(".msav"); });
         var mapFiles = Vars.customMapDirectory.list();
         var mapsToDelete = mapFiles.filter(function (localFile) {
             return !mapList.some(function (remoteFile) {

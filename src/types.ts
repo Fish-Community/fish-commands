@@ -81,7 +81,7 @@ export type PartialFormatString<TData = string | null> = ((data:TData) => string
 /** The data passed to a command handler. */
 export type FishCommandHandlerData<ArgType extends string, StoredData> = {
 	/** Raw arguments that were passed to the command. */
-	rawArgs:(string | undefined)[];
+	rawArgs:Array<string | undefined>;
 	/**
 	 * Formatted and parsed args. Access an argument by name, like python's keyword args.
 	 * Example: `args.player.setRank(Rank.mod);`.
@@ -107,85 +107,83 @@ export type FishCommandHandlerUtils = {
 	/** Vars.netServer.admins */
 	admins: Administration;
 	/** Outputs text to the sender, with a check mark symbol and green color. */
-	outputSuccess(message:string | PartialFormatString):void;
+	outputSuccess(this:void, message:string | PartialFormatString):void;
 	/** Outputs text to the sender, with a fail symbol and yellow color. */
-	outputFail(message:string | PartialFormatString):void;
+	outputFail(this:void, message:string | PartialFormatString):void;
 	/** Outputs text to the sender. Tab characters are replaced with 4 spaces. */
-	output(message:string | PartialFormatString):void;
+	output(this:void, message:string | PartialFormatString):void;
 	/** Use to tag template literals, formatting players, numbers, ranks, and more */
 	f:FFunction;
 	/** Executes a server console command. Be careful! */
-	execServer(message:string):void;
+	execServer(this:void, message:string):void;
 	/** Call this function to set tap handling mode. */
-	handleTaps(mode:TapHandleMode):void;
+	handleTaps(this:void, mode:TapHandleMode):void;
 };
 export type FishCommandHandler<ArgType extends string, StoredData> =
 	(fish:FishCommandHandlerData<ArgType, StoredData> & FishCommandHandlerUtils) => void | Promise<void>;
 
-export interface FishConsoleCommandRunner<ArgType extends string, StoredData> {
-	(_:{
-		/** Raw arguments that were passed to the command. */
-		rawArgs:(string | undefined)[];
-		/**
-		 * Formatted and parsed args.
-		 * Access an argument by name, like python's keyword args.
-		 * Example: `args.player.mod = true`.
-		 * An argument can only be null if it was optional, otherwise the command will error before the handler runs.
-		 **/
-		args:ArgsFromArgStringUnion<ArgType>;
-		data:StoredData;
-		/** Outputs text to the console. */
-		outputSuccess(message:string | PartialFormatString):void;
-		/** Outputs text to the console, using warn(). */
-		outputFail(message:string | PartialFormatString):void;
-		/** Outputs text to the console. Tab characters are replaced with 4 spaces. */
-		output(message:string | PartialFormatString):void;
-		/** Use to tag template literals, formatting players, numbers, ranks, and more */
-		f:FFunction;
-		/** Executes a server console command. Be careful to not commit recursion as that will cause a crash.*/
-		execServer(message:string):void;
-		/** Vars.netServer.admins */
-		admins: Administration;
-		/** Timestamp of the last time this command was run. */
-		lastUsed:number;
-		/** Timestamp of the last time this command was run succesfully. */
-		lastUsedSuccessfully:number;
-	}): unknown;
-}
+export type FishConsoleCommandRunner<ArgType extends string, StoredData> = (_:{
+	/** Raw arguments that were passed to the command. */
+	rawArgs:Array<string | undefined>;
+	/**
+	 * Formatted and parsed args.
+	 * Access an argument by name, like python's keyword args.
+	 * Example: `args.player.mod = true`.
+	 * An argument can only be null if it was optional, otherwise the command will error before the handler runs.
+	 **/
+	args:ArgsFromArgStringUnion<ArgType>;
+	data:StoredData;
+	/** Outputs text to the console. */
+	outputSuccess(this:void, message:string | PartialFormatString):void;
+	/** Outputs text to the console, using warn(). */
+	outputFail(this:void, message:string | PartialFormatString):void;
+	/** Outputs text to the console. Tab characters are replaced with 4 spaces. */
+	output(this:void, message:string | PartialFormatString):void;
+	/** Use to tag template literals, formatting players, numbers, ranks, and more */
+	f:FFunction;
+	/** Executes a server console command. Be careful to not commit recursion as that will cause a crash.*/
+	execServer(this:void, message:string):void;
+	/** Vars.netServer.admins */
+	admins: Administration;
+	/** Timestamp of the last time this command was run. */
+	lastUsed:number;
+	/** Timestamp of the last time this command was run succesfully. */
+	lastUsedSuccessfully:number;
+}) => unknown;
 
-export interface TapHandler<ArgType extends string, StoredData> {
-	(_:{
-		/** Last args used to call the parent command. */
-		args:ArgsFromArgStringUnion<ArgType>;
-		sender:FishPlayer;
-		x:number;
-		y:number;
-		tile:Tile;
-		data:StoredData;
-		output(message:string | PartialFormatString):void;
-		outputFail(message:string | PartialFormatString):void;
-		outputSuccess(message:string | PartialFormatString):void;
-		/** Use to tag template literals, formatting players, numbers, ranks, and more */
-		f:TagFunction<Formattable, PartialFormatString>;
-		currentTapMode:TapHandleMode;
-		/** Call this function to set tap handling mode. */
-		handleTaps(mode:TapHandleMode):void;
-		/** Timestamp of the last time this command was run. */
-		commandLastUsed:number;
-		/** Timestamp of the last time this command was run succesfully. */
-		commandLastUsedSuccessfully:number;
-		/** Vars.netServer.admins */
-		admins: Administration;
-		/** Timestamp of the last time this tap handler was run. */
-		lastUsed:number;
-		/** Timestamp of the last time this tap handler was run succesfully. (without fail() being called) */
-		lastUsedSuccessfully:number;
-	}):unknown;
-}
 
-export type FishCommandRequirement<ArgType extends string, StoredData> = (data:FishCommandHandlerData<ArgType, StoredData>) => unknown;
+export type TapHandler<ArgType extends string, StoredData> = (_:{
+	/** Last args used to call the parent command. */
+	args:ArgsFromArgStringUnion<ArgType>;
+	sender:FishPlayer;
+	x:number;
+	y:number;
+	tile:Tile;
+	data:StoredData;
+	output(this:void, message:string | PartialFormatString):void;
+	outputFail(this:void, message:string | PartialFormatString):void;
+	outputSuccess(this:void, message:string | PartialFormatString):void;
+	/** Use to tag template literals, formatting players, numbers, ranks, and more */
+	f:TagFunction<Formattable, PartialFormatString>;
+	currentTapMode:TapHandleMode;
+	/** Call this function to set tap handling mode. */
+	handleTaps(this:void, mode:TapHandleMode):void;
+	/** Timestamp of the last time this command was run. */
+	commandLastUsed:number;
+	/** Timestamp of the last time this command was run succesfully. */
+	commandLastUsedSuccessfully:number;
+	/** Vars.netServer.admins */
+	admins: Administration;
+	/** Timestamp of the last time this tap handler was run. */
+	lastUsed:number;
+	/** Timestamp of the last time this tap handler was run succesfully. (without fail() being called) */
+	lastUsedSuccessfully:number;
+}) => unknown;
 
-export interface FishCommandData<ArgType extends string, StoredData> {
+export type FishCommandRequirement<ArgType extends string, StoredData> =
+	(data:FishCommandHandlerData<ArgType, StoredData>) => unknown;
+
+export type FishCommandData<ArgType extends string, StoredData> = {
 	/** Args for this command, like ["player:player", "reason:string?"] */
 	args: readonly ArgType[];
 	description: string;
@@ -199,13 +197,13 @@ export interface FishCommandData<ArgType extends string, StoredData> {
 	/** Called exactly once at server start. Use this to add event handlers. */
 	init?: () => StoredData;
 	data?: StoredData;
-	requirements?: NoInfer<FishCommandRequirement<ArgType, StoredData>>[];
+	requirements?: Array<NoInfer<FishCommandRequirement<ArgType, StoredData>>>;
 	handler: FishCommandHandler<ArgType, StoredData>;
 	tapped?: TapHandler<ArgType, StoredData>;
 	/** If true, this command is hidden and pretends to not exist for players that do not have access to it.. */
 	isHidden?: boolean;
 }
-export interface FishConsoleCommandData<ArgType extends string, StoredData> {
+export type FishConsoleCommandData<ArgType extends string, StoredData> = {
 	/** Args for this command, like ["player:player", "reason:string?"] */
 	args: ArgType[];
 	description: string;
@@ -216,7 +214,7 @@ export interface FishConsoleCommandData<ArgType extends string, StoredData> {
 }
 
 
-export interface TileHistoryEntry {
+export type TileHistoryEntry = {
 	name:string;
 	action:string;
 	type:string;
@@ -224,7 +222,7 @@ export interface TileHistoryEntry {
 }
 
 
-export interface FishPlayerData {
+export type FishPlayerData = {
 	uuid: string;
 	name: string;
 	muted: boolean;
@@ -251,25 +249,25 @@ export interface FishPlayerData {
 	pollResponse: 0 | 1 | 2 | 3 | 4;
 }
 
-export interface PlayerHistoryEntry {
+export type PlayerHistoryEntry = {
 	action:string;
 	by:string;
 	time:number;
 }
 
-export interface ClientCommandHandler {
+export type ClientCommandHandler = {
 	register(name:string, args:string, description:string, runner:(args:string[], player:mindustryPlayer) => unknown):void;
 	removeCommand(name:string):void;
 }
 
-export interface ServerCommandHandler {
+export type ServerCommandHandler = {
 	/** Executes a server console command. */
 	handleMessage(command:string):void;
 	register(name:string, args:string, description:string, runner:(args:string[], player:mindustryPlayer) => unknown):void;
 	removeCommand(name:string):void;
 }
 
-export interface PreprocessedCommandArg {
+export type PreprocessedCommandArg = {
 	type: CommandArgType;
 	/** Whether the argument is optional (and may be null) */
 	optional?: boolean;
@@ -277,13 +275,13 @@ export interface PreprocessedCommandArg {
 
 export type PreprocessedCommandArgs = Record<string, PreprocessedCommandArg>;
 
-export interface CommandArg {
+export type CommandArg = {
 	name: string;
 	type: CommandArgType;
 	isOptional: boolean;
 }
 
-export interface FlaggedIPData {
+export type FlaggedIPData = {
 	name: string;
 	uuid: string;
 	ip: string;
@@ -293,6 +291,4 @@ export interface FlaggedIPData {
 export type Boolf<T> = (input:T) => boolean;
 export type Expand<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 
-export interface TagFunction<Tin = string, Tout = string> {
-	(stringChunks: readonly string[], ...varChunks: readonly Tin[]):Tout;
-}
+export type TagFunction<Tin = string, Tout = string> = (stringChunks: readonly string[], ...varChunks: readonly Tin[]) =>Tout

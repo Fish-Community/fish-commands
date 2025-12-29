@@ -134,7 +134,7 @@ var StringIO = /** @class */ (function () {
             this.string += "0".repeat(lenlen);
         }
         else if (typeof str !== "string") {
-            crash("Attempted to serialize string ".concat(str, ", but it was not a string"));
+            crash("Attempted to serialize string ".concat(String(str), ", but it was not a string"));
         }
         else if (str.length > (Math.pow(10, lenlen) - 1)) {
             if (truncate) {
@@ -160,7 +160,7 @@ var StringIO = /** @class */ (function () {
         var length = (options.length - 1).toString().length;
         var option = options.indexOf(value);
         if (option == -1)
-            crash("Attempted to write invalid value \"".concat(value, "\" for enum, valid values are (").concat(options.join(", "), ")"));
+            crash("Attempted to write invalid value \"".concat(String(value), "\" for enum, valid values are (").concat(options.join(", "), ")"));
         this.writeNumber(option, length);
     };
     StringIO.prototype.readNumber = function (size) {
@@ -178,7 +178,7 @@ var StringIO = /** @class */ (function () {
         if (size === void 0) { size = 4; }
         if (clamp === void 0) { clamp = false; }
         if (typeof num != "number")
-            crash("".concat(num, " was not a number!"));
+            crash("".concat(String(num), " was not a number!"));
         if (num.toString().length > size) {
             if (clamp) {
                 if (num > (Math.pow(10, size)) - 1)
@@ -247,6 +247,7 @@ var EventEmitter = /** @class */ (function () {
     EventEmitter.prototype.fire = function (event, args) {
         var _a;
         var listeners = (_a = this.listeners[event]) !== null && _a !== void 0 ? _a : [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (var i = 0; i < listeners.length; i++) {
             listeners[i].apply(listeners, __spreadArray([this], __read(args), false));
         }

@@ -17,11 +17,11 @@ function floatf<T>(input:T):T;
 
 const Call: any;
 const Log: {
-	debug(message:string):void;
-	info(message:string):void;
-	warn(message:string):void;
-	err(message:string):void;
-	err(error:unknown):void;
+	debug(this:void, message:string):void;
+	info(this:void, message:string):void;
+	warn(this:void, message:string):void;
+	err(this:void, message:string):void;
+	err(this:void, error:unknown):void;
 };
 const Strings: {
 	stripColors(string:string):string;
@@ -103,7 +103,7 @@ class World {
 	height(): number;
 	tiles: {
 		eachTile(func:(tile:Tile) => unknown):void;
-	}
+	};
 }
 class Gamemode {
 	static survival:Gamemode;
@@ -146,7 +146,7 @@ class Administration {
 const Events: {
 	on(event:EventType, handler:(e:any) => void):void;
 	fire(event:MEvent):void;
-}
+};
 type MEvent = any;
 class Tile {
 	x:number; y:number;
@@ -160,18 +160,12 @@ class Tile {
 }
 const Menus: {
 	registerMenu(listener:BuiltinMenuListener):number;
-}
+};
 type BuiltinMenuListener = (player:mindustryPlayer, option:number) => unknown;
-const UnitTypes: {
-	[index:string]: UnitType;
-}
-const Sounds: {
-	[index:string]: Sound;
-}
+const UnitTypes: Record<string, UnitType>;
+const Sounds: Record<string, Sound>;
 type Sound = any;
-const Blocks: {
-	[index:string]: Block;
-}
+const Blocks: Record<string, Block>;
 class Block {
 	name: string;
 	buildType: Building;
@@ -183,6 +177,10 @@ type Building = any;
 const Items: Record<string, Item>;
 class Item {
 	name: string;
+}
+class ItemModule {
+	get(item: Item):number;
+	set(item: Item, value: number):void;
 }
 class Team {
 	static derelict:Team;
@@ -196,11 +194,12 @@ class Team {
 	name:string;
 	active():boolean;
 	data():TeamData;
+	core():Building | null;
+	items():ItemModule | null;
 	coloredName():string;
 	id:number;
 	static get(index:number):Team;
 	cores(): Seq<Building>;
-	coloredName():string;
 }
 type TeamData = {
 	units: Seq<Unit>;
@@ -211,23 +210,17 @@ type TeamData = {
 const Units: {
 	getCap(team:Team):number;
 };
-const StatusEffects: {
-	[index:string]: StatusEffect;
-}
+const StatusEffects: Record<string, StatusEffect>;
 type StatusEffect = any;
-const Fx: {
-	[index:string]: Effect;
-}
+const Fx: Record<string, Effect>;
 type Effect = any;
-const Align: {
-	[index:string]: any;
-}
+const Align: Record<string, any>;
 const Groups: {
 	player: EntityGroup<mindustryPlayer>;
 	unit: EntityGroup<Unit>;
 	fire: EntityGroup<Fire>;
 	build: EntityGroup<Building>;
-}
+};
 type Fire = any;
 class Vec2 {
 	constructor(x:number, y:number);
@@ -315,10 +308,10 @@ const Core: {
 		getFramesPerSecond():number;
 		getDeltaTime():number;
 	}
-}
+};
 const Damage: {
 	damage(team:Team, x:number, y:number, radius:number, damage:number, pierce:boolean, air:boolean, ground:boolean):void;
-}
+};
 const Mathf: {
 	halfPi: number;
 	PI2: number;
@@ -327,23 +320,23 @@ const Mathf: {
 	round(val:number, step?:number):number;
 	len(x:number, y:number):number;
 	atan2(x:number, y:number):number;
-}
+};
 const SaveIO: {
 	save(file:Fi):void;
-}
+};
 const Timer: {
 	schedule(func:() => unknown, delaySeconds:number, intervalSeconds?:number, repeatCount?:number):TimerTask;
-}
+};
 class TimerTask {
 	cancel():void;
 }
 const Time: {
 	millis(): number;
 	setDeltaProvider(provider: () => number):void;
-}
+};
 const GameState: {
 	State: Record<"playing" | "paused" | "menu", any>;
-}
+};
 class HttpRequest {
 	submit(func:(response:HttpResponse) => void):void;
 	error(func:(exception:any) => void):void;
@@ -371,15 +364,15 @@ class DataOutputStream extends OutputStream {
 	write(b:number):void;
 	writeBoolean(v:boolean):void;
 	writeByte(v:number):void;
-	writeBytes(s:String):void;
+	writeBytes(s:string):void;
 	writeChar(v:number):void;
-	writeChars(s:String):void;
+	writeChars(s:string):void;
 	writeDouble(v:number):void;
 	writeFloat(v:number):void;
 	writeInt(v:number):void;
 	writeLong(v:number):void;
 	writeShort(v:number):void;
-	writeUTF(s:String):void;
+	writeUTF(s:string):void;
 }
 class DataInputStream extends InputStream {
 	constructor(stream:InputStream);
@@ -393,12 +386,12 @@ class DataInputStream extends InputStream {
 	readFully(b:number[]):void;
 	readFully(b:number[], off:number, len:number):void;
 	readInt():number;
-	readLine():String;
+	readLine():string;
 	readLong():number;
 	readShort():number;
 	readUnsignedByte():number;
 	readUnsignedShort():number;
-	readUTF():String;
+	readUTF():string;
 	skipBytes(n:number):number;
 }
 class ByteArrayOutputStream extends OutputStream {
@@ -412,9 +405,9 @@ const Http: {
 	post(url:string, content:string):HttpRequest;
 	get(url:string):HttpRequest;
 	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
-}
+};
 class Seq<T> {
-	items: (T | null)[];
+	items: Array<T | null>;
 	size: number;
 	constructor();
 	constructor(capacity:number);
@@ -460,6 +453,7 @@ class ObjectSet<T> {
 	get(key:T):T;
 	first():T;
 	clear():void;
+	toString():string;
 }
 class ObjectMap<K, V> {
 	put(key:K, value:V):void;
@@ -504,7 +498,7 @@ function importPackage(package:any):void;
 const Packages: Record<string, any>;
 const EventType: Record<string, EventType>;
 type EventType = any;
-interface PlayerAction {
+type PlayerAction = {
 	player:mindustryPlayer;
 	type:ActionType;
 	tile:Tile | null;
@@ -587,7 +581,7 @@ class ProcessBuilder {
 	static Redirect: {
 		PIPE: any;
 		INHERIT: any;
-	}
+	};
 }
 class Process {
 	waitFor():void;
@@ -639,7 +633,7 @@ class MissileUnitType extends UnitType {}
 class LogicAI {
 	controller: Building | null;
 }
-interface MapTags {
+type MapTags = {
 	name:string;
 	description?:string;
 	author?:string;
@@ -689,16 +683,21 @@ class VoteSession {
 	private votes: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Array<T> {
-	filter(predicate: BooleanConstructor, thisArg?: any): (T extends (false | 0 | "" | null | undefined) ? never : T)[];
+	filter(predicate: BooleanConstructor, thisArg?: any): Array<T extends (false | 0 | "" | null | undefined) ? never : T>;
 }
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ReadonlyArray<T> {
+	// eslint-disable-next-line @typescript-eslint/array-type
 	map<TThis extends ReadonlyArray<T>, U>(this:TThis, fn:(v:T, i:number, a:TThis) => U): number extends TThis["length"] ? U[] : { [K in keyof TThis]: U };
 }
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ObjectConstructor {
-	entries<const K extends PropertyKey, V>(input:Record<K, V>):[K, V][];
-	fromEntries<const K extends PropertyKey, V>(input:[K, V][]):Record<K, V>;
+	entries<const K extends PropertyKey, V>(input:Record<K, V>):Array<[K, V]>;
+	fromEntries<const K extends PropertyKey, V>(input:Array<[K, V]>):Record<K, V>;
 }
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface SymbolConstructor {
 	readonly metadata: unique symbol;
 }
@@ -706,7 +705,7 @@ interface SymbolConstructor {
 const Threads: {
 	daemon(callback:() => unknown):void;
 	thread(callback:() => unknown):void;
-}
+};
 const Tmp: {
 	//not full
 	v1:Vec2;
@@ -725,7 +724,7 @@ const Tmp: {
 	c2:Color;
 	c3:Color;
 	c4:Color;
-}
+};
 class EffectCallPacket2 {
 	effect:Effect;
 	x:number;

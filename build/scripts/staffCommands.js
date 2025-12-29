@@ -382,11 +382,13 @@ exports.commands = (0, commands_1.commandList)({
                     switch (_d.label) {
                         case 0:
                             maxPlayers = 300;
-                            if (args.name && globals_1.uuidPattern.test(args.name)) {
-                                info = (_c = admins.getInfoOptional(args.name)) !== null && _c !== void 0 ? _c : (0, commands_1.fail)(f(templateObject_23 || (templateObject_23 = __makeTemplateObject(["Unknown UUID ", ""], ["Unknown UUID ", ""])), args.name));
-                                mute(info);
-                                return [2 /*return*/];
-                            }
+                            if (!(args.name && globals_1.uuidPattern.test(args.name))) return [3 /*break*/, 2];
+                            info = (_c = admins.getInfoOptional(args.name)) !== null && _c !== void 0 ? _c : (0, commands_1.fail)(f(templateObject_23 || (templateObject_23 = __makeTemplateObject(["Unknown UUID ", ""], ["Unknown UUID ", ""])), args.name));
+                            return [4 /*yield*/, mute(info)];
+                        case 1:
+                            _d.sent();
+                            return [2 /*return*/];
+                        case 2:
                             if (args.name) {
                                 possiblePlayers = (0, funcs_1.setToArray)(admins.searchNames(args.name));
                                 if (possiblePlayers.length > maxPlayers) {
@@ -415,9 +417,11 @@ exports.commands = (0, commands_1.commandList)({
                             return [4 /*yield*/, menus_1.Menu.pagedList(sender, "Mute", "Choose a player to mute", possiblePlayers, {
                                     optionStringifier: function (p) { return p.lastName; }
                                 })];
-                        case 1:
+                        case 3:
                             option = _d.sent();
-                            mute(option);
+                            return [4 /*yield*/, mute(option)];
+                        case 4:
+                            _d.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -440,7 +444,7 @@ exports.commands = (0, commands_1.commandList)({
             var args = _a.args, output = _a.output, f = _a.f;
             if (args.player.history && args.player.history.length > 0) {
                 output("[yellow]_______________Player history_______________\n\n" +
-                    args.player.history.map(function (e) {
+                    (args.player).history.map(function (e) {
                         return "".concat(e.by, " [yellow]").concat(e.action, " ").concat(args.player.prefixedName, " [white]").concat((0, utils_1.formatTimeRelative)(e.time));
                     }).join("\n"));
             }
@@ -1067,8 +1071,8 @@ exports.commands = (0, commands_1.commandList)({
                 }
             })
                 .catch(function (message) {
-                outputFail("Map update failed: ".concat(message));
-                Log.err("Map updates failed: ".concat(message));
+                outputFail("Map update failed: ".concat(String(message)));
+                Log.err("Map updates failed: ".concat(String(message)));
             });
         }
     },

@@ -127,6 +127,6 @@ Timer.schedule(function () {
     })
         .catch(function (message) {
         Call.sendMessage("[scarlet]Automated maps update failed, please report this to a staff member.");
-        Log.err("Automated map update failed: ".concat(message));
+        Log.err("Automated map update failed: ".concat(String(message)));
     });
 }, 60, 600);

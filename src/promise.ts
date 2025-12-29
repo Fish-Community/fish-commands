@@ -23,8 +23,8 @@ export function queueMicrotask(callback:() => unknown, errorHandler:(err:unknown
  */
 export class Promise<TResolve, TReject> {
 	private state: ["resolved", TResolve] | ["rejected", TReject] | ["pending"] = ["pending"];
-	private resolveHandlers: ((value:TResolve) => unknown)[] = [];
-	private rejectHandlers: ((value:TReject) => unknown)[] = [];
+	private resolveHandlers: Array<(value:TResolve) => unknown> = [];
+	private rejectHandlers: Array<(value:TReject) => unknown> = [];
 	constructor(initializer:(
 		resolve: (value:TResolve) => void,
 		reject: (error:TReject) => void,
@@ -52,12 +52,12 @@ export class Promise<TResolve, TReject> {
 		onFulfilled:((value:TResolve) => (UResolve | Promise<UResolve, UReject>)),
 	):Promise<UResolve, TReject | UReject>;
 	then<UResolve1, UResolve2, UReject1, UReject2>(
-		onFulfilled?:((value:TResolve) => (UResolve1 | Promise<UResolve1, UReject1>)) | null | undefined,
-		onRejected?:((error:TReject) => (UResolve2 | Promise<UResolve2, UReject2>)) | null | undefined,
+		onFulfilled?:((value:TResolve) => (UResolve1 | Promise<UResolve1, UReject1>)) | null,
+		onRejected?:((error:TReject) => (UResolve2 | Promise<UResolve2, UReject2>)) | null,
 	):Promise<TResolve | UResolve1 | UResolve2, TReject | UReject1 | UReject2>;
 	then<UResolve1, UResolve2, UReject1, UReject2>(
-		onFulfilled?:((value:TResolve) => (UResolve1 | Promise<UResolve1, UReject1>)) | null | undefined,
-		onRejected?:((error:TReject) => (UResolve2 | Promise<UResolve2, UReject2>)) | null | undefined
+		onFulfilled?:((value:TResolve) => (UResolve1 | Promise<UResolve1, UReject1>)) | null,
+		onRejected?:((error:TReject) => (UResolve2 | Promise<UResolve2, UReject2>)) | null
 	){
 		const {promise, resolve, reject} = Promise.withResolvers<TResolve | UResolve1 | UResolve2, TReject | UReject1 | UReject2>();
 		if(onFulfilled){
@@ -108,12 +108,12 @@ export class Promise<TResolve, TReject> {
 		const promise = new Promise<TResolve, TReject>((r, j) => {
 			resolve = r;
 			reject = j;
-		})
+		});
 		return {
 			promise, resolve, reject
 		};
 	}
-	static all<TResolves extends unknown[], TReject extends unknown>(
+	static all<TResolves extends unknown[], TReject>(
 		promises:{
 			[K in keyof TResolves]: Promise<TResolves[K], TReject>;
 		}

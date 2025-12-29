@@ -11,8 +11,8 @@ import { getIPAddress, random } from '/funcs';
 
 
 //#region filtering
-export type BannedWordList = [word: string | RegExp, whitelist: string[]][];
-type Pre_BannedWordList = (string | string[] | RegExp)[];
+export type BannedWordList = Array<[word: string | RegExp, whitelist: string[]]>;
+type Pre_BannedWordList = Array<string | string[] | RegExp>;
 function processBannedWordList(words: Pre_BannedWordList):BannedWordList {
 	return words.map(word =>
 		(typeof word == "string" || word instanceof RegExp) ?
@@ -127,7 +127,7 @@ export const substitutions:Record<string, string> = Object.fromEntries<string>(O
 	"Z": "\u0179\u017B\u017D\u0224\u0396\u1E90\u1E92\u1E94",
 	"": "\u200B\u200C\u200D",
 }).map(([char, alts]) => alts.split("").map(alt => [alt, char] as const)).flat(1));
-export const multiCharSubstitutions:[RegExp, string][] = [
+export const multiCharSubstitutions:Array<[RegExp, string]> = [
 	[/\|-\|/g, "H"]
 ];
 //#endregion
@@ -270,19 +270,20 @@ export const text = {
 
 
 //TODO use this
-export const FColor = (<T extends string>(data:Record<T, string>):Record<T, {
-	(): string;
-	(str?:string): string;
-	(stringChunks: readonly string[], ...varChunks: readonly (string | number)[]): string;
-}> =>
-	Object.fromEntries(Object.entries(data).map(([k, c]) =>
-		[k, (str?:string | readonly string[], ...varChunks: readonly (string | number)[]) =>
-			str != null ?
-				`${c}${Array.isArray(str) ? String.raw({ raw: str }, ...varChunks) : str}[]`
-			: c
-		]
-	)
-))({
+export const FColor = (
+	<T extends string>(data:Record<T, string>):Record<T, {
+		(): string;
+		(str?:string): string;
+		(stringChunks: readonly string[], ...varChunks: ReadonlyArray<string | number>): string;
+	}> =>
+		Object.fromEntries(Object.entries(data).map(([k, c]) =>
+			[k, (str?:string | readonly string[], ...varChunks: ReadonlyArray<string | number>) =>
+				str != null ?
+					`${c}${Array.isArray(str) ? String.raw({ raw: str }, ...varChunks) : (str as string)}[]`
+				: c
+			]
+		))
+)({
 	discord: "[#7289DA]",
 	/** Used for tips and welcome messages. */
 	tip: "[gold]",

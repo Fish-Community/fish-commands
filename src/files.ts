@@ -35,7 +35,7 @@ function fetchGithubContents(){
 				//Trust github to return valid JSON data
 				resolve(JSON.parse(res.getResultAsString()));
 			} catch(e){
-				reject(`Failed to parse GitHub repository contents: ${e}`);
+				reject(`Failed to parse GitHub repository contents: ${String(e)}`);
 			}
 		}, () => reject(`Network error while fetching github repository contents`));
 	});
@@ -88,7 +88,7 @@ export function updateMaps():Promise<boolean, string> {
 		//filter only valid mindustry maps
 		const mapList = listing
 			.filter(entry => entry.type == 'file')
-			.filter(entry => /\.msav$/.test(entry.name));
+			.filter(entry => entry.name.endsWith(".msav"));
 
 		const mapFiles:Fi[] = Vars.customMapDirectory.list();
 		const mapsToDelete = mapFiles.filter(localFile =>

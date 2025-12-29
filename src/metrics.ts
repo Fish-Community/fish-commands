@@ -1,7 +1,7 @@
 import { serialize } from "/io";
 
 
-type MetricsWeek = Array<number> & {
+type MetricsWeek = number[] & {
 	length: 2520; /* 15 * 24 * 7 */
 };
 export class Metrics {
@@ -22,7 +22,7 @@ export class Metrics {
 		}
 		return weeks;
 	})
-	static weeks: Array<MetricsWeek> = Array(this.weekNumber() + 1).fill(0).map(() => this.newWeek());
+	static weeks: MetricsWeek[] = Array(this.weekNumber() + 1).fill(0).map(() => this.newWeek());
 
 	static {
 		Timer.schedule(() => Metrics.update(), 15, 60);

@@ -103,6 +103,7 @@ function loadPacketHandlers() {
                 return;
             }
             //display labels
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (var i = 0; i < labels.length; i++) {
                 var label = labels[i];
                 if (label.trim().length <= 0)
@@ -152,6 +153,7 @@ function loadPacketHandlers() {
                 p.sendMessage(tooLongText, 1000);
                 return;
             }
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i];
                 if (line.trim().length <= 0)

@@ -68,7 +68,7 @@ export const commands = consoleCommandList({
 					return fishP.lastJoined;
 				}));
 			if(infoList.size == 0) fail(`No players found.`);
-			let outputString:string[] = [""];
+			const outputString:string[] = [""];
 			for(const [playerInfo, fishP] of infoList.toArray()){
 				const flagsText = [
 					fishP?.marked() && `&lris marked&fr until ${formatTimeRelative(fishP.unmarkTime)}`,
@@ -104,7 +104,7 @@ export const commands = consoleCommandList({
 		handler({args, output, admins}){
 			const infoList = args.player == "*" ? FishPlayer.getAllOnline() : FishPlayer.getAllByName(args.player, false);
 			if(infoList.length == 0) fail(`Nobody with that name could be found.`);
-			let outputString:string[] = [""];
+			const outputString:string[] = [""];
 			for(const player of infoList){
 				const playerInfo = admins.getInfo(player.uuid);
 				outputString.push(
@@ -128,7 +128,7 @@ export const commands = consoleCommandList({
 				const size = admins.dosBlacklist.size;
 				if(size == 0) fail('DOS blacklist is already empty.');
 				admins.dosBlacklist.clear();
-				output(`Cleared ${size} IPs from the DOS blacklist.`)
+				output(`Cleared ${size} IPs from the DOS blacklist.`);
 			} else {
 				if(admins.dosBlacklist.remove(args.ip)) output(`Removed ${args.ip} from the DOS blacklist.`);
 				else fail(`IP address ${args.ip} is not DOS blacklisted.`);
@@ -143,7 +143,7 @@ export const commands = consoleCommandList({
 			if(blacklist.isEmpty()) fail("The blacklist is empty");
 			
 			if(args.rich){
-				let outputString = ["DOS Blacklist:"];
+				const outputString = ["DOS Blacklist:"];
 				blacklist.each((ip:string) => {
 					const info = admins.findByIP(ip);
 					if(info){
@@ -256,7 +256,7 @@ export const commands = consoleCommandList({
 						output(`IP &c"${args.target}"&fr was not locally banned.`);
 					}
 					const size = admins.subnetBans.size;
-					admins.subnetBans.removeAll(r => args.target.startsWith(r))
+					admins.subnetBans.removeAll(r => args.target.startsWith(r));
 					if(admins.subnetBans.size < size){
 						output(`Unbanned IP ranges affecting this IP.`);
 					}
@@ -341,7 +341,7 @@ export const commands = consoleCommandList({
 		description: "Overwrites current fish player data.",
 		handler({args, output}){
 			if(args.areyousure){
-				let before = Object.keys(FishPlayer.cachedPlayers).length;
+				const before = Object.keys(FishPlayer.cachedPlayers).length;
 				FishPlayer.loadAll(args.fishplayerdata);
 				output(`Loaded fish player data. before:${before}, after:${Object.keys(FishPlayer.cachedPlayers).length}`);
 			}
@@ -530,7 +530,7 @@ Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, 
 		description: "Stops a player by uuid.",
 		handler({args:{uuid, time}, outputSuccess, admins}){
 			const stopTime = time ?? (maxTime - Date.now() - 10000);
-			const info = admins.getInfoOptional(uuid) as PlayerInfo;
+			const info = admins.getInfoOptional(uuid)!;
 			if(info == null) fail(`Unknown player ${uuid}`);
 			const fishP = FishPlayer.getFromInfo(info);
 			fishP.stop("console", stopTime);
@@ -604,7 +604,7 @@ ${FishPlayer.mapPlayers(p =>
 		args: ["transaction:string"],
 		description: "Oopsie",
 		handler({args}){
-			if(args.transaction == "TRANSACTION") fail(`Not possible :( please download and run locally, and make a backup`)
+			if(args.transaction == "TRANSACTION") fail(`Not possible :( please download and run locally, and make a backup`);
 			else fail(`Command not found. Did you mean "BEGIN TRANSACTION"?`);
 		}
 	},
@@ -638,7 +638,7 @@ ${FishPlayer.mapPlayers(p =>
 					if(backupProcess.exitValue() == 0){
 						outputSuccess(`Successfully created a backup.`);
 						Core.app.post(() => { //back to main thread, modifying fish player
-							playersToPrune.forEach(u => {delete FishPlayer.cachedPlayers[u.uuid]});
+							playersToPrune.forEach(u => {delete FishPlayer.cachedPlayers[u.uuid];});
 							outputSuccess(`Pruned ${playersToPrune.length} players.`);
 						});
 					} else {
@@ -676,7 +676,7 @@ ${FishPlayer.mapPlayers(p =>
 			output(`Updating maps... (this may take a while)`);
 			updateMaps()
 				.then((changed) => outputSuccess(changed ? `Maps were updated.` : `Map update completed, already up to date.`))
-				.catch((message) => outputFail(`Map update failed: ${message}`));
+				.catch((message) => outputFail(`Map update failed: ${String(message)}`));
 		},
 	},
 	switchall: {

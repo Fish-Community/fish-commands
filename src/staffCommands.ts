@@ -158,7 +158,7 @@ export const commands = commandList({
 		perm: Perm.mod,
 		customUnauthorizedMessage: `[yellow]You're a [scarlet]monster[].`,
 		handler({output, f, allCommands}){
-			const Ohnos = allCommands["ohno"].data! as any; //this is not ideal... TODO commit omega shenanigans
+			const Ohnos = allCommands["ohno"].data!; //this is not ideal... TODO commit omega shenanigans
 			const numOhnos = Ohnos.amount();
 			Ohnos.killAll();
 			output(f`[orange]You massacred ${numOhnos} helpless ohno crawlers.`);
@@ -197,7 +197,7 @@ export const commands = commandList({
 			if(args.name) {
 				possiblePlayers = setToArray(admins.searchNames(args.name));
 				if(possiblePlayers.length > maxPlayers){
-					let exactPlayers = setToArray(admins.findByName(args.name) as ObjectSet<PlayerInfo>);
+					const exactPlayers = setToArray(admins.findByName(args.name));
 					if(exactPlayers.length > 0){
 						possiblePlayers = exactPlayers;
 					} else {
@@ -210,7 +210,7 @@ export const commands = commandList({
 					const fishP = FishPlayer.getById(data.id);
 					if(fishP) return fishP.lastJoined;
 					return - data.timesJoined;
-				}
+				};
 				possiblePlayers.sort((a, b) => score(b) - score(a));
 			} else {
 				possiblePlayers = FishPlayer.recentLeaves.map(p => p.info());
@@ -249,14 +249,14 @@ export const commands = commandList({
 					confirmText: `[green]Yes, ${fishP.muted ? "unmute" : "mute"} them`,
 				});
 				logAction(fishP.muted ? "unmuted" : "muted", sender, fishP);
-				if(fishP.muted) fishP.unmute(sender)
+				if(fishP.muted) fishP.unmute(sender);
 				else fishP.mute(sender);
 				outputSuccess(`${fishP.muted ? "Muted" : "Unmuted"} ${option.lastName}.`);
 			}
 			
 			if(args.name && uuidPattern.test(args.name)){
 				const info = admins.getInfoOptional(args.name) ?? fail(f`Unknown UUID ${args.name}`);
-				mute(info);
+				await mute(info);
 				return;
 			}
 
@@ -264,7 +264,7 @@ export const commands = commandList({
 			if(args.name) {
 				possiblePlayers = setToArray(admins.searchNames(args.name));
 				if(possiblePlayers.length > maxPlayers){
-					let exactPlayers = setToArray(admins.findByName(args.name));
+					const exactPlayers = setToArray(admins.findByName(args.name));
 					if(exactPlayers.length > 0){
 						possiblePlayers = exactPlayers;
 					} else {
@@ -277,7 +277,7 @@ export const commands = commandList({
 					const fishP = FishPlayer.getById(data.id);
 					if(fishP) return fishP.lastJoined;
 					return - data.timesJoined;
-				}
+				};
 				possiblePlayers.sort((a, b) => score(b) - score(a));
 			} else {
 				possiblePlayers = FishPlayer.recentLeaves.map(p => p.info());
@@ -287,7 +287,7 @@ export const commands = commandList({
 			const option = await Menu.pagedList(sender, "Mute", "Choose a player to mute", possiblePlayers, {
 				optionStringifier: p => p.lastName
 			});
-			mute(option);
+			await mute(option);
 		}
 	},
 
@@ -308,7 +308,7 @@ export const commands = commandList({
 			if(args.player.history && args.player.history.length > 0){
 				output(
 					`[yellow]_______________Player history_______________\n\n` +
-					(args.player as FishPlayer).history.map(e =>
+					(args.player).history.map(e =>
 						`${e.by} [yellow]${e.action} ${args.player.prefixedName} [white]${formatTimeRelative(e.time)}`
 					).join("\n")
 				);
@@ -355,8 +355,8 @@ export const commands = commandList({
 			const labely = unit.y;
 			fishState.labels.push(Timer.schedule(() => {
 				if(timeRemaining > 0){
-					let timeseconds = timeRemaining % 60;
-					let timeminutes = (timeRemaining - timeseconds) / 60;
+					const timeseconds = timeRemaining % 60;
+					const timeminutes = (timeRemaining - timeseconds) / 60;
 					Call.label(
 `${sender.name}
 
@@ -500,7 +500,7 @@ export const commands = commandList({
 				unit.kill();
 				outputSuccess(f`Killed the unit of player ${args.player}.`);
 			} else {
-				outputFail(f`Player ${args.player} does not have a unit.`)
+				outputFail(f`Player ${args.player} does not have a unit.`);
 			}
 		}
 	},
@@ -675,7 +675,7 @@ export const commands = commandList({
 		handler({args, sender, outputSuccess, f}){
 			const team = args.team ?? sender.team();
 			const tile = Vars.world.tile(args.x, args.y);
-			if(args.rotation != null && (args.rotation < 0 || args.rotation > 3)) fail(f`Invalid rotation ${args.rotation}`)
+			if(args.rotation != null && (args.rotation < 0 || args.rotation > 3)) fail(f`Invalid rotation ${args.rotation}`);
 			if(tile == null)
 				fail(f`Position (${args.x}, ${args.y}) is out of bounds.`);
 			tile.setNet(args.block, team, args.rotation ?? 0);
@@ -697,7 +697,7 @@ export const commands = commandList({
 			if(!args.block) crash(`uh oh`);
 			const team = args.team ?? sender.team();
 			const tile = Vars.world.tile(x, y);
-			if(args.rotation != null && (args.rotation < 0 || args.rotation > 3)) fail(f`Invalid rotation ${args.rotation}`)
+			if(args.rotation != null && (args.rotation < 0 || args.rotation > 3)) fail(f`Invalid rotation ${args.rotation}`);
 			if(tile == null)
 				fail(f`Position (${x}, ${y}) is out of bounds.`);
 			tile.setNet(args.block, team, args.rotation ?? 0);
@@ -880,8 +880,8 @@ ${getAntiBotInfo("client")}`
 					}
 				})
 				.catch((message) => {
-					outputFail(`Map update failed: ${message}`);
-					Log.err(`Map updates failed: ${message}`);
+					outputFail(`Map update failed: ${String(message)}`);
+					Log.err(`Map updates failed: ${String(message)}`);
 				});
 		}
 	},

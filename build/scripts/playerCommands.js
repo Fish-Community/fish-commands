@@ -561,10 +561,11 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     case 'member':
                         output("".concat(commands_1.Perm.member.color, "-- Member commands --\n") + formatList(commands_2.member, commands_1.Perm.member.color));
                         break;
-                    default:
+                    default: {
                         var pageNumber = args.name != undefined ? parseInt(args.name) : 1;
                         var page = (_b = chunkedPlayerCommands[pageNumber - 1]) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("\"".concat(args.name, "\" is an invalid page number."));
                         output("[sky]-- Commands page [lightgrey]".concat(pageNumber, "/").concat(chunkedPlayerCommands.length, "[sky] --\n") + formatList(page, '[sky]'));
+                    }
                 }
             }
         },

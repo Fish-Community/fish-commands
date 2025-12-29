@@ -25,16 +25,16 @@ Object.fromEntries = a => a.reduce((o, [k, v]) => { o[k] = v; return o; }, {});
 //Arrow functions do not bind to "this"
 Array.prototype.at = function(i){
 	return this[i < 0 ? this.length + i : i];
-}
+};
 String.prototype.at = function(i){
 	return this[i < 0 ? this.length + i : i];
-}
+};
 Array.prototype.flat = function(depth){
 	depth = (depth == undefined) ? 1 : depth;
 	return depth > 0 ? this.reduce((acc, item) =>
 		acc.concat(Array.isArray(item) ? item.flat(depth - 1) : item)
 	, []) : this;
-}
+};
 String.raw = function(callSite){
 	const substitutions = Array.prototype.slice.call(arguments, 1);
 	return Array.from(callSite.raw).map((chunk, i) => {
@@ -43,12 +43,12 @@ String.raw = function(callSite){
 		}
 		return substitutions[i - 1] ? substitutions[i - 1] + chunk : chunk;
 	}).join('');
-}
+};
 const Arrayfrom = Array.from;
 Array.from = function(iterable, mapfn){
 	if(mapfn) return Arrayfrom(iterable).map(mapfn);
 	return Arrayfrom(iterable);
-}
+};
 //Fix rhino regex
 if(/ae?a/.test("aeea")){
 	RegExp.prototype.test = function(input){
@@ -63,7 +63,7 @@ if(12.34.toFixed(1) !== '12.3'){
 		const floorLog = Math.floor(Math.log10(this));
 		const output = toFixed.call(this, Math.max(floorLog, -1) + 1 + fractionDigits);
 		return output.toString().slice(0, Math.max(floorLog, 0) + 2 + fractionDigits);
-	}
+	};
 }
 
 this.Promise = require('/promise').Promise;

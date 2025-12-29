@@ -8,4 +8,4 @@ This file contains one single declaration from mindustryTypes.ts that cannot go 
 declare const Reflect: {
 	get(thing:any, key:string):any;
 	set(thing:any, key:string, value:any):void;
-}
+};

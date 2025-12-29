@@ -1,4 +1,5 @@
 "use strict";
+/* eslint-disable @typescript-eslint/array-type */
 /*
 Copyright © BalaM314, 2025. All Rights Reserved.
 This file contains the menu system.

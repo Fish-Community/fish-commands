@@ -229,7 +229,7 @@ function getItem(item) {
     var temp;
     if (item in Items && (temp = Items[item]) instanceof Item)
         return temp;
-    else if (temp = Vars.content.items().find(function (t) { return t.name.includes(item.toLowerCase()); }))
+    else if ((temp = Vars.content.items().find(function (t) { return t.name.includes(item.toLowerCase()); })))
         return temp;
     return "\"".concat(item, "\" is not a valid item.");
 }
@@ -263,7 +263,7 @@ function matchFilter(input, wordList, aggressive) {
                         return { value: (banned === globals_2.uuidPattern ? "a Mindustry UUID" :
                                 banned === globals_2.ipPattern || banned === globals_2.ipPortPattern ? "an IP address" :
                                     //parsing regex with regex, massive hack
-                                    banned instanceof RegExp ? banned.source.replace(/\\b|\(\?\<\!.+?\)|\(\?\!.+?\)/g, "") :
+                                    banned instanceof RegExp ? banned.source.replace(/\\b|\(\?<!.+?\)|\(\?!.+?\)/g, "") :
                                         banned) };
                 }
             };
@@ -304,9 +304,7 @@ function cleanText(text, applyAntiEvasion) {
         var _b = __read(_a, 2), from = _b[0], to = _b[1];
         return acc.replace(from, to);
     }, Strings.stripColors(removeFoosChars(text))
-        .split("").map(function (c) { var _a; return (_a = config_1.substitutions[c]) !== null && _a !== void 0 ? _a : c; }).join(""))
-        .toLowerCase()
-        .trim();
+        .split("").map(function (c) { var _a; return (_a = config_1.substitutions[c]) !== null && _a !== void 0 ? _a : c; }).join("")).toLowerCase().trim();
     if (applyAntiEvasion) {
         replacedText = replacedText.replace(new RegExp("[^a-zA-Z0-9]", "gi"), "");
     }
@@ -454,9 +452,9 @@ function isBuildable(block) {
 function getUnitType(type) {
     validUnits !== null && validUnits !== void 0 ? validUnits : (validUnits = Vars.content.units().select(function (u) { return !(u instanceof MissileUnitType || u.internal); }));
     var temp;
-    if (temp = validUnits.find(function (u) { return u.name == type; }))
+    if ((temp = validUnits.find(function (u) { return u.name == type; })))
         return temp;
-    else if (temp = validUnits.find(function (t) { return t.name.includes(type.toLowerCase()); }))
+    else if ((temp = validUnits.find(function (t) { return t.name.includes(type.toLowerCase()); })))
         return temp;
     return "\"".concat(type, "\" is not a valid unit type.");
 }
@@ -517,9 +515,9 @@ function getBlock(block, filter) {
     var out;
     if (block in Blocks && Blocks[block] instanceof Block && check(Blocks[block]))
         return Blocks[block];
-    else if (out = Vars.content.blocks().find(function (t) { return t.name.includes(block.toLowerCase()) && check(t); }))
+    else if ((out = Vars.content.blocks().find(function (t) { return t.name.includes(block.toLowerCase()) && check(t); })))
         return out;
-    else if (out = Vars.content.blocks().find(function (t) { return t.name.replace(/-/g, "").includes(block.toLowerCase().replace(/ /g, "")) && check(t); }))
+    else if ((out = Vars.content.blocks().find(function (t) { return t.name.replace(/-/g, "").includes(block.toLowerCase().replace(/ /g, "")) && check(t); })))
         return out;
     else if (block.includes("airblast"))
         return Blocks.blastDrill;
@@ -557,8 +555,16 @@ function definitelyRealMemoryCorruption() {
     api.sendModerationMessage("Activated memory corruption prank on server ".concat(Vars.state.rules.mode().name()));
     var t1f = false;
     var t2f = false;
-    globals_2.fishState.corruption_t1 = Timer.schedule(function () { return Vars.state.rules.defaultTeam.data().cores.first().items.set(Items.dormantCyst, (t1f = t1f !== true) ? 69 : 420); }, 0, 0.4, 600);
-    globals_2.fishState.corruption_t2 = Timer.schedule(function () { return Vars.state.rules.defaultTeam.data().cores.first().items.set(Items.fissileMatter, (t2f = t2f !== true) ? 999 : 123); }, 0, 1.5, 200);
+    globals_2.fishState.corruption_t1 = Timer.schedule(function () {
+        var _a;
+        t1f = !t1f;
+        (_a = Vars.state.rules.defaultTeam.items()) === null || _a === void 0 ? void 0 : _a.set(Items.dormantCyst, t1f ? 69 : 420);
+    }, 0, 0.4, 600);
+    globals_2.fishState.corruption_t2 = Timer.schedule(function () {
+        var _a;
+        t2f = !t2f;
+        (_a = Vars.state.rules.defaultTeam.items()) === null || _a === void 0 ? void 0 : _a.set(Items.fissileMatter, t2f ? 999 : 123);
+    }, 0, 1.5, 200);
     var hexString = Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, "0");
     Call.sendMessage("[scarlet]Error: internal server error.");
     Call.sendMessage("[scarlet]Error: memory corruption: mindustry.world.modules.ItemModule@".concat(hexString));
@@ -591,7 +597,9 @@ function logHTrip(player, name, message) {
     players_1.FishPlayer.messageStaff("[yellow]Player [blue]\"".concat(player.cleanedName, "\"[] tripped [cyan]").concat(name, "[]") + (message ? ": ".concat(message) : ""));
     api.sendModerationMessage("Player `".concat(player.cleanedName, "` (`").concat(player.uuid, "`/`").concat(player.ip(), "`) tripped **").concat(name, "**").concat(message ? ": ".concat(message) : "", "\n**Server:** ").concat(config_1.Gamemode.name()));
 }
-function setType(input) { }
+function setType(input) {
+    //does not do any checking
+}
 function untilForever() {
     return (globals_1.maxTime - Date.now() - 10000);
 }
@@ -726,6 +734,7 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
     }
     if (Math.random() < 0.02) {
         return cleanedMessage.split("").reverse().join("");
+        // eslint-disable-next-line no-dupe-else-if
     }
     else if (Math.random() < 0.02) {
         return "[scarlet]I really hope everyone is having a fun time :} <3";
@@ -739,6 +748,7 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
 });
 exports.addToTileHistory = logErrors("Error while saving a tilelog entry", function (e) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3;
+    // eslint-disable-next-line prefer-const
     var tile, uuid, action, type, time = Date.now();
     if (e instanceof EventType.BlockBuildBeginEvent) {
         tile = e.tile;
@@ -921,7 +931,7 @@ function getHash(file, algorithm) {
         }).join("");
     }
     catch (e) {
-        Log.err("Cannot generate ".concat(algorithm, ", ").concat(e));
+        Log.err("Cannot generate ".concat(algorithm, ", ").concat(String(e)));
         return undefined;
     }
 }

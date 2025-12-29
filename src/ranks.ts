@@ -30,7 +30,7 @@ export class Rank {
 		blocksPlaced: number;
 		timeSinceFirstJoin: number;
 		chatMessagesSent: number;
-	}
+	};
 
 	constructor(
 		public name:string,
@@ -85,10 +85,10 @@ export class RoleFlag {
 		public peristent:boolean = true,
 		public assignableByModerators = true,
 	){RoleFlag.flags[name] = this;}
-	static getByName(name:string):RoleFlag | null {
+	static getByName(this:void, name:string):RoleFlag | null {
 		return RoleFlag.flags[name] ?? null;
 	}
-	static getByInput(input:string):RoleFlag[] {
+	static getByInput(this:void, input:string):RoleFlag[] {
 		return Object.values(RoleFlag.flags).filter(flag => flag.name.toLowerCase().includes(input.toLowerCase()));
 	}
 	coloredName(){

@@ -46,7 +46,7 @@ export function initializeTimers(){
 		Timer.schedule(() => {
 			getStaffMessages((messages) => {
 				if(messages.length) FishPlayer.messageStaff(messages);
-			})
+			});
 		}, 5, 2);
 	//Tip
 	Timer.schedule(() => {
@@ -103,6 +103,6 @@ Timer.schedule(() => {
 		})
 		.catch((message) => {
 			Call.sendMessage(`[scarlet]Automated maps update failed, please report this to a staff member.`);
-			Log.err(`Automated map update failed: ${message}`);
+			Log.err(`Automated map update failed: ${String(message)}`);
 		});
-}, 60, 600)
+}, 60, 600);

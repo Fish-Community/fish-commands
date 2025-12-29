@@ -30,7 +30,7 @@ export function memoize<T>(callback: () => T, dep: unknown[], id: number | strin
 
 export function to2DArray<T>(array: T[], width: number) {
 	if (array.length == 0) return [];
-	let output: T[][] = [[]];
+	const output: T[][] = [[]];
 	array.forEach(el => {
 		if (output.at(-1)!.length >= width) {
 			output.push([]);
@@ -79,7 +79,7 @@ export class StringIO {
 		if (str === null) {
 			this.string += "0".repeat(lenlen);
 		} else if (typeof str !== "string") {
-			crash(`Attempted to serialize string ${str}, but it was not a string`);
+			crash(`Attempted to serialize string ${String(str)}, but it was not a string`);
 		} else if (str.length > (10 ** lenlen - 1)) {
 			if (truncate) {
 				Log.err(`Cannot write strings with length greater than ${(10 ** lenlen - 1)} (was ${str.length}), truncating`);
@@ -101,7 +101,7 @@ export class StringIO {
 	writeEnumString<const T>(value: T, options: T[]) {
 		const length = (options.length - 1).toString().length;
 		const option = options.indexOf(value);
-		if (option == -1) crash(`Attempted to write invalid value "${value}" for enum, valid values are (${options.join(", ")})`);
+		if (option == -1) crash(`Attempted to write invalid value "${String(value)}" for enum, valid values are (${options.join(", ")})`);
 		this.writeNumber(option, length);
 	}
 	readNumber(size: number = 4) {
@@ -114,7 +114,7 @@ export class StringIO {
 		return Number(data);
 	}
 	writeNumber(num: number, size: number = 4, clamp = false) {
-		if (typeof num != "number") crash(`${num} was not a number!`);
+		if (typeof num != "number") crash(`${String(num)} was not a number!`);
 		if (num.toString().length > size) {
 			if (clamp) {
 				if (num > (10 ** size) - 1) this.string += (10 ** size) - 1;
@@ -167,7 +167,7 @@ export class EventEmitter<
 	EventMapping extends Record<string, unknown[]>
 > {
 	private listeners: {
-		[K in keyof EventMapping]?: ((t: this, ...args: EventMapping[K]) => unknown)[];
+		[K in keyof EventMapping]?: Array<(t: this, ...args: EventMapping[K]) => unknown>;
 	} = {};
 	on<EventType extends keyof EventMapping>(event: EventType, callback: (t: this, ...args: EventMapping[EventType]) => unknown): this {
 		(this.listeners[event] ??= []).push(callback);
@@ -175,6 +175,7 @@ export class EventEmitter<
 	}
 	fire<EventType extends keyof EventMapping>(event: EventType, args: EventMapping[EventType]) {
 		const listeners = this.listeners[event] ?? [];
+		// eslint-disable-next-line @typescript-eslint/prefer-for-of
 		for (let i = 0; i < listeners.length; i ++) {
 			listeners[i](this, ...args);
 		}
@@ -297,7 +298,7 @@ export function lazy<T extends {}>(func:() => T){
 	let value: T | null = null;
 	return function get(){
 		return value ??= func();
-	}
+	};
 }
 
 export function invalidtoNull(input:number):number | null {

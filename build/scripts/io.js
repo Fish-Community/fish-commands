@@ -211,6 +211,7 @@ var Serializer = /** @class */ (function () {
                         value.length = schema[1];
                     }
                 }
+                // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (var i = 0; i < value.length; i++) {
                     this.writeNode(schema[2], value[i], output);
                 }
@@ -230,9 +231,10 @@ var Serializer = /** @class */ (function () {
                 switch (schema[1]) {
                     case 'u8': return input.readUnsignedByte();
                     case 'u16': return input.readUnsignedShort();
-                    case 'u32':
+                    case 'u32': {
                         var value = input.readInt(); //Java does not support unsigned ints
                         return value < 0 ? value + Math.pow(2, 32) : value;
+                    }
                     case 'i8': return input.readByte();
                     case 'i16': return input.readShort();
                     case 'i32': return input.readInt();
@@ -240,11 +242,13 @@ var Serializer = /** @class */ (function () {
                     case 'f32': return input.readFloat();
                     case 'f64': return input.readDouble();
                 }
+                schema[1];
+                break;
             case 'boolean':
                 return input.readBoolean();
             case 'team':
                 return Team.all[input.readByte()];
-            case 'object':
+            case 'object': {
                 var output = {};
                 try {
                     for (var _c = __values(schema[1]), _d = _c.next(); !_d.done; _d = _c.next()) {
@@ -260,7 +264,8 @@ var Serializer = /** @class */ (function () {
                     finally { if (e_3) throw e_3.error; }
                 }
                 return output;
-            case 'class':
+            }
+            case 'class': {
                 var classData = {};
                 try {
                     for (var _f = __values(schema[2]), _g = _f.next(); !_g.done; _g = _f.next()) {
@@ -276,7 +281,8 @@ var Serializer = /** @class */ (function () {
                     finally { if (e_4) throw e_4.error; }
                 }
                 return new schema[1](classData);
-            case 'array':
+            }
+            case 'array': {
                 var length = typeof schema[1] === "number" ?
                     schema[1]
                     : this.readNode(["number", schema[1]], input);
@@ -285,11 +291,13 @@ var Serializer = /** @class */ (function () {
                     array[i] = this.readNode(schema[2], input);
                 }
                 return array;
-            case 'version':
+            }
+            case 'version': {
                 var version = input.readByte();
                 if (version !== schema[1])
                     (0, funcs_1.crash)("Expected version ".concat(schema[1], ", but read ").concat(version));
                 return this.readNode(schema[2], input);
+            }
         }
     };
     return Serializer;

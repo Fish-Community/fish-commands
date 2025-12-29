@@ -27,6 +27,7 @@ export default defineConfig([
 					ignoredNodes: [
 						"* > TemplateLiteral",
 						"TemplateLiteral ~ *",
+						"TemplateLiteral *",
 						"SwitchCase",
 						"ConditionalExpression",
 					],
@@ -39,6 +40,7 @@ export default defineConfig([
 			"prefer-const": "warn",
 			"no-unexpected-multiline": "off",
 			"no-empty": ["warn", {"allowEmptyCatch": true}],
+			"no-control-regex": "off",
 			"@typescript-eslint/no-require-imports": "off",
 			"@typescript-eslint/no-unused-vars": "off",
 			"@typescript-eslint/no-empty-object-type": "off",
@@ -55,6 +57,12 @@ export default defineConfig([
 			"@typescript-eslint/no-unsafe-function-type": "off",
 			"@typescript-eslint/no-unsafe-member-access": "off",
 			"@typescript-eslint/no-unsafe-return": "off",
+			"@typescript-eslint/no-inferrable-types": "off",
+			"@typescript-eslint/dot-notation": "off",
+			"@typescript-eslint/prefer-nullish-coalescing": "off",
+			"@typescript-eslint/no-empty-function": ["warn", {
+				allow: ["arrowFunctions"]
+			}],
 		},
 	},
 	{

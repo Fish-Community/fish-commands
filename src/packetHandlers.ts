@@ -31,7 +31,7 @@ const tooLongText = '[red]Bulk content length exceeded, please use fewer effects
 const bulkSeparator = '|';
 const procError = '[red]An error occured while processing your request.';
 const invalidReq = '[red]Invalid request. Please consult the documentation.';
-const lowTPSError = '[red]Low server TPS, skipping request.'
+const lowTPSError = '[red]Low server TPS, skipping request.';
 
 const tmpLinePacket = new EffectCallPacket2();
 const tmpLabelPacket = new LabelReliableCallPacket();
@@ -114,6 +114,7 @@ export function loadPacketHandlers() {
 			}
 
 			//display labels
+			// eslint-disable-next-line @typescript-eslint/prefer-for-of
 			for (let i = 0; i < labels.length; i++) {
 				const label = labels[i];
 				if (label.trim().length <= 0) continue;
@@ -164,6 +165,7 @@ export function loadPacketHandlers() {
 				return;
 			}
 
+			// eslint-disable-next-line @typescript-eslint/prefer-for-of
 			for (let i = 0; i < lines.length; i++) {
 				const line = lines[i];
 				if (line.trim().length <= 0) continue;
@@ -207,7 +209,7 @@ export const commands = commandList({
 		args: [],
 		perm: Perm.none,
 		handler({sender, output}){
-				output(
+			output(
 `				[blue]FISH[white] Packet Handler Docs
 [white]Usage:[accent]
 	- Run the javascript function "Call.serverPacketReliable()" to send these. (!js in foos)
@@ -215,9 +217,9 @@ export const commands = commandList({
 
 [white]Packet types[accent]:
 	- Line effect: "lineEffect", "x0,y0,x1,y1,hexColor" (for example "20.7,19.3,50.4,28.9,#FF0000")
-	- Bulk line effect: "bulkLineEffect", equivalent to multiple lineEffect packets, with every line separated by a \'|\' symbol.
+	- Bulk line effect: "bulkLineEffect", equivalent to multiple lineEffect packets, with every line separated by a '|' symbol.
 	- Label effect: "label", "content,duration,x,y" (for example ""Hi!",10,20,28")
-	- Bulk label effect: "bulkLabel", equivalent to multiple label packets, with every label separated by a \'|\' symbol.
+	- Bulk label effect: "bulkLabel", equivalent to multiple label packets, with every label separated by a '|' symbol.
 
 [white]Limitations[accent]:
 	- You ${(sender.hasPerm('bulkVisualEffects')?(`[green]have been granted[accent]`):(`[red]do not have[accent]`))} access to bulk effects.
@@ -236,7 +238,7 @@ export const commands = commandList({
 	- 'The code style when submitted was beyond drunk... but it worked... barely' -BalaM314
 	- "worst error handling i have ever seen, why kick the player???" -ASimpleBeginner'
 	- Most of the code was rewritten in 2024 by [#6e00fb]D[#9e15de]a[#cd29c2]r[#fd3ea5]t[accent].'
-	- Small tweaks by [#00cf]s[#00bf]w[#009f]a[#007f]m[#005f]p[accent]`)
+	- Small tweaks by [#00cf]s[#00bf]w[#009f]a[#007f]m[#005f]p[accent]`);
 		}
 	}
 });
@@ -283,7 +285,7 @@ function handleLabel(player:mindustryPlayer, content:string, isSingle:boolean):b
 		lastLabel = message;
 	}
 
-	let duration = Number(parts[0]);
+	const duration = Number(parts[0]);
 	const x = Number(parts[1]), y = Number(parts[2]);
 	if(Number.isNaN(duration) || duration > MAX_LABEL_TIME || Number.isNaN(x) || Number.isNaN(y)){
 		player.sendMessage(invalidReq);
