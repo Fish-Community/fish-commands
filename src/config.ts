@@ -338,8 +338,8 @@ export const tips = {
 	],
 	christmas: [
 		`Remember to be nice in-game, Santa is watching!`,
-    `Santa's checking his list, so be nice!`,
-    `Have a merry christmas and a happy new year!`,
+		`Santa's checking his list, so be nice!`,
+		`Have a merry christmas and a happy new year!`,
 		`Fish becomes a bit more jolly around Christmastime!`,
 		`Many server maps have been changed for the season.`,
 	],

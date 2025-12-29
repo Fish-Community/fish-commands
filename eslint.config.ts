@@ -41,7 +41,6 @@ export default defineConfig([
 			"no-empty": ["warn", {"allowEmptyCatch": true}],
 			"@typescript-eslint/no-require-imports": "off",
 			"@typescript-eslint/no-unused-vars": "off",
-			"@typescript-eslint/no-unsafe-function-type": "off",
 			"@typescript-eslint/no-empty-object-type": "off",
 			"@typescript-eslint/prefer-promise-reject-errors": "off",
 			"@typescript-eslint/consistent-type-definitions": ["error", "type"],
@@ -49,10 +48,17 @@ export default defineConfig([
 			"@typescript-eslint/no-this-alias": "off",
 			"@typescript-eslint/prefer-regexp-exec": "off",
 			"@typescript-eslint/array-type": ["error", {default: "array-simple"}],
+			
+			"@typescript-eslint/no-unsafe-argument": "off",
+			"@typescript-eslint/no-unsafe-assignment": "off",
+			"@typescript-eslint/no-unsafe-call": "off",
+			"@typescript-eslint/no-unsafe-function-type": "off",
+			"@typescript-eslint/no-unsafe-member-access": "off",
+			"@typescript-eslint/no-unsafe-return": "off",
 		},
 	},
 	{
-		files: ["src/main.js"],
+		files: ["src/main.js", "eslint.config.ts"],
 		extends: [tseslint.configs.disableTypeChecked],
 	},
 ]);

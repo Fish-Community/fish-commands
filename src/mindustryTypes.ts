@@ -272,7 +272,7 @@ class Color {
 	g: number;
 	b: number;
 	a: number;
-  cpy():Color;
+	cpy():Color;
 	rand():Color;
 }
 const Version: {
