@@ -455,7 +455,10 @@ class LabelReliableCallPacket {
 	worldy = 0;
 }
 class CommandRunner<T> {
-	constructor(public accept: (args:string[], parameter: T) => void){}
+	accept: (args:string[], parameter: T) => void;
+	constructor({ accept }:{ accept: (args:string[], parameter: T) => void; }){
+		this.accept = accept;
+	}
 }
 class CommandHandler {
 	commands = new Map<string, Command>();
@@ -762,4 +765,4 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner});

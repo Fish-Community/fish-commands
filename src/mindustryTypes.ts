@@ -794,6 +794,10 @@ const Trigger: Record<'shock'|'cannotUpgrade'|'openConsole'|'blastFreeze'|'impac
 type Trigger = {
 	__brand: 'trigger';
 };
+class CommandRunner<T> {
+	accept: (args:string[], parameter: T) => void;
+	constructor(_: {accept: (args:string[], parameter: T) => void});
+}
 
 class WorldReloader {
 	begin():void;
