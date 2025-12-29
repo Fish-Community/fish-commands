@@ -670,7 +670,9 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 	} else if(e instanceof EventType.PayloadDropEvent){
 		action = "pay-dropped";
 		const controller = e.carrier.controller();
-		uuid = e.carrier.player?.uuid() ?? (controller instanceof LogicAI ? `${e.carrier.type.name} controlled by ${controller.controller.block.name} at ${controller.controller.tileX()},${controller.controller.tileY()} last accessed by ${e.carrier.getControllerName()}` : null) ?? e.carrier.type.name;
+		uuid = e.carrier.player?.uuid() ?? (controller instanceof LogicAI && controller.controller ?
+			`${e.carrier.type.name} controlled by ${controller.controller.block.name} at ${controller.controller.tileX()},${controller.controller.tileY()} last accessed by ${e.carrier.getControllerName()}`
+		: null) ?? e.carrier.type.name;
 		if(e.build){
 			tile = e.build.tile;
 			type = e.build.block.name;
@@ -683,7 +685,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		action = "picked up";
 		if(e.carrier.isPlayer()) return; //This event would have been handled by actionfilter
 		const controller = e.carrier.controller();
-		if(!(controller instanceof LogicAI)) return;
+		if(!(controller instanceof LogicAI && controller.controller != null)) return;
 		uuid = `${e.carrier.type.name} controlled by ${controller.controller.block.name} at ${controller.controller.tileX()},${controller.controller.tileY()} last accessed by ${e.carrier.getControllerName()}`;
 		if(e.build){
 			tile = e.build.tile;

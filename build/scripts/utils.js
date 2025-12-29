@@ -806,7 +806,9 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
     else if (e instanceof EventType.PayloadDropEvent) {
         action = "pay-dropped";
         var controller = e.carrier.controller();
-        uuid = (_z = (_y = (_x = e.carrier.player) === null || _x === void 0 ? void 0 : _x.uuid()) !== null && _y !== void 0 ? _y : (controller instanceof LogicAI ? "".concat(e.carrier.type.name, " controlled by ").concat(controller.controller.block.name, " at ").concat(controller.controller.tileX(), ",").concat(controller.controller.tileY(), " last accessed by ").concat(e.carrier.getControllerName()) : null)) !== null && _z !== void 0 ? _z : e.carrier.type.name;
+        uuid = (_z = (_y = (_x = e.carrier.player) === null || _x === void 0 ? void 0 : _x.uuid()) !== null && _y !== void 0 ? _y : (controller instanceof LogicAI && controller.controller ?
+            "".concat(e.carrier.type.name, " controlled by ").concat(controller.controller.block.name, " at ").concat(controller.controller.tileX(), ",").concat(controller.controller.tileY(), " last accessed by ").concat(e.carrier.getControllerName())
+            : null)) !== null && _z !== void 0 ? _z : e.carrier.type.name;
         if (e.build) {
             tile = e.build.tile;
             type = e.build.block.name;
@@ -825,7 +827,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
         if (e.carrier.isPlayer())
             return; //This event would have been handled by actionfilter
         var controller = e.carrier.controller();
-        if (!(controller instanceof LogicAI))
+        if (!(controller instanceof LogicAI && controller.controller != null))
             return;
         uuid = "".concat(e.carrier.type.name, " controlled by ").concat(controller.controller.block.name, " at ").concat(controller.controller.tileX(), ",").concat(controller.controller.tileY(), " last accessed by ").concat(e.carrier.getControllerName());
         if (e.build) {

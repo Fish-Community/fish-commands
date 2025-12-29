@@ -154,6 +154,7 @@ class Tile {
 	breakable():boolean;
 	block():Block;
 	floor():Block;
+	remove():void;
 	removeNet():void;
 	setNet(block:Block, team:Team, rotation:number):void;
 	getLinkedTiles(callback:(t:Tile) => void):void;
@@ -173,7 +174,16 @@ class Block {
 	localizedName: string;
 	emoji(): string;
 }
-type Building = any;
+class Building {
+	block: Block;
+	tile: Tile;
+	items: ItemModule;
+	team: Team;
+	changeTeam: Team;
+	kill():void;
+	tileX():number;
+	tileY():number;
+}
 const Items: Record<string, Item>;
 class Item {
 	name: string;
@@ -181,6 +191,7 @@ class Item {
 class ItemModule {
 	get(item: Item):number;
 	set(item: Item, value: number):void;
+	add(item: Item, value: number):void;
 }
 class Team {
 	static derelict:Team;
