@@ -42,6 +42,7 @@ class Rules {
 	pvpAutoPause: boolean;
 	placeRangeCheck: boolean;
 	onlyDepositCore: boolean;
+	infiniteResources: boolean;
 	getClass(): typeof Rules;
 	attackMode: boolean;
 	pvp: boolean;
@@ -68,7 +69,7 @@ const Vars: {
 	}
 	maps: Maps;
 	state: {
-		rules: Rules
+		rules: Rules;
 		set(state:State):void;
 		gameOver:boolean;
 		wave:number;

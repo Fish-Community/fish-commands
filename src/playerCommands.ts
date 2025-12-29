@@ -1080,16 +1080,25 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 				case "attack":
 					Vars.state.rules.attackMode = true;
 					Vars.state.rules.pvp = false;
+					Vars.state.rules.infiniteResources = false;
 					break;
 				case "survival":
 					Vars.state.rules.attackMode = false;
 					Vars.state.rules.waves = true;
 					Vars.state.rules.pvp = false;
+					Vars.state.rules.infiniteResources = false;
 					break;
 				case "pvp":
 					Vars.state.rules.attackMode = true;
 					Vars.state.rules.pvp = true;
 					Vars.state.rules.waves = false;
+					Vars.state.rules.infiniteResources = false;
+					break;
+				case "sandbox":
+					Vars.state.rules.attackMode = true;
+					Vars.state.rules.pvp = false;
+					Vars.state.rules.waves = false;
+					Vars.state.rules.infiniteResources = true;
 					break;
 				default: fail(`Invalid mode, valid modes are: attack, survival, pvp`);
 			}
@@ -1098,6 +1107,7 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 			Reflect.set(reloader, "players", Groups.player.copy());
 			Call.worldDataBegin();
 			reloader.end();
+			Call.sendMessage(`[orange]Player ${sender.cleanedName} changed the gamemode to ${args.mode}`);
 			outputSuccess(`Changed mode to ${args.mode}`);
 		}
 	},

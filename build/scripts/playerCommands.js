@@ -1141,16 +1141,25 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 case "attack":
                     Vars.state.rules.attackMode = true;
                     Vars.state.rules.pvp = false;
+                    Vars.state.rules.infiniteResources = false;
                     break;
                 case "survival":
                     Vars.state.rules.attackMode = false;
                     Vars.state.rules.waves = true;
                     Vars.state.rules.pvp = false;
+                    Vars.state.rules.infiniteResources = false;
                     break;
                 case "pvp":
                     Vars.state.rules.attackMode = true;
                     Vars.state.rules.pvp = true;
                     Vars.state.rules.waves = false;
+                    Vars.state.rules.infiniteResources = false;
+                    break;
+                case "sandbox":
+                    Vars.state.rules.attackMode = true;
+                    Vars.state.rules.pvp = false;
+                    Vars.state.rules.waves = false;
+                    Vars.state.rules.infiniteResources = true;
                     break;
                 default: (0, commands_1.fail)("Invalid mode, valid modes are: attack, survival, pvp");
             }
@@ -1159,6 +1168,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             Reflect.set(reloader, "players", Groups.player.copy());
             Call.worldDataBegin();
             reloader.end();
+            Call.sendMessage("[orange]Player ".concat(sender.cleanedName, " changed the gamemode to ").concat(args.mode));
             outputSuccess("Changed mode to ".concat(args.mode));
         }
     }, v8upgrade: {
