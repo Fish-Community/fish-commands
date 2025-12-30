@@ -74,6 +74,21 @@ export const commands = commandList({
 		}
 	},
 
+	pardon: {
+		args: ["player:offlinePlayer"],
+		description: 'Kick a player with optional reason.',
+		perm: Perm.mod,
+		requirements: [Req.moderate("player")],
+		handler({args: {player}, admins, outputSuccess, f}){
+			const info = admins.getInfo(player.uuid);
+			if(Time.millis() > info.lastKicked && !admins.kickedIPs.containsKey(info.lastIP))
+				fail(`That player is not kicked.`);
+			info.lastKicked = 0;
+			admins.kickedIPs.remove(info.lastIP);
+			outputSuccess(f`Pardoned player ${player}.`);
+		}
+	},
+
 	stop: {
 		args: ['player:player', "time:time?", "message:string?"],
 		description: 'Stops a player.',
