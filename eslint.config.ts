@@ -66,6 +66,17 @@ export default defineConfig([
 		},
 	},
 	{
+		files: ["src/**/*.ts"],
+		rules: {
+			'no-restricted-imports': ['error', {
+				patterns: [{
+					group: ['./*'],
+					message: 'Do not import things from "./foo", this will crash at runtime. Use "/foo" instead.',
+				}],
+			}],
+		}
+	},
+	{
 		files: ["src/main.js", "eslint.config.ts"],
 		extends: [tseslint.configs.disableTypeChecked],
 	},

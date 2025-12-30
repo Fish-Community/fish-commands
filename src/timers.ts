@@ -3,7 +3,7 @@ Copyright © BalaM314, 2025. All Rights Reserved.
 This file contains timers that run code at regular intervals.
 */
 
-import { DurationSecs } from './funcs';
+import { DurationSecs } from '/funcs';
 import { getStaffMessages } from '/api';
 import * as config from "/config";
 import { Gamemode } from "/config";
