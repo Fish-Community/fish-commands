@@ -952,7 +952,7 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 			description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
 			perm: Perm.play,
 			data: {votes, voteEndTime: () => voteEndTime, resetVotes, endVote},
-			requirements: [Req.cooldown(10000)],
+			requirements: [Req.cooldown(10_000)],
 			handler({args:{map}, sender}){
 				if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
 				if(votes.get(sender)) fail(`You have already voted.`);

@@ -43,6 +43,7 @@ Events.on(EventType.ConnectionEvent, function (e) {
 });
 Events.on(EventType.PlayerConnect, function (e) {
     if (players_1.FishPlayer.shouldKickNewPlayers() && e.player.info.timesJoined == 1) {
+        //do not use the helper function, for maximum performance
         e.player.kick(Packets.KickReason.kick, 3600000);
     }
     players_1.FishPlayer.onPlayerConnect(e.player);

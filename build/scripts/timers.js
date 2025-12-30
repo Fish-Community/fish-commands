@@ -16,6 +16,7 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeTimers = initializeTimers;
+var funcs_1 = require("./funcs");
 var api_1 = require("/api");
 var config = require("/config");
 var config_1 = require("/config");
@@ -51,14 +52,14 @@ function initializeTimers() {
             }
             finally { if (e_1) throw e_1.error; }
         }
-    }, 10, 300);
+    }, 10, funcs_1.DurationSecs.minutes(5));
     //Memory corruption prank
     Timer.schedule(function () {
         if (Math.random() < 0.2 && !config_1.Gamemode.hexed()) {
             //Timer triggers every 17 hours, and the random chance is 20%, so the average interval between pranks is 85 hours
             (0, utils_1.definitelyRealMemoryCorruption)();
         }
-    }, 3600, 61200);
+    }, funcs_1.DurationSecs.hours(1), funcs_1.DurationSecs.hours(17));
     //Trails
     Timer.schedule(function () {
         return players_1.FishPlayer.forEachPlayer(function (p) { return p.displayTrail(); });
@@ -80,7 +81,7 @@ function initializeTimers() {
         var messageText = messagePool[Math.floor(Math.random() * messagePool.length)];
         var message = showAd ? "[gold]".concat(messageText, "[]") : "[gold]Tip: ".concat(messageText, "[]");
         Call.sendMessage(message);
-    }, 60, 15 * 60);
+    }, 60, funcs_1.DurationSecs.minutes(15));
     //State check
     Timer.schedule(function () {
         if (Groups.unit.size() > 10000) {
@@ -100,7 +101,7 @@ function initializeTimers() {
             players_1.FishPlayer.antiBotModePersist = true;
         players_1.FishPlayer.flagCount = 0;
         globals_1.ipJoins.clear();
-    }, 0, 60);
+    }, 0, funcs_1.DurationSecs.minutes(1));
     Timer.schedule(function () {
         if (players_1.FishPlayer.playersJoinedRecent > 50)
             players_1.FishPlayer.antiBotModePersist = true;
@@ -127,4 +128,4 @@ Timer.schedule(function () {
         Call.sendMessage("[scarlet]Automated maps update failed, please report this to a staff member.");
         Log.err("Automated map update failed: ".concat(String(message)));
     });
-}, 60, 600);
+}, funcs_1.DurationSecs.minutes(1), funcs_1.DurationSecs.minutes(10));

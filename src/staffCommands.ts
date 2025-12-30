@@ -867,7 +867,7 @@ ${getAntiBotInfo("client")}`
 		description: 'Attempt to fetch and update all map files',
 		perm: Perm.trusted,
 		handler({output, outputSuccess, outputFail, lastUsedSuccessfully}){
-			Req.cooldownGlobal(Gamemode.testsrv() ? Duration.seconds(15) : Duration.minutes(5))({lastUsedSuccessfully});
+			Req.cooldownGlobal(Gamemode.testsrv() ? 15_000 : Duration.minutes(5))({lastUsedSuccessfully});
 			output(`Updating maps... (this may take a while)`);
 			updateMaps()
 				.then((changed) => {

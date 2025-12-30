@@ -3,6 +3,7 @@ Copyright © BalaM314, 2025. All Rights Reserved.
 This file contains timers that run code at regular intervals.
 */
 
+import { DurationSecs } from './funcs';
 import { getStaffMessages } from '/api';
 import * as config from "/config";
 import { Gamemode } from "/config";
@@ -29,14 +30,14 @@ export function initializeTimers(){
 				Vars.netServer.admins.dosBlacklist.remove(fishP.info().lastIP);
 			}
 		}
-	}, 10, 300);
+	}, 10, DurationSecs.minutes(5));
 	//Memory corruption prank
 	Timer.schedule(() => {
 		if(Math.random() < 0.2 && !Gamemode.hexed()){
 			//Timer triggers every 17 hours, and the random chance is 20%, so the average interval between pranks is 85 hours
 			definitelyRealMemoryCorruption();
 		}
-	}, 3600, 61200);
+	}, DurationSecs.hours(1), DurationSecs.hours(17));
 	//Trails
 	Timer.schedule(() =>
 		FishPlayer.forEachPlayer(p => p.displayTrail()),
@@ -58,7 +59,7 @@ export function initializeTimers(){
 		const messageText = messagePool[Math.floor(Math.random() * messagePool.length)];
 		const message = showAd ? `[gold]${messageText}[]` : `[gold]Tip: ${messageText}[]`;
 		Call.sendMessage(message);
-	}, 60, 15 * 60);
+	}, 60, DurationSecs.minutes(15));
 	//State check
 	Timer.schedule(() => {
 		if(Groups.unit.size() > 10000){
@@ -77,7 +78,7 @@ export function initializeTimers(){
 		if(FishPlayer.flagCount > 10 || FishPlayer.playersJoinedRecent > 50) FishPlayer.antiBotModePersist = true;
 		FishPlayer.flagCount = 0;
 		ipJoins.clear();
-	}, 0, 60);
+	}, 0, DurationSecs.minutes(1));
 	Timer.schedule(() => {
 		if(FishPlayer.playersJoinedRecent > 50) FishPlayer.antiBotModePersist = true;
 		FishPlayer.playersJoinedRecent = 0;
@@ -103,4 +104,4 @@ Timer.schedule(() => {
 			Call.sendMessage(`[scarlet]Automated maps update failed, please report this to a staff member.`);
 			Log.err(`Automated map update failed: ${String(message)}`);
 		});
-}, 60, 600);
+}, DurationSecs.minutes(1), DurationSecs.minutes(10));

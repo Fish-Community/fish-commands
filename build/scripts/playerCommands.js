@@ -1119,9 +1119,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: "Sets the gamemode.",
         requirements: [commands_1.Req.cooldownGlobal(10000)],
         handler: function (_a) {
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
+            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, lastUsedSuccessfully = _a.lastUsedSuccessfully;
             if (!sender.hasPerm('trusted'))
-                commands_1.Req.cooldownGlobal(30000);
+                commands_1.Req.cooldownGlobal(30000)({ lastUsedSuccessfully: lastUsedSuccessfully });
             //Unpause
             Vars.state.set(GameState.State.playing);
             switch (args.mode) {
