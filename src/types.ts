@@ -197,7 +197,9 @@ export type FishCommandData<ArgType extends string, StoredData> = {
 	/** Called exactly once at server start. Use this to add event handlers. */
 	init?: () => StoredData;
 	data?: StoredData;
-	requirements?: Array<NoInfer<FishCommandRequirement<ArgType, StoredData>>>;
+	requirements?:
+		| Array<NoInfer<FishCommandRequirement<ArgType, StoredData>>>
+		| ((_:FishCommandHandlerData<ArgType, StoredData> & FishCommandHandlerUtils) => Array<NoInfer<FishCommandRequirement<ArgType, StoredData>>>);
 	handler: FishCommandHandler<ArgType, StoredData>;
 	tapped?: TapHandler<ArgType, StoredData>;
 	/** If true, this command is hidden and pretends to not exist for players that do not have access to it.. */
