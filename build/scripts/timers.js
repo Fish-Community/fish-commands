@@ -16,7 +16,7 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeTimers = initializeTimers;
-var funcs_1 = require("./funcs");
+var funcs_1 = require("/funcs");
 var api_1 = require("/api");
 var config = require("/config");
 var config_1 = require("/config");
