@@ -649,7 +649,8 @@ export function register(commands:Record<string, FishCommandData<string, any> | 
 								fishSender.tapInfo.lastArgs = resolvedArgs;
 							},
 						};
-						data.requirements?.forEach(r => r(args));
+						const requirements = typeof data.requirements == "function" ? data.requirements(args) : data.requirements;
+						requirements?.forEach(r => r(args));
 						await data.handler(args);
 						//Update usage data
 						if(!failed){

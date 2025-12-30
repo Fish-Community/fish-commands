@@ -648,10 +648,12 @@ Available types:[yellow]
 		args: ["player:player?"],
 		description: 'Warns other players about power voids.',
 		perm: Perm.play,
-		requirements: [Req.mode("attack")],
-		handler({args, sender, lastUsedSuccessfullySender, lastUsedSuccessfully, outputSuccess, f}){
+		requirements: ({args}) => [
+			Req.mode("attack"),
+			args.player ? Req.cooldown(20_000) : Req.cooldownGlobal(10_000)
+		],
+		handler({args, sender, outputSuccess, f}){
 			if(args.player){
-				Req.cooldown(20_000)({lastUsedSuccessfullySender});
 				if(!sender.hasPerm("trusted")) fail(`You do not have permission to show popups to other players, please run /void with no arguments to send a chat message to everyone.`);
 				if(args.player !== sender && args.player.hasPerm("blockTrolling")) fail(`Target player is insufficiently trollable.`);
 				Menu.menu("\uf83f [scarlet]WARNING[] \uf83f",
@@ -665,7 +667,6 @@ Please stop attacking and [lime]build defenses[] first!`,
 				logAction("showed void warning", sender, args.player);
 				outputSuccess(f`Warned ${args.player} about power voids with a popup message.`);
 			} else {
-				Req.cooldownGlobal(10_000)({lastUsedSuccessfully});
 				Call.sendMessage(
 `[white]Don't break the Power Void (\uf83f), it's a trap!
 Power voids disable anything they are connected to. If you break it, [scarlet]you will get attacked[] by enemy units.

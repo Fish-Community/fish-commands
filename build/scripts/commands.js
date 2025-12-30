@@ -778,16 +778,16 @@ function register(commands, clientHandler, serverHandler) {
                 // let it float, the then() handler cannot crash
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 resolveMissingArgs(output.processedArgs, output.unresolvedArgs, fishSender).then(function (resolvedArgs) { return __awaiter(_this, void 0, void 0, function () {
-                    var usageData, failed, args_1, err_1;
-                    var _a, _b;
-                    return __generator(this, function (_c) {
-                        switch (_c.label) {
+                    var usageData, failed, args_1, requirements, err_1;
+                    var _a;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
                             case 0:
                                 usageData = fishSender.getUsageData(name);
                                 failed = false;
-                                _c.label = 1;
+                                _b.label = 1;
                             case 1:
-                                _c.trys.push([1, 3, 4, 5]);
+                                _b.trys.push([1, 3, 4, 5]);
                                 args_1 = {
                                     rawArgs: rawArgs,
                                     args: resolvedArgs,
@@ -817,17 +817,18 @@ function register(commands, clientHandler, serverHandler) {
                                         fishSender.tapInfo.lastArgs = resolvedArgs;
                                     },
                                 };
-                                (_b = data.requirements) === null || _b === void 0 ? void 0 : _b.forEach(function (r) { return r(args_1); });
+                                requirements = typeof data.requirements == "function" ? data.requirements(args_1) : data.requirements;
+                                requirements === null || requirements === void 0 ? void 0 : requirements.forEach(function (r) { return r(args_1); });
                                 return [4 /*yield*/, data.handler(args_1)];
                             case 2:
-                                _c.sent();
+                                _b.sent();
                                 //Update usage data
                                 if (!failed) {
                                     usageData.lastUsedSuccessfully = globalUsageData[name].lastUsedSuccessfully = Date.now();
                                 }
                                 return [3 /*break*/, 5];
                             case 3:
-                                err_1 = _c.sent();
+                                err_1 = _b.sent();
                                 if (err_1 instanceof exports.CommandError) {
                                     //If the error is a command error, then just outputFail
                                     (0, utils_1.outputFail)(err_1.data, sender);

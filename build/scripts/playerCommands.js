@@ -724,11 +724,16 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         args: ["player:player?"],
         description: 'Warns other players about power voids.',
         perm: commands_1.Perm.play,
-        requirements: [commands_1.Req.mode("attack")],
+        requirements: function (_a) {
+            var args = _a.args;
+            return [
+                commands_1.Req.mode("attack"),
+                args.player ? commands_1.Req.cooldown(20000) : commands_1.Req.cooldownGlobal(10000)
+            ];
+        },
         handler: function (_a) {
-            var args = _a.args, sender = _a.sender, lastUsedSuccessfullySender = _a.lastUsedSuccessfullySender, lastUsedSuccessfully = _a.lastUsedSuccessfully, outputSuccess = _a.outputSuccess, f = _a.f;
+            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
             if (args.player) {
-                commands_1.Req.cooldown(20000)({ lastUsedSuccessfullySender: lastUsedSuccessfullySender });
                 if (!sender.hasPerm("trusted"))
                     (0, commands_1.fail)("You do not have permission to show popups to other players, please run /void with no arguments to send a chat message to everyone.");
                 if (args.player !== sender && args.player.hasPerm("blockTrolling"))
@@ -738,7 +743,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Warned ", " about power voids with a popup message."], ["Warned ", " about power voids with a popup message."])), args.player));
             }
             else {
-                commands_1.Req.cooldownGlobal(10000)({ lastUsedSuccessfully: lastUsedSuccessfully });
                 Call.sendMessage("[white]Don't break the Power Void (\uF83F), it's a trap!\nPower voids disable anything they are connected to. If you break it, [scarlet]you will get attacked[] by enemy units.\nPlease stop attacking and [lime]build defenses[] first!");
             }
         },
