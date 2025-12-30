@@ -3,6 +3,7 @@ Copyright © BalaM314, 2025. All Rights Reserved.
 This file contains the definitions for ranks and role flags.
 */
 
+import { Duration } from "/funcs";
 import type { SelectEnumClassKeys } from "/types";
 
 /** Each player has one rank, which is used to determine their prefix, permissions, and which other players they can perform moderation actions on. */
@@ -13,9 +14,9 @@ export class Rank {
 	static player = new Rank("player", 0, "Ordinary players.", "", "&lk[p]&fr", "");
 	static active = new Rank("active", 1, "Assigned automatically to players who have played for some time.", "[black]<[forest]\uE800[]>[]", "&lk[a]&fr", "[forest]", {
 		joins: 50,
-		playtime: 24 * 60 * 60 * 1000, //24 hours
+		playtime: Duration.hours(24),
 		blocksPlaced: 5000,
-		timeSinceFirstJoin: 24 * 60 * 60 * 1000 * 7, //7 days
+		timeSinceFirstJoin: Duration.days(7),
 	});
 	static trusted = new Rank("trusted", 2, "Trusted players who have gained the trust of a mod or admin.", "[black]<[#E67E22]\uE813[]>[]", "&y[T]&fr", "[#E67E22]");
 	static mod = new Rank("mod", 3, "Moderators who can mute, stop, and kick players.", "[black]<[#6FFC7C]\uE817[]>[]", "&lg[M]&fr", "[#6FFC7C]");

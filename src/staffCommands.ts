@@ -8,7 +8,7 @@ import { Perm, Req, command, commandList, fail } from "/commands";
 import { Gamemode, Mode, rules, stopAntiEvadeTime } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
-import { crash, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from '/funcs';
+import { crash, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from '/funcs';
 import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals";
 import { Menu } from '/menus';
 import { FishPlayer } from "/players";
@@ -64,7 +64,7 @@ export const commands = commandList({
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
 		handler({args, outputSuccess, f, sender}){
-			if(!sender.hasPerm("admin") && args.duration && args.duration > 3600_000 * 6) fail(`Maximum kick duration is 6 hours.`);
+			if(!sender.hasPerm("admin") && args.duration && args.duration > Duration.hours(6)) fail(`Maximum kick duration is 6 hours.`);
 			const reason = args.reason ?? "A staff member did not like your actions.";
 			const duration = args.duration ?? 60_000;
 			args.player.kick(reason, duration);
@@ -224,9 +224,9 @@ export const commands = commandList({
 			args.time ??= match(
 				await Menu.menu("Stop", "Select stop time", ["2 days", "7 days", "30 days", "forever"], sender),
 				{
-					"2 days": 172800000,
-					"7 days": 604800000,
-					"30 days": 2592000000,
+					"2 days": Duration.days(2),
+					"7 days": Duration.days(7),
+					"30 days": Duration.days(30),
 					"forever": maxTime - Date.now() - 10000,
 				}
 			);
@@ -348,7 +348,7 @@ export const commands = commandList({
 		description: "Places a label at your position for a specified amount of time.",
 		perm: Perm.mod,
 		handler({args, sender, outputSuccess, f}){
-			if(args.time > 36000_000) fail(`Time must be less than 10 hours.`);
+			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
 			const unit = sender.unit() ?? fail(`You must be in a unit to use this command.`);
 			let timeRemaining = args.time / 1000;
 			const labelx = unit.x;
@@ -377,7 +377,7 @@ export const commands = commandList({
 		description: "Places a label at the bottom left corner of everyone's screen.",
 		perm: Perm.admin,
 		handler({args, outputSuccess, f}){
-			if(args.time > 36000_000) fail(`Time must be less than 10 hours.`);
+			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
 			let timeRemaining = args.time / 1000;
 			fishState.labels.push(Timer.schedule(() => {
 				if(timeRemaining > 0){
@@ -866,8 +866,8 @@ ${getAntiBotInfo("client")}`
 		args: [],
 		description: 'Attempt to fetch and update all map files',
 		perm: Perm.trusted,
-		handler({output, outputSuccess, outputFail}){
-			Req.cooldownGlobal(Gamemode.testsrv() ? 15_000 : 300_000);
+		handler({output, outputSuccess, outputFail, lastUsedSuccessfully}){
+			Req.cooldownGlobal(Gamemode.testsrv() ? 15_000 : Duration.minutes(5))({lastUsedSuccessfully});
 			output(`Updating maps... (this may take a while)`);
 			updateMaps()
 				.then((changed) => {
@@ -1025,7 +1025,7 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 		args: [],
 		description: "Triggers a fake memory corruption prank.",
 		perm: Perm.mod,
-		requirements: [Req.cooldownGlobal(1800_000)],
+		requirements: [Req.cooldownGlobal(Duration.minutes(30))],
 		handler(){
 			definitelyRealMemoryCorruption();
 		}

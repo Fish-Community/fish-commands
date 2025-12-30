@@ -25,7 +25,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EventEmitter = exports.StringIO = exports.StringBuilder = void 0;
+exports.DurationSecs = exports.Duration = exports.EventEmitter = exports.StringIO = exports.StringBuilder = void 0;
 exports.memoize = memoize;
 exports.to2DArray = to2DArray;
 exports.setToArray = setToArray;
@@ -379,3 +379,16 @@ function computeStatistics(data) {
         average: (data.reduce(function (a, b) { return a + b; }, 0) / data.length),
     };
 }
+exports.Duration = {
+    seconds: function (x) { return x * 1000; },
+    minutes: function (x) { return x * 60000; },
+    hours: function (x) { return x * 3600000; },
+    days: function (x) { return x * 86400000; },
+    months: function (x) { return x * 2592000000; },
+};
+exports.DurationSecs = {
+    minutes: function (x) { return x * 60; },
+    hours: function (x) { return x * 3600; },
+    days: function (x) { return x * 86400; },
+    months: function (x) { return x * 2592000; },
+};

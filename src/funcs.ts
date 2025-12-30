@@ -323,3 +323,17 @@ export function computeStatistics(data:number[]){
 		average: (data.reduce((a, b) => a + b, 0) / data.length),
 	};
 }
+
+export const Duration = {
+	seconds: x => x * 1000,
+	minutes: x => x * 60_000,
+	hours: x => x * 3600_000,
+	days: x => x * 86400_000,
+	months: x => x * 2592000_000,
+} satisfies Record<string, (x:number) => number>;
+export const DurationSecs = {
+	minutes: x => x * 60,
+	hours: x => x * 3600,
+	days: x => x * 86400,
+	months: x => x * 2592000,
+} satisfies Record<string, (x:number) => number>;

@@ -649,7 +649,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 outputSuccess(f(templateObject_8 || (templateObject_8 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
                 return;
             }
-            var time = (_b = args.time) !== null && _b !== void 0 ? _b : 604800000;
+            var time = (_b = args.time) !== null && _b !== void 0 ? _b : funcs_1.Duration.days(7);
             if (time + Date.now() > globals_1.maxTime)
                 (0, commands_1.fail)("Error: time too high.");
             args.player.stop("console", time, (_c = args.message) !== null && _c !== void 0 ? _c : undefined);
@@ -704,9 +704,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 if (p.ranksAtLeast("mod"))
                     numStaff++;
             });
-            var uptimeColor = uptime < 2 * 24 * 3600000 ? "" :
-                uptime < 5 * 24 * 3600000 ? "&ly" :
-                    uptime < 9 * 24 * 3600000 ? "&y" :
+            var uptimeColor = uptime < funcs_1.Duration.days(2) ? "" :
+                uptime < funcs_1.Duration.days(5) ? "&ly" :
+                    uptime < funcs_1.Duration.days(9) ? "&y" :
                         "&br";
             output("\nStatus:\nPlaying on map &fi".concat(Vars.state.map.plainName(), "&fr for ").concat((0, utils_1.formatTime)(1000 * Vars.state.tick / 60), "\n").concat(Vars.state.rules.waves ? "Wave &c".concat(Vars.state.wave, "&fr, &c").concat(Math.ceil(Vars.state.wavetime / 60), "&fr seconds until next wave.\n") : "", "&c").concat(Groups.unit.size(), "&fr units, &c").concat(Vars.state.enemies, "&fr enemies, &c").concat(Groups.build.size(), "&fr buildings\nTPS: ").concat((0, utils_1.colorNumber)(Core.graphics.getFramesPerSecond(), function (f) { return f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w"; }, "server"), ", Memory: &c").concat(Math.round(Core.app.getJavaHeap() / 1048576), "&fr MB\nServer uptime: ").concat(uptimeColor).concat((0, utils_1.formatTime)(uptime), "&fr (since ").concat((0, utils_1.formatTimestamp)(Date.now() - uptime), ")\n").concat([
                 globals_2.fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
@@ -748,7 +748,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 return (!data ||
                     data.timesJoined == 1 ||
                     (data.timesJoined < 10 &&
-                        (Date.now() - player.lastJoined) > (30 * 86400 * 1000)));
+                        (Date.now() - player.lastJoined) > funcs_1.Duration.months(1)));
             });
             if (args.confirm) {
                 outputSuccess("Creating backup...");

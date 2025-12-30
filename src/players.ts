@@ -12,7 +12,7 @@ import { Menu } from "/menus";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
 import type { FishCommandArgType, FishPlayerData, PlayerHistoryEntry } from "/types";
 import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, match, matchFilter } from "/utils";
-import { parseError } from '/funcs';
+import { Duration, parseError } from '/funcs';
 import { escapeStringColorsClient, escapeStringColorsServer } from '/funcs';
 import { crash } from '/funcs';
 import { StringIO } from '/funcs';
@@ -426,7 +426,7 @@ export class FishPlayer {
 `[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (${Vars.netServer.votesRequired()}/${Vars.netServer.votesRequired()})
 [scarlet]Vote passed.`
 					);
-					target.kick(Packets.KickReason.vote, 1800_000);
+					target.kick(Packets.KickReason.vote, Duration.minutes(30));
 					Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
 					Vars.netServer.currentlyKicking = null;
 					return;
@@ -462,12 +462,12 @@ export class FishPlayer {
 	static onPlayerChat(player:mindustryPlayer, message:string){
 		const fishP = this.get(player);
 		if(fishP.joinsLessThan(5)){
-			if(Date.now() - fishP.lastJoined < 6000){
+			if(Date.now() - fishP.lastJoined < 6_000){
 				if(message.trim() == "/vote y"){
 					//Sends /vote y within 5 seconds of joining
 					logHTrip(fishP, "votekick bot");
 					fishP.setPunishedIP(1000);//If there are any further joins within 1 second, its definitely a bot, just ban
-					fishP.kick(Packets.KickReason.kick, 30000);
+					fishP.kick(Packets.KickReason.kick, 30_000);
 				}
 			}
 		}
@@ -757,7 +757,7 @@ We apologize for the inconvenience.`
 
 			//show tips
 			let showAd = false;
-			if(Date.now() - this.lastShownAd > 86400000){
+			if(Date.now() - this.lastShownAd > Duration.days(1)){
 				this.lastShownAd = Date.now();
 				this.showAdNext = true;
 			} else if(this.lastShownAd == globals.maxTime){
@@ -976,7 +976,7 @@ We apologize for the inconvenience.`
 		return false;
 	}
 	static shouldWhackFlaggedPlayers(){
-		return (Date.now() - this.lastBotWhacked) < 300000; //5 minutes
+		return (Date.now() - this.lastBotWhacked) < Duration.minutes(5); //5 minutes
 	}
 	static whackFlaggedPlayers(){
 		this.forEachPlayer(p => {
@@ -989,9 +989,9 @@ We apologize for the inconvenience.`
 	}
 	static onBotWhack(){
 		this.antiBotModePersist = true;
-		if(Date.now() - this.lastBotWhacked > 3600000) //1 hour since last bot whack
+		if(Date.now() - this.lastBotWhacked > Duration.hours(1))
 			api.sendModerationMessage(`!!! <@&1040193678817378305> Possible ongoing bot attack in **${Gamemode.name()}**`);
-		else if(Date.now() - this.lastBotWhacked > 600000) //10 minutes
+		else if(Date.now() - this.lastBotWhacked > Duration.minutes(10))
 			api.sendModerationMessage(`!!! Possible ongoing bot attack in **${Gamemode.name()}**`);
 		this.lastBotWhacked = Date.now();
 		this.whackFlaggedPlayers();
@@ -1151,7 +1151,7 @@ We apologize for the inconvenience.`
 		return this.unmarkTime > Date.now();
 	}
 	afk():boolean {
-		return Date.now() - this.lastActive > 60000 || this.manualAfk;
+		return Date.now() - this.lastActive > 60_000 || this.manualAfk;
 	}
 	stelled():boolean {
 		return this.marked() || this.autoflagged;
@@ -1189,7 +1189,7 @@ We apologize for the inconvenience.`
 				message
 				? `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]${message}[]`
 				: `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.`);
-			if(duration < 3600000){
+			if(duration < Duration.hours(1)){
 				//less than one hour
 				this.sendMessage(`[yellow]Your mark will expire in ${formatTime(duration)}.`);
 			}

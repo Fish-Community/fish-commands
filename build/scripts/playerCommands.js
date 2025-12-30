@@ -728,8 +728,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         handler: function (_a) {
             var args = _a.args, sender = _a.sender, lastUsedSuccessfullySender = _a.lastUsedSuccessfullySender, lastUsedSuccessfully = _a.lastUsedSuccessfully, outputSuccess = _a.outputSuccess, f = _a.f;
             if (args.player) {
-                if (Date.now() - lastUsedSuccessfullySender < 20000)
-                    (0, commands_1.fail)("This command was used recently and is on cooldown.");
+                commands_1.Req.cooldown(20000)({ lastUsedSuccessfullySender: lastUsedSuccessfullySender });
                 if (!sender.hasPerm("trusted"))
                     (0, commands_1.fail)("You do not have permission to show popups to other players, please run /void with no arguments to send a chat message to everyone.");
                 if (args.player !== sender && args.player.hasPerm("blockTrolling"))
@@ -739,8 +738,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Warned ", " about power voids with a popup message."], ["Warned ", " about power voids with a popup message."])), args.player));
             }
             else {
-                if (Date.now() - lastUsedSuccessfully < 10000)
-                    (0, commands_1.fail)("This command was used recently and is on cooldown.");
+                commands_1.Req.cooldownGlobal(10000)({ lastUsedSuccessfully: lastUsedSuccessfully });
                 Call.sendMessage("[white]Don't break the Power Void (\uF83F), it's a trap!\nPower voids disable anything they are connected to. If you break it, [scarlet]you will get attacked[] by enemy units.\nPlease stop attacking and [lime]build defenses[] first!");
             }
         },
@@ -822,7 +820,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: "Vote to start the next wave.",
         perm: commands_1.Perm.play,
         init: function () { return ({
-            manager: new votes_1.VoteManager(1.5 * 60000)
+            manager: new votes_1.VoteManager(funcs_1.Duration.minutes(1.5))
                 .on("success", function (t) { return (0, utils_1.skipWaves)(t.session.data, true); })
                 .on("vote passed", function () { return Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'); })
                 .on("vote failed", function () { return Call.sendMessage('VNW: [red]Vote failed.'); })
@@ -887,7 +885,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: 'Rock the vote to change map.',
         perm: commands_1.Perm.play,
         init: function () { return ({
-            manager: new votes_1.VoteManager(1.5 * 60000, config_1.Gamemode.hexed() ? ["fractionOfVoters", 1] : undefined) //Require unanimity in Hexed, as it is often 1 v everyone
+            manager: new votes_1.VoteManager(funcs_1.Duration.minutes(1.5), config_1.Gamemode.hexed() ? ["fractionOfVoters", 1] : undefined) //Require unanimity in Hexed, as it is often 1 v everyone
                 .on("success", function () { return (0, utils_1.neutralGameover)(); })
                 .on("vote passed", function () { return Call.sendMessage("RTV: [green]Vote has passed, changing map."); })
                 .on("vote failed", function () { return Call.sendMessage("RTV: [red]Vote failed."); })
@@ -953,7 +951,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         var lastVoteCount = 0;
         var lastVoteTime = 0;
         var voteEndTime = -1;
-        var voteDuration = 1.5 * 60000; // 1.5 mins
+        var voteDuration = funcs_1.Duration.minutes(1.5);
         var task = null;
         function resetVotes() {
             votes.clear();
@@ -978,7 +976,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 return; //aborted somehow
             if (votes.size == 0)
                 return; //no votes?
-            if (votes.size + 2 <= lastVoteCount && (Date.now() - lastVoteTime) < 600000) {
+            if (votes.size + 2 <= lastVoteCount && (Date.now() - lastVoteTime) < funcs_1.Duration.minutes(10)) {
                 //If the number of votes is 2 less than the previous number of votes for a vote in the past 10 minutes, abor
                 Call.sendMessage("[cyan]Next Map Vote: [scarlet]Vote aborted because a previous vote had significantly higher turnout");
                 resetVotes();
@@ -1022,7 +1020,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     (0, commands_1.fail)("You have already voted.");
                 votes.set(sender, map);
                 if (voteEndTime == -1) {
-                    if ((Date.now() - lastVoteTime) < 60000)
+                    if ((Date.now() - lastVoteTime) < funcs_1.Duration.minutes(1))
                         (0, commands_1.fail)("Please wait 1 minute before starting a new map vote.");
                     startVote();
                     Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] started a map vote, and voted for [yellow]").concat(map.name(), "[cyan]. Use [white]/nextmap ").concat(map.plainName(), "[] to add your vote, or run [white]/maps[] to see other available maps."));
@@ -1036,7 +1034,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
     }), surrender: (0, commands_1.command)(function () {
         var prefix = "[orange]Surrender[white]: ";
         var managers = Team.all.map(function (team) {
-            return new votes_1.VoteManager(1.5 * 60000, ["fractionOfVoters", config_1.Gamemode.hexed() ? 1 : 3 / 4], function (p) { return p.team() == team && !p.afk(); })
+            return new votes_1.VoteManager(funcs_1.Duration.minutes(1.5), ["fractionOfVoters", config_1.Gamemode.hexed() ? 1 : 3 / 4], function (p) { return p.team() == team && !p.afk(); })
                 .on("success", function () { return team.cores().copy().each(function (c) { return c.kill(); }); })
                 .on("vote passed", function () { return Call.sendMessage(prefix + "Team ".concat(team.coloredName(), " has voted to forfeit this match.")); })
                 .on("vote failed", function (t) { return t.messageEligibleVoters(prefix + "Team ".concat(team.coloredName(), " has chosen not to forfeit this match.")); })
@@ -1121,9 +1119,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: "Sets the gamemode.",
         requirements: [commands_1.Req.cooldownGlobal(10000)],
         handler: function (_a) {
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
+            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, lastUsedSuccessfully = _a.lastUsedSuccessfully;
             if (!sender.hasPerm('trusted'))
-                commands_1.Req.cooldownGlobal(30000);
+                commands_1.Req.cooldownGlobal(30000)({ lastUsedSuccessfully: lastUsedSuccessfully });
             //Unpause
             Vars.state.set(GameState.State.playing);
             switch (args.mode) {
