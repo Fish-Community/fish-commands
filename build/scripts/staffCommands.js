@@ -1056,8 +1056,8 @@ exports.commands = (0, commands_1.commandList)({
         description: 'Attempt to fetch and update all map files',
         perm: commands_1.Perm.trusted,
         handler: function (_a) {
-            var output = _a.output, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail;
-            commands_1.Req.cooldownGlobal(config_1.Gamemode.testsrv() ? 15000 : funcs_1.Duration.minutes(5));
+            var output = _a.output, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail, lastUsedSuccessfully = _a.lastUsedSuccessfully;
+            commands_1.Req.cooldownGlobal(config_1.Gamemode.testsrv() ? funcs_1.Duration.seconds(15) : funcs_1.Duration.minutes(5))({ lastUsedSuccessfully: lastUsedSuccessfully });
             output("Updating maps... (this may take a while)");
             (0, files_1.updateMaps)()
                 .then(function (changed) {

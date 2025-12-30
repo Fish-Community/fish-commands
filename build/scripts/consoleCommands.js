@@ -649,7 +649,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 outputSuccess(f(templateObject_8 || (templateObject_8 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
                 return;
             }
-            var time = (_b = args.time) !== null && _b !== void 0 ? _b : funcs_1.Duration.months(1);
+            var time = (_b = args.time) !== null && _b !== void 0 ? _b : funcs_1.Duration.days(7);
             if (time + Date.now() > globals_1.maxTime)
                 (0, commands_1.fail)("Error: time too high.");
             args.player.stop("console", time, (_c = args.message) !== null && _c !== void 0 ? _c : undefined);

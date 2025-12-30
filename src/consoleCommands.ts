@@ -518,7 +518,7 @@ Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, 
 				return;
 			}
 
-			const time = args.time ?? Duration.months(1);
+			const time = args.time ?? Duration.days(7);
 			if(time + Date.now() > maxTime) fail(`Error: time too high.`);
 			args.player.stop("console", time, args.message ?? undefined);
 			logAction('stopped', "console", args.player, args.message ?? undefined, time);

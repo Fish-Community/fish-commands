@@ -1072,8 +1072,8 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 		}),
 		description: "Sets the gamemode.",
 		requirements: [Req.cooldownGlobal(10_000)],
-		handler({args, sender, outputSuccess}){
-			if(!sender.hasPerm('trusted')) Req.cooldownGlobal(30_000);
+		handler({args, sender, outputSuccess, lastUsedSuccessfully}){
+			if(!sender.hasPerm('trusted')) Req.cooldownGlobal(30_000)({lastUsedSuccessfully});
 			//Unpause
 			Vars.state.set(GameState.State.playing);
 			switch(args.mode){
