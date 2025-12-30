@@ -485,6 +485,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             args: ["target:player?"],
             description: "Toggles spectator mode in PVP games.",
             perm: commands_1.Perm.play,
+            requirements: [commands_1.Req.gameRunning],
             handler: function (_a) {
                 var sender = _a.sender, _b = _a.args.target, target = _b === void 0 ? sender : _b, outputSuccess = _a.outputSuccess, f = _a.f;
                 if (!config_1.Gamemode.pvp() && !sender.hasPerm("mod"))

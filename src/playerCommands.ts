@@ -391,6 +391,7 @@ export const commands = commandList({
 			args: ["target:player?"],
 			description: `Toggles spectator mode in PVP games.`,
 			perm: Perm.play,
+			requirements: [Req.gameRunning],
 			handler({sender, args: {target = sender}, outputSuccess, f}){
 				if(!Gamemode.pvp() && !sender.hasPerm("mod")) fail(`You do not have permission to spectate on a non-pvp server.`);
 				if(target !== sender && target.hasPerm("blockTrolling")) fail(`Target player is insufficiently trollable.`);
