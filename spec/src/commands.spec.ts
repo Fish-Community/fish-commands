@@ -5,11 +5,13 @@ import { FishPlayer } from '../plugin/players';
 describe("commands framework", () => {
 	const clientHandler = new MockCommandHandler(() => {});
 	const serverHandler = new MockCommandHandler(() => {});
-	const test_command_handler = jasmine.createSpy("handler");
 	afterEach(() => {
 		reset();
+		clientHandler.reset();
+		serverHandler.reset();
 	});
 	it("should register a simple command", async () => {
+		const test_command_handler = jasmine.createSpy("handler");
 		register({
 			test_command: {
 				args: [],
@@ -40,6 +42,7 @@ describe("commands framework", () => {
 		}));
 	});
 	it("should handle permissions", async () => {
+		const test_command_handler = jasmine.createSpy("handler");
 		register({
 			test_command: {
 				args: [],

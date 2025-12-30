@@ -29,6 +29,9 @@ export class MockCommandHandler implements ClientCommandHandler, ServerCommandHa
 	removeCommand(name: string){
 		delete this.commands[name];
 	}
+	reset(){
+		this.commands = {};
+	}
 	handleMessage(command: string){
 		this.onMessage(command);
 	}
