@@ -12,7 +12,7 @@ import { Menu } from "/menus";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
 import type { FishCommandArgType, FishPlayerData, PlayerHistoryEntry } from "/types";
 import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, match, matchFilter } from "/utils";
-import { Duration, parseError } from '/funcs';
+import { Duration, parseError, to2DArray } from '/funcs';
 import { escapeStringColorsClient, escapeStringColorsServer } from '/funcs';
 import { crash } from '/funcs';
 import { StringIO } from '/funcs';
@@ -41,6 +41,8 @@ export class FishPlayer {
 	static lastBotWhacked = 0;
 	/** Stores the 10 most recent players that left. */
 	static recentLeaves:FishPlayer[] = [];
+	static migrationFailed = false;
+	static batches = 0;
 	
 	//Transients
 	player:mindustryPlayer | null = null;
@@ -978,7 +980,7 @@ We apologize for the inconvenience.`
 		if(forceSaveSettings) Core.settings.manualSave();
 	}
 	shouldCache(){
-		return this.ranksAtLeast("mod");
+		return this.ranksAtLeast("mod") || FishPlayer.migrationFailed;
 	}
 	/** Does not include stats */
 	hasData(){
@@ -1002,15 +1004,36 @@ We apologize for the inconvenience.`
 			if(string == "") return; //If it's empty, don't try to load anything
 			const out = new StringIO(string);
 			const version = out.readNumber(2);
-			out.readArray(str => FishPlayer.read(version, str, null), version <= 6 ? 4 : 6) //this is really unsafe and is going to cause downtime if i don't fix it
-				.forEach(p => this.cachedPlayers[p.uuid] = p);
+			const players = out.readArray(str => FishPlayer.read(version, str, null), 6);
 			out.expectEOF();
+			players.forEach(p => this.cachedPlayers[p.uuid] = p);
+			if(players.some(p => !p.shouldCache()) && !Core.settings.get("fish-migration-complete", false)){
+				this.migratePlayers(players)
+					.then(() => {
+						Core.settings.put("fish-migration-complete", true);
+						Log.info("Migration completed successfully.");
+					})
+					.catch(err => {
+						FishPlayer.migrationFailed = true;
+						Log.info("Failed to migrate fish player data. Please restart to try again. Data will not be deleted.");
+					});
+			}
 		} catch(err){
 			Log.err(`[CRITICAL] FAILED TO LOAD CACHED FISH PLAYER DATA`);
 			Log.err(parseError(err));
 			Log.err("=============================");
 			Log.err(string);
 			Log.err("=============================");
+		}
+	}
+	static async migratePlayers(players:FishPlayer[]){
+		const batches = to2DArray(players, 10);
+		Log.info(`Data migration started. Migrating ${batches.length} batches of 10 over HTTP.`);
+		for(const batch of batches){
+			await Promise.all(batch.map(fishP =>
+				api.setFishPlayerData(fishP.getData(), 2)
+			));
+			FishPlayer.batches ++;
 		}
 	}
 	//#endregion

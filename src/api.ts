@@ -7,6 +7,7 @@ import type { FishPlayerData } from '/types';
 import { Gamemode, backendIP, Mode } from '/config';
 import { maxTime } from "/globals";
 import { FishPlayer } from '/players';
+import { Promise } from '/promise';
 
 /** Mark a player as stopped until time */
 export function addStopped(uuid: string, time:number) {
@@ -222,7 +223,11 @@ export function getFishPlayerData(uuid:string, callback: (data:FishPlayerData | 
 
 /** Pushes fish player data to the backend. */
 export function setFishPlayerData(data: FishPlayerData, repeats = 1) {
-	if(Mode.noBackend) return;
+	const { promise, resolve, reject } = Promise.withResolvers<void, unknown>();
+	if(Mode.noBackend){
+		resolve();
+		return promise;
+	}
 	const req = Http.post(`http://${backendIP}/api/fish-player/set`, JSON.stringify({
 		player: data,
 		gamemode: Gamemode.name(),
@@ -234,10 +239,12 @@ export function setFishPlayerData(data: FishPlayerData, repeats = 1) {
 		Log.err(`[API] Network error when trying to call api.setFishPlayerData(), repeats=${repeats}`);
 		Log.err(err);
 		if(err?.response) Log.err(err.response.getResultAsString());
-		if(repeats > 0 && !(err.status.code >= 400 && err.status.code <= 499)) setFishPlayerData(data, repeats - 1);
+		if(repeats > 0 && !(err.status?.code >= 400 && err.status?.code <= 499)) setFishPlayerData(data, repeats - 1);
+		else reject(err);
 	});
 	req.submit((response) => {
-		//Log.info(response.getResultAsString());
+		resolve();
 	});
+	return promise;
 }
 

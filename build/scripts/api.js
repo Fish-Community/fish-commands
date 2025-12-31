@@ -19,6 +19,7 @@ exports.setFishPlayerData = setFishPlayerData;
 var config_1 = require("/config");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
+var promise_1 = require("/promise");
 /** Mark a player as stopped until time */
 function addStopped(uuid, time) {
     if (config_1.Mode.noBackend)
@@ -235,8 +236,11 @@ function getFishPlayerData(uuid, callback, callbackError) {
 /** Pushes fish player data to the backend. */
 function setFishPlayerData(data, repeats) {
     if (repeats === void 0) { repeats = 1; }
-    if (config_1.Mode.noBackend)
-        return;
+    var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
+    if (config_1.Mode.noBackend) {
+        resolve();
+        return promise;
+    }
     var req = Http.post("http://".concat(config_1.backendIP, "/api/fish-player/set"), JSON.stringify({
         player: data,
         gamemode: config_1.Gamemode.name(),
@@ -245,14 +249,18 @@ function setFishPlayerData(data, repeats) {
         .header('Accept', '*/*');
     req.timeout = 10000;
     req.error(function (err) {
+        var _a, _b;
         Log.err("[API] Network error when trying to call api.setFishPlayerData(), repeats=".concat(repeats));
         Log.err(err);
         if (err === null || err === void 0 ? void 0 : err.response)
             Log.err(err.response.getResultAsString());
-        if (repeats > 0 && !(err.status.code >= 400 && err.status.code <= 499))
+        if (repeats > 0 && !(((_a = err.status) === null || _a === void 0 ? void 0 : _a.code) >= 400 && ((_b = err.status) === null || _b === void 0 ? void 0 : _b.code) <= 499))
             setFishPlayerData(data, repeats - 1);
+        else
+            reject(err);
     });
     req.submit(function (response) {
-        //Log.info(response.getResultAsString());
+        resolve();
     });
+    return promise;
 }
