@@ -283,12 +283,13 @@ export class FishPlayer {
 		}
 		api.getFishPlayerData(uuid).then(data => {
 			if(!data) return; //nothing to sync
+			let fishP;
 			if(!(uuid in this.cachedPlayers)){
-				const fishP = new FishPlayer(uuid, data, null);
+				fishP = new FishPlayer(uuid, data, null);
 				fishP.dataSynced = true;
 				this.cachedPlayers[uuid] = fishP;
 			} else {
-				const fishP = this.cachedPlayers[uuid];
+				fishP = this.cachedPlayers[uuid];
 				fishP.dataSynced = true;
 				fishP.updateData(data);
 				if(fishP.infoUpdated){
@@ -299,6 +300,9 @@ export class FishPlayer {
 					//Player has not connected yet, nothing further needed
 				}
 			}
+			fishP.checkUsid();
+			fishP.updateMemberExclusiveState();
+			fishP.updateName();
 		}, () => {
 			const fishP = this.cachedPlayers[uuid];
 			if(fishP?.player) fishP.player.sendMessage(text.dataFetchFailed);
@@ -320,7 +324,6 @@ export class FishPlayer {
 				}
 			}
 			fishPlayer.updateAdminStatus();
-			fishPlayer.updateMemberExclusiveState();
 			fishPlayer.checkVPNAndJoins();
 			fishPlayer.checkAutoRanks();
 			fishPlayer.sendWelcomeMessage();

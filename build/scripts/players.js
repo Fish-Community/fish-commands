@@ -367,13 +367,14 @@ var FishPlayer = /** @class */ (function () {
         api.getFishPlayerData(uuid).then(function (data) {
             if (!data)
                 return; //nothing to sync
+            var fishP;
             if (!(uuid in _this.cachedPlayers)) {
-                var fishP = new FishPlayer(uuid, data, null);
+                fishP = new FishPlayer(uuid, data, null);
                 fishP.dataSynced = true;
                 _this.cachedPlayers[uuid] = fishP;
             }
             else {
-                var fishP = _this.cachedPlayers[uuid];
+                fishP = _this.cachedPlayers[uuid];
                 fishP.dataSynced = true;
                 fishP.updateData(data);
                 if (fishP.infoUpdated) {
@@ -386,6 +387,9 @@ var FishPlayer = /** @class */ (function () {
                     //Player has not connected yet, nothing further needed
                 }
             }
+            fishP.checkUsid();
+            fishP.updateMemberExclusiveState();
+            fishP.updateName();
         }, function () {
             var fishP = _this.cachedPlayers[uuid];
             if (fishP === null || fishP === void 0 ? void 0 : fishP.player)
@@ -412,7 +416,6 @@ var FishPlayer = /** @class */ (function () {
                 }
             }
             fishPlayer.updateAdminStatus();
-            fishPlayer.updateMemberExclusiveState();
             fishPlayer.checkVPNAndJoins();
             fishPlayer.checkAutoRanks();
             fishPlayer.sendWelcomeMessage();
