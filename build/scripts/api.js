@@ -19,7 +19,7 @@ var globals_1 = require("/globals");
 var players_1 = require("/players");
 /** Mark a player as stopped until time */
 function addStopped(uuid, time) {
-    if (config_1.Mode.localDebug)
+    if (config_1.Mode.noBackend)
         return;
     var req = Http.post("http://".concat(config_1.backendIP, "/api/addStopped"), JSON.stringify({ id: uuid, time: time }))
         .header('Content-Type', 'application/json')
@@ -32,7 +32,7 @@ function addStopped(uuid, time) {
 }
 /** Mark a player as freed */
 function free(uuid) {
-    if (config_1.Mode.localDebug)
+    if (config_1.Mode.noBackend)
         return;
     var req = Http.post("http://".concat(config_1.backendIP, "/api/free"), JSON.stringify({ id: uuid }))
         .header('Content-Type', 'application/json')
@@ -53,7 +53,7 @@ function getStopped(uuid, callback, callbackError) {
         else
             callback(null);
     }
-    if (config_1.Mode.localDebug)
+    if (config_1.Mode.noBackend)
         return fail("local debug mode");
     var req = Http.post("http://".concat(config_1.backendIP, "/api/getStopped"), JSON.stringify({ id: uuid }))
         .header('Content-Type', 'application/json')
@@ -94,7 +94,7 @@ function isVpn(ip, callback, callbackError) {
 }
 /** Send text to the moderation logs channel in Discord. */
 function sendModerationMessage(message) {
-    if (config_1.Mode.localDebug) {
+    if (config_1.Mode.noBackend) {
         Log.info("Sent moderation log message: ".concat(message));
         return;
     }
@@ -107,7 +107,7 @@ function sendModerationMessage(message) {
 }
 /** Get staff messages from discord. */
 function getStaffMessages(callback) {
-    if (config_1.Mode.localDebug)
+    if (config_1.Mode.noBackend)
         return;
     var req = Http.post("http://".concat(config_1.backendIP, "/api/getStaffMessages"), JSON.stringify({ server: config_1.Gamemode.name() }))
         .header('Content-Type', 'application/json').header('Accept', '*/*');
@@ -123,7 +123,7 @@ function getStaffMessages(callback) {
 }
 /** Send staff messages from server. */
 function sendStaffMessage(message, playerName, callback) {
-    if (config_1.Mode.localDebug)
+    if (config_1.Mode.noBackend)
         return;
     var req = Http.post("http://".concat(config_1.backendIP, "/api/sendStaffMessage"), 
     // need to send both name variants so one can be sent to the other servers with color and discord can use the clean one
@@ -144,7 +144,7 @@ function sendStaffMessage(message, playerName, callback) {
 /** Bans the provided ip and/or uuid. */
 function ban(data, callback) {
     if (callback === void 0) { callback = function () { }; }
-    if (config_1.Mode.localDebug)
+    if (config_1.Mode.noBackend)
         return;
     var req = Http.post("http://".concat(config_1.backendIP, "/api/ban"), JSON.stringify(data))
         .header('Content-Type', 'application/json')
@@ -161,7 +161,7 @@ function ban(data, callback) {
 /** Unbans the provided ip and/or uuid. */
 function unban(data, callback) {
     if (callback === void 0) { callback = function () { }; }
-    if (config_1.Mode.localDebug)
+    if (config_1.Mode.noBackend)
         return;
     var req = Http.post("http://".concat(config_1.backendIP, "/api/unban"), JSON.stringify(data))
         .header('Content-Type', 'application/json')
@@ -178,7 +178,7 @@ function unban(data, callback) {
 }
 /** Gets if either the provided uuid or ip is banned. */
 function getBanned(data, callback) {
-    if (config_1.Mode.localDebug) {
+    if (config_1.Mode.noBackend) {
         Log.info("[API] Attempted to getBanned(".concat(data.uuid, "/").concat(data.ip, "), assuming false due to local debug"));
         callback(false);
         return;

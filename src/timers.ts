@@ -43,7 +43,7 @@ export function initializeTimers(){
 		FishPlayer.forEachPlayer(p => p.displayTrail()),
 	5, 0.15);
 	//Staff chat
-	if(!config.Mode.localDebug)
+	if(!config.Mode.noBackend)
 		Timer.schedule(() => {
 			getStaffMessages((messages) => {
 				if(messages.length) FishPlayer.messageStaff(messages);

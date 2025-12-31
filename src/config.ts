@@ -139,14 +139,15 @@ export const heuristics = {
 	blocksBrokenAfterJoin: 40,
 };
 export const stopAntiEvadeTime = Duration.minutes(30);
+export const backendIP = '45.79.202.111:5082';
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
+	noBackend: new Fi("config/.debug").exists() && !backendIP.startsWith("127.0.0.1:"),
 	isChristmas: new Date().getMonth() == 11,
 	isAprilFools: new Date().getMonth() == 3 && new Date().getDate() == 1,
 };
 //#endregion
 //#region servers
-export const backendIP = '45.79.202.111:5082';
 /** Stores the repository url for the maps for each gamemode. */
 export const mapRepoURLs:Record<GamemodeName, string> = {
 	attack: "https://api.github.com/repos/Fish-Community/fish-maps/contents/attack",

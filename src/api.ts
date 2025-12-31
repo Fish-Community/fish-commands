@@ -9,7 +9,7 @@ import { FishPlayer } from '/players';
 
 /** Mark a player as stopped until time */
 export function addStopped(uuid: string, time:number) {
-	if(Mode.localDebug) return;
+	if(Mode.noBackend) return;
 	const req = Http.post(`http://${backendIP}/api/addStopped`, JSON.stringify({ id: uuid, time }))
 		.header('Content-Type', 'application/json')
 		.header('Accept', '*/*');
@@ -22,7 +22,7 @@ export function addStopped(uuid: string, time:number) {
 
 /** Mark a player as freed */
 export function free(uuid: string) {
-	if(Mode.localDebug) return;
+	if(Mode.noBackend) return;
 	const req = Http.post(`http://${backendIP}/api/free`, JSON.stringify({ id: uuid }))
 		.header('Content-Type', 'application/json')
 		.header('Accept', '*/*');
@@ -47,7 +47,7 @@ export function getStopped(uuid:string, callback: (unmark:any) => unknown, callb
 		else callback(null);
 	}
 
-	if(Mode.localDebug) return fail("local debug mode");
+	if(Mode.noBackend) return fail("local debug mode");
 
 	const req = Http.post(`http://${backendIP}/api/getStopped`, JSON.stringify({ id: uuid }))
 		.header('Content-Type', 'application/json')
@@ -88,7 +88,7 @@ export function isVpn(ip:string, callback: (isVpn:boolean) => unknown, callbackE
 
 /** Send text to the moderation logs channel in Discord. */
 export function sendModerationMessage(message: string) {
-	if(Mode.localDebug){
+	if(Mode.noBackend){
 		Log.info(`Sent moderation log message: ${message}`);
 		return;
 	}
@@ -103,7 +103,7 @@ export function sendModerationMessage(message: string) {
 
 /** Get staff messages from discord. */
 export function getStaffMessages(callback: (messages: string) => unknown) {
-	if(Mode.localDebug) return;
+	if(Mode.noBackend) return;
 	const req = Http.post(`http://${backendIP}/api/getStaffMessages`, JSON.stringify({ server: Gamemode.name() }))
 		.header('Content-Type', 'application/json').header('Accept', '*/*');
 	req.timeout = 10000;
@@ -117,7 +117,7 @@ export function getStaffMessages(callback: (messages: string) => unknown) {
 
 /** Send staff messages from server. */
 export function sendStaffMessage(message:string, playerName:string, callback?: (sent:boolean) => unknown){
-	if(Mode.localDebug) return;
+	if(Mode.noBackend) return;
 	const req = Http.post(
 		`http://${backendIP}/api/sendStaffMessage`,
 		// need to send both name variants so one can be sent to the other servers with color and discord can use the clean one
@@ -137,7 +137,7 @@ export function sendStaffMessage(message:string, playerName:string, callback?: (
 
 /** Bans the provided ip and/or uuid. */
 export function ban(data:{ip?:string; uuid?:string;}, callback:(status:string) => unknown = () => {}){
-	if(Mode.localDebug) return;
+	if(Mode.noBackend) return;
 	const req = Http.post(`http://${backendIP}/api/ban`, JSON.stringify(data))
 		.header('Content-Type', 'application/json')
 		.header('Accept', '*/*');
@@ -152,7 +152,7 @@ export function ban(data:{ip?:string; uuid?:string;}, callback:(status:string) =
 
 /** Unbans the provided ip and/or uuid. */
 export function unban(data:{ip?:string; uuid?:string;}, callback:(status:string, error?:string) => unknown = () => {}){
-	if(Mode.localDebug) return;
+	if(Mode.noBackend) return;
 	const req = Http.post(`http://${backendIP}/api/unban`, JSON.stringify(data))
 		.header('Content-Type', 'application/json')
 		.header('Accept', '*/*');
@@ -168,7 +168,7 @@ export function unban(data:{ip?:string; uuid?:string;}, callback:(status:string,
 
 /** Gets if either the provided uuid or ip is banned. */
 export function getBanned(data:{uuid?:string, ip?:string}, callback:(banned:boolean) => unknown){
-	if(Mode.localDebug){
+	if(Mode.noBackend){
 		Log.info(`[API] Attempted to getBanned(${data.uuid}/${data.ip}), assuming false due to local debug`);
 		callback(false);
 		return;

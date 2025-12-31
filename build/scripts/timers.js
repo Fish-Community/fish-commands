@@ -65,7 +65,7 @@ function initializeTimers() {
         return players_1.FishPlayer.forEachPlayer(function (p) { return p.displayTrail(); });
     }, 5, 0.15);
     //Staff chat
-    if (!config.Mode.localDebug)
+    if (!config.Mode.noBackend)
         Timer.schedule(function () {
             (0, api_1.getStaffMessages)(function (messages) {
                 if (messages.length)

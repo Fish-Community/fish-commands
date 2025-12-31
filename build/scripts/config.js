@@ -33,7 +33,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.localIPAddress = exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.backendIP = exports.Mode = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
+exports.localIPAddress = exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
 var globals_1 = require("/globals");
 var ranks_1 = require("/ranks");
 var funcs_1 = require("/funcs");
@@ -157,14 +157,15 @@ exports.heuristics = {
     blocksBrokenAfterJoin: 40,
 };
 exports.stopAntiEvadeTime = funcs_1.Duration.minutes(30);
+exports.backendIP = '45.79.202.111:5082';
 exports.Mode = {
     localDebug: new Fi("config/.debug").exists(),
+    noBackend: new Fi("config/.debug").exists() && !exports.backendIP.startsWith("127.0.0.1:"),
     isChristmas: new Date().getMonth() == 11,
     isAprilFools: new Date().getMonth() == 3 && new Date().getDate() == 1,
 };
 //#endregion
 //#region servers
-exports.backendIP = '45.79.202.111:5082';
 /** Stores the repository url for the maps for each gamemode. */
 exports.mapRepoURLs = {
     attack: "https://api.github.com/repos/Fish-Community/fish-maps/contents/attack",
