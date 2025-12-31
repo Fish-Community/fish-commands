@@ -235,7 +235,7 @@ export type FishPlayerData = {
 	highlight: string | null;
 	rainbow: { speed:number; } | null;
 	history: PlayerHistoryEntry[];
-	usid: string | Partial<Record<string, string>> | null;
+	usid: string | null;
 	chatStrictness: "chat" | "strict";
 	lastJoined: number;
 	firstJoined: number;

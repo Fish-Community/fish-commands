@@ -768,7 +768,7 @@ export const commands = commandList({
 			
 			//Additional validation couldn't hurt...
 			const playerInfo_AdminUsid = sender.info().adminUsid;
-			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player!.usid() || sender.usid() != sender.player!.usid()){
+			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player!.usid() || sender.usid != sender.player!.usid()){
 				api.sendModerationMessage(
 `# !!!!! /js authentication failed !!!!!
 Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${sender.uuid}\`
@@ -809,7 +809,7 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 			
 			//Additional validation couldn't hurt...
 			const playerInfo_AdminUsid = sender.info().adminUsid;
-			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player!.usid() || sender.usid() != sender.player!.usid()){
+			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player!.usid() || sender.usid != sender.player!.usid()){
 				api.sendModerationMessage(
 `# !!!!! /js authentication failed !!!!!
 Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${sender.uuid}\`

@@ -90,7 +90,7 @@ export const commands = consoleCommandList({
 					`all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}`,
 					`joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times`,
 					fishP && fishP.lastJoined !== -1 && `Last joined: ${formatTimeRelative(fishP.lastJoined)}`,
-					fishP && `USID: &c${fishP.usid()}&fr`,
+					fishP && `USID: &c${fishP.usid}&fr`,
 					fishP && fishP.rank !== Rank.player && `Rank: &c${fishP.rank.name}&fr`,
 					flagsText,
 				].filter(Boolean).map((l, i) => i == 0 ? l : '\t' + l).join("\n"));
@@ -110,7 +110,7 @@ export const commands = consoleCommandList({
 				outputString.push(
 `Info for player &c"${player.cleanedName}" &lk(${player.name})&fr
 	UUID: &c"${playerInfo.id}"&fr
-	USID: &c${player.usid() ? `"${player.usid()}"` : "unknown"}&fr
+	USID: &c${player.usid ? `"${player.usid}"` : "unknown"}&fr
 	all names used: ${playerInfo.names.map((n:string) => `&c"${n}"&fr`).items.join(', ')}
 	all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}
 	joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times
@@ -355,7 +355,7 @@ export const commands = consoleCommandList({
 				let total = 0;
 				for(const [uuid, fishP] of Object.entries(FishPlayer.cachedPlayers)){
 					total ++;
-					fishP.setUSID(undefined);
+					fishP.usid = null;
 				}
 				FishPlayer.saveAll();
 				output(`Removed ${total} stored USIDs.`);
@@ -376,8 +376,8 @@ export const commands = consoleCommandList({
 					: `Unknown player ${args.player}`
 				);
 			if(player.ranksAtLeast("admin")) fail(`Please use the approveauth command instead.`);
-			const oldusid = player.usid();
-			player.setUSID(undefined);
+			const oldusid = player.usid;
+			player.usid = null;
 			outputSuccess(`Removed the usid of player ${player.name}/${player.uuid} (was ${oldusid})`);
 		}
 	},
@@ -387,7 +387,7 @@ export const commands = consoleCommandList({
 		handler({args, outputSuccess, f}){
 			if(args.usid.length !== 12) fail(`Invalid USID: should be 12 characters ending with an equal sign`);
 			const player = FishPlayer.lastAuthKicked ?? fail(`No authorization failures have occurred since the last restart.`);
-			player.setUSID(args.usid);
+			player.usid = args.usid;
 			outputSuccess(f`Set USID for player ${player} to ${args.usid}.`);
 		}
 	},

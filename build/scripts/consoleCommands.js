@@ -141,7 +141,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     "all IPs used: ".concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", ")),
                     "joined &c".concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times"),
                     fishP && fishP.lastJoined !== -1 && "Last joined: ".concat((0, utils_1.formatTimeRelative)(fishP.lastJoined)),
-                    fishP && "USID: &c".concat(fishP.usid(), "&fr"),
+                    fishP && "USID: &c".concat(fishP.usid, "&fr"),
                     fishP && fishP.rank !== ranks_1.Rank.player && "Rank: &c".concat(fishP.rank.name, "&fr"),
                     flagsText,
                 ].filter(Boolean).map(function (l, i) { return i == 0 ? l : '\t' + l; }).join("\n"));
@@ -174,7 +174,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var outputString = [""];
             var _loop_2 = function (player) {
                 var playerInfo = admins.getInfo(player.uuid);
-                outputString.push("Info for player &c\"".concat(player.cleanedName, "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid() ? "\"".concat(player.usid(), "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
+                outputString.push("Info for player &c\"".concat(player.cleanedName, "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid ? "\"".concat(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
             };
             try {
                 for (var infoList_1 = __values(infoList), infoList_1_1 = infoList_1.next(); !infoList_1_1.done; infoList_1_1 = infoList_1.next()) {
@@ -461,7 +461,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     for (var _c = __values(Object.entries(players_1.FishPlayer.cachedPlayers)), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var _e = __read(_d.value, 2), uuid = _e[0], fishP = _e[1];
                         total++;
-                        fishP.setUSID(undefined);
+                        fishP.usid = null;
                     }
                 }
                 catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -491,8 +491,8 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     : "Unknown player ".concat(args.player));
             if (player.ranksAtLeast("admin"))
                 (0, commands_1.fail)("Please use the approveauth command instead.");
-            var oldusid = player.usid();
-            player.setUSID(undefined);
+            var oldusid = player.usid;
+            player.usid = null;
             outputSuccess("Removed the usid of player ".concat(player.name, "/").concat(player.uuid, " (was ").concat(oldusid, ")"));
         }
     },
@@ -505,7 +505,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             if (args.usid.length !== 12)
                 (0, commands_1.fail)("Invalid USID: should be 12 characters ending with an equal sign");
             var player = (_b = players_1.FishPlayer.lastAuthKicked) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("No authorization failures have occurred since the last restart.");
-            player.setUSID(args.usid);
+            player.usid = args.usid;
             outputSuccess(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Set USID for player ", " to ", "."], ["Set USID for player ", " to ", "."])), player, args.usid));
         }
     },

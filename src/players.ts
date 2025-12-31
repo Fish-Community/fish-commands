@@ -100,7 +100,7 @@ export class FishPlayer {
 		speed: number;
 	} | null;
 	history: PlayerHistoryEntry[];
-	usidMapping: Partial<Record<string, string>>;
+	usid: string | null;
 	chatStrictness: "chat" | "strict" = "chat";
 	/** -1 represents unknown */
 	lastJoined:number;
@@ -137,7 +137,7 @@ export class FishPlayer {
 		this.cleanedName = escapeStringColorsServer(Strings.stripColors(this.name));
 		this.rank = Rank.getByName(rank) ?? Rank.player;
 		this.flags = new Set(flags.map(RoleFlag.getByName).filter((f):f is RoleFlag => f != null));
-		this.usidMapping = typeof usid === "string" ? {[localIPAddress]: usid} : (usid ?? {});
+		this.usid = usid ?? null;
 		this.chatStrictness = chatStrictness;
 		this.stats = stats ?? {
 			blocksBroken: 0,
@@ -702,7 +702,7 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 	}
 	/** Checks if this player's USID is correct. */
 	checkUsid(){
-		const storedUSID = this.usid();
+		const storedUSID = this.usid;
 		const usidMissing = storedUSID == null || !storedUSID;
 		const receivedUSID = this.player!.usid();
 		if(this.hasPerm("usidCheck")){
@@ -729,7 +729,7 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 				Log.err(`&rUSID mismatch for player &c"${this.cleanedName}"&r: stored usid is &c${storedUSID}&r, but they tried to connect with usid &c${receivedUSID}&r`);
 			}
 		}
-		this.setUSID(receivedUSID);
+		this.usid = receivedUSID;
 		return true;
 	}
 	displayTrail(){
@@ -887,7 +887,7 @@ We apologize for the inconvenience.`
 		out.writeNumber(this.rainbow?.speed ?? 0, 2);
 		out.writeString(this.rank.name, 2);
 		out.writeArray(Array.from(this.flags).filter(f => f.peristent), (f, str) => str.writeString(f.name, 2), 2);
-		out.writeString(this.usid() ?? null, 2);
+		out.writeString(this.usid, 2);
 		out.writeEnumString(this.chatStrictness, ["chat", "strict"]);
 		out.writeNumber(this.lastJoined, 15);
 		out.writeNumber(this.firstJoined, 15);
@@ -1050,12 +1050,6 @@ We apologize for the inconvenience.`
 	}
 	info():PlayerInfo {
 		return Vars.netServer.admins.getInfo(this.uuid);
-	}
-	usid():string | undefined {
-		return this.usidMapping[localIPAddress];
-	}
-	setUSID(usid:string | undefined){
-		this.usidMapping[localIPAddress] = usid;
 	}
 	/**
 	 * Sends this player a chat message.

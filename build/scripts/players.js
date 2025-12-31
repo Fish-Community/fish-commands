@@ -63,9 +63,8 @@ var funcs_5 = require("/funcs");
 var FishPlayer = /** @class */ (function () {
     //TODO: fix this absolute mess of a constructor! I don't remember why this exists
     function FishPlayer(_a, player) {
-        var _b;
-        var uuid = _a.uuid, name = _a.name, _c = _a.muted, muted = _c === void 0 ? false : _c, _d = _a.autoflagged, autoflagged = _d === void 0 ? false : _d, _e = _a.unmarkTime, unmarked = _e === void 0 ? -1 : _e, _f = _a.highlight, highlight = _f === void 0 ? null : _f, _g = _a.history, history = _g === void 0 ? [] : _g, _h = _a.rainbow, rainbow = _h === void 0 ? null : _h, _j = _a.rank, rank = _j === void 0 ? "player" : _j, _k = _a.flags, flags = _k === void 0 ? [] : _k, usid = _a.usid, _l = _a.chatStrictness, chatStrictness = _l === void 0 ? "chat" : _l, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, _m = _a.showRankPrefix, showRankPrefix = _m === void 0 ? true : _m;
-        var _o, _p, _q, _r;
+        var uuid = _a.uuid, name = _a.name, _b = _a.muted, muted = _b === void 0 ? false : _b, _c = _a.autoflagged, autoflagged = _c === void 0 ? false : _c, _d = _a.unmarkTime, unmarked = _d === void 0 ? -1 : _d, _e = _a.highlight, highlight = _e === void 0 ? null : _e, _f = _a.history, history = _f === void 0 ? [] : _f, _g = _a.rainbow, rainbow = _g === void 0 ? null : _g, _h = _a.rank, rank = _h === void 0 ? "player" : _h, _j = _a.flags, flags = _j === void 0 ? [] : _j, usid = _a.usid, _k = _a.chatStrictness, chatStrictness = _k === void 0 ? "chat" : _k, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, _l = _a.showRankPrefix, showRankPrefix = _l === void 0 ? true : _l;
+        var _m, _o, _p, _q;
         //Transients
         this.player = null;
         this.pet = null;
@@ -99,22 +98,22 @@ var FishPlayer = /** @class */ (function () {
         this.ipDetectedVpn = false;
         this.lastPollSent = -1;
         this.chatStrictness = "chat";
-        this.uuid = (_o = uuid !== null && uuid !== void 0 ? uuid : player === null || player === void 0 ? void 0 : player.uuid()) !== null && _o !== void 0 ? _o : (0, funcs_3.crash)("Attempted to create FishPlayer with no UUID");
-        this.name = (_p = name !== null && name !== void 0 ? name : player === null || player === void 0 ? void 0 : player.name) !== null && _p !== void 0 ? _p : "Unnamed player [ERROR]";
+        this.uuid = (_m = uuid !== null && uuid !== void 0 ? uuid : player === null || player === void 0 ? void 0 : player.uuid()) !== null && _m !== void 0 ? _m : (0, funcs_3.crash)("Attempted to create FishPlayer with no UUID");
+        this.name = (_o = name !== null && name !== void 0 ? name : player === null || player === void 0 ? void 0 : player.name) !== null && _o !== void 0 ? _o : "Unnamed player [ERROR]";
         this.prefixedName = this.name;
         this.muted = muted;
         this.unmarkTime = unmarked;
         this.lastJoined = lastJoined !== null && lastJoined !== void 0 ? lastJoined : -1;
-        this.firstJoined = (_q = firstJoined !== null && firstJoined !== void 0 ? firstJoined : lastJoined) !== null && _q !== void 0 ? _q : Date.now();
+        this.firstJoined = (_p = firstJoined !== null && firstJoined !== void 0 ? firstJoined : lastJoined) !== null && _p !== void 0 ? _p : Date.now();
         this.autoflagged = autoflagged;
         this.highlight = highlight;
         this.history = history;
         this.player = player;
         this.rainbow = rainbow;
         this.cleanedName = (0, funcs_2.escapeStringColorsServer)(Strings.stripColors(this.name));
-        this.rank = (_r = ranks_1.Rank.getByName(rank)) !== null && _r !== void 0 ? _r : ranks_1.Rank.player;
+        this.rank = (_q = ranks_1.Rank.getByName(rank)) !== null && _q !== void 0 ? _q : ranks_1.Rank.player;
         this.flags = new Set(flags.map(ranks_1.RoleFlag.getByName).filter(function (f) { return f != null; }));
-        this.usidMapping = typeof usid === "string" ? (_b = {}, _b[config_1.localIPAddress] = usid, _b) : (usid !== null && usid !== void 0 ? usid : {});
+        this.usid = usid !== null && usid !== void 0 ? usid : null;
         this.chatStrictness = chatStrictness;
         this.stats = stats !== null && stats !== void 0 ? stats : {
             blocksBroken: 0,
@@ -760,7 +759,7 @@ var FishPlayer = /** @class */ (function () {
     };
     /** Checks if this player's USID is correct. */
     FishPlayer.prototype.checkUsid = function () {
-        var storedUSID = this.usid();
+        var storedUSID = this.usid;
         var usidMissing = storedUSID == null || !storedUSID;
         var receivedUSID = this.player.usid();
         if (this.hasPerm("usidCheck")) {
@@ -790,7 +789,7 @@ var FishPlayer = /** @class */ (function () {
                 Log.err("&rUSID mismatch for player &c\"".concat(this.cleanedName, "\"&r: stored usid is &c").concat(storedUSID, "&r, but they tried to connect with usid &c").concat(receivedUSID, "&r"));
             }
         }
-        this.setUSID(receivedUSID);
+        this.usid = receivedUSID;
         return true;
     };
     FishPlayer.prototype.displayTrail = function () {
@@ -952,7 +951,7 @@ var FishPlayer = /** @class */ (function () {
         }
     };
     FishPlayer.prototype.write = function (out) {
-        var _a, _b, _c;
+        var _a, _b;
         if (typeof this.unmarkTime === "string")
             this.unmarkTime = 0;
         out.writeString(this.uuid, 2);
@@ -969,7 +968,7 @@ var FishPlayer = /** @class */ (function () {
         out.writeNumber((_b = (_a = this.rainbow) === null || _a === void 0 ? void 0 : _a.speed) !== null && _b !== void 0 ? _b : 0, 2);
         out.writeString(this.rank.name, 2);
         out.writeArray(Array.from(this.flags).filter(function (f) { return f.peristent; }), function (f, str) { return str.writeString(f.name, 2); }, 2);
-        out.writeString((_c = this.usid()) !== null && _c !== void 0 ? _c : null, 2);
+        out.writeString(this.usid, 2);
         out.writeEnumString(this.chatStrictness, ["chat", "strict"]);
         out.writeNumber(this.lastJoined, 15);
         out.writeNumber(this.firstJoined, 15);
@@ -1161,12 +1160,6 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.info = function () {
         return Vars.netServer.admins.getInfo(this.uuid);
-    };
-    FishPlayer.prototype.usid = function () {
-        return this.usidMapping[config_1.localIPAddress];
-    };
-    FishPlayer.prototype.setUSID = function (usid) {
-        this.usidMapping[config_1.localIPAddress] = usid;
     };
     /**
      * Sends this player a chat message.
