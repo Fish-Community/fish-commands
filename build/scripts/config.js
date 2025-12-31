@@ -255,6 +255,7 @@ exports.text = {
             "[#FFFFFF]"
         ]); },
     },
+    dataFetchFailed: "[scarlet]\u26A0 Data fetch failed!\n[white]Please disconnect and rejoin the server if you encounter further issues, such as missing rank or statistics.",
 };
 //TODO use this
 exports.FColor = (function (data) {

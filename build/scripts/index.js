@@ -112,6 +112,7 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
             Vars.netServer.admins.unbanPlayerID(e.packet.uuid);
         }
     });
+    players_1.FishPlayer.onConnectPacket(e.packet.uuid);
 });
 Events.on(EventType.UnitChangeEvent, function (e) {
     players_1.FishPlayer.onUnitChange(e.player, e.unit);

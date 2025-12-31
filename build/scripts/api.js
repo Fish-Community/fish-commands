@@ -14,6 +14,8 @@ exports.sendStaffMessage = sendStaffMessage;
 exports.ban = ban;
 exports.unban = unban;
 exports.getBanned = getBanned;
+exports.getFishPlayerData = getFishPlayerData;
+exports.setFishPlayerData = setFishPlayerData;
 var config_1 = require("/config");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
@@ -194,5 +196,63 @@ function getBanned(data, callback) {
         if (!str.length)
             return Log.err("[API] Network error(empty response) when trying to call api.getBanned()");
         callback(JSON.parse(str).data);
+    });
+}
+/**
+ * Gets a player's unmark time from the API.
+ * If callbackError is undefined, callback will be called with null on error.
+ **/
+function getFishPlayerData(uuid, callback, callbackError) {
+    function fail(err) {
+        Log.err("[API] Network error when trying to call api.getFishPlayerData()");
+        if (err)
+            Log.err(err);
+        callbackError(err);
+    }
+    if (config_1.Mode.noBackend)
+        return fail("local debug mode");
+    var req = Http.post("http://".concat(config_1.backendIP, "/api/fish-player"), JSON.stringify({
+        id: uuid,
+        gamemode: config_1.Gamemode.name(),
+    }))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*');
+    req.timeout = 10000;
+    req.error(fail);
+    req.submit(function (response) {
+        var data = response.getResultAsString();
+        if (data) {
+            var result = JSON.parse(data);
+            if (!result || typeof result != "object")
+                fail("Invalid fish player data");
+            callback(result);
+        }
+        else {
+            callback(null);
+        }
+    });
+}
+/** Pushes fish player data to the backend. */
+function setFishPlayerData(data, repeats) {
+    if (repeats === void 0) { repeats = 1; }
+    if (config_1.Mode.noBackend)
+        return;
+    var req = Http.post("http://".concat(config_1.backendIP, "/api/fish-player/set"), JSON.stringify({
+        player: data,
+        gamemode: config_1.Gamemode.name(),
+    }))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*');
+    req.timeout = 10000;
+    req.error(function (err) {
+        Log.err("[API] Network error when trying to call api.setFishPlayerData(), repeats=".concat(repeats));
+        Log.err(err);
+        if (err === null || err === void 0 ? void 0 : err.response)
+            Log.err(err.response.getResultAsString());
+        if (repeats > 0 && !(err.status.code >= 400 && err.status.code <= 499))
+            setFishPlayerData(data, repeats - 1);
+    });
+    req.submit(function (response) {
+        //Log.info(response.getResultAsString());
     });
 }

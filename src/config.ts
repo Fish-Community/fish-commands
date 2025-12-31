@@ -267,6 +267,7 @@ export const text = {
 		message: () => string;
 		highlight: () => string;
 	},
+	dataFetchFailed: "[scarlet]\u26A0 Data fetch failed!\n[white]Please disconnect and rejoin the server if you encounter further issues, such as missing rank or statistics.",
 };
 
 

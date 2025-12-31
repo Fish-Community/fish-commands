@@ -56,8 +56,8 @@ export class FishPlayer {
 		type: string;
 		color: Color;
 	} | null = null;
-	cleanedName:string;
-	prefixedName:string;
+	cleanedName:string = "Unnamed player [ERROR}";
+	prefixedName:string = "Unnamed player [ERROR}";
 	/** Used to freeze players when votekicking. */
 	frozen:boolean = false;
 	usageData: Record<string, {
@@ -87,24 +87,25 @@ export class FishPlayer {
 	ipDetectedVpn = false;
 	lastPollSent = -1;
 	autoflagged = false;
+	infoUpdated = false;
 	
 	//Stored data
 	uuid: string;
-	name: string;
-	muted: boolean;
-	unmarkTime: number;
-	rank: Rank;
-	flags: Set<RoleFlag>;
-	highlight: string | null;
+	name: string = "Unnamed player [ERROR}";
+	muted: boolean = false;
+	unmarkTime: number = -1;
+	rank: Rank = Rank.player;
+	flags = new Set<RoleFlag>();
+	highlight: string | null = null;
 	rainbow: {
 		speed: number;
-	} | null;
-	history: PlayerHistoryEntry[];
-	usid: string | null;
+	} | null = null;
+	history: PlayerHistoryEntry[] = [];
+	usid: string | null = null;
 	chatStrictness: "chat" | "strict" = "chat";
 	/** -1 represents unknown */
-	lastJoined:number;
-	firstJoined:number;
+	lastJoined:number = -1;
+	firstJoined:number = -1;
 	stats: {
 		blocksBroken: number;
 		blocksPlaced: number;
@@ -113,49 +114,29 @@ export class FishPlayer {
 		/** Does not include RTVs */
 		gamesFinished: number;
 		gamesWon: number;
+	} = {
+		blocksBroken: 0,
+		blocksPlaced: 0,
+		timeInGame: 0,
+		chatMessagesSent: 0,
+		gamesFinished: 0,
+		gamesWon: 0,
 	};
-	showRankPrefix:boolean;
+	showRankPrefix:boolean = true;
 
-	//TODO: fix this absolute mess of a constructor! I don't remember why this exists
-	constructor({
-		uuid, name, muted = false, unmarkTime: unmarked = -1,
-		highlight = null, history = [], rainbow = null, rank = "player", flags = [], usid,
-		chatStrictness = "chat", lastJoined, firstJoined, stats, showRankPrefix = true,
-	}:Partial<FishPlayerData>, player:mindustryPlayer | null){
-		this.uuid = uuid ?? player?.uuid() ?? crash(`Attempted to create FishPlayer with no UUID`);
-		this.name = name ?? player?.name ?? "Unnamed player [ERROR]";
-		this.prefixedName = this.name;
-		this.muted = muted;
-		this.unmarkTime = unmarked;
-		this.lastJoined = lastJoined ?? -1;
-		this.firstJoined = firstJoined ?? lastJoined ?? Date.now();
-		this.highlight = highlight;
-		this.history = history;
+	constructor(uuid:string, data:Partial<FishPlayerData>, player:mindustryPlayer | null){
+		this.uuid = uuid;
 		this.player = player;
-		this.rainbow = rainbow;
-		this.cleanedName = escapeStringColorsServer(Strings.stripColors(this.name));
-		this.rank = Rank.getByName(rank) ?? Rank.player;
-		this.flags = new Set(flags.map(RoleFlag.getByName).filter((f):f is RoleFlag => f != null));
-		this.usid = usid ?? null;
-		this.chatStrictness = chatStrictness;
-		this.stats = stats ?? {
-			blocksBroken: 0,
-			blocksPlaced: 0,
-			timeInGame: 0,
-			chatMessagesSent: 0,
-			gamesFinished: 0,
-			gamesWon: 0,
-		};
-		this.showRankPrefix = showRankPrefix;
+		this.updateData(data);
 	}
 
 	//#region getplayer
 	//Contains methods used to get FishPlayer instances.
 	static createFromPlayer(player:mindustryPlayer){
-		return new this({}, player);
+		return new this(player.uuid(), {}, player);
 	}
 	static createFromInfo(playerInfo:PlayerInfo){
-		return new this({
+		return new this(playerInfo.id, {
 			uuid: playerInfo.id,
 			name: playerInfo.lastName,
 			usid: playerInfo.adminUsid ?? null
@@ -289,6 +270,30 @@ export class FishPlayer {
 
 	//#region eventhandling
 	//Contains methods that handle an event and must be called by other code (usually through Events.on).
+	static dataFetchFailedUuids = new Set();
+	static onConnectPacket(uuid:string){
+		if(this.cachedPlayers[uuid]) this.cachedPlayers[uuid].infoUpdated = false;
+		api.getFishPlayerData(uuid, data => {
+			if(!data) return; //nothing to sync
+			if(!(uuid in this.cachedPlayers)){
+				this.cachedPlayers[uuid] = new FishPlayer(uuid, data, null);
+			} else {
+				const fishP = this.cachedPlayers[uuid];
+				fishP.updateData(data);
+				if(fishP.infoUpdated){
+					//Player has already connected
+					//Run it again
+					if(fishP.player) fishP.updateSavedInfoFromPlayer(fishP.player);
+				} else {
+					//Player has not connected yet, nothing further needed
+				}
+			}
+		}, () => {
+			const fishP = this.cachedPlayers[uuid];
+			if(fishP?.player) fishP.player.sendMessage(text.dataFetchFailed);
+			else this.dataFetchFailedUuids.add(uuid);
+		});
+	}
 	/** Must be run on PlayerConnectEvent. */
 	static onPlayerConnect(player:mindustryPlayer){
 		const fishPlayer = this.cachedPlayers[player.uuid()] ??= this.createFromPlayer(player);
@@ -308,12 +313,8 @@ export class FishPlayer {
 			fishPlayer.updateMemberExclusiveState();
 			fishPlayer.checkVPNAndJoins();
 			fishPlayer.checkAutoRanks();
-			api.getStopped(player.uuid(), (unmarkTime) => {
-				if(unmarkTime)
-					fishPlayer.unmarkTime = unmarkTime;
-				fishPlayer.sendWelcomeMessage();
-				fishPlayer.updateName();
-			});
+			fishPlayer.sendWelcomeMessage();
+			fishPlayer.updateName();
 			//I think this is a better spot for this
 			if(fishPlayer.firstJoin()) Menu.menu(
 				"Rules for [#0000ff] >|||> FISH [white] servers [white]",
@@ -383,6 +384,7 @@ export class FishPlayer {
 		fishP.lastJoined = Date.now();
 		this.recentLeaves.unshift(fishP);
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
+		api.setFishPlayerData(fishP.getData());
 	}
 	static easterEggVotekickTarget: FishPlayer | null = null;
 	static validateVotekickSession(){
@@ -548,6 +550,7 @@ export class FishPlayer {
 		this.tstats = {
 			blocksBroken: 0
 		};
+		this.infoUpdated = true;
 	}
 	updateMemberExclusiveState(){
 		if(!this.hasPerm("member")){
@@ -594,6 +597,30 @@ export class FishPlayer {
 			Vars.netServer.admins.unAdminPlayer(this.uuid);
 			this.player!.admin = false;
 		}
+	}
+	updateData(data: Partial<FishPlayerData>){
+		if(data.name != undefined) this.name = data.name;
+		if(data.muted != undefined) this.muted = data.muted;
+		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
+		if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
+		if(data.firstJoined != undefined) this.firstJoined = data.firstJoined;
+		if(data.highlight != undefined) this.highlight = data.highlight;
+		if(data.history != undefined) this.history = data.history;
+		if(data.rainbow != undefined) this.rainbow = data.rainbow;
+		if(data.usid != undefined) this.usid = data.usid;
+		if(data.chatStrictness != undefined) this.chatStrictness = data.chatStrictness;
+		if(data.stats != undefined) this.stats = data.stats;
+		if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
+		if(data.rank != undefined) this.rank = Rank.getByName(data.rank) ?? Rank.player;
+		if(data.flags != undefined) this.flags = new Set(data.flags.map(RoleFlag.getByName).filter(Boolean));
+	}
+	getData():FishPlayerData {
+		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix } = this;
+		return {
+			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix,
+			rank: rank.name,
+			flags: [...flags.values()].map(f => f.name)
+		};
 	}
 	checkAntiEvasion(){
 		FishPlayer.updatePunishedIPs();
@@ -733,6 +760,10 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 	}
 	sendWelcomeMessage(){
 		const appealLine = `To appeal, ${FColor.discord`join our discord`} with ${FColor.discord`/discord`}, or ask a ${Rank.mod.color}staff member[] in-game.`;
+		if(FishPlayer.dataFetchFailedUuids.has(this.uuid)){
+			this.sendMessage(text.dataFetchFailed);
+			FishPlayer.dataFetchFailedUuids.delete(this.uuid);
+		}
 		if(this.marked()) this.sendMessage(
 `[gold]Hello there! You are currently [scarlet]marked as a griefer[]. You cannot do anything in-game while marked.
 ${appealLine}
@@ -793,17 +824,14 @@ We apologize for the inconvenience.`
 	//#endregion
 
 	//#region I/O
-	static readLegacy(fishPlayerData:string, player:mindustryPlayer | null){
-		return new this(JSON.parse(fishPlayerData), player);
-	}
 	static read(version:number, fishPlayerData:StringIO, player:mindustryPlayer | null):FishPlayer {
 		switch(version){
 			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
 				crash(`Version ${version} is not longer supported, this should not be possible`);
 				break;
 			case 10: {
-				const fishP = new this({
-					uuid: fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null."),
+				const uuid = fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null.");
+				const fishP = new this(uuid, {
 					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
 					muted: (() => {
 						const muted = fishPlayerData.readBool();
@@ -837,9 +865,9 @@ We apologize for the inconvenience.`
 				fishPlayerData.readNumber(1); //discard pollResponse
 				return fishP;
 			}
-			case 11:
-				return new this({
-					uuid: fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null."),
+			case 11: {
+				const uuid = fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null.");
+				return new this(uuid, {
 					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
 					muted: (() => {
 						const muted = fishPlayerData.readBool();
@@ -870,9 +898,10 @@ We apologize for the inconvenience.`
 					},
 					showRankPrefix: fishPlayerData.readBool(),
 				}, player);
-			case 12:
-				return new this({
-					uuid: fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null."),
+			}
+			case 12: {
+				const uuid = fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null.");
+				return new this(uuid, {
 					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
 					muted: fishPlayerData.readBool(),
 					unmarkTime: fishPlayerData.readNumber(13),
@@ -899,6 +928,7 @@ We apologize for the inconvenience.`
 					},
 					showRankPrefix: fishPlayerData.readBool(),
 				}, player);
+			}
 			default: crash(`Unknown save version ${version}`);
 		}
 	}
@@ -934,7 +964,7 @@ We apologize for the inconvenience.`
 		const out = new StringIO();
 		out.writeNumber(this.saveVersion, 2);
 		out.writeArray(
-			Object.entries(this.cachedPlayers),
+			Object.entries(this.cachedPlayers).filter(([uuid, fishP]) => fishP.shouldCache()),
 			([uuid, player]) => player.write(out),
 			6
 		);
@@ -946,6 +976,9 @@ We apologize for the inconvenience.`
 			string = string.slice(this.chunkSize);
 		}
 		if(forceSaveSettings) Core.settings.manualSave();
+	}
+	shouldCache(){
+		return this.ranksAtLeast("mod");
 	}
 	/** Does not include stats */
 	hasData(){
@@ -967,7 +1000,6 @@ We apologize for the inconvenience.`
 	static loadAll(string = this.getFishPlayersString()){
 		try {
 			if(string == "") return; //If it's empty, don't try to load anything
-			if(string.startsWith("{")) return this.loadAllLegacy(string);
 			const out = new StringIO(string);
 			const version = out.readNumber(2);
 			out.readArray(str => FishPlayer.read(version, str, null), version <= 6 ? 4 : 6) //this is really unsafe and is going to cause downtime if i don't fix it
@@ -979,20 +1011,6 @@ We apologize for the inconvenience.`
 			Log.err("=============================");
 			Log.err(string);
 			Log.err("=============================");
-		}
-	}
-	static loadAllLegacy(jsonString:string){
-		for(const [key, value] of Object.entries(JSON.parse(jsonString) as Record<string, unknown>)){
-			if(value instanceof Object){
-				let rank = "player";
-				if("mod" in value && value.mod) rank = "mod";
-				if("admin" in value && value.admin) rank = "admin";
-				this.cachedPlayers[key] = new this({
-					rank,
-					uuid: key,
-					...value
-				}, null);
-			}
 		}
 	}
 	//#endregion

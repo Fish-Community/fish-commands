@@ -3,6 +3,7 @@ Copyright © BalaM314, 2025. All Rights Reserved.
 This file contains a wrapper over the API calls to the backend server.
 */
 
+import type { FishPlayerData } from '/types';
 import { Gamemode, backendIP, Mode } from '/config';
 import { maxTime } from "/globals";
 import { FishPlayer } from '/players';
@@ -185,3 +186,58 @@ export function getBanned(data:{uuid?:string, ip?:string}, callback:(banned:bool
 		callback(JSON.parse(str).data);
 	});
 }
+
+/**
+ * Gets a player's unmark time from the API.
+ * If callbackError is undefined, callback will be called with null on error.
+ **/
+export function getFishPlayerData(uuid:string, callback: (data:FishPlayerData | null) => unknown, callbackError: (errorMessage:Throwable) => unknown){
+	function fail(err:string){
+		Log.err(`[API] Network error when trying to call api.getFishPlayerData()`);
+		if(err) Log.err(err);
+		callbackError(err);
+	}
+
+	if(Mode.noBackend) return fail("local debug mode");
+
+	const req = Http.post(`http://${backendIP}/api/fish-player`, JSON.stringify({
+		id: uuid,
+		gamemode: Gamemode.name(),
+	}))
+		.header('Content-Type', 'application/json')
+		.header('Accept', '*/*');
+	req.timeout = 10000;
+	req.error(fail);
+	req.submit((response) => {
+		const data = response.getResultAsString();
+		if(data){
+			const result = JSON.parse(data);
+			if(!result || typeof result != "object") fail(`Invalid fish player data`);
+			callback(result);
+		} else {
+			callback(null);
+		}
+	});
+}
+
+/** Pushes fish player data to the backend. */
+export function setFishPlayerData(data: FishPlayerData, repeats = 1) {
+	if(Mode.noBackend) return;
+	const req = Http.post(`http://${backendIP}/api/fish-player/set`, JSON.stringify({
+		player: data,
+		gamemode: Gamemode.name(),
+	}))
+		.header('Content-Type', 'application/json')
+		.header('Accept', '*/*');
+	req.timeout = 10000;
+	req.error((err) => {
+		Log.err(`[API] Network error when trying to call api.setFishPlayerData(), repeats=${repeats}`);
+		Log.err(err);
+		if(err?.response) Log.err(err.response.getResultAsString());
+		if(repeats > 0 && !(err.status.code >= 400 && err.status.code <= 499)) setFishPlayerData(data, repeats - 1);
+	});
+	req.submit((response) => {
+		//Log.info(response.getResultAsString());
+	});
+}
+
