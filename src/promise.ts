@@ -28,15 +28,17 @@ export class Promise<TResolve, TReject> {
 	constructor(initializer:(
 		resolve: (value:TResolve) => void,
 		reject: (error:TReject) => void,
-	) => void){
+	) => void, skipMicrotask = false){
 		initializer(
 			(value) => {
 				this.state = ["resolved", value];
-				queueMicrotask(() => this.resolve());
+				if(skipMicrotask) this.resolve();
+				else queueMicrotask(() => this.resolve());
 			},
 			(error) => {
 				this.state = ["rejected", error];
-				queueMicrotask(() => this.reject());
+				if(skipMicrotask) this.reject();
+				else queueMicrotask(() => this.reject());
 			}
 		);
 	}
@@ -108,13 +110,13 @@ export class Promise<TResolve, TReject> {
 		);
 		return promise;
 	}
-	static withResolvers<TResolve, TReject>(){
+	static withResolvers<TResolve, TReject>(skipMicrotask = false){
 		let resolve!:(value:TResolve) => void;
 		let reject!:(error:TReject) => void;
 		const promise = new Promise<TResolve, TReject>((r, j) => {
 			resolve = r;
 			reject = j;
-		});
+		}, skipMicrotask);
 		return {
 			promise, resolve, reject
 		};

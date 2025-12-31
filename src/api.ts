@@ -192,14 +192,18 @@ export function getBanned(data:{uuid?:string, ip?:string}, callback:(banned:bool
  * Gets a player's unmark time from the API.
  * If callbackError is undefined, callback will be called with null on error.
  **/
-export function getFishPlayerData(uuid:string, callback: (data:FishPlayerData | null) => unknown, callbackError: (errorMessage:Throwable) => unknown){
+export function getFishPlayerData(uuid:string){
+	const { promise, resolve, reject } = Promise.withResolvers<FishPlayerData | null, unknown>();
 	function fail(err:string){
 		Log.err(`[API] Network error when trying to call api.getFishPlayerData()`);
 		if(err) Log.err(err);
-		callbackError(err);
+		reject(err);
 	}
 
-	if(Mode.noBackend) return fail("local debug mode");
+	if(Mode.noBackend){
+		reject("local debug mode");
+		return promise;
+	}
 
 	const req = Http.post(`http://${backendIP}/api/fish-player`, JSON.stringify({
 		id: uuid,
@@ -214,11 +218,12 @@ export function getFishPlayerData(uuid:string, callback: (data:FishPlayerData | 
 		if(data){
 			const result = JSON.parse(data);
 			if(!result || typeof result != "object") fail(`Invalid fish player data`);
-			callback(result);
+			resolve(result);
 		} else {
-			callback(null);
+			resolve(null);
 		}
 	});
+	return promise;
 }
 
 /** Pushes fish player data to the backend. */

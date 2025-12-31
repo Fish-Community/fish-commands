@@ -37,9 +37,9 @@ export const commands = commandList({
 		description: 'Stops a player from chatting.',
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
-		handler({args, sender, outputSuccess, f}){
+		async handler({args, sender, outputSuccess, f}){
 			if(args.player.muted) fail(f`Player ${args.player} is already muted.`);
-			args.player.mute(sender);
+			await args.player.mute(sender);
 			logAction('muted', sender, args.player);
 			outputSuccess(f`Muted player ${args.player}.`);
 		}
@@ -49,10 +49,10 @@ export const commands = commandList({
 		args: ['player:player'],
 		description: 'Unmutes a player',
 		perm: Perm.mod,
-		handler({args, sender, outputSuccess, f}){
+		async handler({args, sender, outputSuccess, f}){
 			if(!args.player.muted && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
 			if(!args.player.muted) fail(f`Player ${args.player} is not muted.`);
-			args.player.unmute(sender);
+			await args.player.unmute(sender);
 			logAction('unmuted', sender, args.player);
 			outputSuccess(f`Unmuted player ${args.player}.`);
 		}
@@ -94,18 +94,18 @@ export const commands = commandList({
 		description: 'Stops a player.',
 		perm: Perm.mod,
 		requirements: [Req.moderate("player", true)],
-		handler({args, sender, outputSuccess, f}){
+		async handler({args, sender, outputSuccess, f}){
 			if(args.player.marked()){
 				//overload: overwrite stoptime
 				if(!args.time) fail(f`Player ${args.player} is already marked.`);
 				const previousTime = formatTimeRelative(args.player.unmarkTime, true);
-				args.player.updateStopTime(args.time);
+				await args.player.updateStopTime(args.time);
 				outputSuccess(f`Player ${args.player}'s stop time has been updated to ${formatTime(args.time)} (was ${previousTime}).`);
 				logAction("updated stop time of", sender, args.player, args.message ?? undefined, args.time);
 			} else {
 				const time = args.time ?? untilForever();
 				if(time + Date.now() > maxTime) fail(`Error: time too high.`);
-				args.player.stop(sender, time, args.message ?? undefined);
+				await args.player.stop(sender, time, args.message ?? undefined);
 				logAction('stopped', sender, args.player, args.message ?? undefined, time);
 				//TODO outputGlobal()
 				Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${args.message ? ` with reason: [white]${args.message}[]` : ""}.`);
@@ -118,9 +118,9 @@ export const commands = commandList({
 		args: ['player:player'],
 		description: 'Frees a player.',
 		perm: Perm.mod,
-		handler({args, sender, outputSuccess, outputFail, f}){
+		async handler({args, sender, outputSuccess, outputFail, f}){
 			if(args.player.marked()){
-				args.player.free(sender);
+				await args.player.free(sender);
 				logAction('freed', sender, args.player);
 				outputSuccess(f`Player ${args.player} has been unmarked.`);
 			} else if(args.player.autoflagged){
@@ -140,13 +140,13 @@ export const commands = commandList({
 		description: "Set a player's rank.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
-		handler({args:{rank, player}, outputSuccess, f, sender}){
+		async handler({args:{rank, player}, outputSuccess, f, sender}){
 			if(rank.level >= sender.rank.level)
 				fail(f`You do not have permission to promote players to rank ${rank}, because your current rank is ${sender.rank}`);
 			if(rank == Rank.pi && !Mode.localDebug) fail(f`Rank ${rank} is immutable.`);
 			if(player.immutable() && !Mode.localDebug) fail(f`Player ${player} is immutable.`);
 
-			player.setRank(rank);
+			await player.setRank(rank);
 			logAction(`set rank to ${rank.name} for`, sender, player);
 			outputSuccess(f`Set rank of player ${player} to ${rank}`);
 		}
@@ -157,11 +157,11 @@ export const commands = commandList({
 		description: "Set a player's role flags.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
-		handler({args:{flag, player, value}, sender, outputSuccess, f}){
+		async handler({args:{flag, player, value}, sender, outputSuccess, f}){
 			if(!sender.hasPerm("admin") && !flag.assignableByModerators)
 				fail(f`You do not have permission to change the value of role flag ${flag}`);
 
-			player.setFlag(flag, value);
+			await player.setFlag(flag, value);
 			logAction(`set roleflag ${flag.name} to ${value} for`, sender, player);
 			outputSuccess(f`Set role flag ${flag} of player ${player} to ${value}`);
 		}
@@ -187,11 +187,11 @@ export const commands = commandList({
 		async handler({args, sender, outputFail, outputSuccess, f, admins}){
 			const maxPlayers = 60;
 			
-			function stop(option:PlayerInfo, time:number){
+			async function stop(option:PlayerInfo, time:number){
 				const fishP = FishPlayer.getFromInfo(option);
 				if(sender.canModerate(fishP, true)){
 					logAction(fishP.marked() ? time == 1000 ? "freed" : "updated stop time of" : "stopped", sender, option, undefined, time);
-					fishP.stop(sender, time);
+					await fishP.stop(sender, time);
 					outputSuccess(f`Player ${option} was marked for ${formatTime(time)}.`);
 				} else {
 					outputFail(`You do not have permission to stop this player.`);
@@ -201,7 +201,7 @@ export const commands = commandList({
 			if(args.name && uuidPattern.test(args.name)){
 				const info:PlayerInfo | null = admins.getInfoOptional(args.name);
 				if(info != null) {
-					stop(info, args.time ?? untilForever());
+					await stop(info, args.time ?? untilForever());
 				} else {
 					outputFail(f`Unknown UUID ${args.name}`);
 				}
@@ -245,7 +245,7 @@ export const commands = commandList({
 					"forever": maxTime - Date.now() - 10000,
 				}
 			);
-			stop(optionPlayer, args.time);
+			await stop(optionPlayer, args.time);
 		}
 	},
 
@@ -264,8 +264,8 @@ export const commands = commandList({
 					confirmText: `[green]Yes, ${fishP.muted ? "unmute" : "mute"} them`,
 				});
 				logAction(fishP.muted ? "unmuted" : "muted", sender, fishP);
-				if(fishP.muted) fishP.unmute(sender);
-				else fishP.mute(sender);
+				if(fishP.muted) await fishP.unmute(sender);
+				else await fishP.mute(sender);
 				outputSuccess(`${fishP.muted ? "Muted" : "Unmuted"} ${option.lastName}.`);
 			}
 			
@@ -418,8 +418,8 @@ export const commands = commandList({
 		args: ["value:boolean", "player:player"],
 		description: "Sets a player's member status.",
 		perm: Perm.admin,
-		handler({args, outputSuccess, f}){
-			args.player.setFlag("member", args.value);
+		async handler({args, outputSuccess, f}){
+			await args.player.setFlag("member", args.value);
 			outputSuccess(f`Set membership status of player ${args.player} to ${args.value}.`);
 		}
 	},

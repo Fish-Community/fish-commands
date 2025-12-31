@@ -25,17 +25,24 @@ function queueMicrotask(callback, errorHandler) {
  * If a called-later handler throws an error, it will print an error to the console, and will not call the reject handler.
  */
 var Promise = /** @class */ (function () {
-    function Promise(initializer) {
+    function Promise(initializer, skipMicrotask) {
+        if (skipMicrotask === void 0) { skipMicrotask = false; }
         var _this = this;
         this.state = ["pending"];
         this.resolveHandlers = [];
         this.rejectHandlers = [];
         initializer(function (value) {
             _this.state = ["resolved", value];
-            queueMicrotask(function () { return _this.resolve(); });
+            if (skipMicrotask)
+                _this.resolve();
+            else
+                queueMicrotask(function () { return _this.resolve(); });
         }, function (error) {
             _this.state = ["rejected", error];
-            queueMicrotask(function () { return _this.reject(); });
+            if (skipMicrotask)
+                _this.reject();
+            else
+                queueMicrotask(function () { return _this.reject(); });
         });
     }
     Promise.prototype.resolve = function () {
@@ -92,13 +99,14 @@ var Promise = /** @class */ (function () {
         this.resolveHandlers.push(function (value) { return resolve(value); });
         return promise;
     };
-    Promise.withResolvers = function () {
+    Promise.withResolvers = function (skipMicrotask) {
+        if (skipMicrotask === void 0) { skipMicrotask = false; }
         var resolve;
         var reject;
         var promise = new Promise(function (r, j) {
             resolve = r;
             reject = j;
-        });
+        }, skipMicrotask);
         return {
             promise: promise,
             resolve: resolve,

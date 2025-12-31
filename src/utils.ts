@@ -531,7 +531,7 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 			){
 				logHTrip(fishPlayer, "bad words in chat", `message: \`${message}\``);
 				fishPlayer.muted = true;
-				fishPlayer.stop("automod", maxTime, `Automatic stop due to suspicious activity`, false);
+				void fishPlayer.stop("automod", maxTime, `Automatic stop due to suspicious activity`, false);
 			}
 			Log.info(`Censored message from player ${player.name}: "${escapeStringColorsServer(message)}"; contained "${filterTripText}"`);
 			FishPlayer.messageStaff(`[yellow]Censored message from player ${fishPlayer.cleanedName}: "${message}" contained "${filterTripText}"`);

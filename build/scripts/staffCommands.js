@@ -116,12 +116,22 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("player")],
         handler: function (_a) {
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (args.player.muted)
-                (0, commands_1.fail)(f(templateObject_3 || (templateObject_3 = __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player));
-            args.player.mute(sender);
-            (0, utils_1.logAction)('muted', sender, args.player);
-            outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Muted player ", "."], ["Muted player ", "."])), args.player));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (args.player.muted)
+                                (0, commands_1.fail)(f(templateObject_3 || (templateObject_3 = __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player));
+                            return [4 /*yield*/, args.player.mute(sender)];
+                        case 1:
+                            _c.sent();
+                            (0, utils_1.logAction)('muted', sender, args.player);
+                            outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Muted player ", "."], ["Muted player ", "."])), args.player));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     unmute: {
@@ -129,14 +139,24 @@ exports.commands = (0, commands_1.commandList)({
         description: 'Unmutes a player',
         perm: commands_1.Perm.mod,
         handler: function (_a) {
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (!args.player.muted && args.player.autoflagged)
-                (0, commands_1.fail)(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."], ["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."])), args.player));
-            if (!args.player.muted)
-                (0, commands_1.fail)(f(templateObject_6 || (templateObject_6 = __makeTemplateObject(["Player ", " is not muted."], ["Player ", " is not muted."])), args.player));
-            args.player.unmute(sender);
-            (0, utils_1.logAction)('unmuted', sender, args.player);
-            outputSuccess(f(templateObject_7 || (templateObject_7 = __makeTemplateObject(["Unmuted player ", "."], ["Unmuted player ", "."])), args.player));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (!args.player.muted && args.player.autoflagged)
+                                (0, commands_1.fail)(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."], ["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."])), args.player));
+                            if (!args.player.muted)
+                                (0, commands_1.fail)(f(templateObject_6 || (templateObject_6 = __makeTemplateObject(["Player ", " is not muted."], ["Player ", " is not muted."])), args.player));
+                            return [4 /*yield*/, args.player.unmute(sender)];
+                        case 1:
+                            _c.sent();
+                            (0, utils_1.logAction)('unmuted', sender, args.player);
+                            outputSuccess(f(templateObject_7 || (templateObject_7 = __makeTemplateObject(["Unmuted player ", "."], ["Unmuted player ", "."])), args.player));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     kick: {
@@ -179,26 +199,39 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("player", true)],
         handler: function (_a) {
-            var _b, _c, _d, _e;
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (args.player.marked()) {
-                //overload: overwrite stoptime
-                if (!args.time)
-                    (0, commands_1.fail)(f(templateObject_10 || (templateObject_10 = __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player));
-                var previousTime = (0, utils_1.formatTimeRelative)(args.player.unmarkTime, true);
-                args.player.updateStopTime(args.time);
-                outputSuccess(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
-                (0, utils_1.logAction)("updated stop time of", sender, args.player, (_b = args.message) !== null && _b !== void 0 ? _b : undefined, args.time);
-            }
-            else {
-                var time = (_c = args.time) !== null && _c !== void 0 ? _c : (0, utils_1.untilForever)();
-                if (time + Date.now() > globals_1.maxTime)
-                    (0, commands_1.fail)("Error: time too high.");
-                args.player.stop(sender, time, (_d = args.message) !== null && _d !== void 0 ? _d : undefined);
-                (0, utils_1.logAction)('stopped', sender, args.player, (_e = args.message) !== null && _e !== void 0 ? _e : undefined, time);
-                //TODO outputGlobal()
-                Call.sendMessage("[orange]Player \"".concat(args.player.prefixedName, "[orange]\" has been marked for ").concat((0, utils_1.formatTime)(time)).concat(args.message ? " with reason: [white]".concat(args.message, "[]") : "", "."));
-            }
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var previousTime, time;
+                var _c, _d, _e, _f;
+                var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            if (!args.player.marked()) return [3 /*break*/, 2];
+                            //overload: overwrite stoptime
+                            if (!args.time)
+                                (0, commands_1.fail)(f(templateObject_10 || (templateObject_10 = __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player));
+                            previousTime = (0, utils_1.formatTimeRelative)(args.player.unmarkTime, true);
+                            return [4 /*yield*/, args.player.updateStopTime(args.time)];
+                        case 1:
+                            _g.sent();
+                            outputSuccess(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
+                            (0, utils_1.logAction)("updated stop time of", sender, args.player, (_c = args.message) !== null && _c !== void 0 ? _c : undefined, args.time);
+                            return [3 /*break*/, 4];
+                        case 2:
+                            time = (_d = args.time) !== null && _d !== void 0 ? _d : (0, utils_1.untilForever)();
+                            if (time + Date.now() > globals_1.maxTime)
+                                (0, commands_1.fail)("Error: time too high.");
+                            return [4 /*yield*/, args.player.stop(sender, time, (_e = args.message) !== null && _e !== void 0 ? _e : undefined)];
+                        case 3:
+                            _g.sent();
+                            (0, utils_1.logAction)('stopped', sender, args.player, (_f = args.message) !== null && _f !== void 0 ? _f : undefined, time);
+                            //TODO outputGlobal()
+                            Call.sendMessage("[orange]Player \"".concat(args.player.prefixedName, "[orange]\" has been marked for ").concat((0, utils_1.formatTime)(time)).concat(args.message ? " with reason: [white]".concat(args.message, "[]") : "", "."));
+                            _g.label = 4;
+                        case 4: return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     free: {
@@ -206,22 +239,34 @@ exports.commands = (0, commands_1.commandList)({
         description: 'Frees a player.',
         perm: commands_1.Perm.mod,
         handler: function (_a) {
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail, f = _a.f;
-            if (args.player.marked()) {
-                args.player.free(sender);
-                (0, utils_1.logAction)('freed', sender, args.player);
-                outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Player ", " has been unmarked."], ["Player ", " has been unmarked."])), args.player));
-            }
-            else if (args.player.autoflagged) {
-                args.player.autoflagged = false;
-                args.player.sendMessage("[yellow]You have been freed! Enjoy!");
-                args.player.updateName();
-                args.player.forceRespawn();
-                outputSuccess(f(templateObject_13 || (templateObject_13 = __makeTemplateObject(["Player ", " has been unflagged."], ["Player ", " has been unflagged."])), args.player));
-            }
-            else {
-                outputFail(f(templateObject_14 || (templateObject_14 = __makeTemplateObject(["Player ", " is not marked or autoflagged."], ["Player ", " is not marked or autoflagged."])), args.player));
-            }
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (!args.player.marked()) return [3 /*break*/, 2];
+                            return [4 /*yield*/, args.player.free(sender)];
+                        case 1:
+                            _c.sent();
+                            (0, utils_1.logAction)('freed', sender, args.player);
+                            outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Player ", " has been unmarked."], ["Player ", " has been unmarked."])), args.player));
+                            return [3 /*break*/, 3];
+                        case 2:
+                            if (args.player.autoflagged) {
+                                args.player.autoflagged = false;
+                                args.player.sendMessage("[yellow]You have been freed! Enjoy!");
+                                args.player.updateName();
+                                args.player.forceRespawn();
+                                outputSuccess(f(templateObject_13 || (templateObject_13 = __makeTemplateObject(["Player ", " has been unflagged."], ["Player ", " has been unflagged."])), args.player));
+                            }
+                            else {
+                                outputFail(f(templateObject_14 || (templateObject_14 = __makeTemplateObject(["Player ", " is not marked or autoflagged."], ["Player ", " is not marked or autoflagged."])), args.player));
+                            }
+                            _c.label = 3;
+                        case 3: return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     setrank: {
@@ -230,16 +275,26 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("player")],
         handler: function (_a) {
-            var _b = _a.args, rank = _b.rank, player = _b.player, outputSuccess = _a.outputSuccess, f = _a.f, sender = _a.sender;
-            if (rank.level >= sender.rank.level)
-                (0, commands_1.fail)(f(templateObject_15 || (templateObject_15 = __makeTemplateObject(["You do not have permission to promote players to rank ", ", because your current rank is ", ""], ["You do not have permission to promote players to rank ", ", because your current rank is ", ""])), rank, sender.rank));
-            if (rank == ranks_1.Rank.pi && !config_1.Mode.localDebug)
-                (0, commands_1.fail)(f(templateObject_16 || (templateObject_16 = __makeTemplateObject(["Rank ", " is immutable."], ["Rank ", " is immutable."])), rank));
-            if (player.immutable() && !config_1.Mode.localDebug)
-                (0, commands_1.fail)(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Player ", " is immutable."], ["Player ", " is immutable."])), player));
-            player.setRank(rank);
-            (0, utils_1.logAction)("set rank to ".concat(rank.name, " for"), sender, player);
-            outputSuccess(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), player, rank));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var _c = _b.args, rank = _c.rank, player = _c.player, outputSuccess = _b.outputSuccess, f = _b.f, sender = _b.sender;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            if (rank.level >= sender.rank.level)
+                                (0, commands_1.fail)(f(templateObject_15 || (templateObject_15 = __makeTemplateObject(["You do not have permission to promote players to rank ", ", because your current rank is ", ""], ["You do not have permission to promote players to rank ", ", because your current rank is ", ""])), rank, sender.rank));
+                            if (rank == ranks_1.Rank.pi && !config_1.Mode.localDebug)
+                                (0, commands_1.fail)(f(templateObject_16 || (templateObject_16 = __makeTemplateObject(["Rank ", " is immutable."], ["Rank ", " is immutable."])), rank));
+                            if (player.immutable() && !config_1.Mode.localDebug)
+                                (0, commands_1.fail)(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Player ", " is immutable."], ["Player ", " is immutable."])), player));
+                            return [4 /*yield*/, player.setRank(rank)];
+                        case 1:
+                            _d.sent();
+                            (0, utils_1.logAction)("set rank to ".concat(rank.name, " for"), sender, player);
+                            outputSuccess(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), player, rank));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     setflag: {
@@ -248,12 +303,22 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("player")],
         handler: function (_a) {
-            var _b = _a.args, flag = _b.flag, player = _b.player, value = _b.value, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (!sender.hasPerm("admin") && !flag.assignableByModerators)
-                (0, commands_1.fail)(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["You do not have permission to change the value of role flag ", ""], ["You do not have permission to change the value of role flag ", ""])), flag));
-            player.setFlag(flag, value);
-            (0, utils_1.logAction)("set roleflag ".concat(flag.name, " to ").concat(value, " for"), sender, player);
-            outputSuccess(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["Set role flag ", " of player ", " to ", ""], ["Set role flag ", " of player ", " to ", ""])), flag, player, value));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var _c = _b.args, flag = _c.flag, player = _c.player, value = _c.value, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            if (!sender.hasPerm("admin") && !flag.assignableByModerators)
+                                (0, commands_1.fail)(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["You do not have permission to change the value of role flag ", ""], ["You do not have permission to change the value of role flag ", ""])), flag));
+                            return [4 /*yield*/, player.setFlag(flag, value)];
+                        case 1:
+                            _d.sent();
+                            (0, utils_1.logAction)("set roleflag ".concat(flag.name, " to ").concat(value, " for"), sender, player);
+                            outputSuccess(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["Set role flag ", " of player ", " to ", ""], ["Set role flag ", " of player ", " to ", ""])), flag, player, value));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     murder: {
@@ -276,15 +341,26 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 function stop(option, time) {
-                    var fishP = players_1.FishPlayer.getFromInfo(option);
-                    if (sender.canModerate(fishP, true)) {
-                        (0, utils_1.logAction)(fishP.marked() ? time == 1000 ? "freed" : "updated stop time of" : "stopped", sender, option, undefined, time);
-                        fishP.stop(sender, time);
-                        outputSuccess(f(templateObject_22 || (templateObject_22 = __makeTemplateObject(["Player ", " was marked for ", "."], ["Player ", " was marked for ", "."])), option, (0, utils_1.formatTime)(time)));
-                    }
-                    else {
-                        outputFail("You do not have permission to stop this player.");
-                    }
+                    return __awaiter(this, void 0, void 0, function () {
+                        var fishP;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    fishP = players_1.FishPlayer.getFromInfo(option);
+                                    if (!sender.canModerate(fishP, true)) return [3 /*break*/, 2];
+                                    (0, utils_1.logAction)(fishP.marked() ? time == 1000 ? "freed" : "updated stop time of" : "stopped", sender, option, undefined, time);
+                                    return [4 /*yield*/, fishP.stop(sender, time)];
+                                case 1:
+                                    _a.sent();
+                                    outputSuccess(f(templateObject_22 || (templateObject_22 = __makeTemplateObject(["Player ", " was marked for ", "."], ["Player ", " was marked for ", "."])), option, (0, utils_1.formatTime)(time)));
+                                    return [3 /*break*/, 3];
+                                case 2:
+                                    outputFail("You do not have permission to stop this player.");
+                                    _a.label = 3;
+                                case 3: return [2 /*return*/];
+                            }
+                        });
+                    });
                 }
                 var maxPlayers, info, possiblePlayers, exactPlayers, score_1, optionPlayer, _c, _d, _e;
                 var _f, _g;
@@ -293,16 +369,18 @@ exports.commands = (0, commands_1.commandList)({
                     switch (_h.label) {
                         case 0:
                             maxPlayers = 60;
-                            if (args.name && globals_1.uuidPattern.test(args.name)) {
-                                info = admins.getInfoOptional(args.name);
-                                if (info != null) {
-                                    stop(info, (_f = args.time) !== null && _f !== void 0 ? _f : (0, utils_1.untilForever)());
-                                }
-                                else {
-                                    outputFail(f(templateObject_23 || (templateObject_23 = __makeTemplateObject(["Unknown UUID ", ""], ["Unknown UUID ", ""])), args.name));
-                                }
-                                return [2 /*return*/];
-                            }
+                            if (!(args.name && globals_1.uuidPattern.test(args.name))) return [3 /*break*/, 4];
+                            info = admins.getInfoOptional(args.name);
+                            if (!(info != null)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, stop(info, (_f = args.time) !== null && _f !== void 0 ? _f : (0, utils_1.untilForever)())];
+                        case 1:
+                            _h.sent();
+                            return [3 /*break*/, 3];
+                        case 2:
+                            outputFail(f(templateObject_23 || (templateObject_23 = __makeTemplateObject(["Unknown UUID ", ""], ["Unknown UUID ", ""])), args.name));
+                            _h.label = 3;
+                        case 3: return [2 /*return*/];
+                        case 4:
                             if (args.name) {
                                 possiblePlayers = (0, funcs_1.setToArray)(admins.searchNames(args.name));
                                 if (possiblePlayers.length > maxPlayers) {
@@ -332,26 +410,28 @@ exports.commands = (0, commands_1.commandList)({
                                     includeCancel: true,
                                     optionStringifier: function (p) { return p.lastName; }
                                 })];
-                        case 1:
+                        case 5:
                             optionPlayer = _h.sent();
-                            if (!((_g = args.time) !== null && _g !== void 0)) return [3 /*break*/, 2];
+                            if (!((_g = args.time) !== null && _g !== void 0)) return [3 /*break*/, 6];
                             _c = _g;
-                            return [3 /*break*/, 4];
-                        case 2:
+                            return [3 /*break*/, 8];
+                        case 6:
                             _d = args;
                             _e = utils_1.match;
                             return [4 /*yield*/, menus_1.Menu.menu("Stop", "Select stop time", ["2 days", "7 days", "30 days", "forever"], sender)];
-                        case 3:
+                        case 7:
                             _c = (_d.time = _e.apply(void 0, [_h.sent(), {
                                     "2 days": funcs_1.Duration.days(2),
                                     "7 days": funcs_1.Duration.days(7),
                                     "30 days": funcs_1.Duration.days(30),
                                     "forever": globals_1.maxTime - Date.now() - 10000,
                                 }]));
-                            _h.label = 4;
-                        case 4:
+                            _h.label = 8;
+                        case 8:
                             _c;
-                            stop(optionPlayer, args.time);
+                            return [4 /*yield*/, stop(optionPlayer, args.time)];
+                        case 9:
+                            _h.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -380,10 +460,16 @@ exports.commands = (0, commands_1.commandList)({
                                 case 1:
                                     _a.sent();
                                     (0, utils_1.logAction)(fishP.muted ? "unmuted" : "muted", sender, fishP);
-                                    if (fishP.muted)
-                                        fishP.unmute(sender);
-                                    else
-                                        fishP.mute(sender);
+                                    if (!fishP.muted) return [3 /*break*/, 3];
+                                    return [4 /*yield*/, fishP.unmute(sender)];
+                                case 2:
+                                    _a.sent();
+                                    return [3 /*break*/, 5];
+                                case 3: return [4 /*yield*/, fishP.mute(sender)];
+                                case 4:
+                                    _a.sent();
+                                    _a.label = 5;
+                                case 5:
                                     outputSuccess("".concat(fishP.muted ? "Muted" : "Unmuted", " ").concat(option.lastName, "."));
                                     return [2 /*return*/];
                             }
@@ -552,9 +638,18 @@ exports.commands = (0, commands_1.commandList)({
         description: "Sets a player's member status.",
         perm: commands_1.Perm.admin,
         handler: function (_a) {
-            var args = _a.args, outputSuccess = _a.outputSuccess, f = _a.f;
-            args.player.setFlag("member", args.value);
-            outputSuccess(f(templateObject_29 || (templateObject_29 = __makeTemplateObject(["Set membership status of player ", " to ", "."], ["Set membership status of player ", " to ", "."])), args.player, args.value));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var args = _b.args, outputSuccess = _b.outputSuccess, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0: return [4 /*yield*/, args.player.setFlag("member", args.value)];
+                        case 1:
+                            _c.sent();
+                            outputSuccess(f(templateObject_29 || (templateObject_29 = __makeTemplateObject(["Set membership status of player ", " to ", "."], ["Set membership status of player ", " to ", "."])), args.player, args.value));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     remind: {

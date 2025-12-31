@@ -7,6 +7,42 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -63,14 +99,24 @@ exports.commands = (0, commands_1.consoleCommandList)({
         args: ["player:player", "rank:rank"],
         description: "Set a player's rank.",
         handler: function (_a) {
-            var args = _a.args, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (args.rank == ranks_1.Rank.pi && !config_1.Mode.localDebug)
-                (0, commands_1.fail)(f(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Rank ", " is immutable."], ["Rank ", " is immutable."])), args.rank));
-            if (args.player.immutable() && !config_1.Mode.localDebug)
-                (0, commands_1.fail)(f(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Player ", " is immutable."], ["Player ", " is immutable."])), args.player));
-            args.player.setRank(args.rank);
-            (0, utils_1.logAction)("set rank to ".concat(args.rank.name, " for"), "console", args.player);
-            outputSuccess(f(templateObject_3 || (templateObject_3 = __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), args.player, args.rank));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var args = _b.args, outputSuccess = _b.outputSuccess, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (args.rank == ranks_1.Rank.pi && !config_1.Mode.localDebug)
+                                (0, commands_1.fail)(f(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Rank ", " is immutable."], ["Rank ", " is immutable."])), args.rank));
+                            if (args.player.immutable() && !config_1.Mode.localDebug)
+                                (0, commands_1.fail)(f(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Player ", " is immutable."], ["Player ", " is immutable."])), args.player));
+                            return [4 /*yield*/, args.player.setRank(args.rank)];
+                        case 1:
+                            _c.sent();
+                            (0, utils_1.logAction)("set rank to ".concat(args.rank.name, " for"), "console", args.player);
+                            outputSuccess(f(templateObject_3 || (templateObject_3 = __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), args.player, args.rank));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     admin: {
@@ -84,10 +130,19 @@ exports.commands = (0, commands_1.consoleCommandList)({
         args: ["player:player", "flag:roleflag", "value:boolean"],
         description: "Set a player's role flags.",
         handler: function (_a) {
-            var args = _a.args, outputSuccess = _a.outputSuccess, f = _a.f;
-            args.player.setFlag(args.flag, args.value);
-            (0, utils_1.logAction)("set roleflag ".concat(args.flag.name, " to ").concat(args.value, " for"), "console", args.player);
-            outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Set role flag ", " of player ", " to ", ""], ["Set role flag ", " of player ", " to ", ""])), args.flag, args.player, args.value));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var args = _b.args, outputSuccess = _b.outputSuccess, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0: return [4 /*yield*/, args.player.setFlag(args.flag, args.value)];
+                        case 1:
+                            _c.sent();
+                            (0, utils_1.logAction)("set roleflag ".concat(args.flag.name, " to ").concat(args.value, " for"), "console", args.player);
+                            outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Set role flag ", " of player ", " to ", ""], ["Set role flag ", " of player ", " to ", ""])), args.flag, args.player, args.value));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     savePlayers: {
@@ -213,14 +268,14 @@ exports.commands = (0, commands_1.consoleCommandList)({
         }
     },
     blacklist: {
-        args: ["rich:boolean?"],
+        args: ["verbose:boolean?"],
         description: "Allows you to view the DOS blacklist.",
         handler: function (_a) {
             var args = _a.args, output = _a.output, admins = _a.admins;
             var blacklist = admins.dosBlacklist;
             if (blacklist.isEmpty())
                 (0, commands_1.fail)("The blacklist is empty");
-            if (args.rich) {
+            if (args.verbose) {
                 var outputString_1 = ["DOS Blacklist:"];
                 blacklist.each(function (ip) {
                     var info = admins.findByIP(ip);
@@ -449,64 +504,45 @@ exports.commands = (0, commands_1.consoleCommandList)({
             }
         }
     },
-    clearallstoredusids: {
-        args: ["areyousure:boolean?", "areyoureallysure:boolean?", "areyoureallyreallysure:boolean?"],
-        description: "Removes every stored USID. NOT RECOMMENDED.",
-        handler: function (_a) {
-            var e_3, _b;
-            var args = _a.args, output = _a.output;
-            if (args.areyousure && args.areyoureallysure && args.areyoureallyreallysure) {
-                var total = 0;
-                try {
-                    for (var _c = __values(Object.entries(players_1.FishPlayer.cachedPlayers)), _d = _c.next(); !_d.done; _d = _c.next()) {
-                        var _e = __read(_d.value, 2), uuid = _e[0], fishP = _e[1];
-                        total++;
-                        fishP.usid = null;
-                    }
-                }
-                catch (e_3_1) { e_3 = { error: e_3_1 }; }
-                finally {
-                    try {
-                        if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
-                    }
-                    finally { if (e_3) throw e_3.error; }
-                }
-                players_1.FishPlayer.saveAll();
-                output("Removed ".concat(total, " stored USIDs."));
-            }
-            else {
-                output("Are you sure?!?!?!?!?!!");
-            }
-        }
-    },
     resetauth: {
         args: ["player:string"],
         description: "Removes the USID of the player provided, use this if they are getting kicked with the message \"Authorization failure!\". Specify \"last\" to use the last player that got kicked.",
         handler: function (_a) {
             var _b, _c;
-            var args = _a.args, outputSuccess = _a.outputSuccess, admins = _a.admins;
+            var args = _a.args, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail, admins = _a.admins;
             var player = args.player == "last" ? ((_b = players_1.FishPlayer.lastAuthKicked) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Nobody has been kicked for authorization failure since the last restart.")) :
                 (_c = players_1.FishPlayer.getById(args.player)) !== null && _c !== void 0 ? _c : (0, commands_1.fail)(admins.getInfoOptional(args.player)
                     ? "Player ".concat(args.player, " has joined the server, but their info was not cached, most likely because they have no rank, so there is no stored USID.")
                     : "Unknown player ".concat(args.player));
             if (player.ranksAtLeast("admin"))
-                (0, commands_1.fail)("Please use the approveauth command instead.");
+                (0, commands_1.fail)("Please use the setusid command instead.");
             var oldusid = player.usid;
             player.usid = null;
-            outputSuccess("Removed the usid of player ".concat(player.name, "/").concat(player.uuid, " (was ").concat(oldusid, ")"));
+            api.setFishPlayerData(player.getData()).then(function () {
+                outputSuccess("Removed the usid of player ".concat(player.name, "/").concat(player.uuid, " (was ").concat(oldusid, ")"));
+            }).catch(function (err) {
+                Log.err(err);
+                outputFail("Failed to remove the usid, please try running the command again.");
+            });
         }
     },
-    approveauth: {
-        args: ["usid:string"],
+    setusid: {
+        args: ["uuid:string", "usid:string"],
         description: "Sets the USID of a player.",
         handler: function (_a) {
             var _b;
-            var args = _a.args, outputSuccess = _a.outputSuccess, f = _a.f;
+            var args = _a.args, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail, f = _a.f;
             if (args.usid.length !== 12)
                 (0, commands_1.fail)("Invalid USID: should be 12 characters ending with an equal sign");
             var player = (_b = players_1.FishPlayer.lastAuthKicked) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("No authorization failures have occurred since the last restart.");
+            var oldusid = player.usid;
             player.usid = args.usid;
-            outputSuccess(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Set USID for player ", " to ", "."], ["Set USID for player ", " to ", "."])), player, args.usid));
+            api.setFishPlayerData(player.getData()).then(function () {
+                outputSuccess("Set the usid of player ".concat(player.name, "/").concat(player.uuid, " to ").concat(args.usid, " (was ").concat(oldusid, ")"));
+            }).catch(function (err) {
+                Log.err(err);
+                outputFail("Failed to remove the usid, please try running the command again.");
+            });
         }
     },
     update: {
@@ -611,7 +647,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
         handler: function (_a) {
             var args = _a.args, f = _a.f, outputSuccess = _a.outputSuccess;
             if (args.player.hasPerm("blockTrolling"))
-                (0, commands_1.fail)(f(templateObject_6 || (templateObject_6 = __makeTemplateObject(["Operation aborted: Player ", " is insufficiently trollable."], ["Operation aborted: Player ", " is insufficiently trollable."])), args.player));
+                (0, commands_1.fail)(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Operation aborted: Player ", " is insufficiently trollable."], ["Operation aborted: Player ", " is insufficiently trollable."])), args.player));
             var oldName = args.player.name;
             args.player.player.name = args.player.prefixedName = args.newname;
             args.player.shouldUpdateName = false;
@@ -638,38 +674,62 @@ exports.commands = (0, commands_1.consoleCommandList)({
         args: ['player:player', "time:time?", "message:string?"],
         description: 'Stops a player.',
         handler: function (_a) {
-            var _b, _c, _d;
-            var args = _a.args, f = _a.f, outputSuccess = _a.outputSuccess;
-            if (args.player.marked()) {
-                //overload: overwrite stoptime
-                if (!args.time)
-                    (0, commands_1.fail)(f(templateObject_7 || (templateObject_7 = __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player));
-                var previousTime = (0, utils_1.formatTime)(args.player.unmarkTime - Date.now());
-                args.player.updateStopTime(args.time);
-                outputSuccess(f(templateObject_8 || (templateObject_8 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
-                return;
-            }
-            var time = (_b = args.time) !== null && _b !== void 0 ? _b : funcs_1.Duration.days(7);
-            if (time + Date.now() > globals_1.maxTime)
-                (0, commands_1.fail)("Error: time too high.");
-            args.player.stop("console", time, (_c = args.message) !== null && _c !== void 0 ? _c : undefined);
-            (0, utils_1.logAction)('stopped', "console", args.player, (_d = args.message) !== null && _d !== void 0 ? _d : undefined, time);
-            Call.sendMessage("[scarlet]Player \"".concat(args.player.prefixedName, "[scarlet]\" has been marked for ").concat((0, utils_1.formatTime)(time)).concat(args.message ? " with reason: [white]".concat(args.message, "[]") : "", "."));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var previousTime, time;
+                var _c, _d, _e;
+                var args = _b.args, f = _b.f, outputSuccess = _b.outputSuccess;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            if (!args.player.marked()) return [3 /*break*/, 2];
+                            //overload: overwrite stoptime
+                            if (!args.time)
+                                (0, commands_1.fail)(f(templateObject_6 || (templateObject_6 = __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player));
+                            previousTime = (0, utils_1.formatTime)(args.player.unmarkTime - Date.now());
+                            return [4 /*yield*/, args.player.updateStopTime(args.time)];
+                        case 1:
+                            _f.sent();
+                            outputSuccess(f(templateObject_7 || (templateObject_7 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
+                            return [2 /*return*/];
+                        case 2:
+                            time = (_c = args.time) !== null && _c !== void 0 ? _c : funcs_1.Duration.days(7);
+                            if (time + Date.now() > globals_1.maxTime)
+                                (0, commands_1.fail)("Error: time too high.");
+                            return [4 /*yield*/, args.player.stop("console", time, (_d = args.message) !== null && _d !== void 0 ? _d : undefined)];
+                        case 3:
+                            _f.sent();
+                            (0, utils_1.logAction)('stopped', "console", args.player, (_e = args.message) !== null && _e !== void 0 ? _e : undefined, time);
+                            Call.sendMessage("[scarlet]Player \"".concat(args.player.prefixedName, "[scarlet]\" has been marked for ").concat((0, utils_1.formatTime)(time)).concat(args.message ? " with reason: [white]".concat(args.message, "[]") : "", "."));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     stopoffline: {
         args: ["uuid:uuid", "time:time?"],
         description: "Stops a player by uuid.",
         handler: function (_a) {
-            var _b = _a.args, uuid = _b.uuid, time = _b.time, outputSuccess = _a.outputSuccess, admins = _a.admins;
-            var stopTime = time !== null && time !== void 0 ? time : (globals_1.maxTime - Date.now() - 10000);
-            var info = admins.getInfoOptional(uuid);
-            if (info == null)
-                (0, commands_1.fail)("Unknown player ".concat(uuid));
-            var fishP = players_1.FishPlayer.getFromInfo(info);
-            fishP.stop("console", stopTime);
-            (0, utils_1.logAction)('stopped', "console", info, undefined, stopTime);
-            outputSuccess("Player \"".concat(info.lastName, "\" was marked for ").concat((0, utils_1.formatTime)(stopTime), "."));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var stopTime, info, fishP;
+                var _c = _b.args, uuid = _c.uuid, time = _c.time, outputSuccess = _b.outputSuccess, admins = _b.admins;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            stopTime = time !== null && time !== void 0 ? time : (globals_1.maxTime - Date.now() - 10000);
+                            info = admins.getInfoOptional(uuid);
+                            if (info == null)
+                                (0, commands_1.fail)("Unknown player ".concat(uuid));
+                            fishP = players_1.FishPlayer.getFromInfo(info);
+                            return [4 /*yield*/, fishP.stop("console", stopTime)];
+                        case 1:
+                            _d.sent();
+                            (0, utils_1.logAction)('stopped', "console", info, undefined, stopTime);
+                            outputSuccess("Player \"".concat(info.lastName, "\" was marked for ").concat((0, utils_1.formatTime)(stopTime), "."));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     clearfire: {
@@ -833,5 +893,87 @@ exports.commands = (0, commands_1.consoleCommandList)({
             }
         }
     },
+    mute: {
+        args: ['player:player'],
+        description: 'Stops a player from chatting.',
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var args = _b.args, outputSuccess = _b.outputSuccess, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (args.player.muted)
+                                (0, commands_1.fail)(f(templateObject_8 || (templateObject_8 = __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player));
+                            return [4 /*yield*/, args.player.mute("console")];
+                        case 1:
+                            _c.sent();
+                            (0, utils_1.logAction)('muted', "console", args.player);
+                            outputSuccess(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Muted player ", "."], ["Muted player ", "."])), args.player));
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
+    },
+    unmute: {
+        args: ['player:player'],
+        description: 'Unmutes a player',
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var args = _b.args, outputSuccess = _b.outputSuccess, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (!args.player.muted && args.player.autoflagged)
+                                (0, commands_1.fail)(f(templateObject_10 || (templateObject_10 = __makeTemplateObject(["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."], ["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."])), args.player));
+                            if (!args.player.muted)
+                                (0, commands_1.fail)(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", " is not muted."], ["Player ", " is not muted."])), args.player));
+                            return [4 /*yield*/, args.player.unmute("console")];
+                        case 1:
+                            _c.sent();
+                            (0, utils_1.logAction)('unmuted', "console", args.player);
+                            outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Unmuted player ", "."], ["Unmuted player ", "."])), args.player));
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
+    },
+    free: {
+        args: ['player:player'],
+        description: 'Frees a player.',
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var args = _b.args, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (!args.player.marked()) return [3 /*break*/, 2];
+                            return [4 /*yield*/, args.player.free("console")];
+                        case 1:
+                            _c.sent();
+                            (0, utils_1.logAction)('freed', "console", args.player);
+                            outputSuccess(f(templateObject_13 || (templateObject_13 = __makeTemplateObject(["Player ", " has been unmarked."], ["Player ", " has been unmarked."])), args.player));
+                            return [3 /*break*/, 3];
+                        case 2:
+                            if (args.player.autoflagged) {
+                                args.player.autoflagged = false;
+                                if (args.player.connected()) {
+                                    args.player.sendMessage("[yellow]You have been unflagged.");
+                                    args.player.updateName();
+                                    args.player.forceRespawn();
+                                }
+                                outputSuccess(f(templateObject_14 || (templateObject_14 = __makeTemplateObject(["Player ", " has been unflagged."], ["Player ", " has been unflagged."])), args.player));
+                            }
+                            else {
+                                outputFail(f(templateObject_15 || (templateObject_15 = __makeTemplateObject(["Player ", " is not marked or autoflagged."], ["Player ", " is not marked or autoflagged."])), args.player));
+                            }
+                            _c.label = 3;
+                        case 3: return [2 /*return*/];
+                    }
+                });
+            });
+        }
+    },
 });
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15;

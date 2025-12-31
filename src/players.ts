@@ -275,7 +275,7 @@ export class FishPlayer {
 	static dataFetchFailedUuids = new Set();
 	static onConnectPacket(uuid:string){
 		if(this.cachedPlayers[uuid]) this.cachedPlayers[uuid].infoUpdated = false;
-		api.getFishPlayerData(uuid, data => {
+		api.getFishPlayerData(uuid).then(data => {
 			if(!data) return; //nothing to sync
 			if(!(uuid in this.cachedPlayers)){
 				this.cachedPlayers[uuid] = new FishPlayer(uuid, data, null);
@@ -732,9 +732,9 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		const receivedUSID = this.player!.usid();
 		if(this.hasPerm("usidCheck")){
 			if(usidMissing){
-				if(this.hasPerm("admin")){
-					//Admin missing USID, don't let them in
-					Log.err(`&rUSID missing for privileged player &c"${this.cleanedName}"&r: no stored usid, cannot authenticate.\nRun &lgapproveauth ${receivedUSID}&fr if you have verified this connection attempt.`);
+				if(this.hasPerm("mod")){
+					//Staff missing USID, don't let them in
+					Log.err(`&rUSID missing for privileged player &c"${this.cleanedName}"&r: no stored usid, cannot authenticate.\nRun &lgsetusid ${this.uuid} ${receivedUSID}&fr if you have verified this connection attempt.`);
 					this.kick(`Authorization failure! Please ask a staff member with Console Access to approve this connection.`, 1);
 					FishPlayer.lastAuthKicked = this;
 					return false;
@@ -743,7 +743,7 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 				}
 			} else {
 				if(receivedUSID != storedUSID){
-					Log.err(`&rUSID mismatch for player &c"${this.cleanedName}"&r: stored usid is &c${storedUSID}&r, but they tried to connect with usid &c${receivedUSID}&r\nRun &lgapproveauth ${receivedUSID}&fr if you have verified this connection attempt.`);
+					Log.err(`&rUSID mismatch for player &c"${this.cleanedName}"&r: stored usid is &c${storedUSID}&r, but they tried to connect with usid &c${receivedUSID}&r\nRun &lgsetusid ${this.uuid} ${receivedUSID}&fr if you have verified this connection attempt.`);
 					this.kick(`Authorization failure!`, 1);
 					FishPlayer.lastAuthKicked = this;
 					return false;
@@ -756,6 +756,29 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		}
 		this.usid = receivedUSID;
 		return true;
+	}
+	/** Warning: the "update" callback is run twice. */
+	async updateSynced(
+		update: (fishP:FishPlayer) => void,
+		beforeFetch?: (fishP:FishPlayer) => void,
+		afterFetch?: (fishP:FishPlayer) => void,
+	){
+		try {
+			update(this);
+			beforeFetch?.(this);
+			const data = await api.getFishPlayerData(this.uuid);
+			if(data) this.updateData(data);
+			update(this);
+			//of course, this is a race condition
+			//but it's harmless, it just picks one server's modification and discards the other one
+			//if someone joins two servers and then setranks to two different things at the exact same time, they're asking for it
+			afterFetch?.(this);
+			await api.setFishPlayerData(this.getData());
+			Log.info("Update successful.");
+		} catch(err){
+			Log.err(err);
+			Log.err(`Update failed.`);
+		}
 	}
 	displayTrail(){
 		if(this.trail) Call.effect(Fx[this.trail.type], this.player!.x, this.player!.y, 0, this.trail.color);
@@ -809,15 +832,16 @@ We apologize for the inconvenience.`
 		if(this.stelled()) return;
 		for(const rankToAssign of Rank.autoRanks){
 			if(!this.ranksAtLeast(rankToAssign) && rankToAssign.autoRankData){
-				if(
+				if( //TODO: use global stats
 					this.joinsAtLeast(rankToAssign.autoRankData.joins) &&
 					this.stats.blocksPlaced >= rankToAssign.autoRankData.blocksPlaced &&
 					this.stats.timeInGame >= rankToAssign.autoRankData.playtime &&
 					this.stats.chatMessagesSent >= rankToAssign.autoRankData.chatMessagesSent &&
 					(Date.now() - this.firstJoined) >= rankToAssign.autoRankData.timeSinceFirstJoin
 				){
-					this.setRank(rankToAssign);
-					this.sendMessage(`You have been automatically promoted to rank ${rankToAssign.coloredName()}!`);
+					void this.setRank(rankToAssign).then(() =>
+						this.sendMessage(`You have been automatically promoted to rank ${rankToAssign.coloredName()}!`)
+					);
 				}
 			}
 		}
@@ -1133,30 +1157,32 @@ We apologize for the inconvenience.`
 		}
 	}
 
-	setRank(rank:Rank){
+	async setRank(rank:Rank){
 		if(typeof rank === "string"){
 			rank satisfies never;
 			crash(`Type error in FishPlayer.setFlag(): rank is invalid`);
 		}
 		if(rank == Rank.pi && !Mode.localDebug) throw new TypeError(`Cannot find function setRank in object [object Object].`);
-		this.rank = rank;
-		this.updateName();
-		this.updateAdminStatus();
-		FishPlayer.saveAll();
+		await this.updateSynced(() => {
+			this.rank = rank;
+			this.updateName();
+			this.updateAdminStatus();
+		}, () => FishPlayer.saveAll());
 	}
-	setFlag(flag_:RoleFlag | RoleFlagName, value:boolean){
+	async setFlag(flag_:RoleFlag | RoleFlagName, value:boolean){
 		const flag = typeof flag_ == "string" ?
 			(RoleFlag.getByName(flag_) ?? crash(`Type error in FishPlayer.setFlag(): flag ${flag_} is invalid`))
 			: flag_;
 		
-		if(value){
-			this.flags.add(flag);
-		} else {
-			this.flags.delete(flag);
-		}
-		this.updateMemberExclusiveState();
-		this.updateName();
-		FishPlayer.saveAll();
+		await this.updateSynced(() => {
+			if(value){
+				this.flags.add(flag);
+			} else {
+				this.flags.delete(flag);
+			}
+			this.updateMemberExclusiveState();
+			this.updateName();
+		});
 	}
 	hasFlag(flagName:RoleFlagName){
 		const flag = RoleFlag.getByName(flagName);
@@ -1221,63 +1247,70 @@ We apologize for the inconvenience.`
 	stelled():boolean {
 		return this.marked() || this.autoflagged;
 	}
-	/** Sets the unmark time but doesn't stop the player's unit or send them a message. */
-	updateStopTime(time:number):void {
-		this.unmarkTime = Date.now() + time;
-		if(this.unmarkTime > globals.maxTime) this.unmarkTime = globals.maxTime;
-		api.addStopped(this.uuid, this.unmarkTime);
-		//Set unmark timer
+	setUnmarkTimer(duration:number){
 		const oldUnmarkTime = this.unmarkTime;
 		Timer.schedule(() => {
-			//Use of this is safe because arrow functions do not create a new this context
 			if(this.unmarkTime === oldUnmarkTime && this.connected()){
 				//Only run the code if the unmark time hasn't changed
 				this.forceRespawn();
 				this.updateName();
 				this.sendMessage("[yellow]Your mark has automatically expired.");
 			}
-		}, time / 1000);
+		}, duration / 1000);
+	}
+	/** Sets the unmark time but doesn't stop the player's unit or send them a message. */
+	updateStopTime(duration:number):Promise<void> {
+		return this.updateSynced(() => {
+			const time = Math.min(Date.now() + duration, globals.maxTime);
+			this.unmarkTime = time;
+			this.updateName();
+		}, () => this.setUnmarkTimer(duration));
 	}
 	stop(by:FishPlayer | string, duration:number, message?:string, notify = true){
-		this.updateStopTime(duration);
-		this.addHistoryEntry({
+		if(duration > 60_000) this.setPunishedIP(stopAntiEvadeTime);
+		this.showRankPrefix = true;
+		return this.updateSynced(() => {
+			this.unmarkTime = Date.now() + duration;
+			if(this.unmarkTime > globals.maxTime) this.unmarkTime = globals.maxTime;
+			this.updateName();
+		}, () => {
+			this.setUnmarkTimer(duration);
+			if(this.connected() && notify){
+				this.stopUnit();
+				this.sendMessage(
+					message
+					? `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]${message}[]`
+					: `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.`);
+				if(duration < Duration.hours(1)){
+					//less than one hour
+					this.sendMessage(`[yellow]Your mark will expire in ${formatTime(duration)}.`);
+				}
+			}
+		}, () => this.addHistoryEntry({
 			action: 'stopped',
 			by: by instanceof FishPlayer ? by.name : by,
 			time: Date.now(),
-		});
-		if(duration > 60_000) this.setPunishedIP(stopAntiEvadeTime);
-		this.showRankPrefix = true;
-		this.updateName();
-		if(this.connected() && notify){
-			this.stopUnit();
-			this.sendMessage(
-				message
-				? `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]${message}[]`
-				: `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.`);
-			if(duration < Duration.hours(1)){
-				//less than one hour
-				this.sendMessage(`[yellow]Your mark will expire in ${formatTime(duration)}.`);
-			}
-		}
+		}));
 	}
 	free(by:FishPlayer | string){
 		by ??= "console";
 		
 		this.autoflagged = false; //Might as well set autoflagged to false
-		this.unmarkTime = -1;
-		api.free(this.uuid);
 		FishPlayer.removePunishedIP(this.ip());
 		FishPlayer.removePunishedUUID(this.uuid);
-		if(this.connected()){
-			this.addHistoryEntry({
-				action: 'freed',
-				by: by instanceof FishPlayer ? by.name : by,
-				time: Date.now(),
-			});
-			this.sendMessage('[yellow]Looks like someone had mercy on you.');
-			this.updateName();
-			this.forceRespawn();
-		}
+		return this.updateSynced(() => {
+			this.unmarkTime = -1;
+		}, () => {
+			if(this.connected()){
+				this.sendMessage('[yellow]Looks like someone had mercy on you.');
+				this.updateName();
+				this.forceRespawn();
+			}
+		}, () => this.addHistoryEntry({
+			action: 'freed',
+			by: by instanceof FishPlayer ? by.name : by,
+			time: Date.now(),
+		}));
 	}
 	kick(reason:string | KickReason = Packets.KickReason.kick, duration:number = 30_000){
 		this.player?.kick(reason, duration);
@@ -1312,31 +1345,33 @@ We apologize for the inconvenience.`
 	}
 	mute(by:FishPlayer | string){
 		if(this.muted) return;
-		this.muted = true;
 		this.showRankPrefix = true;
-		this.updateName();
-		this.sendMessage(`[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.`);
-		this.setPunishedIP(stopAntiEvadeTime);
-		this.addHistoryEntry({
+		return this.updateSynced(() => {
+			this.muted = true;
+			this.updateName();
+		}, () => {
+			this.sendMessage(`[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.`);
+			this.setPunishedIP(stopAntiEvadeTime);
+		}, () => this.addHistoryEntry({
 			action: 'muted',
 			by: by instanceof FishPlayer ? by.name : by,
 			time: Date.now(),
-		});
-		FishPlayer.saveAll();
+		}));
 	}
-	unmute(by:FishPlayer){
+	unmute(by:FishPlayer | string){
 		if(!this.muted) return;
-		this.muted = false;
 		FishPlayer.removePunishedIP(this.ip());
 		FishPlayer.removePunishedUUID(this.uuid);
-		this.updateName();
-		this.sendMessage(`[green]You have been unmuted.`);
-		this.addHistoryEntry({
+		return this.updateSynced(() => {
+			this.muted = false;
+			this.updateName();
+		}, () => {
+			this.sendMessage(`[green]You have been unmuted.`);
+		}, () => this.addHistoryEntry({
 			action: 'muted',
 			by: by instanceof FishPlayer ? by.name : by,
 			time: Date.now(),
-		});
-		FishPlayer.saveAll();
+		}));
 	}
 
 	stopUnit(){
@@ -1428,7 +1463,7 @@ We apologize for the inconvenience.`
 					if(this.tstats.blocksBroken > heuristics.blocksBrokenAfterJoin){
 						tripped = true;
 						logHTrip(this, "blocks broken after join", `${this.tstats.blocksBroken}/${heuristics.blocksBrokenAfterJoin}`);
-						this.stop("automod", globals.maxTime, `Automatic stop due to suspicious activity`);
+						void this.stop("automod", globals.maxTime, `Automatic stop due to suspicious activity`);
 						FishPlayer.messageAllExcept(this,
 `[yellow]Player ${this.cleanedName} has been stopped automatically due to suspected griefing.
 Please look at ${this.position()} and see if they were actually griefing. If they were not, please inform a staff member.`);

@@ -14,7 +14,7 @@ import * as fjsContext from "/fjsContext";
 import { fishState, ipPattern, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
-import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
+import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, outputFail, serverRestartLoop, updateBans } from "/utils";
 import { Duration, escapeStringColorsServer, setToArray } from '/funcs';
 
 
@@ -22,11 +22,11 @@ export const commands = consoleCommandList({
 	setrank: {
 		args: ["player:player", "rank:rank"],
 		description: "Set a player's rank.",
-		handler({args, outputSuccess, f}){
+		async handler({args, outputSuccess, f}){
 			if(args.rank == Rank.pi && !Mode.localDebug) fail(f`Rank ${args.rank} is immutable.`);
 			if(args.player.immutable() && !Mode.localDebug) fail(f`Player ${args.player} is immutable.`);
 
-			args.player.setRank(args.rank);
+			await args.player.setRank(args.rank);
 			logAction(`set rank to ${args.rank.name} for`, "console", args.player);
 			outputSuccess(f`Set rank of player ${args.player} to ${args.rank}`);
 		}
@@ -41,9 +41,9 @@ export const commands = consoleCommandList({
 	setflag: {
 		args: ["player:player", "flag:roleflag", "value:boolean"],
 		description: "Set a player's role flags.",
-		handler({args, outputSuccess, f}){
+		async handler({args, outputSuccess, f}){
 
-			args.player.setFlag(args.flag, args.value);
+			await args.player.setFlag(args.flag, args.value);
 			logAction(`set roleflag ${args.flag.name} to ${args.value} for`, "console", args.player);
 			outputSuccess(f`Set role flag ${args.flag} of player ${args.player} to ${args.value}`);
 		}
@@ -136,13 +136,13 @@ export const commands = consoleCommandList({
 		}
 	},
 	blacklist: {
-		args: ["rich:boolean?"],
+		args: ["verbose:boolean?"],
 		description: "Allows you to view the DOS blacklist.",
 		handler({args, output, admins}){
 			const blacklist = admins.dosBlacklist;
 			if(blacklist.isEmpty()) fail("The blacklist is empty");
 			
-			if(args.rich){
+			if(args.verbose){
 				const outputString = ["DOS Blacklist:"];
 				blacklist.each((ip:string) => {
 					const info = admins.findByIP(ip);
@@ -347,27 +347,10 @@ export const commands = consoleCommandList({
 			}
 		}
 	},
-	clearallstoredusids: {
-		args: ["areyousure:boolean?", "areyoureallysure:boolean?", "areyoureallyreallysure:boolean?"],
-		description: "Removes every stored USID. NOT RECOMMENDED.",
-		handler({args, output}){
-			if(args.areyousure && args.areyoureallysure && args.areyoureallyreallysure){
-				let total = 0;
-				for(const [uuid, fishP] of Object.entries(FishPlayer.cachedPlayers)){
-					total ++;
-					fishP.usid = null;
-				}
-				FishPlayer.saveAll();
-				output(`Removed ${total} stored USIDs.`);
-			} else {
-				output(`Are you sure?!?!?!?!?!!`);
-			}
-		}
-	},
 	resetauth: {
 		args: ["player:string"],
 		description: `Removes the USID of the player provided, use this if they are getting kicked with the message "Authorization failure!". Specify "last" to use the last player that got kicked.`,
-		handler({args, outputSuccess, admins}){
+		handler({args, outputSuccess, outputFail, admins}){
 			const player =
 				args.player == "last" ? (FishPlayer.lastAuthKicked ?? fail(`Nobody has been kicked for authorization failure since the last restart.`)) :
 				FishPlayer.getById(args.player) ?? fail(
@@ -375,20 +358,31 @@ export const commands = consoleCommandList({
 					? `Player ${args.player} has joined the server, but their info was not cached, most likely because they have no rank, so there is no stored USID.`
 					: `Unknown player ${args.player}`
 				);
-			if(player.ranksAtLeast("admin")) fail(`Please use the approveauth command instead.`);
+			if(player.ranksAtLeast("admin")) fail(`Please use the setusid command instead.`);
 			const oldusid = player.usid;
 			player.usid = null;
-			outputSuccess(`Removed the usid of player ${player.name}/${player.uuid} (was ${oldusid})`);
+			api.setFishPlayerData(player.getData()).then(() => {
+				outputSuccess(`Removed the usid of player ${player.name}/${player.uuid} (was ${oldusid})`);
+			}).catch(err => {
+				Log.err(err);
+				outputFail(`Failed to remove the usid, please try running the command again.`);
+			});
 		}
 	},
-	approveauth: {
-		args: ["usid:string"],
+	setusid: {
+		args: ["uuid:string", "usid:string"],
 		description: `Sets the USID of a player.`,
-		handler({args, outputSuccess, f}){
+		handler({args, outputSuccess, outputFail, f}){
 			if(args.usid.length !== 12) fail(`Invalid USID: should be 12 characters ending with an equal sign`);
 			const player = FishPlayer.lastAuthKicked ?? fail(`No authorization failures have occurred since the last restart.`);
+			const oldusid = player.usid;
 			player.usid = args.usid;
-			outputSuccess(f`Set USID for player ${player} to ${args.usid}.`);
+			api.setFishPlayerData(player.getData()).then(() => {
+				outputSuccess(`Set the usid of player ${player.name}/${player.uuid} to ${args.usid} (was ${oldusid})`);
+			}).catch(err => {
+				Log.err(err);
+				outputFail(`Failed to remove the usid, please try running the command again.`);
+			});
 		}
 	},
 	update: {
@@ -507,12 +501,12 @@ Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, 
 	stopplayer: {
 		args: ['player:player', "time:time?", "message:string?"],
 		description: 'Stops a player.',
-		handler({args, f, outputSuccess}){
+		async handler({args, f, outputSuccess}){
 			if(args.player.marked()){
 				//overload: overwrite stoptime
 				if(!args.time) fail(f`Player ${args.player} is already marked.`);
 				const previousTime = formatTime(args.player.unmarkTime - Date.now());
-				args.player.updateStopTime(args.time);
+				await args.player.updateStopTime(args.time);
 				outputSuccess(f`Player ${args.player}'s stop time has been updated to ${formatTime(args.time)} (was ${previousTime}).`);
 
 				return;
@@ -520,7 +514,7 @@ Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, 
 
 			const time = args.time ?? Duration.days(7);
 			if(time + Date.now() > maxTime) fail(`Error: time too high.`);
-			args.player.stop("console", time, args.message ?? undefined);
+			await args.player.stop("console", time, args.message ?? undefined);
 			logAction('stopped', "console", args.player, args.message ?? undefined, time);
 			Call.sendMessage(`[scarlet]Player "${args.player.prefixedName}[scarlet]" has been marked for ${formatTime(time)}${args.message ? ` with reason: [white]${args.message}[]` : ""}.`);
 		}
@@ -528,12 +522,12 @@ Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, 
 	stopoffline: {
 		args: ["uuid:uuid", "time:time?"],
 		description: "Stops a player by uuid.",
-		handler({args:{uuid, time}, outputSuccess, admins}){
+		async handler({args:{uuid, time}, outputSuccess, admins}){
 			const stopTime = time ?? (maxTime - Date.now() - 10000);
 			const info = admins.getInfoOptional(uuid)!;
 			if(info == null) fail(`Unknown player ${uuid}`);
 			const fishP = FishPlayer.getFromInfo(info);
-			fishP.stop("console", stopTime);
+			await fishP.stop("console", stopTime);
 			logAction('stopped', "console", info, undefined, stopTime);
 			outputSuccess(`Player "${info.lastName}" was marked for ${formatTime(stopTime)}.`);
 		}
@@ -694,6 +688,50 @@ ${FishPlayer.mapPlayers(p =>
 				Groups.player.each(target => {
 					Call.connect(target.con, server.ip, server.port);
 				});
+			}
+		}
+	},
+	mute: {
+		args: ['player:player'],
+		description: 'Stops a player from chatting.',
+		async handler({args, outputSuccess, f}){
+			if(args.player.muted) fail(f`Player ${args.player} is already muted.`);
+			await args.player.mute("console");
+			logAction('muted', "console", args.player);
+			outputSuccess(f`Muted player ${args.player}.`);
+		}
+	},
+
+	unmute: {
+		args: ['player:player'],
+		description: 'Unmutes a player',
+		async handler({args, outputSuccess, f}){
+			if(!args.player.muted && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
+			if(!args.player.muted) fail(f`Player ${args.player} is not muted.`);
+			await args.player.unmute("console");
+			logAction('unmuted', "console", args.player);
+			outputSuccess(f`Unmuted player ${args.player}.`);
+		}
+	},
+
+	free: {
+		args: ['player:player'],
+		description: 'Frees a player.',
+		async handler({args, outputSuccess, outputFail, f}){
+			if(args.player.marked()){
+				await args.player.free("console");
+				logAction('freed', "console", args.player);
+				outputSuccess(f`Player ${args.player} has been unmarked.`);
+			} else if(args.player.autoflagged){
+				args.player.autoflagged = false;
+				if(args.player.connected()){
+					args.player.sendMessage("[yellow]You have been unflagged.");
+					args.player.updateName();
+					args.player.forceRespawn();
+				}
+				outputSuccess(f`Player ${args.player} has been unflagged.`);
+			} else {
+				outputFail(f`Player ${args.player} is not marked or autoflagged.`);
 			}
 		}
 	},

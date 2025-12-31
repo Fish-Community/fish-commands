@@ -655,7 +655,7 @@ function processChat(player, message, effects) {
                 .some(function (w) { return config_1.bannedWords.autoWhack.includes(w); })) {
                 logHTrip(fishPlayer, "bad words in chat", "message: `".concat(message, "`"));
                 fishPlayer.muted = true;
-                fishPlayer.stop("automod", globals_1.maxTime, "Automatic stop due to suspicious activity", false);
+                void fishPlayer.stop("automod", globals_1.maxTime, "Automatic stop due to suspicious activity", false);
             }
             Log.info("Censored message from player ".concat(player.name, ": \"").concat((0, funcs_1.escapeStringColorsServer)(message), "\"; contained \"").concat(filterTripText, "\""));
             players_1.FishPlayer.messageStaff("[yellow]Censored message from player ".concat(fishPlayer.cleanedName, ": \"").concat(message, "\" contained \"").concat(filterTripText, "\""));
