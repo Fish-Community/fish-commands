@@ -22,7 +22,7 @@ import { setToArray } from '/funcs';
 export class FishPlayer {
 	static cachedPlayers:Record<string, FishPlayer> = {};
 	static readonly maxHistoryLength = 5;
-	static readonly saveVersion = 11;
+	static readonly saveVersion = 12;
 	static readonly chunkSize = 50000;
 
 	//Static transients
@@ -86,12 +86,12 @@ export class FishPlayer {
 	changedTeam = false;
 	ipDetectedVpn = false;
 	lastPollSent = -1;
+	autoflagged = false;
 	
 	//Stored data
 	uuid: string;
 	name: string;
 	muted: boolean;
-	autoflagged: boolean;
 	unmarkTime: number;
 	rank: Rank;
 	flags: Set<RoleFlag>;
@@ -118,7 +118,7 @@ export class FishPlayer {
 
 	//TODO: fix this absolute mess of a constructor! I don't remember why this exists
 	constructor({
-		uuid, name, muted = false, autoflagged = false, unmarkTime: unmarked = -1,
+		uuid, name, muted = false, unmarkTime: unmarked = -1,
 		highlight = null, history = [], rainbow = null, rank = "player", flags = [], usid,
 		chatStrictness = "chat", lastJoined, firstJoined, stats, showRankPrefix = true,
 	}:Partial<FishPlayerData>, player:mindustryPlayer | null){
@@ -129,7 +129,6 @@ export class FishPlayer {
 		this.unmarkTime = unmarked;
 		this.lastJoined = lastJoined ?? -1;
 		this.firstJoined = firstJoined ?? lastJoined ?? Date.now();
-		this.autoflagged = autoflagged;
 		this.highlight = highlight;
 		this.history = history;
 		this.player = player;
@@ -809,8 +808,11 @@ We apologize for the inconvenience.`
 				const fishP = new this({
 					uuid: fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null."),
 					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
-					muted: fishPlayerData.readBool(),
-					autoflagged: fishPlayerData.readBool(),
+					muted: (() => {
+						const muted = fishPlayerData.readBool();
+						void fishPlayerData.readBool(); //discard the stored data for autoflagged
+						return muted;
+					})(),
 					unmarkTime: fishPlayerData.readNumber(13),
 					highlight: fishPlayerData.readString(2),
 					history: fishPlayerData.readArray(str => ({
@@ -842,8 +844,40 @@ We apologize for the inconvenience.`
 				return new this({
 					uuid: fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null."),
 					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
+					muted: (() => {
+						const muted = fishPlayerData.readBool();
+						void fishPlayerData.readBool(); //discard the stored data for autoflagged
+						return muted;
+					})(),
+					unmarkTime: fishPlayerData.readNumber(13),
+					highlight: fishPlayerData.readString(2),
+					history: fishPlayerData.readArray(str => ({
+						action: str.readString(2) ?? "null",
+						by: str.readString(2) ?? "null",
+						time: str.readNumber(15)
+					})),
+					rainbow: (n => n == 0 ? null : {speed: n})(fishPlayerData.readNumber(2)),
+					rank: fishPlayerData.readString(2) ?? "",
+					flags: fishPlayerData.readArray(str => str.readString(2), 2).filter((s):s is string => s != null),
+					usid: fishPlayerData.readString(2),
+					chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+					lastJoined: fishPlayerData.readNumber(15),
+					firstJoined: fishPlayerData.readNumber(15),
+					stats: {
+						blocksBroken: fishPlayerData.readNumber(10),
+						blocksPlaced: fishPlayerData.readNumber(10),
+						timeInGame: fishPlayerData.readNumber(15),
+						chatMessagesSent: fishPlayerData.readNumber(7),
+						gamesFinished: fishPlayerData.readNumber(5),
+						gamesWon: fishPlayerData.readNumber(5),
+					},
+					showRankPrefix: fishPlayerData.readBool(),
+				}, player);
+			case 12:
+				return new this({
+					uuid: fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null."),
+					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
 					muted: fishPlayerData.readBool(),
-					autoflagged: fishPlayerData.readBool(),
 					unmarkTime: fishPlayerData.readNumber(13),
 					highlight: fishPlayerData.readString(2),
 					history: fishPlayerData.readArray(str => ({
@@ -876,7 +910,6 @@ We apologize for the inconvenience.`
 		out.writeString(this.uuid, 2);
 		out.writeString(this.name, 2, true);
 		out.writeBool(this.muted);
-		out.writeBool(this.autoflagged);
 		out.writeNumber(this.unmarkTime, 13);// this will stop working in 2286! https://en.wikipedia.org/wiki/Time_formatting_and_storage_bugs#Year_2286
 		out.writeString(this.highlight, 2, true);
 		out.writeArray(this.history, (i, str) => {

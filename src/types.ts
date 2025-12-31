@@ -228,7 +228,6 @@ export type FishPlayerData = {
 	uuid: string;
 	name: string;
 	muted: boolean;
-	autoflagged: boolean;
 	unmarkTime: number;
 	rank: string;
 	flags: string[];

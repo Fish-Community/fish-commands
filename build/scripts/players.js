@@ -63,8 +63,8 @@ var funcs_5 = require("/funcs");
 var FishPlayer = /** @class */ (function () {
     //TODO: fix this absolute mess of a constructor! I don't remember why this exists
     function FishPlayer(_a, player) {
-        var uuid = _a.uuid, name = _a.name, _b = _a.muted, muted = _b === void 0 ? false : _b, _c = _a.autoflagged, autoflagged = _c === void 0 ? false : _c, _d = _a.unmarkTime, unmarked = _d === void 0 ? -1 : _d, _e = _a.highlight, highlight = _e === void 0 ? null : _e, _f = _a.history, history = _f === void 0 ? [] : _f, _g = _a.rainbow, rainbow = _g === void 0 ? null : _g, _h = _a.rank, rank = _h === void 0 ? "player" : _h, _j = _a.flags, flags = _j === void 0 ? [] : _j, usid = _a.usid, _k = _a.chatStrictness, chatStrictness = _k === void 0 ? "chat" : _k, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, _l = _a.showRankPrefix, showRankPrefix = _l === void 0 ? true : _l;
-        var _m, _o, _p, _q;
+        var uuid = _a.uuid, name = _a.name, _b = _a.muted, muted = _b === void 0 ? false : _b, _c = _a.unmarkTime, unmarked = _c === void 0 ? -1 : _c, _d = _a.highlight, highlight = _d === void 0 ? null : _d, _e = _a.history, history = _e === void 0 ? [] : _e, _f = _a.rainbow, rainbow = _f === void 0 ? null : _f, _g = _a.rank, rank = _g === void 0 ? "player" : _g, _h = _a.flags, flags = _h === void 0 ? [] : _h, usid = _a.usid, _j = _a.chatStrictness, chatStrictness = _j === void 0 ? "chat" : _j, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, _k = _a.showRankPrefix, showRankPrefix = _k === void 0 ? true : _k;
+        var _l, _m, _o, _p;
         //Transients
         this.player = null;
         this.pet = null;
@@ -97,21 +97,21 @@ var FishPlayer = /** @class */ (function () {
         this.changedTeam = false;
         this.ipDetectedVpn = false;
         this.lastPollSent = -1;
+        this.autoflagged = false;
         this.chatStrictness = "chat";
-        this.uuid = (_m = uuid !== null && uuid !== void 0 ? uuid : player === null || player === void 0 ? void 0 : player.uuid()) !== null && _m !== void 0 ? _m : (0, funcs_3.crash)("Attempted to create FishPlayer with no UUID");
-        this.name = (_o = name !== null && name !== void 0 ? name : player === null || player === void 0 ? void 0 : player.name) !== null && _o !== void 0 ? _o : "Unnamed player [ERROR]";
+        this.uuid = (_l = uuid !== null && uuid !== void 0 ? uuid : player === null || player === void 0 ? void 0 : player.uuid()) !== null && _l !== void 0 ? _l : (0, funcs_3.crash)("Attempted to create FishPlayer with no UUID");
+        this.name = (_m = name !== null && name !== void 0 ? name : player === null || player === void 0 ? void 0 : player.name) !== null && _m !== void 0 ? _m : "Unnamed player [ERROR]";
         this.prefixedName = this.name;
         this.muted = muted;
         this.unmarkTime = unmarked;
         this.lastJoined = lastJoined !== null && lastJoined !== void 0 ? lastJoined : -1;
-        this.firstJoined = (_p = firstJoined !== null && firstJoined !== void 0 ? firstJoined : lastJoined) !== null && _p !== void 0 ? _p : Date.now();
-        this.autoflagged = autoflagged;
+        this.firstJoined = (_o = firstJoined !== null && firstJoined !== void 0 ? firstJoined : lastJoined) !== null && _o !== void 0 ? _o : Date.now();
         this.highlight = highlight;
         this.history = history;
         this.player = player;
         this.rainbow = rainbow;
         this.cleanedName = (0, funcs_2.escapeStringColorsServer)(Strings.stripColors(this.name));
-        this.rank = (_q = ranks_1.Rank.getByName(rank)) !== null && _q !== void 0 ? _q : ranks_1.Rank.player;
+        this.rank = (_p = ranks_1.Rank.getByName(rank)) !== null && _p !== void 0 ? _p : ranks_1.Rank.player;
         this.flags = new Set(flags.map(ranks_1.RoleFlag.getByName).filter(function (f) { return f != null; }));
         this.usid = usid !== null && usid !== void 0 ? usid : null;
         this.chatStrictness = chatStrictness;
@@ -864,7 +864,7 @@ var FishPlayer = /** @class */ (function () {
         return new this(JSON.parse(fishPlayerData), player);
     };
     FishPlayer.read = function (version, fishPlayerData, player) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         switch (version) {
             case 0:
             case 1:
@@ -882,8 +882,11 @@ var FishPlayer = /** @class */ (function () {
                 var fishP = new this({
                     uuid: (_a = fishPlayerData.readString(2)) !== null && _a !== void 0 ? _a : (0, funcs_3.crash)("Failed to deserialize FishPlayer: UUID was null."),
                     name: (_b = fishPlayerData.readString(2)) !== null && _b !== void 0 ? _b : "Unnamed player [ERROR]",
-                    muted: fishPlayerData.readBool(),
-                    autoflagged: fishPlayerData.readBool(),
+                    muted: (function () {
+                        var muted = fishPlayerData.readBool();
+                        void fishPlayerData.readBool(); //discard the stored data for autoflagged
+                        return muted;
+                    })(),
                     unmarkTime: fishPlayerData.readNumber(13),
                     highlight: fishPlayerData.readString(2),
                     history: fishPlayerData.readArray(function (str) {
@@ -918,8 +921,11 @@ var FishPlayer = /** @class */ (function () {
                 return new this({
                     uuid: (_d = fishPlayerData.readString(2)) !== null && _d !== void 0 ? _d : (0, funcs_3.crash)("Failed to deserialize FishPlayer: UUID was null."),
                     name: (_e = fishPlayerData.readString(2)) !== null && _e !== void 0 ? _e : "Unnamed player [ERROR]",
-                    muted: fishPlayerData.readBool(),
-                    autoflagged: fishPlayerData.readBool(),
+                    muted: (function () {
+                        var muted = fishPlayerData.readBool();
+                        void fishPlayerData.readBool(); //discard the stored data for autoflagged
+                        return muted;
+                    })(),
                     unmarkTime: fishPlayerData.readNumber(13),
                     highlight: fishPlayerData.readString(2),
                     history: fishPlayerData.readArray(function (str) {
@@ -947,6 +953,38 @@ var FishPlayer = /** @class */ (function () {
                     },
                     showRankPrefix: fishPlayerData.readBool(),
                 }, player);
+            case 12:
+                return new this({
+                    uuid: (_g = fishPlayerData.readString(2)) !== null && _g !== void 0 ? _g : (0, funcs_3.crash)("Failed to deserialize FishPlayer: UUID was null."),
+                    name: (_h = fishPlayerData.readString(2)) !== null && _h !== void 0 ? _h : "Unnamed player [ERROR]",
+                    muted: fishPlayerData.readBool(),
+                    unmarkTime: fishPlayerData.readNumber(13),
+                    highlight: fishPlayerData.readString(2),
+                    history: fishPlayerData.readArray(function (str) {
+                        var _a, _b;
+                        return ({
+                            action: (_a = str.readString(2)) !== null && _a !== void 0 ? _a : "null",
+                            by: (_b = str.readString(2)) !== null && _b !== void 0 ? _b : "null",
+                            time: str.readNumber(15)
+                        });
+                    }),
+                    rainbow: (function (n) { return n == 0 ? null : { speed: n }; })(fishPlayerData.readNumber(2)),
+                    rank: (_j = fishPlayerData.readString(2)) !== null && _j !== void 0 ? _j : "",
+                    flags: fishPlayerData.readArray(function (str) { return str.readString(2); }, 2).filter(function (s) { return s != null; }),
+                    usid: fishPlayerData.readString(2),
+                    chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+                    lastJoined: fishPlayerData.readNumber(15),
+                    firstJoined: fishPlayerData.readNumber(15),
+                    stats: {
+                        blocksBroken: fishPlayerData.readNumber(10),
+                        blocksPlaced: fishPlayerData.readNumber(10),
+                        timeInGame: fishPlayerData.readNumber(15),
+                        chatMessagesSent: fishPlayerData.readNumber(7),
+                        gamesFinished: fishPlayerData.readNumber(5),
+                        gamesWon: fishPlayerData.readNumber(5),
+                    },
+                    showRankPrefix: fishPlayerData.readBool(),
+                }, player);
             default: (0, funcs_3.crash)("Unknown save version ".concat(version));
         }
     };
@@ -957,7 +995,6 @@ var FishPlayer = /** @class */ (function () {
         out.writeString(this.uuid, 2);
         out.writeString(this.name, 2, true);
         out.writeBool(this.muted);
-        out.writeBool(this.autoflagged);
         out.writeNumber(this.unmarkTime, 13); // this will stop working in 2286! https://en.wikipedia.org/wiki/Time_formatting_and_storage_bugs#Year_2286
         out.writeString(this.highlight, 2, true);
         out.writeArray(this.history, function (i, str) {
@@ -1486,7 +1523,7 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.cachedPlayers = {};
     FishPlayer.maxHistoryLength = 5;
-    FishPlayer.saveVersion = 11;
+    FishPlayer.saveVersion = 12;
     FishPlayer.chunkSize = 50000;
     //Static transients
     FishPlayer.stats = {
