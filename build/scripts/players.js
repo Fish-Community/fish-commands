@@ -132,6 +132,7 @@ var FishPlayer = /** @class */ (function () {
         this.lastPollSent = -1;
         this.autoflagged = false;
         this.infoUpdated = false;
+        this.dataSynced = false;
         this.name = "Unnamed player [ERROR}";
         this.muted = false;
         this.unmarkTime = -1;
@@ -358,22 +359,28 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.onConnectPacket = function (uuid) {
         var _this = this;
-        if (this.cachedPlayers[uuid])
-            this.cachedPlayers[uuid].infoUpdated = false;
+        var entry = this.cachedPlayers[uuid];
+        if (entry) {
+            entry.infoUpdated = false;
+            entry.dataSynced = false;
+        }
         api.getFishPlayerData(uuid).then(function (data) {
             if (!data)
                 return; //nothing to sync
             if (!(uuid in _this.cachedPlayers)) {
-                _this.cachedPlayers[uuid] = new FishPlayer(uuid, data, null);
+                var fishP = new FishPlayer(uuid, data, null);
+                fishP.dataSynced = true;
+                _this.cachedPlayers[uuid] = fishP;
             }
             else {
                 var fishP = _this.cachedPlayers[uuid];
+                fishP.dataSynced = true;
                 fishP.updateData(data);
                 if (fishP.infoUpdated) {
                     //Player has already connected
                     //Run it again
                     if (fishP.player)
-                        fishP.updateSavedInfoFromPlayer(fishP.player);
+                        fishP.updateSavedInfoFromPlayer(fishP.player, true);
                 }
                 else {
                     //Player has not connected yet, nothing further needed
@@ -404,7 +411,6 @@ var FishPlayer = /** @class */ (function () {
                     fishPlayer.sendMessage("[scarlet]\u26A0 Don't be a script kiddie!");
                 }
             }
-            fishPlayer.updateName();
             fishPlayer.updateAdminStatus();
             fishPlayer.updateMemberExclusiveState();
             fishPlayer.checkVPNAndJoins();
@@ -619,9 +625,15 @@ var FishPlayer = /** @class */ (function () {
         return out;
     };
     /** Must be called at player join, before updateName(). */
-    FishPlayer.prototype.updateSavedInfoFromPlayer = function (player) {
+    FishPlayer.prototype.updateSavedInfoFromPlayer = function (player, repeated) {
+        if (repeated === void 0) { repeated = false; }
         this.player = player;
-        this.name = player.name;
+        if (repeated) {
+            this.name = this.originalName;
+        }
+        else {
+            this.originalName = this.name = player.name;
+        }
         //Do not update USID here
         this.manualAfk = false;
         this.cleanedName = Strings.stripColors(player.name);

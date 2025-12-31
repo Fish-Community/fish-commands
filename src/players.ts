@@ -90,6 +90,8 @@ export class FishPlayer {
 	lastPollSent = -1;
 	autoflagged = false;
 	infoUpdated = false;
+	dataSynced = false;
+	originalName?: string;
 	
 	//Stored data
 	uuid: string;
@@ -274,18 +276,25 @@ export class FishPlayer {
 	//Contains methods that handle an event and must be called by other code (usually through Events.on).
 	static dataFetchFailedUuids = new Set();
 	static onConnectPacket(uuid:string){
-		if(this.cachedPlayers[uuid]) this.cachedPlayers[uuid].infoUpdated = false;
+		const entry = this.cachedPlayers[uuid];
+		if(entry){
+			entry.infoUpdated = false;
+			entry.dataSynced = false;
+		}
 		api.getFishPlayerData(uuid).then(data => {
 			if(!data) return; //nothing to sync
 			if(!(uuid in this.cachedPlayers)){
-				this.cachedPlayers[uuid] = new FishPlayer(uuid, data, null);
+				const fishP = new FishPlayer(uuid, data, null);
+				fishP.dataSynced = true;
+				this.cachedPlayers[uuid] = fishP;
 			} else {
 				const fishP = this.cachedPlayers[uuid];
+				fishP.dataSynced = true;
 				fishP.updateData(data);
 				if(fishP.infoUpdated){
 					//Player has already connected
 					//Run it again
-					if(fishP.player) fishP.updateSavedInfoFromPlayer(fishP.player);
+					if(fishP.player) fishP.updateSavedInfoFromPlayer(fishP.player, true);
 				} else {
 					//Player has not connected yet, nothing further needed
 				}
@@ -310,7 +319,6 @@ export class FishPlayer {
 					fishPlayer.sendMessage("[scarlet]\u26A0 Don't be a script kiddie!");
 				}
 			}
-			fishPlayer.updateName();
 			fishPlayer.updateAdminStatus();
 			fishPlayer.updateMemberExclusiveState();
 			fishPlayer.checkVPNAndJoins();
@@ -536,9 +544,14 @@ export class FishPlayer {
 		return out;
 	}
 	/** Must be called at player join, before updateName(). */
-	updateSavedInfoFromPlayer(player:mindustryPlayer){
+	updateSavedInfoFromPlayer(player:mindustryPlayer, repeated = false){
 		this.player = player;
-		this.name = player.name;
+		if(repeated){
+			this.name = this.originalName!;
+		} else {
+			this.originalName = this.name = player.name;
+		}
+
 		//Do not update USID here
 		this.manualAfk = false;
 		this.cleanedName = Strings.stripColors(player.name);
