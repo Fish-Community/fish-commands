@@ -562,14 +562,9 @@ var FishPlayer = /** @class */ (function () {
     };
     /** Must be called at player join, before updateName(). */
     FishPlayer.prototype.updateSavedInfoFromPlayer = function (player) {
-        var _this = this;
         this.player = player;
         this.name = player.name;
         //Do not update USID here
-        this.flags.forEach(function (f) {
-            if (!f.peristent)
-                _this.flags.delete(f);
-        });
         this.manualAfk = false;
         this.cleanedName = Strings.stripColors(player.name);
         this.lastJoined = Date.now();
@@ -1004,7 +999,7 @@ var FishPlayer = /** @class */ (function () {
         });
         out.writeNumber((_b = (_a = this.rainbow) === null || _a === void 0 ? void 0 : _a.speed) !== null && _b !== void 0 ? _b : 0, 2);
         out.writeString(this.rank.name, 2);
-        out.writeArray(Array.from(this.flags).filter(function (f) { return f.peristent; }), function (f, str) { return str.writeString(f.name, 2); }, 2);
+        out.writeArray(Array.from(this.flags), function (f, str) { return str.writeString(f.name, 2); }, 2);
         out.writeString(this.usid, 2);
         out.writeEnumString(this.chatStrictness, ["chat", "strict"]);
         out.writeNumber(this.lastJoined, 15);

@@ -536,9 +536,6 @@ export class FishPlayer {
 		this.player = player;
 		this.name = player.name;
 		//Do not update USID here
-		this.flags.forEach(f => {
-			if(!f.peristent) this.flags.delete(f);
-		});
 		this.manualAfk = false;
 		this.cleanedName = Strings.stripColors(player.name);
 		this.lastJoined = Date.now();
@@ -919,7 +916,7 @@ We apologize for the inconvenience.`
 		});
 		out.writeNumber(this.rainbow?.speed ?? 0, 2);
 		out.writeString(this.rank.name, 2);
-		out.writeArray(Array.from(this.flags).filter(f => f.peristent), (f, str) => str.writeString(f.name, 2), 2);
+		out.writeArray(Array.from(this.flags), (f, str) => str.writeString(f.name, 2), 2);
 		out.writeString(this.usid, 2);
 		out.writeEnumString(this.chatStrictness, ["chat", "strict"]);
 		out.writeNumber(this.lastJoined, 15);

@@ -63,14 +63,12 @@ Object.freeze(Rank.pi); //anti-trolling
  * Players can have any combination of the role flags.
  */
 var RoleFlag = /** @class */ (function () {
-    function RoleFlag(name, prefix, description, color, peristent, assignableByModerators) {
-        if (peristent === void 0) { peristent = true; }
+    function RoleFlag(name, prefix, description, color, assignableByModerators) {
         if (assignableByModerators === void 0) { assignableByModerators = true; }
         this.name = name;
         this.prefix = prefix;
         this.description = description;
         this.color = color;
-        this.peristent = peristent;
         this.assignableByModerators = assignableByModerators;
         RoleFlag.flags[name] = this;
     }
@@ -85,11 +83,11 @@ var RoleFlag = /** @class */ (function () {
         return this.color + this.name + "[]";
     };
     RoleFlag.flags = {};
-    RoleFlag.developer = new RoleFlag("developer", "[black]<[#B000FF]\uE80E[]>[]", "Awarded to people who contribute to the server's codebase.", "[#B000FF]", true, false);
-    RoleFlag.member = new RoleFlag("member", "[black]<[yellow]\uE809[]>[]", "Awarded to our awesome donors who support the server.", "[pink]", true, false);
-    RoleFlag.illusionist = new RoleFlag("illusionist", "", "Assigned to to individuals who have earned access to enhanced visual effect features.", "[lightgrey]", true, true);
-    RoleFlag.chief_map_analyst = new RoleFlag("chief map analyst", "[black]<[#5800FF]\uE833[]>[]", "Assigned to the chief map analyst, who oversees map management.", "[#5800FF]", true, true);
-    RoleFlag.no_effects = new RoleFlag("no_effects", "", "Given to people who have abused the visual effects.", "", true, true);
+    RoleFlag.developer = new RoleFlag("developer", "[black]<[#B000FF]\uE80E[]>[]", "Awarded to people who contribute to the server's codebase.", "[#B000FF]", false);
+    RoleFlag.member = new RoleFlag("member", "[black]<[yellow]\uE809[]>[]", "Awarded to our awesome donors who support the server.", "[pink]", false);
+    RoleFlag.illusionist = new RoleFlag("illusionist", "", "Assigned to to individuals who have earned access to enhanced visual effect features.", "[lightgrey]", true);
+    RoleFlag.chief_map_analyst = new RoleFlag("chief map analyst", "[black]<[#5800FF]\uE833[]>[]", "Assigned to the chief map analyst, who oversees map management.", "[#5800FF]", true);
+    RoleFlag.no_effects = new RoleFlag("no_effects", "", "Given to people who have abused the visual effects.", "", true);
     return RoleFlag;
 }());
 exports.RoleFlag = RoleFlag;
