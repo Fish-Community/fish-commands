@@ -30,6 +30,7 @@ export default defineConfig([
 						"TemplateLiteral *",
 						"SwitchCase",
 						"ConditionalExpression",
+						"PropertyDefinition > ObjectExpression"
 					],
 				}
 			],
