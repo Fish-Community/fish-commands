@@ -70,6 +70,11 @@ var Promise = /** @class */ (function () {
                 }
             });
         }
+        else {
+            this.rejectHandlers.push(function (value) {
+                reject(value);
+            });
+        }
         return promise;
     };
     Promise.prototype.catch = function (onRejected) {
@@ -105,11 +110,15 @@ var Promise = /** @class */ (function () {
         var outputs = new Array(promises.length);
         var resolutions = 0;
         promises.map(function (p, i) {
-            return p.then(function (v) {
+            p.then(function (v) {
                 outputs[i] = v;
                 resolutions++;
                 if (resolutions == promises.length)
                     resolve(outputs);
+            });
+            p.catch(function (err) {
+                resolutions = -Infinity;
+                reject(err);
             });
         });
         return promise;

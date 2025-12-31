@@ -81,6 +81,12 @@ export class Promise<TResolve, TReject> {
 					}
 				}
 			);
+		} else {
+			this.rejectHandlers.push(
+				value => {
+					reject(value);
+				}
+			);
 		}
 		return promise;
 	}
@@ -121,13 +127,17 @@ export class Promise<TResolve, TReject> {
 		const {promise, resolve, reject} = Promise.withResolvers<TResolves, TReject>();
 		const outputs = new Array(promises.length);
 		let resolutions = 0;
-		promises.map((p, i) =>
+		promises.map((p, i) => {
 			p.then(v => {
 				outputs[i] = v;
 				resolutions ++;
 				if(resolutions == promises.length) resolve(outputs as TResolves);
-			})
-		);
+			});
+			p.catch(err => {
+				resolutions = -Infinity;
+				reject(err);
+			});
+		});
 		return promise;
 	}
 	static resolve<TResolve>(value:TResolve):Promise<TResolve, any> {
