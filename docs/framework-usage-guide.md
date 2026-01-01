@@ -19,7 +19,7 @@ Additionally, it can be used like this:
 const historyData:TileHistory = tileHistory[`${x},${y}`] ?? fail(`There is no recorded history for the selected tile.`);
 ```
 
-Calling this function is allowed in command handlers and menus.
+Calling the `fail()` function is only allowed in command handlers and menus.
 
 ## Menu framework
 
@@ -67,9 +67,9 @@ if(matches.size > 20)
 displayMatches();
 ```
 
-## Commands system
+## Commands framework
 
-This plugin uses a custom commands system, which is much easier to use than the builtin one.
+This plugin uses a custom commands framework.
 
 ### Command arguments
 
@@ -123,6 +123,43 @@ requirements: [Req.modeNot("survival"), Req.cooldown(60_000)]
 ```
 
 This will allow the command to run if the mode is not survival and if it has not been run by the same player in the past 60 seconds, otherwise, an appropriate error message is printed.
+
+### Tap handling
+
+To activate the tap handler for a command, run `handleTaps("on")` or `handleTaps("once")` in the command handler. The framework will invoke the tapped() handler whenever the user taps a tile. Call `handleTaps("off")` in the tap handler or the command handler to disable.
+
+### Data storage
+
+When storing data in a command, you must use the `command()` helper function to get type definitions.
+
+There are two mechanisms for a command to store data:
+
+#### Property
+
+If a value is provided for the `data` property, the command handler will be able to access and mutate it as part of the handler arguments. The `init()` method can be specified to run code to generate the initial value of `data`, or to register event handlers.
+
+#### Command thunk
+
+The commands object can be a thunk, like this:
+
+```ts
+commandList({
+  mycommand: command(() => {
+    let value = 0;
+    Events.on(EventType.GameOverEvent, () => {
+      //Register event handlers here
+    });
+    return {
+      args: [],
+      description: "description",
+      perm: Perm.none,
+      handler({output}){
+        output(value++);
+      }
+    }
+  })
+})
+```
 
 ## Formatting system
 
