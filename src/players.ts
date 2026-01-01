@@ -402,7 +402,7 @@ export class FishPlayer {
 		fishP.lastJoined = Date.now();
 		this.recentLeaves.unshift(fishP);
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
-		api.setFishPlayerData(fishP.getData());
+		api.setFishPlayerData(fishP.getData(), 1, true);
 	}
 	static easterEggVotekickTarget: FishPlayer | null = null;
 	static validateVotekickSession(){
@@ -791,8 +791,8 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 			if(data) this.updateData(data);
 			update(this);
 			//of course, this is a race condition
-			//but it's harmless, it just picks one server's modification and discards the other one
-			//if someone joins two servers and then setranks to two different things at the exact same time, they're asking for it
+			//but it's unlikely to happen
+			//could be fixed by transmitting the update operation to the server as a mongo update command
 			afterFetch?.(this);
 			await api.setFishPlayerData(this.getData());
 			Log.info("Update successful.");

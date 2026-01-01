@@ -494,7 +494,7 @@ var FishPlayer = /** @class */ (function () {
         this.recentLeaves.unshift(fishP);
         if (this.recentLeaves.length > 10)
             this.recentLeaves.pop();
-        api.setFishPlayerData(fishP.getData());
+        api.setFishPlayerData(fishP.getData(), 1, true);
     };
     FishPlayer.validateVotekickSession = function () {
         var _a;
@@ -934,8 +934,8 @@ var FishPlayer = /** @class */ (function () {
                             this.updateData(data);
                         update(this);
                         //of course, this is a race condition
-                        //but it's harmless, it just picks one server's modification and discards the other one
-                        //if someone joins two servers and then setranks to two different things at the exact same time, they're asking for it
+                        //but it's unlikely to happen
+                        //could be fixed by transmitting the update operation to the server as a mongo update command
                         afterFetch === null || afterFetch === void 0 ? void 0 : afterFetch(this);
                         return [4 /*yield*/, api.setFishPlayerData(this.getData())];
                     case 2:

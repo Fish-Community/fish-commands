@@ -169,7 +169,7 @@ export function getFishPlayerData(uuid:string){
 }
 
 /** Pushes fish player data to the backend. */
-export function setFishPlayerData(data: FishPlayerData, repeats = 1) {
+export function setFishPlayerData(data: FishPlayerData, repeats = 1, ignoreActivelySyncedFields = false) {
 	const { promise, resolve, reject } = Promise.withResolvers<void, unknown>();
 	if(Mode.noBackend){
 		resolve();
@@ -178,6 +178,7 @@ export function setFishPlayerData(data: FishPlayerData, repeats = 1) {
 	const req = Http.post(`http://${backendIP}/api/fish-player/set`, JSON.stringify({
 		player: data,
 		gamemode: Gamemode.name(),
+		ignoreActivelySyncedFields,
 	}))
 		.header('Content-Type', 'application/json')
 		.header('Accept', '*/*');
@@ -186,7 +187,7 @@ export function setFishPlayerData(data: FishPlayerData, repeats = 1) {
 		Log.err(`[API] Network error when trying to call api.setFishPlayerData(), repeats=${repeats}`);
 		Log.err(err);
 		if(err?.response) Log.err(err.response.getResultAsString());
-		if(repeats > 0 && !(err.status?.code >= 400 && err.status?.code <= 499)) setFishPlayerData(data, repeats - 1);
+		if(repeats > 0 && !(err.status?.code >= 400 && err.status?.code <= 499)) setFishPlayerData(data, repeats - 1, ignoreActivelySyncedFields);
 		else reject(err);
 	});
 	req.submit((response) => {

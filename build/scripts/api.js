@@ -178,8 +178,9 @@ function getFishPlayerData(uuid) {
     return promise;
 }
 /** Pushes fish player data to the backend. */
-function setFishPlayerData(data, repeats) {
+function setFishPlayerData(data, repeats, ignoreActivelySyncedFields) {
     if (repeats === void 0) { repeats = 1; }
+    if (ignoreActivelySyncedFields === void 0) { ignoreActivelySyncedFields = false; }
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend) {
         resolve();
@@ -188,6 +189,7 @@ function setFishPlayerData(data, repeats) {
     var req = Http.post("http://".concat(config_1.backendIP, "/api/fish-player/set"), JSON.stringify({
         player: data,
         gamemode: config_1.Gamemode.name(),
+        ignoreActivelySyncedFields: ignoreActivelySyncedFields,
     }))
         .header('Content-Type', 'application/json')
         .header('Accept', '*/*');
@@ -199,7 +201,7 @@ function setFishPlayerData(data, repeats) {
         if (err === null || err === void 0 ? void 0 : err.response)
             Log.err(err.response.getResultAsString());
         if (repeats > 0 && !(((_a = err.status) === null || _a === void 0 ? void 0 : _a.code) >= 400 && ((_b = err.status) === null || _b === void 0 ? void 0 : _b.code) <= 499))
-            setFishPlayerData(data, repeats - 1);
+            setFishPlayerData(data, repeats - 1, ignoreActivelySyncedFields);
         else
             reject(err);
     });
