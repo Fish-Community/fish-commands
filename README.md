@@ -18,6 +18,7 @@ List of notable features:
 * Tap handling system
 * Permission handling system
 * Easy failing with fail() and its associated pattern
+* Requirements system for common predicates
 * Automatically allows using a menu to resolve arguments left blank
 
 Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks in advance!

@@ -15,7 +15,7 @@
 * Regexps are broken due to the engine being used. (weird behavior, crashes)
 * Use Java regexes instead.
 
-## Systems
+## Frameworks
 
 ### Error handling
 
@@ -37,9 +37,9 @@ const historyData:TileHistory = tileHistory[`${x},${y}`] ?? fail(`There is no re
 
 Calling this function is allowed in command handlers and menus.
 
-### Menu system
+### Menu framework
 
-This plugin uses callback-based menu handling.
+This plugin uses async menu handling.
 
 #### Before
 ```ts
@@ -65,12 +65,23 @@ Additionally, this code will break if there are many fruits, because the options
 
 #### After
 ```ts
-menu("Fruit", "Choose a fruit", ['🍏', '🍐', '🍊', '🍉'], player, ({option, sender}) => {
-  sender.sendMessage(`You chose ${option}`);
-}, true); //"True" automatically includes a "Cancel" option, which does not call the handler when selected.
+const option = await Menu.menu(
+  "Fruit", "Choose a fruit",
+  ['🍏', '🍐', '🍊', '🍉'],
+  sender,
+  { includeCancel: true }
+);
+sender.sendMessage(`You chose ${option}`);
 ```
 
 Everything is handled.
+
+This can also be used for confirm menus:
+```ts
+if(matches.size > 20)
+  await Menu.confirm(sender, `Are you sure you want to view all ${matches.size} matches?`);
+displayMatches();
+```
 
 ### Commands system
 
@@ -106,13 +117,14 @@ A Perm represents some permission that is required to run a command. (usually a 
 
 Perms also make it easier to change the required permission for a command, or have a permission require a different level of trust depending on the gamemode. For example, the "change team" permission requires less trust on Sandbox.
 ```ts
-const changeTeam = new Perm("changeTeam", fishP => {switch(true){
-  case Mode.sandbox(): return fishP.ranksAtLeast("trusted");
-  case Mode.attack(): return fishP.ranksAtLeast("admin");
-  case Mode.hexed(): return fishP.ranksAtLeast("mod");
-  case Mode.pvp(): return fishP.ranksAtLeast("trusted");
-  default: return fishP.ranksAtLeast("admin");
-}});
+const changeTeam = new Perm("changeTeam", "admin").exceptModes({
+  sandbox: Perm.trusted,
+  attack: Perm.admin,
+  hexed: Perm.mod,
+  pvp: Perm.trusted,
+  minigame: Perm.trusted,
+  testsrv: Perm.trusted,
+});
 ```
 
 #### Req
