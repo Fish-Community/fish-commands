@@ -214,7 +214,6 @@ export const commands = consoleCommandList({
 				if(info) logAction("whacked", "console", info);
 				else logAction(`console ip-whacked ${args.target}`);
 
-				api.addStopped(args.target, globals.maxTime);
 				if(admins.isIDBanned(args.target)){
 					api.ban({uuid: args.target});
 					output(`UUID &c"${args.target}"&fr is already banned. Ban was synced to other servers.`);
@@ -243,7 +242,6 @@ export const commands = consoleCommandList({
 					admins.banPlayerIP(ip);
 					logAction(`console whacked ${Strings.stripColors(player.name)} (\`${uuid}\`/\`${ip}\`)`);
 					api.ban({uuid, ip});
-					api.addStopped(player.uuid(), globals.maxTime);
 					output(`&lrIP &c"${ip}"&lr was banned. UUID &c"${uuid}"&lr was banned. Ban was synced to other servers.`);
 				}
 			}

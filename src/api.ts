@@ -5,66 +5,9 @@ This file contains a wrapper over the API calls to the backend server.
 
 import type { FishPlayerData } from '/types';
 import { Gamemode, backendIP, Mode } from '/config';
-import { maxTime } from "/globals";
 import { FishPlayer } from '/players';
 import { Promise } from '/promise';
 
-/** Mark a player as stopped until time */
-export function addStopped(uuid: string, time:number) {
-	if(Mode.noBackend) return;
-	const req = Http.post(`http://${backendIP}/api/addStopped`, JSON.stringify({ id: uuid, time }))
-		.header('Content-Type', 'application/json')
-		.header('Accept', '*/*');
-	req.timeout = 10000;
-	req.error(() => Log.err(`[API] Network error when trying to call api.addStopped()`));
-	req.submit((response) => {
-		//Log.info(response.getResultAsString());
-	});
-}
-
-/** Mark a player as freed */
-export function free(uuid: string) {
-	if(Mode.noBackend) return;
-	const req = Http.post(`http://${backendIP}/api/free`, JSON.stringify({ id: uuid }))
-		.header('Content-Type', 'application/json')
-		.header('Accept', '*/*');
-	req.timeout = 10000;
-	req.error(() => Log.err(`[API] Network error when trying to call api.free()`));
-	req.submit((response) => {
-		//Log.info(response.getResultAsString());
-	});
-}
-
-/**
- * Gets a player's unmark time from the API.
- * If callbackError is undefined, callback will be called with null on error.
- **/
-export function getStopped(uuid:string, callback: (unmark:number | null) => unknown):void;
-export function getStopped(uuid:string, callback: (unmark:number) => unknown, callbackError: (errorMessage:Throwable) => unknown):void;
-export function getStopped(uuid:string, callback: (unmark:any) => unknown, callbackError?: (errorMessage:Throwable) => unknown){
-	function fail(err:string){
-		Log.err(`[API] Network error when trying to call api.getStopped()`);
-		if(err) Log.err(err);
-		if(callbackError) callbackError(err);
-		else callback(null);
-	}
-
-	if(Mode.noBackend) return fail("local debug mode");
-
-	const req = Http.post(`http://${backendIP}/api/getStopped`, JSON.stringify({ id: uuid }))
-		.header('Content-Type', 'application/json')
-		.header('Accept', '*/*');
-	req.timeout = 10000;
-	req.error(fail);
-	req.submit((response) => {
-		const temp = response.getResultAsString();
-		if(!temp.length) return fail("reponse empty");
-		const time = JSON.parse(temp).time;
-		if(isNaN(Number(time))) return fail(`API IS BROKEN!!! Invalid unmark time "${time}": not a number`);
-		if(time.toString().length > 13) callback(maxTime);
-		callback(Number(time));
-	});
-}
 
 const cachedIps:Record<string, boolean | undefined> = {};
 /** Make an API request to see if an IP is likely VPN. */

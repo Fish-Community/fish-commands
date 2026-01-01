@@ -84,7 +84,6 @@ exports.commands = void 0;
 var api = require("/api");
 var commands_1 = require("/commands");
 var config_1 = require("/config");
-var globals = require("/globals");
 var config_2 = require("/config");
 var globals_1 = require("/globals");
 var files_1 = require("/files");
@@ -407,7 +406,6 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     (0, utils_1.logAction)("whacked", "console", info);
                 else
                     (0, utils_1.logAction)("console ip-whacked ".concat(args.target));
-                api.addStopped(args.target, globals.maxTime);
                 if (admins.isIDBanned(args.target)) {
                     api.ban({ uuid: args.target });
                     output("UUID &c\"".concat(args.target, "\"&fr is already banned. Ban was synced to other servers."));
@@ -442,7 +440,6 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     admins.banPlayerIP(ip);
                     (0, utils_1.logAction)("console whacked ".concat(Strings.stripColors(player.name), " (`").concat(uuid, "`/`").concat(ip, "`)"));
                     api.ban({ uuid: uuid, ip: ip });
-                    api.addStopped(player.uuid(), globals.maxTime);
                     output("&lrIP &c\"".concat(ip, "\"&lr was banned. UUID &c\"").concat(uuid, "\"&lr was banned. Ban was synced to other servers."));
                 }
             }

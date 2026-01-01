@@ -4,9 +4,6 @@ Copyright © BalaM314, 2025. All Rights Reserved.
 This file contains a wrapper over the API calls to the backend server.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addStopped = addStopped;
-exports.free = free;
-exports.getStopped = getStopped;
 exports.isVpn = isVpn;
 exports.sendModerationMessage = sendModerationMessage;
 exports.getStaffMessages = getStaffMessages;
@@ -17,64 +14,8 @@ exports.getBanned = getBanned;
 exports.getFishPlayerData = getFishPlayerData;
 exports.setFishPlayerData = setFishPlayerData;
 var config_1 = require("/config");
-var globals_1 = require("/globals");
 var players_1 = require("/players");
 var promise_1 = require("/promise");
-/** Mark a player as stopped until time */
-function addStopped(uuid, time) {
-    if (config_1.Mode.noBackend)
-        return;
-    var req = Http.post("http://".concat(config_1.backendIP, "/api/addStopped"), JSON.stringify({ id: uuid, time: time }))
-        .header('Content-Type', 'application/json')
-        .header('Accept', '*/*');
-    req.timeout = 10000;
-    req.error(function () { return Log.err("[API] Network error when trying to call api.addStopped()"); });
-    req.submit(function (response) {
-        //Log.info(response.getResultAsString());
-    });
-}
-/** Mark a player as freed */
-function free(uuid) {
-    if (config_1.Mode.noBackend)
-        return;
-    var req = Http.post("http://".concat(config_1.backendIP, "/api/free"), JSON.stringify({ id: uuid }))
-        .header('Content-Type', 'application/json')
-        .header('Accept', '*/*');
-    req.timeout = 10000;
-    req.error(function () { return Log.err("[API] Network error when trying to call api.free()"); });
-    req.submit(function (response) {
-        //Log.info(response.getResultAsString());
-    });
-}
-function getStopped(uuid, callback, callbackError) {
-    function fail(err) {
-        Log.err("[API] Network error when trying to call api.getStopped()");
-        if (err)
-            Log.err(err);
-        if (callbackError)
-            callbackError(err);
-        else
-            callback(null);
-    }
-    if (config_1.Mode.noBackend)
-        return fail("local debug mode");
-    var req = Http.post("http://".concat(config_1.backendIP, "/api/getStopped"), JSON.stringify({ id: uuid }))
-        .header('Content-Type', 'application/json')
-        .header('Accept', '*/*');
-    req.timeout = 10000;
-    req.error(fail);
-    req.submit(function (response) {
-        var temp = response.getResultAsString();
-        if (!temp.length)
-            return fail("reponse empty");
-        var time = JSON.parse(temp).time;
-        if (isNaN(Number(time)))
-            return fail("API IS BROKEN!!! Invalid unmark time \"".concat(time, "\": not a number"));
-        if (time.toString().length > 13)
-            callback(globals_1.maxTime);
-        callback(Number(time));
-    });
-}
 var cachedIps = {};
 /** Make an API request to see if an IP is likely VPN. */
 function isVpn(ip, callback, callbackError) {
