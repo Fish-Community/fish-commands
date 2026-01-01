@@ -936,7 +936,7 @@ var FishPlayer = /** @class */ (function () {
                         //but it's unlikely to happen
                         //could be fixed by transmitting the update operation to the server as a mongo update command
                         afterFetch === null || afterFetch === void 0 ? void 0 : afterFetch(this);
-                        return [4 /*yield*/, api.setFishPlayerData(this.getData())];
+                        return [4 /*yield*/, api.setFishPlayerData(this.getData(), 1, true)];
                     case 2:
                         _a.sent();
                         return [2 /*return*/];

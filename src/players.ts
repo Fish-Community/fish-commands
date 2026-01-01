@@ -793,7 +793,7 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		//but it's unlikely to happen
 		//could be fixed by transmitting the update operation to the server as a mongo update command
 		afterFetch?.(this);
-		await api.setFishPlayerData(this.getData());
+		await api.setFishPlayerData(this.getData(), 1, true);
 	}
 	displayTrail(){
 		if(this.trail) Call.effect(Fx[this.trail.type], this.player!.x, this.player!.y, 0, this.trail.color);
