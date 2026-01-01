@@ -169,13 +169,13 @@ export function getFishPlayerData(uuid:string){
 }
 
 /** Pushes fish player data to the backend. */
-export function setFishPlayerData(data: FishPlayerData, repeats = 1, merge = false) {
+export function setFishPlayerData(data: FishPlayerData, repeats = 1) {
 	const { promise, resolve, reject } = Promise.withResolvers<void, unknown>();
 	if(Mode.noBackend){
 		resolve();
 		return promise;
 	}
-	const req = Http.post(`http://${backendIP}/api/fish-player/${merge ? "merge" : "set"}`, JSON.stringify({
+	const req = Http.post(`http://${backendIP}/api/fish-player/set`, JSON.stringify({
 		player: data,
 		gamemode: Gamemode.name(),
 	}))

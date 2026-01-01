@@ -1241,9 +1241,6 @@ var FishPlayer = /** @class */ (function () {
             var players = out.readArray(function (str) { return FishPlayer.read(version_1, str, null); }, 6);
             out.expectEOF();
             players.forEach(function (p) { return _this.cachedPlayers[p.uuid] = p; });
-            if (players.some(function (p) { return !p.shouldCache(); }) && !Core.settings.get("fish-migration-complete", false)) {
-                void this.migratePlayers(players);
-            }
         }
         catch (err) {
             Log.err("[CRITICAL] FAILED TO LOAD CACHED FISH PLAYER DATA");
@@ -1252,61 +1249,6 @@ var FishPlayer = /** @class */ (function () {
             Log.err(string);
             Log.err("=============================");
         }
-    };
-    FishPlayer.migratePlayers = function (players) {
-        return __awaiter(this, void 0, void 0, function () {
-            var batches, batches_1, batches_1_1, batch, e_8_1, err_2;
-            var e_8, _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _b.trys.push([0, 9, , 10]);
-                        FishPlayer.migrationFailed = false;
-                        FishPlayer.batches = 0;
-                        batches = (0, funcs_1.to2DArray)(players, 10);
-                        Log.info("Data migration started. Migrating ".concat(batches.length, " batches of 10 over HTTP."));
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 6, 7, 8]);
-                        batches_1 = __values(batches), batches_1_1 = batches_1.next();
-                        _b.label = 2;
-                    case 2:
-                        if (!!batches_1_1.done) return [3 /*break*/, 5];
-                        batch = batches_1_1.value;
-                        return [4 /*yield*/, Promise.all(batch.map(function (fishP) {
-                                return api.setFishPlayerData(fishP.getData(), 2, true);
-                            }))];
-                    case 3:
-                        _b.sent();
-                        FishPlayer.batches++;
-                        _b.label = 4;
-                    case 4:
-                        batches_1_1 = batches_1.next();
-                        return [3 /*break*/, 2];
-                    case 5: return [3 /*break*/, 8];
-                    case 6:
-                        e_8_1 = _b.sent();
-                        e_8 = { error: e_8_1 };
-                        return [3 /*break*/, 8];
-                    case 7:
-                        try {
-                            if (batches_1_1 && !batches_1_1.done && (_a = batches_1.return)) _a.call(batches_1);
-                        }
-                        finally { if (e_8) throw e_8.error; }
-                        return [7 /*endfinally*/];
-                    case 8:
-                        Core.settings.put("fish-migration-complete", true);
-                        Log.info("Migration completed successfully.");
-                        return [3 /*break*/, 10];
-                    case 9:
-                        err_2 = _b.sent();
-                        FishPlayer.migrationFailed = true;
-                        Log.info("Failed to migrate fish player data. Please run `fjs FishPlayer.migratePlayers(Object.values(FishPlayer.cachedPlayers))` to try again. Data will not be deleted.");
-                        return [3 /*break*/, 10];
-                    case 10: return [2 /*return*/];
-                }
-            });
-        });
     };
     //#endregion
     //#region util
