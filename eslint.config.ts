@@ -51,6 +51,17 @@ export default defineConfig([
 			"@typescript-eslint/no-this-alias": "off",
 			"@typescript-eslint/prefer-regexp-exec": "off",
 			"@typescript-eslint/array-type": ["error", {default: "array-simple"}],
+			'no-restricted-syntax': [
+				'warn',
+				{
+					selector: 'LogicalExpression[operator="||"][right.value=true]',
+					message: '|| true is only for testing',
+				},
+				{
+					selector: 'LogicalExpression[operator="&&"][right.value=false]',
+					message: '&& false is only for testing',
+				},
+			],
 			
 			"@typescript-eslint/no-unsafe-argument": "off",
 			"@typescript-eslint/no-unsafe-assignment": "off",
