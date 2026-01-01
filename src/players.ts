@@ -300,9 +300,11 @@ export class FishPlayer {
 					//Player has not connected yet, nothing further needed
 				}
 			}
-			fishP.checkUsid();
-			fishP.updateMemberExclusiveState();
-			fishP.updateName();
+			if(fishP.connected()){
+				fishP.checkUsid();
+				fishP.updateMemberExclusiveState();
+				fishP.updateName();
+			}
 		}, () => {
 			const fishP = this.cachedPlayers[uuid];
 			if(fishP?.player) fishP.player.sendMessage(text.dataFetchFailed);

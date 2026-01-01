@@ -387,9 +387,11 @@ var FishPlayer = /** @class */ (function () {
                     //Player has not connected yet, nothing further needed
                 }
             }
-            fishP.checkUsid();
-            fishP.updateMemberExclusiveState();
-            fishP.updateName();
+            if (fishP.connected()) {
+                fishP.checkUsid();
+                fishP.updateMemberExclusiveState();
+                fishP.updateName();
+            }
         }, function () {
             var fishP = _this.cachedPlayers[uuid];
             if (fishP === null || fishP === void 0 ? void 0 : fishP.player)
