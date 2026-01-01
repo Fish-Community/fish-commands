@@ -920,11 +920,10 @@ var FishPlayer = /** @class */ (function () {
     /** Warning: the "update" callback is run twice. */
     FishPlayer.prototype.updateSynced = function (update, beforeFetch, afterFetch) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, err_1;
+            var data;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
                         update(this);
                         beforeFetch === null || beforeFetch === void 0 ? void 0 : beforeFetch(this);
                         return [4 /*yield*/, api.getFishPlayerData(this.uuid)];
@@ -940,14 +939,7 @@ var FishPlayer = /** @class */ (function () {
                         return [4 /*yield*/, api.setFishPlayerData(this.getData())];
                     case 2:
                         _a.sent();
-                        Log.info("Update successful.");
-                        return [3 /*break*/, 4];
-                    case 3:
-                        err_1 = _a.sent();
-                        Log.err(err_1);
-                        Log.err("Update failed.");
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });

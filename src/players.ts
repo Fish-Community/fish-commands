@@ -784,22 +784,16 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		beforeFetch?: (fishP:FishPlayer) => void,
 		afterFetch?: (fishP:FishPlayer) => void,
 	){
-		try {
-			update(this);
-			beforeFetch?.(this);
-			const data = await api.getFishPlayerData(this.uuid);
-			if(data) this.updateData(data);
-			update(this);
-			//of course, this is a race condition
-			//but it's unlikely to happen
-			//could be fixed by transmitting the update operation to the server as a mongo update command
-			afterFetch?.(this);
-			await api.setFishPlayerData(this.getData());
-			Log.info("Update successful.");
-		} catch(err){
-			Log.err(err);
-			Log.err(`Update failed.`);
-		}
+		update(this);
+		beforeFetch?.(this);
+		const data = await api.getFishPlayerData(this.uuid);
+		if(data) this.updateData(data);
+		update(this);
+		//of course, this is a race condition
+		//but it's unlikely to happen
+		//could be fixed by transmitting the update operation to the server as a mongo update command
+		afterFetch?.(this);
+		await api.setFishPlayerData(this.getData());
 	}
 	displayTrail(){
 		if(this.trail) Call.effect(Fx[this.trail.type], this.player!.x, this.player!.y, 0, this.trail.color);
