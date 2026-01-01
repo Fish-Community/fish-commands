@@ -323,7 +323,7 @@ export const commands = commandList({
 			if(args.player.history && args.player.history.length > 0){
 				output(
 					`[yellow]_______________Player history_______________\n\n` +
-					(args.player).history.map(e =>
+					(args.player).history.sort((a, b) => a.time - b.time).map(e =>
 						`${e.by} [yellow]${e.action} ${args.player.prefixedName} [white]${formatTimeRelative(e.time)}`
 					).join("\n")
 				);

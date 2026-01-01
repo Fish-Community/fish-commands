@@ -545,7 +545,7 @@ exports.commands = (0, commands_1.commandList)({
             var args = _a.args, output = _a.output, f = _a.f;
             if (args.player.history && args.player.history.length > 0) {
                 output("[yellow]_______________Player history_______________\n\n" +
-                    (args.player).history.map(function (e) {
+                    (args.player).history.sort(function (a, b) { return a.time - b.time; }).map(function (e) {
                         return "".concat(e.by, " [yellow]").concat(e.action, " ").concat(args.player.prefixedName, " [white]").concat((0, utils_1.formatTimeRelative)(e.time));
                     }).join("\n"));
             }
