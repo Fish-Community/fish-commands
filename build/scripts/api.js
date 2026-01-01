@@ -178,14 +178,15 @@ function getFishPlayerData(uuid) {
     return promise;
 }
 /** Pushes fish player data to the backend. */
-function setFishPlayerData(data, repeats) {
+function setFishPlayerData(data, repeats, merge) {
     if (repeats === void 0) { repeats = 1; }
+    if (merge === void 0) { merge = false; }
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend) {
         resolve();
         return promise;
     }
-    var req = Http.post("http://".concat(config_1.backendIP, "/api/fish-player/set"), JSON.stringify({
+    var req = Http.post("http://".concat(config_1.backendIP, "/api/fish-player/").concat(merge ? "merge" : "set"), JSON.stringify({
         player: data,
         gamemode: config_1.Gamemode.name(),
     }))

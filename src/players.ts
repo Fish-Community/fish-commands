@@ -1047,17 +1047,7 @@ We apologize for the inconvenience.`
 			const players = out.readArray(str => FishPlayer.read(version, str, null), 6);
 			out.expectEOF();
 			players.forEach(p => this.cachedPlayers[p.uuid] = p);
-			if(players.some(p => !p.shouldCache()) && !Core.settings.get("fish-migration-complete", false)){
-				this.migratePlayers(players)
-					.then(() => {
-						Core.settings.put("fish-migration-complete", true);
-						Log.info("Migration completed successfully.");
-					})
-					.catch(err => {
-						FishPlayer.migrationFailed = true;
-						Log.info("Failed to migrate fish player data. Please restart to try again. Data will not be deleted.");
-					});
-			}
+			void this.migratePlayers(players);
 		} catch(err){
 			Log.err(`[CRITICAL] FAILED TO LOAD CACHED FISH PLAYER DATA`);
 			Log.err(parseError(err));
@@ -1067,13 +1057,24 @@ We apologize for the inconvenience.`
 		}
 	}
 	static async migratePlayers(players:FishPlayer[]){
-		const batches = to2DArray(players, 10);
-		Log.info(`Data migration started. Migrating ${batches.length} batches of 10 over HTTP.`);
-		for(const batch of batches){
-			await Promise.all(batch.map(fishP =>
-				api.setFishPlayerData(fishP.getData(), 2)
-			));
-			FishPlayer.batches ++;
+		if(players.some(p => !p.shouldCache()) && !Core.settings.get("fish-migration-complete", false)){
+			try {
+				FishPlayer.migrationFailed = false;
+				FishPlayer.batches = 0;
+				const batches = to2DArray(players, 10);
+				Log.info(`Data migration started. Migrating ${batches.length} batches of 10 over HTTP.`);
+				for(const batch of batches){
+					await Promise.all(batch.map(fishP =>
+						api.setFishPlayerData(fishP.getData(), 2, true)
+					));
+					FishPlayer.batches ++;
+				}
+				Core.settings.put("fish-migration-complete", true);
+				Log.info("Migration completed successfully.");
+			} catch(err){
+				FishPlayer.migrationFailed = true;
+				Log.info("Failed to migrate fish player data. Please run `fjs FishPlayer.migratePlayers(Object.values(FishPlayer.cachedPlayers))` to try again. Data will not be deleted.");
+			}
 		}
 	}
 	//#endregion
