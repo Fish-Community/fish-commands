@@ -391,9 +391,14 @@ var FishPlayer = /** @class */ (function () {
                 fishP.checkUsid();
                 fishP.updateMemberExclusiveState();
                 fishP.updateName();
+                fishP.updateAdminStatus();
+                fishP.checkAutoRanks();
+                fishP.sendWelcomeMessage();
             }
         }, function () {
             var fishP = _this.cachedPlayers[uuid];
+            fishP.updateAdminStatus();
+            fishP.sendWelcomeMessage();
             if (fishP === null || fishP === void 0 ? void 0 : fishP.player)
                 fishP.player.sendMessage(config_1.text.dataFetchFailed);
             else
@@ -419,8 +424,6 @@ var FishPlayer = /** @class */ (function () {
             }
             fishPlayer.updateAdminStatus();
             fishPlayer.checkVPNAndJoins();
-            fishPlayer.checkAutoRanks();
-            fishPlayer.sendWelcomeMessage();
             fishPlayer.updateName();
             //I think this is a better spot for this
             if (fishPlayer.firstJoin())

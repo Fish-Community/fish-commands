@@ -304,9 +304,14 @@ export class FishPlayer {
 				fishP.checkUsid();
 				fishP.updateMemberExclusiveState();
 				fishP.updateName();
+				fishP.updateAdminStatus();
+				fishP.checkAutoRanks();
+				fishP.sendWelcomeMessage();
 			}
 		}, () => {
 			const fishP = this.cachedPlayers[uuid];
+			fishP.updateAdminStatus();
+			fishP.sendWelcomeMessage();
 			if(fishP?.player) fishP.player.sendMessage(text.dataFetchFailed);
 			else this.dataFetchFailedUuids.add(uuid);
 		});
@@ -327,8 +332,6 @@ export class FishPlayer {
 			}
 			fishPlayer.updateAdminStatus();
 			fishPlayer.checkVPNAndJoins();
-			fishPlayer.checkAutoRanks();
-			fishPlayer.sendWelcomeMessage();
 			fishPlayer.updateName();
 			//I think this is a better spot for this
 			if(fishPlayer.firstJoin()) Menu.menu(
