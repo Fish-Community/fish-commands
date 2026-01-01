@@ -158,70 +158,148 @@ exports.commands = (0, commands_1.consoleCommandList)({
         args: ["player:string"],
         description: "Find player info(s). Displays all names and ips of a player.",
         handler: function (_a) {
-            var e_1, _b;
-            var args = _a.args, output = _a.output, admins = _a.admins;
-            var infoList = admins.findByName(args.player)
-                .toSeq()
-                .map(function (p) { return [p, players_1.FishPlayer.getById(p.id)]; })
-                .sort(floatf(function (_a) {
-                var _b = __read(_a, 2), info = _b[0], fishP = _b[1];
-                if (!fishP)
-                    return -20000 + info.timesJoined;
-                return fishP.lastJoined;
-            }));
-            if (infoList.size == 0)
-                (0, commands_1.fail)("No players found.");
-            var outputString = [""];
-            var _loop_1 = function (playerInfo, fishP) {
-                var flagsText = [
-                    (fishP === null || fishP === void 0 ? void 0 : fishP.marked()) && "&lris marked&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime)),
-                    (fishP === null || fishP === void 0 ? void 0 : fishP.muted) && "&lris muted&fr",
-                    (fishP === null || fishP === void 0 ? void 0 : fishP.hasFlag("member")) && "&lmis member&fr",
-                    (fishP === null || fishP === void 0 ? void 0 : fishP.autoflagged) && "&lris autoflagged&fr",
-                    playerInfo.banned && "&bris UUID banned&fr",
-                ].filter(Boolean).join(", ");
-                var lastJoinedColor = (fishP === null || fishP === void 0 ? void 0 : fishP.lastJoined) && fishP.lastJoined !== -1 ? (function () {
-                    var timeSinceLastJoin = (Date.now() - fishP.lastJoined) / 1000;
-                    if (timeSinceLastJoin < 3600)
-                        return "&br";
-                    if (timeSinceLastJoin < 24 * 3600)
-                        return "&by";
-                    if (timeSinceLastJoin < 7 * 24 * 3600)
-                        return "&lw";
-                    return "&lk";
-                })() : "&fr";
-                outputString.push([
-                    "".concat(lastJoinedColor, "Trace info for player &fr&y").concat(playerInfo.id, "&fr").concat(lastJoinedColor, " / &c\"").concat((0, funcs_1.escapeStringColorsServer)(Strings.stripColors(playerInfo.lastName)), "\" &lk(").concat((0, funcs_1.escapeStringColorsServer)(playerInfo.lastName), ")&fr"),
-                    playerInfo.names.size > 1 && "all names used: ".concat(playerInfo.names.map(funcs_1.escapeStringColorsServer).map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', ')),
-                    "all IPs used: ".concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", ")),
-                    "joined &c".concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times"),
-                    fishP && fishP.lastJoined !== -1 && "Last joined: ".concat((0, utils_1.formatTimeRelative)(fishP.lastJoined)),
-                    fishP && "USID: &c".concat(fishP.usid, "&fr"),
-                    fishP && fishP.rank !== ranks_1.Rank.player && "Rank: &c".concat(fishP.rank.name, "&fr"),
-                    flagsText,
-                ].filter(Boolean).map(function (l, i) { return i == 0 ? l : '\t' + l; }).join("\n"));
-            };
-            try {
-                for (var _c = __values(infoList.toArray()), _d = _c.next(); !_d.done; _d = _c.next()) {
-                    var _e = __read(_d.value, 2), playerInfo = _e[0], fishP = _e[1];
-                    _loop_1(playerInfo, fishP);
+            return __awaiter(this, arguments, void 0, function (_b) {
+                function display(infoList) {
+                    var e_2, _a;
+                    var outputString = [""];
+                    var _loop_1 = function (playerInfo, fishP) {
+                        var flagsText = [
+                            (fishP === null || fishP === void 0 ? void 0 : fishP.marked()) && "&lris marked&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime)),
+                            (fishP === null || fishP === void 0 ? void 0 : fishP.muted) && "&lris muted&fr",
+                            (fishP === null || fishP === void 0 ? void 0 : fishP.hasFlag("member")) && "&lmis member&fr",
+                            (fishP === null || fishP === void 0 ? void 0 : fishP.autoflagged) && "&lris autoflagged&fr",
+                            playerInfo.banned && "&bris UUID banned&fr",
+                        ].filter(Boolean).join(", ");
+                        var lastJoinedColor = (fishP === null || fishP === void 0 ? void 0 : fishP.lastJoined) && fishP.lastJoined !== -1 ? (function () {
+                            var timeSinceLastJoin = (Date.now() - fishP.lastJoined) / 1000;
+                            if (timeSinceLastJoin < 3600)
+                                return "&br";
+                            if (timeSinceLastJoin < 24 * 3600)
+                                return "&by";
+                            if (timeSinceLastJoin < 7 * 24 * 3600)
+                                return "&lw";
+                            return "&lk";
+                        })() : "&fr";
+                        outputString.push([
+                            "".concat(lastJoinedColor, "Trace info for player &fr&y").concat(playerInfo.id, "&fr").concat(lastJoinedColor, " / &c\"").concat((0, funcs_1.escapeStringColorsServer)(Strings.stripColors(playerInfo.lastName)), "\" &lk(").concat((0, funcs_1.escapeStringColorsServer)(playerInfo.lastName), ")&fr"),
+                            playerInfo.names.size > 1 && "all names used: ".concat(playerInfo.names.map(funcs_1.escapeStringColorsServer).map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', ')),
+                            "all IPs used: ".concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", ")),
+                            "joined &c".concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times"),
+                            fishP && fishP.lastJoined !== -1 && "Last joined: ".concat((0, utils_1.formatTimeRelative)(fishP.lastJoined)),
+                            fishP && "USID: &c".concat(fishP.usid, "&fr"),
+                            fishP && fishP.rank !== ranks_1.Rank.player && "Rank: &c".concat(fishP.rank.name, "&fr"),
+                            flagsText,
+                        ].filter(Boolean).map(function (l, i) { return i == 0 ? l : '\t' + l; }).join("\n"));
+                    };
+                    try {
+                        for (var infoList_1 = __values(infoList), infoList_1_1 = infoList_1.next(); !infoList_1_1.done; infoList_1_1 = infoList_1.next()) {
+                            var _b = __read(infoList_1_1.value, 2), playerInfo = _b[0], fishP = _b[1];
+                            _loop_1(playerInfo, fishP);
+                        }
+                    }
+                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                    finally {
+                        try {
+                            if (infoList_1_1 && !infoList_1_1.done && (_a = infoList_1.return)) _a.call(infoList_1);
+                        }
+                        finally { if (e_2) throw e_2.error; }
+                    }
+                    output(outputString.join("\n"));
                 }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            output(outputString.join("\n"));
+                var infoList, playersToFetch, _c, _d, batch, e_1_1, err_1;
+                var e_1, _e;
+                var _this = this;
+                var args = _b.args, output = _b.output, admins = _b.admins;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            infoList = admins.findByName(args.player)
+                                .toSeq().toArray()
+                                .map(function (p) { return [p, players_1.FishPlayer.getById(p.id)]; });
+                            if (infoList.length == 0)
+                                (0, commands_1.fail)("No players found.");
+                            playersToFetch = infoList.filter(function (_a) {
+                                var _b = __read(_a, 2), a = _b[0], b = _b[1];
+                                return !b;
+                            }).map(function (_a) {
+                                var _b = __read(_a, 2), a = _b[0], b = _b[1];
+                                return a;
+                            });
+                            if (!(playersToFetch.length == 0)) return [3 /*break*/, 1];
+                            display(infoList);
+                            return [3 /*break*/, 13];
+                        case 1:
+                            //Attempt to fetch data
+                            //If there are too many players, give up
+                            if (playersToFetch.length > 50)
+                                display(infoList);
+                            output("Fetching data...");
+                            _f.label = 2;
+                        case 2:
+                            _f.trys.push([2, 11, , 12]);
+                            _f.label = 3;
+                        case 3:
+                            _f.trys.push([3, 8, 9, 10]);
+                            _c = __values((0, funcs_1.to2DArray)(playersToFetch, 10)), _d = _c.next();
+                            _f.label = 4;
+                        case 4:
+                            if (!!_d.done) return [3 /*break*/, 7];
+                            batch = _d.value;
+                            return [4 /*yield*/, Promise.all(batch.map(function (info) { return __awaiter(_this, void 0, void 0, function () {
+                                    var data, fishP;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, api.getFishPlayerData(info.id)];
+                                            case 1:
+                                                data = _a.sent();
+                                                if (data) {
+                                                    fishP = players_1.FishPlayer.createFromInfo(info);
+                                                    fishP.updateData(data);
+                                                    players_1.FishPlayer.cachedPlayers[info.id] = fishP;
+                                                }
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); }))];
+                        case 5:
+                            _f.sent();
+                            _f.label = 6;
+                        case 6:
+                            _d = _c.next();
+                            return [3 /*break*/, 4];
+                        case 7: return [3 /*break*/, 10];
+                        case 8:
+                            e_1_1 = _f.sent();
+                            e_1 = { error: e_1_1 };
+                            return [3 /*break*/, 10];
+                        case 9:
+                            try {
+                                if (_d && !_d.done && (_e = _c.return)) _e.call(_c);
+                            }
+                            finally { if (e_1) throw e_1.error; }
+                            return [7 /*endfinally*/];
+                        case 10: return [3 /*break*/, 12];
+                        case 11:
+                            err_1 = _f.sent();
+                            Log.err(err_1);
+                            return [3 /*break*/, 12];
+                        case 12:
+                            infoList = admins.findByName(args.player)
+                                .toSeq().toArray()
+                                .map(function (p) { return [p, players_1.FishPlayer.getById(p.id)]; });
+                            display(infoList);
+                            _f.label = 13;
+                        case 13: return [2 /*return*/];
+                    }
+                });
+            });
         }
     },
     infoonline: {
         args: ["player:string"],
         description: "Display information about an online player.",
         handler: function (_a) {
-            var e_2, _b;
+            var e_3, _b;
             var args = _a.args, output = _a.output, admins = _a.admins;
             var infoList = args.player == "*" ? players_1.FishPlayer.getAllOnline() : players_1.FishPlayer.getAllByName(args.player, false);
             if (infoList.length == 0)
@@ -232,17 +310,17 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 outputString.push("Info for player &c\"".concat(player.cleanedName, "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid ? "\"".concat(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
             };
             try {
-                for (var infoList_1 = __values(infoList), infoList_1_1 = infoList_1.next(); !infoList_1_1.done; infoList_1_1 = infoList_1.next()) {
-                    var player = infoList_1_1.value;
+                for (var infoList_2 = __values(infoList), infoList_2_1 = infoList_2.next(); !infoList_2_1.done; infoList_2_1 = infoList_2.next()) {
+                    var player = infoList_2_1.value;
                     _loop_2(player);
                 }
             }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
-                    if (infoList_1_1 && !infoList_1_1.done && (_b = infoList_1.return)) _b.call(infoList_1);
+                    if (infoList_2_1 && !infoList_2_1.done && (_b = infoList_2.return)) _b.call(infoList_2);
                 }
-                finally { if (e_2) throw e_2.error; }
+                finally { if (e_3) throw e_3.error; }
             }
             output(outputString.join("\n"));
         }

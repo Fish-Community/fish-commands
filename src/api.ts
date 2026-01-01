@@ -189,8 +189,7 @@ export function getBanned(data:{uuid?:string, ip?:string}, callback:(banned:bool
 }
 
 /**
- * Gets a player's unmark time from the API.
- * If callbackError is undefined, callback will be called with null on error.
+ * Fetches fish player data from the backend.
  **/
 export function getFishPlayerData(uuid:string){
 	const { promise, resolve, reject } = Promise.withResolvers<FishPlayerData | null, unknown>();

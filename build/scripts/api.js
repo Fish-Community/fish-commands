@@ -200,8 +200,7 @@ function getBanned(data, callback) {
     });
 }
 /**
- * Gets a player's unmark time from the API.
- * If callbackError is undefined, callback will be called with null on error.
+ * Fetches fish player data from the backend.
  **/
 function getFishPlayerData(uuid) {
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;

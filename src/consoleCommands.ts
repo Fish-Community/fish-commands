@@ -15,7 +15,7 @@ import { fishState, ipPattern, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, outputFail, serverRestartLoop, updateBans } from "/utils";
-import { Duration, escapeStringColorsServer, setToArray } from '/funcs';
+import { Duration, escapeStringColorsServer, setToArray, to2DArray } from '/funcs';
 
 
 export const commands = consoleCommandList({
@@ -59,43 +59,67 @@ export const commands = consoleCommandList({
 	info: {
 		args: ["player:string"],
 		description: "Find player info(s). Displays all names and ips of a player.",
-		handler({args, output, admins}){
-			const infoList = admins.findByName(args.player)
-				.toSeq()
-				.map(p => [p, FishPlayer.getById(p.id)] as const)
-				.sort(floatf(([info, fishP]) => {
-					if(!fishP) return -20000 + info.timesJoined;
-					return fishP.lastJoined;
-				}));
-			if(infoList.size == 0) fail(`No players found.`);
-			const outputString:string[] = [""];
-			for(const [playerInfo, fishP] of infoList.toArray()){
-				const flagsText = [
-					fishP?.marked() && `&lris marked&fr until ${formatTimeRelative(fishP.unmarkTime)}`,
-					fishP?.muted && "&lris muted&fr",
-					fishP?.hasFlag("member") && "&lmis member&fr",
-					fishP?.autoflagged && "&lris autoflagged&fr",
-					playerInfo.banned && "&bris UUID banned&fr",
-				].filter(Boolean).join(", ");
-				const lastJoinedColor = fishP?.lastJoined && fishP.lastJoined !== -1 ? (() => {
-					const timeSinceLastJoin = (Date.now() - fishP.lastJoined) / 1000;
-					if(timeSinceLastJoin < 3600) return "&br";
-					if(timeSinceLastJoin < 24 * 3600) return "&by";
-					if(timeSinceLastJoin < 7 * 24 * 3600) return "&lw";
-					return "&lk";
-				})() : "&fr";
-				outputString.push([
-					`${lastJoinedColor}Trace info for player &fr&y${playerInfo.id}&fr${lastJoinedColor} / &c"${escapeStringColorsServer(Strings.stripColors(playerInfo.lastName))}" &lk(${escapeStringColorsServer(playerInfo.lastName)})&fr`,
-					playerInfo.names.size > 1 && `all names used: ${playerInfo.names.map(escapeStringColorsServer).map((n:string) => `&c"${n}"&fr`).items.join(', ')}`,
-					`all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}`,
-					`joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times`,
-					fishP && fishP.lastJoined !== -1 && `Last joined: ${formatTimeRelative(fishP.lastJoined)}`,
-					fishP && `USID: &c${fishP.usid}&fr`,
-					fishP && fishP.rank !== Rank.player && `Rank: &c${fishP.rank.name}&fr`,
-					flagsText,
-				].filter(Boolean).map((l, i) => i == 0 ? l : '\t' + l).join("\n"));
+		async handler({args, output, admins}){
+			let infoList = admins.findByName(args.player)
+				.toSeq().toArray()
+				.map(p => [p, FishPlayer.getById(p.id)] as const);
+			if(infoList.length == 0) fail(`No players found.`);
+			const playersToFetch = infoList.filter(([a, b]) => !b).map(([a, b]) => a);
+			if(playersToFetch.length == 0) display(infoList);
+			else {
+				//Attempt to fetch data
+				//If there are too many players, give up
+				if(playersToFetch.length > 50) display(infoList);
+				output(`Fetching data...`);
+				try {
+					for(const batch of to2DArray(playersToFetch, 10)){
+						await Promise.all(batch.map(async info => {
+							const data = await api.getFishPlayerData(info.id);
+							if(data){
+								const fishP = FishPlayer.createFromInfo(info);
+								fishP.updateData(data);
+								FishPlayer.cachedPlayers[info.id] = fishP;
+							}
+						}));
+					}
+				} catch(err){
+					Log.err(err);
+				}
+				infoList = admins.findByName(args.player)
+					.toSeq().toArray()
+					.map(p => [p, FishPlayer.getById(p.id)] as const);
+				display(infoList);
 			}
-			output(outputString.join("\n"));
+			function display(infoList: Array<readonly [PlayerInfo, FishPlayer | null]>){
+				const outputString:string[] = [""];
+				for(const [playerInfo, fishP] of infoList){
+					const flagsText = [
+						fishP?.marked() && `&lris marked&fr until ${formatTimeRelative(fishP.unmarkTime)}`,
+						fishP?.muted && "&lris muted&fr",
+						fishP?.hasFlag("member") && "&lmis member&fr",
+						fishP?.autoflagged && "&lris autoflagged&fr",
+						playerInfo.banned && "&bris UUID banned&fr",
+					].filter(Boolean).join(", ");
+					const lastJoinedColor = fishP?.lastJoined && fishP.lastJoined !== -1 ? (() => {
+						const timeSinceLastJoin = (Date.now() - fishP.lastJoined) / 1000;
+						if(timeSinceLastJoin < 3600) return "&br";
+						if(timeSinceLastJoin < 24 * 3600) return "&by";
+						if(timeSinceLastJoin < 7 * 24 * 3600) return "&lw";
+						return "&lk";
+					})() : "&fr";
+					outputString.push([
+						`${lastJoinedColor}Trace info for player &fr&y${playerInfo.id}&fr${lastJoinedColor} / &c"${escapeStringColorsServer(Strings.stripColors(playerInfo.lastName))}" &lk(${escapeStringColorsServer(playerInfo.lastName)})&fr`,
+						playerInfo.names.size > 1 && `all names used: ${playerInfo.names.map(escapeStringColorsServer).map((n:string) => `&c"${n}"&fr`).items.join(', ')}`,
+						`all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}`,
+						`joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times`,
+						fishP && fishP.lastJoined !== -1 && `Last joined: ${formatTimeRelative(fishP.lastJoined)}`,
+						fishP && `USID: &c${fishP.usid}&fr`,
+						fishP && fishP.rank !== Rank.player && `Rank: &c${fishP.rank.name}&fr`,
+						flagsText,
+					].filter(Boolean).map((l, i) => i == 0 ? l : '\t' + l).join("\n"));
+				}
+				output(outputString.join("\n"));
+			}
 		}
 	},
 	infoonline: {
