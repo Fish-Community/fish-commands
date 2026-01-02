@@ -5,13 +5,12 @@ For functions that don't need values from other files, see funcs.ts.
 */
 
 import * as api from "/api";
-import { fail } from "/commands";
-import { Gamemode, GamemodeName, adminNames, bannedWords, text, multiCharSubstitutions, substitutions } from "/config";
+import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
+import { fail, PartialFormatString } from "/frameworks/commands";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, StringIO } from "/funcs";
-import { maxTime } from "/globals";
-import { fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, tileHistory, uuidPattern } from "/globals";
+import { fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
-import { Boolf, PartialFormatString, SelectEnumClassKeys } from "/types";
+import { Boolf, SelectEnumClassKeys } from "/types";
 
 
 export function memoizeChatFilter(impl:(arg:string) => string){

@@ -46,9 +46,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoteManager = void 0;
-var players_1 = require("/players");
 var funcs_1 = require("/funcs");
-var funcs_2 = require("/funcs");
+var players_1 = require("/players");
 /** Manages a vote. */
 var VoteManager = /** @class */ (function (_super) {
     __extends(VoteManager, _super);
@@ -162,5 +161,5 @@ var VoteManager = /** @class */ (function (_super) {
         }
     };
     return VoteManager;
-}(funcs_2.EventEmitter));
+}(funcs_1.EventEmitter));
 exports.VoteManager = VoteManager;

@@ -7,7 +7,7 @@ Fixes: @author Dart25
 Fixes: @author Jurorno9
 */
 
-import { Perm, commandList } from "/commands";
+import { Perm, commandList } from "/frameworks/commands";
 import { FishPlayer } from "/players";
 
 //some much needed restrictions

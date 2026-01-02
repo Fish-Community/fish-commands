@@ -3,11 +3,11 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the map run tracker and statistics computation. 
 */
 
-import { FFunction } from "/commands";
 import { Gamemode } from "/config";
+import { FFunction } from "/frameworks/commands";
+import { dataClass, serialize } from "/frameworks/io";
 import { computeStatistics, Duration } from "/funcs";
 import { FishEvents } from "/globals";
-import { dataClass, serialize } from "/io";
 import { formatTime, formatTimeShort, match } from "/utils";
 
 type FinishedMapRunData = {

@@ -40,7 +40,7 @@ exports.Metrics = void 0;
 Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the player count tracking.
 */
-var io_1 = require("/io");
+var io_1 = require("/frameworks/io");
 var Metrics = function () {
     var _a;
     var _static_weeks_decorators;

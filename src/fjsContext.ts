@@ -8,21 +8,21 @@ import type { FishPlayer as tFishPlayer } from "/players";
 type FishPlayer = tFishPlayer; //absurd
 
 const api = require("/api");
-const commands = require("/commands");
+const commands = require("/frameworks/commands");
 const config = require("/config");
-const { commands: consoleCommands } = require("/consoleCommands");
+const { commands: consoleCommands } = require("/commands/console");
 const files = require("/files");
 const funcs = require("/funcs");
 const globals = require("/globals");
 const maps = require("/maps");
-const { commands: memberCommands } = require("/memberCommands");
-const menus = require("/menus");
+const { commands: memberCommands } = require("/commands/member");
+const menus = require("/frameworks/menus");
 const { Metrics } = require('/metrics');
 const packetHandlers = require("/packetHandlers");
-const { commands: playerCommands } = require("/playerCommands");
+const { commands: playerCommands } = require("/commands/general");
 const players = require("/players");
 const ranks = require("/ranks");
-const { commands: staffCommands } = require("/staffCommands");
+const { commands: staffCommands } = require("/commands/staff");
 const timers = require("/timers");
 const utils = require("/utils");
 const votes = require("/votes");

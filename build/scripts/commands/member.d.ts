@@ -1,0 +1,1 @@
+export declare const commands: Record<"highlight" | "rainbow" | "pet", import("/frameworks/commands").FishCommandData<string, any> | (() => import("/frameworks/commands").FishCommandData<string, any>)>;

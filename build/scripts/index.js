@@ -16,16 +16,12 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var api = require("/api");
-var commands = require("/commands");
-var commands_1 = require("/commands");
-var consoleCommands_1 = require("/consoleCommands");
+var aggregate_1 = require("/commands/aggregate");
+var commands_1 = require("/frameworks/commands");
+var menus = require("/frameworks/menus");
 var globals_1 = require("/globals");
-var memberCommands_1 = require("/memberCommands");
-var menus = require("/menus");
 var packetHandlers_1 = require("/packetHandlers");
-var playerCommands_1 = require("/playerCommands");
 var players_1 = require("/players");
-var staffCommands_1 = require("/staffCommands");
 var timers = require("/timers");
 var utils_1 = require("/utils");
 Events.on(EventType.ConnectionEvent, function (e) {
@@ -156,13 +152,8 @@ Events.on(EventType.ServerLoadEvent, function (e) {
             return true;
         }
     });
-    commands.register(staffCommands_1.commands, clientHandler, serverHandler);
-    commands.register(playerCommands_1.commands, clientHandler, serverHandler);
-    commands.register(memberCommands_1.commands, clientHandler, serverHandler);
-    commands.register(packetHandlers_1.commands, clientHandler, serverHandler);
-    commands.registerConsole(consoleCommands_1.commands, serverHandler);
+    (0, aggregate_1.registerAll)(clientHandler, serverHandler);
     (0, packetHandlers_1.loadPacketHandlers)();
-    commands.initialize();
     //Load plugin data
     try {
         var path = (0, utils_1.fishCommandsRootDirPath)();

@@ -4,10 +4,10 @@ This file contains all the console commands, which can be run through the server
 */
 
 import * as api from "/api";
-import { consoleCommandList, fail } from "/commands";
 import { FishServer, Gamemode, Mode } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
+import { consoleCommandList, fail } from "/frameworks/commands";
 import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
 import { fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";

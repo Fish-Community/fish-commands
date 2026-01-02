@@ -4,14 +4,14 @@ This file contains the FishPlayer class, and many player-related functions.
 */
 
 import * as api from "/api";
-import { Perm, PermType } from "/commands";
 import { FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
+import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
+import { Menu } from "/frameworks/menus";
 import { crash, Duration, escapeStringColorsClient, parseError, setToArray, StringIO } from "/funcs";
 import * as globals from "/globals";
 import { uuidPattern } from "/globals";
-import { Menu } from "/menus";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
-import type { FishCommandArgType, FishPlayerData, PlayerHistoryEntry } from "/types";
+import type { FishPlayerData, PlayerHistoryEntry } from "/types";
 import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, matchFilter } from "/utils";
 
 
@@ -1232,7 +1232,7 @@ We apologize for the inconvenience.`
 	//#endregion
 	
 	//#region util
-		/**
+	/**
 	 * Sends a message to staff only.
 	 * @returns if the message was received by anyone.
 	 */

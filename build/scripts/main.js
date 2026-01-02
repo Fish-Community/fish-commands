@@ -1,5 +1,5 @@
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 This is a special file which is automatically loaded by the game server.
 It only contains polyfills, and requires index.js.
 */
@@ -48,7 +48,7 @@ const Arrayfrom = Array.from;
 Array.from = function(iterable, mapfn){
 	if(mapfn) throw new Error(`Array.from does not work with mapfn due to incorrectly generating sparse arrays. Please use Array(length).fill().map() instead.`);
 	return Arrayfrom(iterable);
-}
+};
 //Fix rhino regex
 if(/ae?a/.test("aeea")){
 	RegExp.prototype.test = function(input){

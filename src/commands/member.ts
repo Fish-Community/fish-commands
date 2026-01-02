@@ -3,7 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains member commands, which are fun cosmetics for donators.
 */
 
-import { Perm, command, commandList, fail } from "/commands";
+import { Perm, command, commandList, fail } from "/frameworks/commands";
 import { FishPlayer } from "/players";
 
 

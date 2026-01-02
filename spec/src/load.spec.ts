@@ -1,6 +1,6 @@
 
 import '../plugin/index';
-import { reset } from '../plugin/commands';
+import { reset } from '../plugin/frameworks/commands';
 
 
 describe('fish-commands', () => {

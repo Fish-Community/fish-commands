@@ -4,16 +4,12 @@ This file contains the main code, which calls other functions and initializes th
 */
 
 import * as api from "/api";
-import * as commands from "/commands";
-import { handleTapEvent } from "/commands";
-import { commands as consoleCommands } from "/consoleCommands";
+import { registerAll } from "/commands/aggregate";
+import { handleTapEvent } from "/frameworks/commands";
+import * as menus from "/frameworks/menus";
 import { FishEvents, fishPlugin, fishState, ipJoins, tileHistory } from "/globals";
-import { commands as memberCommands } from "/memberCommands";
-import * as menus from "/menus";
-import { loadPacketHandlers, commands as packetHandlerCommands } from "/packetHandlers";
-import { commands as playerCommands } from "/playerCommands";
+import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
-import { commands as staffCommands } from "/staffCommands";
 import * as timers from "/timers";
 import { addToTileHistory, fishCommandsRootDirPath, processChat, serverRestartLoop } from "/utils";
 
@@ -152,15 +148,8 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 		}
 	});
 
-
-	commands.register(staffCommands, clientHandler, serverHandler);
-	commands.register(playerCommands, clientHandler, serverHandler);
-	commands.register(memberCommands, clientHandler, serverHandler);
-	commands.register(packetHandlerCommands, clientHandler, serverHandler);
-	commands.registerConsole(consoleCommands, serverHandler);
+	registerAll(clientHandler, serverHandler);
 	loadPacketHandlers();
-	
-	commands.initialize();
 
 	//Load plugin data
 	try {

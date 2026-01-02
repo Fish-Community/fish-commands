@@ -5,7 +5,7 @@ This file contains member commands, which are fun cosmetics for donators.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
-var commands_1 = require("/commands");
+var commands_1 = require("/frameworks/commands");
 exports.commands = (0, commands_1.commandList)({
     pet: (0, commands_1.command)({
         args: ["name:string?"],

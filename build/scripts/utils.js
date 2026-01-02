@@ -86,11 +86,10 @@ exports.match = match;
 exports.fishCommandsRootDirPath = fishCommandsRootDirPath;
 exports.applyEffectMode = applyEffectMode;
 var api = require("/api");
-var commands_1 = require("/commands");
 var config_1 = require("/config");
+var commands_1 = require("/frameworks/commands");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
-var globals_2 = require("/globals");
 var players_1 = require("/players");
 function memoizeChatFilter(impl) {
     var lastCleanedInput = null;
@@ -261,8 +260,8 @@ function matchFilter(input, wordList, aggressive) {
                     var modifiedText_1 = text_1;
                     whitelist.forEach(function (w) { return modifiedText_1 = modifiedText_1.replace(new RegExp(w, "g"), ""); }); //Replace whitelisted words with nothing
                     if (banned instanceof RegExp ? banned.test(modifiedText_1) : modifiedText_1.includes(banned)) //If the text still matches, fail
-                        return { value: (banned === globals_2.uuidPattern ? "a Mindustry UUID" :
-                                banned === globals_2.ipPattern || banned === globals_2.ipPortPattern ? "an IP address" :
+                        return { value: (banned === globals_1.uuidPattern ? "a Mindustry UUID" :
+                                banned === globals_1.ipPattern || banned === globals_1.ipPortPattern ? "an IP address" :
                                     //parsing regex with regex, massive hack
                                     banned instanceof RegExp ? banned.source.replace(/\\b|\(\?<!.+?\)|\(\?!.+?\)/g, "") :
                                         banned) };
@@ -372,7 +371,7 @@ function logAction(action, by, to, reason, duration) {
             ip = to.ip();
         }
         else if (typeof to == "string") {
-            if (globals_2.uuidPattern.test(to)) {
+            if (globals_1.uuidPattern.test(to)) {
                 name = "[".concat(to, "]");
                 uuid = to;
                 ip = "[unknown]";
@@ -433,7 +432,7 @@ function serverRestartLoop(sec) {
     if (sec > 0) {
         if (sec < 15 || sec % 5 == 0)
             Call.sendMessage("[scarlet]Server restarting in: ".concat(sec));
-        globals_2.fishState.restartLoopTask = Timer.schedule(function () { return serverRestartLoop(sec - 1); }, 1);
+        globals_1.fishState.restartLoopTask = Timer.schedule(function () { return serverRestartLoop(sec - 1); }, 1);
     }
     else {
         Log.info("Restarting...");
@@ -556,12 +555,12 @@ function definitelyRealMemoryCorruption() {
     api.sendModerationMessage("Activated memory corruption prank on server ".concat(Vars.state.rules.mode().name()));
     var t1f = false;
     var t2f = false;
-    globals_2.fishState.corruption_t1 = Timer.schedule(function () {
+    globals_1.fishState.corruption_t1 = Timer.schedule(function () {
         var _a;
         t1f = !t1f;
         (_a = Vars.state.rules.defaultTeam.items()) === null || _a === void 0 ? void 0 : _a.set(Items.dormantCyst, t1f ? 69 : 420);
     }, 0, 0.4, 600);
-    globals_2.fishState.corruption_t2 = Timer.schedule(function () {
+    globals_1.fishState.corruption_t2 = Timer.schedule(function () {
         var _a;
         t2f = !t2f;
         (_a = Vars.state.rules.defaultTeam.items()) === null || _a === void 0 ? void 0 : _a.set(Items.fissileMatter, t2f ? 999 : 123);
@@ -868,7 +867,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
     [tile, uuid, action, type, time];
     tile.getLinkedTiles(function (t) {
         var pos = "".concat(t.x, ",").concat(t.y);
-        var existingData = globals_2.tileHistory[pos] ? funcs_1.StringIO.read(globals_2.tileHistory[pos], function (str) { return str.readArray(function (d) { return ({
+        var existingData = globals_1.tileHistory[pos] ? funcs_1.StringIO.read(globals_1.tileHistory[pos], function (str) { return str.readArray(function (d) { return ({
             action: d.readString(2),
             uuid: d.readString(3),
             time: d.readNumber(16),
@@ -884,7 +883,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
             existingData = existingData.splice(0, 9);
         }
         //Write
-        globals_2.tileHistory[t.x + ',' + t.y] = funcs_1.StringIO.write(existingData, function (str, data) { return str.writeArray(data, function (el) {
+        globals_1.tileHistory[t.x + ',' + t.y] = funcs_1.StringIO.write(existingData, function (str, data) { return str.writeArray(data, function (el) {
             str.writeString(el.action, 2);
             str.writeString(el.uuid, 3);
             str.writeNumber(el.time, 16);
@@ -893,7 +892,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
     });
 });
 function getIPRange(input, error) {
-    if (globals_2.ipRangeCIDRPattern.test(input)) {
+    if (globals_1.ipRangeCIDRPattern.test(input)) {
         var _a = __read(input.split("/"), 2), ip = _a[0], maskLength = _a[1];
         switch (maskLength) {
             case "24":
@@ -905,7 +904,7 @@ function getIPRange(input, error) {
                 return null;
         }
     }
-    else if (globals_2.ipRangeWildcardPattern.test(input)) {
+    else if (globals_1.ipRangeWildcardPattern.test(input)) {
         //1.2.3.*
         //1.2.*
         var _b = __read(input.split("."), 4), a = _b[0], b = _b[1], c = _b[2], d = _b[3];

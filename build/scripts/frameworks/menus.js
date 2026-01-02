@@ -67,7 +67,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.listeners = exports.Menu = void 0;
 exports.registerListeners = registerListeners;
-var commands_1 = require("/commands");
+var commands_1 = require("/frameworks/commands");
 var funcs_1 = require("/funcs");
 var players_1 = require("/players");
 var promise_1 = require("/promise");

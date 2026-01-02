@@ -1,5 +1,5 @@
 import { delay, fakeObject, MockCommandHandler, randomUUID } from './test-utils';
-import { initialize, Perm, register, reset } from '../plugin/commands';
+import { initialize, Perm, register, reset } from '../plugin/frameworks/commands';
 import { FishPlayer } from '../plugin/players';
 
 describe("commands framework", () => {

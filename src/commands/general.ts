@@ -4,15 +4,15 @@ This file contains most in-game chat commands that can be run by untrusted playe
 */
 
 import * as api from "/api";
-import { command, commandList, fail, formatArg, Perm, Req } from "/commands";
 import { FishServer, Gamemode, rules, text } from "/config";
+import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
+import type { FishCommandData } from "/frameworks/commands/types";
+import { Menu } from "/frameworks/menus";
 import { capitalizeText, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
 import { FMap } from "/maps";
-import { Menu } from "/menus";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import type { FishCommandData } from "/types";
 import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
 

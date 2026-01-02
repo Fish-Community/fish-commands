@@ -3,7 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains configurable constants.
 */
 
-import type { PermType } from "/commands";
+import type { PermType } from "/frameworks/commands";
 import { ipPattern, ipPortPattern, uuidPattern } from "/globals";
 import { Rank } from "/ranks";
 import { Duration, random } from "/funcs";

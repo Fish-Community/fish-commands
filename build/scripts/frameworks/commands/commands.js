@@ -6,10 +6,6 @@ For usage information, see docs/framework-usage-guide.md
 For maintenance information, see docs/frameworks.md
 */
 //Behold, the power of typescript!
-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -85,23 +81,25 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommandError = exports.f_client = exports.Req = exports.Perm = exports.consoleCommandList = exports.commandList = exports.allConsoleCommands = exports.allCommands = void 0;
+exports.consoleCommandList = exports.commandList = exports.allConsoleCommands = exports.allCommands = void 0;
 exports.command = command;
 exports.formatArg = formatArg;
-exports.fail = fail;
 exports.handleTapEvent = handleTapEvent;
 exports.register = register;
 exports.registerConsole = registerConsole;
 exports.initialize = initialize;
 exports.reset = reset;
-var config_1 = require("/config");
+var errors_1 = require("/frameworks/commands/errors");
+var formatting_1 = require("/frameworks/commands/formatting");
+var types_1 = require("/frameworks/commands/types");
+var menus_1 = require("/frameworks/menus");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
-var menus_1 = require("/menus");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
 var utils_1 = require("/utils");
 var hiddenUnauthorizedMessage = "[scarlet]Unknown command. Check [lightgray]/help[scarlet].";
+/** Flag to prevent double initialization */
 var initialized = false;
 /** Stores all chat comamnds by their name. */
 exports.allCommands = {};
@@ -109,11 +107,6 @@ exports.allCommands = {};
 exports.allConsoleCommands = {};
 /** Stores the last usage data for chat commands by their name. */
 var globalUsageData = {};
-/** All valid command arg types. */
-var commandArgTypes = [
-    "string", "number", "boolean", "player", /*"menuPlayer",*/ "team", "time", "unittype", "block",
-    "uuid", "offlinePlayer", "map", "rank", "roleflag", "item"
-];
 /** Helper function to get the correct type for command lists. */
 var commandList = function (list) { return list; };
 exports.commandList = commandList;
@@ -140,133 +133,6 @@ exports.consoleCommandList = consoleCommandList;
 function command(input) {
     return input;
 }
-/** Represents a permission that is required to do something. */
-var Perm = /** @class */ (function () {
-    function Perm(name, check, color, unauthorizedMessage) {
-        if (color === void 0) { color = ""; }
-        if (unauthorizedMessage === void 0) { unauthorizedMessage = "You do not have the required permission (".concat(name, ") to execute this command"); }
-        this.name = name;
-        this.color = color;
-        this.unauthorizedMessage = unauthorizedMessage;
-        if (typeof check == "string") {
-            if (ranks_1.Rank.getByName(check) == null)
-                (0, funcs_1.crash)("Invalid perm ".concat(name, ": invalid rank name ").concat(check));
-            this.check = function (fishP) { return fishP.ranksAtLeast(check); };
-        }
-        else {
-            this.check = check;
-        }
-        Perm.perms[name] = this;
-    }
-    /** Creates a new Perm with overrides for specified gamemodes. */
-    Perm.prototype.exceptModes = function (modes, unauthorizedMessage) {
-        var _this = this;
-        if (unauthorizedMessage === void 0) { unauthorizedMessage = this.unauthorizedMessage; }
-        return new Perm(this.name, function (fishP) {
-            var _a;
-            var effectivePerm = (_a = modes[config_1.Gamemode.name()]) !== null && _a !== void 0 ? _a : _this;
-            return effectivePerm.check(fishP);
-        }, this.color, unauthorizedMessage);
-    };
-    Perm.fromRank = function (rank) {
-        return new Perm(rank.name, function (fishP) { return fishP.ranksAtLeast(rank); }, rank.color);
-    };
-    Perm.getByName = function (name) {
-        var _a;
-        return (_a = Perm.perms[name]) !== null && _a !== void 0 ? _a : (0, funcs_1.crash)("Invalid requiredPerm");
-    };
-    Perm.perms = {};
-    Perm.none = new Perm("all", function (fishP) { return true; }, "[sky]");
-    Perm.trusted = Perm.fromRank(ranks_1.Rank.trusted);
-    Perm.mod = Perm.fromRank(ranks_1.Rank.mod);
-    Perm.admin = Perm.fromRank(ranks_1.Rank.admin);
-    Perm.member = new Perm("member", function (fishP) { return fishP.hasFlag("member"); }, "[pink]", "You must have a ".concat(config_1.FColor.member(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Fish Membership"], ["Fish Membership"]))), " to use this command. Get a Fish Membership at[sky] ").concat(config_1.text.membershipURL, " []"));
-    Perm.chat = new Perm("chat", function (fishP) { return (!fishP.muted && !fishP.autoflagged) || fishP.ranksAtLeast("mod"); });
-    Perm.bypassChatFilter = new Perm("bypassChatFilter", "admin");
-    Perm.seeMutedMessages = new Perm("seeMutedMessages", function (fishP) { return fishP.muted || fishP.autoflagged || fishP.ranksAtLeast("mod"); });
-    Perm.play = new Perm("play", function (fishP) { return !fishP.stelled() || fishP.ranksAtLeast("mod"); });
-    Perm.seeErrorMessages = new Perm("seeErrorMessages", "admin");
-    Perm.viewUUIDs = new Perm("viewUUIDs", "admin");
-    Perm.blockTrolling = new Perm("blockTrolling", function (fishP) { return fishP.rank === ranks_1.Rank.pi; });
-    Perm.visualEffects = new Perm("visualEffects", function (fishP) { return (!fishP.stelled() || fishP.ranksAtLeast("mod")) && !fishP.hasFlag("no_effects"); });
-    Perm.bulkVisualEffects = new Perm("bulkVisualEffects", function (fishP) { return ((fishP.hasFlag("developer") || fishP.hasFlag("illusionist") || fishP.hasFlag("member")) && !fishP.stelled())
-        || fishP.ranksAtLeast("mod"); });
-    Perm.bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
-    Perm.bypassVotekick = new Perm("bypassVotekick", "mod");
-    Perm.warn = new Perm("warn", "mod");
-    Perm.vanish = new Perm("vanish", "mod");
-    Perm.changeTeam = new Perm("changeTeam", "admin").exceptModes({
-        sandbox: Perm.trusted,
-        attack: Perm.admin,
-        hexed: Perm.mod,
-        pvp: Perm.trusted,
-        minigame: Perm.trusted,
-        testsrv: Perm.trusted,
-    });
-    /** Whether players should be allowed to change the team of a unit or building. If not, they will be kicked out of their current unit or building before switching teams. */
-    Perm.changeTeamExternal = new Perm("changeTeamExternal", "admin").exceptModes({
-        sandbox: Perm.trusted,
-    });
-    Perm.usidCheck = new Perm("usidCheck", "trusted");
-    Perm.runJS = new Perm("runJS", "manager");
-    Perm.bypassNameCheck = new Perm("bypassNameCheck", "fish");
-    Perm.hardcore = new Perm("hardcore", "trusted");
-    Perm.massKill = new Perm("massKill", "admin").exceptModes({
-        sandbox: Perm.mod,
-    });
-    Perm.voteOtherTeams = new Perm("voteOtherTeams", "trusted");
-    Perm.immediatelyVotekickNewPlayers = new Perm("immediatelyVotekickNewPlayers", "trusted");
-    return Perm;
-}());
-exports.Perm = Perm;
-exports.Req = {
-    mode: function (mode) { return function () {
-        return config_1.Gamemode[mode]()
-            || fail("This command is only available in ".concat((0, utils_1.formatModeName)(mode)));
-    }; },
-    modeNot: function (mode) { return function () {
-        return !config_1.Gamemode[mode]()
-            || fail("This command is disabled in ".concat((0, utils_1.formatModeName)(mode)));
-    }; },
-    moderate: function (argName, allowSameRank, minimumLevel, allowSelfIfUnauthorized) {
-        if (allowSameRank === void 0) { allowSameRank = false; }
-        if (minimumLevel === void 0) { minimumLevel = "mod"; }
-        if (allowSelfIfUnauthorized === void 0) { allowSelfIfUnauthorized = false; }
-        return function (_a) {
-            var args = _a.args, sender = _a.sender;
-            return (args[argName] == undefined || sender.canModerate(args[argName], !allowSameRank, minimumLevel, allowSelfIfUnauthorized)
-                || fail("You do not have permission to perform moderation actions on this player."));
-        };
-    },
-    cooldown: function (durationMS) { return function (_a) {
-        var lastUsedSuccessfullySender = _a.lastUsedSuccessfullySender;
-        return Date.now() - lastUsedSuccessfullySender >= durationMS
-            || fail("This command was run recently and is on cooldown.");
-    }; },
-    cooldownGlobal: function (durationMS) { return function (_a) {
-        var lastUsedSuccessfully = _a.lastUsedSuccessfully;
-        return Date.now() - lastUsedSuccessfully >= durationMS
-            || fail("This command was run recently and is on cooldown.");
-    }; },
-    gameRunning: function () {
-        return !Vars.state.gameOver
-            || fail("This game is over, please wait for the next map to load.");
-    },
-    teamAlive: function (_a) {
-        var sender = _a.sender;
-        return sender.team().active()
-            || fail("Your team is dead.");
-    },
-    unitExists: function (message) {
-        if (message === void 0) { message = "You must be in a unit to use this command."; }
-        return function (_a) {
-            var _b;
-            var sender = _a.sender;
-            return (sender.connected() && ((_b = sender.unit()) === null || _b === void 0 ? void 0 : _b.added) && !sender.unit().dead)
-                || fail(message);
-        };
-    }
-};
 /** Takes an arg string, like `reason:string?` and converts it to a CommandArg. */
 function processArgString(str) {
     //this was copypasted from mlogx haha
@@ -275,7 +141,7 @@ function processArgString(str) {
         (0, funcs_1.crash)("Bad arg string ".concat(str, ": does not match pattern word:word(?)"));
     }
     var _a = __read(matchResult, 4), name = _a[1], type = _a[2], isOptional = _a[3];
-    if (commandArgTypes.includes(type)) {
+    if (types_1.commandArgTypes.includes(type)) {
         return { name: name, type: type, isOptional: !!isOptional };
     }
     else {
@@ -498,175 +364,6 @@ function processArgs(args, processedCmdArgs, allowMenus) {
     }
     return { processedArgs: outputArgs, unresolvedArgs: unresolvedArgs };
 }
-var outputFormatter_server = (0, funcs_1.tagProcessorPartial)(function (chunk) {
-    if (chunk instanceof players_1.FishPlayer) {
-        return "&c(".concat((0, funcs_1.escapeStringColorsServer)(chunk.cleanedName), ")&fr");
-    }
-    else if (chunk instanceof ranks_1.Rank) {
-        return "&p".concat(chunk.name, "&fr");
-    }
-    else if (chunk instanceof ranks_1.RoleFlag) {
-        return "&p".concat(chunk.name, "&fr");
-    }
-    else if (chunk instanceof Error) {
-        return "&r".concat((0, funcs_1.escapeStringColorsServer)(chunk.toString()), "&fr");
-    }
-    else if (chunk instanceof Player) {
-        var player = chunk; //not sure why this is necessary, typescript randomly converts any to unknown
-        return "&cPlayer#".concat(player.id, " (").concat((0, funcs_1.escapeStringColorsServer)(Strings.stripColors(player.name)), ")&fr");
-    }
-    else if (typeof chunk == "string") {
-        if (globals_1.uuidPattern.test(chunk)) {
-            return "&b".concat(chunk, "&fr");
-        }
-        else if (globals_1.ipPattern.test(chunk)) {
-            return "&b".concat(chunk, "&fr");
-        }
-        else {
-            return "".concat(chunk);
-        }
-    }
-    else if (typeof chunk == "boolean") {
-        return "&b".concat(chunk.toString(), "&fr");
-    }
-    else if (typeof chunk == "number") {
-        return "&b".concat(chunk.toString(), "&fr");
-    }
-    else if (chunk instanceof Administration.PlayerInfo) {
-        return "&c".concat((0, funcs_1.escapeStringColorsServer)(chunk.plainLastName()), "&fr");
-    }
-    else if (chunk instanceof UnitType) {
-        return "&c".concat(chunk.localizedName, "&fr");
-    }
-    else if (chunk instanceof Block) {
-        return "&c".concat(chunk.localizedName, "&fr");
-    }
-    else if (chunk instanceof Team) {
-        return "&c".concat(chunk.name, "&fr");
-    }
-    else if (chunk instanceof Item) {
-        return "&c".concat(chunk.name, "&fr");
-    }
-    else {
-        chunk;
-        Log.err("Invalid format object!");
-        Log.info(chunk);
-        return chunk; //let it get stringified by the JS engine
-    }
-});
-var outputFormatter_client = (0, funcs_1.tagProcessorPartial)(function (chunk, i, data, stringChunks) {
-    var _a, _b;
-    var reset = (_b = data !== null && data !== void 0 ? data : (_a = stringChunks[0].match(/^\[.+?\]/)) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : "";
-    if (chunk instanceof players_1.FishPlayer) {
-        return "[cyan](".concat(chunk.name, "[cyan])") + reset;
-    }
-    else if (chunk instanceof ranks_1.Rank) {
-        return "".concat(chunk.color).concat(chunk.name, "[]") + reset;
-    }
-    else if (chunk instanceof ranks_1.RoleFlag) {
-        return "".concat(chunk.color).concat(chunk.name, "[]") + reset;
-    }
-    else if (chunk instanceof Error) {
-        return "[red]".concat(chunk.toString()) + reset;
-    }
-    else if (chunk instanceof Player) {
-        var fishP = players_1.FishPlayer.get(chunk);
-        return "[cyan](".concat(fishP.name, "[cyan])") + reset;
-    }
-    else if (typeof chunk == "string") {
-        if (globals_1.uuidPattern.test(chunk)) {
-            return "[blue]".concat(chunk, "[]");
-        }
-        else if (globals_1.ipPattern.test(chunk)) {
-            return "[blue]".concat(chunk, "[]");
-        }
-        else {
-            //TODO reset color?
-            return chunk;
-        }
-    }
-    else if (typeof chunk == "boolean") {
-        return "[blue]".concat(chunk.toString(), "[]");
-    }
-    else if (typeof chunk == "number") {
-        return "[blue]".concat(chunk.toString(), "[]");
-    }
-    else if (chunk instanceof Administration.PlayerInfo) {
-        return chunk.lastName + reset;
-    }
-    else if (chunk instanceof UnitType) {
-        return "[cyan]".concat(chunk.localizedName, "[]");
-    }
-    else if (chunk instanceof Block) {
-        return "[cyan]".concat(chunk.localizedName, "[]");
-    }
-    else if (chunk instanceof Team) {
-        return "[white]".concat(chunk.coloredName(), "[][]");
-    }
-    else if (chunk instanceof Item) {
-        return "[cyan]".concat(chunk.name, "[]");
-    }
-    else {
-        chunk;
-        Log.err("Invalid format object!");
-        Log.info(chunk);
-        return chunk; //allow it to get stringified by the engine
-    }
-});
-var fFunctions = {
-    boolGood: function (value) {
-        return [
-            value ? "[green]true[]" : "[red]false[]",
-            value ? "&lgtrue&fr" : "&lrfalse&fr",
-        ];
-    },
-    boolBad: function (value) {
-        return [
-            value ? "[red]true[]" : "[green]false[]",
-            value ? "&lrtrue&fr" : "&lgfalse&fr",
-        ];
-    },
-    percent: function (value, decimals) {
-        if (decimals === void 0) { decimals = 0; }
-        if (isNaN(value) || !isFinite(value))
-            return ["[gray]N/A[]", "N/A"];
-        var percent = (value * 100).toFixed(decimals) + "%";
-        return ["".concat(percent), "".concat(percent)];
-    },
-    number: function (value, decimals) {
-        if (decimals === void 0) { decimals = null; }
-        if (isNaN(value) || !isFinite(value))
-            return ["[gray]N/A[]", "N/A"];
-        if (decimals !== null)
-            return [value.toFixed(decimals), value.toFixed(decimals)];
-        return [value.toString(), value.toString()];
-    }
-};
-var processedFFunctions = [0, 1].map(function (i) {
-    return Object.fromEntries(Object.entries(fFunctions).map(function (_a) {
-        var _b = __read(_a, 2), k = _b[0], v = _b[1];
-        return [k,
-            function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
-                }
-                return v.apply(processedFFunctions[i], args)[i];
-            }
-        ];
-    }));
-});
-exports.f_client = Object.assign(outputFormatter_client, processedFFunctions[0]);
-var f_server = Object.assign(outputFormatter_server, processedFFunctions[1]);
-exports.CommandError = (function () { });
-Object.setPrototypeOf(exports.CommandError.prototype, Error.prototype);
-function fail(message) {
-    var err = new Error(typeof message == "string" ? message : "");
-    //oh no it's even worse now because i have to smuggle a function through here
-    err.data = message;
-    Object.setPrototypeOf(err, exports.CommandError.prototype);
-    throw err;
-}
 var variadicArgumentTypes = ["player", "string", "map"];
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
 function convertArgs(processedCmdArgs, allowMenus) {
@@ -693,7 +390,7 @@ function handleTapEvent(event) {
             outputFail: function (message) { (0, utils_1.outputFail)(message, sender); failed_1 = true; },
             outputSuccess: function (message) { return (0, utils_1.outputSuccess)(message, sender); },
             output: function (message) { return (0, utils_1.outputMessage)(message, sender); },
-            f: outputFormatter_client,
+            f: formatting_1.outputFormatter_client,
             admins: Vars.netServer.admins,
             commandLastUsed: usageData.lastUsed,
             commandLastUsedSuccessfully: usageData.lastUsedSuccessfully,
@@ -717,7 +414,7 @@ function handleTapEvent(event) {
             usageData.tapLastUsedSuccessfully = Date.now();
     }
     catch (err) {
-        if (err instanceof exports.CommandError) {
+        if (err instanceof errors_1.CommandError) {
             //If the error is a command error, then just outputFail
             (0, utils_1.outputFail)(err.data, sender);
         }
@@ -795,7 +492,7 @@ function register(commands, clientHandler, serverHandler) {
                                     outputFail: function (message) { (0, utils_1.outputFail)(message, sender); failed = true; },
                                     outputSuccess: function (message) { return (0, utils_1.outputSuccess)(message, sender); },
                                     output: function (message) { return (0, utils_1.outputMessage)(message, sender); },
-                                    f: exports.f_client,
+                                    f: formatting_1.f_client,
                                     execServer: function (command) { return serverHandler.handleMessage(command); },
                                     admins: Vars.netServer.admins,
                                     lastUsedSender: usageData.lastUsed,
@@ -828,7 +525,7 @@ function register(commands, clientHandler, serverHandler) {
                                 return [3 /*break*/, 5];
                             case 3:
                                 err_1 = _b.sent();
-                                if (err_1 instanceof exports.CommandError) {
+                                if (err_1 instanceof errors_1.CommandError) {
                                     //If the error is a command error, then just outputFail
                                     (0, utils_1.outputFail)(err_1.data, sender);
                                 }
@@ -887,14 +584,14 @@ function registerConsole(commands, serverHandler) {
                 var usageData = ((_a = globalUsageData[_b = "_console_" + name]) !== null && _a !== void 0 ? _a : (globalUsageData[_b] = { lastUsed: -1, lastUsedSuccessfully: -1 }));
                 try {
                     var failed_2 = false;
-                    data.handler(__assign({ rawArgs: rawArgs, args: output.processedArgs, data: data.data, outputFail: function (message) { (0, utils_1.outputConsole)(message, Log.err); failed_2 = true; }, outputSuccess: utils_1.outputConsole, output: utils_1.outputConsole, f: f_server, execServer: function (command) { return serverHandler.handleMessage(command); }, admins: Vars.netServer.admins }, usageData));
+                    data.handler(__assign({ rawArgs: rawArgs, args: output.processedArgs, data: data.data, outputFail: function (message) { (0, utils_1.outputConsole)(message, Log.err); failed_2 = true; }, outputSuccess: utils_1.outputConsole, output: utils_1.outputConsole, f: formatting_1.f_server, execServer: function (command) { return serverHandler.handleMessage(command); }, admins: Vars.netServer.admins }, usageData));
                     usageData.lastUsed = Date.now();
                     if (!failed_2)
                         usageData.lastUsedSuccessfully = Date.now();
                 }
                 catch (err) {
                     usageData.lastUsed = Date.now();
-                    if (err instanceof exports.CommandError) {
+                    if (err instanceof errors_1.CommandError) {
                         Log.warn(typeof err.data == "function" ? err.data("&fr") : err.data);
                     }
                     else {
@@ -1034,4 +731,3 @@ function reset() {
         finally { if (e_9) throw e_9.error; }
     }
 }
-var templateObject_1;

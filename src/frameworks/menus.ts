@@ -6,7 +6,7 @@ For usage information, see docs/framework-usage-guide.md
 For maintenance information, see docs/frameworks.md
 */
 
-import { CommandError, fail } from "/commands";
+import { CommandError, fail } from "/frameworks/commands";
 import { parseError, to2DArray } from "/funcs";
 import { FishPlayer } from "/players";
 import { Promise } from "/promise";

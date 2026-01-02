@@ -82,12 +82,12 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FishPlayer = void 0;
 var api = require("/api");
-var commands_1 = require("/commands");
 var config_1 = require("/config");
+var commands_1 = require("/frameworks/commands");
+var menus_1 = require("/frameworks/menus");
 var funcs_1 = require("/funcs");
 var globals = require("/globals");
 var globals_1 = require("/globals");
-var menus_1 = require("/menus");
 var ranks_1 = require("/ranks");
 var utils_1 = require("/utils");
 var FishPlayer = /** @class */ (function () {

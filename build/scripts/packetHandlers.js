@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 exports.loadPacketHandlers = loadPacketHandlers;
 exports.bulkInfoMsg = bulkInfoMsg;
-var commands_1 = require("/commands");
+var commands_1 = require("/frameworks/commands");
 var players_1 = require("/players");
 //some much needed restrictions
 /** point in which effects will refuse to render */

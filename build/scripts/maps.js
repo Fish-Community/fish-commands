@@ -72,9 +72,9 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FMap = exports.PartialMapRun = exports.FinishedMapRun = void 0;
 var config_1 = require("/config");
+var io_1 = require("/frameworks/io");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
-var io_1 = require("/io");
 var utils_1 = require("/utils");
 var FinishedMapRun = /** @class */ (function (_super) {
     __extends(FinishedMapRun, _super);

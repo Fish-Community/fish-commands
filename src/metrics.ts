@@ -2,7 +2,7 @@
 Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the player count tracking.
 */
-import { serialize } from "/io";
+import { serialize } from "/frameworks/io";
 
 
 type MetricsWeek = number[] & {
