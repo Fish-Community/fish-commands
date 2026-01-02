@@ -16,14 +16,16 @@ import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, l
 
 
 export class FishPlayer {
-	/** Stores all currently loaded FishPlayer objects. */
-	static cachedPlayers:Record<string, FishPlayer> = {};
+	//#region Static constants
 	/** Save version used for serialized FishPlayers. */
 	static readonly saveVersion = 12;
 	/** Maximum chunk size used when writing FishPlayer data to Core.settings. */
 	static readonly chunkSize = 50000;
-
-	//Static transients
+	//#endregion
+	
+	//#region Static transients
+	/** Stores all currently loaded FishPlayer objects. */
+	static cachedPlayers:Record<string, FishPlayer> = {};
 	static stats = {
 		numIpsChecked: 0,
 		numIpsFlagged: 0,
@@ -46,6 +48,7 @@ export class FishPlayer {
 	static antiBotModePersist = false;
 	static antiBotModeOverride = false;
 	static lastBotWhacked = 0;
+	//#endregion
 	
 	//#region Transient properties
 	//Commands framework
@@ -111,7 +114,7 @@ export class FishPlayer {
 	dataSynced = false;
 	//#endregion
 	
-	//Stored data
+	//#region Stored data
 	uuid: string;
 	name: string = "Unnamed player [ERROR}";
 	muted: boolean = false;
@@ -156,6 +159,7 @@ export class FishPlayer {
 	};
 	/** Used for the /vanish command. */
 	showRankPrefix:boolean = true;
+	//#endregion
 
 	constructor(uuid:string, data:Partial<FishPlayerData>, player:mindustryPlayer | null){
 		this.uuid = uuid;
@@ -301,8 +305,8 @@ export class FishPlayer {
 	}
 	//#endregion
 
-	//#region eventhandling
-	//Contains methods that handle an event and must be called by other code (usually through Events.on).
+	//#region datasync
+	//Please see docs/data-management.md for a description of the update syncing algorithm.
 	static dataFetchFailedUuids = new Set();
 	static onConnectPacket(uuid:string){
 		const entry = this.cachedPlayers[uuid];
@@ -345,6 +349,182 @@ export class FishPlayer {
 			else this.dataFetchFailedUuids.add(uuid);
 		});
 	}
+	/** Must be called at player join, before updateName(). */
+	updateSavedInfoFromPlayer(player:mindustryPlayer, repeated = false){
+		this.player = player;
+		if(repeated){
+			this.name = this.originalName!;
+		} else {
+			this.originalName = this.name = player.name;
+		}
+		if(this.firstJoined == -1) this.firstJoined = Date.now();
+
+		//Do not update USID here
+		this.manualAfk = false;
+		this.cleanedName = Strings.stripColors(player.name);
+		this.lastJoined = Date.now();
+		this.lastMousePosition = [0, 0];
+		this.lastActive = Date.now();
+		if(this.highlight === "[white]") this.highlight = null;
+		this.shouldUpdateName = true;
+		this.changedTeam = false;
+		this.ipDetectedVpn = false;
+		this.tstats = {
+			blocksBroken: 0
+		};
+		this.infoUpdated = true;
+	}
+	updateData(data: Partial<FishPlayerData>){
+		if(data.name != undefined) this.name = data.name;
+		if(data.muted != undefined) this.muted = data.muted;
+		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
+		if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
+		if(data.firstJoined != undefined) this.firstJoined = data.firstJoined;
+		if(data.highlight != undefined) this.highlight = data.highlight;
+		if(data.history != undefined) this.history = data.history;
+		if(data.rainbow != undefined) this.rainbow = data.rainbow;
+		if(data.usid != undefined) this.usid = data.usid;
+		if(data.chatStrictness != undefined) this.chatStrictness = data.chatStrictness;
+		if(data.stats != undefined) this.stats = data.stats;
+		if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
+		if(data.rank != undefined) this.rank = Rank.getByName(data.rank) ?? Rank.player;
+		if(data.flags != undefined) this.flags = new Set(data.flags.map(RoleFlag.getByName).filter(Boolean));
+	}
+	getData():FishPlayerData {
+		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix } = this;
+		return {
+			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix,
+			rank: rank.name,
+			flags: [...flags.values()].map(f => f.name)
+		};
+	}
+	/** Warning: the "update" callback is run twice. */
+	async updateSynced(
+		update: (fishP:FishPlayer) => void,
+		beforeFetch?: (fishP:FishPlayer) => void,
+		afterFetch?: (fishP:FishPlayer) => void,
+	){
+		update(this);
+		beforeFetch?.(this);
+		const data = await api.getFishPlayerData(this.uuid);
+		if(data) this.updateData(data);
+		update(this);
+		//of course, this is a race condition
+		//but it's unlikely to happen
+		//could be fixed by transmitting the update operation to the server as a mongo update command
+		afterFetch?.(this);
+		await api.setFishPlayerData(this.getData());
+	}
+	//#endregion
+
+	//#region actively synced data updates
+	stop(by:FishPlayer | string, duration:number, message?:string, notify = true){
+		if(duration > 60_000) this.setPunishedIP(stopAntiEvadeTime);
+		this.showRankPrefix = true;
+		return this.updateSynced(() => {
+			this.unmarkTime = Date.now() + duration;
+			if(this.unmarkTime > globals.maxTime) this.unmarkTime = globals.maxTime;
+			this.updateName();
+		}, () => {
+			this.setUnmarkTimer(duration);
+			if(this.connected() && notify){
+				this.stopUnit();
+				this.sendMessage(
+					message
+					? `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]${message}[]`
+					: `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.`);
+				if(duration < Duration.hours(1)){
+					//less than one hour
+					this.sendMessage(`[yellow]Your mark will expire in ${formatTime(duration)}.`);
+				}
+			}
+		}, () => this.addHistoryEntry({
+			action: 'stopped',
+			by: by instanceof FishPlayer ? by.name : by,
+			time: Date.now(),
+		}));
+	}
+	free(by:FishPlayer | string){
+		by ??= "console";
+		
+		this.autoflagged = false; //Might as well set autoflagged to false
+		FishPlayer.removePunishedIP(this.ip());
+		FishPlayer.removePunishedUUID(this.uuid);
+		return this.updateSynced(() => {
+			this.unmarkTime = -1;
+		}, () => {
+			if(this.connected()){
+				this.sendMessage('[yellow]Looks like someone had mercy on you.');
+				this.updateName();
+				this.forceRespawn();
+			}
+		}, () => this.addHistoryEntry({
+			action: 'freed',
+			by: by instanceof FishPlayer ? by.name : by,
+			time: Date.now(),
+		}));
+	}
+	async setRank(rank:Rank){
+		if(typeof rank === "string"){
+			rank satisfies never;
+			crash(`Type error in FishPlayer.setFlag(): rank is invalid`);
+		}
+		if(rank == Rank.pi && !Mode.localDebug) throw new TypeError(`Cannot find function setRank in object [object Object].`);
+		await this.updateSynced(() => {
+			this.rank = rank;
+			this.updateName();
+			this.updateAdminStatus();
+		}, () => FishPlayer.saveAll());
+	}
+	async setFlag(flag_:RoleFlag | RoleFlagName, value:boolean){
+		const flag = typeof flag_ == "string" ?
+			(RoleFlag.getByName(flag_) ?? crash(`Type error in FishPlayer.setFlag(): flag ${flag_} is invalid`))
+			: flag_;
+		
+		await this.updateSynced(() => {
+			if(value){
+				this.flags.add(flag);
+			} else {
+				this.flags.delete(flag);
+			}
+			this.updateMemberExclusiveState();
+			this.updateName();
+		});
+	}
+	mute(by:FishPlayer | string){
+		if(this.muted) return;
+		this.showRankPrefix = true;
+		return this.updateSynced(() => {
+			this.muted = true;
+			this.updateName();
+		}, () => {
+			this.sendMessage(`[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.`);
+			this.setPunishedIP(stopAntiEvadeTime);
+		}, () => this.addHistoryEntry({
+			action: 'muted',
+			by: by instanceof FishPlayer ? by.name : by,
+			time: Date.now(),
+		}));
+	}
+	unmute(by:FishPlayer | string){
+		if(!this.muted) return;
+		FishPlayer.removePunishedIP(this.ip());
+		FishPlayer.removePunishedUUID(this.uuid);
+		return this.updateSynced(() => {
+			this.muted = false;
+			this.updateName();
+		}, () => {
+			this.sendMessage(`[green]You have been unmuted.`);
+		}, () => this.addHistoryEntry({
+			action: 'muted',
+			by: by instanceof FishPlayer ? by.name : by,
+			time: Date.now(),
+		}));
+	}
+	//#endregion
+	
+	//#region eventhandling
+	//Contains methods that handle an event and must be called by other code (usually through Events.on).
 	/** Must be run on PlayerConnectEvent. */
 	static onPlayerConnect(player:mindustryPlayer){
 		const fishPlayer = this.cachedPlayers[player.uuid()] ??= this.createFromPlayer(player);
@@ -580,31 +760,6 @@ export class FishPlayer {
 		});
 		return out;
 	}
-	/** Must be called at player join, before updateName(). */
-	updateSavedInfoFromPlayer(player:mindustryPlayer, repeated = false){
-		this.player = player;
-		if(repeated){
-			this.name = this.originalName!;
-		} else {
-			this.originalName = this.name = player.name;
-		}
-		if(this.firstJoined == -1) this.firstJoined = Date.now();
-
-		//Do not update USID here
-		this.manualAfk = false;
-		this.cleanedName = Strings.stripColors(player.name);
-		this.lastJoined = Date.now();
-		this.lastMousePosition = [0, 0];
-		this.lastActive = Date.now();
-		if(this.highlight === "[white]") this.highlight = null;
-		this.shouldUpdateName = true;
-		this.changedTeam = false;
-		this.ipDetectedVpn = false;
-		this.tstats = {
-			blocksBroken: 0
-		};
-		this.infoUpdated = true;
-	}
 	updateMemberExclusiveState(){
 		if(!this.hasPerm("member")){
 			this.highlight = null;
@@ -650,30 +805,6 @@ export class FishPlayer {
 			Vars.netServer.admins.unAdminPlayer(this.uuid);
 			this.player!.admin = false;
 		}
-	}
-	updateData(data: Partial<FishPlayerData>){
-		if(data.name != undefined) this.name = data.name;
-		if(data.muted != undefined) this.muted = data.muted;
-		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
-		if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
-		if(data.firstJoined != undefined) this.firstJoined = data.firstJoined;
-		if(data.highlight != undefined) this.highlight = data.highlight;
-		if(data.history != undefined) this.history = data.history;
-		if(data.rainbow != undefined) this.rainbow = data.rainbow;
-		if(data.usid != undefined) this.usid = data.usid;
-		if(data.chatStrictness != undefined) this.chatStrictness = data.chatStrictness;
-		if(data.stats != undefined) this.stats = data.stats;
-		if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
-		if(data.rank != undefined) this.rank = Rank.getByName(data.rank) ?? Rank.player;
-		if(data.flags != undefined) this.flags = new Set(data.flags.map(RoleFlag.getByName).filter(Boolean));
-	}
-	getData():FishPlayerData {
-		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix } = this;
-		return {
-			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix,
-			rank: rank.name,
-			flags: [...flags.values()].map(f => f.name)
-		};
 	}
 	checkAntiEvasion(){
 		FishPlayer.updatePunishedIPs();
@@ -807,23 +938,6 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		}
 		this.usid = receivedUSID;
 		return true;
-	}
-	/** Warning: the "update" callback is run twice. */
-	async updateSynced(
-		update: (fishP:FishPlayer) => void,
-		beforeFetch?: (fishP:FishPlayer) => void,
-		afterFetch?: (fishP:FishPlayer) => void,
-	){
-		update(this);
-		beforeFetch?.(this);
-		const data = await api.getFishPlayerData(this.uuid);
-		if(data) this.updateData(data);
-		update(this);
-		//of course, this is a race condition
-		//but it's unlikely to happen
-		//could be fixed by transmitting the update operation to the server as a mongo update command
-		afterFetch?.(this);
-		await api.setFishPlayerData(this.getData());
 	}
 	displayTrail(){
 		if(this.trail) Call.effect(Fx[this.trail.type], this.player!.x, this.player!.y, 0, this.trail.color);
@@ -1086,7 +1200,7 @@ We apologize for the inconvenience.`
 	}
 	//#endregion
 	
-	//#region util
+	//#region antibot
 	static antiBotMode(){
 		return this.flagCount >= 3 || this.playersJoinedRecent > 50 || this.antiBotModePersist || this.antiBotModeOverride;
 	}
@@ -1114,6 +1228,70 @@ We apologize for the inconvenience.`
 			api.sendModerationMessage(`!!! Possible ongoing bot attack in **${Gamemode.name()}**`);
 		this.lastBotWhacked = Date.now();
 		this.whackFlaggedPlayers();
+	}
+	//#endregion
+	
+	//#region util
+		/**
+	 * Sends a message to staff only.
+	 * @returns if the message was received by anyone.
+	 */
+	static messageStaff(senderName:string, message:string):boolean;
+	static messageStaff(message:string):boolean;
+	static messageStaff(arg1:string, arg2?:string):boolean {
+		const message = arg2 ? `[gray]<[cyan]staff[gray]>[white]${arg1}[green]: [cyan]${arg2}` : arg1;
+		let messageReceived = false;
+		Groups.player.each(pl => {
+			const fishP = FishPlayer.get(pl);
+			if(fishP.hasPerm("mod")){
+				pl.sendMessage(message);
+				messageReceived = true;
+			}
+		});
+		return messageReceived;
+	}
+	/**
+	 * Sends a message to trusted players only.
+	 */
+	static messageTrusted(senderName:string, message:string):void;
+	static messageTrusted(message:string):void;
+	static messageTrusted(arg1:string, arg2?:string){
+		const message = arg2 ? `[gray]<[${Rank.trusted.color}]trusted[gray]>[white]${arg1}[green]: [cyan]${arg2}` : arg1;
+		FishPlayer.forEachPlayer(fishP => {
+			if(fishP.ranksAtLeast("trusted")) fishP.sendMessage(message);
+		});
+	}
+	/**
+	 * Sends a message to muted players only.
+	 * @returns if the message was received by anyone.
+	 */
+	static messageMuted(senderName:string, message:string):boolean;
+	static messageMuted(senderName:string):boolean;
+	static messageMuted(arg1:string, arg2?:string):boolean {
+		const message = arg2 ? `[gray]<[red]muted[gray]>[white]${arg1}[coral]: [lightgray]${arg2}` : arg1;
+		let messageReceived = false;
+		Groups.player.each(pl => {
+			const fishP = FishPlayer.get(pl);
+			if(fishP.hasPerm("seeMutedMessages")){
+				pl.sendMessage(message);
+				messageReceived = true;
+			}
+		});
+		return messageReceived;
+	}
+	static messageAllExcept(exclude:FishPlayer, message:string){
+		FishPlayer.forEachPlayer(fishP => {
+			if(fishP !== exclude) fishP.sendMessage(message);
+		});
+	}
+	static messageAllWithPerm(perm:PermType | undefined, message:string){
+		if(perm){
+			FishPlayer.forEachPlayer(fishP => {
+				if(fishP.hasPerm(perm)) fishP.sendMessage(message);
+			});
+		} else {
+			Call.sendMessage(message);
+		}
 	}
 	position():string {
 		return `(${Math.floor(this.player!.x / 8)}, ${Math.floor(this.player!.y / 8)})`;
@@ -1179,34 +1357,6 @@ We apologize for the inconvenience.`
 			this.player?.sendMessage(message);
 			this.lastRatelimitedMessage = Date.now();
 		}
-	}
-
-	async setRank(rank:Rank){
-		if(typeof rank === "string"){
-			rank satisfies never;
-			crash(`Type error in FishPlayer.setFlag(): rank is invalid`);
-		}
-		if(rank == Rank.pi && !Mode.localDebug) throw new TypeError(`Cannot find function setRank in object [object Object].`);
-		await this.updateSynced(() => {
-			this.rank = rank;
-			this.updateName();
-			this.updateAdminStatus();
-		}, () => FishPlayer.saveAll());
-	}
-	async setFlag(flag_:RoleFlag | RoleFlagName, value:boolean){
-		const flag = typeof flag_ == "string" ?
-			(RoleFlag.getByName(flag_) ?? crash(`Type error in FishPlayer.setFlag(): flag ${flag_} is invalid`))
-			: flag_;
-		
-		await this.updateSynced(() => {
-			if(value){
-				this.flags.add(flag);
-			} else {
-				this.flags.delete(flag);
-			}
-			this.updateMemberExclusiveState();
-			this.updateName();
-		});
 	}
 	hasFlag(flagName:RoleFlagName){
 		const flag = RoleFlag.getByName(flagName);
@@ -1279,60 +1429,6 @@ We apologize for the inconvenience.`
 			}
 		}, duration / 1000);
 	}
-	/** Sets the unmark time but doesn't stop the player's unit or send them a message. */
-	updateStopTime(duration:number):Promise<void> {
-		return this.updateSynced(() => {
-			const time = Math.min(Date.now() + duration, globals.maxTime);
-			this.unmarkTime = time;
-			this.updateName();
-		}, () => this.setUnmarkTimer(duration));
-	}
-	stop(by:FishPlayer | string, duration:number, message?:string, notify = true){
-		if(duration > 60_000) this.setPunishedIP(stopAntiEvadeTime);
-		this.showRankPrefix = true;
-		return this.updateSynced(() => {
-			this.unmarkTime = Date.now() + duration;
-			if(this.unmarkTime > globals.maxTime) this.unmarkTime = globals.maxTime;
-			this.updateName();
-		}, () => {
-			this.setUnmarkTimer(duration);
-			if(this.connected() && notify){
-				this.stopUnit();
-				this.sendMessage(
-					message
-					? `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]${message}[]`
-					: `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.`);
-				if(duration < Duration.hours(1)){
-					//less than one hour
-					this.sendMessage(`[yellow]Your mark will expire in ${formatTime(duration)}.`);
-				}
-			}
-		}, () => this.addHistoryEntry({
-			action: 'stopped',
-			by: by instanceof FishPlayer ? by.name : by,
-			time: Date.now(),
-		}));
-	}
-	free(by:FishPlayer | string){
-		by ??= "console";
-		
-		this.autoflagged = false; //Might as well set autoflagged to false
-		FishPlayer.removePunishedIP(this.ip());
-		FishPlayer.removePunishedUUID(this.uuid);
-		return this.updateSynced(() => {
-			this.unmarkTime = -1;
-		}, () => {
-			if(this.connected()){
-				this.sendMessage('[yellow]Looks like someone had mercy on you.');
-				this.updateName();
-				this.forceRespawn();
-			}
-		}, () => this.addHistoryEntry({
-			action: 'freed',
-			by: by instanceof FishPlayer ? by.name : by,
-			time: Date.now(),
-		}));
-	}
 	kick(reason:string | KickReason = Packets.KickReason.kick, duration:number = 30_000){
 		this.player?.kick(reason, duration);
 	}
@@ -1364,35 +1460,13 @@ We apologize for the inconvenience.`
 	unfreeze(){
 		this.frozen = false;
 	}
-	mute(by:FishPlayer | string){
-		if(this.muted) return;
-		this.showRankPrefix = true;
+	/** Sets the unmark time but doesn't stop the player's unit or send them a message. */
+	updateStopTime(duration:number):Promise<void> {
 		return this.updateSynced(() => {
-			this.muted = true;
+			const time = Math.min(Date.now() + duration, globals.maxTime);
+			this.unmarkTime = time;
 			this.updateName();
-		}, () => {
-			this.sendMessage(`[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.`);
-			this.setPunishedIP(stopAntiEvadeTime);
-		}, () => this.addHistoryEntry({
-			action: 'muted',
-			by: by instanceof FishPlayer ? by.name : by,
-			time: Date.now(),
-		}));
-	}
-	unmute(by:FishPlayer | string){
-		if(!this.muted) return;
-		FishPlayer.removePunishedIP(this.ip());
-		FishPlayer.removePunishedUUID(this.uuid);
-		return this.updateSynced(() => {
-			this.muted = false;
-			this.updateName();
-		}, () => {
-			this.sendMessage(`[green]You have been unmuted.`);
-		}, () => this.addHistoryEntry({
-			action: 'muted',
-			by: by instanceof FishPlayer ? by.name : by,
-			time: Date.now(),
-		}));
+		}, () => this.setUnmarkTimer(duration));
 	}
 
 	stopUnit(){
@@ -1408,69 +1482,6 @@ We apologize for the inconvenience.`
 			}
 		}
 	}
-
-	/**
-	 * Sends a message to staff only.
-	 * @returns if the message was received by anyone.
-	 */
-	static messageStaff(senderName:string, message:string):boolean;
-	static messageStaff(message:string):boolean;
-	static messageStaff(arg1:string, arg2?:string):boolean {
-		const message = arg2 ? `[gray]<[cyan]staff[gray]>[white]${arg1}[green]: [cyan]${arg2}` : arg1;
-		let messageReceived = false;
-		Groups.player.each(pl => {
-			const fishP = FishPlayer.get(pl);
-			if(fishP.hasPerm("mod")){
-				pl.sendMessage(message);
-				messageReceived = true;
-			}
-		});
-		return messageReceived;
-	}
-	/**
-	 * Sends a message to trusted players only.
-	 */
-	static messageTrusted(senderName:string, message:string):void;
-	static messageTrusted(message:string):void;
-	static messageTrusted(arg1:string, arg2?:string){
-		const message = arg2 ? `[gray]<[${Rank.trusted.color}]trusted[gray]>[white]${arg1}[green]: [cyan]${arg2}` : arg1;
-		FishPlayer.forEachPlayer(fishP => {
-			if(fishP.ranksAtLeast("trusted")) fishP.sendMessage(message);
-		});
-	}
-	/**
-	 * Sends a message to muted players only.
-	 * @returns if the message was received by anyone.
-	 */
-	static messageMuted(senderName:string, message:string):boolean;
-	static messageMuted(senderName:string):boolean;
-	static messageMuted(arg1:string, arg2?:string):boolean {
-		const message = arg2 ? `[gray]<[red]muted[gray]>[white]${arg1}[coral]: [lightgray]${arg2}` : arg1;
-		let messageReceived = false;
-		Groups.player.each(pl => {
-			const fishP = FishPlayer.get(pl);
-			if(fishP.hasPerm("seeMutedMessages")){
-				pl.sendMessage(message);
-				messageReceived = true;
-			}
-		});
-		return messageReceived;
-	}
-	static messageAllExcept(exclude:FishPlayer, message:string){
-		FishPlayer.forEachPlayer(fishP => {
-			if(fishP !== exclude) fishP.sendMessage(message);
-		});
-	}
-	static messageAllWithPerm(perm:PermType | undefined, message:string){
-		if(perm){
-			FishPlayer.forEachPlayer(fishP => {
-				if(fishP.hasPerm(perm)) fishP.sendMessage(message);
-			});
-		} else {
-			Call.sendMessage(message);
-		}
-	}
-
 	//#endregion
 
 	//#region heuristics
