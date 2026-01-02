@@ -15,6 +15,12 @@
 * Regexps are broken due to the engine being used. (weird behavior, crashes)
 * Use Java regexes instead.
 
+## Async handling
+
+ES6 Promises and ES7 async/await work normally. Some unused Promise methods may not be implemented yet.
+
+The plugin uses a mixture of callbacks, async/await, and promises to handle asynchronous operations. We plan to transition to promises and async/await only.
+
 ## Frameworks
 
 See [framework-usage-guide.md](framework-usage-guide.md).
