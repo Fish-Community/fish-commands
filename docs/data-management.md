@@ -29,7 +29,7 @@ find (ctrl + f then paste the code thing inside the file) `type FishPlayerData` 
 ### FishPlayer Data Fields
 
 | Category | Field | Type |
-| :--- | :--- | :--- | :--- |
+| :--- | :--- | :--- |
 | **Immutable** | `uuid` | `string` |
 | **Important** | `muted` | `boolean` |
 | | `unmarkTime` | `number` |
