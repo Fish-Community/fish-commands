@@ -81,11 +81,11 @@ A player may join two servers at once:
 
 ### Backend handling
 
-The backend needs to store unsynced data as a map from index to value. When data is fetched or saved, it needs to handle only the appropriate value for the server making the request.
+For unsynced data, the backend needs to store a different value from each server. In the MongoDB document, the data is stored as a mapping from gamemode to value. When data is fetched or saved, the backend needs to return or modify only the appropriate value for the server making the request.
 
 Updates to the history field use the setUnion operation. It is not possible for a server to remove history entries, only the backend can do this. Therefore, if a player is connected to two servers at once and their history is updated in both servers, no data will be lost.
 
-To simplify validation, the "Save only the unimportant fields to the database" operation sends all fields over the wire, and the backend handles selection of unimportant fields.
+To simplify validation, the "Save only the unimportant fields to the database" operation sends **all** fields to the backend, and the backend selects and saves only the unimportant fields.
 
 ## FishPlayer transients
 
