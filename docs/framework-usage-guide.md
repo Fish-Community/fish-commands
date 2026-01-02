@@ -179,3 +179,66 @@ The `f` function also behaves differently if it is being run from a chat command
 
 ----
 For information about the implementation of the frameworks, see [frameworks.md](frameworks.md).
+
+## Serialization framework
+
+The serialization framework handles the efficient serialization of data values. (If performance is more important than storage space and validation is not an issue, use JSON.)
+
+### Manual use
+
+Create an instance of the Serializer class, passing the type of your data as a generic type argument, and a schema to the constructor. Use the read() and write() methods to read and write data from streams.
+
+The type definitions will provide intellisense while you are writing the schema, and will catch certain errors in the schema.
+
+Example:
+```ts
+type DataEntry = {
+  field1: string;
+  /** will have exactly 510 elements */
+  field2: number[];
+  field3: {
+    field4: number;
+  }
+};
+const serializer = new Serializer<DataEntry>(
+  ["object", [
+    ["field1", "string"],
+    ["field2", ["array", 510, ["number", "u8"]]], //use a constant length for the array
+    ["field3", ["object", [
+      ["field4", ["number", "i32"]]
+    ]]],
+  ]]
+);
+let x = Serializer.read(...);
+//  ^? DataEntry
+```
+
+### @serialize decorator
+To save a static class property to Core.settings, use the `@serialize` decorator. The decorator will read the type of the property and provide intellisense for the schema.
+
+Example:
+```ts
+type DataEntry = {
+  field1: string;
+  /** will have exactly 510 elements */
+  field2: number[];
+  field3: {
+    field4: number;
+  }
+};
+class SomethingFishy {
+	@serialize("fishes", () => ["version", 0, //Version is optional but recommended
+    //Use a u16 to store the length of the arrray: maximum length is 65536
+		["array", "u16", 
+      ["object", [
+        ["field1", "string"],
+        ["field2", ["array", 510, ["number", "u8"]]], //use a constant length for the array
+        ["field3", ["object", [
+          ["field4", ["number", "i32"]]
+        ]]],
+      ]]
+    ]
+	])
+  static fishes: DataEntry[] = [];
+}
+```
