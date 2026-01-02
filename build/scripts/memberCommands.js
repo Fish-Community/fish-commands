@@ -7,63 +7,76 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 var commands_1 = require("/commands");
 exports.commands = (0, commands_1.commandList)({
-    pet: {
+    pet: (0, commands_1.command)({
         args: ["name:string?"],
         description: 'Spawns a cool pet with a displayed name that follows you around.',
         perm: commands_1.Perm.member,
+        data: {},
         handler: function (_a) {
-            var _b;
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
+            var _b, _c;
+            var args = _a.args, sender = _a.sender, data = _a.data, outputSuccess = _a.outputSuccess;
             if (!args.name) {
-                var pet_1 = Groups.unit.find(function (u) { return u.id === sender.pet; });
-                if (pet_1)
+                var pet_1 = data[sender.uuid];
+                if (pet_1) {
                     pet_1.kill();
-                sender.pet = null;
-                outputSuccess("Your pet has been removed.");
-                return;
+                    delete data[sender.uuid];
+                    outputSuccess("Your pet has been removed.");
+                    return;
+                }
             }
-            if (sender.muted)
+            if (sender.muted || !args.name)
                 args.name = "".concat(sender.name, "[white]'s pet");
             if (args.name.length > 500)
                 (0, commands_1.fail)("Name cannot be more than 500 characters.");
             if (Strings.stripColors(args.name).length > 70)
                 (0, commands_1.fail)("Name cannot be more than 70 characters, not including color tags.");
-            if (sender.pet !== null) {
-                var pet_2 = Groups.unit.find(function (u) { return u.id === sender.pet; });
-                if (pet_2)
-                    pet_2.kill();
-                sender.pet = null;
-            }
-            var unit = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("You do not have a unit for the pet to follow.");
+            (_b = data[sender.uuid]) === null || _b === void 0 ? void 0 : _b.kill();
+            var unit = (_c = sender.unit()) !== null && _c !== void 0 ? _c : (0, commands_1.fail)("You do not have a unit for the pet to follow.");
             var pet = UnitTypes.merui.spawn(sender.team(), unit.x, unit.y);
             pet.apply(StatusEffects.disarmed, Number.MAX_SAFE_INTEGER);
-            sender.pet = pet.id;
+            data[sender.uuid] = pet;
             Call.infoPopup('[#7FD7FD7f]\uE81B', 5, Align.topRight, 180, 0, 0, 10);
             outputSuccess("Spawned a pet.");
-            function controlUnit(_a) {
-                var pet = _a.pet, fishPlayer = _a.fishPlayer, petName = _a.petName;
-                return Timer.schedule(function () {
-                    var unit = fishPlayer.unit();
-                    if (pet.id !== fishPlayer.pet || !fishPlayer.connected() || !unit) {
-                        pet.kill();
+            var petName = args.name;
+            var vec = new Vec2(0, 0);
+            (function controlUnit() {
+                try {
+                    var unit_1 = sender.unit();
+                    var currentPet = data[sender.uuid];
+                    if (pet != currentPet)
+                        return;
+                    if (currentPet.dead) {
+                        delete data[sender.uuid];
                         return;
                     }
-                    var distX = unit.x - pet.x;
-                    var distY = unit.y - pet.y;
-                    if (distX >= 50 || distX <= -50 || distY >= 50 || distY <= -50) {
-                        pet.approach(new Vec2(distX, distY));
+                    if (!sender.connected()) {
+                        currentPet === null || currentPet === void 0 ? void 0 : currentPet.kill();
+                        return;
                     }
-                    Call.label(petName, 0.07, pet.x, pet.y + 5);
-                    if (fishPlayer.trail) {
-                        Call.effect(Fx[fishPlayer.trail.type], pet.x, pet.y, 0, fishPlayer.trail.color);
+                    if (unit_1 && currentPet) {
+                        var distX = unit_1.x - currentPet.x;
+                        var distY = unit_1.y - currentPet.y;
+                        vec.set(distX, distY);
+                        if (vec.len() > 50) {
+                            currentPet.approach(vec);
+                        }
+                        if (vec.len() > 20 * 8) {
+                            currentPet.apply(StatusEffects.fast, 60);
+                        }
+                        Call.label(petName, 0.07, currentPet.x, currentPet.y + 5);
+                        //Pets share the sender's trail
+                        if (sender.trail) {
+                            Call.effect(Fx[sender.trail.type], currentPet.x, currentPet.y, 0, sender.trail.color);
+                        }
                     }
-                    controlUnit({ petName: petName, pet: pet, fishPlayer: fishPlayer });
-                }, 0.05);
-            }
-            ;
-            controlUnit({ petName: args.name, pet: pet, fishPlayer: sender });
+                    return Timer.schedule(controlUnit, 0.05);
+                }
+                catch (err) {
+                    Log.err(err);
+                }
+            })();
         }
-    },
+    }),
     highlight: {
         args: ['color:string?'],
         description: 'Makes your chat text colored by default.',

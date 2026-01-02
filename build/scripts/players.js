@@ -105,8 +105,6 @@ var FishPlayer = /** @class */ (function () {
         };
         //Misc
         this.player = null;
-        /** Used by the /pet command, TODO move this state to the /pet command */
-        this.pet = null;
         /** Used by the /watch command, TODO move this state to the /watch command */
         this.watch = false;
         /** Used for the /trail command, TODO move this state to the /trail command */

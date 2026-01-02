@@ -238,6 +238,7 @@ class Vec2 {
 	constructor(x:number, y:number);
 	set(v:Vec2):Vec2;
 	set(x:number, y:number):Vec2;
+	len():number;
 }
 /* mindustry.gen.Player */
 class Player {

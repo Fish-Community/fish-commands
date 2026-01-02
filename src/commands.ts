@@ -52,7 +52,7 @@ export const consoleCommandList = <A extends Record<string, string>>(list:{
 	[K in keyof A]: FishConsoleCommandData<A[K], any>;
 }):Record<keyof A, FishConsoleCommandData<string, any>> => list;
 
-export function command<TParam extends string, TData>(cmd:FishCommandData<TParam, TData>):FishCommandData<TParam, TData>;
+export function command<const TParam extends string, TData>(cmd:FishCommandData<TParam, TData>):FishCommandData<TParam, TData>;
 export function command<const TParam extends string, TData>(cmd:() => FishCommandData<TParam, TData>):FishCommandData<TParam, TData>;//not type safe, can't be bothered to find a solution that works with commandList
 export function command<TParam extends string, TData>(cmd:FishConsoleCommandData<TParam, TData>):FishConsoleCommandData<TParam, TData>;
 /**
