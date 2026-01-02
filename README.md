@@ -1,25 +1,27 @@
 # Fish commands
 
+![image](docs/images/fish-logo.png)
+
 A monolithic plugin that handles all custom features for the >|||>Fish servers. Created by Brandons404, rewritten by BalaM314.
 
 **Before reading the code, see [docs/info.md](docs/info.md).**
 
-## Clean and easy to use commands system
-Example code:
-![image](docs/intellisense.png)
-![image](docs/menus.png)
-![image](docs/fail.png)
+![image](docs/images/intellisense.png)
+![image](docs/images/menus.png)
+![image](docs/images/fail.png)
 
-List of notable features:
-* Low-boilerplate argument handling system that supports arguments of various types, and optional arguments. Automatically generates an error if one of the args is invalid (eg, specifying a team that does not exist, or an ambiguous player name).
-* Intellisense for the arguments (The IDE will see `args: ["team:team?"]` and correctly type `args.team` as `Team | null`)
-* Callback-based menu system with builtin permission safety
-* Command handlers are provided with the command's usage stats (how long ago the command was used, etc)
-* Tap handling system
-* Permission handling system
-* Easy failing with fail() and its associated pattern
-* Requirements system for common predicates
-* Automatically allows using a menu to resolve arguments left blank
+## Features
+* 95 in-game commands and 36 console commands
+* Data syncing
+* Automated moderation
+* Cross-server chat
+* Anti-impersonation
+* Chat filtering
+* Map management through a discord bot
+* Map run tracking
+* Visual effects
+* Tile logs
+----
 
 Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks in advance!
 
