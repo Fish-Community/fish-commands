@@ -12,7 +12,7 @@ Most important player information is stored in the FishPlayer class. This data n
 
 ### Data
 
-See `type FishPlayerData` in [src/types.ts](src/types.ts) for up-to-date information.
+See `type FishPlayerData` in [src/types.ts](/src/types.ts) for up-to-date information.
 
 Some data is "unsynced", meaning it is not synced between servers and can be different on each server. However, this data is still stored on the database, to make it easy to change the gamemode of a server.
 
@@ -61,22 +61,22 @@ When the player leaves:
 ### Example scenarios
 
 A player may join two servers at once:
-|Server A|Server B|
+|__Server A__|__Server B__|
 |--------|--------|
-|Player joins   |        |
-|        |Player joins   |
-|Set rank|        |
+|**Player joins**   |        |
+|        |**Player joins**   |
+|**Set rank**|        |
 |(fetch) |        |
 |(update)|        |
 |(store) |        |
-|        |Set flag|
+|        |**Set flag**|
 |        |(fetch) |
 |        |(now Server B knows about the new rank)|
 |        |(update)|
 |        |(store) |
-|        |Leaves  |
+|        |**Leaves**  |
 |        |(store unimportant or unsynced state)|
-|Leaves  |        |
+|**Leaves**  |        |
 |(store unimportant or unsynced state)|        |
 
 ### Backend handling
@@ -111,7 +111,7 @@ Player count data is stored on each server using the serialization framework.
 
 Some information about the current map run is stored locally, to keep it through a server restart. The maximum player count reached and the time elapsed are stored in `Core.settings`.
 
-Some information is stored for each run on a map. See `class FinishedMapRun` in [src/maps.ts](src/maps.ts) for up-to-date information.
+Some information is stored for each run on a map. See `class FinishedMapRun` in [src/maps.ts](/src/maps.ts) for up-to-date information.
 
 Map run data is stored on each server using the serialization framework. This data gets processed into statistics and displayed by the `/mapinfo` command.
 
