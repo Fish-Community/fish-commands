@@ -12,18 +12,21 @@ Most important player information is stored in the FishPlayer class. This data n
 
 ### Data
 
-See `type FishPlayerData` in (src/types.ts)[src/types.ts] for up-to-date information.
+See `type FishPlayerData` in [src/types.ts](src/types.ts) for up-to-date information.
 
 Some data is "unsynced", meaning it is not synced between servers and can be different on each server. However, this data is still stored on the database, to make it easy to change the gamemode of a server.
+
 Most unsynced data is tied to a gamemode, so it is indexed by the gamemode name. However, the USID is tied to the IP address of the server, so it is indexed by IP address.
 
 Immutable data:
 * uuid: string
+
 Important data:
 * muted: boolean
 * unmarkTime: number
 * rank: string
 * flags: string[]
+
 Unimportant data:
 * name: string
 * highlight: string | null
@@ -31,6 +34,7 @@ Unimportant data:
 * history: PlayerHistoryEntry[]
 * chatStrictness: "chat" | "strict"
 * showRankPrefix: boolean
+
 Unsynced data:
 * usid: string | null
 * lastJoined: number
@@ -39,16 +43,19 @@ Unsynced data:
 
 ### Syncing algorithm
 
-* When a player joins the server (connectpacket):
+When a player joins the server (connectpacket):
   * Fetch data from the backend
   * This data may arrive before or after the player connects. Some code needs to be run on data fetch, some code needs to be run on connect, and some needs to be run on both.
-* When some important state needs to be updated (for example, rank):
+
+When some important state needs to be updated (for example, rank):
   * Fetch data from the backend again, because the data in cache may be outdated if it has been modified on the database.
   * Make the necessary change to the data
   * Save it to the backend
-* When unimportant state needs to be updated (for example, /rainbow):
+
+When unimportant state needs to be updated (for example, /rainbow):
   * Modify the data currently in memory.
-* When the player leaves:
+
+When the player leaves:
   * Save **only the unimportant fields** to the database.
 
 ### Example scenarios
@@ -92,7 +99,7 @@ Banned IPs and banned UUIDs are both stored separately from fish player data, as
 
 The server queries ban data when it receives a ConnectPacket. To allow for unbanning IPs, the server also queries ban data when it receives a ConnectionEvent for a banned IP. However, by the time the query response comes back, Mindustry will have already kicked the player, so unbanned players will need to join twice.
 
-Bans do not spread automatically: for example, if the UUID `bbbbbbb` and the IP `1.2.3.4` are banned, and a player attempts to connect from UUID `cccccc` and IP `1.2.3.4`, the connection will be rejected, but the UUID `cccccc` will not become banned.
+Bans do not spread automatically: for example, if the UUID `bbbbbbb` and the IP `1.2.3.4` are banned, and a player attempts to connect from UUID `cccccc` and IP `1.2.3.4`, the connection will be rejected, but the UUID `cccccc` will **not** become banned.
 
 ## Player count data
 
@@ -104,7 +111,7 @@ Player count data is stored on each server using the serialization framework.
 
 Some information about the current map run is stored locally, to keep it through a server restart. The maximum player count reached and the time elapsed are stored in `Core.settings`.
 
-Some information is stored for each run on a map. See `class FinishedMapRun` in (src/maps.ts)[src/maps.ts] for up-to-date information.
+Some information is stored for each run on a map. See `class FinishedMapRun` in [src/maps.ts](src/maps.ts) for up-to-date information.
 
 Map run data is stored on each server using the serialization framework. This data gets processed into statistics and displayed by the `/mapinfo` command.
 
