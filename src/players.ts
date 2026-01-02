@@ -5,24 +5,22 @@ This file contains the FishPlayer class, and many player-related functions.
 
 import * as api from "/api";
 import { Perm, PermType } from "/commands";
+import { FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
+import { crash, Duration, escapeStringColorsClient, parseError, setToArray, StringIO } from '/funcs';
 import * as globals from "/globals";
-import { FColor, Gamemode, heuristics, localIPAddress, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { uuidPattern } from "/globals";
 import { Menu } from "/menus";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
 import type { FishCommandArgType, FishPlayerData, PlayerHistoryEntry } from "/types";
-import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, match, matchFilter } from "/utils";
-import { Duration, parseError, to2DArray } from '/funcs';
-import { escapeStringColorsClient, escapeStringColorsServer } from '/funcs';
-import { crash } from '/funcs';
-import { StringIO } from '/funcs';
-import { setToArray } from '/funcs';
+import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, matchFilter } from "/utils";
 
 
 export class FishPlayer {
+	/** Stores all currently loaded FishPlayer objects. */
 	static cachedPlayers:Record<string, FishPlayer> = {};
-	static readonly maxHistoryLength = 5;
+	/** Save version used for serialized FishPlayers. */
 	static readonly saveVersion = 12;
+	/** Maximum chunk size used when writing FishPlayer data to Core.settings. */
 	static readonly chunkSize = 50000;
 
 	//Static transients
@@ -31,37 +29,31 @@ export class FishPlayer {
 		numIpsFlagged: 0,
 		numIpsErrored: 0,
 	};
+	/** The last player that was kicked due to a USID mismatch. */
 	static lastAuthKicked:FishPlayer | null = null;
-	//If a new account joins from one of these IPs, the IP gets banned.
+	/**
+	 * List of IPs that were recently punished.
+	 * If a new account joins from one of these IPs,
+	 * we assume they are trying to evade the punishment
+	 * and the IP gets banned.
+	 */
 	static punishedIPs = [] as Array<[ip:string, uuid:string, expiryTime:number]>;
+	/** Stores the 10 most recent players that left. */
+	static recentLeaves:FishPlayer[] = [];
+	//Used for the antibot. Some of these values are reset by timers.
 	static flagCount = 0;
 	static playersJoinedRecent = 0;
 	static antiBotModePersist = false;
 	static antiBotModeOverride = false;
 	static lastBotWhacked = 0;
-	/** Stores the 10 most recent players that left. */
-	static recentLeaves:FishPlayer[] = [];
-	static migrationFailed = false;
-	static batches = 0;
 	
-	//Transients
-	player:mindustryPlayer | null = null;
-	pet:number | null = null;
-	watch:boolean = false;
+	//#region Transient properties
+	//Commands framework
 	/** Front-to-back queue of menus to show. */
 	activeMenus: Array<{
 		callback: (option:number) => void;
 	}> = [];
-	tileId = false;
-	tilelog:null | "once" | "persist" = null;
-	trail: {
-		type: string;
-		color: Color;
-	} | null = null;
-	cleanedName:string = "Unnamed player [ERROR}";
-	prefixedName:string = "Unnamed player [ERROR}";
-	/** Used to freeze players when votekicking. */
-	frozen:boolean = false;
+	/** Mapping from command to usage data. */
 	usageData: Record<string, {
 		lastUsed: number;
 		lastUsedSuccessfully: number;
@@ -73,25 +65,55 @@ export class FishPlayer {
 		lastArgs: {} as Record<string, FishCommandArgType>,
 		mode: "once" as "once" | "on",
 	};
+	//Misc
+	player:mindustryPlayer | null = null;
+	/** Used by the /pet command, TODO move this state to the /pet command */
+	pet:number | null = null;
+	/** Used by the /watch command, TODO move this state to the /watch command */
+	watch:boolean = false;
+	/** Used for the /trail command, TODO move this state to the /trail command */
+	trail: {
+		type: string;
+		color: Color;
+	} | null = null;
+	cleanedName:string = "Unnamed player [ERROR}";
+	prefixedName:string = "Unnamed player [ERROR}";
+	/** Used to freeze players when votekicking. */
+	frozen:boolean = false;
+	/** Used to avoid spamming players with ads by the tip message system */
 	lastShownAd:number = globals.maxTime;
+	/** Used to avoid spamming players with ads by the tip message system */
 	showAdNext:boolean = false;
+	/** Transient statistics, used by the automatic griefer detection. */
 	tstats = {
 		//remember to clear this in updateSavedInfoFromPlayer!
 		blocksBroken: 0,
 	};
+	/** Whether the player has manually marked themselves as AFK. */
 	manualAfk = false;
-	shouldUpdateName = true;
+	//Used for AFK detection.
 	lastMousePosition = [0, 0] as [x:number, y:number];
 	lastUnitPosition = [0, 0] as [x:number, y:number];
 	lastActive:number = Date.now();
+	/** Set this to false to disable automatic name updates. Used for the rename console command. */
+	shouldUpdateName = true;
+	/** Used by the sendMessage() ratelimit system. */
 	lastRatelimitedMessage = -1;
+	/** Keeps track of whether a player has changed team this match, for win rate calculation. */
 	changedTeam = false;
+	/** Whether the player's IP was detected as a VPN. */
 	ipDetectedVpn = false;
-	lastPollSent = -1;
+	/**
+	 * If a player's IP is detected as a VPN on their first join,
+	 * they are autoflagged and cannot build or talk in chat.
+	 */
 	autoflagged = false;
+	/** The original name that this player used to join the server. */
+	originalName?: string;
+	// Used by the data syncing framework.
 	infoUpdated = false;
 	dataSynced = false;
-	originalName?: string;
+	//#endregion
 	
 	//Stored data
 	uuid: string;
@@ -100,15 +122,25 @@ export class FishPlayer {
 	unmarkTime: number = -1;
 	rank: Rank = Rank.player;
 	flags = new Set<RoleFlag>();
+	/** Used to color chat messages for the member command */
 	highlight: string | null = null;
+	/** Used to color the player's name for the member command */
 	rainbow: {
 		speed: number;
 	} | null = null;
+	/** List of all moderation actions that have been performed on this player. */
 	history: PlayerHistoryEntry[] = [];
+	/**
+	 * The USID for this player.
+	 * USID stands for Unique Server IDentifier. It is like a UUID, but unique to each server (by IP and port).
+	 * It cannot be viewed by admins and it cannot be obtained by other servers.
+	 */
 	usid: string | null = null;
+	/** If chat strictness is set to "strict", the player will not be allowed to swear. */
 	chatStrictness: "chat" | "strict" = "chat";
 	/** -1 represents unknown */
 	lastJoined:number = -1;
+	/** -1 represents unknown */
 	firstJoined:number = -1;
 	stats: {
 		blocksBroken: number;
@@ -126,6 +158,7 @@ export class FishPlayer {
 		gamesFinished: 0,
 		gamesWon: 0,
 	};
+	/** Used for the /vanish command. */
 	showRankPrefix:boolean = true;
 
 	constructor(uuid:string, data:Partial<FishPlayerData>, player:mindustryPlayer | null){
@@ -980,7 +1013,7 @@ We apologize for the inconvenience.`
 		out.writeBool(this.muted);
 		out.writeNumber(this.unmarkTime, 13);// this will stop working in 2286! https://en.wikipedia.org/wiki/Time_formatting_and_storage_bugs#Year_2286
 		out.writeString(this.highlight, 2, true);
-		out.writeArray(this.history, (i, str) => {
+		out.writeArray(this.history.slice(-5), (i, str) => {
 			str.writeString(i.action, 2);
 			str.writeString(i.by.slice(0, 98), 2, true);
 			str.writeNumber(i.time, 15);
@@ -1019,7 +1052,7 @@ We apologize for the inconvenience.`
 		if(forceSaveSettings) Core.settings.manualSave();
 	}
 	shouldCache(){
-		return this.ranksAtLeast("mod") || FishPlayer.migrationFailed;
+		return this.ranksAtLeast("mod");
 	}
 	/** Does not include stats */
 	hasData(){
@@ -1223,9 +1256,6 @@ We apologize for the inconvenience.`
 	//#region moderation
 	/** Records a moderation action taken on a player. */
 	addHistoryEntry(entry:PlayerHistoryEntry){
-		if(this.history.length > FishPlayer.maxHistoryLength){
-			this.history.shift();
-		}
 		this.history.push(entry);
 	}
 	static addPlayerHistory(id:string, entry:PlayerHistoryEntry){

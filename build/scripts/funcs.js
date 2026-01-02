@@ -103,8 +103,10 @@ var StringBuilder = /** @class */ (function () {
     return StringBuilder;
 }());
 exports.StringBuilder = StringBuilder;
-//I really should have just used bytes instead of a string.
-/** Used for serialization to strings. */
+/**
+ * Used for serialization to strings.
+ * @deprecated use Serializer instead, which serializes to byte[]
+ */
 var StringIO = /** @class */ (function () {
     function StringIO(string) {
         if (string === void 0) { string = ""; }

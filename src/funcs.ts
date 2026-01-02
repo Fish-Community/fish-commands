@@ -62,9 +62,10 @@ export class StringBuilder {
 		return this;
 	}
 }
-//I really should have just used bytes instead of a string.
-/** Used for serialization to strings. */
-
+/**
+ * Used for serialization to strings.
+ * @deprecated use Serializer instead, which serializes to byte[]
+ */
 export class StringIO {
 	offset: number = 0;
 	constructor(public string: string = "") { }
