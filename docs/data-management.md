@@ -12,7 +12,7 @@ Most important player information is stored in the FishPlayer class. This data n
 
 ### Data
 
-See `type FishPlayerData` in (src/types.ts)[src/types.ts] for up-to-date information.
+See `type FishPlayerData` in [src/types.ts](src/types.ts) for up-to-date information.
 
 Some data is "unsynced", meaning it is not synced between servers and can be different on each server. However, this data is still stored on the database, to make it easy to change the gamemode of a server.
 Most unsynced data is tied to a gamemode, so it is indexed by the gamemode name. However, the USID is tied to the IP address of the server, so it is indexed by IP address.
