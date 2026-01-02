@@ -45,6 +45,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SettingsSerializer = exports.Serializer = exports.DataClass = void 0;
 exports.dataClass = dataClass;
 exports.serialize = serialize;
+/*
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains the serialization framework.
+For usage information, see docs/framework-usage-guide.md
+For maintenance information, see docs/frameworks.md
+*/
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var DataClass = /** @class */ (function () {

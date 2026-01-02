@@ -1,5 +1,5 @@
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 This is a special file which is automatically loaded by the game server.
 It only contains polyfills, and requires index.js.
 */

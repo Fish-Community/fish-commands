@@ -1,8 +1,10 @@
 "use strict";
 /* eslint-disable @typescript-eslint/array-type */
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-This file contains the menu system.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains the menu framework.
+For usage information, see docs/framework-usage-guide.md
+For maintenance information, see docs/frameworks.md
 */
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {

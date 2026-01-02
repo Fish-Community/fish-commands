@@ -1,6 +1,6 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains mutable global variables, and global constants.
 */
 Object.defineProperty(exports, "__esModule", { value: true });

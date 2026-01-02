@@ -1,6 +1,6 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains all the console commands, which can be run through the server console.
 */
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {

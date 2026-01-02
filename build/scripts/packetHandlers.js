@@ -1,6 +1,6 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the visual effects system.
 Original contributor: @author TheEt1234
 Fixes: @author BalaM314

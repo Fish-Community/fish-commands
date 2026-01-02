@@ -1,7 +1,7 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-Unfinished.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains the map run tracker and statistics computation.
 */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {

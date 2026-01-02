@@ -1,6 +1,6 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains most in-game chat commands that can be run by untrusted players.
 */
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {

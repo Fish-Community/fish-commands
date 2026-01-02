@@ -1,6 +1,7 @@
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-This file contains many utility functions.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains many utility functions that need access to any values from other files.
+For functions that don't need values from other files, see funcs.ts.
 */
 
 import * as api from '/api';

@@ -1,6 +1,6 @@
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-This file contains a wrapper over the API calls to the backend server.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains wrappers over the API calls to the backend server.
 */
 
 import type { FishPlayerData } from '/types';

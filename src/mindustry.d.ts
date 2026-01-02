@@ -1,5 +1,5 @@
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains one single declaration from mindustryTypes.ts that cannot go in there.
 */
 

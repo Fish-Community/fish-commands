@@ -1,6 +1,6 @@
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-This file contains a custom (bad) polyfill for promises with slightly different behavior.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains a custom polyfill for promises with slightly different behavior.
 */
 
 
@@ -17,10 +17,6 @@ export function queueMicrotask(callback:() => unknown, errorHandler:(err:unknown
 	});
 }
 
-/**
- * Differences from normal promises:
- * If a called-later handler throws an error, it will print an error to the console, and will not call the reject handler.
- */
 export class Promise<TResolve, TReject> {
 	private state: ["resolved", TResolve] | ["rejected", TReject] | ["pending"] = ["pending"];
 	private resolveHandlers: Array<(value:TResolve) => unknown> = [];

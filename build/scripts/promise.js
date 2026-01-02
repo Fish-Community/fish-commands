@@ -1,7 +1,7 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-This file contains a custom (bad) polyfill for promises with slightly different behavior.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains a custom polyfill for promises with slightly different behavior.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Promise = void 0;
@@ -20,10 +20,6 @@ function queueMicrotask(callback, errorHandler) {
         }
     });
 }
-/**
- * Differences from normal promises:
- * If a called-later handler throws an error, it will print an error to the console, and will not call the reject handler.
- */
 var Promise = /** @class */ (function () {
     function Promise(initializer, skipMicrotask) {
         if (skipMicrotask === void 0) { skipMicrotask = false; }

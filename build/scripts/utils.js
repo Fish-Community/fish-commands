@@ -1,7 +1,8 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-This file contains many utility functions.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains many utility functions that need access to any values from other files.
+For functions that don't need values from other files, see funcs.ts.
 */
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;

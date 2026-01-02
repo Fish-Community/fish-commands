@@ -1,5 +1,5 @@
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 Script to remap imports from '/filename' to './filename.js'.
 */
 

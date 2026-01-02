@@ -1,6 +1,6 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains TypeScript type definitions for Mindustry's code.
 Mindustry is written in Java, which has strong types.
 Mindustry supports loading Javascript, which does not have types.

@@ -36,6 +36,10 @@ var __runInitializers = (this && this.__runInitializers) || function (thisArg, i
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Metrics = void 0;
+/*
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains the player count tracking.
+*/
 var io_1 = require("/io");
 var Metrics = function () {
     var _a;

@@ -1,3 +1,9 @@
+/*
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains the serialization framework.
+For usage information, see docs/framework-usage-guide.md
+For maintenance information, see docs/frameworks.md
+*/
 import { crash, lazy } from "/funcs";
 import { FishEvents } from "/globals";
 

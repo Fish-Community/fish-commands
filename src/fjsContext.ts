@@ -1,6 +1,7 @@
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-This file contains the context for the "fjs" command, which executes code with access to the plugin's internals.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains the context for the "fjs" command,
+which executes code with access to the plugin's internals.
 */
 
 import type { FishPlayer as tFishPlayer } from "/players";

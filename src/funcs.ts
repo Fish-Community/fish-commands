@@ -1,3 +1,8 @@
+/*
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains dozens of simple functions that do not need access to any values from other files.
+For functions that do need values from other files, see utils.ts.
+*/
 import type { PartialFormatString, TagFunction } from '/types.js';
 
 const storedValues: Record<string, {

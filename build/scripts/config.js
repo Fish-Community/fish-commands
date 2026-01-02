@@ -1,6 +1,6 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
+Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains configurable constants.
 */
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {

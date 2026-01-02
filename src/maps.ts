@@ -1,6 +1,6 @@
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-Unfinished.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains the map run tracker and statistics computation. 
 */
 
 import { FFunction } from '/commands';

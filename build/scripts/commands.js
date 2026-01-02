@@ -1,7 +1,9 @@
 "use strict";
 /*
-Copyright © BalaM314, 2025. All Rights Reserved.
-This file contains the commands system.
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains the commands framework.
+For usage information, see docs/framework-usage-guide.md
+For maintenance information, see docs/frameworks.md
 */
 //Behold, the power of typescript!
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
