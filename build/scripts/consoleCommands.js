@@ -185,6 +185,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                             "all IPs used: ".concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", ")),
                             "joined &c".concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times"),
                             fishP && fishP.lastJoined !== -1 && "Last joined: ".concat((0, utils_1.formatTimeRelative)(fishP.lastJoined)),
+                            fishP && fishP.firstJoined !== -1 && (0, utils_1.formatTimeRelative)(fishP.firstJoined),
                             fishP && "USID: &c".concat(fishP.usid, "&fr"),
                             fishP && fishP.rank !== ranks_1.Rank.player && "Rank: &c".concat(fishP.rank.name, "&fr"),
                             flagsText,

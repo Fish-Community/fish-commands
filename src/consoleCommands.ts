@@ -113,6 +113,7 @@ export const commands = consoleCommandList({
 						`all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}`,
 						`joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times`,
 						fishP && fishP.lastJoined !== -1 && `Last joined: ${formatTimeRelative(fishP.lastJoined)}`,
+						fishP && fishP.firstJoined !== -1 && formatTimeRelative(fishP.firstJoined),
 						fishP && `USID: &c${fishP.usid}&fr`,
 						fishP && fishP.rank !== Rank.player && `Rank: &c${fishP.rank.name}&fr`,
 						flagsText,

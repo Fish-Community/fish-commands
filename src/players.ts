@@ -592,6 +592,7 @@ export class FishPlayer {
 		} else {
 			this.originalName = this.name = player.name;
 		}
+		if(this.firstJoined == -1) this.firstJoined = Date.now();
 
 		//Do not update USID here
 		this.manualAfk = false;
