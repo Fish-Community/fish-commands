@@ -84,6 +84,9 @@ export default defineConfig([
 				patterns: [{
 					group: ['./*'],
 					message: 'Do not import things from "./foo", this will crash at runtime. Use "/foo" instead.',
+				}, {
+					group: ['../*'],
+					message: 'Do not import things from "../foo", this will crash at runtime. Use "/foo" instead.',
 				}],
 			}],
 		}
