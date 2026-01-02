@@ -7,8 +7,8 @@ Fixes: @author Dart25
 Fixes: @author Jurorno9
 */
 
-import { Perm, commandList } from '/commands';
-import { FishPlayer } from '/players';
+import { Perm, commandList } from "/commands";
+import { FishPlayer } from "/players";
 
 //some much needed restrictions
 /** point in which effects will refuse to render */

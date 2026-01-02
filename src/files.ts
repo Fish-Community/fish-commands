@@ -5,10 +5,10 @@ Original contributor: @author Jurorno9
 Maintenance: @author BalaM314
 */
 
-import { mapRepoURLs, Gamemode } from "/config";
+import { Gamemode, mapRepoURLs } from "/config";
+import { crash } from "/funcs";
 import { Promise } from "/promise";
 import { getHash } from "/utils";
-import { crash } from '/funcs';
 
 
 

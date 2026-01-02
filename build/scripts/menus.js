@@ -68,11 +68,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.listeners = exports.Menu = void 0;
 exports.registerListeners = registerListeners;
 var commands_1 = require("/commands");
-var players_1 = require("/players");
-var utils_1 = require("/utils");
 var funcs_1 = require("/funcs");
-var funcs_2 = require("/funcs");
+var players_1 = require("/players");
 var promise_1 = require("/promise");
+var utils_1 = require("/utils");
 /** Used to change the behavior of adding another menu when being run in a menu callback. */
 var isInMenuCallback = false;
 /** Stores a mapping from name to the numeric id of a listener that has been registered. */
@@ -169,7 +168,7 @@ exports.Menu = {
         var _b = _a === void 0 ? {} : _a, _c = _b.includeCancel, includeCancel = _c === void 0 ? false : _c, _d = _b.optionStringifier, optionStringifier = _d === void 0 ? String : _d, _e = _b.columns, columns = _e === void 0 ? 3 : _e, _f = _b.onCancel, onCancel = _f === void 0 ? "ignore" : _f, _g = _b.cancelOptionId, cancelOptionId = _g === void 0 ? -1 : _g;
         //Set up the 2D array of options, and maybe add cancel
         //Call.menu() with [[]] will cause a client crash, make sure to pass [] instead
-        var arrangedOptions = (options.length == 0 && !includeCancel) ? [] : (0, funcs_2.to2DArray)(options, columns);
+        var arrangedOptions = (options.length == 0 && !includeCancel) ? [] : (0, funcs_1.to2DArray)(options, columns);
         if (includeCancel) {
             arrangedOptions.push(["[red]Cancel[]"]);
             //This is safe because cancelOptionId is set,
@@ -334,7 +333,7 @@ exports.Menu = {
         var _b;
         var _c = _a.rowsPerPage, rowsPerPage = _c === void 0 ? 10 : _c, _d = _a.columns, columns = _d === void 0 ? 3 : _d, cfg = __rest(_a, ["rowsPerPage", "columns"]);
         //Generate pages
-        var pages = (0, funcs_2.to2DArray)((0, funcs_2.to2DArray)(options, columns), rowsPerPage);
+        var pages = (0, funcs_1.to2DArray)((0, funcs_1.to2DArray)(options, columns), rowsPerPage);
         if (pages.length <= 1)
             return exports.Menu.buttons(target, title, description, (_b = pages[0]) !== null && _b !== void 0 ? _b : [], cfg);
         return exports.Menu.pages(target, title, description, pages, cfg);
@@ -344,7 +343,7 @@ exports.Menu = {
         if (_a === void 0) { _a = {}; }
         var _c = _a.rowsPerPage, rowsPerPage = _c === void 0 ? 10 : _c, _d = _a.columns, columns = _d === void 0 ? 3 : _d, _e = _a.optionStringifier, optionStringifier = _e === void 0 ? String : _e, cfg = __rest(_a, ["rowsPerPage", "columns", "optionStringifier"]);
         //Generate pages
-        var pages = (0, funcs_2.to2DArray)((0, funcs_2.to2DArray)(options.map(function (o) { return ({ data: o, get text() { return optionStringifier(o); } }); }), columns), rowsPerPage);
+        var pages = (0, funcs_1.to2DArray)((0, funcs_1.to2DArray)(options.map(function (o) { return ({ data: o, get text() { return optionStringifier(o); } }); }), columns), rowsPerPage);
         if (pages.length <= 1)
             return exports.Menu.buttons(target, title, description, (_b = pages[0]) !== null && _b !== void 0 ? _b : [], cfg);
         return exports.Menu.pages(target, title, description, pages, cfg);

@@ -3,11 +3,11 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains timers that run code at regular intervals.
 */
 
-import { DurationSecs } from '/funcs';
-import { getStaffMessages } from '/api';
+import { getStaffMessages } from "/api";
 import * as config from "/config";
 import { Gamemode } from "/config";
-import { updateMaps } from '/files';
+import { updateMaps } from "/files";
+import { DurationSecs } from "/funcs";
 import { FishEvents, ipJoins } from "/globals";
 import { FishPlayer } from "/players";
 import { definitelyRealMemoryCorruption, neutralGameover } from "/utils";

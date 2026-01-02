@@ -7,11 +7,10 @@ For maintenance information, see docs/frameworks.md
 */
 
 import { CommandError, fail } from "/commands";
+import { parseError, to2DArray } from "/funcs";
 import { FishPlayer } from "/players";
-import { outputFail } from "/utils";
-import { parseError } from '/funcs';
-import { to2DArray } from '/funcs';
 import { Promise } from "/promise";
+import { outputFail } from "/utils";
 
 /** Used to change the behavior of adding another menu when being run in a menu callback. */
 let isInMenuCallback = false;
@@ -350,3 +349,4 @@ export const Menu = {
 };
 
 export { registeredListeners as listeners };
+

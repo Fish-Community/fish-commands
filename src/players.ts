@@ -6,7 +6,7 @@ This file contains the FishPlayer class, and many player-related functions.
 import * as api from "/api";
 import { Perm, PermType } from "/commands";
 import { FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
-import { crash, Duration, escapeStringColorsClient, parseError, setToArray, StringIO } from '/funcs';
+import { crash, Duration, escapeStringColorsClient, parseError, setToArray, StringIO } from "/funcs";
 import * as globals from "/globals";
 import { uuidPattern } from "/globals";
 import { Menu } from "/menus";

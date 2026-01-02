@@ -71,11 +71,11 @@ var __read = (this && this.__read) || function (o, n) {
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FMap = exports.PartialMapRun = exports.FinishedMapRun = void 0;
+var config_1 = require("/config");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var io_1 = require("/io");
 var utils_1 = require("/utils");
-var config_1 = require("/config");
 var FinishedMapRun = /** @class */ (function (_super) {
     __extends(FinishedMapRun, _super);
     //this constructor is useless, but rhino crashes with a bizarre error when trying to run the emitted code

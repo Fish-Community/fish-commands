@@ -6,7 +6,7 @@ This file contains configurable constants.
 import type { PermType } from "/commands";
 import { ipPattern, ipPortPattern, uuidPattern } from "/globals";
 import { Rank } from "/ranks";
-import { Duration, getIPAddress, random } from '/funcs';
+import { Duration, random } from "/funcs";
 
 
 
@@ -363,4 +363,3 @@ export const rules = [
 ].map(r => `[white]${r}`);
 //#endregion
 
-export const localIPAddress = getIPAddress();

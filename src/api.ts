@@ -3,10 +3,10 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains wrappers over the API calls to the backend server.
 */
 
-import type { FishPlayerData } from '/types';
-import { Gamemode, backendIP, Mode } from '/config';
-import { FishPlayer } from '/players';
-import { Promise } from '/promise';
+import { backendIP, Gamemode, Mode } from "/config";
+import { FishPlayer } from "/players";
+import { Promise } from "/promise";
+import type { FishPlayerData } from "/types";
 
 
 const cachedIps:Record<string, boolean | undefined> = {};

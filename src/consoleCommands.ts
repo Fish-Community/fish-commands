@@ -5,17 +5,14 @@ This file contains all the console commands, which can be run through the server
 
 import * as api from "/api";
 import { consoleCommandList, fail } from "/commands";
-import { FishServer, localIPAddress, Mode } from "/config";
-import * as globals from "/globals";
-import { Gamemode, mapRepoURLs } from "/config";
-import { ipPortPattern, maxTime } from "/globals";
+import { FishServer, Gamemode, Mode } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
-import { fishState, ipPattern, tileHistory, uuidPattern } from "/globals";
+import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
+import { fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
-import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, outputFail, serverRestartLoop, updateBans } from "/utils";
-import { Duration, escapeStringColorsServer, setToArray, to2DArray } from '/funcs';
+import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
 
 
 export const commands = consoleCommandList({
