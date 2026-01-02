@@ -67,9 +67,7 @@ export class FishPlayer {
 	};
 	//Misc
 	player:mindustryPlayer | null = null;
-	/** Used by the /watch command, TODO move this state to the /watch command */
-	watch:boolean = false;
-	/** Used for the /trail command, TODO move this state to the /trail command */
+	/** Used for the /trail command. */
 	trail: {
 		type: string;
 		color: Color;

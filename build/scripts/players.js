@@ -105,9 +105,7 @@ var FishPlayer = /** @class */ (function () {
         };
         //Misc
         this.player = null;
-        /** Used by the /watch command, TODO move this state to the /watch command */
-        this.watch = false;
-        /** Used for the /trail command, TODO move this state to the /trail command */
+        /** Used for the /trail command. */
         this.trail = null;
         this.cleanedName = "Unnamed player [ERROR}";
         this.prefixedName = "Unnamed player [ERROR}";

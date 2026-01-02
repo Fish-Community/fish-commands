@@ -424,42 +424,42 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
      * spot the command was made. This is pretty buggy but otherwise the
      * player will be up the target player's butt
      */
-    watch: {
+    watch: (0, commands_1.command)({
         args: ['player:player?'],
         description: "Watch/unwatch a player.",
         perm: commands_1.Perm.none,
+        data: new Set,
         handler: function (_a) {
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail;
-            if (sender.watch) {
+            var args = _a.args, data = _a.data, sender = _a.sender, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail;
+            if (data.has(sender.uuid)) {
                 outputSuccess("No longer watching a player.");
-                sender.watch = false;
+                data.delete(sender.uuid);
             }
             else if (args.player) {
-                sender.watch = true;
+                data.add(sender.uuid);
                 var senderUnit_1 = sender.unit();
                 var stayX_1 = senderUnit_1 === null || senderUnit_1 === void 0 ? void 0 : senderUnit_1.x;
                 var stayY_1 = senderUnit_1 === null || senderUnit_1 === void 0 ? void 0 : senderUnit_1.y;
                 var target_1 = args.player.player;
-                var watch_1 = function () {
+                (function watch() {
                     var _a, _b;
-                    if (sender.watch && target_1.unit()) {
+                    if (data.has(sender.uuid) && target_1.unit()) {
                         // Self.X+(172.5-Self.X)/10
                         Call.setCameraPosition(sender.con, target_1.unit().x, target_1.unit().y);
                         if (senderUnit_1)
                             (_b = (_a = sender.unit()) === null || _a === void 0 ? void 0 : _a.set) === null || _b === void 0 ? void 0 : _b.call(_a, stayX_1, stayY_1);
-                        Timer.schedule(function () { return watch_1(); }, 0.1, 0.1, 0);
+                        Timer.schedule(function () { return watch(); }, 0.1, 0.1, 0);
                     }
                     else {
                         Call.setCameraPosition(sender.con, stayX_1, stayY_1);
                     }
-                };
-                watch_1();
+                })();
             }
             else {
                 outputFail("No player to unwatch.");
             }
         },
-    }, spectate: (0, commands_1.command)(function () {
+    }), spectate: (0, commands_1.command)(function () {
         //TODO revise code
         /** Mapping between player and original team */
         var spectators = new Map();

@@ -338,22 +338,23 @@ export const commands = commandList({
 	 * spot the command was made. This is pretty buggy but otherwise the
 	 * player will be up the target player's butt
 	 */
-	watch: {
+	watch: command({
 		args: ['player:player?'],
 		description: `Watch/unwatch a player.`,
 		perm: Perm.none,
-		handler({ args, sender, outputSuccess, outputFail }) {
-			if(sender.watch){
+		data: new Set<string>,
+		handler({ args, data, sender, outputSuccess, outputFail }) {
+			if(data.has(sender.uuid)){
 				outputSuccess(`No longer watching a player.`);
-				sender.watch = false;
+				data.delete(sender.uuid);
 			} else if(args.player){
-				sender.watch = true;
+				data.add(sender.uuid);
 				const senderUnit = sender.unit();
 				const stayX = senderUnit?.x;
 				const stayY = senderUnit?.y;
 				const target = args.player.player!;
-				const watch = () => {
-					if(sender.watch && target.unit()){
+				(function watch(){
+					if(data.has(sender.uuid) && target.unit()){
 						// Self.X+(172.5-Self.X)/10
 						Call.setCameraPosition(sender.con, target.unit()!.x, target.unit()!.y);
 						if(senderUnit) sender.unit()?.set?.(stayX!, stayY!);
@@ -361,14 +362,12 @@ export const commands = commandList({
 					} else {
 						Call.setCameraPosition(sender.con, stayX, stayY);
 					}
-				};
-
-				watch();
+				})();
 			} else {
 				outputFail(`No player to unwatch.`);
 			}
 		},
-	},
+	}),
 	spectate: command(() => {
 		//TODO revise code
 		/** Mapping between player and original team */
