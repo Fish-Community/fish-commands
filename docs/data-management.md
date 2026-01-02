@@ -2,9 +2,10 @@
 
 ## 1. System architecture
 
-We currently have **8 servers**: 
-* 1 for each gamemode
-* **1 backend**: runs the map bot, the #game-staff-chat discord bot, and the database.
+**Servers**: We currently have 
+* **Count**: 8 servers: 
+  * 1 for each gamemode
+  * **1 backend**: runs the map bot, the #game-staff-chat discord bot, and the database.
 
 **The MongoDB database**: 
 * **Access**: through HTTP endpoints on a backend server.
@@ -12,11 +13,12 @@ We currently have **8 servers**:
 
 ## 2. FishPlayer
 
-Most important player information is stored in the FishPlayer class. This data needs to be synced between servers.
+**Storing**: Most important player information is stored in the FishPlayer class. 
+**Note**: This data needs to be synced between servers.
 
 ### Data
 
-See (or find) `type FishPlayerData` in [src/types.ts](src/types.ts) for up-to-date information.
+find (ctrl + f then paste the code thing inside the file) `type FishPlayerData` in [src/types.ts](../src/types.ts) for up-to-date information.
 
 **Unsynced data handling**:
 * **What**: data that is not synced between servers and can be different on each server.
@@ -85,18 +87,19 @@ A player may join two servers at once:
 
 ### Backend handling
 
-**Mapping**: The backend needs to store unsynced data as a map from index to value.
-* **Fetching**: When data is fetched or saved, it needs to handle only the appropriate value for the server making the request.
+**Mapping**: the backend needs to store unsynced data as a map from index to value.
+* **Fetching**: when data is fetched or saved, it needs to handle only the appropriate value for the server making the request.
 
-**Note**: Updates to the history field use the `setUnion` operation.  
-* **Why**: It is not possible for a server to remove history entries, only the backend can do this.  
+**Note**: updates to the history field use the `setUnion` operation.  
+* **Why**: it is not possible for a server to remove history entries, only the backend can do this.  
   * If a player is connected to two servers at once and their history is updated in both servers, no data will be **lost**.
 
 To simplify validation, the "Save only the unimportant fields to the database" operation sends all fields over the wire, and the backend handles selection of unimportant fields.  
 
 ## FishPlayer transients
 
-**What**: some values are not important enough to store, and are only useful for a short time. For example: flag variables used for implementation, references to the player's pet, or a list of menus to show to the player.
+**What**: some values are not important enough to store, and are only useful for a short time. 
+* **Example**: flag variables used for implementation, references to the player's pet, or a list of menus to show to the player.
 
 **Storing**: these values are considered transients, and are only stored in memory. 
 **Discarding**: discarded on server restarts.
@@ -116,27 +119,30 @@ To simplify validation, the "Save only the unimportant fields to the database" o
 
 ## Player count data
 
-The number of players online is saved once every 4 minutes.
+**Saving Interval**: the number of players online is saved once every 4 minutes.
 
-Player count data is stored on each server using the serialization framework.
+**Framework**: player count data is stored on each server using the serialization framework.
 
 ## Map data
 
-Some information about the current map run is stored locally, to keep it through a server restart. The maximum player count reached and the time elapsed are stored in `Core.settings`.
+**Storing**: some information about the current map run is stored locally, to keep it through a server restart.  
+* *Small note*: The maximum player count reached and the time elapsed are stored in `Core.settings`.
 
-Some information is stored for each run on a map. See `class FinishedMapRun` in (src/maps.ts)[src/maps.ts] for up-to-date information.
+**Info**: some information is stored for each run on a map. 
+**Where**: find (ctrl + f then paste the code thing inside the file) `Class FinishedMapRun` in [src/maps.ts](../src/maps.ts) for up-to-date information.
 
-Map run data is stored on each server using the serialization framework. This data gets processed into statistics and displayed by the `/mapinfo` command.
+**Framework**: map run data is stored on each server using the serialization framework. 
+* this data gets processed into statistics and displayed by the `/mapinfo` command.
 
 ## Vanilla PlayerInfo
 
-We use the vanilla PlayerInfo system to track the following fields for moderation:
+**Why**: we use the vanilla PlayerInfo system to track the following fields for moderation:
 * Times joined
 * Times kicked
 * List of past names
 * List of past IPs
 
-These fields are read by the `info` and `/info` commands. Join count is used in many places throughout the plugin for decision logic.
+**Command**: these fields are read by the `info` and `/info` commands. Join count is used in many places throughout the plugin for decision logic.
 
-This data is currently not synced.
+**Sad**: this data is currently not synced.
 
