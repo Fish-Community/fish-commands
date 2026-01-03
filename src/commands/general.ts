@@ -973,7 +973,11 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 	surrender: command(() => {
 		const prefix = "[orange]Surrender[white]: ";
 		const managers = Team.all.map(team =>
-			new VoteManager<number>(Duration.minutes(1.5), ["fractionOfVoters", Gamemode.hexed() ? 1 : 3/4], p => p.team() == team && !p.afk())
+			new VoteManager<number>(
+				Duration.minutes(1.5),
+				["fractionOfVoters", Gamemode.hexed() ? 1 : 3/4],
+				p => p.team() == team,
+			)
 				.on("success", () => team.cores().copy().each(c => c.kill()))
 				.on("vote passed", () => Call.sendMessage(
 					prefix + `Team ${team.coloredName()} has voted to forfeit this match.`

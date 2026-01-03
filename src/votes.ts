@@ -4,6 +4,7 @@ This file contains the voting system.
 Some contributions: @author Jurorno9
 */
 
+import { fail } from "/frameworks/commands";
 import { crash, EventEmitter } from "/funcs";
 import { FishPlayer } from "/players";
 
@@ -33,7 +34,8 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 	constructor(
 		public voteTime:number,
 		public goal:["fractionOfVoters", number] | ["absolute", number] = ["fractionOfVoters", 0.50001],
-		public isEligible:(fishP:FishPlayer, data: SessionData) => boolean = (fishP) => !fishP.afk()
+		public isEligible:(fishP:FishPlayer, data: SessionData) => boolean = () => true,
+		public isCounted:(fishP:FishPlayer, data: SessionData) => boolean = (fishP) => !fishP.afk(),
 	){
 		super();
 		if(goal[0] == "fractionOfVoters"){
@@ -49,8 +51,10 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 		Events.on(EventType.GameOverEvent, () => this.resetVote());
 	}
 
+	/** @throws CommandError */
 	start(player:FishPlayer, newVote:number, data:SessionData){
 		if(data === null) crash(`Cannot start vote: data not provided`);
+		if(!this.isEligible(player, data)) fail(`You are not eligible for this vote.`);
 		this.session = {
 			timer: Timer.schedule(() => this._checkVote(false), this.voteTime / 1000),
 			votes: new Map(),
@@ -59,8 +63,10 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 		this.vote(player, newVote, data);
 	}
 
+	/** @throws CommandError */
 	vote(player:FishPlayer, newVote:number, data:SessionData | null){
 		if(!this.session) return this.start(player, newVote, data!);
+		if(!this.isEligible(player, this.session.data)) fail(`You are not eligible for this vote.`);
 		const oldVote = this.session.votes.get(player.uuid);
 		this.session.votes.set(player.uuid, newVote);
 		if(oldVote == null) this.fire("player vote", [player, newVote]);
@@ -96,19 +102,31 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 	}
 	
 	requiredVotes():number {
-		if(this.goal[0] == "absolute")
+		if(this.goal[0] == "absolute"){
 			return this.goal[1];
-		else
-			return Math.max(Math.ceil(this.goal[1] * this.getEligibleVoters().length), 1);
+		} else {
+			const numVoters = FishPlayer.getAllOnline().filter(p =>
+				this.isEligible(p, this.session!.data) && (this.isCounted(p, this.session!.data) || this.session!.votes.has(p.uuid))
+			).length;
+			return Math.max(Math.ceil(this.goal[1] * numVoters), 1);
+		}
 	}
 
 	currentVotes():number {
-		return this.session ? [...this.session.votes].reduce((acc, [k, v]) => acc + v, 0) : 0;
+		if(this.session){
+			for(const key of this.session.votes.keys()){
+				const fishP = FishPlayer.getById(key)!;
+				if(!this.isEligible(fishP, this.session.data)) this.session.votes.delete(key);
+			}
+			return [...this.session.votes].reduce((acc, [k, v]) => acc + v, 0);
+		} else return 0;
 	}
 
 	getEligibleVoters():FishPlayer[] {
 		if(!this.session) return [];
-		return FishPlayer.getAllOnline().filter(p => this.isEligible(p, this.session!.data) || this.session!.votes.has(p.uuid));
+		return FishPlayer.getAllOnline().filter(p =>
+			this.isEligible(p, this.session!.data)
+		);
 	}
 	messageEligibleVoters(message:string){
 		this.getEligibleVoters().forEach(p => p.sendMessage(message));

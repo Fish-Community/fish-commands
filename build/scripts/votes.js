@@ -19,6 +19,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -46,18 +57,21 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoteManager = void 0;
+var commands_1 = require("/frameworks/commands");
 var funcs_1 = require("/funcs");
 var players_1 = require("/players");
 /** Manages a vote. */
 var VoteManager = /** @class */ (function (_super) {
     __extends(VoteManager, _super);
-    function VoteManager(voteTime, goal, isEligible) {
+    function VoteManager(voteTime, goal, isEligible, isCounted) {
         if (goal === void 0) { goal = ["fractionOfVoters", 0.50001]; }
-        if (isEligible === void 0) { isEligible = function (fishP) { return !fishP.afk(); }; }
+        if (isEligible === void 0) { isEligible = function () { return true; }; }
+        if (isCounted === void 0) { isCounted = function (fishP) { return !fishP.afk(); }; }
         var _this = _super.call(this) || this;
         _this.voteTime = voteTime;
         _this.goal = goal;
         _this.isEligible = isEligible;
+        _this.isCounted = isCounted;
         /** The ongoing voting session, if there is one. */
         _this.session = null;
         if (goal[0] == "fractionOfVoters") {
@@ -77,10 +91,13 @@ var VoteManager = /** @class */ (function (_super) {
         Events.on(EventType.GameOverEvent, function () { return _this.resetVote(); });
         return _this;
     }
+    /** @throws CommandError */
     VoteManager.prototype.start = function (player, newVote, data) {
         var _this = this;
         if (data === null)
             (0, funcs_1.crash)("Cannot start vote: data not provided");
+        if (!this.isEligible(player, data))
+            (0, commands_1.fail)("You are not eligible for this vote.");
         this.session = {
             timer: Timer.schedule(function () { return _this._checkVote(false); }, this.voteTime / 1000),
             votes: new Map(),
@@ -88,9 +105,12 @@ var VoteManager = /** @class */ (function (_super) {
         };
         this.vote(player, newVote, data);
     };
+    /** @throws CommandError */
     VoteManager.prototype.vote = function (player, newVote, data) {
         if (!this.session)
             return this.start(player, newVote, data);
+        if (!this.isEligible(player, this.session.data))
+            (0, commands_1.fail)("You are not eligible for this vote.");
         var oldVote = this.session.votes.get(player.uuid);
         this.session.votes.set(player.uuid, newVote);
         if (oldVote == null)
@@ -126,22 +146,50 @@ var VoteManager = /** @class */ (function (_super) {
         this.session = null;
     };
     VoteManager.prototype.requiredVotes = function () {
-        if (this.goal[0] == "absolute")
+        var _this = this;
+        if (this.goal[0] == "absolute") {
             return this.goal[1];
-        else
-            return Math.max(Math.ceil(this.goal[1] * this.getEligibleVoters().length), 1);
+        }
+        else {
+            var numVoters = players_1.FishPlayer.getAllOnline().filter(function (p) {
+                return _this.isEligible(p, _this.session.data) && (_this.isCounted(p, _this.session.data) || _this.session.votes.has(p.uuid));
+            }).length;
+            return Math.max(Math.ceil(this.goal[1] * numVoters), 1);
+        }
     };
     VoteManager.prototype.currentVotes = function () {
-        return this.session ? __spreadArray([], __read(this.session.votes), false).reduce(function (acc, _a) {
-            var _b = __read(_a, 2), k = _b[0], v = _b[1];
-            return acc + v;
-        }, 0) : 0;
+        var e_1, _a;
+        if (this.session) {
+            try {
+                for (var _b = __values(this.session.votes.keys()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var key = _c.value;
+                    var fishP = players_1.FishPlayer.getById(key);
+                    if (!this.isEligible(fishP, this.session.data))
+                        this.session.votes.delete(key);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return __spreadArray([], __read(this.session.votes), false).reduce(function (acc, _a) {
+                var _b = __read(_a, 2), k = _b[0], v = _b[1];
+                return acc + v;
+            }, 0);
+        }
+        else
+            return 0;
     };
     VoteManager.prototype.getEligibleVoters = function () {
         var _this = this;
         if (!this.session)
             return [];
-        return players_1.FishPlayer.getAllOnline().filter(function (p) { return _this.isEligible(p, _this.session.data) || _this.session.votes.has(p.uuid); });
+        return players_1.FishPlayer.getAllOnline().filter(function (p) {
+            return _this.isEligible(p, _this.session.data);
+        });
     };
     VoteManager.prototype.messageEligibleVoters = function (message) {
         this.getEligibleVoters().forEach(function (p) { return p.sendMessage(message); });
