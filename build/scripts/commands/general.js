@@ -770,7 +770,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 sender.changedTeam = true;
             sender.setTeam(team);
             outputSuccess(f(templateObject_13 || (templateObject_13 = __makeTemplateObject(["Changed your team to ", "."], ["Changed your team to ", "."])), team));
-            if (reason)
+            if (reason && !config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("changed team to ".concat(team.name, " on ").concat((0, funcs_1.escapeTextDiscord)(Vars.state.map.plainName()), " with reason ").concat((0, funcs_1.escapeTextDiscord)(reason)), sender);
         },
     }, teamp: {

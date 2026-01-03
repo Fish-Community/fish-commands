@@ -694,7 +694,7 @@ Please stop attacking and [lime]build defenses[] first!`
 			if(!sender.hasPerm("mod")) sender.changedTeam = true;
 			sender.setTeam(team);
 			outputSuccess(f`Changed your team to ${team}.`);
-			if(reason) logAction(`changed team to ${team.name} on ${escapeTextDiscord(Vars.state.map.plainName())} with reason ${escapeTextDiscord(reason)}`, sender);
+			if(reason && !Gamemode.sandbox()) logAction(`changed team to ${team.name} on ${escapeTextDiscord(Vars.state.map.plainName())} with reason ${escapeTextDiscord(reason)}`, sender);
 		},
 	},
 
