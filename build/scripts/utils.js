@@ -61,6 +61,7 @@ exports.parseTimeString = parseTimeString;
 exports.serverRestartLoop = serverRestartLoop;
 exports.isBuildable = isBuildable;
 exports.getUnitType = getUnitType;
+exports.isMapValidForGamemode = isMapValidForGamemode;
 exports.getMap = getMap;
 exports.getBlock = getBlock;
 exports.teleportPlayer = teleportPlayer;
@@ -458,13 +459,26 @@ function getUnitType(type) {
         return temp;
     return "\"".concat(type, "\" is not a valid unit type.");
 }
+/** The vanilla validation code doesn't work on servers */
+function isMapValidForGamemode(map) {
+    if (map.custom)
+        return true; //we assume that all custom maps are appropriate for the selected gamemode
+    var pvpMaps = ["Veins", "Glacier", "Passage"]; //Maps.pvpMaps
+    switch (Vars.state.rules.mode().name()) {
+        case "sandbox":
+        case "editor": return true; //sandbox can be played on any map
+        case "attack":
+        case "pvp": return pvpMaps.includes(map.name()); //technically the pvp maps are valid attack maps, since they have an (undefended) enemy core
+        case "survival": return !pvpMaps.includes(map.name());
+        default: return false; //unreachable
+    }
+}
 //TODO refactor this, lots of duped code across multiple select functions
 function getMap(name) {
     var e_5, _a;
     if (name == "")
         return "none";
-    var mode = Vars.state.rules.mode();
-    var maps = Vars.maps.all() /*.select(m => mode.valid(m))*/; //this doesn't work...
+    var maps = Vars.maps.all().select(isMapValidForGamemode); //this doesn't work...
     var filters = [
         //m => m.name() === name, //exact match
         function (m) { return m.name().replace(/ /g, "_") === name; }, //exact match with spaces replaced

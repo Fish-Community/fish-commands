@@ -219,6 +219,8 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 				const map = getMap(args[i]);
 				if(map == "none") return {error: `Map "${args[i]}" not found.`};
 				else if(map == "multiple") return {error: `Name "${args[i]}" could refer to more than one map. Be more specific.`};
+				//TODO change all these "multiple" errors into menus
+				//TODO refactor this function, there's a lot of duplicated code
 				outputArgs[cmdArg.name] = map;
 				break;
 			}

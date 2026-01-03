@@ -342,11 +342,22 @@ export function getUnitType(type:string):UnitType | string {
 	return `"${type}" is not a valid unit type.`;
 }
 
+/** The vanilla validation code doesn't work on servers */
+export function isMapValidForGamemode(map:MMap):boolean {
+	if(map.custom) return true; //we assume that all custom maps are appropriate for the selected gamemode
+	const pvpMaps = ["Veins", "Glacier", "Passage"]; //Maps.pvpMaps
+	switch(Vars.state.rules.mode().name()){
+		case "sandbox": case "editor": return true; //sandbox can be played on any map
+		case "attack": case "pvp": return pvpMaps.includes(map.name()); //technically the pvp maps are valid attack maps, since they have an (undefended) enemy core
+		case "survival": return !pvpMaps.includes(map.name());
+		default: return false; //unreachable
+	}
+}
+
 //TODO refactor this, lots of duped code across multiple select functions
 export function getMap(name:string):MMap | "none" | "multiple" {
 	if(name == "") return "none";
-	const mode = Vars.state.rules.mode();
-	const maps = Vars.maps.all() /*.select(m => mode.valid(m))*/; //this doesn't work...
+	const maps = Vars.maps.all().select(isMapValidForGamemode); //this doesn't work...
 	
 	const filters:Array<(m:MMap) => boolean> = [
 		//m => m.name() === name, //exact match
