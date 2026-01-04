@@ -649,7 +649,7 @@ export const commands = commandList({
 	[accent]autoflagged: ${f.boolBad(args.target.autoflagged)}
 	[accent]VPN detected: ${f.boolBad(args.target.ipDetectedVpn)}
 	[accent]times joined / kicked: ${info.timesJoined}/${info.timesKicked}
-	[accent]First joined: ${args.target.firstJoined == -1 ? "unknown" : formatTimeRelative(args.target.firstJoined)}
+	[accent]First joined: ${args.target.firstJoined < 1 ? "unknown" : formatTimeRelative(args.target.firstJoined)}
 	[accent]Names used: [[${names}]`
 			);
 			if(sender.hasPerm("viewUUIDs"))
