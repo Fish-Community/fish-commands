@@ -308,17 +308,19 @@ export class FishPlayer {
 	//#region datasync
 	//Please see docs/data-management.md for a description of the update syncing algorithm.
 	static dataFetchFailedUuids = new Set();
-	static onConnectPacket(uuid:string){
+	static onConnectPacket({uuid, name}:ConnectPacket){
 		const entry = this.cachedPlayers[uuid];
 		if(entry){
 			entry.infoUpdated = false;
 			entry.dataSynced = false;
+			entry.name = name;
 		}
 		api.getFishPlayerData(uuid).then(data => {
 			if(!data) return; //nothing to sync
 			let fishP;
 			if(!(uuid in this.cachedPlayers)){
 				fishP = new FishPlayer(uuid, data, null);
+				fishP.originalName = name;
 				fishP.dataSynced = true;
 				this.cachedPlayers[uuid] = fishP;
 			} else {
@@ -769,9 +771,11 @@ export class FishPlayer {
 	/** Updates the mindustry player's name, using the prefixes of the current rank and role flags. */
 	updateName(){
 		if(!this.connected() || !this.shouldUpdateName) return;//No player, no need to update
+		const name = this.originalName ?? this.name;
 		if(this.marked()) this.showRankPrefix = true;
 		let prefix = '';
-		if(!this.hasPerm("bypassNameCheck") && isImpersonator(this.name, this.ranksAtLeast("admin"))) prefix += "[scarlet]SUSSY IMPOSTOR[]";
+		if(!this.hasPerm("bypassNameCheck") && isImpersonator(name, this.ranksAtLeast("admin")))
+			prefix += "[scarlet]SUSSY IMPOSTOR[]";
 		if(this.marked()) prefix += prefixes.marked;
 		else if(this.autoflagged) prefix += prefixes.flagged;
 		if(this.muted) prefix += prefixes.muted;
@@ -784,17 +788,17 @@ export class FishPlayer {
 		}
 		if(prefix.length > 0 && !prefix.endsWith(" ")) prefix += " ";
 		let replacedName;
-		if(cleanText(this.name, true).includes("hacker")){
+		if(cleanText(name, true).includes("hacker")){
 			//"Don't be a script kiddie"
 			//-LiveOverflow, 2015
-			if(/h.*a.*c.*k.*[3e].*r/i.test(this.name)){ //try to only replace the part that contains "hacker" if it can be found with a simple regex
-				this.name = replacedName = this.name.replace(/h.*a.*c.*k.*[3e].*r/gi, "[brown]script kiddie[]");
+			if(/h.*a.*c.*k.*[3e].*r/i.test(name)){ //try to only replace the part that contains "hacker" if it can be found with a simple regex
+				replacedName = name.replace(/h.*a.*c.*k.*[3e].*r/gi, "[brown]script kiddie[]");
 			} else {
-				this.name = replacedName = "[brown]script kiddie";
+				replacedName = "[brown]script kiddie";
 			}
 		} else if(this.name.endsWith("[") && !this.name.endsWith("[[")){
-			replacedName = this.name + "[";
-		} else replacedName = this.name;
+			replacedName = name + "[";
+		} else replacedName = name;
 		this.player!.name = this.prefixedName = prefix + replacedName;
 	}
 	updateAdminStatus(){

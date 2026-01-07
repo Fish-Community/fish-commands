@@ -379,12 +379,14 @@ var FishPlayer = /** @class */ (function () {
         }
         return "none";
     };
-    FishPlayer.onConnectPacket = function (uuid) {
+    FishPlayer.onConnectPacket = function (_a) {
         var _this = this;
+        var uuid = _a.uuid, name = _a.name;
         var entry = this.cachedPlayers[uuid];
         if (entry) {
             entry.infoUpdated = false;
             entry.dataSynced = false;
+            entry.name = name;
         }
         api.getFishPlayerData(uuid).then(function (data) {
             if (!data)
@@ -392,6 +394,7 @@ var FishPlayer = /** @class */ (function () {
             var fishP;
             if (!(uuid in _this.cachedPlayers)) {
                 fishP = new FishPlayer(uuid, data, null);
+                fishP.originalName = name;
                 fishP.dataSynced = true;
                 _this.cachedPlayers[uuid] = fishP;
             }
@@ -909,12 +912,14 @@ var FishPlayer = /** @class */ (function () {
     /** Updates the mindustry player's name, using the prefixes of the current rank and role flags. */
     FishPlayer.prototype.updateName = function () {
         var e_5, _a;
+        var _b;
         if (!this.connected() || !this.shouldUpdateName)
             return; //No player, no need to update
+        var name = (_b = this.originalName) !== null && _b !== void 0 ? _b : this.name;
         if (this.marked())
             this.showRankPrefix = true;
         var prefix = '';
-        if (!this.hasPerm("bypassNameCheck") && (0, utils_1.isImpersonator)(this.name, this.ranksAtLeast("admin")))
+        if (!this.hasPerm("bypassNameCheck") && (0, utils_1.isImpersonator)(name, this.ranksAtLeast("admin")))
             prefix += "[scarlet]SUSSY IMPOSTOR[]";
         if (this.marked())
             prefix += config_1.prefixes.marked;
@@ -926,15 +931,15 @@ var FishPlayer = /** @class */ (function () {
             prefix += "[orange]\uE876 AFK \uE876 | [white]";
         if (this.showRankPrefix) {
             try {
-                for (var _b = __values(this.flags), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var flag = _c.value;
+                for (var _c = __values(this.flags), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var flag = _d.value;
                     prefix += flag.prefix;
                 }
             }
             catch (e_5_1) { e_5 = { error: e_5_1 }; }
             finally {
                 try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                 }
                 finally { if (e_5) throw e_5.error; }
             }
@@ -943,21 +948,21 @@ var FishPlayer = /** @class */ (function () {
         if (prefix.length > 0 && !prefix.endsWith(" "))
             prefix += " ";
         var replacedName;
-        if ((0, utils_1.cleanText)(this.name, true).includes("hacker")) {
+        if ((0, utils_1.cleanText)(name, true).includes("hacker")) {
             //"Don't be a script kiddie"
             //-LiveOverflow, 2015
-            if (/h.*a.*c.*k.*[3e].*r/i.test(this.name)) { //try to only replace the part that contains "hacker" if it can be found with a simple regex
-                this.name = replacedName = this.name.replace(/h.*a.*c.*k.*[3e].*r/gi, "[brown]script kiddie[]");
+            if (/h.*a.*c.*k.*[3e].*r/i.test(name)) { //try to only replace the part that contains "hacker" if it can be found with a simple regex
+                replacedName = name.replace(/h.*a.*c.*k.*[3e].*r/gi, "[brown]script kiddie[]");
             }
             else {
-                this.name = replacedName = "[brown]script kiddie";
+                replacedName = "[brown]script kiddie";
             }
         }
         else if (this.name.endsWith("[") && !this.name.endsWith("[[")) {
-            replacedName = this.name + "[";
+            replacedName = name + "[";
         }
         else
-            replacedName = this.name;
+            replacedName = name;
         this.player.name = this.prefixedName = prefix + replacedName;
     };
     FishPlayer.prototype.updateAdminStatus = function () {

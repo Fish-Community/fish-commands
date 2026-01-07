@@ -99,7 +99,7 @@ Events.on(EventType.ConnectPacketEvent, (e) => {
 			Vars.netServer.admins.unbanPlayerID(e.packet.uuid);
 		}
 	});
-	FishPlayer.onConnectPacket(e.packet.uuid);
+	FishPlayer.onConnectPacket(e.packet);
 });
 Events.on(EventType.UnitChangeEvent, (e) => {
 	FishPlayer.onUnitChange(e.player, e.unit);
