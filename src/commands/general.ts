@@ -1116,4 +1116,22 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 			outputSuccess(`Changed mode to ${args.mode}`);
 		}
 	},
+
+	mixunit: {
+		args: ["type:unittype", "base:unittype"],
+		description: "Spawns a unit that is made of two unit types mixed together.",
+		perm: Perm.admin.exceptModes({
+			sandbox: Perm.play
+		}),
+		requirements: ({sender}) => [!sender.hasPerm("admin") && Req.cooldown(1500), Req.unitExists()].filter(Boolean),
+		handler({args, sender, f, outputSuccess}){
+			const { team, x, y } = sender.unit()!;
+			const unit = args.base.create(team);
+			unit.type = args.type;
+			unit.maxHealth = args.type.health; //because half-dead units aren't fun
+			unit.set(x, y);
+			unit.add();
+			outputSuccess(f`Spawned a ${args.type} that is partly a ${args.base}.`);
+		}
+	}
 });

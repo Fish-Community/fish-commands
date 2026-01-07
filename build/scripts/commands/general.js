@@ -1163,5 +1163,25 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             Call.sendMessage("[orange]Player ".concat(sender.cleanedName, " changed the gamemode to ").concat(args.mode));
             outputSuccess("Changed mode to ".concat(args.mode));
         }
+    }, mixunit: {
+        args: ["type:unittype", "base:unittype"],
+        description: "Spawns a unit that is made of two unit types mixed together.",
+        perm: commands_1.Perm.admin.exceptModes({
+            sandbox: commands_1.Perm.play
+        }),
+        requirements: function (_a) {
+            var sender = _a.sender;
+            return [!sender.hasPerm("admin") && commands_1.Req.cooldown(1500), commands_1.Req.unitExists()].filter(Boolean);
+        },
+        handler: function (_a) {
+            var args = _a.args, sender = _a.sender, f = _a.f, outputSuccess = _a.outputSuccess;
+            var _b = sender.unit(), team = _b.team, x = _b.x, y = _b.y;
+            var unit = args.base.create(team);
+            unit.type = args.type;
+            unit.maxHealth = args.type.health; //because half-dead units aren't fun
+            unit.set(x, y);
+            unit.add();
+            outputSuccess(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["Spawned a ", " that is partly a ", "."], ["Spawned a ", " that is partly a ", "."])), args.type, args.base));
+        }
     } }));
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19;
