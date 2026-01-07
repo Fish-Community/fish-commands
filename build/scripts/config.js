@@ -69,8 +69,9 @@ exports.bannedWords = {
         /\bf(a)g\b/, "fa" + "gg" + "ot",
         /\bc(u)m\b/, ["semen", "sement", "horsemen", "housemen", "defensemen", "those", "menders"],
         ["porn", "maporn"],
+        "futa" + "nari", "futa",
         "ur gay", "your gay", "youre gay", "you're gay",
-        "gooning", "gooner", "loli", /\banal\b/, "cunny"
+        "gooning", "gooner", "dildo", "loli", /\banal\b/, "cunny"
     ]),
     /** Strict: banned in names and for players with a chat strictness level of 'strict'. */
     strict: processBannedWordList([
@@ -301,7 +302,7 @@ exports.tips = {
         "Aoelog can show the history of tiles in an area. Select the opposite corners of a rectangle to view the history of its tiles.",
         "Aoelog is the plural version of tilelog, access it via [white]/aoelog[]",
         "You can mark yourself as AFK(away from keyboard) with [white]/afk[].",
-        "Run /survival, /attack, /pvp, /sandbox or /hexed to quickly change to another server.",
+        "Run /survival, /attack, /pvp, /sandbox, /hexed or /minigame to quickly change to another server.",
         "Need to get rid of an active griefer? Use [#6FFC7C]/s[] to send a message to all staff members across all servers.",
         "Use [white]/help to get more information about a specific command.",
         "If you want to send a message to just one player, you can use the [white]/msg[] command.",
