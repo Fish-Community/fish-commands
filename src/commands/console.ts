@@ -201,7 +201,7 @@ export const commands = consoleCommandList({
 					output(`&lrIP &c"${args.target}"&lr was banned. Ban was synced to other servers.`);
 				}
 			} else if((range = getIPRange(args.target)) != null){
-				if(admins.subnetBans.contains(ip => ip.replace(/\.$/, "") == range)){
+				if(admins.subnetBans.contains(boolf<string>(ip => ip.replace(/\.$/, "") == range))){
 					output(`Subnet &c"${range}"&fr is already banned.`);
 				} else {
 					admins.subnetBans.add(range);

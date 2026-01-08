@@ -100,7 +100,6 @@ export type FlaggedIPData = {
 	moderated: boolean;
 };
 
-export type Boolf<T> = (input:T) => boolean;
 export type Expand<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 
 export type TagFunction<Tin = string, Tout = string> = (stringChunks: readonly string[], ...varChunks: readonly Tin[]) =>Tout

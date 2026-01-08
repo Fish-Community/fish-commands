@@ -10,7 +10,7 @@ import { fail, PartialFormatString } from "/frameworks/commands";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, StringIO } from "/funcs";
 import { fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
-import { Boolf, SelectEnumClassKeys } from "/types";
+import { SelectEnumClassKeys } from "/types";
 
 
 export function memoizeChatFilter(impl:(arg:string) => string){
@@ -151,8 +151,8 @@ export function getTeam(team:string):Team | string {
 
 /** Attempts to parse an Item from the input. */
 export function getItem(item:string):Item | string {
-	let temp: Item | null;
-	if(item in Items && (temp = Items[item]) instanceof Item) return temp;
+	let temp;
+	if(item in Items && (temp = Items[item as keyof typeof Items]) instanceof Item) return temp;
 	else if((temp = Vars.content.items().find(t => t.name.includes(item.toLowerCase())))) return temp;
 	return `"${item}" is not a valid item.`;
 }
@@ -213,8 +213,8 @@ export function isImpersonator(name:string, isAdmin:boolean):false | string {
 	const replacedText = cleanText(name);
 	const antiEvasionText = cleanText(name, true);
 	//very clean code i know
-	const filters:Array<[check:Boolf<string>, message:string]> = (
-		(input: Array<string | [string | RegExp | Boolf<string>, string]>) =>
+	const filters:Array<[check: (value:string) => boolean, message:string]> = (
+		(input: Array<string | [string | RegExp | ((value:string) => boolean), string]>) =>
 			input.map(i =>
 				Array.isArray(i) ? [
 					typeof i[0] == "string" ? replacedText => replacedText.includes((i[0] as string)) :

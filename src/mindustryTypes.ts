@@ -429,7 +429,7 @@ class Seq<T> {
 	static with<T>(items:Iterable<T>):Seq<T>;
 	add(item:T):this;
 	contains(item:T):boolean;
-	contains(pred:(item:T) => boolean):boolean;
+	contains(pred:Boolf<T>):boolean;
 	count(pred:(item:T) => boolean):number;
 	/** @deprecated Use select() or retainAll() */
 	filter(pred:(item:T) => boolean):Seq<T>;
