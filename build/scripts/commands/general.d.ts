@@ -1,2 +1,0 @@
-import type { FishCommandData } from "/frameworks/commands/types";
-export declare const commands: Record<"about" | "ranks" | "unpause" | "vanish" | "discord" | "tp" | "clean" | "die" | "tilelog" | "aoelog" | "afk" | "tileid" | "switch" | "s" | "watch" | "spectate" | "team" | "help" | "msg" | "r" | "trail" | "ohno" | "rules" | "void" | "teamp" | "rank" | "forcevnw" | "vnw" | "forcertv" | "rtv" | "forcenextmap" | "maps" | "nextmap" | "surrender" | "stats" | "showworld" | "mapinfo" | "gamemode" | "mixunit", FishCommandData<string, any> | (() => FishCommandData<string, any>)>;

@@ -3,7 +3,7 @@ node_modules
 package-lock.json
 ts-debugtrace
 tsconfig.tsbuildinfo
-build/scripts/*.d.ts
+build/scripts/**/*.d.ts
 build/scripts/client.js
 build/scripts/client.d.js
 spec/build
