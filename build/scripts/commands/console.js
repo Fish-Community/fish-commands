@@ -1049,5 +1049,14 @@ exports.commands = (0, commands_1.consoleCommandList)({
             });
         }
     },
+    say: {
+        args: ["message:string"],
+        description: "Sends a message to the in-game chat.",
+        handler: function (_a) {
+            var message = _a.args.message;
+            Call.sendMessage("[scarlet][[Server]:[] ".concat(message));
+            Log.info("&fi&lcServer: &fr&lw".concat(message));
+        }
+    }
 });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15;

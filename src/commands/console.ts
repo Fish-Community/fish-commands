@@ -755,4 +755,13 @@ ${FishPlayer.mapPlayers(p =>
 			}
 		}
 	},
+	
+	say: {
+		args: ["message:string"],
+		description: "Sends a message to the in-game chat.",
+		handler({args: {message}}){
+			Call.sendMessage(`[scarlet][[Server]:[] ${message}`);
+			Log.info(`&fi&lcServer: &fr&lw${message}`);
+		}
+	}
 });
