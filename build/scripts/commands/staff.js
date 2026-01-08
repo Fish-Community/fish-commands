@@ -180,7 +180,7 @@ exports.commands = (0, commands_1.commandList)({
     },
     pardon: {
         args: ["player:offlinePlayer"],
-        description: 'Kick a player with optional reason.',
+        description: 'Pardons a votekicked player.',
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("player")],
         handler: function (_a) {

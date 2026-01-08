@@ -76,7 +76,7 @@ export const commands = commandList({
 
 	pardon: {
 		args: ["player:offlinePlayer"],
-		description: 'Kick a player with optional reason.',
+		description: 'Pardons a votekicked player.',
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
 		handler({args: {player}, admins, outputSuccess, f}){
