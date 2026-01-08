@@ -525,8 +525,10 @@ function register(commands, clientHandler, serverHandler) {
                                 //Verify authorization
                                 //as a bonus, this crashes if data.perm is undefined
                                 if (!data.perm.check(fishSender)) {
-                                    if (data.customUnauthorizedMessage)
+                                    if (data.customUnauthorizedMessage) {
                                         (0, utils_1.outputFail)(data.customUnauthorizedMessage, sender);
+                                        globals_1.FishEvents.fire("commandUnauthorized", [fishSender, name]);
+                                    }
                                     else if (data.isHidden)
                                         (0, utils_1.outputMessage)(hiddenUnauthorizedMessage, sender);
                                     else

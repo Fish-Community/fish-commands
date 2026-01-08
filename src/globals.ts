@@ -4,7 +4,7 @@ This file contains mutable global variables, and global constants.
 */
 
 import { EventEmitter } from "/funcs";
-import type { FishPlayer } from "/players";
+import { FishPlayer } from "/players";
 
 export const tileHistory:Record<string, string> = {};
 export const recentWhispers:Record<string, string> = {};
@@ -30,6 +30,7 @@ export const ipPortPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}$/;
 export const ipRangeCIDRPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/(1[2-9]|2[0-4])$/; //Disallow anything bigger than a /12
 export const ipRangeWildcardPattern = /^(\d{1,3}\.\d{1,3})\.(?:(\d{1,3}\.\*)|\*)$/; //Disallow anything bigger than a /16
 export const maxTime = 9999999999999;
+export const unitsT5 = [UnitTypes.reign, UnitTypes.toxopid, UnitTypes.corvus, UnitTypes.eclipse, UnitTypes.oct, UnitTypes.omura, UnitTypes.navanax, UnitTypes.conquer, UnitTypes.collaris, UnitTypes.disrupt];
 
 export const FishEvents = new EventEmitter<{
 	/** Fired after a team change. The current team is player.team() */
@@ -40,4 +41,9 @@ export const FishEvents = new EventEmitter<{
 	saveData: [];
 	/** Use this event to mutate things after all the data is loaded */
 	dataLoaded: [];
+	commandUnauthorized: [player: FishPlayer, name: string];
+	scriptKiddie: [player: FishPlayer];
+	memoryCorruption: [];
+	/** Called when the "say" console command is run. */
+	serverSays: [];
 }>();

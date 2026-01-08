@@ -12,7 +12,7 @@ import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishC
 import { CommandArgType, commandArgTypes } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
 import { crash, escapeStringColorsClient, parseError, setToArray } from "/funcs";
-import { uuidPattern } from "/globals";
+import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
 import type { ClientCommandHandler, CommandArg, ServerCommandHandler } from "/types";
@@ -345,9 +345,10 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 				//Verify authorization
 				//as a bonus, this crashes if data.perm is undefined
 				if(!data.perm.check(fishSender)){
-					if(data.customUnauthorizedMessage)
+					if(data.customUnauthorizedMessage){
 						outputFail(data.customUnauthorizedMessage, sender);
-					else if(data.isHidden)
+						FishEvents.fire("commandUnauthorized", [fishSender, name]);
+					} else if(data.isHidden)
 						outputMessage(hiddenUnauthorizedMessage, sender);
 					else
 						outputFail(data.perm.unauthorizedMessage, sender);

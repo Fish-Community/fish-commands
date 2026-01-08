@@ -177,6 +177,7 @@ var FishPlayer = /** @class */ (function () {
         };
         /** Used for the /vanish command. */
         this.showRankPrefix = true;
+        this.achievements = new Bits();
         this.uuid = uuid;
         this.player = player;
         this.updateData(data);
@@ -453,6 +454,8 @@ var FishPlayer = /** @class */ (function () {
             this.rank = (_a = ranks_1.Rank.getByName(data.rank)) !== null && _a !== void 0 ? _a : ranks_1.Rank.player;
         if (data.flags != undefined)
             this.flags = new Set(data.flags.map(ranks_1.RoleFlag.getByName).filter(Boolean));
+        if (data.achievements != undefined)
+            this.achievements = JsonIO.read(Bits, data.achievements);
     };
     FishPlayer.prototype.getData = function () {
         var _a = this, uuid = _a.uuid, name = _a.name, muted = _a.muted, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
@@ -471,7 +474,8 @@ var FishPlayer = /** @class */ (function () {
             stats: stats,
             showRankPrefix: showRankPrefix,
             rank: rank.name,
-            flags: __spreadArray([], __read(flags.values()), false).map(function (f) { return f.name; })
+            flags: __spreadArray([], __read(flags.values()), false).map(function (f) { return f.name; }),
+            achievements: JsonIO.write(this.achievements)
         };
     };
     /** Warning: the "update" callback is run twice. */
@@ -656,6 +660,7 @@ var FishPlayer = /** @class */ (function () {
                 }
                 else if ((0, utils_1.cleanText)(player.name, true).includes("hacker")) {
                     fishPlayer.sendMessage("[scarlet]\u26A0 Don't be a script kiddie!");
+                    globals_1.FishEvents.fire("scriptKiddie", [fishPlayer]);
                 }
             }
             fishPlayer.updateAdminStatus();

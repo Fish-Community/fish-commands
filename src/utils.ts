@@ -8,7 +8,7 @@ import * as api from "/api";
 import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
 import { fail, PartialFormatString } from "/frameworks/commands";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, StringIO } from "/funcs";
-import { fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
+import { FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { SelectEnumClassKeys } from "/types";
 
@@ -438,6 +438,7 @@ export function definitelyRealMemoryCorruption(){
 	const hexString = Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, "0");
 	Call.sendMessage("[scarlet]Error: internal server error.");
 	Call.sendMessage(`[scarlet]Error: memory corruption: mindustry.world.modules.ItemModule@${hexString}`);
+	FishEvents.fire("memoryCorruption", []);
 }
 
 export function getEnemyTeam():Team {

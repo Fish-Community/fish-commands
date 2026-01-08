@@ -70,6 +70,7 @@ const Vars: {
 	maps: Maps;
 	state: {
 		rules: Rules;
+		planet: Planet;
 		set(state:State):void;
 		gameOver:boolean;
 		wave:number;
@@ -79,7 +80,9 @@ const Vars: {
 		enemies:number;
 		/** Time in ticks, 60/s */
 		tick:number;
-	}
+		teams: Teams;
+	};
+	indexer: BlockIndexer;
 	saveExtension: string;
 	saveDirectory: Fi;
 	modDirectory: Fi;
@@ -88,7 +91,19 @@ const Vars: {
 	tilesize: 8;
 	world: World;
 };
+class Teams {
+	active: Seq<Team>;
+}
+class BlockIndexer {
+	getFlagged(team: Team, flag: BlockFlag): Seq<Building>;
+}
+class BlockFlag {
+	static storage: BlockFlag;
+}
 type State = {__state: ""};
+class Planet {
+	name: string;
+}
 type Scripts = any;
 type CommandHandler = any;
 const CommandHandler: CommandHandler;
@@ -179,20 +194,54 @@ class Building {
 	block: Block;
 	tile: Tile;
 	items: ItemModule;
+	power: PowerModule;
+	liquids: LiquidModule;
 	team: Team;
 	changeTeam: Team;
+	enabled: boolean;
+	ammo?: Seq<{item: Item}>;
+	warmup?: number;
+	storageCapacity?: number;
+	timeScale(): number;
 	kill():void;
 	tileX():number;
 	tileY():number;
 }
-const Items: Record<string, Item>;
+const Items: Record<"scrap" | "copper" | "lead" | "graphite" | "coal" | "titanium" | "thorium" | "silicon" | "plastanium" | "phaseFabric" | "surgeAlloy" | "sporePod" | "sand" | "blastCompound" | "pyratite" | "metaglass" | "beryllium" | "tungsten" | "oxide" | "carbide" | "fissileMatter" | "dormantCyst", Item> & {
+	serpuloItems: Seq<Item>;
+	erekirItems: Seq<Item>;
+};
 class Item {
 	name: string;
+	hidden: boolean;
+	emoji(): string;
+}
+const Liquids: Record<string, Liquid>;
+class Liquid {
+	name: string;
+	gas: boolean;
+}
+class LiquidModule {
+	current(): Liquid;
 }
 class ItemModule {
 	get(item: Item):number;
 	set(item: Item, value: number):void;
 	add(item: Item, value: number):void;
+	has(item: Item, amount: number): boolean;
+	has(stacks: ItemStack[]): boolean;
+}
+class PowerModule {
+	graph: PowerGraph;
+}
+class PowerGraph {
+	lastPowerProduced: number;
+	lastPowerNeeded: number;
+	producers: Seq<Building>;
+	consumers: Seq<Building>;
+}
+class ItemStack {
+	constructor(item: Item, amount: number);
 }
 class Team {
 	static derelict:Team;
@@ -207,7 +256,7 @@ class Team {
 	active():boolean;
 	data():TeamData;
 	core():Building | null;
-	items():ItemModule | null;
+	items():ItemModule;
 	coloredName():string;
 	id:number;
 	static get(index:number):Team;
@@ -232,6 +281,7 @@ const Groups: {
 	unit: EntityGroup<Unit>;
 	fire: EntityGroup<Fire>;
 	build: EntityGroup<Building>;
+	powerGraph: EntityGroup<{graph: PowerGraph}>;
 };
 type Fire = any;
 class Vec2 {
@@ -428,9 +478,11 @@ class Seq<T> {
 	static with<T>(...items:T[]):Seq<T>;
 	static with<T>(items:Iterable<T>):Seq<T>;
 	add(item:T):this;
+	addUnique(item:T):this;
 	contains(item:T):boolean;
 	contains(pred:Boolf<T>):boolean;
 	count(pred:(item:T) => boolean):number;
+	allMatch(pred:(item:T) => boolean):boolean;
 	/** @deprecated Use select() or retainAll() */
 	filter(pred:(item:T) => boolean):Seq<T>;
 	retainAll(pred:(item:T) => boolean):Seq<T>;
@@ -451,6 +503,7 @@ class Seq<T> {
 	random():T | null;
 	get(index:number):T;
 	first():T;
+	peek():T;
 	firstOpt():T | null;
 	clear():void;
 }
@@ -532,6 +585,8 @@ type Unit = {
 	spawnedByCore: boolean;
 	added: boolean;
 	id: number;
+	tileOn():Tile | null;
+	tile?: () => Building;
 	kill():void;
 	add():void;
 	isAdded():boolean;
@@ -571,7 +626,9 @@ class Fi {
 	name():string;
 	readBytes():number[];
 }
-
+class Bullet {
+	owner: Unit | Building;
+}
 class Pattern {
 	static matches(regex:string, target:string):boolean;
 	static compile(regex:string):Pattern;
@@ -638,6 +695,7 @@ class UnitType {
 	spawn(team:Team, x:number, y:number):Unit;
 	create(team:Team):Unit;
 	supportsEnv(env:number):boolean;
+	emoji():string;
 	health: number;
 	hidden: boolean;
 	internal: boolean;
@@ -808,4 +866,27 @@ class WorldReloader {
 	end():void;
 }
 
+class Bits {
+	constructor(capacity?: number);
+	get(index:number):boolean;
+	/**
+	 * @param value Default true
+	 */
+	set(index:number, value?:boolean):void;
+	set(index:number, value:number):void;
+}
+
+type JavaClass<T> = any;
+
+const JsonIO: {
+	write(object:{}): string;
+	read<T>(clazz: JavaClass<T>, data: string): T;
+};
+
+class Boolf<T> {
+	constructor(_: {get: (value: T) => boolean});
+}
+function boolf<T>(func: (value: T) => boolean): Boolf<T>;
+
+const Iconc: Record<"rotate" | "modeSurvival" | "power" | "left" | "redditAlien" | "edit" | "downOpen" | "pencil" | "file" | "lockOpen" | "right" | "infoCircle" | "pick" | "settings" | "spray1" | "terrain" | "exit" | "wrench" | "lock" | "discord" | "eye" | "none" | "play" | "diagonal" | "eraser" | "trash" | "liquid" | "fileImage" | "defense" | "layers" | "grid" | "admin" | "steam" | "star" | "chartBar" | "chat" | "android" | "image" | "map" | "logic" | "menu" | "commandRally" | "editor" | "folder" | "units" | "commandAttack" | "copy" | "filter" | "cancel" | "terminal" | "upload" | "eyeOff" | "save" | "planeOutline" | "fill" | "distribution" | "upOpen" | "rightOpen" | "modePvp" | "download" | "list" | "flipX" | "flipY" | "effect" | "paste" | "planet" | "waves" | "up" | "warning" | "tree" | "add" | "down" | "host" | "spray" | "info" | "players" | "resize" | "refresh1" | "production" | "crafting" | "pause" | "googleplay" | "hammer" | "fileText" | "modeAttack" | "move" | "zoom" | "bookOpen" | "refresh" | "ok" | "home" | "githubSquare" | "powerOld" | "github" | "undo" | "box" | "trello" | "book" | "export" | "fileTextFill" | "rightOpenOut" | "turret" | "leftOpen" | "line" | "itchio" | "link" | "filters" | "redo", number>;
 }

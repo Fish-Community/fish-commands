@@ -3,13 +3,14 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the FishPlayer class, and many player-related functions.
 */
 
+import type { Achievement } from "/achievements";
 import * as api from "/api";
 import { FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
 import { crash, Duration, escapeStringColorsClient, parseError, search, setToArray, StringIO } from "/funcs";
 import * as globals from "/globals";
-import { uuidPattern } from "/globals";
+import { uuidPattern, FishEvents } from "/globals";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
 import type { FishPlayerData, PlayerHistoryEntry } from "/types";
 import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, matchFilter } from "/utils";
@@ -159,6 +160,7 @@ export class FishPlayer {
 	};
 	/** Used for the /vanish command. */
 	showRankPrefix:boolean = true;
+	achievements: Bits = new Bits();
 	//#endregion
 
 	constructor(uuid:string, data:Partial<FishPlayerData>, player:mindustryPlayer | null){
@@ -378,13 +380,15 @@ export class FishPlayer {
 		if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
 		if(data.rank != undefined) this.rank = Rank.getByName(data.rank) ?? Rank.player;
 		if(data.flags != undefined) this.flags = new Set(data.flags.map(RoleFlag.getByName).filter(Boolean));
+		if(data.achievements != undefined) this.achievements = JsonIO.read(Bits, data.achievements);
 	}
 	getData():FishPlayerData {
 		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix } = this;
 		return {
 			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix,
 			rank: rank.name,
-			flags: [...flags.values()].map(f => f.name)
+			flags: [...flags.values()].map(f => f.name),
+			achievements: JsonIO.write(this.achievements)
 		};
 	}
 	/** Warning: the "update" callback is run twice. */
@@ -526,6 +530,7 @@ export class FishPlayer {
 					fishPlayer.sendMessage(`[scarlet]\u26A0[] [gold]Oh no! Our systems think you are a [scarlet]SUSSY IMPERSONATOR[]!\n[gold]Reason: ${message}\n[gold]Change your name to remove the tag.`);
 				} else if(cleanText(player.name, true).includes("hacker")){
 					fishPlayer.sendMessage("[scarlet]\u26A0 Don't be a script kiddie!");
+					FishEvents.fire("scriptKiddie", [fishPlayer]);
 				}
 			}
 			fishPlayer.updateAdminStatus();

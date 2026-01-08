@@ -581,6 +581,7 @@ function definitelyRealMemoryCorruption() {
     var hexString = Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, "0");
     Call.sendMessage("[scarlet]Error: internal server error.");
     Call.sendMessage("[scarlet]Error: memory corruption: mindustry.world.modules.ItemModule@".concat(hexString));
+    globals_1.FishEvents.fire("memoryCorruption", []);
 }
 function getEnemyTeam() {
     if (config_1.Gamemode.pvp())

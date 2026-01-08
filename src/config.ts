@@ -228,6 +228,7 @@ export const Gamemode = {
 	minigame: () => Gamemode.name() == "minigame",
 	name: () => Core.settings.get("mode", Vars.state.rules.mode().name()) as "attack" | "survival" | "pvp" | "sandbox" | "hexed" | "hardcore" | "testsrv" | "minigame",
 };
+export const GamemodeNames: GamemodeName[] = Object.keys(Gamemode).filter((x): x is GamemodeName => x !== "name");
 //#endregion
 //#region text content
 
@@ -283,7 +284,7 @@ export const FColor = (
 		Object.fromEntries(Object.entries(data).map(([k, c]) =>
 			[k, (str?:string | readonly string[], ...varChunks: ReadonlyArray<string | number>) =>
 				str != null ?
-					`${c}${Array.isArray(str) ? String.raw({ raw: str }, ...varChunks) : (str as string)}[]`
+					`${c}${Array.isArray(str) ? String.raw({ raw: str }, ...varChunks.map(v => String(v) + c)) : (str as string)}[]`
 				: c
 			]
 		))
@@ -292,6 +293,7 @@ export const FColor = (
 	/** Used for tips and welcome messages. */
 	tip: "[gold]",
 	member: "[pink]",
+	achievement: "[lime]",
 });
 /** Tips that are shown to players randomly. */
 export const tips = {
