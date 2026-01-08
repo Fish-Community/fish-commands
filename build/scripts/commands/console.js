@@ -391,7 +391,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 }
             }
             else if ((range = (0, utils_1.getIPRange)(args.target)) != null) {
-                if (admins.subnetBans.contains(function (ip) { return ip.replace(/\.$/, "") == range; })) {
+                if (admins.subnetBans.contains(boolf(function (ip) { return ip.replace(/\.$/, "") == range; }))) {
                     output("Subnet &c\"".concat(range, "\"&fr is already banned."));
                 }
                 else {
@@ -1056,6 +1056,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var message = _a.args.message;
             Call.sendMessage("[scarlet][[Server]:[] ".concat(message));
             Log.info("&fi&lcServer: &fr&lw".concat(message));
+            globals_1.FishEvents.fire("serverSays", []);
         }
     }
 });

@@ -59,6 +59,8 @@ export type FishPlayerData = {
 		gamesWon: number;
 	};
 	showRankPrefix: boolean;
+	/** This field contains long values, store it as a string */
+	achievements: string;
 }
 
 export type PlayerHistoryEntry = {

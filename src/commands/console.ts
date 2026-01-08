@@ -9,7 +9,7 @@ import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { consoleCommandList, fail } from "/frameworks/commands";
 import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
-import { fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
+import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
@@ -762,6 +762,7 @@ ${FishPlayer.mapPlayers(p =>
 		handler({args: {message}}){
 			Call.sendMessage(`[scarlet][[Server]:[] ${message}`);
 			Log.info(`&fi&lcServer: &fr&lw${message}`);
+			FishEvents.fire("serverSays", []);
 		}
 	}
 });
