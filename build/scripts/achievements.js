@@ -396,7 +396,7 @@ exports.Achievements = {
         checkFrequent: function (team) { return team.items().has(Items.silicon, 100000); }
     }),
     //other players based
-    alone: new Achievement(["red", Iconc.players], "Alone", "Be the only player online for more than two minutes"),
+    alone: new Achievement(["red", Iconc.players], "Alone", "Be the only player online for more than two minutes", { notify: "none" }),
     join_playercount_20: new Achievement(["lime", Iconc.players], "Is there enough room?", "Join a server with 20 players online", {
         checkPlayerJoin: function () { return Groups.player.size() > 20; },
     }),
@@ -489,6 +489,7 @@ Events.on(EventType.UnitBulletDestroyEvent, function (_a) {
 });
 var siliconReached = Team.all.map(function (_) { return false; });
 Events.on(EventType.GameOverEvent, function () { return siliconReached = Team.all.map(function (_) { return false; }); });
+var isAlone = 0;
 Timer.schedule(function () {
     if (!Vars.state.gameOver) {
         Vars.state.teams.active.each(function (t) {
@@ -498,6 +499,14 @@ Timer.schedule(function () {
                 exports.Achievements.siligone.grantToAllOnline(t);
         });
     }
+    if (Groups.player.size() == 1) {
+        if (isAlone == 0)
+            isAlone = Date.now();
+        else if (Date.now() > isAlone + funcs_1.Duration.minutes(2))
+            exports.Achievements.alone.grantToAllOnline();
+    }
+    else
+        isAlone = 0;
 }, 2, 2);
 globals_1.FishEvents.on("scriptKiddie", function (_, p) { return exports.Achievements.script_kiddie.grantTo(p); });
 globals_1.FishEvents.on("memoryCorruption", function () { return exports.Achievements.memory_corruption.grantToAllOnline(); });
