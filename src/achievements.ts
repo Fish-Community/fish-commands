@@ -298,7 +298,7 @@ export const Achievements = {
 	}),
 
 	//other players based
-	alone: new Achievement(["red", Iconc.players], "Alone", "Be the only player online for more than two minutes"),
+	alone: new Achievement(["red", Iconc.players], "Alone", "Be the only player online for more than two minutes", { notify: "none" }),
 	join_playercount_20: new Achievement(["lime", Iconc.players], "Is there enough room?", "Join a server with 20 players online", {
 		checkPlayerJoin: () => Groups.player.size() > 20,
 	}),
@@ -384,6 +384,7 @@ Events.on(EventType.UnitBulletDestroyEvent, ({unit, bullet}:{unit:Unit; bullet: 
 
 let siliconReached = Team.all.map(_ => false);
 Events.on(EventType.GameOverEvent, () => siliconReached = Team.all.map(_ => false));
+let isAlone = 0;
 Timer.schedule(() => {
 	if(!Vars.state.gameOver){
 		Vars.state.teams.active.each(t => {
@@ -391,7 +392,12 @@ Timer.schedule(() => {
 			else if(t.items().get(Items.silicon) == 0) Achievements.siligone.grantToAllOnline(t);
 		});
 	}
+	if(Groups.player.size() == 1){
+		if(isAlone == 0) isAlone = Date.now();
+		else if(Date.now() > isAlone + Duration.minutes(2)) Achievements.alone.grantToAllOnline();
+	} else isAlone = 0;
 }, 2, 2);
+
 
 FishEvents.on("scriptKiddie", (_, p) => Achievements.script_kiddie.grantTo(p));
 FishEvents.on("memoryCorruption", () => Achievements.memory_corruption.grantToAllOnline());
