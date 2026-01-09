@@ -843,6 +843,38 @@ const Strings = {
 	},
 };
 
+class UnitType {}
+
+const UnitTypes = Object.fromEntries(
+	["mace", "dagger", "crawler", "fortress", "scepter", "reign", "vela", "nova", "pulsar", "quasar", "corvus", "atrax", "merui", "cleroi", "anthicus", "tecta", "collaris", "spiroct", "arkyid", "toxopid", "elude", "flare", "eclipse", "horizon", "zenith", "antumbra", "avert", "obviate", "mono", "poly", "mega", "evoke", "incite", "emanate", "quell", "disrupt", "quad", "oct", "alpha", "beta", "gamma", "risso", "minke", "bryde", "sei", "omura", "retusa", "oxynoe", "cyerce", "aegires", "navanax", "block", "manifold", "assemblyDrone", "stell", "locus", "precept", "vanquish", "conquer", "missile", "latum", "renale"]
+		.map(n => [n, new UnitType()])
+);
+
+class Bits {
+	bits = new BigUint64Array(1);
+	constructor(capacity?: number){ /*empty*/ }
+	get(index:number):boolean {
+		const word = index >>> 6;
+		return word < this.bits.length && Boolean(this.bits[word] & BigInt(1 << index));
+	}
+	set(index:number, value:boolean = true){
+		const word = index >>> 6;
+		if(value){
+			this.checkCapacity(word);
+			this.bits[word] |= BigInt(1 << (index & 0x3F));
+		} else {
+			if(word >= this.bits.length) return;
+			this.bits[word] &= BigInt(~(1 << (index & 0x3F)));
+		}
+	}
+	checkCapacity(len:number){
+		if(len >= this.bits.length){
+			const newBits = new BigUint64Array(len + 1);
+			newBits.set(this.bits);
+			this.bits = newBits;
+		}
+	}
+}
 
 const Packages = {
 	java: {
@@ -856,4 +888,4 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits});
