@@ -3,8 +3,9 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains most in-game chat commands that can be run by untrusted players.
 */
 
+import { Achievement } from "/achievements";
 import * as api from "/api";
-import { FishServer, Gamemode, rules, text } from "/config";
+import { FColor, FishServer, Gamemode, rules, text } from "/config";
 import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
@@ -1134,5 +1135,35 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 			unit.add();
 			outputSuccess(f`Spawned a ${args.type} that is partly a ${args.base}.`);
 		}
-	}
+	},
+
+	achievement: {
+		args: ["name:string?", "verbose:boolean?"],
+		description: "Displays information on a specific achievement.",
+		perm: Perm.none,
+		async handler({args: {name = "", verbose = false}, sender, f, output}){
+			name = Strings.stripColors(name.toLowerCase());
+			
+			const matching = Achievement.all.filter(a => Strings.stripColors(a.name).toLowerCase().includes(name));
+			if(matching.length == 0)
+				fail(f`No achievements found with name ${name}. To view all achievements, run [accent]/achievements[].`);
+			const achievement = matching.length > 2 ?
+				await Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, {
+					onCancel: "reject"
+				})
+			: matching[0];
+			
+			output(FColor.achievement`\
+Achievement ${achievement.icon} ${achievement.name}
+[white]--------------[]
+${achievement.description + (achievement.extendedDescription ? ("\n" + `[gray]${achievement.extendedDescription}`) : "")}
+Allowed modes:${achievement.modesText}
+Unlocked: ${f.boolGood(achievement.has(sender))}
+${verbose ? `[gray]ID: (${achievement.nid})${achievement.sid}\n` : ""}\
+${verbose ? `[gray]Notifies: ${achievement.notify}\n` : ""}\
+${achievement.hidden ? "This achievement is secret." : ""}\
+`);
+			//TODO "x% of players have this achievement" tracking, requires backend aggregation endpoint
+		}
+	},
 });

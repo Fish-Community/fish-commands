@@ -81,6 +81,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
+var achievements_1 = require("/achievements");
 var api = require("/api");
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
@@ -1184,5 +1185,38 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             unit.add();
             outputSuccess(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["Spawned a ", " that is partly a ", "."], ["Spawned a ", " that is partly a ", "."])), args.type, args.base));
         }
+    }, achievement: {
+        args: ["name:string?", "verbose:boolean?"],
+        description: "Displays information on a specific achievement.",
+        perm: commands_1.Perm.none,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var matching, achievement, _c;
+                var _d = _b.args, _e = _d.name, name = _e === void 0 ? "" : _e, _f = _d.verbose, verbose = _f === void 0 ? false : _f, sender = _b.sender, f = _b.f, output = _b.output;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            name = Strings.stripColors(name.toLowerCase());
+                            matching = achievements_1.Achievement.all.filter(function (a) { return Strings.stripColors(a.name).toLowerCase().includes(name); });
+                            if (matching.length == 0)
+                                (0, commands_1.fail)(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."], ["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."])), name));
+                            if (!(matching.length > 2)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, menus_1.Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, {
+                                    onCancel: "reject"
+                                })];
+                        case 1:
+                            _c = _g.sent();
+                            return [3 /*break*/, 3];
+                        case 2:
+                            _c = matching[0];
+                            _g.label = 3;
+                        case 3:
+                            achievement = _c;
+                            output(config_1.FColor.achievement(templateObject_21 || (templateObject_21 = __makeTemplateObject(["Achievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes:", "\nUnlocked: ", "\n", "", "", ""], ["\\\nAchievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes:", "\nUnlocked: ", "\n", "\\\n", "\\\n", "\\\n"])), achievement.icon, achievement.name, achievement.description + (achievement.extendedDescription ? ("\n" + "[gray]".concat(achievement.extendedDescription)) : ""), achievement.modesText, f.boolGood(achievement.has(sender)), verbose ? "[gray]ID: (".concat(achievement.nid, ")").concat(achievement.sid, "\n") : "", verbose ? "[gray]Notifies: ".concat(achievement.notify, "\n") : "", achievement.hidden ? "This achievement is secret." : ""));
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
     } }));
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21;
