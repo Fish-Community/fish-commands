@@ -83,23 +83,30 @@ var Achievement = /** @class */ (function () {
         Object.assign(this, options);
         if (options.modes) {
             var _b = __read(options.modes), type = _b[0], modes_1 = _b.slice(1);
-            if (type == "only")
+            if (type == "only") {
                 this.allowedModes = modes_1;
-            else
+                this.modesText = modes_1.join(", ");
+            }
+            else {
                 this.allowedModes = config_1.GamemodeNames.filter(function (m) { return !modes_1.includes(m); });
+                this.modesText = "all except ".concat(modes_1.join(", "));
+            }
         }
         else {
             this.allowedModes = config_1.GamemodeNames;
+            this.modesText = "all";
         }
-        Achievement.all.push(this);
-        if (this.checkPlayerFrequent || this.checkFrequent)
-            Achievement.checkFrequent.push(this);
-        if (this.checkPlayerInfrequent || this.checkInfrequent)
-            Achievement.checkInfrequent.push(this);
-        if (this.checkPlayerJoin)
-            Achievement.checkJoin.push(this);
-        if (this.checkPlayerGameover || this.checkGameover)
-            Achievement.checkGameover.push(this);
+        if (!this.disabled) {
+            Achievement.all.push(this);
+            if (this.checkPlayerFrequent || this.checkFrequent)
+                Achievement.checkFrequent.push(this);
+            if (this.checkPlayerInfrequent || this.checkInfrequent)
+                Achievement.checkInfrequent.push(this);
+            if (this.checkPlayerJoin)
+                Achievement.checkJoin.push(this);
+            if (this.checkPlayerGameover || this.checkGameover)
+                Achievement.checkGameover.push(this);
+        }
     }
     Achievement.prototype.message = function () {
         return config_1.FColor.achievement(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Achievement granted!\n[accent]", ": [white]", ""], ["Achievement granted!\\n[accent]", ": [white]", ""])), this.name, this.description);
@@ -114,7 +121,7 @@ var Achievement = /** @class */ (function () {
         var _this = this;
         players_1.FishPlayer.forEachPlayer(function (p) {
             if (!_this.has(p) && (!team || p.team() == team)) {
-                if (_this.notify != "none")
+                if (_this.notify != "nobody")
                     p.sendMessage(_this.message());
                 _this.setObtained(p);
             }
@@ -287,10 +294,10 @@ exports.Achievements = {
     //Joining based
     welcome: new Achievement("_", "Welcome", "Join the server.", {
         checkPlayerJoin: function () { return true; },
-        notify: "none"
+        notify: "nobody"
     }),
     migratory_fish: new Achievement(Iconc.exit, "Migratory Fish", "Join all of our servers.", {
-        hidden: true
+        disabled: true
     }), //TODO
     frequent_visitor: new Achievement(Iconc.planeOutline, "Frequent Visitor", ["Join the server 100 times.", "Note: Do not reconnect frequently, that will not work. This achievement requires that you have been playing for 1 month."], {
         checkPlayerJoin: function (p) { return p.info().timesJoined >= 100 && (Date.now() - p.globalFirstJoined > funcs_1.Duration.months(1)); }
@@ -374,7 +381,7 @@ exports.Achievements = {
     //messages based
     messages_1: new Achievement(["white", Iconc.chat], "Hello", "Send your first chat message.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 1; },
-        notify: "none"
+        notify: "nobody"
     }),
     messages_2: new Achievement(["red", Iconc.chat], "Chat 2", ["Send 100 chat messages.", "Warning: you will be kicked if you spam the chat."], {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 100; }
@@ -392,7 +399,7 @@ exports.Achievements = {
     //blocks built based
     builds_1: new Achievement(["white", Iconc.fileText], "The Factory Must Prepare", "Construct 1 buildings.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.blocksPlaced >= 1; },
-        notify: "none"
+        notify: "nobody"
     }),
     builds_2: new Achievement(["red", Iconc.fileText], "The Factory Must Begin", "Construct 200 buildings.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.blocksPlaced > 200; }
@@ -413,7 +420,7 @@ exports.Achievements = {
     }),
     dibs: new Achievement(["green", Blocks.tetrativeReconstructor.emoji()], "Dibs", "Be the first player to control the first T5 unit made by a reconstructor that you placed.", {
         modes: ["not", "sandbox"],
-        hidden: true
+        disabled: true
     }), //TODO
     worm: new Achievement(UnitTypes.latum.emoji(), "Worm", "Control a Latum.", {
         checkPlayerFrequent: function (player) {
@@ -428,11 +435,11 @@ exports.Achievements = {
     }),
     head_start: new Achievement(Iconc.commandAttack, "Head Start", ["Win a match of PVP where your opponents have a 5 minute head start.", "Your team must wait for the first 5 minutes without building or descontructing any buildings."], {
         modes: ["only", "pvp"],
-        hidden: true
+        disabled: true
     }), //TODO
     one_v_two: new Achievement(["red", Iconc.modePvp], "1v2", "Defeat two (or more) opponents in PVP without help from other players.", {
         modes: ["only", "pvp"],
-        hidden: true
+        disabled: true
     }), //TODO
     //sandbox
     underpowered: new Achievement(["red", Blocks.powerSource.emoji()], "Underpowered", "Overload a power source.", {
@@ -451,13 +458,13 @@ exports.Achievements = {
     }),
     //easter eggs
     memory_corruption: new Achievement(["red", Iconc.host], "Is the server OK?", "Witness a memory corruption.", {
-        notify: "none"
+        notify: "nobody"
     }),
     run_js_without_perms: new Achievement(["yellow", Iconc.warning], "838", ["Receive a warning from the server that an incident will be reported.", "One of the admin commands has a custom error message."], {
         notify: "everyone"
     }),
     script_kiddie: new Achievement(["red", Iconc.warning], "Script Kiddie", ["Pretend to be a hacker. The server will disagree.", "Change your name to something including \"hacker\"."], {
-        notify: "none"
+        notify: "nobody"
     }),
     hacker: new Achievement(["lightgray", Iconc.host], "Hacker", "Find a bug in the server and report it responsibly.", {
         hidden: true
@@ -508,7 +515,7 @@ exports.Achievements = {
     }),
     //other players based
     alone: new Achievement(["red", Iconc.players], "Alone", "Be the only player online for more than two minutes", {
-        notify: "none"
+        notify: "nobody"
     }),
     join_playercount_20: new Achievement(["lime", Iconc.players], "Is there enough room?", "Join a server with 20 players online", {
         checkPlayerJoin: function () { return Groups.player.size() > 20; },
@@ -547,18 +554,18 @@ exports.Achievements = {
     }),
     pacifist_crawler: new Achievement(UnitTypes.crawler.emoji(), "Pacifist Crawler", "Control a crawler for 15 minutes without exploding.", {
         modes: ["not", "sandbox"],
-        hidden: true
+        disabled: true
     }), //TODO
     core_low_hp: new Achievement(["yellow", Blocks.coreNucleus.emoji()], "Close Call", "Have your core reach less than 1% health, but survive.", {
         modes: ["not", "sandbox"],
-        hidden: true
+        disabled: true
     }), //TODO
     enemy_core_low_hp: new Achievement(["red", Blocks.coreNucleus.emoji()], "So Close", "Cause the enemy core to reach less than 1% health, but survive.", {
         modes: ["not", "sandbox"],
-        hidden: true
+        disabled: true
     }), //TODO
     verified: new Achievement([ranks_1.Rank.active.color, Iconc.ok], "Verified", "Be promoted automatically to ".concat(ranks_1.Rank.active.coloredName(), " rank."), {
-        checkPlayerJoin: function (p) { return p.ranksAtLeast("active"); }, notify: "none"
+        checkPlayerJoin: function (p) { return p.ranksAtLeast("active"); }, notify: "nobody"
     }),
     afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
         modes: ["not", "sandbox"],
