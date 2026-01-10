@@ -46,6 +46,7 @@ var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
+var utils_1 = require("/utils");
 //scrap doesn't count
 var serpuloItems = [Items.copper, Items.lead, Items.graphite, Items.silicon, Items.metaglass, Items.titanium, Items.plastanium, Items.thorium, Items.surgeAlloy, Items.phaseFabric];
 var erekirItems = [Items.beryllium, Items.graphite, Items.silicon, Items.tungsten, Items.oxide, Items.surgeAlloy, Items.thorium, Items.carbide, Items.phaseFabric];
@@ -66,7 +67,7 @@ var Achievement = /** @class */ (function () {
         this.hidden = false;
         this.disabled = false;
         if (Array.isArray(icon)) {
-            this.icon = "[".concat(icon[0], "]") + (typeof icon[1] == "number" ? String.fromCharCode(icon[1]) : icon[1]);
+            this.icon = (icon[0].startsWith("[") ? icon[0] : "[".concat(icon[0], "]")) + (typeof icon[1] == "number" ? String.fromCharCode(icon[1]) : icon[1]);
         }
         else if (typeof icon == "number") {
             this.icon = String.fromCharCode(icon);
@@ -127,6 +128,7 @@ var Achievement = /** @class */ (function () {
             }
         });
     };
+    /** Do not call this in a loop on an achievement set to notify everyone. */
     Achievement.prototype.grantTo = function (player) {
         if (this.notify == "everyone")
             Call.sendMessage(this.messageToEveryone(player));
@@ -157,15 +159,21 @@ Events.on(EventType.PlayerJoin, function (_a) {
     var e_1, _b;
     var _c;
     var player = _a.player;
+    var _loop_1 = function (ach) {
+        if (ach.allowedInMode()) {
+            var fishP_1 = players_1.FishPlayer.get(player);
+            if (!ach.has(fishP_1) && ((_c = ach.checkPlayerJoin) === null || _c === void 0 ? void 0 : _c.call(ach, fishP_1))) {
+                if (fishP_1.dataSynced)
+                    ach.grantTo(fishP_1);
+                else
+                    Timer.schedule(function () { return ach.grantTo(fishP_1); }, 2); //2 seconds should be enough
+            }
+        }
+    };
     try {
         for (var _d = __values(Achievement.checkJoin), _e = _d.next(); !_e.done; _e = _d.next()) {
             var ach = _e.value;
-            if (ach.allowedInMode()) {
-                var fishP = players_1.FishPlayer.get(player);
-                if (!ach.has(fishP) && ((_c = ach.checkPlayerJoin) === null || _c === void 0 ? void 0 : _c.call(ach, fishP))) {
-                    ach.grantTo(fishP);
-                }
-            }
+            _loop_1(ach);
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -179,7 +187,7 @@ Events.on(EventType.PlayerJoin, function (_a) {
 globals_1.FishEvents.on("gameOver", function (_, winner) {
     var e_2, _a;
     var _b;
-    var _loop_1 = function (ach) {
+    var _loop_2 = function (ach) {
         if (ach.allowedInMode()) {
             if ((_b = ach.checkGameover) === null || _b === void 0 ? void 0 : _b.call(ach, winner))
                 ach.grantToAllOnline();
@@ -195,7 +203,7 @@ globals_1.FishEvents.on("gameOver", function (_, winner) {
     try {
         for (var _c = __values(Achievement.checkGameover), _d = _c.next(); !_d.done; _d = _c.next()) {
             var ach = _d.value;
-            _loop_1(ach);
+            _loop_2(ach);
         }
     }
     catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -208,13 +216,14 @@ globals_1.FishEvents.on("gameOver", function (_, winner) {
 });
 Timer.schedule(function () {
     var e_3, _a;
-    var _loop_2 = function (ach) {
+    var _loop_3 = function (ach) {
         if (ach.allowedInMode()) {
             if (ach.checkFrequent) {
                 if (config_1.Gamemode.pvp()) {
-                    Vars.state.teams.active.each(function (t) {
-                        if (ach.checkFrequent(t))
-                            ach.grantToAllOnline(t);
+                    Vars.state.teams.active.each(function (_a) {
+                        var team = _a.team;
+                        if (ach.checkFrequent(team))
+                            ach.grantToAllOnline(team);
                     });
                 }
                 else {
@@ -234,7 +243,7 @@ Timer.schedule(function () {
     try {
         for (var _b = __values(Achievement.checkFrequent), _c = _b.next(); !_c.done; _c = _b.next()) {
             var ach = _c.value;
-            _loop_2(ach);
+            _loop_3(ach);
         }
     }
     catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -247,13 +256,14 @@ Timer.schedule(function () {
 }, 1, 1);
 Timer.schedule(function () {
     var e_4, _a;
-    var _loop_3 = function (ach) {
+    var _loop_4 = function (ach) {
         if (ach.allowedInMode()) {
             if (ach.checkInfrequent) {
                 if (config_1.Gamemode.pvp()) {
-                    Vars.state.teams.active.each(function (t) {
-                        if (ach.checkInfrequent(t))
-                            ach.grantToAllOnline(t);
+                    Vars.state.teams.active.each(function (_a) {
+                        var team = _a.team;
+                        if (ach.checkInfrequent(team))
+                            ach.grantToAllOnline(team);
                     });
                 }
                 else {
@@ -273,7 +283,7 @@ Timer.schedule(function () {
     try {
         for (var _b = __values(Achievement.checkInfrequent), _c = _b.next(); !_c.done; _c = _b.next()) {
             var ach = _c.value;
-            _loop_3(ach);
+            _loop_4(ach);
         }
     }
     catch (e_4_1) { e_4 = { error: e_4_1 }; }
@@ -462,7 +472,7 @@ exports.Achievements = {
     memory_corruption: new Achievement(["red", Iconc.host], "Is the server OK?", "Witness a memory corruption.", {
         notify: "nobody"
     }),
-    run_js_without_perms: new Achievement(["yellow", Iconc.warning], "838", ["Receive a warning from the server that an incident will be reported.", "One of the admin commands has a custom error message."], {
+    run_js_without_perms: new Achievement(["yellow", Iconc.warning], "XKCD 838", ["Receive a warning from the server that an incident will be reported.", "One of the admin commands has a custom error message."], {
         notify: "everyone"
     }),
     script_kiddie: new Achievement(["red", Iconc.warning], "Script Kiddie", ["Pretend to be a hacker. The server will disagree.", "Change your name to something including \"hacker\"."], {
@@ -476,6 +486,8 @@ exports.Achievements = {
         modes: ["not", "sandbox"],
         checkPlayerFrequent: function (player) {
             var _a;
+            if (!Vars.state.planet)
+                return false;
             return ((_a = player.team().items()) === null || _a === void 0 ? void 0 : _a.has(usefulItems10k[Vars.state.planet.name])) || false;
         },
     }),
@@ -489,6 +501,8 @@ exports.Achievements = {
         modes: ["not", "sandbox"],
         checkFrequent: function (team) {
             var _a;
+            if (!Vars.state.planet)
+                return false;
             var items;
             switch (Vars.state.planet.name) {
                 case "serpulo":
@@ -580,7 +594,7 @@ exports.Achievements = {
             var unit = p.unit();
             if (!unit)
                 return false;
-            var statuses = Reflect.get(unit, "statuses");
+            var statuses = (0, utils_1.getStatuses)(unit);
             return statuses.size >= 5;
         },
         modes: ["not", "sandbox"]
@@ -635,14 +649,16 @@ globals_1.FishEvents.on("commandUnauthorized", function (_, player, name) {
 Events.on(EventType.UnitDrownEvent, function (_a) {
     var _b;
     var unit = _a.unit;
-    if (unit.type == UnitTypes.mace && ((_b = unit.tileOn()) === null || _b === void 0 ? void 0 : _b.floor()) == Blocks.cryofluid)
-        exports.Achievements.drown_mace_in_cryo.grantToAllOnline();
-    else if (unit.type == UnitTypes.conquer || unit.type == UnitTypes.vanquish)
-        exports.Achievements.drown_big_tank.grantToAllOnline();
+    if (!config_1.Gamemode.sandbox()) {
+        if (unit.type == UnitTypes.mace && ((_b = unit.tileOn()) === null || _b === void 0 ? void 0 : _b.floor()) == Blocks.cryofluid)
+            exports.Achievements.drown_mace_in_cryo.grantToAllOnline();
+        else if (unit.type == UnitTypes.conquer || unit.type == UnitTypes.vanquish)
+            exports.Achievements.drown_big_tank.grantToAllOnline();
+    }
 });
 Events.on(EventType.UnitBulletDestroyEvent, function (_a) {
     var unit = _a.unit, bullet = _a.bullet;
-    if (unit.type == UnitTypes.dagger && bullet.owner.block == Blocks.foreshadow) {
+    if (!config_1.Gamemode.sandbox() && unit.type == UnitTypes.dagger && bullet.owner.block == Blocks.foreshadow) {
         var build = bullet.owner;
         if (build.liquids.current() == Liquids.cryofluid && build.timeScale() >= 3)
             exports.Achievements.foreshadow_overkill.grantToAllOnline(build.team);
@@ -652,12 +668,13 @@ var siliconReached = Team.all.map(function (_) { return false; });
 Events.on(EventType.GameOverEvent, function () { return siliconReached = Team.all.map(function (_) { return false; }); });
 var isAlone = 0;
 Timer.schedule(function () {
-    if (!Vars.state.gameOver) {
-        Vars.state.teams.active.each(function (t) {
-            if (t.items().has(Items.silicon, 2000))
-                siliconReached[t.id] = true;
-            else if (t.items().get(Items.silicon) == 0)
-                exports.Achievements.siligone.grantToAllOnline(t);
+    if (!Vars.state.gameOver && !config_1.Gamemode.sandbox()) {
+        Vars.state.teams.active.each(function (_a) {
+            var team = _a.team;
+            if (team.items().has(Items.silicon, 2000))
+                siliconReached[team.id] = true;
+            else if (siliconReached[team.id] && team.items().get(Items.silicon) == 0)
+                exports.Achievements.siligone.grantToAllOnline(team);
         });
     }
     if (Groups.player.size() == 1) {
@@ -669,7 +686,7 @@ Timer.schedule(function () {
     else
         isAlone = 0;
 }, 2, 2);
-globals_1.FishEvents.on("scriptKiddie", function (_, p) { return exports.Achievements.script_kiddie.grantTo(p); });
+globals_1.FishEvents.on("scriptKiddie", function (_, p) { return Timer.schedule(function () { return exports.Achievements.script_kiddie.grantTo(p); }, 2); });
 globals_1.FishEvents.on("memoryCorruption", function () { return exports.Achievements.memory_corruption.grantToAllOnline(); });
 globals_1.FishEvents.on("serverSays", function () { return exports.Achievements.server_speak.grantToAllOnline(); });
 var templateObject_1, templateObject_2;

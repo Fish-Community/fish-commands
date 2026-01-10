@@ -890,3 +890,23 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 	}
 }
 
+const sources = [
+	Packages.mindustry.gen.UnitEntity,
+	Packages.mindustry.gen.MechUnit,
+	Packages.mindustry.gen.LegsUnit,
+	Packages.mindustry.gen.CrawlUnit,
+	Packages.mindustry.gen.UnitWaterMove,
+	Packages.mindustry.gen.BlockUnitUnit,
+	Packages.mindustry.gen.ElevationMoveUnit,
+	Packages.mindustry.gen.BuildingTetherPayloadUnit,
+	Packages.mindustry.gen.TimedKillUnit,
+	Packages.mindustry.gen.PayloadUnit,
+	Packages.mindustry.gen.TankUnit,
+];
+export function getStatuses(unit:Unit):Seq<{ effect: StatusEffect }> {
+	for(const clazz of sources){
+		if(unit instanceof clazz)
+			return ArcReflect.get(clazz, unit, "statuses") as Seq<{ effect: StatusEffect }>;
+	}
+	return new Seq();
+}

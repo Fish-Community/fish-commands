@@ -86,6 +86,7 @@ exports.getHash = getHash;
 exports.match = match;
 exports.fishCommandsRootDirPath = fishCommandsRootDirPath;
 exports.applyEffectMode = applyEffectMode;
+exports.getStatuses = getStatuses;
 var api = require("/api");
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
@@ -1060,4 +1061,35 @@ function applyEffectMode(mode, unit, ticks) {
             finally { if (e_7) throw e_7.error; }
         }
     }
+}
+var sources = [
+    Packages.mindustry.gen.UnitEntity,
+    Packages.mindustry.gen.MechUnit,
+    Packages.mindustry.gen.LegsUnit,
+    Packages.mindustry.gen.CrawlUnit,
+    Packages.mindustry.gen.UnitWaterMove,
+    Packages.mindustry.gen.BlockUnitUnit,
+    Packages.mindustry.gen.ElevationMoveUnit,
+    Packages.mindustry.gen.BuildingTetherPayloadUnit,
+    Packages.mindustry.gen.TimedKillUnit,
+    Packages.mindustry.gen.PayloadUnit,
+    Packages.mindustry.gen.TankUnit,
+];
+function getStatuses(unit) {
+    var e_8, _a;
+    try {
+        for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
+            var clazz = sources_1_1.value;
+            if (unit instanceof clazz)
+                return ArcReflect.get(clazz, unit, "statuses");
+        }
+    }
+    catch (e_8_1) { e_8 = { error: e_8_1 }; }
+    finally {
+        try {
+            if (sources_1_1 && !sources_1_1.done && (_a = sources_1.return)) _a.call(sources_1);
+        }
+        finally { if (e_8) throw e_8.error; }
+    }
+    return new Seq();
 }
