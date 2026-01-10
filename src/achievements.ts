@@ -17,7 +17,7 @@ const mixtechItems = Items.serpuloItems.copy();
 Items.erekirItems.each(i => mixtechItems.add(i));
 
 export class Achievement {
-	private nid: number;
+	nid: number;
 	sid!: string;
 
 	icon: string;
@@ -32,10 +32,11 @@ export class Achievement {
 	checkFrequent?: (team: Team) => boolean;
 	checkGameover?: (winTeam:Team) => boolean;
 
-	notify: "none" | "player" | "everyone" = "player";
+	notify: "nobody" | "player" | "everyone" = "player";
 	hidden = false;
 	disabled = false;
 	allowedModes: GamemodeName[];
+	modesText: string;
 	
 	static all: Achievement[] = [];
 	/** Checked every second. */
@@ -71,16 +72,24 @@ export class Achievement {
 		Object.assign(this, options);
 		if(options.modes){
 			const [type, ...modes] = options.modes;
-			if(type == "only") this.allowedModes = modes;
-			else this.allowedModes = GamemodeNames.filter(m => !modes.includes(m));
+			if(type == "only"){
+				this.allowedModes = modes;
+				this.modesText = modes.join(", ");
+			} else {
+				this.allowedModes = GamemodeNames.filter(m => !modes.includes(m));
+				this.modesText = `all except ${modes.join(", ")}`;
+			}
 		} else {
 			this.allowedModes = GamemodeNames;
+			this.modesText = `all`;
 		}
-		Achievement.all.push(this);
-		if(this.checkPlayerFrequent || this.checkFrequent) Achievement.checkFrequent.push(this);
-		if(this.checkPlayerInfrequent || this.checkInfrequent) Achievement.checkInfrequent.push(this);
-		if(this.checkPlayerJoin) Achievement.checkJoin.push(this);
-		if(this.checkPlayerGameover || this.checkGameover) Achievement.checkGameover.push(this);
+		if(!this.disabled){
+			Achievement.all.push(this);
+			if(this.checkPlayerFrequent || this.checkFrequent) Achievement.checkFrequent.push(this);
+			if(this.checkPlayerInfrequent || this.checkInfrequent) Achievement.checkInfrequent.push(this);
+			if(this.checkPlayerJoin) Achievement.checkJoin.push(this);
+			if(this.checkPlayerGameover || this.checkGameover) Achievement.checkGameover.push(this);
+		}
 	}
 
 	message():string {
@@ -96,7 +105,7 @@ export class Achievement {
 	public grantToAllOnline(team?: Team){
 		FishPlayer.forEachPlayer(p => {
 			if(!this.has(p) && (!team || p.team() == team)){
-				if(this.notify != "none") p.sendMessage(this.message());
+				if(this.notify != "nobody") p.sendMessage(this.message());
 				this.setObtained(p);
 			}
 		});
@@ -190,10 +199,10 @@ export const Achievements = {
 	//Joining based
 	welcome: new Achievement("_", "Welcome", "Join the server.", {
 		checkPlayerJoin: () => true,
-		notify: "none"
+		notify: "nobody"
 	}),
 	migratory_fish: new Achievement(Iconc.exit, "Migratory Fish", "Join all of our servers.", {
-		hidden: true
+		disabled: true
 	}), //TODO
 	frequent_visitor: new Achievement(Iconc.planeOutline, "Frequent Visitor", ["Join the server 100 times.", "Note: Do not reconnect frequently, that will not work. This achievement requires that you have been playing for 1 month."], {
 		checkPlayerJoin: p => p.info().timesJoined >= 100 && (Date.now() - p.globalFirstJoined > Duration.months(1))
@@ -277,7 +286,7 @@ export const Achievements = {
 	//messages based
 	messages_1: new Achievement(["white", Iconc.chat], "Hello", "Send your first chat message.", {
 		checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 1,
-		notify: "none"
+		notify: "nobody"
 	}),
 	messages_2: new Achievement(["red", Iconc.chat], "Chat 2", ["Send 100 chat messages.", "Warning: you will be kicked if you spam the chat."], {
 		checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 100
@@ -296,7 +305,7 @@ export const Achievements = {
 	//blocks built based
 	builds_1: new Achievement(["white", Iconc.fileText], "The Factory Must Prepare", "Construct 1 buildings.", {
 		checkPlayerInfrequent: p => p.globalStats.blocksPlaced >= 1,
-		notify: "none"
+		notify: "nobody"
 	}),
 	builds_2: new Achievement(["red", Iconc.fileText], "The Factory Must Begin", "Construct 200 buildings.", {
 		checkPlayerInfrequent: p => p.globalStats.blocksPlaced > 200
@@ -316,7 +325,7 @@ export const Achievements = {
 	}),
 	dibs: new Achievement(["green", Blocks.tetrativeReconstructor.emoji()], "Dibs", "Be the first player to control the first T5 unit made by a reconstructor that you placed.", {
 		modes: ["not", "sandbox"],
-		hidden: true
+		disabled: true
 	}), //TODO
 	worm: new Achievement(UnitTypes.latum.emoji(), "Worm", "Control a Latum.", {
 		checkPlayerFrequent(player) {
@@ -331,11 +340,11 @@ export const Achievements = {
 	}),
 	head_start: new Achievement(Iconc.commandAttack, "Head Start", ["Win a match of PVP where your opponents have a 5 minute head start.", "Your team must wait for the first 5 minutes without building or descontructing any buildings."], {
 		modes: ["only", "pvp"],
-		hidden: true
+		disabled: true
 	}), //TODO
 	one_v_two: new Achievement(["red", Iconc.modePvp], "1v2", "Defeat two (or more) opponents in PVP without help from other players.", {
 		modes: ["only", "pvp"],
-		hidden: true
+		disabled: true
 	}), //TODO
 
 	//sandbox
@@ -355,13 +364,13 @@ export const Achievements = {
 
 	//easter eggs
 	memory_corruption: new Achievement(["red", Iconc.host], "Is the server OK?", "Witness a memory corruption.", {
-		notify: "none"
+		notify: "nobody"
 	}),
 	run_js_without_perms: new Achievement(["yellow", Iconc.warning], "838", ["Receive a warning from the server that an incident will be reported.", "One of the admin commands has a custom error message."], {
 		notify: "everyone"
 	}),
 	script_kiddie: new Achievement(["red", Iconc.warning], "Script Kiddie", ["Pretend to be a hacker. The server will disagree.", "Change your name to something including \"hacker\"."], {
-		notify: "none"
+		notify: "nobody"
 	}),
 	hacker: new Achievement(["lightgray", Iconc.host], "Hacker", "Find a bug in the server and report it responsibly.", {
 		hidden: true
@@ -405,7 +414,7 @@ export const Achievements = {
 
 	//other players based
 	alone: new Achievement(["red", Iconc.players], "Alone", "Be the only player online for more than two minutes", {
-		notify: "none"
+		notify: "nobody"
 	}),
 	join_playercount_20: new Achievement(["lime", Iconc.players], "Is there enough room?", "Join a server with 20 players online", {
 		checkPlayerJoin: () => Groups.player.size() > 20,
@@ -445,18 +454,18 @@ export const Achievements = {
 	}),
 	pacifist_crawler: new Achievement(UnitTypes.crawler.emoji(), "Pacifist Crawler", "Control a crawler for 15 minutes without exploding.", {
 		modes: ["not", "sandbox"],
-		hidden: true
+		disabled: true
 	}), //TODO
 	core_low_hp: new Achievement(["yellow", Blocks.coreNucleus.emoji()], "Close Call", "Have your core reach less than 1% health, but survive.", {
 		modes: ["not", "sandbox"],
-		hidden: true
+		disabled: true
 	}), //TODO
 	enemy_core_low_hp: new Achievement(["red", Blocks.coreNucleus.emoji()], "So Close", "Cause the enemy core to reach less than 1% health, but survive.", {
 		modes: ["not", "sandbox"],
-		hidden: true
+		disabled: true
 	}), //TODO
 	verified: new Achievement([Rank.active.color, Iconc.ok], "Verified", `Be promoted automatically to ${Rank.active.coloredName()} rank.`, {
-		checkPlayerJoin: p => p.ranksAtLeast("active"), notify: "none"
+		checkPlayerJoin: p => p.ranksAtLeast("active"), notify: "nobody"
 	}),
 	afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
 		modes: ["not", "sandbox"],
