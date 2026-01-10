@@ -1174,15 +1174,19 @@ ${achievement.hidden ? "This achievement is secret." : ""}\
 		description: "Shows all achievements in a paged menu.",
 		perm: Perm.none,
 		async handler({sender, args: { target = sender }, f}){
-			await Menu.textPages(sender, Achievement.all.map(a => [
-				`${a.icon}[] ${a.name}`,
-				() => FColor.achievement`\
+			await Menu.textPages(
+				sender,
+				Achievement.all.filter(a => !a.hidden || a.has(target))
+					.map(a => [
+						`${a.icon}[] ${a.name}`,
+						() => FColor.achievement`\
 ${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
 Allowed modes: ${a.modesText}
 Unlocked: ${f.boolGood(a.has(target))}
 ${a.hidden ? "This achievement is secret." : ""}\
 `
-			]));
+					])
+			);
 		}
 	},
 
@@ -1191,7 +1195,7 @@ ${a.hidden ? "This achievement is secret." : ""}\
 		description: "Shows all achievements in a 2D scrolling menu.",
 		perm: Perm.none,
 		async handler({sender, args: { target = sender }, f}){
-			const options = to2DArray(Achievement.all, 6).map(row => row.map(a => ({
+			const options = to2DArray(Achievement.all.filter(a => !a.hidden || a.has(target)), 6).map(row => row.map(a => ({
 				data: a,
 				text: a.has(target) ? a.icon : `[gray]${Strings.stripColors(a.icon)}`,
 			})));
