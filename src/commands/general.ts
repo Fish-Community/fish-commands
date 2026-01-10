@@ -3,7 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains most in-game chat commands that can be run by untrusted players.
 */
 
-import { Achievement } from "/achievements";
+import { Achievement, Achievements } from "/achievements";
 import * as api from "/api";
 import { FColor, FishServer, Gamemode, rules, text } from "/config";
 import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
@@ -1183,6 +1183,37 @@ Unlocked: ${f.boolGood(a.has(target))}
 ${a.hidden ? "This achievement is secret." : ""}\
 `
 			]));
+		}
+	},
+
+	achievementgrid: {
+		args: ["target:player?"],
+		description: "Shows all achievements in a 2D scrolling menu.",
+		perm: Perm.none,
+		async handler({sender, args: { target = sender }, f}){
+			const options = to2DArray(Achievement.all, 6).map(row => row.map(a => ({
+				data: a,
+				text: a.has(target) ? a.icon : `[gray]${Strings.stripColors(a.icon)}`,
+			})));
+			let x = 0, y = 0;
+			let a: Achievement | null = null;
+			while(true){
+				[a, x, y] = await Menu.scroll(
+					sender, "Achievements",
+					a ? FColor.achievement`\
+${a.icon} ${a.name}
+
+${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
+
+Allowed modes: ${a.modesText}
+Unlocked: ${f.boolGood(a.has(target))}
+${a.hidden ? "This achievement is secret." : ""}\
+` : "Click an achievement icon to show more information.",
+					options,
+					{ onCancel: "reject", columns: 4, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
+				);
+				if(a == Achievements.click_me && target == sender) a.grantTo(sender);
+			}
 		}
 	},
 	
