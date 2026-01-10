@@ -345,7 +345,7 @@ export class FishPlayer {
 		} else {
 			this.originalName = this.name = player.name;
 		}
-		if(this.firstJoined == -1) this.firstJoined = Date.now();
+		if(this.firstJoined < 1) this.firstJoined = Date.now();
 
 		//Do not update USID here
 		this.manualAfk = false;
@@ -987,12 +987,12 @@ We apologize for the inconvenience.`
 		if(this.stelled()) return;
 		for(const rankToAssign of Rank.autoRanks){
 			if(!this.ranksAtLeast(rankToAssign) && rankToAssign.autoRankData){
-				if( //TODO: use global stats
+				if(
 					this.joinsAtLeast(rankToAssign.autoRankData.joins) &&
-					this.stats.blocksPlaced >= rankToAssign.autoRankData.blocksPlaced &&
-					this.stats.timeInGame >= rankToAssign.autoRankData.playtime &&
-					this.stats.chatMessagesSent >= rankToAssign.autoRankData.chatMessagesSent &&
-					(Date.now() - this.firstJoined) >= rankToAssign.autoRankData.timeSinceFirstJoin
+					this.globalStats.blocksPlaced >= rankToAssign.autoRankData.blocksPlaced &&
+					this.globalStats.timeInGame >= rankToAssign.autoRankData.playtime &&
+					this.globalStats.chatMessagesSent >= rankToAssign.autoRankData.chatMessagesSent &&
+					(Date.now() - this.globalFirstJoined) >= rankToAssign.autoRankData.timeSinceFirstJoin
 				){
 					void this.setRank(rankToAssign).then(() =>
 						this.sendMessage(`You have been automatically promoted to rank ${rankToAssign.coloredName()}!`)

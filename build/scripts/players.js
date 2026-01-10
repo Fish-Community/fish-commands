@@ -411,7 +411,7 @@ var FishPlayer = /** @class */ (function () {
         else {
             this.originalName = this.name = player.name;
         }
-        if (this.firstJoined == -1)
+        if (this.firstJoined < 1)
             this.firstJoined = Date.now();
         //Do not update USID here
         this.manualAfk = false;
@@ -1144,12 +1144,11 @@ var FishPlayer = /** @class */ (function () {
             return;
         var _loop_1 = function (rankToAssign) {
             if (!this_1.ranksAtLeast(rankToAssign) && rankToAssign.autoRankData) {
-                if ( //TODO: use global stats
-                this_1.joinsAtLeast(rankToAssign.autoRankData.joins) &&
-                    this_1.stats.blocksPlaced >= rankToAssign.autoRankData.blocksPlaced &&
-                    this_1.stats.timeInGame >= rankToAssign.autoRankData.playtime &&
-                    this_1.stats.chatMessagesSent >= rankToAssign.autoRankData.chatMessagesSent &&
-                    (Date.now() - this_1.firstJoined) >= rankToAssign.autoRankData.timeSinceFirstJoin) {
+                if (this_1.joinsAtLeast(rankToAssign.autoRankData.joins) &&
+                    this_1.globalStats.blocksPlaced >= rankToAssign.autoRankData.blocksPlaced &&
+                    this_1.globalStats.timeInGame >= rankToAssign.autoRankData.playtime &&
+                    this_1.globalStats.chatMessagesSent >= rankToAssign.autoRankData.chatMessagesSent &&
+                    (Date.now() - this_1.globalFirstJoined) >= rankToAssign.autoRankData.timeSinceFirstJoin) {
                     void this_1.setRank(rankToAssign).then(function () {
                         return _this.sendMessage("You have been automatically promoted to rank ".concat(rankToAssign.coloredName(), "!"));
                     });
