@@ -1229,7 +1229,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 var sender = _b.sender, _c = _b.args.target, target = _c === void 0 ? sender : _c, f = _b.f;
                 return __generator(this, function (_d) {
                     switch (_d.label) {
-                        case 0: return [4 /*yield*/, menus_1.Menu.textPages(sender, achievements_1.Achievement.all.map(function (a) { return [
+                        case 0: return [4 /*yield*/, menus_1.Menu.textPages(sender, achievements_1.Achievement.all.filter(function (a) { return !a.hidden || a.has(target); })
+                                .map(function (a) { return [
                                 "".concat(a.icon, "[] ").concat(a.name),
                                 function () { return config_1.FColor.achievement(templateObject_22 || (templateObject_22 = __makeTemplateObject(["", "\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : ""); }
                             ]; }))];
@@ -1252,7 +1253,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 return __generator(this, function (_e) {
                     switch (_e.label) {
                         case 0:
-                            options = (0, funcs_1.to2DArray)(achievements_1.Achievement.all, 6).map(function (row) { return row.map(function (a) { return ({
+                            options = (0, funcs_1.to2DArray)(achievements_1.Achievement.all.filter(function (a) { return !a.hidden || a.has(target); }), 6).map(function (row) { return row.map(function (a) { return ({
                                 data: a,
                                 text: a.has(target) ? a.icon : "[gray]".concat(Strings.stripColors(a.icon)),
                             }); }); });
