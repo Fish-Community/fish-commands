@@ -1202,7 +1202,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                 (0, commands_1.fail)(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."], ["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."])), name));
                             if (!(matching.length > 2)) return [3 /*break*/, 2];
                             return [4 /*yield*/, menus_1.Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, {
-                                    onCancel: "reject"
+                                    onCancel: "reject",
+                                    columns: 2,
+                                    optionStringifier: function (a) { return "".concat(a.icon, "[] ").concat(a.name); }
                                 })];
                         case 1:
                             _c = _g.sent();
@@ -1218,5 +1220,25 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 });
             });
         }
+    }, achievementlist: {
+        args: ["target:player?"],
+        description: "Shows all achievements in a paged menu.",
+        perm: commands_1.Perm.none,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var sender = _b.sender, _c = _b.args.target, target = _c === void 0 ? sender : _c, f = _b.f;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0: return [4 /*yield*/, menus_1.Menu.textPages(sender, achievements_1.Achievement.all.map(function (a) { return [
+                                "".concat(a.icon, "[] ").concat(a.name),
+                                function () { return config_1.FColor.achievement(templateObject_22 || (templateObject_22 = __makeTemplateObject(["", "\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : ""); }
+                            ]; }))];
+                        case 1:
+                            _d.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
     } }));
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22;
