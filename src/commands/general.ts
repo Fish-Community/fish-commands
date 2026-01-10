@@ -1045,7 +1045,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 				data: null,
 			})), Vars.world.width()).reverse();
 			const height = Vars.world.height();
-			void Menu.scroll(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
+			void Menu.scroll2D(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
 				columns: size,
 				rows: size,
 				x: x ? x - Math.trunc(size / 2) : 0,
@@ -1198,7 +1198,7 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			let x = 0, y = 0;
 			let a: Achievement | null = null;
 			while(true){
-				[a, x, y] = await Menu.scroll(
+				[a, x, y] = await Menu.scroll2D(
 					sender, "Achievements",
 					a ? FColor.achievement`\
 ${a.icon} ${a.name}

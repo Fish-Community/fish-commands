@@ -126,7 +126,7 @@ export const Menu = {
 		Call.menu(target.con, registeredListeners.generic, title, description, stringifiedOptions);
 		return promise;
 	},
-	/** Displays a menu to a player, returning a Promise. Arranges options into a 2D array, and can add a Cancel option. */
+	/** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */
 	menu<const TOption, TCancelBehavior extends MenuCancelOption = "ignore">(
 		this:void, title:string, description:string, options:TOption[], target:FishPlayer,
 		{
@@ -175,6 +175,10 @@ export const Menu = {
 	}:MenuConfirmProps = {}){
 		return Menu.confirm(target, description, { cancelText, confirmText, ...rest });
 	},
+	/**
+	 * Displays a menu to a player, returning a Promise.
+	 * Accepts pre-generated data and text. Alternative to optionStringifier if the text is already generated.
+	 */
 	buttons<TButtonData, TCancelBehavior extends MenuCancelOption>(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:{ data: TButtonData; text: string; }[][],
@@ -185,6 +189,11 @@ export const Menu = {
 			optionStringifier: o => o.text,
 		}).then(o => o?.data as TButtonData | (TCancelBehavior extends "null" ? null : never));
 	},
+	/**
+	 * Displays a menu to a player, returning a Promise.
+	 * Adds left and right arrows to switch pages.
+	 * Shows different options based on the page.
+	 */
 	pages<TOption, TCancelBehavior extends MenuCancelOption>(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:{ data: TOption; text: string; }[][][],
@@ -218,15 +227,21 @@ export const Menu = {
 		showPage(0);
 		return promise;
 	},
-	textPages<TOption, TCancelBehavior extends MenuCancelOption>(
+	/**
+	 * Displays a menu to a player, returning a Promise.
+	 * Adds left and right arrows to switch pages.
+	 * Does not support options.
+	 * Shows different text based on the current page.
+	 */
+	textPages<TCancelBehavior extends MenuCancelOption>(
 		this:void, target:FishPlayer, pages:Array<readonly [title:string, description:() => string]>,
-		cfg: Pick<MenuOptions<TOption, TCancelBehavior>, "onCancel"> & {
+		cfg: Pick<MenuOptions<never, TCancelBehavior>, "onCancel"> & {
 			/** Index or title of the initial page. */
 			startPage?: number | string;
 		} = {},
 	){
 		const { promise, reject, resolve } = Promise.withResolvers<
-			(TCancelBehavior extends "null" ? null : never) | TOption,
+			(TCancelBehavior extends "null" ? null : never),
 			TCancelBehavior extends "reject" ? "cancel" : never
 		>();
 		const pageSkipSize = Math.max(Math.floor(pages.length / 8), 5);
@@ -267,7 +282,13 @@ export const Menu = {
 		showPage(index);
 		return promise;
 	},
-	scroll<TOption, TCancelBehavior extends MenuCancelOption>(
+	/**
+	 * Displays a menu to a player, returning a Promise.
+	 * Accepts a 2D array of options and shows a region of that 2D grid.
+	 * Adds arrows to scroll left/right/up/down.
+	 * Resolves to the selected option.
+	 */
+	scroll2D<TOption, TCancelBehavior extends MenuCancelOption>(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:{ data: TOption; text: string; }[][],
 		cfg: Pick<MenuOptions<TOption, TCancelBehavior>, "onCancel" | "columns"> & {
@@ -323,6 +344,11 @@ export const Menu = {
 		showPage(Math.min(cfg.x ?? 0, width - cols), Math.min(cfg.y ?? 0, height - rows));
 		return promise;
 	},
+	/**
+	 * Displays a menu to a player, returning a Promise.
+	 * Adds left and right arrows to switch pages. Automatically paginates provided options.
+	 * Accepts pre-generated data and text. Alternative to optionStringifier if the text is already generated.
+	 */
 	pagedListButtons<TButtonData, MenuCancelBehavior extends MenuCancelOption = "ignore">(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:Array<{ data: TButtonData; text: string; }>,
@@ -336,6 +362,10 @@ export const Menu = {
 		if(pages.length <= 1) return Menu.buttons(target, title, description, pages[0] ?? [], cfg);
 		return Menu.pages(target, title, description, pages, cfg);
 	},
+	/**
+	 * Displays a menu to a player, returning a Promise.
+	 * Adds left and right arrows to switch pages. Automatically paginates provided options.
+	 */
 	pagedList<TButtonData, MenuCancelBehavior extends MenuCancelOption = "ignore">(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:TButtonData[],

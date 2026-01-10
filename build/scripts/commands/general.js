@@ -1093,7 +1093,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 data: null,
             }); }), Vars.world.width()).reverse();
             var height = Vars.world.height();
-            void menus_1.Menu.scroll(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
+            void menus_1.Menu.scroll2D(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
                 columns: size,
                 rows: size,
                 x: x ? x - Math.trunc(size / 2) : 0,
@@ -1261,7 +1261,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             _e.label = 1;
                         case 1:
                             if (!true) return [3 /*break*/, 3];
-                            return [4 /*yield*/, menus_1.Menu.scroll(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") : "Click an achievement icon to show more information.", options, { onCancel: "reject", columns: 4, rows: 4, getCenterText: function () { return String.fromCharCode(Iconc.settings); }, x: x, y: y })];
+                            return [4 /*yield*/, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") : "Click an achievement icon to show more information.", options, { onCancel: "reject", columns: 4, rows: 4, getCenterText: function () { return String.fromCharCode(Iconc.settings); }, x: x, y: y })];
                         case 2:
                             _c = __read.apply(void 0, [_e.sent(), 3]), a = _c[0], x = _c[1], y = _c[2];
                             if (a == achievements_1.Achievements.click_me && target == sender)
