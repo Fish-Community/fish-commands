@@ -195,8 +195,8 @@ export const Achievements = {
 	migratory_fish: new Achievement(Iconc.exit, "Migratory Fish", "Join all of our servers.", {
 		hidden: true
 	}), //TODO
-	frequent_visitor: new Achievement(Iconc.planeOutline, "Frequent Visitor", "Join the server 100 times.", {
-		checkPlayerJoin: p => p.info().timesJoined >= 100
+	frequent_visitor: new Achievement(Iconc.planeOutline, "Frequent Visitor", ["Join the server 100 times.", "Note: Do not reconnect frequently, that will not work. This achievement requires that you have been playing for 1 month."], {
+		checkPlayerJoin: p => p.info().timesJoined >= 100 && (Date.now() - p.globalFirstJoined > Duration.months(1))
 	}),
 
 	//Gamemode based
@@ -279,16 +279,16 @@ export const Achievements = {
 		checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 1,
 		notify: "none"
 	}),
-	messages_2: new Achievement(["red", Iconc.chat], "Chat 2", "Send 100 chat messages.", {
+	messages_2: new Achievement(["red", Iconc.chat], "Chat 2", ["Send 100 chat messages.", "Warning: you will be kicked if you spam the chat."], {
 		checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 100
 	}),
-	messages_3: new Achievement(["orange", Iconc.chat], "Chat 3", "Send 500 chat messages.", {
+	messages_3: new Achievement(["orange", Iconc.chat], "Chat 3", ["Send 500 chat messages.", "Warning: you will be kicked if you spam the chat."], {
 		checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 500
 	}),
-	messages_4: new Achievement(["yellow", Iconc.chat], "Chat 4", "Send 2000 chat messages.", {
+	messages_4: new Achievement(["yellow", Iconc.chat], "Chat 4", ["Send 2000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
 		checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 2000
 	}),
-	messages_5: new Achievement(["lime", Iconc.chat], "Chat 4", "Send 5000 chat messages.", {
+	messages_5: new Achievement(["lime", Iconc.chat], "Chat 4", ["Send 5000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
 		checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 5000,
 		notify: "everyone"
 	}),
@@ -306,7 +306,6 @@ export const Achievements = {
 	}),
 	builds_4: new Achievement(["yellow", Iconc.fileText], "The Factory Must Grow", "Construct 5000 buildings.", {
 		checkPlayerInfrequent: p => p.globalStats.blocksPlaced > 5000,
-		notify: "everyone"
 	}),
 
 	//units
