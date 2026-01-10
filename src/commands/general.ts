@@ -1013,20 +1013,21 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		};
 	}),
 	stats: {
-		args: ["target:player"],
+		args: ["target:player", "global:boolean?"],
 		perm: Perm.none,
 		description: "Views a player's stats.",
-		handler({args:{target}, output, f}){
+		handler({args:{target, global = false}, output, f}){
+			const stats = global ? target.globalStats : target.stats;
 			output(f`[accent]\
-Statistics for player ${target}:
+Statistics for player ${target} ${global ? "on this server" : "across all servers"}:
 (note: we started recording statistics on 22 Jan 2024)
 [white]--------------[]
-Blocks broken: ${target.stats.blocksBroken}
-Blocks placed: ${target.stats.blocksPlaced}
-Chat messages sent: ${target.stats.chatMessagesSent}
-Games finished: ${target.stats.gamesFinished}
-Time in-game: ${formatTime(target.stats.timeInGame)}
-Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
+Blocks broken: ${stats.blocksBroken}
+Blocks placed: ${stats.blocksPlaced}
+Chat messages sent: ${stats.chatMessagesSent}
+Games finished: ${stats.gamesFinished}
+Time in-game: ${formatTime(stats.timeInGame)}
+Win rate: ${stats.gamesWon / stats.gamesFinished}`
 			);
 		}
 	},

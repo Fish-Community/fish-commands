@@ -1068,12 +1068,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             },
         };
     }), stats: {
-        args: ["target:player"],
+        args: ["target:player", "global:boolean?"],
         perm: commands_1.Perm.none,
         description: "Views a player's stats.",
         handler: function (_a) {
-            var target = _a.args.target, output = _a.output, f = _a.f;
-            output(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["[accent]Statistics for player ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, target.stats.blocksBroken, target.stats.blocksPlaced, target.stats.chatMessagesSent, target.stats.gamesFinished, (0, utils_1.formatTime)(target.stats.timeInGame), target.stats.gamesWon / target.stats.gamesFinished));
+            var _b = _a.args, target = _b.target, _c = _b.global, global = _c === void 0 ? false : _c, output = _a.output, f = _a.f;
+            var stats = global ? target.globalStats : target.stats;
+            output(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, global ? "on this server" : "across all servers", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished));
         }
     }, showworld: {
         args: ["x:number?", "y:number?", "size:number?"],
