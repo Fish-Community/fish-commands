@@ -132,10 +132,12 @@ var Achievement = /** @class */ (function () {
             Call.sendMessage(this.messageToEveryone(player));
         else if (this.notify == "player")
             player.sendMessage(this.message());
-        this.setObtained(player);
+        if (!this.has(player))
+            this.setObtained(player);
     };
     Achievement.prototype.setObtained = function (player) {
-        return player.achievements.set(this.nid);
+        //void player.updateSynced(fishP => fishP.achievements.set(this.nid));
+        player.achievements.set(this.nid);
     };
     Achievement.prototype.has = function (player) {
         return player.achievements.get(this.nid);

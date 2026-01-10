@@ -592,7 +592,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 (0, commands_1.fail)("Please use the setusid command instead.");
             var oldusid = player.usid;
             player.usid = null;
-            api.setFishPlayerData(player.getData()).then(function () {
+            api.setFishPlayerData(player.getData(), 1, true).then(function () {
                 outputSuccess("Removed the usid of player ".concat(player.name, "/").concat(player.uuid, " (was ").concat(oldusid, ")"));
             }).catch(function (err) {
                 Log.err(err);
@@ -611,7 +611,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var player = (_b = players_1.FishPlayer.lastAuthKicked) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("No authorization failures have occurred since the last restart.");
             var oldusid = player.usid;
             player.usid = args.usid;
-            api.setFishPlayerData(player.getData()).then(function () {
+            api.setFishPlayerData(player.getData(), 1, true).then(function () {
                 outputSuccess("Set the usid of player ".concat(player.name, "/").concat(player.uuid, " to ").concat(args.usid, " (was ").concat(oldusid, ")"));
             }).catch(function (err) {
                 Log.err(err);

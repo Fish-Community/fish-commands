@@ -179,8 +179,6 @@ function getFishPlayerData(uuid) {
 }
 /** Pushes fish player data to the backend. */
 function setFishPlayerData(data, repeats, ignoreActivelySyncedFields) {
-    if (repeats === void 0) { repeats = 1; }
-    if (ignoreActivelySyncedFields === void 0) { ignoreActivelySyncedFields = false; }
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend) {
         resolve();
