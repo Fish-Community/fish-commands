@@ -89,7 +89,9 @@ export class FishPlayer {
 	tstats = {
 		//remember to clear this in updateSavedInfoFromPlayer!
 		blocksBroken: 0,
+		blockInteractionsThisMap: 0,
 		lastMapStartTime: 0,
+		lastMapPlayedTime: 0,
 		wavesSurvived: 0,
 	};
 	/** Whether the player has manually marked themselves as AFK. */
@@ -374,6 +376,10 @@ export class FishPlayer {
 		this.changedTeam = false;
 		this.ipDetectedVpn = false;
 		this.tstats.blocksBroken = 0;
+		if(this.tstats.lastMapPlayedTime != FishPlayer.lastMapStartTime){
+			this.tstats.blockInteractionsThisMap = 0;
+			this.tstats.lastMapPlayedTime = FishPlayer.lastMapStartTime;
+		}
 		this.infoUpdated = true;
 	}
 	updateData(data: Partial<FishPlayerData>){
@@ -717,6 +723,7 @@ export class FishPlayer {
 	}
 	private static ignoreGameOver = false;
 	static onGameOver(winningTeam:Team){
+		FishEvents.fire("gameOver", [winningTeam]);
 		this.forEachPlayer((fishPlayer) => {
 			//Clear temporary states such as menu and taphandler
 			fishPlayer.activeMenus = [];
@@ -732,6 +739,7 @@ export class FishPlayer {
 			}
 			fishPlayer.changedTeam = false;
 			fishPlayer.tstats.wavesSurvived = 0;
+			fishPlayer.tstats.blockInteractionsThisMap = 0;
 		});
 	}
 	static ignoreGameover(callback:() => unknown){

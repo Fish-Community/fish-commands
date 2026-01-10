@@ -125,7 +125,7 @@ Events.on(EventType.PlayerJoin, ({player}: {player: mindustryPlayer}) => {
 		}
 	}
 });
-Events.on(EventType.GameOverEvent, ({winner}) => {
+FishEvents.on("gameOver", (_, winner) => {
 	for(const ach of Achievement.checkGameover){
 		if(ach.allowedInMode()){
 			if(ach.checkGameover?.(winner)) ach.grantToAllOnline();
@@ -458,10 +458,12 @@ export const Achievements = {
 	verified: new Achievement([Rank.active.color, Iconc.ok], "Verified", `Be promoted automatically to ${Rank.active.coloredName()} rank.`, {
 		checkPlayerJoin: p => p.ranksAtLeast("active"), notify: "none"
 	}),
-	afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without doing anything.", {
+	afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
 		modes: ["not", "sandbox"],
-		hidden: true
-	}), //TODO
+		checkPlayerGameover(player, winTeam) {
+			return player.team() == winTeam && player.tstats.blockInteractionsThisMap == 0;
+		},
+	}),
 	status_effects_5: new Achievement(StatusEffects.electrified.emoji(), "A Furious Cocktail", "Have at least 5 status effects at once.", {
 		checkPlayerFrequent: p => {
 			const unit = p.unit();
