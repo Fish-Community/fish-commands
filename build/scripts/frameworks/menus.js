@@ -290,24 +290,29 @@ exports.Menu = {
         var width = options[0].length;
         function showPage(x, y) {
             var _a, _b;
-            var opts = __spreadArray(__spreadArray([], __read(options.slice(y, y + rows).map(function (r) { return r.slice(x, x + cols).map(function (d) { return ({ text: d.text, data: [d.data] }); }); })), false), [
+            var opts = __spreadArray(__spreadArray([], __read(options.slice(y, y + rows).map(function (r) { return r.concat(Array(width - r.length).fill({ data: "blank", text: "" })); }).map(function (r) {
+                return r.slice(x, x + cols).map(function (d) { return ({ text: d.text, data: [d.data] }); });
+            })), false), [
                 [
                     { data: "blank", text: "" },
-                    { data: "up", text: "[".concat(y == 0 ? "gray" : "accent", "]^\n|") },
+                ],
+                [
+                    { data: "blank", text: "" },
+                    { data: "up", text: "[".concat(y == 0 ? "gray" : "accent", "]").concat(String.fromCharCode(Iconc.up)) },
                     { data: "blank", text: "" },
                 ], [
-                    { data: "left", text: "[".concat(x == 0 ? "gray" : "accent", "]<--") },
+                    { data: "left", text: "[".concat(x == 0 ? "gray" : "accent", "]").concat(String.fromCharCode(Iconc.left)) },
                     { data: "blank", text: (_b = (_a = cfg.getCenterText) === null || _a === void 0 ? void 0 : _a.call(cfg, x, y)) !== null && _b !== void 0 ? _b : '' },
-                    { data: "right", text: "[".concat(x == width - cols ? "gray" : "accent", "]-->") }
+                    { data: "right", text: "[".concat(x == width - cols ? "gray" : "accent", "]").concat(String.fromCharCode(Iconc.right)) },
                 ], [
                     { data: "blank", text: "" },
-                    { data: "down", text: "[".concat(y == height - rows ? "gray" : "accent", "]|\nV") },
+                    { data: "down", text: "[".concat(y == height - rows ? "gray" : "accent", "]").concat(String.fromCharCode(Iconc.down)) },
                     { data: "blank", text: "" },
                 ]
             ], false);
-            void exports.Menu.buttons(target, title, description, opts, __assign(__assign({}, cfg), { onCancel: "null" })).then(function (response) {
+            void exports.Menu.buttons(target, title, description, opts, cfg).then(function (response) {
                 if (response instanceof Array)
-                    resolve(response[0]);
+                    resolve([response[0], x, y]);
                 else if (response === "right")
                     showPage(Math.min(x + 1, width - cols), y);
                 else if (response === "left")

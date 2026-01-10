@@ -278,7 +278,7 @@ export const Menu = {
 		} = {},
 	){
 		const { promise, reject, resolve } = Promise.withResolvers<
-			(TCancelBehavior extends "null" ? null : never) | TOption,
+			(TCancelBehavior extends "null" ? null : never) | [TOption, x:number, y:number],
 			TCancelBehavior extends "reject" ? "cancel" : never
 		>();
 		const { rows = 5, columns: cols = 5 } = cfg;
@@ -286,23 +286,28 @@ export const Menu = {
 		const width = options[0].length;
 		function showPage(x:number, y:number){
 			const opts:{ data: "left" | "blank" | "right" | "up" | "down" | readonly [TOption]; text: string; }[][] = [
-				...options.slice(y, y + rows).map(r => r.slice(x, x + cols).map(d => ({ text: d.text, data: [d.data] as const }))),
+				...options.slice(y, y + rows).map(r => r.concat(Array(width - r.length).fill({ data: "blank", text: `` }))).map(r =>
+					r.slice(x, x + cols).map(d => ({ text: d.text, data: [d.data] as const }))
+				),
 				[
 					{ data: "blank", text: `` },
-					{ data: "up", text: `[${y == 0 ? "gray" : "accent"}]^\n|` },
+				],
+				[
+					{ data: "blank", text: `` },
+					{ data: "up", text: `[${y == 0 ? "gray" : "accent"}]${String.fromCharCode(Iconc.up)}` },
 					{ data: "blank", text: `` },
 				],[
-					{ data: "left", text: `[${x == 0 ? "gray" : "accent"}]<--` },
+					{ data: "left", text: `[${x == 0 ? "gray" : "accent"}]${String.fromCharCode(Iconc.left)}` },
 					{ data: "blank", text: cfg.getCenterText?.(x, y) ?? '' },
-					{ data: "right", text: `[${x == width - cols ? "gray" : "accent"}]-->` }
+					{ data: "right", text: `[${x == width - cols ? "gray" : "accent"}]${String.fromCharCode(Iconc.right)}` },
 				],[
 					{ data: "blank", text: `` },
-					{ data: "down", text: `[${y == height - rows ? "gray" : "accent"}]|\nV` },
+					{ data: "down", text: `[${y == height - rows ? "gray" : "accent"}]${String.fromCharCode(Iconc.down)}` },
 					{ data: "blank", text: `` },
 				]
 			];
-			void Menu.buttons(target, title, description, opts, {...cfg, onCancel: "null"}).then<unknown, never>(response => {
-				if(response instanceof Array) resolve(response[0]);
+			void Menu.buttons(target, title, description, opts, cfg).then<unknown, never>(response => {
+				if(response instanceof Array) resolve([response[0], x, y]);
 				else if(response === "right") showPage(Math.min(x + 1, width - cols), y);
 				else if(response === "left") showPage(Math.max(x - 1, 0), y);
 				else if(response === "up") showPage(x, Math.max(y - 1, 0));
