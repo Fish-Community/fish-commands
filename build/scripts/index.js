@@ -212,6 +212,7 @@ Events.on(EventType.GameOverEvent, function (e) {
     }
     players_1.FishPlayer.onGameOver(e.winner);
 });
+Events.on(EventType.WorldLoadEvent, function () { return players_1.FishPlayer.onGameBegin(); });
 Events.on(EventType.PlayerChatEvent, function (e) {
     players_1.FishPlayer.onPlayerChat(e.player, e.message);
 });

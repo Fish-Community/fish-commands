@@ -204,6 +204,7 @@ Events.on(EventType.GameOverEvent, (e) => {
 	}
 	FishPlayer.onGameOver(e.winner as Team);
 });
+Events.on(EventType.WorldLoadEvent, () => FishPlayer.onGameBegin());
 Events.on(EventType.PlayerChatEvent, e => {
 	FishPlayer.onPlayerChat(e.player, e.message);
 });
