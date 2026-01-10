@@ -70,7 +70,7 @@ const Vars: {
 	maps: Maps;
 	state: {
 		rules: Rules;
-		planet: Planet;
+		planet: Planet | null;
 		set(state:State):void;
 		gameOver:boolean;
 		wave:number;
@@ -92,7 +92,7 @@ const Vars: {
 	world: World;
 };
 class Teams {
-	active: Seq<Team>;
+	active: Seq<TeamData>;
 }
 class BlockIndexer {
 	getFlagged(team: Team, flag: BlockFlag): Seq<Building>;
@@ -263,6 +263,7 @@ class Team {
 	cores(): Seq<Building>;
 }
 type TeamData = {
+	team: Team;
 	units: Seq<Unit>;
 	buildings: Seq<Building>;
 	cores: Seq<Building>;
@@ -889,4 +890,11 @@ class Boolf<T> {
 function boolf<T>(func: (value: T) => boolean): Boolf<T>;
 
 const Iconc: Record<"rotate" | "modeSurvival" | "power" | "left" | "redditAlien" | "edit" | "downOpen" | "pencil" | "file" | "lockOpen" | "right" | "infoCircle" | "pick" | "settings" | "spray1" | "terrain" | "exit" | "wrench" | "lock" | "discord" | "eye" | "none" | "play" | "diagonal" | "eraser" | "trash" | "liquid" | "fileImage" | "defense" | "layers" | "grid" | "admin" | "steam" | "star" | "chartBar" | "chat" | "android" | "image" | "map" | "logic" | "menu" | "commandRally" | "editor" | "folder" | "units" | "commandAttack" | "copy" | "filter" | "cancel" | "terminal" | "upload" | "eyeOff" | "save" | "planeOutline" | "fill" | "distribution" | "upOpen" | "rightOpen" | "modePvp" | "download" | "list" | "flipX" | "flipY" | "effect" | "paste" | "planet" | "waves" | "up" | "warning" | "tree" | "add" | "down" | "host" | "spray" | "info" | "players" | "resize" | "refresh1" | "production" | "crafting" | "pause" | "googleplay" | "hammer" | "fileText" | "modeAttack" | "move" | "zoom" | "bookOpen" | "refresh" | "ok" | "home" | "githubSquare" | "powerOld" | "github" | "undo" | "box" | "trello" | "book" | "export" | "fileTextFill" | "rightOpenOut" | "turret" | "leftOpen" | "line" | "itchio" | "link" | "filters" | "redo", number>;
+
+const ArcReflect: {
+	get(thing:any, key:string):any;
+	get(clazz:any, thing:any, key:string):any;
+	set(thing:any, key:string, value:any):void;
+};
+
 }
