@@ -201,35 +201,35 @@ export const Achievements = {
 	minigame: new Achievement(Iconc.play, "Minigame", ["Win a Minigame.", "You must be present for the beginning and end of the game."], { modes: ["only", "minigame"] }),
 
 	//playtime based
-	playtime_1: new Achievement(["white", Iconc.googleplay], "Playtime 1", "Spend 1 hour in-game.", { checkPlayerInfrequent: p => p.stats.timeInGame >= Duration.hours(1) }),
-	playtime_2: new Achievement(["red", Iconc.googleplay], "Playtime 2", "Spend 12 hours in-game.", { checkPlayerInfrequent: p => p.stats.timeInGame >= Duration.hours(12) }),
-	playtime_3: new Achievement(["orange", Iconc.googleplay], "Playtime 3", "Spend 2 days in-game.", { checkPlayerInfrequent: p => p.stats.timeInGame >= Duration.days(2) }),
-	playtime_4: new Achievement(["yellow", Iconc.googleplay], "Playtime 4", "Spend 10 days in-game.", { checkPlayerInfrequent: p => p.stats.timeInGame >= Duration.days(10) }),
+	playtime_1: new Achievement(["white", Iconc.googleplay], "Playtime 1", "Spend 1 hour in-game.", { checkPlayerInfrequent: p => p.globalStats.timeInGame >= Duration.hours(1) }),
+	playtime_2: new Achievement(["red", Iconc.googleplay], "Playtime 2", "Spend 12 hours in-game.", { checkPlayerInfrequent: p => p.globalStats.timeInGame >= Duration.hours(12) }),
+	playtime_3: new Achievement(["orange", Iconc.googleplay], "Playtime 3", "Spend 2 days in-game.", { checkPlayerInfrequent: p => p.globalStats.timeInGame >= Duration.days(2) }),
+	playtime_4: new Achievement(["yellow", Iconc.googleplay], "Playtime 4", "Spend 10 days in-game.", { checkPlayerInfrequent: p => p.globalStats.timeInGame >= Duration.days(10) }),
 
 	//victories based
-	victory_1: new Achievement(["white", Iconc.star], "First Victory", "Win a map run.", { checkPlayerGameover: p => p.stats.gamesWon >= 1 }),
-	victory_2: new Achievement(["red", Iconc.star], "Victories 2", "Win 5 map runs.", { checkPlayerGameover: p => p.stats.gamesWon >= 5 }),
-	victory_3: new Achievement(["orange", Iconc.star], "Victories 3", "Win 30 map runs.", { checkPlayerGameover: p => p.stats.gamesWon >= 30 }),
-	victory_4: new Achievement(["yellow", Iconc.star], "Victories 4", "Win 100 map runs.", { checkPlayerGameover: p => p.stats.gamesWon >= 100, notify: "everyone" }),
+	victory_1: new Achievement(["white", Iconc.star], "First Victory", "Win a map run.", { checkPlayerGameover: p => p.globalStats.gamesWon >= 1 }),
+	victory_2: new Achievement(["red", Iconc.star], "Victories 2", "Win 5 map runs.", { checkPlayerGameover: p => p.globalStats.gamesWon >= 5 }),
+	victory_3: new Achievement(["orange", Iconc.star], "Victories 3", "Win 30 map runs.", { checkPlayerGameover: p => p.globalStats.gamesWon >= 30 }),
+	victory_4: new Achievement(["yellow", Iconc.star], "Victories 4", "Win 100 map runs.", { checkPlayerGameover: p => p.globalStats.gamesWon >= 100, notify: "everyone" }),
 
 	//games based
-	games_1: new Achievement(["white", Iconc.itchio], "Games 1", "Play 10 map runs.", { checkPlayerGameover: p => p.stats.gamesFinished >= 10 }),
-	games_2: new Achievement(["red", Iconc.itchio], "Games 2", "Play 40 map runs.", { checkPlayerGameover: p => p.stats.gamesFinished >= 40 }),
-	games_3: new Achievement(["orange", Iconc.itchio], "Games 3", "Play 100 map runs.", { checkPlayerGameover: p => p.stats.gamesFinished >= 100 }),
-	games_4: new Achievement(["yellow", Iconc.itchio], "Games 4", "Play 200 map runs.", { checkPlayerGameover: p => p.stats.gamesFinished >= 200, notify: "everyone" }),
+	games_1: new Achievement(["white", Iconc.itchio], "Games 1", "Play 10 map runs.", { checkPlayerGameover: p => p.globalStats.gamesFinished >= 10 }),
+	games_2: new Achievement(["red", Iconc.itchio], "Games 2", "Play 40 map runs.", { checkPlayerGameover: p => p.globalStats.gamesFinished >= 40 }),
+	games_3: new Achievement(["orange", Iconc.itchio], "Games 3", "Play 100 map runs.", { checkPlayerGameover: p => p.globalStats.gamesFinished >= 100 }),
+	games_4: new Achievement(["yellow", Iconc.itchio], "Games 4", "Play 200 map runs.", { checkPlayerGameover: p => p.globalStats.gamesFinished >= 200, notify: "everyone" }),
 
 	//messages based
-	messages_1: new Achievement(["white", Iconc.chat], "Hello", "Send your first chat message.", { notify: "none", checkPlayerInfrequent: p => p.stats.chatMessagesSent >= 1 }),
-	messages_2: new Achievement(["red", Iconc.chat], "Chat 2", "Send 100 chat messages.", { checkPlayerInfrequent: p => p.stats.chatMessagesSent >= 100 }),
-	messages_3: new Achievement(["orange", Iconc.chat], "Chat 3", "Send 500 chat messages.", { checkPlayerInfrequent: p => p.stats.chatMessagesSent >= 500 }),
-	messages_4: new Achievement(["yellow", Iconc.chat], "Chat 4", "Send 2000 chat messages.", { checkPlayerInfrequent: p => p.stats.chatMessagesSent >= 2000 }),
-	messages_5: new Achievement(["lime", Iconc.chat], "Chat 4", "Send 5000 chat messages.", { checkPlayerInfrequent: p => p.stats.chatMessagesSent >= 5000, notify: "everyone" }),
+	messages_1: new Achievement(["white", Iconc.chat], "Hello", "Send your first chat message.", { notify: "none", checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 1 }),
+	messages_2: new Achievement(["red", Iconc.chat], "Chat 2", "Send 100 chat messages.", { checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 100 }),
+	messages_3: new Achievement(["orange", Iconc.chat], "Chat 3", "Send 500 chat messages.", { checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 500 }),
+	messages_4: new Achievement(["yellow", Iconc.chat], "Chat 4", "Send 2000 chat messages.", { checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 2000 }),
+	messages_5: new Achievement(["lime", Iconc.chat], "Chat 4", "Send 5000 chat messages.", { checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 5000, notify: "everyone" }),
 
 	//blocks built based
-	builds_1: new Achievement(["white", Iconc.fileText], "The Factory Must Prepare", "Construct 1 buildings.", { checkPlayerInfrequent: p => p.stats.blocksPlaced >= 1, notify: "none" }),
-	builds_2: new Achievement(["red", Iconc.fileText], "The Factory Must Begin", "Construct 200 buildings.", { checkPlayerInfrequent: p => p.stats.blocksPlaced > 200 }),
-	builds_3: new Achievement(["orange", Iconc.fileText], "The Factory Must Produce", "Construct 1000 buildings.", { checkPlayerInfrequent: p => p.stats.blocksPlaced > 1000 }),
-	builds_4: new Achievement(["yellow", Iconc.fileText], "The Factory Must Grow", "Construct 5000 buildings.", { checkPlayerInfrequent: p => p.stats.blocksPlaced > 5000, notify: "everyone" }),
+	builds_1: new Achievement(["white", Iconc.fileText], "The Factory Must Prepare", "Construct 1 buildings.", { checkPlayerInfrequent: p => p.globalStats.blocksPlaced >= 1, notify: "none" }),
+	builds_2: new Achievement(["red", Iconc.fileText], "The Factory Must Begin", "Construct 200 buildings.", { checkPlayerInfrequent: p => p.globalStats.blocksPlaced > 200 }),
+	builds_3: new Achievement(["orange", Iconc.fileText], "The Factory Must Produce", "Construct 1000 buildings.", { checkPlayerInfrequent: p => p.globalStats.blocksPlaced > 1000 }),
+	builds_4: new Achievement(["yellow", Iconc.fileText], "The Factory Must Grow", "Construct 5000 buildings.", { checkPlayerInfrequent: p => p.globalStats.blocksPlaced > 5000, notify: "everyone" }),
 
 	//units
 	t5: new Achievement(Blocks.tetrativeReconstructor.emoji(), "T5", "Control a T5 unit.", { modes: ["not", "sandbox"], checkPlayerFrequent(player) {
