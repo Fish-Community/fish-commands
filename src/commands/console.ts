@@ -381,7 +381,7 @@ export const commands = consoleCommandList({
 			if(player.ranksAtLeast("admin")) fail(`Please use the setusid command instead.`);
 			const oldusid = player.usid;
 			player.usid = null;
-			api.setFishPlayerData(player.getData()).then(() => {
+			api.setFishPlayerData(player.getData(), 1, true).then(() => {
 				outputSuccess(`Removed the usid of player ${player.name}/${player.uuid} (was ${oldusid})`);
 			}).catch(err => {
 				Log.err(err);
@@ -397,7 +397,7 @@ export const commands = consoleCommandList({
 			const player = FishPlayer.lastAuthKicked ?? fail(`No authorization failures have occurred since the last restart.`);
 			const oldusid = player.usid;
 			player.usid = args.usid;
-			api.setFishPlayerData(player.getData()).then(() => {
+			api.setFishPlayerData(player.getData(), 1, true).then(() => {
 				outputSuccess(`Set the usid of player ${player.name}/${player.uuid} to ${args.usid} (was ${oldusid})`);
 			}).catch(err => {
 				Log.err(err);

@@ -169,6 +169,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 
 	Core.app.addListener({
 		dispose(){
+			FishPlayer.uploadAll();
 			FishEvents.fire("saveData", []);
 			FishPlayer.saveAll(false);
 			Log.info("Saved on exit.");

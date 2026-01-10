@@ -113,11 +113,12 @@ export class Achievement {
 	public grantTo(player:FishPlayer){
 		if(this.notify == "everyone") Call.sendMessage(this.messageToEveryone(player));
 		else if(this.notify == "player") player.sendMessage(this.message());
-		this.setObtained(player);
+		if(!this.has(player)) this.setObtained(player);
 	}
 
 	private setObtained(player:FishPlayer){
-		return player.achievements.set(this.nid);
+		//void player.updateSynced(fishP => fishP.achievements.set(this.nid));
+		player.achievements.set(this.nid);
 	}
 	public has(player:FishPlayer){
 		return player.achievements.get(this.nid);

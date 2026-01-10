@@ -514,7 +514,7 @@ var FishPlayer = /** @class */ (function () {
                         //but it's unlikely to happen
                         //could be fixed by transmitting the update operation to the server as a mongo update command
                         afterFetch === null || afterFetch === void 0 ? void 0 : afterFetch(this);
-                        return [4 /*yield*/, api.setFishPlayerData(this.getData())];
+                        return [4 /*yield*/, api.setFishPlayerData(this.getData(), 1, false)];
                     case 2:
                         _a.sent();
                         return [2 /*return*/];
@@ -1367,6 +1367,11 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.shouldCache = function () {
         return this.ranksAtLeast("mod");
+    };
+    FishPlayer.uploadAll = function () {
+        FishPlayer.forEachPlayer(function (fishP) {
+            return void api.setFishPlayerData(fishP.getData(), 1, true);
+        });
     };
     /** Does not include stats */
     FishPlayer.prototype.hasData = function () {

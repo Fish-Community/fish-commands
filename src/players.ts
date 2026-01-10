@@ -413,7 +413,7 @@ export class FishPlayer {
 		//but it's unlikely to happen
 		//could be fixed by transmitting the update operation to the server as a mongo update command
 		afterFetch?.(this);
-		await api.setFishPlayerData(this.getData());
+		await api.setFishPlayerData(this.getData(), 1, false);
 	}
 	//#endregion
 
@@ -1176,6 +1176,11 @@ We apologize for the inconvenience.`
 	}
 	shouldCache(){
 		return this.ranksAtLeast("mod");
+	}
+	static uploadAll(){
+		FishPlayer.forEachPlayer(fishP =>
+			void api.setFishPlayerData(fishP.getData(), 1, true)
+		);
 	}
 	/** Does not include stats */
 	hasData(){
