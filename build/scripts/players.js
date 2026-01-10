@@ -472,7 +472,7 @@ var FishPlayer = /** @class */ (function () {
         if (data.flags != undefined)
             this.flags = new Set(data.flags.map(ranks_1.RoleFlag.getByName).filter(Boolean));
         if (data.achievements != undefined)
-            this.achievements = JsonIO.read(Bits, data.achievements);
+            this.achievements = JsonIO.read(Bits, "{bits:".concat(data.achievements, "}"));
     };
     FishPlayer.prototype.getData = function () {
         var _a = this, uuid = _a.uuid, name = _a.name, muted = _a.muted, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
@@ -492,7 +492,7 @@ var FishPlayer = /** @class */ (function () {
             showRankPrefix: showRankPrefix,
             rank: rank.name,
             flags: __spreadArray([], __read(flags.values()), false).map(function (f) { return f.name; }),
-            achievements: JsonIO.write(this.achievements)
+            achievements: JsonIO.write(Reflect.get(this.achievements, "bits"))
         };
     };
     /** Warning: the "update" callback is run twice. */

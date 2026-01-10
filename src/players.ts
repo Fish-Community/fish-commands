@@ -387,7 +387,7 @@ export class FishPlayer {
 		if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
 		if(data.rank != undefined) this.rank = Rank.getByName(data.rank) ?? Rank.player;
 		if(data.flags != undefined) this.flags = new Set(data.flags.map(RoleFlag.getByName).filter(Boolean));
-		if(data.achievements != undefined) this.achievements = JsonIO.read(Bits, data.achievements);
+		if(data.achievements != undefined) this.achievements = JsonIO.read(Bits, `{bits:${data.achievements}}`);
 	}
 	getData():UploadedFishPlayerData {
 		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix } = this;
@@ -395,7 +395,7 @@ export class FishPlayer {
 			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix,
 			rank: rank.name,
 			flags: [...flags.values()].map(f => f.name),
-			achievements: JsonIO.write(this.achievements)
+			achievements: JsonIO.write(Reflect.get(this.achievements, "bits"))
 		};
 	}
 	/** Warning: the "update" callback is run twice. */
