@@ -121,7 +121,9 @@ var FishPlayer = /** @class */ (function () {
         this.tstats = {
             //remember to clear this in updateSavedInfoFromPlayer!
             blocksBroken: 0,
+            blockInteractionsThisMap: 0,
             lastMapStartTime: 0,
+            lastMapPlayedTime: 0,
             wavesSurvived: 0,
         };
         /** Whether the player has manually marked themselves as AFK. */
@@ -427,6 +429,10 @@ var FishPlayer = /** @class */ (function () {
         this.changedTeam = false;
         this.ipDetectedVpn = false;
         this.tstats.blocksBroken = 0;
+        if (this.tstats.lastMapPlayedTime != FishPlayer.lastMapStartTime) {
+            this.tstats.blockInteractionsThisMap = 0;
+            this.tstats.lastMapPlayedTime = FishPlayer.lastMapStartTime;
+        }
         this.infoUpdated = true;
     };
     FishPlayer.prototype.updateData = function (data) {
@@ -828,6 +834,7 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.onGameOver = function (winningTeam) {
         var _this = this;
+        globals_1.FishEvents.fire("gameOver", [winningTeam]);
         this.forEachPlayer(function (fishPlayer) {
             //Clear temporary states such as menu and taphandler
             fishPlayer.activeMenus = [];
@@ -845,6 +852,7 @@ var FishPlayer = /** @class */ (function () {
             }
             fishPlayer.changedTeam = false;
             fishPlayer.tstats.wavesSurvived = 0;
+            fishPlayer.tstats.blockInteractionsThisMap = 0;
         });
     };
     FishPlayer.ignoreGameover = function (callback) {

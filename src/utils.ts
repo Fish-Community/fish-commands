@@ -644,6 +644,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 				const fishP = FishPlayer.get(e.unit.player);
 				//TODO move this code
 				fishP.tstats.blocksBroken ++;
+				fishP.tstats.blockInteractionsThisMap ++;
 				fishP.updateStats(stats => stats.blocksBroken ++);
 			}
 		} else {
@@ -653,16 +654,25 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 				const fishP = FishPlayer.get(e.unit.player);
 				//TODO move this code
 				fishP.updateStats(stats => stats.blocksPlaced ++);
+				fishP.tstats.blockInteractionsThisMap ++;
 			}
 		}
 	} else if(e instanceof EventType.ConfigEvent){
 		tile = e.tile.tile;
 		uuid = e.player?.uuid() ?? "unknown";
+		if(uuid != "unknown"){
+			const fishP = FishPlayer.getById(uuid);
+			if(fishP) fishP.tstats.blockInteractionsThisMap ++;
+		}
 		action = "configured";
 		type = e.tile.block.name;
 	} else if(e instanceof EventType.BuildRotateEvent){
 		tile = e.build.tile;
 		uuid = e.unit?.player?.uuid() ?? e.unit?.type.name ?? "unknown";
+		if(uuid != "unknown"){
+			const fishP = FishPlayer.getById(uuid);
+			if(fishP) fishP.tstats.blockInteractionsThisMap ++;
+		}
 		action = "rotated";
 		type = e.build.block.name;
 	} else if(e instanceof EventType.UnitDestroyEvent){

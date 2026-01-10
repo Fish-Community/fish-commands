@@ -167,13 +167,12 @@ Events.on(EventType.PlayerJoin, function (_a) {
         finally { if (e_1) throw e_1.error; }
     }
 });
-Events.on(EventType.GameOverEvent, function (_a) {
-    var e_2, _b;
-    var _c;
-    var winner = _a.winner;
+globals_1.FishEvents.on("gameOver", function (_, winner) {
+    var e_2, _a;
+    var _b;
     var _loop_1 = function (ach) {
         if (ach.allowedInMode()) {
-            if ((_c = ach.checkGameover) === null || _c === void 0 ? void 0 : _c.call(ach, winner))
+            if ((_b = ach.checkGameover) === null || _b === void 0 ? void 0 : _b.call(ach, winner))
                 ach.grantToAllOnline();
             else
                 players_1.FishPlayer.forEachPlayer(function (fishP) {
@@ -185,15 +184,15 @@ Events.on(EventType.GameOverEvent, function (_a) {
         }
     };
     try {
-        for (var _d = __values(Achievement.checkGameover), _e = _d.next(); !_e.done; _e = _d.next()) {
-            var ach = _e.value;
+        for (var _c = __values(Achievement.checkGameover), _d = _c.next(); !_d.done; _d = _c.next()) {
+            var ach = _d.value;
             _loop_1(ach);
         }
     }
     catch (e_2_1) { e_2 = { error: e_2_1 }; }
     finally {
         try {
-            if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
+            if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
         }
         finally { if (e_2) throw e_2.error; }
     }
@@ -293,8 +292,8 @@ exports.Achievements = {
     migratory_fish: new Achievement(Iconc.exit, "Migratory Fish", "Join all of our servers.", {
         hidden: true
     }), //TODO
-    frequent_visitor: new Achievement(Iconc.planeOutline, "Frequent Visitor", "Join the server 100 times.", {
-        checkPlayerJoin: function (p) { return p.info().timesJoined >= 100; }
+    frequent_visitor: new Achievement(Iconc.planeOutline, "Frequent Visitor", ["Join the server 100 times.", "Note: Do not reconnect frequently, that will not work. This achievement requires that you have been playing for 1 month."], {
+        checkPlayerJoin: function (p) { return p.info().timesJoined >= 100 && (Date.now() - p.globalFirstJoined > funcs_1.Duration.months(1)); }
     }),
     //Gamemode based
     attack: new Achievement(Iconc.modeAttack, "Attack", ["Defeat an attack map.", "You must be present for the beginning and end of the game."], {
@@ -377,16 +376,16 @@ exports.Achievements = {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 1; },
         notify: "none"
     }),
-    messages_2: new Achievement(["red", Iconc.chat], "Chat 2", "Send 100 chat messages.", {
+    messages_2: new Achievement(["red", Iconc.chat], "Chat 2", ["Send 100 chat messages.", "Warning: you will be kicked if you spam the chat."], {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 100; }
     }),
-    messages_3: new Achievement(["orange", Iconc.chat], "Chat 3", "Send 500 chat messages.", {
+    messages_3: new Achievement(["orange", Iconc.chat], "Chat 3", ["Send 500 chat messages.", "Warning: you will be kicked if you spam the chat."], {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 500; }
     }),
-    messages_4: new Achievement(["yellow", Iconc.chat], "Chat 4", "Send 2000 chat messages.", {
+    messages_4: new Achievement(["yellow", Iconc.chat], "Chat 4", ["Send 2000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 2000; }
     }),
-    messages_5: new Achievement(["lime", Iconc.chat], "Chat 4", "Send 5000 chat messages.", {
+    messages_5: new Achievement(["lime", Iconc.chat], "Chat 4", ["Send 5000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 5000; },
         notify: "everyone"
     }),
@@ -403,7 +402,6 @@ exports.Achievements = {
     }),
     builds_4: new Achievement(["yellow", Iconc.fileText], "The Factory Must Grow", "Construct 5000 buildings.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.blocksPlaced > 5000; },
-        notify: "everyone"
     }),
     //units
     t5: new Achievement(Blocks.tetrativeReconstructor.emoji(), "T5", "Control a T5 unit.", {
@@ -562,10 +560,12 @@ exports.Achievements = {
     verified: new Achievement([ranks_1.Rank.active.color, Iconc.ok], "Verified", "Be promoted automatically to ".concat(ranks_1.Rank.active.coloredName(), " rank."), {
         checkPlayerJoin: function (p) { return p.ranksAtLeast("active"); }, notify: "none"
     }),
-    afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without doing anything.", {
+    afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
         modes: ["not", "sandbox"],
-        hidden: true
-    }), //TODO
+        checkPlayerGameover: function (player, winTeam) {
+            return player.team() == winTeam && player.tstats.blockInteractionsThisMap == 0;
+        },
+    }),
     status_effects_5: new Achievement(StatusEffects.electrified.emoji(), "A Furious Cocktail", "Have at least 5 status effects at once.", {
         checkPlayerFrequent: function (p) {
             var unit = p.unit();

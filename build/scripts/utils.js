@@ -774,6 +774,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
                 var fishP = players_1.FishPlayer.get(e.unit.player);
                 //TODO move this code
                 fishP.tstats.blocksBroken++;
+                fishP.tstats.blockInteractionsThisMap++;
                 fishP.updateStats(function (stats) { return stats.blocksBroken++; });
             }
         }
@@ -784,18 +785,29 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
                 var fishP = players_1.FishPlayer.get(e.unit.player);
                 //TODO move this code
                 fishP.updateStats(function (stats) { return stats.blocksPlaced++; });
+                fishP.tstats.blockInteractionsThisMap++;
             }
         }
     }
     else if (e instanceof EventType.ConfigEvent) {
         tile = e.tile.tile;
         uuid = (_m = (_l = e.player) === null || _l === void 0 ? void 0 : _l.uuid()) !== null && _m !== void 0 ? _m : "unknown";
+        if (uuid != "unknown") {
+            var fishP = players_1.FishPlayer.getById(uuid);
+            if (fishP)
+                fishP.tstats.blockInteractionsThisMap++;
+        }
         action = "configured";
         type = e.tile.block.name;
     }
     else if (e instanceof EventType.BuildRotateEvent) {
         tile = e.build.tile;
         uuid = (_s = (_q = (_p = (_o = e.unit) === null || _o === void 0 ? void 0 : _o.player) === null || _p === void 0 ? void 0 : _p.uuid()) !== null && _q !== void 0 ? _q : (_r = e.unit) === null || _r === void 0 ? void 0 : _r.type.name) !== null && _s !== void 0 ? _s : "unknown";
+        if (uuid != "unknown") {
+            var fishP = players_1.FishPlayer.getById(uuid);
+            if (fishP)
+                fishP.tstats.blockInteractionsThisMap++;
+        }
         action = "rotated";
         type = e.build.block.name;
     }
