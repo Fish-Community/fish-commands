@@ -49,6 +49,7 @@ export class FishPlayer {
 	static antiBotModePersist = false;
 	static antiBotModeOverride = false;
 	static lastBotWhacked = 0;
+	static lastMapStartTime = 0;
 	//#endregion
 	
 	//#region Transient properties
@@ -88,6 +89,8 @@ export class FishPlayer {
 	tstats = {
 		//remember to clear this in updateSavedInfoFromPlayer!
 		blocksBroken: 0,
+		lastMapStartTime: 0,
+		wavesSurvived: 0,
 	};
 	/** Whether the player has manually marked themselves as AFK. */
 	manualAfk = false;
@@ -357,9 +360,7 @@ export class FishPlayer {
 		this.shouldUpdateName = true;
 		this.changedTeam = false;
 		this.ipDetectedVpn = false;
-		this.tstats = {
-			blocksBroken: 0
-		};
+		this.tstats.blocksBroken = 0;
 		this.infoUpdated = true;
 	}
 	updateData(data: Partial<FishPlayerData>){
@@ -717,12 +718,19 @@ export class FishPlayer {
 				}
 			}
 			fishPlayer.changedTeam = false;
+			fishPlayer.tstats.wavesSurvived = 0;
 		});
 	}
 	static ignoreGameover(callback:() => unknown){
 		this.ignoreGameOver = true;
 		callback();
 		this.ignoreGameOver = false;
+	}
+	static onGameBegin(){
+		const startTime = Date.now();
+		FishPlayer.lastMapStartTime = startTime;
+		//wait 7 seconds for players to join
+		Timer.schedule(() => FishPlayer.forEachPlayer(p => p.tstats.lastMapStartTime = startTime), 7);
 	}
 	/** Must be run on UnitChangeEvent. */
 	static onUnitChange(player:mindustryPlayer, unit:Unit | null){
@@ -1509,3 +1517,5 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 
 }
 
+//TODO convert all the unnecessary event handlers to simple calls to Events.on
+Events.on(EventType.WaveEvent, () => FishPlayer.forEachPlayer(p => p.tstats.wavesSurvived ++));

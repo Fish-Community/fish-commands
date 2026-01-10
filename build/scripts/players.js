@@ -121,6 +121,8 @@ var FishPlayer = /** @class */ (function () {
         this.tstats = {
             //remember to clear this in updateSavedInfoFromPlayer!
             blocksBroken: 0,
+            lastMapStartTime: 0,
+            wavesSurvived: 0,
         };
         /** Whether the player has manually marked themselves as AFK. */
         this.manualAfk = false;
@@ -424,9 +426,7 @@ var FishPlayer = /** @class */ (function () {
         this.shouldUpdateName = true;
         this.changedTeam = false;
         this.ipDetectedVpn = false;
-        this.tstats = {
-            blocksBroken: 0
-        };
+        this.tstats.blocksBroken = 0;
         this.infoUpdated = true;
     };
     FishPlayer.prototype.updateData = function (data) {
@@ -844,12 +844,19 @@ var FishPlayer = /** @class */ (function () {
                 }
             }
             fishPlayer.changedTeam = false;
+            fishPlayer.tstats.wavesSurvived = 0;
         });
     };
     FishPlayer.ignoreGameover = function (callback) {
         this.ignoreGameOver = true;
         callback();
         this.ignoreGameOver = false;
+    };
+    FishPlayer.onGameBegin = function () {
+        var startTime = Date.now();
+        FishPlayer.lastMapStartTime = startTime;
+        //wait 7 seconds for players to join
+        Timer.schedule(function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.lastMapStartTime = startTime; }); }, 7);
     };
     /** Must be run on UnitChangeEvent. */
     FishPlayer.onUnitChange = function (player, unit) {
@@ -1749,6 +1756,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.antiBotModePersist = false;
     FishPlayer.antiBotModeOverride = false;
     FishPlayer.lastBotWhacked = 0;
+    FishPlayer.lastMapStartTime = 0;
     FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { return p.player.id.toString() === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
@@ -1763,4 +1771,6 @@ var FishPlayer = /** @class */ (function () {
     return FishPlayer;
 }());
 exports.FishPlayer = FishPlayer;
+//TODO convert all the unnecessary event handlers to simple calls to Events.on
+Events.on(EventType.WaveEvent, function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.wavesSurvived++; }); });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4;
