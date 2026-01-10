@@ -110,7 +110,7 @@ var Achievement = /** @class */ (function () {
         }
     }
     Achievement.prototype.message = function () {
-        return config_1.FColor.achievement(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Achievement granted!\n[accent]", ": [white]", ""], ["Achievement granted!\\n[accent]", ": [white]", ""])), this.name, this.description);
+        return config_1.FColor.achievement(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Achievement granted!\n[accent]", "[white]: ", ""], ["Achievement granted!\\n[accent]", "[white]: ", ""])), this.name, this.description);
     };
     Achievement.prototype.messageToEveryone = function (player) {
         return config_1.FColor.achievement(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Player ", " has completed the achievement \"", "\"."], ["Player ", " has completed the achievement \"", "\"."])), player.prefixedName, this.name);
@@ -583,6 +583,7 @@ exports.Achievements = {
     verified: new Achievement([ranks_1.Rank.active.color, Iconc.ok], "Verified", "Be promoted automatically to ".concat(ranks_1.Rank.active.coloredName(), " rank."), {
         checkPlayerJoin: function (p) { return p.ranksAtLeast("active"); }, notify: "nobody"
     }),
+    click_me: new Achievement(Iconc.bookOpen, "Clicked", "Run /achievementsgrid and click this achievement."),
     afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
         modes: ["not", "sandbox"],
         checkPlayerGameover: function (player, winTeam) {

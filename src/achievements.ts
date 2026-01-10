@@ -94,7 +94,7 @@ export class Achievement {
 	}
 
 	message():string {
-		return FColor.achievement`Achievement granted!\n[accent]${this.name}: [white]${this.description}`;
+		return FColor.achievement`Achievement granted!\n[accent]${this.name}[white]: ${this.description}`;
 	}
 	messageToEveryone(player:FishPlayer):string {
 		return FColor.achievement`Player ${player.prefixedName} has completed the achievement "${this.name}".`;
@@ -473,6 +473,7 @@ export const Achievements = {
 	verified: new Achievement([Rank.active.color, Iconc.ok], "Verified", `Be promoted automatically to ${Rank.active.coloredName()} rank.`, {
 		checkPlayerJoin: p => p.ranksAtLeast("active"), notify: "nobody"
 	}),
+	click_me: new Achievement(Iconc.bookOpen, "Clicked", `Run /achievementsgrid and click this achievement.`),
 	afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
 		modes: ["not", "sandbox"],
 		checkPlayerGameover(player, winTeam) {
