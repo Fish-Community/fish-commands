@@ -1157,7 +1157,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 Achievement ${achievement.icon} ${achievement.name}
 [white]--------------[]
 ${achievement.description + (achievement.extendedDescription ? ("\n" + `[gray]${achievement.extendedDescription}`) : "")}
-Allowed modes:${achievement.modesText}
+Allowed modes: ${achievement.modesText}
 Unlocked: ${f.boolGood(achievement.has(sender))}
 ${verbose ? `[gray]ID: (${achievement.nid})${achievement.sid}\n` : ""}\
 ${verbose ? `[gray]Notifies: ${achievement.notify}\n` : ""}\

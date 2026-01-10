@@ -3,6 +3,7 @@ import { Duration } from "/funcs";
 import { FishEvents, unitsT5 } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
+import { getStatuses } from "/utils";
 
 //scrap doesn't count
 const serpuloItems = [Items.copper, Items.lead, Items.graphite, Items.silicon, Items.metaglass, Items.titanium, Items.plastanium, Items.thorium, Items.surgeAlloy, Items.phaseFabric];
@@ -59,7 +60,7 @@ export class Achievement {
 		}> = {},
 	){
 		if(Array.isArray(icon)){
-			this.icon = `[${icon[0]}]` + (typeof icon[1] == "number" ? String.fromCharCode(icon[1]) : icon[1]);
+			this.icon = (icon[0].startsWith("[") ? icon[0] : `[${icon[0]}]`) + (typeof icon[1] == "number" ? String.fromCharCode(icon[1]) : icon[1]);
 		} else if(typeof icon == "number"){
 			this.icon = String.fromCharCode(icon);
 		} else {
@@ -110,6 +111,7 @@ export class Achievement {
 			}
 		});
 	}
+	/** Do not call this in a loop on an achievement set to notify everyone. */
 	public grantTo(player:FishPlayer){
 		if(this.notify == "everyone") Call.sendMessage(this.messageToEveryone(player));
 		else if(this.notify == "player") player.sendMessage(this.message());
@@ -130,7 +132,8 @@ Events.on(EventType.PlayerJoin, ({player}: {player: mindustryPlayer}) => {
 		if(ach.allowedInMode()){
 			const fishP = FishPlayer.get(player);
 			if(!ach.has(fishP) && ach.checkPlayerJoin?.(fishP)){
-				ach.grantTo(fishP);
+				if(fishP.dataSynced) ach.grantTo(fishP);
+				else Timer.schedule(() => ach.grantTo(fishP), 2); //2 seconds should be enough
 			}
 		}
 	}
@@ -152,8 +155,8 @@ Timer.schedule(() => {
 		if(ach.allowedInMode()){
 			if(ach.checkFrequent){
 				if(Gamemode.pvp()){
-					Vars.state.teams.active.each(t => {
-						if(ach.checkFrequent!(t)) ach.grantToAllOnline(t);
+					Vars.state.teams.active.each(({team}) => {
+						if(ach.checkFrequent!(team)) ach.grantToAllOnline(team);
 					});
 				} else {
 					if(ach.checkFrequent(Vars.state.rules.defaultTeam)) ach.grantToAllOnline();
@@ -171,8 +174,8 @@ Timer.schedule(() => {
 		if(ach.allowedInMode()){
 			if(ach.checkInfrequent){
 				if(Gamemode.pvp()){
-					Vars.state.teams.active.each(t => {
-						if(ach.checkInfrequent!(t)) ach.grantToAllOnline(t);
+					Vars.state.teams.active.each(({team}) => {
+						if(ach.checkInfrequent!(team)) ach.grantToAllOnline(team);
 					});
 				} else {
 					if(ach.checkInfrequent(Vars.state.rules.defaultTeam)) ach.grantToAllOnline();
@@ -367,7 +370,7 @@ export const Achievements = {
 	memory_corruption: new Achievement(["red", Iconc.host], "Is the server OK?", "Witness a memory corruption.", {
 		notify: "nobody"
 	}),
-	run_js_without_perms: new Achievement(["yellow", Iconc.warning], "838", ["Receive a warning from the server that an incident will be reported.", "One of the admin commands has a custom error message."], {
+	run_js_without_perms: new Achievement(["yellow", Iconc.warning], "XKCD 838", ["Receive a warning from the server that an incident will be reported.", "One of the admin commands has a custom error message."], {
 		notify: "everyone"
 	}),
 	script_kiddie: new Achievement(["red", Iconc.warning], "Script Kiddie", ["Pretend to be a hacker. The server will disagree.", "Change your name to something including \"hacker\"."], {
@@ -381,6 +384,7 @@ export const Achievements = {
 	items_10k: new Achievement(["green", Iconc.distribution], "Cornucopia", "Obtain 10k of every useful resource.", {
 		modes: ["not", "sandbox"],
 		checkPlayerFrequent(player) {
+			if(!Vars.state.planet) return false;
 			return player.team().items()?.has(usefulItems10k[Vars.state.planet.name as "serpulo" | "erekir" | "sun"]) || false;
 		},
 	}),
@@ -393,6 +397,7 @@ export const Achievements = {
 	full_core: new Achievement(["green", Blocks.coreAcropolis.emoji()], "Multiblock Incinerator", "Completely fill the core with all obtainable items on a map with core incineration enabled.", {
 		modes: ["not", "sandbox"],
 		checkFrequent(team) {
+			if(!Vars.state.planet) return false;
 			let items;
 			switch(Vars.state.planet.name as "serpulo" | "erekir" | "sun"){
 				case "serpulo": items = Items.serpuloItems; break;
@@ -478,7 +483,7 @@ export const Achievements = {
 		checkPlayerFrequent: p => {
 			const unit = p.unit();
 			if(!unit) return false;
-			const statuses = Reflect.get(unit, "statuses") as Seq<{ effect: StatusEffect }>;
+			const statuses = getStatuses(unit);
 			return statuses.size >= 5;
 		},
 		modes: ["not", "sandbox"]
@@ -528,12 +533,14 @@ FishEvents.on("commandUnauthorized", (_, player, name) => {
 
 
 Events.on(EventType.UnitDrownEvent, ({unit}:{unit: Unit}) => {
-	if(unit.type == UnitTypes.mace && unit.tileOn()?.floor() == Blocks.cryofluid) Achievements.drown_mace_in_cryo.grantToAllOnline();
-	else if(unit.type == UnitTypes.conquer || unit.type == UnitTypes.vanquish) Achievements.drown_big_tank.grantToAllOnline();
+	if(!Gamemode.sandbox()){
+		if(unit.type == UnitTypes.mace && unit.tileOn()?.floor() == Blocks.cryofluid) Achievements.drown_mace_in_cryo.grantToAllOnline();
+		else if(unit.type == UnitTypes.conquer || unit.type == UnitTypes.vanquish) Achievements.drown_big_tank.grantToAllOnline();
+	}
 });
 
 Events.on(EventType.UnitBulletDestroyEvent, ({unit, bullet}:{unit:Unit; bullet: Bullet}) => {
-	if(unit.type == UnitTypes.dagger && (bullet.owner as Building).block == Blocks.foreshadow){
+	if(!Gamemode.sandbox() && unit.type == UnitTypes.dagger && (bullet.owner as Building).block == Blocks.foreshadow){
 		const build = bullet.owner as Building;
 		if(build.liquids.current() == Liquids.cryofluid && build.timeScale() >= 3) Achievements.foreshadow_overkill.grantToAllOnline(build.team);
 	}
@@ -543,10 +550,11 @@ let siliconReached = Team.all.map(_ => false);
 Events.on(EventType.GameOverEvent, () => siliconReached = Team.all.map(_ => false));
 let isAlone = 0;
 Timer.schedule(() => {
-	if(!Vars.state.gameOver){
-		Vars.state.teams.active.each(t => {
-			if(t.items().has(Items.silicon, 2000)) siliconReached[t.id] = true;
-			else if(t.items().get(Items.silicon) == 0) Achievements.siligone.grantToAllOnline(t);
+	if(!Vars.state.gameOver && !Gamemode.sandbox()){
+		Vars.state.teams.active.each(({team}) => {
+			if(team.items().has(Items.silicon, 2000)) siliconReached[team.id] = true;
+			else if(siliconReached[team.id] && team.items().get(Items.silicon) == 0)
+				Achievements.siligone.grantToAllOnline(team);
 		});
 	}
 	if(Groups.player.size() == 1){
@@ -556,6 +564,6 @@ Timer.schedule(() => {
 }, 2, 2);
 
 
-FishEvents.on("scriptKiddie", (_, p) => Achievements.script_kiddie.grantTo(p));
+FishEvents.on("scriptKiddie", (_, p) => Timer.schedule(() => Achievements.script_kiddie.grantTo(p), 2));
 FishEvents.on("memoryCorruption", () => Achievements.memory_corruption.grantToAllOnline());
 FishEvents.on("serverSays", () => Achievements.server_speak.grantToAllOnline());
