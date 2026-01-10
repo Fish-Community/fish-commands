@@ -1240,5 +1240,37 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 });
             });
         }
+    }, achievementgrid: {
+        args: ["target:player?"],
+        description: "Shows all achievements in a 2D scrolling menu.",
+        perm: commands_1.Perm.none,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var options, x, y, a;
+                var _c;
+                var sender = _b.sender, _d = _b.args.target, target = _d === void 0 ? sender : _d, f = _b.f;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
+                        case 0:
+                            options = (0, funcs_1.to2DArray)(achievements_1.Achievement.all, 6).map(function (row) { return row.map(function (a) { return ({
+                                data: a,
+                                text: a.has(target) ? a.icon : "[gray]".concat(Strings.stripColors(a.icon)),
+                            }); }); });
+                            x = 0, y = 0;
+                            a = null;
+                            _e.label = 1;
+                        case 1:
+                            if (!true) return [3 /*break*/, 3];
+                            return [4 /*yield*/, menus_1.Menu.scroll(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") : "Click an achievement icon to show more information.", options, { onCancel: "reject", columns: 4, rows: 4, getCenterText: function () { return String.fromCharCode(Iconc.settings); }, x: x, y: y })];
+                        case 2:
+                            _c = __read.apply(void 0, [_e.sent(), 3]), a = _c[0], x = _c[1], y = _c[2];
+                            if (a == achievements_1.Achievements.click_me && target == sender)
+                                a.grantTo(sender);
+                            return [3 /*break*/, 1];
+                        case 3: return [2 /*return*/];
+                    }
+                });
+            });
+        }
     } }));
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23;
