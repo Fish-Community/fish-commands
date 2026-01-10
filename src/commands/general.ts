@@ -1149,7 +1149,9 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 				fail(f`No achievements found with name ${name}. To view all achievements, run [accent]/achievements[].`);
 			const achievement = matching.length > 2 ?
 				await Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, {
-					onCancel: "reject"
+					onCancel: "reject",
+					columns: 2,
+					optionStringifier: a => `${a.icon}[] ${a.name}`
 				})
 			: matching[0];
 			
@@ -1166,4 +1168,22 @@ ${achievement.hidden ? "This achievement is secret." : ""}\
 			//TODO "x% of players have this achievement" tracking, requires backend aggregation endpoint
 		}
 	},
+
+	achievementlist: {
+		args: ["target:player?"],
+		description: "Shows all achievements in a paged menu.",
+		perm: Perm.none,
+		async handler({sender, args: { target = sender }, f}){
+			await Menu.textPages(sender, Achievement.all.map(a => [
+				`${a.icon}[] ${a.name}`,
+				() => FColor.achievement`\
+${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
+Allowed modes: ${a.modesText}
+Unlocked: ${f.boolGood(a.has(target))}
+${a.hidden ? "This achievement is secret." : ""}\
+`
+			]));
+		}
+	},
+	
 });
