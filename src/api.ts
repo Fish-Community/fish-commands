@@ -6,7 +6,7 @@ This file contains wrappers over the API calls to the backend server.
 import { backendIP, Gamemode, Mode } from "/config";
 import { FishPlayer } from "/players";
 import { Promise } from "/promise";
-import type { FishPlayerData } from "/types";
+import type { FishPlayerData, UploadedFishPlayerData } from "/types";
 
 
 const cachedIps:Record<string, boolean | undefined> = {};
@@ -169,7 +169,7 @@ export function getFishPlayerData(uuid:string){
 }
 
 /** Pushes fish player data to the backend. */
-export function setFishPlayerData(data: FishPlayerData, repeats = 1, ignoreActivelySyncedFields = false) {
+export function setFishPlayerData(data: UploadedFishPlayerData, repeats = 1, ignoreActivelySyncedFields = false) {
 	const { promise, resolve, reject } = Promise.withResolvers<void, unknown>();
 	if(Mode.noBackend){
 		resolve();

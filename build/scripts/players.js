@@ -167,6 +167,10 @@ var FishPlayer = /** @class */ (function () {
         this.lastJoined = -1;
         /** -1 represents unknown */
         this.firstJoined = -1;
+        /** -1 represents unknown */
+        this.globalLastJoined = -1;
+        /** -1 represents unknown */
+        this.globalFirstJoined = -1;
         this.stats = {
             blocksBroken: 0,
             blocksPlaced: 0,
@@ -175,6 +179,7 @@ var FishPlayer = /** @class */ (function () {
             gamesFinished: 0,
             gamesWon: 0,
         };
+        this.globalStats = this.stats;
         /** Used for the /vanish command. */
         this.showRankPrefix = true;
         this.achievements = new Bits();
@@ -436,6 +441,10 @@ var FishPlayer = /** @class */ (function () {
             this.lastJoined = data.lastJoined;
         if (data.firstJoined != undefined)
             this.firstJoined = data.firstJoined;
+        if (data.globalLastJoined != undefined)
+            this.globalLastJoined = data.globalLastJoined;
+        if (data.globalFirstJoined != undefined)
+            this.globalFirstJoined = data.globalFirstJoined;
         if (data.highlight != undefined)
             this.highlight = data.highlight;
         if (data.history != undefined)
@@ -448,6 +457,8 @@ var FishPlayer = /** @class */ (function () {
             this.chatStrictness = data.chatStrictness;
         if (data.stats != undefined)
             this.stats = data.stats;
+        if (data.globalStats != undefined)
+            this.globalStats = data.globalStats;
         if (data.showRankPrefix != undefined)
             this.showRankPrefix = data.showRankPrefix;
         if (data.rank != undefined)
@@ -730,7 +741,7 @@ var FishPlayer = /** @class */ (function () {
         //Clear temporary states such as menu and taphandler
         fishP.activeMenus = [];
         fishP.tapInfo.commandName = null;
-        fishP.stats.timeInGame += (Date.now() - fishP.lastJoined); //Time between joining and leaving
+        fishP.updateStats(function (stats) { return stats.timeInGame += (Date.now() - fishP.lastJoined); }); //Time between joining and leaving
         fishP.lastJoined = Date.now();
         this.recentLeaves.unshift(fishP);
         if (this.recentLeaves.length > 10)
@@ -808,7 +819,7 @@ var FishPlayer = /** @class */ (function () {
             }
         }
         fishP.lastActive = Date.now();
-        fishP.stats.chatMessagesSent++;
+        fishP.updateStats(function (stats) { return stats.chatMessagesSent++; });
     };
     FishPlayer.onPlayerCommand = function (player, command, unjoinedRawArgs) {
         if (command == "msg" && unjoinedRawArgs[1] == "Please do not use that logic, as it is attem83 logic and is bad to use. For more information please read www.mindustry.dev/attem")
@@ -823,13 +834,13 @@ var FishPlayer = /** @class */ (function () {
             fishPlayer.tapInfo.commandName = null;
             //Update stats
             if (!_this.ignoreGameOver && fishPlayer.team() != Team.derelict && winningTeam != Team.derelict) {
-                fishPlayer.stats.gamesFinished++;
+                fishPlayer.updateStats(function (stats) { return stats.gamesFinished++; });
                 if (fishPlayer.changedTeam) {
                     fishPlayer.sendMessage("Refusing to update stats due to a team change.");
                 }
                 else {
                     if (fishPlayer.team() == winningTeam)
-                        fishPlayer.stats.gamesWon++;
+                        fishPlayer.updateStats(function (stats) { return stats.gamesWon++; });
                 }
             }
             fishPlayer.changedTeam = false;
@@ -1572,6 +1583,10 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.joinsLessThan = function (amount) {
         return this.info().timesJoined < amount;
+    };
+    FishPlayer.prototype.updateStats = function (func) {
+        func(this.stats);
+        func(this.globalStats);
     };
     /**
      * Returns a score between 0 and 1, as an estimate of the player's skill level.

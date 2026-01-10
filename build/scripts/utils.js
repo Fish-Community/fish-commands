@@ -774,7 +774,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
                 var fishP = players_1.FishPlayer.get(e.unit.player);
                 //TODO move this code
                 fishP.tstats.blocksBroken++;
-                fishP.stats.blocksBroken++;
+                fishP.updateStats(function (stats) { return stats.blocksBroken++; });
             }
         }
         else {
@@ -783,7 +783,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
             if ((_k = (_j = e.unit) === null || _j === void 0 ? void 0 : _j.player) === null || _k === void 0 ? void 0 : _k.uuid()) {
                 var fishP = players_1.FishPlayer.get(e.unit.player);
                 //TODO move this code
-                fishP.stats.blocksPlaced++;
+                fishP.updateStats(function (stats) { return stats.blocksPlaced++; });
             }
         }
     }

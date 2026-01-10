@@ -644,7 +644,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 				const fishP = FishPlayer.get(e.unit.player);
 				//TODO move this code
 				fishP.tstats.blocksBroken ++;
-				fishP.stats.blocksBroken ++;
+				fishP.updateStats(stats => stats.blocksBroken ++);
 			}
 		} else {
 			action = "built";
@@ -652,7 +652,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 			if(e.unit?.player?.uuid()){
 				const fishP = FishPlayer.get(e.unit.player);
 				//TODO move this code
-				fishP.stats.blocksPlaced ++;
+				fishP.updateStats(stats => stats.blocksPlaced ++);
 			}
 		}
 	} else if(e instanceof EventType.ConfigEvent){

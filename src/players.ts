@@ -12,7 +12,7 @@ import { crash, Duration, escapeStringColorsClient, parseError, search, setToArr
 import * as globals from "/globals";
 import { uuidPattern, FishEvents } from "/globals";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
-import type { FishPlayerData, PlayerHistoryEntry } from "/types";
+import type { FishPlayerData, PlayerHistoryEntry, Stats, UploadedFishPlayerData } from "/types";
 import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, matchFilter } from "/utils";
 
 
@@ -142,15 +142,11 @@ export class FishPlayer {
 	lastJoined:number = -1;
 	/** -1 represents unknown */
 	firstJoined:number = -1;
-	stats: {
-		blocksBroken: number;
-		blocksPlaced: number;
-		timeInGame: number;
-		chatMessagesSent: number;
-		/** Does not include RTVs */
-		gamesFinished: number;
-		gamesWon: number;
-	} = {
+	/** -1 represents unknown */
+	globalLastJoined:number = -1;
+	/** -1 represents unknown */
+	globalFirstJoined:number = -1;
+	stats: Stats = {
 		blocksBroken: 0,
 		blocksPlaced: 0,
 		timeInGame: 0,
@@ -158,6 +154,7 @@ export class FishPlayer {
 		gamesFinished: 0,
 		gamesWon: 0,
 	};
+	globalStats: Stats = this.stats;
 	/** Used for the /vanish command. */
 	showRankPrefix:boolean = true;
 	achievements: Bits = new Bits();
@@ -371,18 +368,21 @@ export class FishPlayer {
 		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
 		if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
 		if(data.firstJoined != undefined) this.firstJoined = data.firstJoined;
+		if(data.globalLastJoined != undefined) this.globalLastJoined = data.globalLastJoined;
+		if(data.globalFirstJoined != undefined) this.globalFirstJoined = data.globalFirstJoined;
 		if(data.highlight != undefined) this.highlight = data.highlight;
 		if(data.history != undefined) this.history = data.history;
 		if(data.rainbow != undefined) this.rainbow = data.rainbow;
 		if(data.usid != undefined) this.usid = data.usid;
 		if(data.chatStrictness != undefined) this.chatStrictness = data.chatStrictness;
 		if(data.stats != undefined) this.stats = data.stats;
+		if(data.globalStats != undefined) this.globalStats = data.globalStats;
 		if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
 		if(data.rank != undefined) this.rank = Rank.getByName(data.rank) ?? Rank.player;
 		if(data.flags != undefined) this.flags = new Set(data.flags.map(RoleFlag.getByName).filter(Boolean));
 		if(data.achievements != undefined) this.achievements = JsonIO.read(Bits, data.achievements);
 	}
-	getData():FishPlayerData {
+	getData():UploadedFishPlayerData {
 		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix } = this;
 		return {
 			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix,
@@ -601,7 +601,7 @@ export class FishPlayer {
 		//Clear temporary states such as menu and taphandler
 		fishP.activeMenus = [];
 		fishP.tapInfo.commandName = null;
-		fishP.stats.timeInGame += (Date.now() - fishP.lastJoined); //Time between joining and leaving
+		fishP.updateStats(stats => stats.timeInGame += (Date.now() - fishP.lastJoined)); //Time between joining and leaving
 		fishP.lastJoined = Date.now();
 		this.recentLeaves.unshift(fishP);
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
@@ -694,7 +694,7 @@ export class FishPlayer {
 			}
 		}
 		fishP.lastActive = Date.now();
-		fishP.stats.chatMessagesSent ++;
+		fishP.updateStats(stats => stats.chatMessagesSent ++);
 	}
 	static onPlayerCommand(player:FishPlayer, command:string, unjoinedRawArgs:string[]){
 		if(command == "msg" && unjoinedRawArgs[1] == "Please do not use that logic, as it is attem83 logic and is bad to use. For more information please read www.mindustry.dev/attem")
@@ -709,11 +709,11 @@ export class FishPlayer {
 			fishPlayer.tapInfo.commandName = null;
 			//Update stats
 			if(!this.ignoreGameOver && fishPlayer.team() != Team.derelict && winningTeam != Team.derelict){
-				fishPlayer.stats.gamesFinished ++;
+				fishPlayer.updateStats(stats => stats.gamesFinished ++);
 				if(fishPlayer.changedTeam){
 					fishPlayer.sendMessage(`Refusing to update stats due to a team change.`);
 				} else {
-					if(fishPlayer.team() == winningTeam) fishPlayer.stats.gamesWon ++;
+					if(fishPlayer.team() == winningTeam) fishPlayer.updateStats(stats => stats.gamesWon ++);
 				}
 			}
 			fishPlayer.changedTeam = false;
@@ -1382,6 +1382,11 @@ We apologize for the inconvenience.`
 	}
 	joinsLessThan(amount:number){
 		return this.info().timesJoined < amount;
+	}
+
+	updateStats(func:(stats:Stats) => void):void {
+		func(this.stats);
+		func(this.globalStats);
 	}
 
 	/**
