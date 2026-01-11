@@ -79,16 +79,13 @@ function downloadMaps(githubListing:GitHubFile[]):Promise<void, string> {
 	})).then(v => {});
 }
 
-/**
- * @returns whether any maps were changed
- */
 export function updateMaps():Promise<boolean, string> {
 	//get github map listing
 	return fetchGithubContents().then((listing) => {
 		//filter only valid mindustry maps
 		const mapList = listing
 			.filter(entry => entry.type == 'file')
-			.filter(entry => /\.msav$/.test(entry.name));
+			.filter(entry => /\.(msav|json)$/.test(entry.name));
 
 		const mapFiles:Fi[] = Vars.customMapDirectory.list();
 		const mapsToDelete = mapFiles.filter(localFile =>
