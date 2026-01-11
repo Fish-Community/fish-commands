@@ -16,7 +16,7 @@
 	"license": "UNLICENSED",
 	"devDependencies": {
 		"@types/jasmine": "^5.1.5",
-		"@types/node": "^22.10.9",
+		"@types/node": "^22.19.5",
 		"esbuild": "^0.25.9",
 		"jasmine": "^5.5.0",
 		"typescript": "^5.7.3"

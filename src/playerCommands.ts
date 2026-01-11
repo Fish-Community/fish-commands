@@ -4,16 +4,16 @@ This file contains most in-game chat commands that can be run by untrusted playe
 */
 
 import * as api from '/api';
-import { command, commandList, fail, formatArg, Perm, Req } from '/commands';
+import { allCommands, command, commandList, fail, formatArg, Perm, Req } from '/commands';
 import { FishServer, Gamemode, rules, text } from '/config';
 import { capitalizeText, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from '/funcs';
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from '/globals';
-import { FMap } from '/maps';
+import { FMap, PartialMapRun } from '/maps';
 import { Menu } from '/menus';
 import { FishPlayer } from '/players';
 import { Rank, RoleFlag } from '/ranks';
 import type { FishCommandData } from '/types';
-import { formatTime, formatTimeRelative, getColor, logAction, match, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from '/utils';
+import { formatTime, formatTimeRelative, getColor, logAction, match, nearbyEnemyTile, neutralGameover, outputMessage, skipWaves, teleportPlayer } from '/utils';
 import { VoteManager } from '/votes';
 
 export const commands = commandList({
@@ -855,6 +855,7 @@ Please stop attacking and [lime]build defenses[] first!`
 
 	},
 
+	/*
 	maps: {
 		args: [],
 		description: 'Lists the available maps.',
@@ -871,6 +872,16 @@ ${Vars.maps.customMaps().toArray().map(map =>
 			);
 		}
 	},
+	*/
+
+	maps:{
+		description:'depreciated, please use /maps instead',
+		args:['map:map?'],
+		perm:Perm.none,
+		handler:() => {
+			fail('This command was moved to /nextmap');
+		},
+	},
 
 	nextmap: command(() => {
 		const votes = new Map<FishPlayer, MMap>();
@@ -880,6 +891,53 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		const voteDuration = 1.5 * 60000; // 1.5 mins
 		let task: TimerTask | null = null;
 
+		let currentMenu = (target:FishPlayer) => {
+			let mainMenu = Menu.raw("Fish Map Manager",`[accent]---Current Map---\nMap Name: [white]${Vars.state.map.name()}\n[accent]Map Author: [white]${Vars.state.map.author()}\nFastest Time: [white]${formatTime(FMap.getCreate(Vars.state.map).stats().shortestTime)}\nCurrent Time: [white]${formatTime(PartialMapRun.current!.duration())}`, [["[green]Current Maps"], ["[yellow]Throwback Maps"], ["[orange]Campaigns"], ["Close"]], target);
+			mainMenu.then((res) => {
+				switch(res){
+					case '[green]Current Maps':
+						let CurrentMapsMenu = Menu.pagedList(target, "Current Maps", "", Vars.maps.customMaps().toArray(), {optionStringifier: (map:MMap) => {return map.name()}, rowsPerPage:10, columns:1});
+						CurrentMapsMenu.catch(() => {}).then((map) => {
+							if(map == null) return;
+							let CurrentMapMenu = Menu.raw(map.name(), `[accent]Description: [white]${map.description()}\n[accent]Author: [white]${map.author()}\n[accent]Fastest Time: [white]${formatTime((FMap.getCreate(map)).stats().shortestTime)}\n[accent]Runs: [white]${(FMap.getCreate(map)).stats().allRunCount}\n[accent]Winrate: [white]${((FMap.getCreate(map)).stats().winRate * 100).toFixed(2)}%`, [["[green]Vote for this Map"], ["[red]Back"]], target);
+							CurrentMapMenu.then(res => {
+								switch(res){
+									case("[green]Vote for this Map"):
+										sendVote(target, map);
+										break;
+									case("[red]Back"):
+										currentMenu(target);
+										break;
+								}
+							});
+						});
+						break;
+					case '[yellow]Throwback Maps':
+						outputMessage("Throwback maps have not yet been implemented.", target);
+						break;
+					case '[orange]Campaigns':
+						outputMessage("Campaigns have not yet been implemented.", target);
+						break;
+					case 'Close':
+						break;
+				}
+			});
+		}
+		
+		function sendVote(sender:FishPlayer, map:MMap){
+			if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
+			if(votes.get(sender)) fail(`You have already voted.`);
+
+			votes.set(sender, map);
+			if(voteEndTime == -1){
+				if((Date.now() - lastVoteTime) < 60_000) fail(`Please wait 1 minute before starting a new map vote.`);
+				startVote();
+				Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] started a map vote, and voted for [yellow]${map.name()}[cyan]. Use [white]/nextmap ${map.plainName()}[] to add your vote, or run [white]/maps[] to see other available maps.`);
+			} else {
+				Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] voted for [yellow]${map.name()}[cyan]. Time left: [scarlet]${formatTimeRelative(voteEndTime, true)}`);
+				showVotes();
+			}
+		}
 		function resetVotes(){
 			votes.clear();
 			voteEndTime = -1;
@@ -947,24 +1005,14 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		Events.on(EventType.ServerLoadEvent, resetVotes);
 
 		return {
-			args: ['map:map'],
-			description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
+			args: ['map:map?'],
+			description: 'Allows you to vote for the next map.',
 			perm: Perm.play,
 			data: {votes, voteEndTime: () => voteEndTime, resetVotes, endVote},
 			requirements: [Req.cooldown(10000)],
-			handler({args:{map}, sender}){
-				if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
-				if(votes.get(sender)) fail(`You have already voted.`);
-				
-				votes.set(sender, map);
-				if(voteEndTime == -1){
-					if((Date.now() - lastVoteTime) < 60_000) fail(`Please wait 1 minute before starting a new map vote.`);
-					startVote();
-					Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] started a map vote, and voted for [yellow]${map.name()}[cyan]. Use [white]/nextmap ${map.plainName()}[] to add your vote, or run [white]/maps[] to see other available maps.`);
-				} else {
-					Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] voted for [yellow]${map.name()}[cyan]. Time left: [scarlet]${formatTimeRelative(voteEndTime, true)}`);
-					showVotes();
-				}
+			handler({args, sender}){
+				if(args.map) sendVote(sender, args.map);
+				else currentMenu(sender);
 			}
 		};
 	}),
