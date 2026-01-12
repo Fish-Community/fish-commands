@@ -1285,7 +1285,7 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			});
 			if(!reason) return;
 
-			const issuerName = sender.player?.name ?? sender.name ?? 'Unknown';
+			const issuerName = sender.player?.name ?? 'Unknown';
 			const targetName = target.name;
 			const serverName = Gamemode.name();
 			const message =
