@@ -923,6 +923,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
     // 		votekickmanager.handleVote(sender, args ? 1 : -1);
     //	 }
     // },
+    // no, it will not get the menu. yes, I know it sucks, but I doubt we nee
     forcenextmap: {
         args: ["map:map"],
         description: 'Override the next map in queue.',
@@ -941,16 +942,32 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 outputSuccess(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Forced the next map to be \"", "\" by ", ""], ["Forced the next map to be \"", "\" by ", ""])), args.map.name(), args.map.author()));
             }
         },
-    }, maps: {
+    }, 
+    /*
+    maps: {
         args: [],
         description: 'Lists the available maps.',
-        perm: commands_1.Perm.none,
-        handler: function (_a) {
-            var output = _a.output;
-            output("[yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.\n\n[blue]Available maps:\n_________________________\n".concat(Vars.maps.customMaps().toArray().map(function (map) {
-                return "[yellow]".concat(map.name());
-            }).join("\n")));
+        perm: Perm.none,
+        handler({output}){
+            output(`\
+[yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.
+
+[blue]Available maps:
+_________________________
+${Vars.maps.customMaps().toArray().map(map =>
+`[yellow]${map.name()}`
+).join("\n")}`
+            );
         }
+    },
+    */
+    maps: {
+        description: 'depreciated, please use /maps instead',
+        args: [],
+        perm: commands_1.Perm.none,
+        handler: function () {
+            (0, commands_1.fail)('This command was moved to /nextmap');
+        },
     }, nextmap: (0, commands_1.command)(function () {
         var votes = new Map();
         var lastVoteCount = 0;
@@ -958,6 +975,56 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         var voteEndTime = -1;
         var voteDuration = funcs_1.Duration.minutes(1.5);
         var task = null;
+        var currentMenu = function (target) {
+            var mainMenu = menus_1.Menu.raw("Fish Map Manager", "[accent]---Current Map---\nMap Name: [white]".concat(Vars.state.map.name(), "\n[accent]Map Author: [white]").concat(Vars.state.map.author(), "\nFastest Time: [white]").concat((0, utils_1.formatTime)(maps_1.FMap.getCreate(Vars.state.map).stats().shortestTime), "\nCurrent Time: [white]").concat((0, utils_1.formatTime)(maps_1.PartialMapRun.current.duration())), [["[green]Current Maps"], ["[yellow]Throwback Maps"], ["[orange]Campaigns"], ["Close"]], target);
+            mainMenu.then(function (res) {
+                switch (res) {
+                    case '[green]Current Maps':
+                        var CurrentMapsMenu = menus_1.Menu.pagedList(target, "Current Maps", "", Vars.maps.customMaps().toArray(), { optionStringifier: function (map) { return map.name(); }, rowsPerPage: 10, columns: 1 });
+                        CurrentMapsMenu.catch(function () { }).then(function (map) {
+                            if (map == null)
+                                return;
+                            var CurrentMapMenu = menus_1.Menu.raw(map.name(), "[accent]Description: [white]".concat(map.description(), "\n[accent]Author: [white]").concat(map.author(), "\n[accent]Fastest Time: [white]").concat((0, utils_1.formatTime)((maps_1.FMap.getCreate(map)).stats().shortestTime), "\n[accent]Runs: [white]").concat((maps_1.FMap.getCreate(map)).stats().allRunCount, "\n[accent]Winrate: [white]").concat(((maps_1.FMap.getCreate(map)).stats().winRate * 100).toFixed(2), "%"), [["[green]Vote for this Map"], ["[red]Back"]], target);
+                            CurrentMapMenu.then(function (res) {
+                                switch (res) {
+                                    case ("[green]Vote for this Map"):
+                                        sendVote(target, map);
+                                        break;
+                                    case ("[red]Back"):
+                                        currentMenu(target);
+                                        break;
+                                }
+                            });
+                        });
+                        break;
+                    case '[yellow]Throwback Maps':
+                        (0, utils_1.outputMessage)("Throwback maps have not yet been implemented.", target);
+                        break;
+                    case '[orange]Campaigns':
+                        (0, utils_1.outputMessage)("Campaigns have not yet been implemented.", target);
+                        break;
+                    case 'Close':
+                        break;
+                }
+            });
+        };
+        function sendVote(sender, map) {
+            if (config_1.Gamemode.testsrv())
+                (0, commands_1.fail)("Please use /forcenextmap instead.");
+            if (votes.get(sender))
+                (0, commands_1.fail)("You have already voted.");
+            votes.set(sender, map);
+            if (voteEndTime == -1) {
+                if ((Date.now() - lastVoteTime) < 60000)
+                    (0, commands_1.fail)("Please wait 1 minute before starting a new map vote.");
+                startVote();
+                Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] started a map vote, and voted for [yellow]").concat(map.name(), "[cyan]. Use [white]/nextmap ").concat(map.plainName(), "[] to add your vote, or run [white]/maps[] to see other available maps."));
+            }
+            else {
+                Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] voted for [yellow]").concat(map.name(), "[cyan]. Time left: [scarlet]").concat((0, utils_1.formatTimeRelative)(voteEndTime, true)));
+                showVotes();
+            }
+        }
         function resetVotes() {
             votes.clear();
             voteEndTime = -1;
@@ -1012,28 +1079,17 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         Events.on(EventType.GameOverEvent, resetVotes);
         Events.on(EventType.ServerLoadEvent, resetVotes);
         return {
-            args: ['map:map'],
-            description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
+            args: ['map:map?'],
+            description: 'Allows you to vote for the next map.',
             perm: commands_1.Perm.play,
             data: { votes: votes, voteEndTime: function () { return voteEndTime; }, resetVotes: resetVotes, endVote: endVote },
             requirements: [commands_1.Req.cooldown(10000)],
             handler: function (_a) {
-                var map = _a.args.map, sender = _a.sender;
-                if (config_1.Gamemode.testsrv())
-                    (0, commands_1.fail)("Please use /forcenextmap instead.");
-                if (votes.get(sender))
-                    (0, commands_1.fail)("You have already voted.");
-                votes.set(sender, map);
-                if (voteEndTime == -1) {
-                    if ((Date.now() - lastVoteTime) < funcs_1.Duration.minutes(1))
-                        (0, commands_1.fail)("Please wait 1 minute before starting a new map vote.");
-                    startVote();
-                    Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] started a map vote, and voted for [yellow]").concat(map.name(), "[cyan]. Use [white]/nextmap ").concat(map.plainName(), "[] to add your vote, or run [white]/maps[] to see other available maps."));
-                }
-                else {
-                    Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] voted for [yellow]").concat(map.name(), "[cyan]. Time left: [scarlet]").concat((0, utils_1.formatTimeRelative)(voteEndTime, true)));
-                    showVotes();
-                }
+                var args = _a.args, sender = _a.sender;
+                if (args.map)
+                    sendVote(sender, args.map);
+                else
+                    currentMenu(sender);
             }
         };
     }), surrender: (0, commands_1.command)(function () {
