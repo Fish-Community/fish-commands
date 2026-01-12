@@ -877,11 +877,11 @@ ${Vars.maps.customMaps().toArray().map(map =>
 	},
 	*/
 
-	maps:{
-		description:'depreciated, please use /maps instead',
-		args:[],
-		perm:Perm.none,
-		handler:() => {
+	maps: {
+		description: 'depreciated, please use /maps instead',
+		args: [],
+		perm: Perm.none,
+		handler(){
 			fail('This command was moved to /nextmap');
 		},
 	},
@@ -894,16 +894,38 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		const voteDuration = Duration.minutes(1.5);
 		let task: TimerTask | null = null;
 
-		let currentMenu = (target:FishPlayer) => {
-			let mainMenu = Menu.raw("Fish Map Manager",`[accent]---Current Map---\nMap Name: [white]${Vars.state.map.name()}\n[accent]Map Author: [white]${Vars.state.map.author()}\nFastest Time: [white]${formatTime(FMap.getCreate(Vars.state.map).stats().shortestTime)}\nCurrent Time: [white]${formatTime(PartialMapRun.current!.duration())}`, [["[green]Current Maps"], ["[yellow]Throwback Maps"], ["[orange]Campaigns"], ["Close"]], target);
+		function currentMenu(target:FishPlayer){
+			const mainMenu = Menu.raw(
+				"Fish Map Manager",
+`[accent]---Current Map---
+Map Name: [white]${Vars.state.map.name()}
+[accent]Map Author: [white]${Vars.state.map.author()}
+Fastest Time: [white]${formatTime(FMap.getCreate(Vars.state.map).stats().shortestTime)}
+Current Time: [white]${formatTime(PartialMapRun.current!.duration())}`,
+				[["[green]Current Maps"], ["[yellow]Throwback Maps"], ["[orange]Campaigns"], ["Close"]],
+				target
+			);
 			mainMenu.then((res) => {
 				switch(res){
 					case '[green]Current Maps':
-						let CurrentMapsMenu = Menu.pagedList(target, "Current Maps", "", Vars.maps.customMaps().toArray(), {optionStringifier: (map:MMap) => {return map.name()}, rowsPerPage:10, columns:1});
-						CurrentMapsMenu.catch(() => {}).then((map) => {
+						Menu.pagedList(
+							target,
+							"Current Maps",
+							"",
+							Vars.maps.customMaps().toArray(),
+							{ optionStringifier: map => map.name(), rowsPerPage: 10, columns: 1 }
+						).catch(() => {}).then(map => {
 							if(map == null) return;
-							let CurrentMapMenu = Menu.raw(map.name(), `[accent]Description: [white]${map.description()}\n[accent]Author: [white]${map.author()}\n[accent]Fastest Time: [white]${formatTime((FMap.getCreate(map)).stats().shortestTime)}\n[accent]Runs: [white]${(FMap.getCreate(map)).stats().allRunCount}\n[accent]Winrate: [white]${((FMap.getCreate(map)).stats().winRate * 100).toFixed(2)}%`, [["[green]Vote for this Map"], ["[red]Back"]], target);
-							CurrentMapMenu.then(res => {
+							Menu.raw(
+								map.name(),
+								`[accent]Description: [white]${map.description()}
+[accent]Author: [white]${map.author()}
+[accent]Fastest Time: [white]${formatTime((FMap.getCreate(map)).stats().shortestTime)}
+[accent]Runs: [white]${(FMap.getCreate(map)).stats().allRunCount}
+[accent]Winrate: [white]${((FMap.getCreate(map)).stats().winRate * 100).toFixed(2)}%`,
+								[["[green]Vote for this Map"], ["[red]Back"]],
+								target
+							).then(res => {
 								switch(res){
 									case("[green]Vote for this Map"):
 										sendVote(target, map);
@@ -933,7 +955,7 @@ ${Vars.maps.customMaps().toArray().map(map =>
 
 			votes.set(sender, map);
 			if(voteEndTime == -1){
-				if((Date.now() - lastVoteTime) < 60_000) fail(`Please wait 1 minute before starting a new map vote.`);
+				if((Date.now() - lastVoteTime) < Duration.minutes(1)) fail(`Please wait 1 minute before starting a new map vote.`);
 				startVote();
 				Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] started a map vote, and voted for [yellow]${map.name()}[cyan]. Use [white]/nextmap ${map.plainName()}[] to add your vote, or run [white]/maps[] to see other available maps.`);
 			} else {

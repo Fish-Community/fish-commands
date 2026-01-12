@@ -975,17 +975,15 @@ ${Vars.maps.customMaps().toArray().map(map =>
         var voteEndTime = -1;
         var voteDuration = funcs_1.Duration.minutes(1.5);
         var task = null;
-        var currentMenu = function (target) {
+        function currentMenu(target) {
             var mainMenu = menus_1.Menu.raw("Fish Map Manager", "[accent]---Current Map---\nMap Name: [white]".concat(Vars.state.map.name(), "\n[accent]Map Author: [white]").concat(Vars.state.map.author(), "\nFastest Time: [white]").concat((0, utils_1.formatTime)(maps_1.FMap.getCreate(Vars.state.map).stats().shortestTime), "\nCurrent Time: [white]").concat((0, utils_1.formatTime)(maps_1.PartialMapRun.current.duration())), [["[green]Current Maps"], ["[yellow]Throwback Maps"], ["[orange]Campaigns"], ["Close"]], target);
             mainMenu.then(function (res) {
                 switch (res) {
                     case '[green]Current Maps':
-                        var CurrentMapsMenu = menus_1.Menu.pagedList(target, "Current Maps", "", Vars.maps.customMaps().toArray(), { optionStringifier: function (map) { return map.name(); }, rowsPerPage: 10, columns: 1 });
-                        CurrentMapsMenu.catch(function () { }).then(function (map) {
+                        menus_1.Menu.pagedList(target, "Current Maps", "", Vars.maps.customMaps().toArray(), { optionStringifier: function (map) { return map.name(); }, rowsPerPage: 10, columns: 1 }).catch(function () { }).then(function (map) {
                             if (map == null)
                                 return;
-                            var CurrentMapMenu = menus_1.Menu.raw(map.name(), "[accent]Description: [white]".concat(map.description(), "\n[accent]Author: [white]").concat(map.author(), "\n[accent]Fastest Time: [white]").concat((0, utils_1.formatTime)((maps_1.FMap.getCreate(map)).stats().shortestTime), "\n[accent]Runs: [white]").concat((maps_1.FMap.getCreate(map)).stats().allRunCount, "\n[accent]Winrate: [white]").concat(((maps_1.FMap.getCreate(map)).stats().winRate * 100).toFixed(2), "%"), [["[green]Vote for this Map"], ["[red]Back"]], target);
-                            CurrentMapMenu.then(function (res) {
+                            menus_1.Menu.raw(map.name(), "[accent]Description: [white]".concat(map.description(), "\n[accent]Author: [white]").concat(map.author(), "\n[accent]Fastest Time: [white]").concat((0, utils_1.formatTime)((maps_1.FMap.getCreate(map)).stats().shortestTime), "\n[accent]Runs: [white]").concat((maps_1.FMap.getCreate(map)).stats().allRunCount, "\n[accent]Winrate: [white]").concat(((maps_1.FMap.getCreate(map)).stats().winRate * 100).toFixed(2), "%"), [["[green]Vote for this Map"], ["[red]Back"]], target).then(function (res) {
                                 switch (res) {
                                     case ("[green]Vote for this Map"):
                                         sendVote(target, map);
@@ -1007,7 +1005,7 @@ ${Vars.maps.customMaps().toArray().map(map =>
                         break;
                 }
             });
-        };
+        }
         function sendVote(sender, map) {
             if (config_1.Gamemode.testsrv())
                 (0, commands_1.fail)("Please use /forcenextmap instead.");
@@ -1015,7 +1013,7 @@ ${Vars.maps.customMaps().toArray().map(map =>
                 (0, commands_1.fail)("You have already voted.");
             votes.set(sender, map);
             if (voteEndTime == -1) {
-                if ((Date.now() - lastVoteTime) < 60000)
+                if ((Date.now() - lastVoteTime) < funcs_1.Duration.minutes(1))
                     (0, commands_1.fail)("Please wait 1 minute before starting a new map vote.");
                 startVote();
                 Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] started a map vote, and voted for [yellow]").concat(map.name(), "[cyan]. Use [white]/nextmap ").concat(map.plainName(), "[] to add your vote, or run [white]/maps[] to see other available maps."));
