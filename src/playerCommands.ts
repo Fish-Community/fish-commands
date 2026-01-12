@@ -836,6 +836,7 @@ Please stop attacking and [lime]build defenses[] first!`
 	//	 }
 	// },
 
+	// no, it will not get the menu. yes, I know it sucks, but I doubt we nee
 	forcenextmap: {
 		args: ["map:map"],
 		description: 'Override the next map in queue.',
@@ -876,7 +877,7 @@ ${Vars.maps.customMaps().toArray().map(map =>
 
 	maps:{
 		description:'depreciated, please use /maps instead',
-		args:['map:map?'],
+		args:[],
 		perm:Perm.none,
 		handler:() => {
 			fail('This command was moved to /nextmap');

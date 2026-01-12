@@ -1,6 +1,5 @@
 asd
 node_modules
-package-lock.json
 ts-debugtrace
 tsconfig.tsbuildinfo
 build/scripts/*.d.ts

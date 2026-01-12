@@ -930,6 +930,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
     // 		votekickmanager.handleVote(sender, args ? 1 : -1);
     //	 }
     // },
+    // no, it will not get the menu. yes, I know it sucks, but I doubt we nee
     forcenextmap: {
         args: ["map:map"],
         description: 'Override the next map in queue.',
@@ -969,7 +970,7 @@ ${Vars.maps.customMaps().toArray().map(map =>
     */
     maps: {
         description: 'depreciated, please use /maps instead',
-        args: ['map:map?'],
+        args: [],
         perm: commands_1.Perm.none,
         handler: function () {
             (0, commands_1.fail)('This command was moved to /nextmap');
