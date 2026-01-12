@@ -358,7 +358,7 @@ export function isMapValidForGamemode(map:MMap):boolean {
 export function getMap(name:string):MMap | "none" | "multiple" {
 	if(name == "") return "none";
 	const maps = Vars.maps.all().select(isMapValidForGamemode); //this doesn't work...
-	
+
 	const filters:Array<(m:MMap) => boolean> = [
 		//m => m.name() === name, //exact match
 		m => m.name().replace(/ /g, "_") === name, //exact match with spaces replaced
@@ -369,7 +369,7 @@ export function getMap(name:string):MMap | "none" | "multiple" {
 		m => m.plainName().replace(/ /g, "").toLowerCase().includes(name.toLowerCase()), //partial match with spaces removed ignoring case and colors
 		m => m.plainName().replace(/[^a-zA-Z]/gi, "").toLowerCase().includes(name.toLowerCase()), //partial match with non-alphabetic characters removed ignoring case and colors
 	];
-	
+
 	for(const filter of filters){
 		const matchingMaps = maps.select(filter);
 		if(matchingMaps.size == 1) return matchingMaps.get(0);
@@ -730,7 +730,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 			time: d.readNumber(16),
 			type: d.readString(2),
 		}), 1)) : [];
-	
+
 		existingData.push({
 			action, uuid, time, type
 		});
@@ -743,7 +743,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 			str.writeString(el.type, 2);
 		}, 1));
 	});
-	
+
 });
 
 export function getIPRange(input:string, error?:(message:string) => never):string | null {
