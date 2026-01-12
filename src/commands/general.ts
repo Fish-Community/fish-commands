@@ -1160,6 +1160,10 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 				return;
 			});
 			if(!target) return;
+			if(target === sender.player){
+				outputFail('You cannot report yourself.');
+				return;
+			}
 
 			const baseReasons = [
 				'Griefing',
