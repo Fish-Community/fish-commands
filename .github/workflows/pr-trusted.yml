@@ -43,7 +43,8 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 9
-          run_install: true
+          run_install:
+            args: [--no-frozen-lockfile]
       - name: Typescript Compile
         run: pnpm run build
       - name: Copy main.js
@@ -55,6 +56,7 @@ jobs:
         # Returns 0 if files changed, and 1 if no files changed
         run: |
           git add build/scripts
+          git add pnpm-lock.yaml
           echo "committed=$(git commit -m "Automated TypeScript compile / lint" > /dev/null; echo $?)" >> $GITHUB_OUTPUT
       - name: Push changes
         # Do not create an infinite loop of workflows
