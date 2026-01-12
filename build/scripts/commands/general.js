@@ -1191,10 +1191,10 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 var onlinePlayers, target, baseReasons, reasons, reason, issuerName, targetName, serverName, message;
-                var _c, _d, _e;
+                var _c, _d;
                 var sender = _b.sender, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail, f = _b.f;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
                             onlinePlayers = (0, funcs_1.setToArray)(Groups.player);
                             if (onlinePlayers.length === 0) {
@@ -1209,9 +1209,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                     return;
                                 })];
                         case 1:
-                            target = _f.sent();
+                            target = _e.sent();
                             if (!target)
                                 return [2 /*return*/];
+                            if (target === sender.player) {
+                                outputFail('You cannot report yourself.');
+                                return [2 /*return*/];
+                            }
                             baseReasons = [
                                 'Griefing',
                                 'Harassment',
@@ -1226,10 +1230,10 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                     return;
                                 })];
                         case 2:
-                            reason = _f.sent();
+                            reason = _e.sent();
                             if (!reason)
                                 return [2 /*return*/];
-                            issuerName = (_e = (_d = (_c = sender.player) === null || _c === void 0 ? void 0 : _c.name) !== null && _d !== void 0 ? _d : sender.name) !== null && _e !== void 0 ? _e : 'Unknown';
+                            issuerName = (_d = (_c = sender.player) === null || _c === void 0 ? void 0 : _c.name) !== null && _d !== void 0 ? _d : 'Unknown';
                             targetName = target.name;
                             serverName = config_1.Gamemode.name();
                             message = "[Report] Server: ".concat(serverName, "\n") +
