@@ -1182,7 +1182,7 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 			});
 			if(!reason) return;
 
-			const issuerName = sender.player?.name ?? sender.name ?? 'Unknown';
+			const issuerName = sender.player?.name ?? 'Unknown';
 			const targetName = target.name;
 			const serverName = Gamemode.name();
 			const message =
