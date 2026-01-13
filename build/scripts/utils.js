@@ -893,7 +893,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
             time: time,
             type: type
         });
-        existingData = existingData.slice(-10);
+        existingData = existingData.slice(-9);
         //Write
         globals_1.tileHistory[t.x + ',' + t.y] = funcs_1.StringIO.write(existingData, function (str, data) { return str.writeArray(data, function (el) {
             str.writeString(el.action, 2);
