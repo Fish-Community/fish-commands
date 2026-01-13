@@ -559,8 +559,8 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 			    FishPlayer.messageStaff(`[yellow]Temp-muted ${fishPlayer.cleanedName} for ${Math.round(durationMs / 60000)} minutes: n-word`);
 			    Log.info(`[automod] Temp-muted ${player.name} (${player.uuid()}) for ${Math.round(durationMs / 60000)}m: n-word`);
 			    Timer.schedule(() => { void fishPlayer.unmute("automod"); }, durationMs / 1000);
-				};
-			};
+				}
+			}
 		}
 		message = text.chatFilterReplacement.message();
 		highlight ??= text.chatFilterReplacement.highlight();
