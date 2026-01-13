@@ -473,7 +473,7 @@ export const Achievements = {
 	verified: new Achievement([Rank.active.color, Iconc.ok], "Verified", `Be promoted automatically to ${Rank.active.coloredName()} rank.`, {
 		checkPlayerJoin: p => p.ranksAtLeast("active"), notify: "nobody"
 	}),
-	click_me: new Achievement(Iconc.bookOpen, "Clicked", `Run /achievementsgrid and click this achievement.`),
+	click_me: new Achievement(Iconc.bookOpen, "Clicked", `Run /achievementgrid and click this achievement.`),
 	afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
 		modes: ["not", "sandbox"],
 		checkPlayerGameover(player, winTeam) {
@@ -536,7 +536,13 @@ FishEvents.on("commandUnauthorized", (_, player, name) => {
 Events.on(EventType.UnitDrownEvent, ({unit}:{unit: Unit}) => {
 	if(!Gamemode.sandbox()){
 		if(unit.type == UnitTypes.mace && unit.tileOn()?.floor() == Blocks.cryofluid) Achievements.drown_mace_in_cryo.grantToAllOnline();
-		else if(unit.type == UnitTypes.conquer || unit.type == UnitTypes.vanquish) Achievements.drown_big_tank.grantToAllOnline();
+		else if(unit.type == UnitTypes.conquer || unit.type == UnitTypes.vanquish){
+			if(Gamemode.pvp()){
+				Vars.state.teams.active.map(t => t.team).select(t => t !== unit.team).each(t => Achievements.drown_big_tank.grantToAllOnline(t));
+			} else {
+				if(unit.team !== Vars.state.rules.defaultTeam) Achievements.drown_big_tank.grantToAllOnline();
+			}
+		}
 	}
 });
 

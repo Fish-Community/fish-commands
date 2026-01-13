@@ -583,7 +583,7 @@ exports.Achievements = {
     verified: new Achievement([ranks_1.Rank.active.color, Iconc.ok], "Verified", "Be promoted automatically to ".concat(ranks_1.Rank.active.coloredName(), " rank."), {
         checkPlayerJoin: function (p) { return p.ranksAtLeast("active"); }, notify: "nobody"
     }),
-    click_me: new Achievement(Iconc.bookOpen, "Clicked", "Run /achievementsgrid and click this achievement."),
+    click_me: new Achievement(Iconc.bookOpen, "Clicked", "Run /achievementgrid and click this achievement."),
     afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
         modes: ["not", "sandbox"],
         checkPlayerGameover: function (player, winTeam) {
@@ -653,8 +653,15 @@ Events.on(EventType.UnitDrownEvent, function (_a) {
     if (!config_1.Gamemode.sandbox()) {
         if (unit.type == UnitTypes.mace && ((_b = unit.tileOn()) === null || _b === void 0 ? void 0 : _b.floor()) == Blocks.cryofluid)
             exports.Achievements.drown_mace_in_cryo.grantToAllOnline();
-        else if (unit.type == UnitTypes.conquer || unit.type == UnitTypes.vanquish)
-            exports.Achievements.drown_big_tank.grantToAllOnline();
+        else if (unit.type == UnitTypes.conquer || unit.type == UnitTypes.vanquish) {
+            if (config_1.Gamemode.pvp()) {
+                Vars.state.teams.active.map(function (t) { return t.team; }).select(function (t) { return t !== unit.team; }).each(function (t) { return exports.Achievements.drown_big_tank.grantToAllOnline(t); });
+            }
+            else {
+                if (unit.team !== Vars.state.rules.defaultTeam)
+                    exports.Achievements.drown_big_tank.grantToAllOnline();
+            }
+        }
     }
 });
 Events.on(EventType.UnitBulletDestroyEvent, function (_a) {
