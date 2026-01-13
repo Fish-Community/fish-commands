@@ -62,6 +62,7 @@ export default defineConfig([
 					message: '&& false is only for testing',
 				},
 			],
+			"no-fallthrough": "off", //Typescript's native noFallthroughCasesInSwitch is more accurate
 			
 			"@typescript-eslint/no-unsafe-argument": "off",
 			"@typescript-eslint/no-unsafe-assignment": "off",
