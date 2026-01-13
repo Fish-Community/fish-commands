@@ -858,32 +858,21 @@ Please stop attacking and [lime]build defenses[] first!`
 
 	},
 
-	/*
 	maps: {
 		args: [],
 		description: 'Lists the available maps.',
 		perm: Perm.none,
 		handler({output}){
 			output(`\
-[yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.
+[yellow]Use [white]/nextmap [lightgray][[map name] [yellow]to vote on a map.
 
 [blue]Available maps:
 _________________________
 ${Vars.maps.customMaps().toArray().map(map =>
-`[yellow]${map.name()}`
+	`[yellow]${map.name()}`
 ).join("\n")}`
 			);
 		}
-	},
-	*/
-
-	maps: {
-		description: 'depreciated, please use /maps instead',
-		args: [],
-		perm: Perm.none,
-		handler(){
-			fail('This command was moved to /nextmap');
-		},
 	},
 
 	nextmap: command(() => {
