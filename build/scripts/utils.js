@@ -673,6 +673,21 @@ function processChat(player, message, effects) {
             }
             Log.info("Censored message from player ".concat(player.name, ": \"").concat((0, funcs_1.escapeStringColorsServer)(message), "\"; contained \"").concat(filterTripText, "\""));
             players_1.FishPlayer.messageStaff("[yellow]Censored message from player ".concat(fishPlayer.cleanedName, ": \"").concat(message, "\" contained \"").concat(filterTripText, "\""));
+            if (!suspicious) {
+                // for - https://github.com/Fish-Community/fish-commands/issues/69
+                var normalized = removeFoosChars(message).toLowerCase();
+                var nwordPattern = /\bn[i1!][gq9]+[gq9]+[ea3]r\b|\bn[i1!][gq9]+[gq9]+a\b/;
+                if (nwordPattern.test(normalized)) {
+                    var durationMs = config_1.tempMute.nwordDurationMs;
+                    void fishPlayer.mute("automod");
+                    player.sendMessage("[scarlet]You have been muted for ".concat(Math.round(durationMs / 60000), " minutes.[lightgray] Reason: Prohibited language"));
+                    players_1.FishPlayer.messageStaff("[yellow]Temp-muted ".concat(fishPlayer.cleanedName, " for ").concat(Math.round(durationMs / 60000), " minutes: n-word"));
+                    Log.info("[automod] Temp-muted ".concat(player.name, " (").concat(player.uuid(), ") for ").concat(Math.round(durationMs / 60000), "m: n-word"));
+                    Timer.schedule(function () { void fishPlayer.unmute("automod"); }, durationMs / 1000);
+                }
+                ;
+            }
+            ;
         }
         message = config_1.text.chatFilterReplacement.message();
         highlight !== null && highlight !== void 0 ? highlight : (highlight = config_1.text.chatFilterReplacement.highlight());
