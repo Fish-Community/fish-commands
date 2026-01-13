@@ -890,7 +890,7 @@ ${Vars.maps.customMaps().toArray().map(map =>
 Map Name: [white]${Vars.state.map.name()}
 [accent]Map Author: [white]${Vars.state.map.author()}
 Fastest Time: [white]${formatTime(FMap.getCreate(Vars.state.map).stats().shortestTime)}
-Current Time: [white]${formatTime(PartialMapRun.current!.duration())}`,
+Current Time: [white]${formatTime(PartialMapRun.current?.duration() ?? FMap.getCreate(Vars.state.map).runs.at(-1)?.duration() ?? 0)}`,
 				["[green]Current Maps", "[yellow]Throwback Maps", "[orange]Campaigns"],
 				target,
 				{ columns: 1, includeCancel: "Close" }

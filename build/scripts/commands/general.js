@@ -962,11 +962,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         function currentMenu(target) {
             return __awaiter(this, void 0, void 0, function () {
                 var result, _a, map, res;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0: return [4 /*yield*/, menus_1.Menu.menu("Select a map", "[accent]---Current Map---\nMap Name: [white]".concat(Vars.state.map.name(), "\n[accent]Map Author: [white]").concat(Vars.state.map.author(), "\nFastest Time: [white]").concat((0, utils_1.formatTime)(maps_1.FMap.getCreate(Vars.state.map).stats().shortestTime), "\nCurrent Time: [white]").concat((0, utils_1.formatTime)(maps_1.PartialMapRun.current.duration())), ["[green]Current Maps", "[yellow]Throwback Maps", "[orange]Campaigns"], target, { columns: 1, includeCancel: "Close" })];
+                var _b, _c, _d, _e;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0: return [4 /*yield*/, menus_1.Menu.menu("Select a map", "[accent]---Current Map---\nMap Name: [white]".concat(Vars.state.map.name(), "\n[accent]Map Author: [white]").concat(Vars.state.map.author(), "\nFastest Time: [white]").concat((0, utils_1.formatTime)(maps_1.FMap.getCreate(Vars.state.map).stats().shortestTime), "\nCurrent Time: [white]").concat((0, utils_1.formatTime)((_e = (_c = (_b = maps_1.PartialMapRun.current) === null || _b === void 0 ? void 0 : _b.duration()) !== null && _c !== void 0 ? _c : (_d = maps_1.FMap.getCreate(Vars.state.map).runs.at(-1)) === null || _d === void 0 ? void 0 : _d.duration()) !== null && _e !== void 0 ? _e : 0)), ["[green]Current Maps", "[yellow]Throwback Maps", "[orange]Campaigns"], target, { columns: 1, includeCancel: "Close" })];
                         case 1:
-                            result = _b.sent();
+                            result = _f.sent();
                             _a = result;
                             switch (_a) {
                                 case '[green]Current Maps': return [3 /*break*/, 2];
@@ -976,25 +977,25 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             return [3 /*break*/, 7];
                         case 2: return [4 /*yield*/, menus_1.Menu.pagedList(target, "Current Maps", "Select a map to view more information.", Vars.maps.customMaps().toArray(), { optionStringifier: function (map) { return map.name(); }, rowsPerPage: 10, columns: 1 })];
                         case 3:
-                            map = _b.sent();
+                            map = _f.sent();
                             return [4 /*yield*/, menus_1.Menu.buttons(target, map.name(), "[accent]Description: [white]".concat(map.description(), "\n[accent]Author: [white]").concat(map.author(), "\n[accent]Fastest Time: [white]").concat((0, utils_1.formatTime)((maps_1.FMap.getCreate(map)).stats().shortestTime), "\n[accent]Runs: [white]").concat((maps_1.FMap.getCreate(map)).stats().allRunCount, "\n[accent]Winrate: [white]").concat(((maps_1.FMap.getCreate(map)).stats().winRate * 100).toFixed(2), "%"), [[
                                         { data: true, text: "[green]Vote for this Map" }
                                     ], [
                                         { data: false, text: "[red]Back" }
                                     ]], { onCancel: "null" })];
                         case 4:
-                            res = _b.sent();
+                            res = _f.sent();
                             if (res)
                                 return [2 /*return*/, map];
                             else
                                 return [2 /*return*/, currentMenu(target)];
-                            _b.label = 5;
+                            _f.label = 5;
                         case 5:
                             (0, commands_1.fail)("Throwback maps have not yet been implemented.");
-                            _b.label = 6;
+                            _f.label = 6;
                         case 6:
                             (0, commands_1.fail)("Campaigns have not yet been implemented.");
-                            _b.label = 7;
+                            _f.label = 7;
                         case 7:
                             ;
                             return [2 /*return*/];
