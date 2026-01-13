@@ -939,9 +939,6 @@ Current Time: [white]${formatTime(PartialMapRun.current!.duration())}`,
 		}
 
 		function sendVote(sender:FishPlayer, map:MMap){
-			if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
-			if(votes.get(sender)) fail(`You have already voted.`);
-
 			votes.set(sender, map);
 			if(voteEndTime == -1){
 				if((Date.now() - lastVoteTime) < Duration.minutes(1)) fail(`Please wait 1 minute before starting a new map vote.`);
@@ -1025,6 +1022,9 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 			data: {votes, voteEndTime: () => voteEndTime, resetVotes, endVote},
 			requirements: [Req.cooldown(10_000)],
 			async handler({args, sender}){
+				if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
+				if(votes.get(sender)) fail(`You have already voted.`);
+
 				args.map ??= await currentMenu(sender);
 				sendVote(sender, args.map);
 			}
