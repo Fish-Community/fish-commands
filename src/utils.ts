@@ -554,11 +554,17 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 			
 			  if (nwordPattern.test(normalized)) {
 			    const durationMs = tempMute.nwordDurationMs;
+			    const muteTimestamp = Date.now();
+			    (fishPlayer as any)._lastAutomodMuteAt = muteTimestamp;
 			    void fishPlayer.mute("automod");
 			    player.sendMessage(`[scarlet]You have been muted for ${Math.round(durationMs / 60000)} minutes.[lightgray] Reason: Prohibited language`);
 			    FishPlayer.messageStaff(`[yellow]Temp-muted ${fishPlayer.cleanedName} for ${Math.round(durationMs / 60000)} minutes: n-word`);
 			    Log.info(`[automod] Temp-muted ${player.name} (${player.uuid()}) for ${Math.round(durationMs / 60000)}m: n-word`);
-			    Timer.schedule(() => { void fishPlayer.unmute("automod"); }, durationMs / 1000);
+			    Timer.schedule(() => {
+			      if ((fishPlayer as any)._lastAutomodMuteAt === muteTimestamp) {
+			        void fishPlayer.unmute("automod");
+			      }
+			    }, durationMs / 1000);
 				}
 			}
 		}
