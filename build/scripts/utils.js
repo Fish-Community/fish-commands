@@ -685,9 +685,7 @@ function processChat(player, message, effects) {
                     Log.info("[automod] Temp-muted ".concat(player.name, " (").concat(player.uuid(), ") for ").concat(Math.round(durationMs / 60000), "m: n-word"));
                     Timer.schedule(function () { void fishPlayer.unmute("automod"); }, durationMs / 1000);
                 }
-                ;
             }
-            ;
         }
         message = config_1.text.chatFilterReplacement.message();
         highlight !== null && highlight !== void 0 ? highlight : (highlight = config_1.text.chatFilterReplacement.highlight());
