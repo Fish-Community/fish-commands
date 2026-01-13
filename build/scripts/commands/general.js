@@ -976,41 +976,49 @@ ${Vars.maps.customMaps().toArray().map(map =>
         var voteDuration = funcs_1.Duration.minutes(1.5);
         var task = null;
         function currentMenu(target) {
-            var mainMenu = menus_1.Menu.raw("Fish Map Manager", "[accent]---Current Map---\nMap Name: [white]".concat(Vars.state.map.name(), "\n[accent]Map Author: [white]").concat(Vars.state.map.author(), "\nFastest Time: [white]").concat((0, utils_1.formatTime)(maps_1.FMap.getCreate(Vars.state.map).stats().shortestTime), "\nCurrent Time: [white]").concat((0, utils_1.formatTime)(maps_1.PartialMapRun.current.duration())), [["[green]Current Maps"], ["[yellow]Throwback Maps"], ["[orange]Campaigns"], ["Close"]], target);
-            mainMenu.then(function (res) {
-                switch (res) {
-                    case '[green]Current Maps':
-                        menus_1.Menu.pagedList(target, "Current Maps", "", Vars.maps.customMaps().toArray(), { optionStringifier: function (map) { return map.name(); }, rowsPerPage: 10, columns: 1 }).catch(function () { }).then(function (map) {
-                            if (map == null)
-                                return;
-                            menus_1.Menu.raw(map.name(), "[accent]Description: [white]".concat(map.description(), "\n[accent]Author: [white]").concat(map.author(), "\n[accent]Fastest Time: [white]").concat((0, utils_1.formatTime)((maps_1.FMap.getCreate(map)).stats().shortestTime), "\n[accent]Runs: [white]").concat((maps_1.FMap.getCreate(map)).stats().allRunCount, "\n[accent]Winrate: [white]").concat(((maps_1.FMap.getCreate(map)).stats().winRate * 100).toFixed(2), "%"), [["[green]Vote for this Map"], ["[red]Back"]], target).then(function (res) {
-                                switch (res) {
-                                    case ("[green]Vote for this Map"):
-                                        sendVote(target, map);
-                                        break;
-                                    case ("[red]Back"):
-                                        currentMenu(target);
-                                        break;
-                                }
-                            });
-                        });
-                        break;
-                    case '[yellow]Throwback Maps':
-                        (0, utils_1.outputMessage)("Throwback maps have not yet been implemented.", target);
-                        break;
-                    case '[orange]Campaigns':
-                        (0, utils_1.outputMessage)("Campaigns have not yet been implemented.", target);
-                        break;
-                    case 'Close':
-                        break;
-                }
+            return __awaiter(this, void 0, void 0, function () {
+                var result, _a, map, res;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0: return [4 /*yield*/, menus_1.Menu.menu("Select a map", "[accent]---Current Map---\nMap Name: [white]".concat(Vars.state.map.name(), "\n[accent]Map Author: [white]").concat(Vars.state.map.author(), "\nFastest Time: [white]").concat((0, utils_1.formatTime)(maps_1.FMap.getCreate(Vars.state.map).stats().shortestTime), "\nCurrent Time: [white]").concat((0, utils_1.formatTime)(maps_1.PartialMapRun.current.duration())), ["[green]Current Maps", "[yellow]Throwback Maps", "[orange]Campaigns"], target, { columns: 1, includeCancel: "Close" })];
+                        case 1:
+                            result = _b.sent();
+                            _a = result;
+                            switch (_a) {
+                                case '[green]Current Maps': return [3 /*break*/, 2];
+                                case '[yellow]Throwback Maps': return [3 /*break*/, 5];
+                                case '[orange]Campaigns': return [3 /*break*/, 6];
+                            }
+                            return [3 /*break*/, 7];
+                        case 2: return [4 /*yield*/, menus_1.Menu.pagedList(target, "Current Maps", "Select a map to view more information.", Vars.maps.customMaps().toArray(), { optionStringifier: function (map) { return map.name(); }, rowsPerPage: 10, columns: 1 })];
+                        case 3:
+                            map = _b.sent();
+                            return [4 /*yield*/, menus_1.Menu.buttons(target, map.name(), "[accent]Description: [white]".concat(map.description(), "\n[accent]Author: [white]").concat(map.author(), "\n[accent]Fastest Time: [white]").concat((0, utils_1.formatTime)((maps_1.FMap.getCreate(map)).stats().shortestTime), "\n[accent]Runs: [white]").concat((maps_1.FMap.getCreate(map)).stats().allRunCount, "\n[accent]Winrate: [white]").concat(((maps_1.FMap.getCreate(map)).stats().winRate * 100).toFixed(2), "%"), [[
+                                        { data: true, text: "[green]Vote for this Map" }
+                                    ], [
+                                        { data: false, text: "[red]Back" }
+                                    ]], { onCancel: "null" })];
+                        case 4:
+                            res = _b.sent();
+                            if (res)
+                                return [2 /*return*/, map];
+                            else
+                                return [2 /*return*/, currentMenu(target)];
+                            _b.label = 5;
+                        case 5:
+                            (0, commands_1.fail)("Throwback maps have not yet been implemented.");
+                            _b.label = 6;
+                        case 6:
+                            (0, commands_1.fail)("Campaigns have not yet been implemented.");
+                            _b.label = 7;
+                        case 7:
+                            ;
+                            return [2 /*return*/];
+                    }
+                });
             });
         }
         function sendVote(sender, map) {
-            if (config_1.Gamemode.testsrv())
-                (0, commands_1.fail)("Please use /forcenextmap instead.");
-            if (votes.get(sender))
-                (0, commands_1.fail)("You have already voted.");
             votes.set(sender, map);
             if (voteEndTime == -1) {
                 if ((Date.now() - lastVoteTime) < funcs_1.Duration.minutes(1))
@@ -1083,11 +1091,33 @@ ${Vars.maps.customMaps().toArray().map(map =>
             data: { votes: votes, voteEndTime: function () { return voteEndTime; }, resetVotes: resetVotes, endVote: endVote },
             requirements: [commands_1.Req.cooldown(10000)],
             handler: function (_a) {
-                var args = _a.args, sender = _a.sender;
-                if (args.map)
-                    sendVote(sender, args.map);
-                else
-                    currentMenu(sender);
+                return __awaiter(this, arguments, void 0, function (_b) {
+                    var _c, _d;
+                    var _e;
+                    var args = _b.args, sender = _b.sender;
+                    return __generator(this, function (_f) {
+                        switch (_f.label) {
+                            case 0:
+                                if (config_1.Gamemode.testsrv())
+                                    (0, commands_1.fail)("Please use /forcenextmap instead.");
+                                if (votes.get(sender))
+                                    (0, commands_1.fail)("You have already voted.");
+                                if (!((_e = args.map) !== null && _e !== void 0)) return [3 /*break*/, 1];
+                                _c = _e;
+                                return [3 /*break*/, 3];
+                            case 1:
+                                _d = args;
+                                return [4 /*yield*/, currentMenu(sender)];
+                            case 2:
+                                _c = (_d.map = _f.sent());
+                                _f.label = 3;
+                            case 3:
+                                _c;
+                                sendVote(sender, args.map);
+                                return [2 /*return*/];
+                        }
+                    });
+                });
             }
         };
     }), surrender: (0, commands_1.command)(function () {
