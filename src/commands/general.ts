@@ -894,61 +894,50 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		const voteDuration = Duration.minutes(1.5);
 		let task: TimerTask | null = null;
 
-		function currentMenu(target:FishPlayer){
-			const mainMenu = Menu.raw(
-				"Fish Map Manager",
-`[accent]---Current Map---
+		async function currentMenu(target: FishPlayer): Promise<MMap> {
+			const result = await Menu.menu(
+				"Select a map",
+				`[accent]---Current Map---
 Map Name: [white]${Vars.state.map.name()}
 [accent]Map Author: [white]${Vars.state.map.author()}
 Fastest Time: [white]${formatTime(FMap.getCreate(Vars.state.map).stats().shortestTime)}
 Current Time: [white]${formatTime(PartialMapRun.current!.duration())}`,
-				[["[green]Current Maps"], ["[yellow]Throwback Maps"], ["[orange]Campaigns"], ["Close"]],
-				target
+				["[green]Current Maps", "[yellow]Throwback Maps", "[orange]Campaigns"],
+				target,
+				{ columns: 1, includeCancel: "Close" }
 			);
-			mainMenu.then((res) => {
-				switch(res){
-					case '[green]Current Maps':
-						Menu.pagedList(
-							target,
-							"Current Maps",
-							"",
-							Vars.maps.customMaps().toArray(),
-							{ optionStringifier: map => map.name(), rowsPerPage: 10, columns: 1 }
-						).catch(() => {}).then(map => {
-							if(map == null) return;
-							Menu.raw(
-								map.name(),
-								`[accent]Description: [white]${map.description()}
+			switch (result) {
+				case '[green]Current Maps': {
+					const map = await Menu.pagedList(
+						target,
+						"Current Maps",
+						"Select a map to view more information.",
+						Vars.maps.customMaps().toArray(),
+						{ optionStringifier: map => map.name(), rowsPerPage: 10, columns: 1 }
+					);
+					const res = await Menu.buttons(
+						target,
+						map.name(),
+						`[accent]Description: [white]${map.description()}
 [accent]Author: [white]${map.author()}
 [accent]Fastest Time: [white]${formatTime((FMap.getCreate(map)).stats().shortestTime)}
 [accent]Runs: [white]${(FMap.getCreate(map)).stats().allRunCount}
 [accent]Winrate: [white]${((FMap.getCreate(map)).stats().winRate * 100).toFixed(2)}%`,
-								[["[green]Vote for this Map"], ["[red]Back"]],
-								target
-							).then(res => {
-								switch(res){
-									case("[green]Vote for this Map"):
-										sendVote(target, map);
-										break;
-									case("[red]Back"):
-										currentMenu(target);
-										break;
-								}
-							});
-						});
-						break;
-					case '[yellow]Throwback Maps':
-						outputMessage("Throwback maps have not yet been implemented.", target);
-						break;
-					case '[orange]Campaigns':
-						outputMessage("Campaigns have not yet been implemented.", target);
-						break;
-					case 'Close':
-						break;
+						[[
+							{ data: true, text: "[green]Vote for this Map" }
+						], [
+							{ data: false, text: "[red]Back" }
+						]],
+						{ onCancel: "null" }
+					);
+					if(res) return map;
+					else return currentMenu(target);
 				}
-			});
+				case '[yellow]Throwback Maps': fail("Throwback maps have not yet been implemented.");
+				case '[orange]Campaigns': fail("Campaigns have not yet been implemented.");
+			};
 		}
-		
+
 		function sendVote(sender:FishPlayer, map:MMap){
 			if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
 			if(votes.get(sender)) fail(`You have already voted.`);
@@ -1035,9 +1024,9 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 			perm: Perm.play,
 			data: {votes, voteEndTime: () => voteEndTime, resetVotes, endVote},
 			requirements: [Req.cooldown(10_000)],
-			handler({args, sender}){
-				if(args.map) sendVote(sender, args.map);
-				else currentMenu(sender);
+			async handler({args, sender}){
+				args.map ??= await currentMenu(sender);
+				sendVote(sender, args.map);
 			}
 		};
 	}),
