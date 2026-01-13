@@ -942,32 +942,16 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 outputSuccess(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Forced the next map to be \"", "\" by ", ""], ["Forced the next map to be \"", "\" by ", ""])), args.map.name(), args.map.author()));
             }
         },
-    }, 
-    /*
-    maps: {
+    }, maps: {
         args: [],
         description: 'Lists the available maps.',
-        perm: Perm.none,
-        handler({output}){
-            output(`\
-[yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.
-
-[blue]Available maps:
-_________________________
-${Vars.maps.customMaps().toArray().map(map =>
-`[yellow]${map.name()}`
-).join("\n")}`
-            );
-        }
-    },
-    */
-    maps: {
-        description: 'depreciated, please use /maps instead',
-        args: [],
         perm: commands_1.Perm.none,
-        handler: function () {
-            (0, commands_1.fail)('This command was moved to /nextmap');
-        },
+        handler: function (_a) {
+            var output = _a.output;
+            output("[yellow]Use [white]/nextmap [lightgray][[map name] [yellow]to vote on a map.\n\n[blue]Available maps:\n_________________________\n".concat(Vars.maps.customMaps().toArray().map(function (map) {
+                return "[yellow]".concat(map.name());
+            }).join("\n")));
+        }
     }, nextmap: (0, commands_1.command)(function () {
         var votes = new Map();
         var lastVoteCount = 0;
