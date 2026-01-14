@@ -1196,7 +1196,7 @@ ${a.hidden ? "This achievement is secret." : ""}\
 		perm: Perm.none,
 		async handler({sender, args: { target = sender }, f}){
 			const visibleAchievements = Achievement.all.filter(a => !a.hidden || a.has(target));
-			const options = to2DArray(visibleAchievements, 6).map(row => row.map(a => ({
+			const options = to2DArray(visibleAchievements, 7).map(row => row.map(a => ({
 				data: a,
 				text: a.has(target) ? a.icon : `[gray]${Strings.stripColors(a.icon)}`,
 			})));
@@ -1205,23 +1205,28 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			let x = 0, y = 0;
 			let a: Achievement | null = null;
 			while(true){
-				[a, x, y] = await Menu.scroll2D(
-					sender, "Achievements",
-					a ? FColor.achievement`\
-${a.icon} ${a.name}
-
-${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
-
-Allowed modes: ${a.modesText}
-Unlocked: ${f.boolGood(a.has(target))}
-${a.hidden ? "This achievement is secret." : ""}\
-` :
-	(target == sender ? `You have ${numberAchievements}/${totalAchievements} achievements.`
-	: FColor.achievement`Player ${target.prefixedName} has ${numberAchievements}/${totalAchievements} achievements.`)
-	+ "\nClick an achievement icon to show more information.",
-					options,
-					{ onCancel: "ignore", columns: 4, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
-				);
+				try {
+					[a, x, y] = await Menu.scroll2D(
+						sender, "Achievements",
+						a ? FColor.achievement`\
+	${a.icon} ${a.name}
+	
+	${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
+	
+	Allowed modes: ${a.modesText}
+	Unlocked: ${f.boolGood(a.has(target))}
+	${a.hidden ? "This achievement is secret." : ""}\
+	` :
+		(target == sender ? `You have ${numberAchievements}/${totalAchievements} achievements.`
+		: FColor.achievement`Player ${target.prefixedName} has ${numberAchievements}/${totalAchievements} achievements.`)
+		+ "\nClick an achievement icon to show more information.",
+						options,
+						{ onCancel: "reject", columns: 5, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
+					);
+				} catch(err){
+					if(err == "cancel") return; //TODO replace this string "cancel" with a symbol
+					else throw err;
+				}
 				if(a == Achievements.click_me && target == sender) a.grantTo(sender);
 			}
 		}

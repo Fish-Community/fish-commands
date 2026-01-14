@@ -1247,14 +1247,14 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var visibleAchievements, options, numberAchievements, totalAchievements, x, y, a;
+                var visibleAchievements, options, numberAchievements, totalAchievements, x, y, a, err_1;
                 var _c;
                 var sender = _b.sender, _d = _b.args.target, target = _d === void 0 ? sender : _d, f = _b.f;
                 return __generator(this, function (_e) {
                     switch (_e.label) {
                         case 0:
                             visibleAchievements = achievements_1.Achievement.all.filter(function (a) { return !a.hidden || a.has(target); });
-                            options = (0, funcs_1.to2DArray)(visibleAchievements, 6).map(function (row) { return row.map(function (a) { return ({
+                            options = (0, funcs_1.to2DArray)(visibleAchievements, 7).map(function (row) { return row.map(function (a) { return ({
                                 data: a,
                                 text: a.has(target) ? a.icon : "[gray]".concat(Strings.stripColors(a.icon)),
                             }); }); });
@@ -1264,17 +1264,29 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             a = null;
                             _e.label = 1;
                         case 1:
-                            if (!true) return [3 /*break*/, 3];
-                            return [4 /*yield*/, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") :
+                            if (!true) return [3 /*break*/, 6];
+                            _e.label = 2;
+                        case 2:
+                            _e.trys.push([2, 4, , 5]);
+                            return [4 /*yield*/, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["\t", " ", "\n\t\n\t", "\n\t\n\tAllowed modes: ", "\n\tUnlocked: ", "\n\t", "\t"], ["\\\n\t", " ", "\n\t\n\t", "\n\t\n\tAllowed modes: ", "\n\tUnlocked: ", "\n\t", "\\\n\t"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") :
                                     (target == sender ? "You have ".concat(numberAchievements, "/").concat(totalAchievements, " achievements.")
                                         : config_1.FColor.achievement(templateObject_24 || (templateObject_24 = __makeTemplateObject(["Player ", " has ", "/", " achievements."], ["Player ", " has ", "/", " achievements."])), target.prefixedName, numberAchievements, totalAchievements))
-                                        + "\nClick an achievement icon to show more information.", options, { onCancel: "ignore", columns: 4, rows: 4, getCenterText: function () { return String.fromCharCode(Iconc.settings); }, x: x, y: y })];
-                        case 2:
+                                        + "\nClick an achievement icon to show more information.", options, { onCancel: "reject", columns: 5, rows: 4, getCenterText: function () { return String.fromCharCode(Iconc.settings); }, x: x, y: y })];
+                        case 3:
                             _c = __read.apply(void 0, [_e.sent(), 3]), a = _c[0], x = _c[1], y = _c[2];
+                            return [3 /*break*/, 5];
+                        case 4:
+                            err_1 = _e.sent();
+                            if (err_1 == "cancel")
+                                return [2 /*return*/]; //TODO replace this string "cancel" with a symbol
+                            else
+                                throw err_1;
+                            return [3 /*break*/, 5];
+                        case 5:
                             if (a == achievements_1.Achievements.click_me && target == sender)
                                 a.grantTo(sender);
                             return [3 /*break*/, 1];
-                        case 3: return [2 /*return*/];
+                        case 6: return [2 /*return*/];
                     }
                 });
             });
