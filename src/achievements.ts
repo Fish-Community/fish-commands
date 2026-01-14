@@ -201,7 +201,7 @@ export const Achievements = {
 
 
 	//Joining based
-	welcome: new Achievement("_", "Welcome", "Join the server.", {
+	welcome: new Achievement(["gold", Iconc.infoCircle], "Welcome", "Join the server.", {
 		checkPlayerJoin: () => true,
 		notify: "nobody"
 	}),

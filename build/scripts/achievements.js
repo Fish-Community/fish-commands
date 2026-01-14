@@ -304,7 +304,7 @@ exports.Achievements = {
     // Do not remove any achievements: instead, set the "disabled" option to true.
     // Reordering achievements will cause ID shifts.
     //Joining based
-    welcome: new Achievement("_", "Welcome", "Join the server.", {
+    welcome: new Achievement(["gold", Iconc.infoCircle], "Welcome", "Join the server.", {
         checkPlayerJoin: function () { return true; },
         notify: "nobody"
     }),
