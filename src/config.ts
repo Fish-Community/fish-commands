@@ -73,6 +73,11 @@ export const bannedWords: {
 	],
 };
 
+export const tempMute = {
+	// temp mutes bakas if they use n word. oof. set duration of mute here.
+	nwordDurationMs: Duration.minutes(10),
+};
+
 //for some reason the external mindustry server does not read the files correctly, so we can only use ASCII
 export const substitutions:Record<string, string> = Object.fromEntries<string>(Object.entries<string>({
 	"a": "\u0430\u1E9A\u1EA1\u1E01\u00E4\u03B1@\u0101\u0103\u0105\u03AC",

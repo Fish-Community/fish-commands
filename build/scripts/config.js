@@ -33,7 +33,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
+exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.tempMute = exports.bannedWords = void 0;
 var globals_1 = require("/globals");
 var ranks_1 = require("/ranks");
 var funcs_1 = require("/funcs");
@@ -87,6 +87,10 @@ exports.bannedWords = {
     autoWhack: [
         "nig" + "ger", "nig" + "ga", "ni8" + "8er", "hit" + "ler", "fa" + "gg" + "ot", "nazis",
     ],
+};
+exports.tempMute = {
+    // temp mutes bakas if they use n word. oof. set duration of mute here.
+    nwordDurationMs: funcs_1.Duration.minutes(10),
 };
 //for some reason the external mindustry server does not read the files correctly, so we can only use ASCII
 exports.substitutions = Object.fromEntries(Object.entries({
