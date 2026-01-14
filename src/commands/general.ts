@@ -1195,10 +1195,13 @@ ${a.hidden ? "This achievement is secret." : ""}\
 		description: "Shows all achievements in a 2D scrolling menu.",
 		perm: Perm.none,
 		async handler({sender, args: { target = sender }, f}){
-			const options = to2DArray(Achievement.all.filter(a => !a.hidden || a.has(target)), 6).map(row => row.map(a => ({
+			const visibleAchievements = Achievement.all.filter(a => !a.hidden || a.has(target));
+			const options = to2DArray(visibleAchievements, 6).map(row => row.map(a => ({
 				data: a,
 				text: a.has(target) ? a.icon : `[gray]${Strings.stripColors(a.icon)}`,
 			})));
+			const numberAchievements = Achievement.all.filter(a => a.has(target)).length;
+			const totalAchievements = visibleAchievements.length;
 			let x = 0, y = 0;
 			let a: Achievement | null = null;
 			while(true){
@@ -1212,9 +1215,12 @@ ${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescriptio
 Allowed modes: ${a.modesText}
 Unlocked: ${f.boolGood(a.has(target))}
 ${a.hidden ? "This achievement is secret." : ""}\
-` : "Click an achievement icon to show more information.",
+` :
+	(target == sender ? `You have ${numberAchievements}/${totalAchievements} achievements.`
+	: FColor.achievement`Player ${target.prefixedName} has ${numberAchievements}/${totalAchievements} achievements.`)
+	+ "\nClick an achievement icon to show more information.",
 					options,
-					{ onCancel: "reject", columns: 4, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
+					{ onCancel: "ignore", columns: 4, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
 				);
 				if(a == Achievements.click_me && target == sender) a.grantTo(sender);
 			}
