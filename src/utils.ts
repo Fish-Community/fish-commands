@@ -548,7 +548,6 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 			FishPlayer.messageStaff(`[yellow]Censored message from player ${fishPlayer.cleanedName}: "${message}" contained "${filterTripText}"`);
 			
 			if (!suspicious) {
-				// for - https://github.com/Fish-Community/fish-commands/issues/69
 			  const normalized = removeFoosChars(message).toLowerCase();
 			  const nwordPattern = /\bn[i1!][gq9]+[gq9]+[ea3]r\b|\bn[i1!][gq9]+[gq9]+a\b/;
 			
