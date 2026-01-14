@@ -38,6 +38,7 @@ export const bannedWords: {
 		"fanum tax", "gyatt", "rizz", "skibidi", //With love, DarthScion
 		//>:( -dart
 		"uwu", //lol
+		// why?? why the uwu??? -starkatt
 		
 		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", //our apologies to citizens of the Republic of Niger
 		"негр", "ниггер",
