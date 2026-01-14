@@ -675,7 +675,7 @@ function processChat(player, message, effects) {
             players_1.FishPlayer.messageStaff("[yellow]Censored message from player ".concat(fishPlayer.cleanedName, ": \"").concat(message, "\" contained \"").concat(filterTripText, "\""));
             if (!suspicious) {
                 var normalized = removeFoosChars(message).toLowerCase();
-                var nwordPattern = /\bn[i1!][gq9]+[gq9]+[ea3]r\b|\bn[i1!][gq9]+[gq9]+a\b/;
+                var nwordPattern = /\bn[i1!][gq9]{2,}(?:[ea3]r|a)\b/;
                 if (nwordPattern.test(normalized)) {
                     var durationMs = config_1.tempMute.nwordDurationMs;
                     var muteTimestamp_1 = Date.now();
