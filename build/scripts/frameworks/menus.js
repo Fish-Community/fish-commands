@@ -170,7 +170,7 @@ exports.Menu = {
         //Call.menu() with [[]] will cause a client crash, make sure to pass [] instead
         var arrangedOptions = (options.length == 0 && !includeCancel) ? [] : (0, funcs_1.to2DArray)(options, columns);
         if (includeCancel) {
-            arrangedOptions.push(["[red]Cancel[]"]);
+            arrangedOptions.push([(typeof includeCancel == "string" ? includeCancel : "[red]Cancel[]")]);
             //This is safe because cancelOptionId is set,
             //so the handler will never get called with "Cancel".
             cancelOptionId = options.length;
