@@ -4,6 +4,7 @@
 		"module": "CommonJS",
 		"moduleDetection": "force",
 		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": true,
 		"strict": true,
 		"skipLibCheck": true,
 		"lib": ["ES2022"],

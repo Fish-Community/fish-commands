@@ -734,7 +734,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		existingData.push({
 			action, uuid, time, type
 		});
-		existingData = existingData.slice(-10);
+		existingData = existingData.slice(-9);
 		//Write
 		tileHistory[t.x + ',' + t.y] = StringIO.write(existingData, (str, data) => str.writeArray(data, el => {
 			str.writeString(el.action, 2);
