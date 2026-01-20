@@ -25,7 +25,7 @@ export const commands = commandList({
 			if(args.player.hasPerm("blockTrolling")) fail(f`Player ${args.player} is insufficiently trollable.`);
 
 			const message = args.message ?? "You have been warned. I suggest you stop what you're doing";
-			Menu.menu('Warning', message, ["[green]Accept"], args.player, { onCancel: 'null' })
+			void Menu.menu('Warning', message, ["[green]Accept"], args.player, { onCancel: 'null' })
 				.then(() => outputSuccess('Player acknowledged the warning.'));
 			logAction('warned', sender, args.player, message);
 			outputSuccess(f`Warned player ${args.player} for "${message}"`);

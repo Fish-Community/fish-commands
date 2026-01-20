@@ -2,6 +2,7 @@
 Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains a custom polyfill for promises with slightly different behavior.
 */
+/* eslint-disable @typescript-eslint/no-floating-promises */
 
 
 export function queueMicrotask(callback:() => unknown, errorHandler:(err:unknown) => unknown = (err) => {

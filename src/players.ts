@@ -532,7 +532,7 @@ export class FishPlayer {
 			fishPlayer.checkVPNAndJoins();
 			fishPlayer.updateName();
 			//I think this is a better spot for this
-			if(fishPlayer.firstJoin()) Menu.menu(
+			if(fishPlayer.firstJoin()) void Menu.menu(
 				"Rules for [#0000ff] >|||> FISH [white] servers [white]",
 				rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].",
 				["[green]I understand and agree to these terms"],
@@ -600,7 +600,7 @@ export class FishPlayer {
 		fishP.lastJoined = Date.now();
 		this.recentLeaves.unshift(fishP);
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
-		api.setFishPlayerData(fishP.getData(), 1, true);
+		void api.setFishPlayerData(fishP.getData(), 1, true);
 	}
 	static easterEggVotekickTarget: FishPlayer | null = null;
 	static validateVotekickSession(){
@@ -844,7 +844,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 						api.sendStaffMessage(`Autoflagged player ${this.name}[cyan] for suspected vpn!`, "AntiVPN");
 						FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.name}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn. They have been automatically stopped and muted. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free.`);
 						Log.warn(`Player ${this.name} (${this.uuid}) was autoflagged.`);
-						Menu.buttons(
+						void Menu.buttons(
 							this,
 							"[gold]Welcome to Fish Community!",
 							`[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ${FColor.discord`Join our Discord`} to request a staff member come online if none are on.`,

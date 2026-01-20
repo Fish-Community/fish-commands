@@ -104,7 +104,7 @@ exports.commands = (0, commands_1.commandList)({
             if (args.player.hasPerm("blockTrolling"))
                 (0, commands_1.fail)(f(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
             var message = (_b = args.message) !== null && _b !== void 0 ? _b : "You have been warned. I suggest you stop what you're doing";
-            menus_1.Menu.menu('Warning', message, ["[green]Accept"], args.player, { onCancel: 'null' })
+            void menus_1.Menu.menu('Warning', message, ["[green]Accept"], args.player, { onCancel: 'null' })
                 .then(function () { return outputSuccess('Player acknowledged the warning.'); });
             (0, utils_1.logAction)('warned', sender, args.player, message);
             outputSuccess(f(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Warned player ", " for \"", "\""], ["Warned player ", " for \"", "\""])), args.player, message));

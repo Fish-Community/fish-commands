@@ -473,7 +473,6 @@ function isMapValidForGamemode(map) {
         default: return false; //unreachable
     }
 }
-//TODO refactor this, lots of duped code across multiple select functions
 function getMap(name) {
     var e_5, _a;
     if (name == "")

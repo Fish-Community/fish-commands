@@ -210,7 +210,7 @@ exports.Menu = {
                     { data: "right", text: "[".concat(index == options.length - 1 ? "gray" : "accent", "]-->") }
                 ]
             ], false);
-            exports.Menu.buttons(target, title, description, opts, cfg).then(function (response) {
+            void exports.Menu.buttons(target, title, description, opts, __assign(__assign({}, cfg), { onCancel: "null" })).then(function (response) {
                 if (response instanceof Array)
                     resolve(response[0]);
                 else if (response === "right")
@@ -247,7 +247,7 @@ exports.Menu = {
                     { data: ["cancel"], text: "[red]Close" },
                 ]
             ];
-            exports.Menu.buttons(target, pages[index][0], pages[index][1](), opts, cfg).then(function (response) {
+            void exports.Menu.buttons(target, pages[index][0], pages[index][1](), opts, __assign(__assign({}, cfg), { onCancel: "null" })).then(function (response) {
                 if ((response === null || response === void 0 ? void 0 : response[0]) === "right")
                     showPage(Math.min(index + response[1], pages.length - 1));
                 else if ((response === null || response === void 0 ? void 0 : response[0]) === "left")
@@ -305,7 +305,7 @@ exports.Menu = {
                     { data: "blank", text: "" },
                 ]
             ], false);
-            exports.Menu.buttons(target, title, description, opts, cfg).then(function (response) {
+            void exports.Menu.buttons(target, title, description, opts, __assign(__assign({}, cfg), { onCancel: "null" })).then(function (response) {
                 if (response instanceof Array)
                     resolve(response[0]);
                 else if (response === "right")

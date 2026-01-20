@@ -3,6 +3,7 @@
 Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains a custom polyfill for promises with slightly different behavior.
 */
+/* eslint-disable @typescript-eslint/no-floating-promises */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Promise = void 0;
 exports.queueMicrotask = queueMicrotask;

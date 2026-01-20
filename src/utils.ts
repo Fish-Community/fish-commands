@@ -354,7 +354,6 @@ export function isMapValidForGamemode(map:MMap):boolean {
 	}
 }
 
-//TODO refactor this, lots of duped code across multiple select functions
 export function getMap(name:string):MMap | "none" | "multiple" {
 	if(name == "") return "none";
 	const maps = Vars.maps.all().select(isMapValidForGamemode); //this doesn't work...

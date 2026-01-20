@@ -663,7 +663,7 @@ var FishPlayer = /** @class */ (function () {
             fishPlayer.updateName();
             //I think this is a better spot for this
             if (fishPlayer.firstJoin())
-                menus_1.Menu.menu("Rules for [#0000ff] >|||> FISH [white] servers [white]", config_1.rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].", ["[green]I understand and agree to these terms"], fishPlayer);
+                void menus_1.Menu.menu("Rules for [#0000ff] >|||> FISH [white] servers [white]", config_1.rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].", ["[green]I understand and agree to these terms"], fishPlayer);
         }
     };
     /** Must be run on PlayerJoinEvent. */
@@ -730,7 +730,7 @@ var FishPlayer = /** @class */ (function () {
         this.recentLeaves.unshift(fishP);
         if (this.recentLeaves.length > 10)
             this.recentLeaves.pop();
-        api.setFishPlayerData(fishP.getData(), 1, true);
+        void api.setFishPlayerData(fishP.getData(), 1, true);
     };
     FishPlayer.validateVotekickSession = function () {
         var _a;
@@ -995,7 +995,7 @@ var FishPlayer = /** @class */ (function () {
                         api.sendStaffMessage("Autoflagged player ".concat(_this.name, "[cyan] for suspected vpn!"), "AntiVPN");
                         FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".concat(_this.name, "[cyan]\"[yellow] is new (").concat(info.timesJoined - 1, " joins) and using a vpn. They have been automatically stopped and muted. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free."));
                         Log.warn("Player ".concat(_this.name, " (").concat(_this.uuid, ") was autoflagged."));
-                        menus_1.Menu.buttons(_this, "[gold]Welcome to Fish Community!", "[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".concat(config_1.FColor.discord(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."), [[
+                        void menus_1.Menu.buttons(_this, "[gold]Welcome to Fish Community!", "[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".concat(config_1.FColor.discord(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."), [[
                                 { data: "Close", text: "Close" },
                                 { data: "Discord", text: config_1.FColor.discord("Discord") },
                             ]]).then(function (option) {

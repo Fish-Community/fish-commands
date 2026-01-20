@@ -709,7 +709,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 if (target.hasPerm("blockTrolling"))
                     (0, commands_1.fail)(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
             }
-            menus_1.Menu.menu("Rules for [#0000ff]>|||> FISH [white]servers", config_1.rules.join("\n\n"), ["[green]I agree to abide by these rules[]", "No"], target).then(function (option) {
+            void menus_1.Menu.menu("Rules for [#0000ff]>|||> FISH [white]servers", config_1.rules.join("\n\n"), ["[green]I agree to abide by these rules[]", "No"], target).then(function (option) {
                 if (option == "No") {
                     target.kick("You must agree to the rules to play on this server. Rejoin to agree to the rules.", 1);
                     outputSuccess('Player rejected the rules and was kicked.');
@@ -739,7 +739,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     (0, commands_1.fail)("You do not have permission to show popups to other players, please run /void with no arguments to send a chat message to everyone.");
                 if (args.player !== sender && args.player.hasPerm("blockTrolling"))
                     (0, commands_1.fail)("Target player is insufficiently trollable.");
-                menus_1.Menu.menu("\uf83f [scarlet]WARNING[] \uf83f", "[white]Don't break the Power Void (\uF83F), it's a trap!\nPower voids disable anything they are connected to.\nIf you break it, [scarlet]you will get attacked[] by enemy units.\nPlease stop attacking and [lime]build defenses[] first!", ["I understand"], args.player, { onCancel: 'null' }).then(function () { return outputSuccess(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", " acknowledged the warning."], ["Player ", " acknowledged the warning."])), args.player)); });
+                void menus_1.Menu.menu("\uf83f [scarlet]WARNING[] \uf83f", "[white]Don't break the Power Void (\uF83F), it's a trap!\nPower voids disable anything they are connected to.\nIf you break it, [scarlet]you will get attacked[] by enemy units.\nPlease stop attacking and [lime]build defenses[] first!", ["I understand"], args.player, { onCancel: 'null' }).then(function () { return outputSuccess(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", " acknowledged the warning."], ["Player ", " acknowledged the warning."])), args.player)); });
                 (0, utils_1.logAction)("showed void warning", sender, args.player);
                 outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Warned ", " about power voids with a popup message."], ["Warned ", " about power voids with a popup message."])), args.player));
             }
@@ -1091,7 +1091,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 data: null,
             }); }), Vars.world.width()).reverse();
             var height = Vars.world.height();
-            menus_1.Menu.scroll(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
+            void menus_1.Menu.scroll(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
                 columns: size,
                 rows: size,
                 x: x ? x - Math.trunc(size / 2) : 0,
@@ -1109,7 +1109,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 output(maps_1.FMap.getCreate(map).displayStats(f));
             }
             else {
-                menus_1.Menu.textPages(sender, Vars.maps.customMaps().map(function (m) {
+                void menus_1.Menu.textPages(sender, Vars.maps.customMaps().map(function (m) {
                     return ["Map information", function () { return maps_1.FMap.getCreate(m).displayStats(f); }];
                 }).toArray(), {
                     startPage: Vars.maps.customMaps().toArray().indexOf(Vars.state.map),

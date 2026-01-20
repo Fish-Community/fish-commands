@@ -201,7 +201,7 @@ function setFishPlayerData(data, repeats, ignoreActivelySyncedFields) {
         if (err === null || err === void 0 ? void 0 : err.response)
             Log.err(err.response.getResultAsString());
         if (repeats > 0 && !(((_a = err.status) === null || _a === void 0 ? void 0 : _a.code) >= 400 && ((_b = err.status) === null || _b === void 0 ? void 0 : _b.code) <= 499))
-            setFishPlayerData(data, repeats - 1, ignoreActivelySyncedFields);
+            setFishPlayerData(data, repeats - 1, ignoreActivelySyncedFields).then(resolve).catch(reject);
         else
             reject(err);
     });

@@ -187,7 +187,8 @@ export function setFishPlayerData(data: FishPlayerData, repeats = 1, ignoreActiv
 		Log.err(`[API] Network error when trying to call api.setFishPlayerData(), repeats=${repeats}`);
 		Log.err(err);
 		if(err?.response) Log.err(err.response.getResultAsString());
-		if(repeats > 0 && !(err.status?.code >= 400 && err.status?.code <= 499)) setFishPlayerData(data, repeats - 1, ignoreActivelySyncedFields);
+		if(repeats > 0 && !(err.status?.code >= 400 && err.status?.code <= 499))
+			setFishPlayerData(data, repeats - 1, ignoreActivelySyncedFields).then(resolve).catch(reject);
 		else reject(err);
 	});
 	req.submit((response) => {

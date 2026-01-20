@@ -203,7 +203,7 @@ export const Menu = {
 					{ data: "right", text: `[${index == options.length - 1 ? "gray" : "accent"}]-->` }
 				]
 			];
-			Menu.buttons(target, title, description, opts, cfg).then<unknown, never>(response => {
+			void Menu.buttons(target, title, description, opts, {...cfg, onCancel: "null"}).then<unknown, never>(response => {
 				if(response instanceof Array) resolve(response[0]);
 				else if(response === "right") showPage(Math.min(index + 1, options.length - 1));
 				else if(response === "left") showPage(Math.max(index - 1, 0));
@@ -243,7 +243,7 @@ export const Menu = {
 					{ data: ["cancel"], text: `[red]Close` },
 				]
 			];
-			Menu.buttons(target, pages[index][0], pages[index][1](), opts, cfg).then<unknown, never>(response => {
+			void Menu.buttons(target, pages[index][0], pages[index][1](), opts, {...cfg, onCancel: "null"}).then<unknown, never>(response => {
 				if(response?.[0] === "right") showPage(Math.min(index + response[1], pages.length - 1));
 				else if(response?.[0] === "left") showPage(Math.max(index - response[1], 0));
 				else {
@@ -301,7 +301,7 @@ export const Menu = {
 					{ data: "blank", text: `` },
 				]
 			];
-			Menu.buttons(target, title, description, opts, cfg).then<unknown, never>(response => {
+			void Menu.buttons(target, title, description, opts, {...cfg, onCancel: "null"}).then<unknown, never>(response => {
 				if(response instanceof Array) resolve(response[0]);
 				else if(response === "right") showPage(Math.min(x + 1, width - cols), y);
 				else if(response === "left") showPage(Math.max(x - 1, 0), y);

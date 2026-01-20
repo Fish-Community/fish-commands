@@ -629,7 +629,7 @@ Available types:[yellow]
 				if(!sender.hasPerm("warn")) fail(`You do not have permission to show rules to other players.`);
 				if(target.hasPerm("blockTrolling")) fail(f`Player ${args.player!} is insufficiently trollable.`);
 			}
-			Menu.menu(
+			void Menu.menu(
 				"Rules for [#0000ff]>|||> FISH [white]servers", rules.join("\n\n"),
 				["[green]I agree to abide by these rules[]", "No"], target,
 			).then((option) => {
@@ -656,7 +656,7 @@ Available types:[yellow]
 			if(args.player){
 				if(!sender.hasPerm("trusted")) fail(`You do not have permission to show popups to other players, please run /void with no arguments to send a chat message to everyone.`);
 				if(args.player !== sender && args.player.hasPerm("blockTrolling")) fail(`Target player is insufficiently trollable.`);
-				Menu.menu("\uf83f [scarlet]WARNING[] \uf83f",
+				void Menu.menu("\uf83f [scarlet]WARNING[] \uf83f",
 `[white]Don't break the Power Void (\uf83f), it's a trap!
 Power voids disable anything they are connected to.
 If you break it, [scarlet]you will get attacked[] by enemy units.
@@ -1043,7 +1043,7 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 				data: null,
 			})), Vars.world.width()).reverse();
 			const height = Vars.world.height();
-			Menu.scroll(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
+			void Menu.scroll(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
 				columns: size,
 				rows: size,
 				x: x ? x - Math.trunc(size / 2) : 0,
@@ -1061,7 +1061,7 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 			if(map){
 				output(FMap.getCreate(map).displayStats(f)!);
 			} else {
-				Menu.textPages(sender, Vars.maps.customMaps().map(m =>
+				void Menu.textPages(sender, Vars.maps.customMaps().map(m =>
 					["Map information", () => FMap.getCreate(m).displayStats(f)!] as const
 				).toArray(), {
 					startPage: Vars.maps.customMaps().toArray().indexOf(Vars.state.map),

@@ -51,6 +51,7 @@ export default defineConfig([
 			"@typescript-eslint/no-this-alias": "off",
 			"@typescript-eslint/prefer-regexp-exec": "off",
 			"@typescript-eslint/array-type": ["error", {default: "array-simple"}],
+			"@typescript-eslint/no-floating-promises": ["warn", { "checkThenables": true }],
 			'no-restricted-syntax': [
 				'warn',
 				{
