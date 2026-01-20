@@ -287,29 +287,30 @@ exports.commands = (0, commands_1.commandList)({
                                 (0, commands_1.fail)(f(templateObject_16 || (templateObject_16 = __makeTemplateObject(["Rank ", " is immutable."], ["Rank ", " is immutable."])), rank));
                             if (player.immutable() && !config_1.Mode.localDebug)
                                 (0, commands_1.fail)(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Player ", " is immutable."], ["Player ", " is immutable."])), player));
-                            if (player == sender && rank.level < sender.rank.level) {
-                                menus_1.Menu.menu("Self Demotion Warning", "[red] ARE YOU SURE YOU WANT TO SELF DEMOTE. THIS ACTION CANNOT BE UNDONE!", ["[green]No, Go Back", "[red]Yes, Demote"], sender).then(function (res) { return __awaiter(_this, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                if (!(res == "[red]Yes, Demote")) return [3 /*break*/, 2];
-                                                return [4 /*yield*/, player.setRank(rank)];
-                                            case 1:
-                                                _a.sent();
-                                                (0, utils_1.logAction)("".concat(sender, " demoted themselves to ").concat(rank));
-                                                outputSuccess(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["You have set your own ranke to ", ""], ["You have set your own ranke to ", ""])), rank));
-                                                _a.label = 2;
-                                            case 2: return [2 /*return*/];
-                                        }
-                                    });
-                                }); });
-                            }
-                            return [4 /*yield*/, player.setRank(rank)];
-                        case 1:
+                            if (!(player == sender && rank.level < sender.rank.level)) return [3 /*break*/, 1];
+                            menus_1.Menu.menu("Self Demotion Warning", "[red] ARE YOU SURE YOU WANT TO SELF DEMOTE. THIS ACTION CANNOT BE UNDONE!", ["[green]No, Go Back", "[red]Yes, Demote"], sender).then(function (res) { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            if (!(res == "[red]Yes, Demote")) return [3 /*break*/, 2];
+                                            return [4 /*yield*/, player.setRank(rank)];
+                                        case 1:
+                                            _a.sent();
+                                            (0, utils_1.logAction)("".concat(sender, " demoted themselves to ").concat(rank));
+                                            outputSuccess(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["You have set your own rank to ", ""], ["You have set your own rank to ", ""])), rank));
+                                            _a.label = 2;
+                                        case 2: return [2 /*return*/];
+                                    }
+                                });
+                            }); });
+                            return [3 /*break*/, 3];
+                        case 1: return [4 /*yield*/, player.setRank(rank)];
+                        case 2:
                             _d.sent();
                             (0, utils_1.logAction)("set rank to ".concat(rank.name, " for"), sender, player);
                             outputSuccess(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), player, rank));
-                            return [2 /*return*/];
+                            _d.label = 3;
+                        case 3: return [2 /*return*/];
                     }
                 });
             });

@@ -150,13 +150,14 @@ export const commands = commandList({
 					if(res == "[red]Yes, Demote"){
 						await player.setRank(rank);
 						logAction(`${sender} demoted themselves to ${rank}`);
-						outputSuccess(f`You have set your own ranke to ${rank}`);
+						outputSuccess(f`You have set your own rank to ${rank}`);
 					}
 				})
+			} else {
+				await player.setRank(rank);
+				logAction(`set rank to ${rank.name} for`, sender, player);
+				outputSuccess(f`Set rank of player ${player} to ${rank}`);
 			}
-			await player.setRank(rank);
-			logAction(`set rank to ${rank.name} for`, sender, player);
-			outputSuccess(f`Set rank of player ${player} to ${rank}`);
 		}
 	},
 
