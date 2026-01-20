@@ -286,8 +286,13 @@ exports.commands = (0, commands_1.commandList)({
                                 (0, commands_1.fail)(f(templateObject_16 || (templateObject_16 = __makeTemplateObject(["Rank ", " is immutable."], ["Rank ", " is immutable."])), rank));
                             if (player.immutable() && !config_1.Mode.localDebug)
                                 (0, commands_1.fail)(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Player ", " is immutable."], ["Player ", " is immutable."])), player));
-                            return [4 /*yield*/, player.setRank(rank)];
+                            if (!(player == sender && rank.level < sender.rank.level)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "[red] ARE YOU SURE YOU WANT TO SELF DEMOTE. THIS ACTION CANNOT BE UNDONE!")];
                         case 1:
+                            _d.sent();
+                            _d.label = 2;
+                        case 2: return [4 /*yield*/, player.setRank(rank)];
+                        case 3:
                             _d.sent();
                             (0, utils_1.logAction)("set rank to ".concat(rank.name, " for"), sender, player);
                             outputSuccess(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), player, rank));
