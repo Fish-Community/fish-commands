@@ -331,6 +331,21 @@ export function computeStatistics(data:number[]){
 	};
 }
 
+/**
+ * Uses an array of progressively less specific search functions to return none, one, or multiple matches.
+ */
+export function search<T>(...filters: Array<(x:T, query:string) => boolean>): (options: T[], query:string | undefined) => T | T[] | null {
+	return function(options, query){
+		if(!query) return options;
+		for(const filter of filters){
+			const result = options.filter(x => filter(x, query));
+			if(result.length == 1) return result[0];
+			else if(result.length > 1) return result;
+		}
+		return null;
+	};
+}
+
 export const Duration = {
 	seconds: x => x * 1000,
 	minutes: x => x * 60_000,

@@ -24,6 +24,17 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DurationSecs = exports.Duration = exports.EventEmitter = exports.StringIO = exports.StringBuilder = void 0;
 exports.memoize = memoize;
@@ -43,6 +54,7 @@ exports.lazy = lazy;
 exports.invalidtoNull = invalidtoNull;
 exports.cleanColors = cleanColors;
 exports.computeStatistics = computeStatistics;
+exports.search = search;
 var storedValues = {};
 /**
  * Stores the output of a function and returns that value
@@ -379,6 +391,43 @@ function computeStatistics(data) {
         range: highest - lowest,
         //variance? stdev?
         average: (data.reduce(function (a, b) { return a + b; }, 0) / data.length),
+    };
+}
+/**
+ * Uses an array of progressively less specific search functions to return none, one, or multiple matches.
+ */
+function search() {
+    var filters = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        filters[_i] = arguments[_i];
+    }
+    return function (options, query) {
+        var e_1, _a;
+        if (!query)
+            return options;
+        var _loop_1 = function (filter) {
+            var result = options.filter(function (x) { return filter(x, query); });
+            if (result.length == 1)
+                return { value: result[0] };
+            else if (result.length > 1)
+                return { value: result };
+        };
+        try {
+            for (var filters_1 = __values(filters), filters_1_1 = filters_1.next(); !filters_1_1.done; filters_1_1 = filters_1.next()) {
+                var filter = filters_1_1.value;
+                var state_1 = _loop_1(filter);
+                if (typeof state_1 === "object")
+                    return state_1.value;
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (filters_1_1 && !filters_1_1.done && (_a = filters_1.return)) _a.call(filters_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return null;
     };
 }
 exports.Duration = {
