@@ -7,7 +7,7 @@ import * as api from "/api";
 import { FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
-import { crash, Duration, escapeStringColorsClient, parseError, setToArray, StringIO } from "/funcs";
+import { crash, Duration, escapeStringColorsClient, parseError, search, setToArray, StringIO } from "/funcs";
 import * as globals from "/globals";
 import { uuidPattern } from "/globals";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
@@ -217,29 +217,16 @@ export class FishPlayer {
 		});
 		return output;
 	}
-	static getOneByString(str:string):FishPlayer | "none" | "multiple" {
-		if(str == "") return "none";
-		const players = this.getAllOnline();
-		let matchingPlayers:FishPlayer[];
-
-		const filters:Array<(p:FishPlayer) => boolean> = [
-			p => p.uuid === str,
-			p => p.player!.id.toString() === str,
-			p => p.name.toLowerCase() === str.toLowerCase(),
-			// p => p.cleanedName === str,
-			p => p.cleanedName.toLowerCase() === str.toLowerCase(),
-			p => p.name.toLowerCase().includes(str.toLowerCase()),
-			// p => p.cleanedName.includes(str),
-			p => p.cleanedName.toLowerCase().includes(str.toLowerCase()),
-		];
-
-		for(const filter of filters){
-			matchingPlayers = players.filter(filter);
-			if(matchingPlayers.length == 1) return matchingPlayers[0];
-			else if(matchingPlayers.length > 1) return "multiple";
-		}
-		return "none";
-	}
+	static search = search<FishPlayer>(
+		(p, str) => p.uuid === str,
+		(p, str) => p.player!.id.toString() === str,
+		(p, str) => p.name.toLowerCase() === str.toLowerCase(),
+		// (p, str) => p.cleanedName === str,
+		(p, str) => p.cleanedName.toLowerCase() === str.toLowerCase(),
+		(p, str) => p.name.toLowerCase().includes(str.toLowerCase()),
+		// (p, str) => p.cleanedName.includes(str),
+		(p, str) => p.cleanedName.toLowerCase().includes(str.toLowerCase()),
+	);
 	static getOneMindustryPlayerByName(str:string):mindustryPlayer | "none" | "multiple" {
 		if(str == "") return "none";
 		const players = setToArray(Groups.player);

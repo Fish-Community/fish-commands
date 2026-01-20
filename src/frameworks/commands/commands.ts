@@ -134,21 +134,17 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 		//Deserialize the arg
 		switch(cmdArg.type){
 			case "player": {
-				if(args[i]){
-					const output = FishPlayer.getOneByString(args[i]);
-					if(output == "none") fail(`Player "${args[i]}" not found.`);
-					else if(output == "multiple") fail(`Name "${args[i]}" could refer to more than one player.`);
-					outputArgs[cmdArg.name] = output;
-				} else {
-					const optionsList = setToArray(Groups.player);
-					const option = await Menu.menu(`Select a player`, `Select a player for the argument "${cmdArg.name}"`, optionsList, sender!, {
+				const output = FishPlayer.search(FishPlayer.getAllOnline(), args[i]);
+				if(!output) fail(`Player "${args[i]}" not found.`);
+				else if(Array.isArray(output)){
+					if(!sender) fail(`Name "${args[i]}" could refer to more than one player.`);
+					outputArgs[cmdArg.name] = await Menu.menu(`Select a player`, `Select a player for the argument "${cmdArg.name}"`, output, sender, {
 						includeCancel: true,
 						optionStringifier: player => Strings.stripColors(player.name).length >= 3 ?
 							player.name
 							: escapeStringColorsClient(player.name)
 					});
-					outputArgs[cmdArg.name] = FishPlayer.get(option);
-				}
+				} else outputArgs[cmdArg.name] = output;
 				break;
 			}
 			case "offlinePlayer":
@@ -225,8 +221,8 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 				const map = getMap(args[i]);
 				if(map == "none") fail(`Map "${args[i]}" not found.`);
 				else if(map == "multiple") fail(`Name "${args[i]}" could refer to more than one map. Be more specific.`);
-				//TODO change all these "multiple" errors into menus
-				//TODO refactor this function, there's a lot of duplicated code
+				//TODO change all these "multiple" errors into menu
+				//TODO refactor this function using search() curry, there's a lot of duplicated search code
 				outputArgs[cmdArg.name] = map;
 				break;
 			}

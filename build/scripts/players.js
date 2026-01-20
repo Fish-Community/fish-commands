@@ -244,21 +244,20 @@ var FishPlayer = /** @class */ (function () {
         });
         return output;
     };
-    FishPlayer.getOneByString = function (str) {
+    FishPlayer.getOneMindustryPlayerByName = function (str) {
         var e_1, _a;
         if (str == "")
             return "none";
-        var players = this.getAllOnline();
+        var players = (0, funcs_1.setToArray)(Groups.player);
         var matchingPlayers;
         var filters = [
-            function (p) { return p.uuid === str; },
-            function (p) { return p.player.id.toString() === str; },
-            function (p) { return p.name.toLowerCase() === str.toLowerCase(); },
-            // p => p.cleanedName === str,
-            function (p) { return p.cleanedName.toLowerCase() === str.toLowerCase(); },
+            function (p) { return p.name === str; },
+            // p => Strings.stripColors(p.name) === str,
+            function (p) { return Strings.stripColors(p.name).toLowerCase() === str.toLowerCase(); },
+            // p => p.name.includes(str),
             function (p) { return p.name.toLowerCase().includes(str.toLowerCase()); },
-            // p => p.cleanedName.includes(str),
-            function (p) { return p.cleanedName.toLowerCase().includes(str.toLowerCase()); },
+            function (p) { return Strings.stripColors(p.name).includes(str); },
+            function (p) { return Strings.stripColors(p.name).toLowerCase().includes(str.toLowerCase()); },
         ];
         try {
             for (var filters_1 = __values(filters), filters_1_1 = filters_1.next(); !filters_1_1.done; filters_1_1 = filters_1.next()) {
@@ -279,40 +278,6 @@ var FishPlayer = /** @class */ (function () {
         }
         return "none";
     };
-    FishPlayer.getOneMindustryPlayerByName = function (str) {
-        var e_2, _a;
-        if (str == "")
-            return "none";
-        var players = (0, funcs_1.setToArray)(Groups.player);
-        var matchingPlayers;
-        var filters = [
-            function (p) { return p.name === str; },
-            // p => Strings.stripColors(p.name) === str,
-            function (p) { return Strings.stripColors(p.name).toLowerCase() === str.toLowerCase(); },
-            // p => p.name.includes(str),
-            function (p) { return p.name.toLowerCase().includes(str.toLowerCase()); },
-            function (p) { return Strings.stripColors(p.name).includes(str); },
-            function (p) { return Strings.stripColors(p.name).toLowerCase().includes(str.toLowerCase()); },
-        ];
-        try {
-            for (var filters_2 = __values(filters), filters_2_1 = filters_2.next(); !filters_2_1.done; filters_2_1 = filters_2.next()) {
-                var filter = filters_2_1.value;
-                matchingPlayers = players.filter(filter);
-                if (matchingPlayers.length == 1)
-                    return matchingPlayers[0];
-                else if (matchingPlayers.length > 1)
-                    return "multiple";
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (filters_2_1 && !filters_2_1.done && (_a = filters_2.return)) _a.call(filters_2);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return "none";
-    };
     //This method exists only because there is no easy way to turn an entitygroup into an array
     FishPlayer.getAllOnline = function () {
         var players = [];
@@ -325,7 +290,7 @@ var FishPlayer = /** @class */ (function () {
     };
     /** Returns all cached FishPlayers with names matching the search string. */
     FishPlayer.getAllOfflineByName = function (name) {
-        var e_3, _a;
+        var e_2, _a;
         var matching = [];
         try {
             for (var _b = __values(Object.entries(this.cachedPlayers)), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -334,18 +299,18 @@ var FishPlayer = /** @class */ (function () {
                     matching.push(player);
             }
         }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_3) throw e_3.error; }
+            finally { if (e_2) throw e_2.error; }
         }
         return matching;
     };
     /** Tries to return one cached FishPlayer with name matching the search string. */
     FishPlayer.getOneOfflineByName = function (str) {
-        var e_4, _a;
+        var e_3, _a;
         if (str == "")
             return "none";
         var players = Object.values(this.cachedPlayers);
@@ -361,8 +326,8 @@ var FishPlayer = /** @class */ (function () {
             function (p) { return p.cleanedName.toLowerCase().includes(str.toLowerCase()); },
         ];
         try {
-            for (var filters_3 = __values(filters), filters_3_1 = filters_3.next(); !filters_3_1.done; filters_3_1 = filters_3.next()) {
-                var filter = filters_3_1.value;
+            for (var filters_2 = __values(filters), filters_2_1 = filters_2.next(); !filters_2_1.done; filters_2_1 = filters_2.next()) {
+                var filter = filters_2_1.value;
                 matchingPlayers = players.filter(filter);
                 if (matchingPlayers.length == 1)
                     return matchingPlayers[0];
@@ -370,12 +335,12 @@ var FishPlayer = /** @class */ (function () {
                     return "multiple";
             }
         }
-        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
         finally {
             try {
-                if (filters_3_1 && !filters_3_1.done && (_a = filters_3.return)) _a.call(filters_3);
+                if (filters_2_1 && !filters_2_1.done && (_a = filters_2.return)) _a.call(filters_2);
             }
-            finally { if (e_4) throw e_4.error; }
+            finally { if (e_3) throw e_3.error; }
         }
         return "none";
     };
@@ -911,7 +876,7 @@ var FishPlayer = /** @class */ (function () {
     };
     /** Updates the mindustry player's name, using the prefixes of the current rank and role flags. */
     FishPlayer.prototype.updateName = function () {
-        var e_5, _a;
+        var e_4, _a;
         var _b;
         if (!this.connected() || !this.shouldUpdateName)
             return; //No player, no need to update
@@ -936,12 +901,12 @@ var FishPlayer = /** @class */ (function () {
                     prefix += flag.prefix;
                 }
             }
-            catch (e_5_1) { e_5 = { error: e_5_1 }; }
+            catch (e_4_1) { e_4 = { error: e_4_1 }; }
             finally {
                 try {
                     if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                 }
-                finally { if (e_5) throw e_5.error; }
+                finally { if (e_4) throw e_4.error; }
             }
             prefix += this.rank.prefix;
         }
@@ -976,7 +941,7 @@ var FishPlayer = /** @class */ (function () {
         }
     };
     FishPlayer.prototype.checkAntiEvasion = function () {
-        var e_6, _a;
+        var e_5, _a;
         var _b, _c;
         FishPlayer.updatePunishedIPs();
         try {
@@ -993,12 +958,12 @@ var FishPlayer = /** @class */ (function () {
                 }
             }
         }
-        catch (e_6_1) { e_6 = { error: e_6_1 }; }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
         finally {
             try {
                 if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
             }
-            finally { if (e_6) throw e_6.error; }
+            finally { if (e_5) throw e_5.error; }
         }
         return true;
     };
@@ -1157,7 +1122,7 @@ var FishPlayer = /** @class */ (function () {
         }
     };
     FishPlayer.prototype.checkAutoRanks = function () {
-        var e_7, _a;
+        var e_6, _a;
         var _this = this;
         if (this.stelled())
             return;
@@ -1182,12 +1147,12 @@ var FishPlayer = /** @class */ (function () {
                 _loop_1(rankToAssign);
             }
         }
-        catch (e_7_1) { e_7 = { error: e_7_1 }; }
+        catch (e_6_1) { e_6 = { error: e_6_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_7) throw e_7.error; }
+            finally { if (e_6) throw e_6.error; }
         }
     };
     //#endregion
@@ -1765,6 +1730,11 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.antiBotModePersist = false;
     FishPlayer.antiBotModeOverride = false;
     FishPlayer.lastBotWhacked = 0;
+    FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { return p.player.id.toString() === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
+    // (p, str) => p.cleanedName === str,
+    function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
+    // (p, str) => p.cleanedName.includes(str),
+    function (p, str) { return p.cleanedName.toLowerCase().includes(str.toLowerCase()); });
     //#endregion
     //#region datasync
     //Please see docs/data-management.md for a description of the update syncing algorithm.
