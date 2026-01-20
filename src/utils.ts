@@ -5,7 +5,7 @@ For functions that don't need values from other files, see funcs.ts.
 */
 
 import * as api from "/api";
-import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
+import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text, tempMute } from "/config";
 import { fail, PartialFormatString } from "/frameworks/commands";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, StringIO } from "/funcs";
 import { fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
@@ -545,6 +545,26 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 			}
 			Log.info(`Censored message from player ${player.name}: "${escapeStringColorsServer(message)}"; contained "${filterTripText}"`);
 			FishPlayer.messageStaff(`[yellow]Censored message from player ${fishPlayer.cleanedName}: "${message}" contained "${filterTripText}"`);
+			
+			if (!suspicious) {
+			  const normalized = removeFoosChars(message).toLowerCase();
+			  const nwordPattern = /\bn[i1!][gq9]{2,}(?:[ea3]r|a)\b/;
+			
+			  if (nwordPattern.test(normalized)) {
+			    const durationMs = tempMute.nwordDurationMs;
+			    const muteTimestamp = Date.now();
+			    (fishPlayer as any)._lastAutomodMuteAt = muteTimestamp;
+			    void fishPlayer.mute("automod");
+			    player.sendMessage(`[scarlet]You have been muted for ${Math.round(durationMs / 60000)} minutes.[lightgray] Reason: Prohibited language`);
+			    FishPlayer.messageStaff(`[yellow]Temp-muted ${fishPlayer.cleanedName} for ${Math.round(durationMs / 60000)} minutes: n-word`);
+			    Log.info(`[automod] Temp-muted ${player.name} (${player.uuid()}) for ${Math.round(durationMs / 60000)}m: n-word`);
+			    Timer.schedule(() => {
+			      if ((fishPlayer as any)._lastAutomodMuteAt === muteTimestamp) {
+			        void fishPlayer.unmute("automod");
+			      }
+			    }, durationMs / 1000);
+				}
+			}
 		}
 		message = text.chatFilterReplacement.message();
 		highlight ??= text.chatFilterReplacement.highlight();
