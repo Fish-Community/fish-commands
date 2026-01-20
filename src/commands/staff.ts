@@ -146,14 +146,14 @@ export const commands = commandList({
 			if(rank == Rank.pi && !Mode.localDebug) fail(f`Rank ${rank} is immutable.`);
 			if(player.immutable() && !Mode.localDebug) fail(f`Player ${player} is immutable.`);
 			if(player == sender && rank.level < sender.rank.level){
-				Menu.confirmDangerous(
+				await Menu.confirmDangerous(
 					sender, 
 					"[red] ARE YOU SURE YOU WANT TO SELF DEMOTE. THIS ACTION CANNOT BE UNDONE!"
 				);
 			}
-				await player.setRank(rank);
-				logAction(`set rank to ${rank.name} for`, sender, player);
-				outputSuccess(f`Set rank of player ${player} to ${rank}`);
+			await player.setRank(rank);
+			logAction(`set rank to ${rank.name} for`, sender, player);
+			outputSuccess(f`Set rank of player ${player} to ${rank}`);
 		}
 	},
 
