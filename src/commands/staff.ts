@@ -146,7 +146,7 @@ export const commands = commandList({
 			if(rank == Rank.pi && !Mode.localDebug) fail(f`Rank ${rank} is immutable.`);
 			if(player.immutable() && !Mode.localDebug) fail(f`Player ${player} is immutable.`);
 			if(player == sender && rank.level < sender.rank.level){
-				Menu.menu("Self Demotion Warning", "[red] ARE YOU SURE YOU WANT TO SELF DEMOTE. THIS ACTION CANNOT BE UNDONE!", ["[green]No, Go Back", "[red]Yes, Demote"], sender).then(async (res) => {
+				Menu.confirmDangerous(sender, "[red] ARE YOU SURE YOU WANT TO SELF DEMOTE. THIS ACTION CANNOT BE UNDONE!").then(async (res) => {
 					if(res == "[red]Yes, Demote"){
 						await player.setRank(rank);
 						logAction(`${sender} demoted themselves to ${rank}`);
