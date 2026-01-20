@@ -148,7 +148,7 @@ export const commands = commandList({
 			if(player == sender && rank.level < sender.rank.level){
 				Menu.confirmDangerous(
 					sender, 
-"[red] ARE YOU SURE YOU WANT TO SELF DEMOTE. THIS ACTION CANNOT BE UNDONE!")
+					"[red] ARE YOU SURE YOU WANT TO SELF DEMOTE. THIS ACTION CANNOT BE UNDONE!")
 				.then( async () => {
 						await player.setRank(rank);
 						logAction(`${sender} demoted themselves to ${rank}`);
