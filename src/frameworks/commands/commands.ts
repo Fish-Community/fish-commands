@@ -6,7 +6,7 @@ For maintenance information, see docs/frameworks.md
 */
 //Behold, the power of typescript!
 
-import { CommandError } from "/frameworks/commands/errors";
+import { CommandError, fail } from "/frameworks/commands/errors";
 import { f_client, f_server, outputFormatter_client } from "/frameworks/commands/formatting";
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
 import { CommandArgType, commandArgTypes } from "/frameworks/commands/types";
@@ -116,39 +116,45 @@ function joinArgs(rawArgs:string[]){
 }
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
-function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:boolean = true):{
-	processedArgs: Record<string, FishCommandArgType>;
-	unresolvedArgs: CommandArg[];
-} | {
-	error: string;
-}{
-	const outputArgs:Record<string, FishCommandArgType> = {};
-	const unresolvedArgs:CommandArg[] = [];
+async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
+	const outputArgs: Record<string, FishCommandArgType> = {};
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
 		if(!(i in args) || args[i] === ""){
 			//if the arg was not provided or it was empty
 			if(cmdArg.isOptional){
 				outputArgs[cmdArg.name] = undefined;
-			} else if(cmdArg.type == "player" && allowMenus){
-				outputArgs[cmdArg.name] = undefined;
-				unresolvedArgs.push(cmdArg);
-			} else return {error: `No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`};
-			continue;
+				continue;
+			} else if(sender && ["player"].includes(cmdArg.type)){
+				//it will be resolved later
+			} else {
+				fail(`No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`);
+			}
 		}
 
 		//Deserialize the arg
 		switch(cmdArg.type){
 			case "player": {
-				const output = FishPlayer.getOneByString(args[i]);
-				if(output == "none") return {error: `Player "${args[i]}" not found.`};
-				else if(output == "multiple") return {error: `Name "${args[i]}" could refer to more than one player.`};
-				outputArgs[cmdArg.name] = output;
+				if(args[i]){
+					const output = FishPlayer.getOneByString(args[i]);
+					if(output == "none") fail(`Player "${args[i]}" not found.`);
+					else if(output == "multiple") fail(`Name "${args[i]}" could refer to more than one player.`);
+					outputArgs[cmdArg.name] = output;
+				} else {
+					const optionsList = setToArray(Groups.player);
+					const option = await Menu.menu(`Select a player`, `Select a player for the argument "${cmdArg.name}"`, optionsList, sender!, {
+						includeCancel: true,
+						optionStringifier: player => Strings.stripColors(player.name).length >= 3 ?
+							player.name
+							: escapeStringColorsClient(player.name)
+					});
+					outputArgs[cmdArg.name] = FishPlayer.get(option);
+				}
 				break;
 			}
 			case "offlinePlayer":
 				if(uuidPattern.test(args[i])){
 					const player = FishPlayer.getById(args[i]);
-					if(player == null) return {error: `Player with uuid "${args[i]}" not found. Specify "create:${args[i]}" to create the player.`};
+					if(player == null) fail(`Player with uuid "${args[i]}" not found. Specify "create:${args[i]}" to create the player.`);
 					outputArgs[cmdArg.name] = player;
 				} else if(args[i].startsWith("create:") && uuidPattern.test(args[i].split("create:")[1])){
 					outputArgs[cmdArg.name] = FishPlayer.getFromInfo(
@@ -158,14 +164,14 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 					);
 				} else {
 					const output = FishPlayer.getOneOfflineByName(args[i]);
-					if(output == "none") return {error: `Player "${args[i]}" not found.`};
-					else if(output == "multiple") return {error: `Name "${args[i]}" could refer to more than one player. Try specifying by ID.`};
+					if(output == "none") fail(`Player "${args[i]}" not found.`);
+					else if(output == "multiple") fail(`Name "${args[i]}" could refer to more than one player. Try specifying by ID.`);
 					outputArgs[cmdArg.name] = output;
 				}
 				break;
 			case "team": {
 				const team = getTeam(args[i]);
-				if(typeof team == "string") return {error: team};
+				if(typeof team == "string") fail(team);
 				outputArgs[cmdArg.name] = team;
 				break;
 			}
@@ -178,14 +184,14 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 						number = Number(args[i].slice(0, -1));
 
 					if(isNaN(number))
-						return {error: `Invalid number "${args[i]}"`};
+						fail(`Invalid number "${args[i]}"`);
 				}
 				outputArgs[cmdArg.name] = number;
 				break;
 			}
 			case "time": {
 				const milliseconds = parseTimeString(args[i]);
-				if(milliseconds == null) return {error: `Invalid time string "${args[i]}"`};
+				if(milliseconds == null) fail(`Invalid time string "${args[i]}"`);
 				outputArgs[cmdArg.name] = milliseconds;
 				break;
 			}
@@ -196,29 +202,29 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 				switch(args[i].toLowerCase()){
 					case "true": case "yes": case "yeah": case "ya": case "ye": case "t": case "y": case "1": outputArgs[cmdArg.name] = true; break;
 					case "false": case "no": case "nah": case "nay": case "nope": case "f": case "n": case "0": outputArgs[cmdArg.name] = false; break;
-					default: return {error: `Argument ${args[i]} is not a boolean. Try "true" or "false".`};
+					default: fail(`Argument ${args[i]} is not a boolean. Try "true" or "false".`);
 				}
 				break;
 			case "block": {
 				const block = getBlock(args[i], "air");
-				if(typeof block == "string") return {error: block};
+				if(typeof block == "string") fail(block);
 				outputArgs[cmdArg.name] = block;
 				break;
 			}
 			case "unittype": {
 				const unit = getUnitType(args[i]);
-				if(typeof unit == "string") return {error: unit};
+				if(typeof unit == "string") fail(unit);
 				outputArgs[cmdArg.name] = unit;
 				break;
 			}
 			case "uuid":
-				if(!uuidPattern.test(args[i])) return {error: `Invalid uuid string "${args[i]}"`};
+				if(!uuidPattern.test(args[i])) fail(`Invalid uuid string "${args[i]}"`);
 				outputArgs[cmdArg.name] = args[i];
 				break;
 			case "map": {
 				const map = getMap(args[i]);
-				if(map == "none") return {error: `Map "${args[i]}" not found.`};
-				else if(map == "multiple") return {error: `Name "${args[i]}" could refer to more than one map. Be more specific.`};
+				if(map == "none") fail(`Map "${args[i]}" not found.`);
+				else if(map == "multiple") fail(`Name "${args[i]}" could refer to more than one map. Be more specific.`);
 				//TODO change all these "multiple" errors into menus
 				//TODO refactor this function, there's a lot of duplicated code
 				outputArgs[cmdArg.name] = map;
@@ -226,28 +232,28 @@ function processArgs(args:string[], processedCmdArgs:CommandArg[], allowMenus:bo
 			}
 			case "rank": {
 				const ranks = Rank.getByInput(args[i]);
-				if(ranks.length == 0) return {error:`Unknown rank "${args[i]}"`};
-				if(ranks.length > 1) return {error:`Ambiguous rank "${args[i]}"`};
+				if(ranks.length == 0) fail(`Unknown rank "${args[i]}"`);
+				if(ranks.length > 1) fail(`Ambiguous rank "${args[i]}"`);
 				outputArgs[cmdArg.name] = ranks[0];
 				break;
 			}
 			case "roleflag": {
 				const roleflags = RoleFlag.getByInput(args[i]);
-				if(roleflags.length == 0) return {error:`Unknown role flag "${args[i]}"`};
-				if(roleflags.length > 1) return {error:`Ambiguous role flag "${args[i]}"`};
+				if(roleflags.length == 0) fail(`Unknown role flag "${args[i]}"`);
+				if(roleflags.length > 1) fail(`Ambiguous role flag "${args[i]}"`);
 				outputArgs[cmdArg.name] = roleflags[0];
 				break;
 			}
 			case "item": {
 				const item = getItem(args[i]);
-				if(typeof item === "string") return { error: item };
+				if(typeof item === "string") fail(item);
 				outputArgs[cmdArg.name] = item;
 				break;
 			}
 			default: cmdArg.type satisfies never; crash("impossible");
 		}
 	}
-	return {processedArgs: outputArgs, unresolvedArgs};
+	return outputArgs;
 }
 
 const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map"];
@@ -273,7 +279,7 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 		command.tapped?.({
 			args: sender.tapInfo.lastArgs,
 			data: command.data,
-			outputFail: message => {outputFail(message, sender); failed = true;},
+			outputFail: message => { outputFail(message, sender); failed = true; },
 			outputSuccess: message => outputSuccess(message, sender),
 			output: message => outputMessage(message, sender),
 			f: outputFormatter_client,
@@ -298,7 +304,7 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 		});
 		if(!failed)
 			usageData.tapLastUsedSuccessfully = Date.now();
-		
+
 	} catch(err){
 		if(err instanceof CommandError){
 			//If the error is a command error, then just outputFail
@@ -320,7 +326,7 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 /**
  * Registers all commands in a list to a client command handler.
  **/
-export function register(commands:Record<string, FishCommandData<string, any> | (() => FishCommandData<string, any>)>, clientHandler:ClientCommandHandler, serverHandler:ServerCommandHandler){
+export function register(commands: Record<string, FishCommandData<string, any> | (() => FishCommandData<string, any>)>, clientHandler: ClientCommandHandler, serverHandler: ServerCommandHandler){
 
 	for(const [name, _data] of Object.entries(commands)){
 
@@ -334,7 +340,7 @@ export function register(commands:Record<string, FishCommandData<string, any> | 
 			name,
 			convertArgs(processedCmdArgs, true),
 			data.description,
-			new CommandHandler.CommandRunner({ accept(unjoinedRawArgs:string[], sender:mindustryPlayer){
+			new CommandHandler.CommandRunner({ async accept(unjoinedRawArgs: string[], sender: mindustryPlayer){
 				if(!initialized) crash(`Commands not initialized!`);
 
 				const fishSender = FishPlayer.get(sender);
@@ -354,72 +360,70 @@ export function register(commands:Record<string, FishCommandData<string, any> | 
 
 				//closure over processedCmdArgs, should be fine
 				//Process the args
-				const rawArgs = joinArgs(unjoinedRawArgs);
-				const output = processArgs(rawArgs, processedCmdArgs);
-				if("error" in output){
+				const rawArgs = joinArgs(unjoinedRawArgs); //TODO: remove this when we replace the command handler
+				//Resolve missing args (such as players that need to be determined through a menu)
+				let resolvedArgs;
+				try {
+					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, fishSender);
+				} catch(err){
 					//if args are invalid
-					outputFail(output.error, sender);
+					if(err instanceof CommandError) outputFail(err.data, sender);
 					return;
 				}
-				
-				//Resolve missing args (such as players that need to be determined through a menu)
-				// let it float, the then() handler cannot crash
-				// eslint-disable-next-line @typescript-eslint/no-floating-promises
-				resolveMissingArgs(output.processedArgs, output.unresolvedArgs, fishSender).then(async (resolvedArgs) => {
-					//Run the command handler
-					const usageData = fishSender.getUsageData(name);
-					let failed = false;
-					try {
-						const args:FishCommandHandlerData<string, any> & FishCommandHandlerUtils = {
-							rawArgs,
-							args: resolvedArgs,
-							sender: fishSender,
-							data: data.data,
-							outputFail: message => {outputFail(message, sender); failed = true;},
-							outputSuccess: message => outputSuccess(message, sender),
-							output: message => outputMessage(message, sender),
-							f: f_client,
-							execServer: command => serverHandler.handleMessage(command),
-							admins: Vars.netServer.admins,
-							lastUsedSender: usageData.lastUsed,
-							lastUsedSuccessfullySender: usageData.lastUsedSuccessfully,
-							lastUsedSuccessfully: (globalUsageData[name] ??= {lastUsed: -1, lastUsedSuccessfully: -1}).lastUsedSuccessfully,
-							allCommands,
-							currentTapMode: fishSender.tapInfo.commandName == null ? "off" : fishSender.tapInfo.mode,
-							handleTaps(mode){
-								if(data.tapped == undefined) crash(`No tap handler to activate: command "${name}"`);
-								if(mode == "off"){
-									fishSender.tapInfo.commandName = null;
-								} else {
-									fishSender.tapInfo.commandName = name;
-									fishSender.tapInfo.mode = mode;
-								}
-								fishSender.tapInfo.lastArgs = resolvedArgs;
-							},
-						};
-						const requirements = typeof data.requirements == "function" ? data.requirements(args) : data.requirements;
-						requirements?.forEach(r => r(args));
-						await data.handler(args);
-						//Update usage data
-						if(!failed){
-							usageData.lastUsedSuccessfully = globalUsageData[name].lastUsedSuccessfully = Date.now();
-						}
-					} catch(err){
-						if(err instanceof CommandError){
-							//If the error is a command error, then just outputFail
-							outputFail(err.data, sender);
-						} else {
-							sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
-							if(fishSender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
-							Log.err(`Unhandled error in command execution: ${fishSender.cleanedName} ran /${name}`);
-							Log.err(err as Error);
-							Log.err((err as Error).stack!);
-						}
-					} finally {
-						usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();
+
+				//Run the command handler
+				const usageData = fishSender.getUsageData(name);
+				let failed = false;
+				try {
+					const args: FishCommandHandlerData<string, any> & FishCommandHandlerUtils = {
+						rawArgs,
+						args: resolvedArgs,
+						sender: fishSender,
+						data: data.data,
+						outputFail: message => { outputFail(message, sender); failed = true; },
+						outputSuccess: message => outputSuccess(message, sender),
+						output: message => outputMessage(message, sender),
+						f: f_client,
+						execServer: command => serverHandler.handleMessage(command),
+						admins: Vars.netServer.admins,
+						lastUsedSender: usageData.lastUsed,
+						lastUsedSuccessfullySender: usageData.lastUsedSuccessfully,
+						lastUsedSuccessfully: (globalUsageData[name] ??= { lastUsed: -1, lastUsedSuccessfully: -1 }).lastUsedSuccessfully,
+						allCommands,
+						currentTapMode: fishSender.tapInfo.commandName == null ? "off" : fishSender.tapInfo.mode,
+						handleTaps(mode){
+							if(data.tapped == undefined) crash(`No tap handler to activate: command "${name}"`);
+							if(mode == "off"){
+								fishSender.tapInfo.commandName = null;
+							} else {
+								fishSender.tapInfo.commandName = name;
+								fishSender.tapInfo.mode = mode;
+							}
+							fishSender.tapInfo.lastArgs = resolvedArgs;
+						},
+					};
+					const requirements = typeof data.requirements == "function" ? data.requirements(args) : data.requirements;
+					requirements?.forEach(r => r(args));
+					await data.handler(args);
+					//Update usage data
+					if(!failed){
+						usageData.lastUsedSuccessfully = globalUsageData[name].lastUsedSuccessfully = Date.now();
 					}
-				});
-			}})
+				} catch(err){
+					if(err instanceof CommandError){
+						//If the error is a command error, then just outputFail
+						outputFail(err.data, sender);
+					} else {
+						sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
+						if(fishSender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
+						Log.err(`Unhandled error in command execution: ${fishSender.cleanedName} ran /${name}`);
+						Log.err(err as Error);
+						Log.err((err as Error).stack!);
+					}
+				} finally {
+					usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();
+				}
+			} })
 		);
 		allCommands[name] = data;
 	}
@@ -436,26 +440,28 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 			name,
 			convertArgs(processedCmdArgs, false),
 			data.description,
-			new CommandHandler.CommandRunner({ accept: (rawArgs:string[]) => {
+			new CommandHandler.CommandRunner({ async accept(rawArgs: string[]){
 				if(!initialized) crash(`Commands not initialized!`);
 
 				//closure over processedCmdArgs, should be fine
 				//Process the args
-				const output = processArgs(rawArgs, processedCmdArgs, false);
-				if("error" in output){
-					//ifargs are invalid
-					Log.warn(output.error);
+				let resolvedArgs;
+				try {
+					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, null);
+				} catch(err){
+					//if args are invalid
+					if(err instanceof CommandError) Log.err(err);
 					return;
 				}
-				
-				const usageData = (globalUsageData["_console_" + name] ??= {lastUsed: -1, lastUsedSuccessfully: -1});
+
+				const usageData = (globalUsageData["_console_" + name] ??= { lastUsed: -1, lastUsedSuccessfully: -1 });
 				try {
 					let failed = false;
 					data.handler({
 						rawArgs,
-						args: output.processedArgs,
+						args: resolvedArgs,
 						data: data.data,
-						outputFail: message => {outputConsole(message, Log.err); failed = true;},
+						outputFail: message => { outputConsole(message, Log.err); failed = true; },
 						outputSuccess: outputConsole,
 						output: outputConsole,
 						f: f_server,
@@ -474,30 +480,13 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 						Log.err(parseError(err));
 					}
 				}
-			}})
+			} })
 		);
 		allConsoleCommands[name] = data;
 	}
 }
 
-/** Resolves missing args. This function is necessary to handle cases such as a command that accepts multiple players that all need to be selected through menus. */
-async function resolveMissingArgs(processedArgs: Record<string, FishCommandArgType>, unresolvedArgs:CommandArg[], sender:FishPlayer){
-	for(const argToResolve of unresolvedArgs){
-		//TODO support other arg types
-		//we have text input menu now
-		if(argToResolve.type === "player"){
-			const optionsList = setToArray(Groups.player);
-			const option = await Menu.menu(`Select a player`, `Select a player for the argument "${argToResolve.name}"`, optionsList, sender, {
-				includeCancel: true,
-				optionStringifier: player => Strings.stripColors(player.name).length >= 3 ?
-					player.name
-				: escapeStringColorsClient(player.name)
-			});
-			processedArgs[argToResolve.name] = FishPlayer.get(option);
-		} else crash(`Unable to resolve arg of type ${argToResolve.type}`);
-	}
-	return processedArgs;
-}
+
 
 export function initialize(){
 	if(initialized){

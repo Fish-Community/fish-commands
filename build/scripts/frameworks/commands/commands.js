@@ -190,88 +190,130 @@ function joinArgs(rawArgs) {
     return outputArgs;
 }
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
-function processArgs(args, processedCmdArgs, allowMenus) {
-    var e_2, _a;
-    if (allowMenus === void 0) { allowMenus = true; }
-    var outputArgs = {};
-    var unresolvedArgs = [];
-    try {
-        for (var _b = __values(processedCmdArgs.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var _d = __read(_c.value, 2), i = _d[0], cmdArg = _d[1];
-            if (!(i in args) || args[i] === "") {
-                //if the arg was not provided or it was empty
-                if (cmdArg.isOptional) {
-                    outputArgs[cmdArg.name] = undefined;
-                }
-                else if (cmdArg.type == "player" && allowMenus) {
-                    outputArgs[cmdArg.name] = undefined;
-                    unresolvedArgs.push(cmdArg);
-                }
-                else
-                    return { error: "No value specified for arg ".concat(cmdArg.name, ". Did you type two spaces instead of one?") };
-                continue;
-            }
-            //Deserialize the arg
-            switch (cmdArg.type) {
-                case "player": {
-                    var output = players_1.FishPlayer.getOneByString(args[i]);
+function processArgs(args, processedCmdArgs, sender) {
+    return __awaiter(this, void 0, void 0, function () {
+        var outputArgs, _a, _b, _c, i, cmdArg, _d, output, optionsList, option, player, output, team, number, milliseconds, block, unit, map, ranks, roleflags, item, e_2_1;
+        var e_2, _e;
+        return __generator(this, function (_f) {
+            switch (_f.label) {
+                case 0:
+                    outputArgs = {};
+                    _f.label = 1;
+                case 1:
+                    _f.trys.push([1, 23, 24, 25]);
+                    _a = __values(processedCmdArgs.entries()), _b = _a.next();
+                    _f.label = 2;
+                case 2:
+                    if (!!_b.done) return [3 /*break*/, 22];
+                    _c = __read(_b.value, 2), i = _c[0], cmdArg = _c[1];
+                    if (!(i in args) || args[i] === "") {
+                        //if the arg was not provided or it was empty
+                        if (cmdArg.isOptional) {
+                            outputArgs[cmdArg.name] = undefined;
+                        }
+                        else if (sender && ["player"].includes(cmdArg.type)) {
+                            //it will be resolved later
+                        }
+                        else {
+                            (0, errors_1.fail)("No value specified for arg ".concat(cmdArg.name, ". Did you type two spaces instead of one?"));
+                        }
+                    }
+                    _d = cmdArg.type;
+                    switch (_d) {
+                        case "player": return [3 /*break*/, 3];
+                        case "offlinePlayer": return [3 /*break*/, 7];
+                        case "team": return [3 /*break*/, 8];
+                        case "number": return [3 /*break*/, 9];
+                        case "time": return [3 /*break*/, 10];
+                        case "string": return [3 /*break*/, 11];
+                        case "boolean": return [3 /*break*/, 12];
+                        case "block": return [3 /*break*/, 13];
+                        case "unittype": return [3 /*break*/, 14];
+                        case "uuid": return [3 /*break*/, 15];
+                        case "map": return [3 /*break*/, 16];
+                        case "rank": return [3 /*break*/, 17];
+                        case "roleflag": return [3 /*break*/, 18];
+                        case "item": return [3 /*break*/, 19];
+                    }
+                    return [3 /*break*/, 20];
+                case 3:
+                    if (!args[i]) return [3 /*break*/, 4];
+                    output = players_1.FishPlayer.getOneByString(args[i]);
                     if (output == "none")
-                        return { error: "Player \"".concat(args[i], "\" not found.") };
+                        (0, errors_1.fail)("Player \"".concat(args[i], "\" not found."));
                     else if (output == "multiple")
-                        return { error: "Name \"".concat(args[i], "\" could refer to more than one player.") };
+                        (0, errors_1.fail)("Name \"".concat(args[i], "\" could refer to more than one player."));
                     outputArgs[cmdArg.name] = output;
-                    break;
-                }
-                case "offlinePlayer":
+                    return [3 /*break*/, 6];
+                case 4:
+                    optionsList = (0, funcs_1.setToArray)(Groups.player);
+                    return [4 /*yield*/, menus_1.Menu.menu("Select a player", "Select a player for the argument \"".concat(cmdArg.name, "\""), optionsList, sender, {
+                            includeCancel: true,
+                            optionStringifier: function (player) { return Strings.stripColors(player.name).length >= 3 ?
+                                player.name
+                                : (0, funcs_1.escapeStringColorsClient)(player.name); }
+                        })];
+                case 5:
+                    option = _f.sent();
+                    outputArgs[cmdArg.name] = players_1.FishPlayer.get(option);
+                    _f.label = 6;
+                case 6: return [3 /*break*/, 21];
+                case 7:
                     if (globals_1.uuidPattern.test(args[i])) {
-                        var player = players_1.FishPlayer.getById(args[i]);
+                        player = players_1.FishPlayer.getById(args[i]);
                         if (player == null)
-                            return { error: "Player with uuid \"".concat(args[i], "\" not found. Specify \"create:").concat(args[i], "\" to create the player.") };
+                            (0, errors_1.fail)("Player with uuid \"".concat(args[i], "\" not found. Specify \"create:").concat(args[i], "\" to create the player."));
                         outputArgs[cmdArg.name] = player;
                     }
                     else if (args[i].startsWith("create:") && globals_1.uuidPattern.test(args[i].split("create:")[1])) {
                         outputArgs[cmdArg.name] = players_1.FishPlayer.getFromInfo(Vars.netServer.admins.getInfo(args[i].split("create:")[1]));
                     }
                     else {
-                        var output = players_1.FishPlayer.getOneOfflineByName(args[i]);
+                        output = players_1.FishPlayer.getOneOfflineByName(args[i]);
                         if (output == "none")
-                            return { error: "Player \"".concat(args[i], "\" not found.") };
+                            (0, errors_1.fail)("Player \"".concat(args[i], "\" not found."));
                         else if (output == "multiple")
-                            return { error: "Name \"".concat(args[i], "\" could refer to more than one player. Try specifying by ID.") };
+                            (0, errors_1.fail)("Name \"".concat(args[i], "\" could refer to more than one player. Try specifying by ID."));
                         outputArgs[cmdArg.name] = output;
                     }
-                    break;
-                case "team": {
-                    var team = (0, utils_1.getTeam)(args[i]);
-                    if (typeof team == "string")
-                        return { error: team };
-                    outputArgs[cmdArg.name] = team;
-                    break;
-                }
-                case "number": {
-                    var number = Number(args[i]);
-                    if (isNaN(number)) {
-                        if (/\(\d+,/.test(args[i]))
-                            number = Number(args[i].slice(1, -1));
-                        else if (/\d+\)/.test(args[i]))
-                            number = Number(args[i].slice(0, -1));
-                        if (isNaN(number))
-                            return { error: "Invalid number \"".concat(args[i], "\"") };
+                    return [3 /*break*/, 21];
+                case 8:
+                    {
+                        team = (0, utils_1.getTeam)(args[i]);
+                        if (typeof team == "string")
+                            (0, errors_1.fail)(team);
+                        outputArgs[cmdArg.name] = team;
+                        return [3 /*break*/, 21];
                     }
-                    outputArgs[cmdArg.name] = number;
-                    break;
-                }
-                case "time": {
-                    var milliseconds = (0, utils_1.parseTimeString)(args[i]);
-                    if (milliseconds == null)
-                        return { error: "Invalid time string \"".concat(args[i], "\"") };
-                    outputArgs[cmdArg.name] = milliseconds;
-                    break;
-                }
-                case "string":
+                    _f.label = 9;
+                case 9:
+                    {
+                        number = Number(args[i]);
+                        if (isNaN(number)) {
+                            if (/\(\d+,/.test(args[i]))
+                                number = Number(args[i].slice(1, -1));
+                            else if (/\d+\)/.test(args[i]))
+                                number = Number(args[i].slice(0, -1));
+                            if (isNaN(number))
+                                (0, errors_1.fail)("Invalid number \"".concat(args[i], "\""));
+                        }
+                        outputArgs[cmdArg.name] = number;
+                        return [3 /*break*/, 21];
+                    }
+                    _f.label = 10;
+                case 10:
+                    {
+                        milliseconds = (0, utils_1.parseTimeString)(args[i]);
+                        if (milliseconds == null)
+                            (0, errors_1.fail)("Invalid time string \"".concat(args[i], "\""));
+                        outputArgs[cmdArg.name] = milliseconds;
+                        return [3 /*break*/, 21];
+                    }
+                    _f.label = 11;
+                case 11:
                     outputArgs[cmdArg.name] = args[i];
-                    break;
-                case "boolean":
+                    return [3 /*break*/, 21];
+                case 12:
                     switch (args[i].toLowerCase()) {
                         case "true":
                         case "yes":
@@ -293,78 +335,98 @@ function processArgs(args, processedCmdArgs, allowMenus) {
                         case "0":
                             outputArgs[cmdArg.name] = false;
                             break;
-                        default: return { error: "Argument ".concat(args[i], " is not a boolean. Try \"true\" or \"false\".") };
+                        default: (0, errors_1.fail)("Argument ".concat(args[i], " is not a boolean. Try \"true\" or \"false\"."));
                     }
-                    break;
-                case "block": {
-                    var block = (0, utils_1.getBlock)(args[i], "air");
-                    if (typeof block == "string")
-                        return { error: block };
-                    outputArgs[cmdArg.name] = block;
-                    break;
-                }
-                case "unittype": {
-                    var unit = (0, utils_1.getUnitType)(args[i]);
-                    if (typeof unit == "string")
-                        return { error: unit };
-                    outputArgs[cmdArg.name] = unit;
-                    break;
-                }
-                case "uuid":
+                    return [3 /*break*/, 21];
+                case 13:
+                    {
+                        block = (0, utils_1.getBlock)(args[i], "air");
+                        if (typeof block == "string")
+                            (0, errors_1.fail)(block);
+                        outputArgs[cmdArg.name] = block;
+                        return [3 /*break*/, 21];
+                    }
+                    _f.label = 14;
+                case 14:
+                    {
+                        unit = (0, utils_1.getUnitType)(args[i]);
+                        if (typeof unit == "string")
+                            (0, errors_1.fail)(unit);
+                        outputArgs[cmdArg.name] = unit;
+                        return [3 /*break*/, 21];
+                    }
+                    _f.label = 15;
+                case 15:
                     if (!globals_1.uuidPattern.test(args[i]))
-                        return { error: "Invalid uuid string \"".concat(args[i], "\"") };
+                        (0, errors_1.fail)("Invalid uuid string \"".concat(args[i], "\""));
                     outputArgs[cmdArg.name] = args[i];
-                    break;
-                case "map": {
-                    var map = (0, utils_1.getMap)(args[i]);
-                    if (map == "none")
-                        return { error: "Map \"".concat(args[i], "\" not found.") };
-                    else if (map == "multiple")
-                        return { error: "Name \"".concat(args[i], "\" could refer to more than one map. Be more specific.") };
-                    //TODO change all these "multiple" errors into menus
-                    //TODO refactor this function, there's a lot of duplicated code
-                    outputArgs[cmdArg.name] = map;
-                    break;
-                }
-                case "rank": {
-                    var ranks = ranks_1.Rank.getByInput(args[i]);
-                    if (ranks.length == 0)
-                        return { error: "Unknown rank \"".concat(args[i], "\"") };
-                    if (ranks.length > 1)
-                        return { error: "Ambiguous rank \"".concat(args[i], "\"") };
-                    outputArgs[cmdArg.name] = ranks[0];
-                    break;
-                }
-                case "roleflag": {
-                    var roleflags = ranks_1.RoleFlag.getByInput(args[i]);
-                    if (roleflags.length == 0)
-                        return { error: "Unknown role flag \"".concat(args[i], "\"") };
-                    if (roleflags.length > 1)
-                        return { error: "Ambiguous role flag \"".concat(args[i], "\"") };
-                    outputArgs[cmdArg.name] = roleflags[0];
-                    break;
-                }
-                case "item": {
-                    var item = (0, utils_1.getItem)(args[i]);
-                    if (typeof item === "string")
-                        return { error: item };
-                    outputArgs[cmdArg.name] = item;
-                    break;
-                }
-                default:
+                    return [3 /*break*/, 21];
+                case 16:
+                    {
+                        map = (0, utils_1.getMap)(args[i]);
+                        if (map == "none")
+                            (0, errors_1.fail)("Map \"".concat(args[i], "\" not found."));
+                        else if (map == "multiple")
+                            (0, errors_1.fail)("Name \"".concat(args[i], "\" could refer to more than one map. Be more specific."));
+                        //TODO change all these "multiple" errors into menus
+                        //TODO refactor this function, there's a lot of duplicated code
+                        outputArgs[cmdArg.name] = map;
+                        return [3 /*break*/, 21];
+                    }
+                    _f.label = 17;
+                case 17:
+                    {
+                        ranks = ranks_1.Rank.getByInput(args[i]);
+                        if (ranks.length == 0)
+                            (0, errors_1.fail)("Unknown rank \"".concat(args[i], "\""));
+                        if (ranks.length > 1)
+                            (0, errors_1.fail)("Ambiguous rank \"".concat(args[i], "\""));
+                        outputArgs[cmdArg.name] = ranks[0];
+                        return [3 /*break*/, 21];
+                    }
+                    _f.label = 18;
+                case 18:
+                    {
+                        roleflags = ranks_1.RoleFlag.getByInput(args[i]);
+                        if (roleflags.length == 0)
+                            (0, errors_1.fail)("Unknown role flag \"".concat(args[i], "\""));
+                        if (roleflags.length > 1)
+                            (0, errors_1.fail)("Ambiguous role flag \"".concat(args[i], "\""));
+                        outputArgs[cmdArg.name] = roleflags[0];
+                        return [3 /*break*/, 21];
+                    }
+                    _f.label = 19;
+                case 19:
+                    {
+                        item = (0, utils_1.getItem)(args[i]);
+                        if (typeof item === "string")
+                            (0, errors_1.fail)(item);
+                        outputArgs[cmdArg.name] = item;
+                        return [3 /*break*/, 21];
+                    }
+                    _f.label = 20;
+                case 20:
                     cmdArg.type;
                     (0, funcs_1.crash)("impossible");
+                    _f.label = 21;
+                case 21:
+                    _b = _a.next();
+                    return [3 /*break*/, 2];
+                case 22: return [3 /*break*/, 25];
+                case 23:
+                    e_2_1 = _f.sent();
+                    e_2 = { error: e_2_1 };
+                    return [3 /*break*/, 25];
+                case 24:
+                    try {
+                        if (_b && !_b.done && (_e = _a.return)) _e.call(_a);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                    return [7 /*endfinally*/];
+                case 25: return [2 /*return*/, outputArgs];
             }
-        }
-    }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-    finally {
-        try {
-            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-        }
-        finally { if (e_2) throw e_2.error; }
-    }
-    return { processedArgs: outputArgs, unresolvedArgs: unresolvedArgs };
+        });
+    });
 }
 var variadicArgumentTypes = ["player", "string", "map"];
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
@@ -447,45 +509,47 @@ function register(commands, clientHandler, serverHandler) {
         var processedCmdArgs = data.args.map(processArgString);
         clientHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
         clientHandler.register(name, convertArgs(processedCmdArgs, true), data.description, new CommandHandler.CommandRunner({ accept: function (unjoinedRawArgs, sender) {
-                var _this = this;
-                if (!initialized)
-                    (0, funcs_1.crash)("Commands not initialized!");
-                var fishSender = players_1.FishPlayer.get(sender);
-                players_1.FishPlayer.onPlayerCommand(fishSender, name, unjoinedRawArgs);
-                //Verify authorization
-                //as a bonus, this crashes if data.perm is undefined
-                if (!data.perm.check(fishSender)) {
-                    if (data.customUnauthorizedMessage)
-                        (0, utils_1.outputFail)(data.customUnauthorizedMessage, sender);
-                    else if (data.isHidden)
-                        (0, utils_1.outputMessage)(hiddenUnauthorizedMessage, sender);
-                    else
-                        (0, utils_1.outputFail)(data.perm.unauthorizedMessage, sender);
-                    return;
-                }
-                //closure over processedCmdArgs, should be fine
-                //Process the args
-                var rawArgs = joinArgs(unjoinedRawArgs);
-                var output = processArgs(rawArgs, processedCmdArgs);
-                if ("error" in output) {
-                    //if args are invalid
-                    (0, utils_1.outputFail)(output.error, sender);
-                    return;
-                }
-                //Resolve missing args (such as players that need to be determined through a menu)
-                // let it float, the then() handler cannot crash
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                resolveMissingArgs(output.processedArgs, output.unresolvedArgs, fishSender).then(function (resolvedArgs) { return __awaiter(_this, void 0, void 0, function () {
-                    var usageData, failed, args_1, requirements, err_1;
+                return __awaiter(this, void 0, void 0, function () {
+                    var fishSender, rawArgs, resolvedArgs, err_1, usageData, failed, args_1, requirements, err_2;
                     var _a;
                     return __generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
-                                usageData = fishSender.getUsageData(name);
-                                failed = false;
+                                if (!initialized)
+                                    (0, funcs_1.crash)("Commands not initialized!");
+                                fishSender = players_1.FishPlayer.get(sender);
+                                players_1.FishPlayer.onPlayerCommand(fishSender, name, unjoinedRawArgs);
+                                //Verify authorization
+                                //as a bonus, this crashes if data.perm is undefined
+                                if (!data.perm.check(fishSender)) {
+                                    if (data.customUnauthorizedMessage)
+                                        (0, utils_1.outputFail)(data.customUnauthorizedMessage, sender);
+                                    else if (data.isHidden)
+                                        (0, utils_1.outputMessage)(hiddenUnauthorizedMessage, sender);
+                                    else
+                                        (0, utils_1.outputFail)(data.perm.unauthorizedMessage, sender);
+                                    return [2 /*return*/];
+                                }
+                                rawArgs = joinArgs(unjoinedRawArgs);
                                 _b.label = 1;
                             case 1:
-                                _b.trys.push([1, 3, 4, 5]);
+                                _b.trys.push([1, 3, , 4]);
+                                return [4 /*yield*/, processArgs(rawArgs, processedCmdArgs, fishSender)];
+                            case 2:
+                                resolvedArgs = _b.sent();
+                                return [3 /*break*/, 4];
+                            case 3:
+                                err_1 = _b.sent();
+                                //if args are invalid
+                                if (err_1 instanceof errors_1.CommandError)
+                                    (0, utils_1.outputFail)(err_1.data, sender);
+                                return [2 /*return*/];
+                            case 4:
+                                usageData = fishSender.getUsageData(name);
+                                failed = false;
+                                _b.label = 5;
+                            case 5:
+                                _b.trys.push([5, 7, 8, 9]);
                                 args_1 = {
                                     rawArgs: rawArgs,
                                     args: resolvedArgs,
@@ -518,35 +582,35 @@ function register(commands, clientHandler, serverHandler) {
                                 requirements = typeof data.requirements == "function" ? data.requirements(args_1) : data.requirements;
                                 requirements === null || requirements === void 0 ? void 0 : requirements.forEach(function (r) { return r(args_1); });
                                 return [4 /*yield*/, data.handler(args_1)];
-                            case 2:
+                            case 6:
                                 _b.sent();
                                 //Update usage data
                                 if (!failed) {
                                     usageData.lastUsedSuccessfully = globalUsageData[name].lastUsedSuccessfully = Date.now();
                                 }
-                                return [3 /*break*/, 5];
-                            case 3:
-                                err_1 = _b.sent();
-                                if (err_1 instanceof errors_1.CommandError) {
+                                return [3 /*break*/, 9];
+                            case 7:
+                                err_2 = _b.sent();
+                                if (err_2 instanceof errors_1.CommandError) {
                                     //If the error is a command error, then just outputFail
-                                    (0, utils_1.outputFail)(err_1.data, sender);
+                                    (0, utils_1.outputFail)(err_2.data, sender);
                                 }
                                 else {
                                     sender.sendMessage("[scarlet]\u274C An error occurred while executing the command!");
                                     if (fishSender.hasPerm("seeErrorMessages"))
-                                        sender.sendMessage((0, funcs_1.parseError)(err_1));
+                                        sender.sendMessage((0, funcs_1.parseError)(err_2));
                                     Log.err("Unhandled error in command execution: ".concat(fishSender.cleanedName, " ran /").concat(name));
-                                    Log.err(err_1);
-                                    Log.err(err_1.stack);
+                                    Log.err(err_2);
+                                    Log.err(err_2.stack);
                                 }
-                                return [3 /*break*/, 5];
-                            case 4:
+                                return [3 /*break*/, 9];
+                            case 8:
                                 usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();
                                 return [7 /*endfinally*/];
-                            case 5: return [2 /*return*/];
+                            case 9: return [2 /*return*/];
                         }
                     });
-                }); });
+                });
             } }));
         exports.allCommands[name] = data;
     };
@@ -571,36 +635,51 @@ function registerConsole(commands, serverHandler) {
         var processedCmdArgs = data.args.map(processArgString);
         serverHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
         serverHandler.register(name, convertArgs(processedCmdArgs, false), data.description, new CommandHandler.CommandRunner({ accept: function (rawArgs) {
-                var _a;
-                var _b;
-                if (!initialized)
-                    (0, funcs_1.crash)("Commands not initialized!");
-                //closure over processedCmdArgs, should be fine
-                //Process the args
-                var output = processArgs(rawArgs, processedCmdArgs, false);
-                if ("error" in output) {
-                    //ifargs are invalid
-                    Log.warn(output.error);
-                    return;
-                }
-                var usageData = ((_a = globalUsageData[_b = "_console_" + name]) !== null && _a !== void 0 ? _a : (globalUsageData[_b] = { lastUsed: -1, lastUsedSuccessfully: -1 }));
-                try {
-                    var failed_2 = false;
-                    data.handler(__assign({ rawArgs: rawArgs, args: output.processedArgs, data: data.data, outputFail: function (message) { (0, utils_1.outputConsole)(message, Log.err); failed_2 = true; }, outputSuccess: utils_1.outputConsole, output: utils_1.outputConsole, f: formatting_1.f_server, execServer: function (command) { return serverHandler.handleMessage(command); }, admins: Vars.netServer.admins }, usageData));
-                    usageData.lastUsed = Date.now();
-                    if (!failed_2)
-                        usageData.lastUsedSuccessfully = Date.now();
-                }
-                catch (err) {
-                    usageData.lastUsed = Date.now();
-                    if (err instanceof errors_1.CommandError) {
-                        Log.warn(typeof err.data == "function" ? err.data("&fr") : err.data);
-                    }
-                    else {
-                        Log.err("&lrAn error occured while executing the command!&fr");
-                        Log.err((0, funcs_1.parseError)(err));
-                    }
-                }
+                return __awaiter(this, void 0, void 0, function () {
+                    var resolvedArgs, err_3, usageData, failed_2;
+                    var _a;
+                    var _b;
+                    return __generator(this, function (_c) {
+                        switch (_c.label) {
+                            case 0:
+                                if (!initialized)
+                                    (0, funcs_1.crash)("Commands not initialized!");
+                                _c.label = 1;
+                            case 1:
+                                _c.trys.push([1, 3, , 4]);
+                                return [4 /*yield*/, processArgs(rawArgs, processedCmdArgs, null)];
+                            case 2:
+                                resolvedArgs = _c.sent();
+                                return [3 /*break*/, 4];
+                            case 3:
+                                err_3 = _c.sent();
+                                //if args are invalid
+                                if (err_3 instanceof errors_1.CommandError)
+                                    Log.err(err_3);
+                                return [2 /*return*/];
+                            case 4:
+                                usageData = ((_a = globalUsageData[_b = "_console_" + name]) !== null && _a !== void 0 ? _a : (globalUsageData[_b] = { lastUsed: -1, lastUsedSuccessfully: -1 }));
+                                try {
+                                    failed_2 = false;
+                                    data.handler(__assign({ rawArgs: rawArgs, args: resolvedArgs, data: data.data, outputFail: function (message) { (0, utils_1.outputConsole)(message, Log.err); failed_2 = true; }, outputSuccess: utils_1.outputConsole, output: utils_1.outputConsole, f: formatting_1.f_server, execServer: function (command) { return serverHandler.handleMessage(command); }, admins: Vars.netServer.admins }, usageData));
+                                    usageData.lastUsed = Date.now();
+                                    if (!failed_2)
+                                        usageData.lastUsedSuccessfully = Date.now();
+                                }
+                                catch (err) {
+                                    usageData.lastUsed = Date.now();
+                                    if (err instanceof errors_1.CommandError) {
+                                        Log.warn(typeof err.data == "function" ? err.data("&fr") : err.data);
+                                    }
+                                    else {
+                                        Log.err("&lrAn error occured while executing the command!&fr");
+                                        Log.err((0, funcs_1.parseError)(err));
+                                    }
+                                }
+                                return [2 /*return*/];
+                        }
+                    });
+                });
             } }));
         exports.allConsoleCommands[name] = data;
     };
@@ -618,56 +697,8 @@ function registerConsole(commands, serverHandler) {
         finally { if (e_4) throw e_4.error; }
     }
 }
-/** Resolves missing args. This function is necessary to handle cases such as a command that accepts multiple players that all need to be selected through menus. */
-function resolveMissingArgs(processedArgs, unresolvedArgs, sender) {
-    return __awaiter(this, void 0, void 0, function () {
-        var unresolvedArgs_1, unresolvedArgs_1_1, argToResolve, optionsList, option, e_5_1;
-        var e_5, _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 6, 7, 8]);
-                    unresolvedArgs_1 = __values(unresolvedArgs), unresolvedArgs_1_1 = unresolvedArgs_1.next();
-                    _b.label = 1;
-                case 1:
-                    if (!!unresolvedArgs_1_1.done) return [3 /*break*/, 5];
-                    argToResolve = unresolvedArgs_1_1.value;
-                    if (!(argToResolve.type === "player")) return [3 /*break*/, 3];
-                    optionsList = (0, funcs_1.setToArray)(Groups.player);
-                    return [4 /*yield*/, menus_1.Menu.menu("Select a player", "Select a player for the argument \"".concat(argToResolve.name, "\""), optionsList, sender, {
-                            includeCancel: true,
-                            optionStringifier: function (player) { return Strings.stripColors(player.name).length >= 3 ?
-                                player.name
-                                : (0, funcs_1.escapeStringColorsClient)(player.name); }
-                        })];
-                case 2:
-                    option = _b.sent();
-                    processedArgs[argToResolve.name] = players_1.FishPlayer.get(option);
-                    return [3 /*break*/, 4];
-                case 3:
-                    (0, funcs_1.crash)("Unable to resolve arg of type ".concat(argToResolve.type));
-                    _b.label = 4;
-                case 4:
-                    unresolvedArgs_1_1 = unresolvedArgs_1.next();
-                    return [3 /*break*/, 1];
-                case 5: return [3 /*break*/, 8];
-                case 6:
-                    e_5_1 = _b.sent();
-                    e_5 = { error: e_5_1 };
-                    return [3 /*break*/, 8];
-                case 7:
-                    try {
-                        if (unresolvedArgs_1_1 && !unresolvedArgs_1_1.done && (_a = unresolvedArgs_1.return)) _a.call(unresolvedArgs_1);
-                    }
-                    finally { if (e_5) throw e_5.error; }
-                    return [7 /*endfinally*/];
-                case 8: return [2 /*return*/, processedArgs];
-            }
-        });
-    });
-}
 function initialize() {
-    var e_6, _a, e_7, _b;
+    var e_5, _a, e_6, _b;
     if (initialized) {
         (0, funcs_1.crash)("Already initialized commands.");
     }
@@ -678,12 +709,12 @@ function initialize() {
                 command_1.data = command_1.init();
         }
     }
-    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+    catch (e_5_1) { e_5 = { error: e_5_1 }; }
     finally {
         try {
             if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
         }
-        finally { if (e_6) throw e_6.error; }
+        finally { if (e_5) throw e_5.error; }
     }
     try {
         for (var _f = __values(Object.entries(exports.allCommands)), _g = _f.next(); !_g.done; _g = _f.next()) {
@@ -692,17 +723,17 @@ function initialize() {
                 command_2.data = command_2.init();
         }
     }
-    catch (e_7_1) { e_7 = { error: e_7_1 }; }
+    catch (e_6_1) { e_6 = { error: e_6_1 }; }
     finally {
         try {
             if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
         }
-        finally { if (e_7) throw e_7.error; }
+        finally { if (e_6) throw e_6.error; }
     }
     initialized = true;
 }
 function reset() {
-    var e_8, _a, e_9, _b;
+    var e_7, _a, e_8, _b;
     initialized = false;
     try {
         for (var _c = __values(Object.entries(exports.allConsoleCommands)), _d = _c.next(); !_d.done; _d = _c.next()) {
@@ -711,12 +742,12 @@ function reset() {
                 command_3.data = undefined;
         }
     }
-    catch (e_8_1) { e_8 = { error: e_8_1 }; }
+    catch (e_7_1) { e_7 = { error: e_7_1 }; }
     finally {
         try {
             if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
         }
-        finally { if (e_8) throw e_8.error; }
+        finally { if (e_7) throw e_7.error; }
     }
     try {
         for (var _f = __values(Object.entries(exports.allCommands)), _g = _f.next(); !_g.done; _g = _f.next()) {
@@ -725,11 +756,11 @@ function reset() {
                 command_4.data = undefined;
         }
     }
-    catch (e_9_1) { e_9 = { error: e_9_1 }; }
+    catch (e_8_1) { e_8 = { error: e_8_1 }; }
     finally {
         try {
             if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
         }
-        finally { if (e_9) throw e_9.error; }
+        finally { if (e_8) throw e_8.error; }
     }
 }
