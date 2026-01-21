@@ -1183,5 +1183,73 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             unit.add();
             outputSuccess(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["Spawned a ", " that is partly a ", "."], ["Spawned a ", " that is partly a ", "."])), args.type, args.base));
         }
+    }, report: {
+        args: [],
+        description: 'Report a player to staff with a selected reason.',
+        perm: commands_1.Perm.play,
+        requirements: [commands_1.Req.cooldown(4000)],
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var onlinePlayers, target, baseReasons, reasons, reason, issuerName, targetName, serverName, message;
+                var _c, _d;
+                var sender = _b.sender, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail, f = _b.f;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
+                        case 0:
+                            onlinePlayers = (0, funcs_1.setToArray)(Groups.player);
+                            if (onlinePlayers.length === 0) {
+                                outputFail('No players online to report.');
+                                return [2 /*return*/];
+                            }
+                            return [4 /*yield*/, menus_1.Menu.menu('Report Player', 'Select a player to report.', onlinePlayers, sender, {
+                                    includeCancel: true,
+                                    optionStringifier: function (player) { return player.name; }
+                                }).catch(function () {
+                                    outputFail('Report cancelled.');
+                                    return;
+                                })];
+                        case 1:
+                            target = _e.sent();
+                            if (!target)
+                                return [2 /*return*/];
+                            if (target === sender.player) {
+                                outputFail('You cannot report yourself.');
+                                return [2 /*return*/];
+                            }
+                            baseReasons = [
+                                'Griefing',
+                                'Harassment',
+                                'Cheating / Exploiting',
+                                'Spam',
+                                'Trolling',
+                                'Other',
+                            ];
+                            reasons = target.admin ? __spreadArray(__spreadArray([], __read(baseReasons), false), ['Admin Abuse'], false) : baseReasons;
+                            return [4 /*yield*/, menus_1.Menu.menu('Report Reason', "Select a reason for reporting [accent]".concat(target.name, "[]"), reasons, sender, { includeCancel: true }).catch(function () {
+                                    outputFail('Report cancelled.');
+                                    return;
+                                })];
+                        case 2:
+                            reason = _e.sent();
+                            if (!reason)
+                                return [2 /*return*/];
+                            issuerName = (_d = (_c = sender.player) === null || _c === void 0 ? void 0 : _c.name) !== null && _d !== void 0 ? _d : 'Unknown';
+                            targetName = target.name;
+                            serverName = config_1.Gamemode.name();
+                            message = "[Report] Server: ".concat(serverName, "\n") +
+                                "Issuer: ".concat(Strings.stripColors(issuerName), "\n") +
+                                "Target: ".concat(Strings.stripColors(targetName)).concat(target.admin ? ' (Admin)' : '', "\n") +
+                                "Reason: ".concat(reason);
+                            api.sendStaffMessage(message, issuerName, function (sent) {
+                                if (sent)
+                                    outputSuccess(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["Report sent to staff: ", " for \"", "\"."], ["Report sent to staff: ", " for \"", "\"."])), targetName, reason));
+                                else
+                                    outputFail('Failed to send report to staff. Please try again later.');
+                            });
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        },
     } }));
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20;
