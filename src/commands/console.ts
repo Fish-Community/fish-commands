@@ -91,7 +91,9 @@ export const commands = consoleCommandList({
 				const outputString:string[] = [""];
 				for(const [playerInfo, fishP] of infoList){
 					const flagsText = [
-						fishP?.marked() && `&lris marked&fr until ${formatTimeRelative(fishP.unmarkTime)}`,
+						fishP?.marked() && (maxTime - fishP.unmarkTime < 20_000 ?
+							`&lris marked forever&fr`
+						: `&lris marked&fr until ${formatTimeRelative(fishP.unmarkTime)}`),
 						fishP?.muted && "&lris muted&fr",
 						fishP?.hasFlag("member") && "&lmis member&fr",
 						fishP?.autoflagged && "&lris autoflagged&fr",

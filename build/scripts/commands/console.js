@@ -161,7 +161,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     var outputString = [""];
                     var _loop_1 = function (playerInfo, fishP) {
                         var flagsText = [
-                            (fishP === null || fishP === void 0 ? void 0 : fishP.marked()) && "&lris marked&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime)),
+                            (fishP === null || fishP === void 0 ? void 0 : fishP.marked()) && (globals_1.maxTime - fishP.unmarkTime < 20000 ?
+                                "&lris marked forever&fr"
+                                : "&lris marked&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime))),
                             (fishP === null || fishP === void 0 ? void 0 : fishP.muted) && "&lris muted&fr",
                             (fishP === null || fishP === void 0 ? void 0 : fishP.hasFlag("member")) && "&lmis member&fr",
                             (fishP === null || fishP === void 0 ? void 0 : fishP.autoflagged) && "&lris autoflagged&fr",
