@@ -33,7 +33,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
+exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
 var globals_1 = require("/globals");
 var ranks_1 = require("/ranks");
 var funcs_1 = require("/funcs");
@@ -219,6 +219,7 @@ exports.Gamemode = {
     minigame: function () { return exports.Gamemode.name() == "minigame"; },
     name: function () { return Core.settings.get("mode", Vars.state.rules.mode().name()); },
 };
+exports.GamemodeNames = Object.keys(exports.Gamemode).filter(function (x) { return x !== "name"; });
 //#endregion
 //#region text content
 exports.prefixes = {
@@ -267,7 +268,7 @@ exports.FColor = (function (data) {
                     varChunks[_i - 1] = arguments[_i];
                 }
                 return str != null ?
-                    "".concat(c).concat(Array.isArray(str) ? String.raw.apply(String, __spreadArray([{ raw: str }], __read(varChunks), false)) : str, "[]")
+                    "".concat(c).concat(Array.isArray(str) ? String.raw.apply(String, __spreadArray([{ raw: str }], __read(varChunks.map(function (v) { return String(v) + c; })), false)) : str, "[]")
                     : c;
             }
         ];
@@ -277,6 +278,7 @@ exports.FColor = (function (data) {
     /** Used for tips and welcome messages. */
     tip: "[gold]",
     member: "[pink]",
+    achievement: "[lime]",
 });
 /** Tips that are shown to players randomly. */
 exports.tips = {

@@ -21,6 +21,7 @@ export function initializeTimers(){
 		Core.app.post(() => {
 			SaveIO.save(file);
 			FishPlayer.saveAll();
+			FishPlayer.uploadAll();
 			Call.sendMessage('[#4fff8f9f]Game saved.');
 			FishEvents.fire("saveData", []);
 		});

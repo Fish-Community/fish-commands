@@ -687,7 +687,9 @@ const Vars = {
 	modDirectory: new Fi('/mods'),
 	customMapDirectory: new Fi('/maps'),
 	content: {
-
+		items(){
+			return new Seq(Object.values(Items).filter(i => i instanceof Item));
+		}
 	},
 	tilesize: 8,
 	world: {
@@ -843,6 +845,73 @@ const Strings = {
 	},
 };
 
+class UnitType {
+	emoji(){return "e";}
+}
+const UnitTypes = Object.fromEntries(
+	["mace", "dagger", "crawler", "fortress", "scepter", "reign", "vela", "nova", "pulsar", "quasar", "corvus", "atrax", "merui", "cleroi", "anthicus", "tecta", "collaris", "spiroct", "arkyid", "toxopid", "elude", "flare", "eclipse", "horizon", "zenith", "antumbra", "avert", "obviate", "mono", "poly", "mega", "evoke", "incite", "emanate", "quell", "disrupt", "quad", "oct", "alpha", "beta", "gamma", "risso", "minke", "bryde", "sei", "omura", "retusa", "oxynoe", "cyerce", "aegires", "navanax", "block", "manifold", "assemblyDrone", "stell", "locus", "precept", "vanquish", "conquer", "missile", "latum", "renale"]
+		.map(n => [n, new UnitType()])
+);
+
+class Item {
+	emoji(){return "e";}
+}
+const Items = Object.fromEntries(
+	["scrap", "copper", "lead", "graphite", "coal", "titanium", "thorium", "silicon", "plastanium", "phaseFabric", "surgeAlloy", "sporePod", "sand", "blastCompound", "pyratite", "metaglass", "beryllium", "tungsten", "oxide", "carbide", "fissileMatter", "dormantCyst"]
+		.map(n => [n, new Item()])
+) as any;
+Items.serpuloItems = new Seq(Object.values(Items).slice(0, -6));
+Items.erekirItems = new Seq([Items.graphite, Items.thorium, Items.silicon, Items.phaseFabric, Items.surgeAlloy, Items.beryllium, Items.tungsten, Items.oxide, Items.carbide, Items.sand]);
+
+class Block {
+	emoji(){return "e";}
+}
+const Blocks = Object.fromEntries(
+	["air", "spawn", "removeWall", "removeOre", "cliff", "deepwater", "water", "taintedWater", "deepTaintedWater", "tar", "slag", "cryofluid", "stone", "craters", "charr", "sand", "darksand", "dirt", "mud", "ice", "snow", "darksandTaintedWater", "space", "empty", "dacite", "rhyolite", "rhyoliteCrater", "roughRhyolite", "regolith", "yellowStone", "redIce", "redStone", "denseRedStone", "arkyciteFloor", "arkyicStone", "redmat", "bluemat", "stoneWall", "dirtWall", "sporeWall", "iceWall", "daciteWall", "sporePine", "snowPine", "pine", "shrubs", "whiteTree", "whiteTreeDead", "sporeCluster", "redweed", "purbush", "yellowCoral", "rhyoliteVent", "carbonVent", "arkyicVent", "yellowStoneVent", "redStoneVent", "crystallineVent", "stoneVent", "basaltVent", "regolithWall", "yellowStoneWall", "rhyoliteWall", "carbonWall", "redIceWall", "ferricStoneWall", "beryllicStoneWall", "arkyicWall", "crystallineStoneWall", "redStoneWall", "redDiamondWall", "ferricStone", "ferricCraters", "carbonStone", "beryllicStone", "crystallineStone", "crystalFloor", "yellowStonePlates", "iceSnow", "sandWater", "darksandWater", "duneWall", "sandWall", "moss", "sporeMoss", "shale", "shaleWall", "grass", "salt", "coreZone", "shaleBoulder", "sandBoulder", "daciteBoulder", "boulder", "snowBoulder", "basaltBoulder", "carbonBoulder", "ferricBoulder", "beryllicBoulder", "yellowStoneBoulder", "arkyicBoulder", "crystalCluster", "vibrantCrystalCluster", "crystalBlocks", "crystalOrbs", "crystallineBoulder", "redIceBoulder", "rhyoliteBoulder", "redStoneBoulder", "metalFloor", "metalFloorDamaged", "metalFloor2", "metalFloor3", "metalFloor4", "metalFloor5", "basalt", "magmarock", "hotrock", "snowWall", "saltWall", "darkPanel1", "darkPanel2", "darkPanel3", "darkPanel4", "darkPanel5", "darkPanel6", "darkMetal", "metalTiles1", "metalTiles2", "metalTiles3", "metalTiles4", "metalTiles5", "metalTiles6", "metalTiles7", "metalTiles8", "metalTiles9", "metalTiles10", "metalTiles11", "metalTiles12", "metalTiles13", "metalWall1", "metalWall2", "metalWall3", "metalWall4", "coloredFloor", "coloredWall", "characterOverlayGray", "characterOverlayWhite", "runeOverlay", "cruxRuneOverlay", "pebbles", "tendrils", "oreCopper", "oreLead", "oreScrap", "oreCoal", "oreTitanium", "oreThorium", "oreBeryllium", "oreTungsten", "oreCrystalThorium", "wallOreThorium", "wallOreBeryllium", "graphiticWall", "wallOreTungsten", "siliconSmelter", "siliconCrucible", "kiln", "graphitePress", "plastaniumCompressor", "multiPress", "phaseWeaver", "surgeSmelter", "pyratiteMixer", "blastMixer", "cryofluidMixer", "melter", "separator", "disassembler", "sporePress", "pulverizer", "incinerator", "coalCentrifuge", "siliconArcFurnace", "electrolyzer", "oxidationChamber", "atmosphericConcentrator", "electricHeater", "slagHeater", "phaseHeater", "heatRedirector", "smallHeatRedirector", "heatRouter", "slagIncinerator", "carbideCrucible", "slagCentrifuge", "surgeCrucible", "cyanogenSynthesizer", "phaseSynthesizer", "heatReactor", "powerSource", "powerVoid", "itemSource", "itemVoid", "liquidSource", "liquidVoid", "payloadSource", "payloadVoid", "illuminator", "heatSource", "copperWall", "copperWallLarge", "titaniumWall", "titaniumWallLarge", "plastaniumWall", "plastaniumWallLarge", "thoriumWall", "thoriumWallLarge", "door", "doorLarge", "phaseWall", "phaseWallLarge", "surgeWall", "surgeWallLarge", "berylliumWall", "berylliumWallLarge", "tungstenWall", "tungstenWallLarge", "blastDoor", "reinforcedSurgeWall", "reinforcedSurgeWallLarge", "carbideWall", "carbideWallLarge", "shieldedWall", "mender", "mendProjector", "overdriveProjector", "overdriveDome", "forceProjector", "shockMine", "scrapWall", "scrapWallLarge", "scrapWallHuge", "scrapWallGigantic", "thruster", "ok", "these", "names", "are", "getting", "ridiculous", "but", "at", "least", "I", "don", "t", "have", "humongous", "walls", "yet", "radar", "buildTower", "regenProjector", "barrierProjector", "shockwaveTower", "shieldProjector", "largeShieldProjector", "shieldBreaker", "conveyor", "titaniumConveyor", "plastaniumConveyor", "armoredConveyor", "distributor", "junction", "itemBridge", "phaseConveyor", "sorter", "invertedSorter", "router", "overflowGate", "underflowGate", "unloader", "massDriver", "duct", "armoredDuct", "ductRouter", "overflowDuct", "underflowDuct", "ductBridge", "ductUnloader", "surgeConveyor", "surgeRouter", "unitCargoLoader", "unitCargoUnloadPoint", "mechanicalPump", "rotaryPump", "impulsePump", "conduit", "pulseConduit", "platedConduit", "liquidRouter", "liquidContainer", "liquidTank", "liquidJunction", "bridgeConduit", "phaseConduit", "reinforcedPump", "reinforcedConduit", "reinforcedLiquidJunction", "reinforcedBridgeConduit", "reinforcedLiquidRouter", "reinforcedLiquidContainer", "reinforcedLiquidTank", "combustionGenerator", "thermalGenerator", "steamGenerator", "differentialGenerator", "rtgGenerator", "solarPanel", "largeSolarPanel", "thoriumReactor", "impactReactor", "battery", "batteryLarge", "powerNode", "powerNodeLarge", "surgeTower", "diode", "turbineCondenser", "ventCondenser", "chemicalCombustionChamber", "pyrolysisGenerator", "fluxReactor", "neoplasiaReactor", "beamNode", "beamTower", "beamLink", "mechanicalDrill", "pneumaticDrill", "laserDrill", "blastDrill", "waterExtractor", "oilExtractor", "cultivator", "cliffCrusher", "largeCliffCrusher", "plasmaBore", "largePlasmaBore", "impactDrill", "eruptionDrill", "coreShard", "coreFoundation", "coreNucleus", "vault", "container", "coreBastion", "coreCitadel", "coreAcropolis", "reinforcedContainer", "reinforcedVault", "duo", "scatter", "scorch", "hail", "arc", "wave", "lancer", "swarmer", "salvo", "fuse", "ripple", "cyclone", "foreshadow", "spectre", "meltdown", "segment", "parallax", "tsunami", "breach", "diffuse", "sublimate", "titan", "disperse", "afflict", "lustre", "scathe", "smite", "malign", "groundFactory", "airFactory", "navalFactory", "additiveReconstructor", "multiplicativeReconstructor", "exponentialReconstructor", "tetrativeReconstructor", "repairPoint", "repairTurret", "tankFabricator", "shipFabricator", "mechFabricator", "tankRefabricator", "shipRefabricator", "mechRefabricator", "primeRefabricator", "tankAssembler", "shipAssembler", "mechAssembler", "basicAssemblerModule", "unitRepairTower", "payloadConveyor", "payloadRouter", "reinforcedPayloadConveyor", "reinforcedPayloadRouter", "payloadMassDriver", "largePayloadMassDriver", "smallDeconstructor", "deconstructor", "constructor", "largeConstructor", "payloadLoader", "payloadUnloader", "message", "switchBlock", "microProcessor", "logicProcessor", "hyperProcessor", "largeLogicDisplay", "logicDisplay", "tileLogicDisplay", "memoryCell", "memoryBank", "canvas", "reinforcedMessage", "worldProcessor", "worldCell", "worldMessage", "worldSwitch", "launchPad", "advancedLaunchPad", "landingPad", "interplanetaryAccelerator"]
+		.map(n => [n, new Block()])
+) as any;
+
+class StatusEffect {
+	emoji(){return "e";}
+}
+const StatusEffects = Object.fromEntries(
+	["none", "burning", "freezing", "unmoving", "slow", "fast", "wet", "muddy", "melting", "sapped", "tarred", "overdrive", "overclock", "shielded", "shocked", "blasted", "corroded", "boss", "sporeSlowed", "disarmed", "electrified", "invincible", "dynamic"]
+		.map(n => [n, new StatusEffect()])
+) as any;
+
+class ItemStack {
+	constructor(
+		public item: Item, public amount: number,
+	){}
+}
+
+class Bits {
+	bits = new BigUint64Array(1);
+	constructor(capacity?: number){ /*empty*/ }
+	get(index:number):boolean {
+		const word = index >>> 6;
+		return word < this.bits.length && Boolean(this.bits[word] & BigInt(1 << index));
+	}
+	set(index:number, value:boolean = true){
+		const word = index >>> 6;
+		if(value){
+			this.checkCapacity(word);
+			this.bits[word] |= BigInt(1 << (index & 0x3F));
+		} else {
+			if(word >= this.bits.length) return;
+			this.bits[word] &= BigInt(~(1 << (index & 0x3F)));
+		}
+	}
+	checkCapacity(len:number){
+		if(len >= this.bits.length){
+			const newBits = new BigUint64Array(len + 1);
+			newBits.set(this.bits);
+			this.bits = newBits;
+		}
+	}
+}
+
+const Iconc = Object.fromEntries(["rotate", "modeSurvival", "power", "left", "redditAlien", "edit", "downOpen", "pencil", "file", "lockOpen", "right", "infoCircle", "pick", "settings", "spray1", "terrain", "exit", "wrench", "lock", "discord", "eye", "none", "play", "diagonal", "eraser", "trash", "liquid", "fileImage", "defense", "layers", "grid", "admin", "steam", "star", "chartBar", "chat", "android", "image", "map", "logic", "menu", "commandRally", "editor", "folder", "units", "commandAttack", "copy", "filter", "cancel", "terminal", "upload", "eyeOff", "save", "planeOutline", "fill", "distribution", "upOpen", "rightOpen", "modePvp", "download", "list", "flipX", "flipY", "effect", "paste", "planet", "waves", "up", "warning", "tree", "add", "down", "host", "spray", "info", "players", "resize", "refresh1", "production", "crafting", "pause", "googleplay", "hammer", "fileText", "modeAttack", "move", "zoom", "bookOpen", "refresh", "ok", "home", "githubSquare", "powerOld", "github", "undo", "box", "trello", "book", "export", "fileTextFill", "rightOpenOut", "turret", "leftOpen", "line", "itchio", "link", "filters", "redo"].map(n => [n, 0xFE60]));
 
 const Packages = {
 	java: {
@@ -856,4 +925,4 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects});

@@ -8,9 +8,9 @@ import * as api from "/api";
 import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
 import { fail, PartialFormatString } from "/frameworks/commands";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, StringIO } from "/funcs";
-import { fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
+import { FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
-import { Boolf, SelectEnumClassKeys } from "/types";
+import { SelectEnumClassKeys } from "/types";
 
 
 export function memoizeChatFilter(impl:(arg:string) => string){
@@ -151,8 +151,8 @@ export function getTeam(team:string):Team | string {
 
 /** Attempts to parse an Item from the input. */
 export function getItem(item:string):Item | string {
-	let temp: Item | null;
-	if(item in Items && (temp = Items[item]) instanceof Item) return temp;
+	let temp;
+	if(item in Items && (temp = Items[item as keyof typeof Items]) instanceof Item) return temp;
 	else if((temp = Vars.content.items().find(t => t.name.includes(item.toLowerCase())))) return temp;
 	return `"${item}" is not a valid item.`;
 }
@@ -213,8 +213,8 @@ export function isImpersonator(name:string, isAdmin:boolean):false | string {
 	const replacedText = cleanText(name);
 	const antiEvasionText = cleanText(name, true);
 	//very clean code i know
-	const filters:Array<[check:Boolf<string>, message:string]> = (
-		(input: Array<string | [string | RegExp | Boolf<string>, string]>) =>
+	const filters:Array<[check: (value:string) => boolean, message:string]> = (
+		(input: Array<string | [string | RegExp | ((value:string) => boolean), string]>) =>
 			input.map(i =>
 				Array.isArray(i) ? [
 					typeof i[0] == "string" ? replacedText => replacedText.includes((i[0] as string)) :
@@ -438,6 +438,7 @@ export function definitelyRealMemoryCorruption(){
 	const hexString = Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, "0");
 	Call.sendMessage("[scarlet]Error: internal server error.");
 	Call.sendMessage(`[scarlet]Error: memory corruption: mindustry.world.modules.ItemModule@${hexString}`);
+	FishEvents.fire("memoryCorruption", []);
 }
 
 export function getEnemyTeam():Team {
@@ -643,7 +644,8 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 				const fishP = FishPlayer.get(e.unit.player);
 				//TODO move this code
 				fishP.tstats.blocksBroken ++;
-				fishP.stats.blocksBroken ++;
+				fishP.tstats.blockInteractionsThisMap ++;
+				fishP.updateStats(stats => stats.blocksBroken ++);
 			}
 		} else {
 			action = "built";
@@ -651,17 +653,26 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 			if(e.unit?.player?.uuid()){
 				const fishP = FishPlayer.get(e.unit.player);
 				//TODO move this code
-				fishP.stats.blocksPlaced ++;
+				fishP.updateStats(stats => stats.blocksPlaced ++);
+				fishP.tstats.blockInteractionsThisMap ++;
 			}
 		}
 	} else if(e instanceof EventType.ConfigEvent){
 		tile = e.tile.tile;
 		uuid = e.player?.uuid() ?? "unknown";
+		if(uuid != "unknown"){
+			const fishP = FishPlayer.getById(uuid);
+			if(fishP) fishP.tstats.blockInteractionsThisMap ++;
+		}
 		action = "configured";
 		type = e.tile.block.name;
 	} else if(e instanceof EventType.BuildRotateEvent){
 		tile = e.build.tile;
 		uuid = e.unit?.player?.uuid() ?? e.unit?.type.name ?? "unknown";
+		if(uuid != "unknown"){
+			const fishP = FishPlayer.getById(uuid);
+			if(fishP) fishP.tstats.blockInteractionsThisMap ++;
+		}
 		action = "rotated";
 		type = e.build.block.name;
 	} else if(e instanceof EventType.UnitDestroyEvent){
@@ -879,3 +890,23 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 	}
 }
 
+const sources = [
+	Packages.mindustry.gen.UnitEntity,
+	Packages.mindustry.gen.MechUnit,
+	Packages.mindustry.gen.LegsUnit,
+	Packages.mindustry.gen.CrawlUnit,
+	Packages.mindustry.gen.UnitWaterMove,
+	Packages.mindustry.gen.BlockUnitUnit,
+	Packages.mindustry.gen.ElevationMoveUnit,
+	Packages.mindustry.gen.BuildingTetherPayloadUnit,
+	Packages.mindustry.gen.TimedKillUnit,
+	Packages.mindustry.gen.PayloadUnit,
+	Packages.mindustry.gen.TankUnit,
+];
+export function getStatuses(unit:Unit):Seq<{ effect: StatusEffect }> {
+	for(const clazz of sources){
+		if(unit instanceof clazz)
+			return ArcReflect.get(clazz, unit, "statuses") as Seq<{ effect: StatusEffect }>;
+	}
+	return new Seq();
+}

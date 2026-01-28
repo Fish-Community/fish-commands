@@ -163,7 +163,7 @@ exports.Menu = {
         Call.menu(target.con, registeredListeners.generic, title, description, stringifiedOptions);
         return promise;
     },
-    /** Displays a menu to a player, returning a Promise. Arranges options into a 2D array, and can add a Cancel option. */
+    /** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */
     menu: function (title, description, options, target, _a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.includeCancel, includeCancel = _c === void 0 ? false : _c, _d = _b.optionStringifier, optionStringifier = _d === void 0 ? String : _d, _e = _b.columns, columns = _e === void 0 ? 3 : _e, _f = _b.onCancel, onCancel = _f === void 0 ? "ignore" : _f, _g = _b.cancelOptionId, cancelOptionId = _g === void 0 ? -1 : _g;
         //Set up the 2D array of options, and maybe add cancel
@@ -196,10 +196,19 @@ exports.Menu = {
         var _b = _a.confirmText, confirmText = _b === void 0 ? "[red]Confirm" : _b, _c = _a.cancelText, cancelText = _c === void 0 ? "[green]Cancel" : _c, rest = __rest(_a, ["confirmText", "cancelText"]);
         return exports.Menu.confirm(target, description, __assign({ cancelText: cancelText, confirmText: confirmText }, rest));
     },
+    /**
+     * Displays a menu to a player, returning a Promise.
+     * Accepts pre-generated data and text. Alternative to optionStringifier if the text is already generated.
+     */
     buttons: function (target, title, description, options, cfg) {
         if (cfg === void 0) { cfg = {}; }
         return exports.Menu.raw(title, description, options, target, __assign(__assign({}, cfg), { optionStringifier: function (o) { return o.text; } })).then(function (o) { return o === null || o === void 0 ? void 0 : o.data; });
     },
+    /**
+     * Displays a menu to a player, returning a Promise.
+     * Adds left and right arrows to switch pages.
+     * Shows different options based on the page.
+     */
     pages: function (target, title, description, options, cfg) {
         var _a = promise_1.Promise.withResolvers(), promise = _a.promise, reject = _a.reject, resolve = _a.resolve;
         function showPage(index) {
@@ -230,6 +239,12 @@ exports.Menu = {
         showPage(0);
         return promise;
     },
+    /**
+     * Displays a menu to a player, returning a Promise.
+     * Adds left and right arrows to switch pages.
+     * Does not support options.
+     * Shows different text based on the current page.
+     */
     textPages: function (target, pages, cfg) {
         if (cfg === void 0) { cfg = {}; }
         var _a = promise_1.Promise.withResolvers(), promise = _a.promise, reject = _a.reject, resolve = _a.resolve;
@@ -281,7 +296,13 @@ exports.Menu = {
         showPage(index);
         return promise;
     },
-    scroll: function (target, title, description, options, cfg) {
+    /**
+     * Displays a menu to a player, returning a Promise.
+     * Accepts a 2D array of options and shows a region of that 2D grid.
+     * Adds arrows to scroll left/right/up/down.
+     * Resolves to the selected option.
+     */
+    scroll2D: function (target, title, description, options, cfg) {
         var _a, _b;
         if (cfg === void 0) { cfg = {}; }
         var _c = promise_1.Promise.withResolvers(), promise = _c.promise, reject = _c.reject, resolve = _c.resolve;
@@ -290,24 +311,29 @@ exports.Menu = {
         var width = options[0].length;
         function showPage(x, y) {
             var _a, _b;
-            var opts = __spreadArray(__spreadArray([], __read(options.slice(y, y + rows).map(function (r) { return r.slice(x, x + cols).map(function (d) { return ({ text: d.text, data: [d.data] }); }); })), false), [
+            var opts = __spreadArray(__spreadArray([], __read(options.slice(y, y + rows).map(function (r) { return r.concat(Array(width - r.length).fill({ data: "blank", text: "" })); }).map(function (r) {
+                return r.slice(x, x + cols).map(function (d) { return ({ text: d.text, data: [d.data] }); });
+            })), false), [
                 [
                     { data: "blank", text: "" },
-                    { data: "up", text: "[".concat(y == 0 ? "gray" : "accent", "]^\n|") },
+                ],
+                [
+                    { data: "blank", text: "" },
+                    { data: "up", text: "[".concat(y == 0 ? "gray" : "accent", "]").concat(String.fromCharCode(Iconc.up)) },
                     { data: "blank", text: "" },
                 ], [
-                    { data: "left", text: "[".concat(x == 0 ? "gray" : "accent", "]<--") },
+                    { data: "left", text: "[".concat(x == 0 ? "gray" : "accent", "]").concat(String.fromCharCode(Iconc.left)) },
                     { data: "blank", text: (_b = (_a = cfg.getCenterText) === null || _a === void 0 ? void 0 : _a.call(cfg, x, y)) !== null && _b !== void 0 ? _b : '' },
-                    { data: "right", text: "[".concat(x == width - cols ? "gray" : "accent", "]-->") }
+                    { data: "right", text: "[".concat(x == width - cols ? "gray" : "accent", "]").concat(String.fromCharCode(Iconc.right)) },
                 ], [
                     { data: "blank", text: "" },
-                    { data: "down", text: "[".concat(y == height - rows ? "gray" : "accent", "]|\nV") },
+                    { data: "down", text: "[".concat(y == height - rows ? "gray" : "accent", "]").concat(String.fromCharCode(Iconc.down)) },
                     { data: "blank", text: "" },
                 ]
             ], false);
-            void exports.Menu.buttons(target, title, description, opts, __assign(__assign({}, cfg), { onCancel: "null" })).then(function (response) {
+            void exports.Menu.buttons(target, title, description, opts, cfg).then(function (response) {
                 if (response instanceof Array)
-                    resolve(response[0]);
+                    resolve([response[0], x, y]);
                 else if (response === "right")
                     showPage(Math.min(x + 1, width - cols), y);
                 else if (response === "left")
@@ -329,6 +355,11 @@ exports.Menu = {
         showPage(Math.min((_a = cfg.x) !== null && _a !== void 0 ? _a : 0, width - cols), Math.min((_b = cfg.y) !== null && _b !== void 0 ? _b : 0, height - rows));
         return promise;
     },
+    /**
+     * Displays a menu to a player, returning a Promise.
+     * Adds left and right arrows to switch pages. Automatically paginates provided options.
+     * Accepts pre-generated data and text. Alternative to optionStringifier if the text is already generated.
+     */
     pagedListButtons: function (target, title, description, options, _a) {
         var _b;
         var _c = _a.rowsPerPage, rowsPerPage = _c === void 0 ? 10 : _c, _d = _a.columns, columns = _d === void 0 ? 3 : _d, cfg = __rest(_a, ["rowsPerPage", "columns"]);
@@ -338,6 +369,10 @@ exports.Menu = {
             return exports.Menu.buttons(target, title, description, (_b = pages[0]) !== null && _b !== void 0 ? _b : [], cfg);
         return exports.Menu.pages(target, title, description, pages, cfg);
     },
+    /**
+     * Displays a menu to a player, returning a Promise.
+     * Adds left and right arrows to switch pages. Automatically paginates provided options.
+     */
     pagedList: function (target, title, description, options, _a) {
         var _b;
         if (_a === void 0) { _a = {}; }

@@ -566,6 +566,7 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             var outputSuccess = _a.outputSuccess;
             players_1.FishPlayer.saveAll();
+            players_1.FishPlayer.uploadAll();
             globals_1.FishEvents.fire("saveData", []);
             var file = Vars.saveDirectory.child("1.".concat(Vars.saveExtension));
             SaveIO.save(file);

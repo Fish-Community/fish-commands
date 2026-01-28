@@ -3,15 +3,16 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the FishPlayer class, and many player-related functions.
 */
 
+import type { Achievement } from "/achievements";
 import * as api from "/api";
 import { FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
 import { crash, Duration, escapeStringColorsClient, parseError, search, setToArray, StringIO } from "/funcs";
 import * as globals from "/globals";
-import { uuidPattern } from "/globals";
+import { uuidPattern, FishEvents } from "/globals";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
-import type { FishPlayerData, PlayerHistoryEntry } from "/types";
+import type { FishPlayerData, PlayerHistoryEntry, Stats, UploadedFishPlayerData } from "/types";
 import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, matchFilter } from "/utils";
 
 
@@ -48,6 +49,7 @@ export class FishPlayer {
 	static antiBotModePersist = false;
 	static antiBotModeOverride = false;
 	static lastBotWhacked = 0;
+	static lastMapStartTime = 0;
 	//#endregion
 	
 	//#region Transient properties
@@ -87,6 +89,10 @@ export class FishPlayer {
 	tstats = {
 		//remember to clear this in updateSavedInfoFromPlayer!
 		blocksBroken: 0,
+		blockInteractionsThisMap: 0,
+		lastMapStartTime: 0,
+		lastMapPlayedTime: 0,
+		wavesSurvived: 0,
 	};
 	/** Whether the player has manually marked themselves as AFK. */
 	manualAfk = false;
@@ -141,15 +147,11 @@ export class FishPlayer {
 	lastJoined:number = -1;
 	/** -1 represents unknown */
 	firstJoined:number = -1;
-	stats: {
-		blocksBroken: number;
-		blocksPlaced: number;
-		timeInGame: number;
-		chatMessagesSent: number;
-		/** Does not include RTVs */
-		gamesFinished: number;
-		gamesWon: number;
-	} = {
+	/** -1 represents unknown */
+	globalLastJoined:number = -1;
+	/** -1 represents unknown */
+	globalFirstJoined:number = -1;
+	stats: Stats = {
 		blocksBroken: 0,
 		blocksPlaced: 0,
 		timeInGame: 0,
@@ -157,8 +159,10 @@ export class FishPlayer {
 		gamesFinished: 0,
 		gamesWon: 0,
 	};
+	globalStats: Stats = this.stats;
 	/** Used for the /vanish command. */
 	showRankPrefix:boolean = true;
+	achievements: Bits = new Bits();
 	//#endregion
 
 	constructor(uuid:string, data:Partial<FishPlayerData>, player:mindustryPlayer | null){
@@ -346,7 +350,7 @@ export class FishPlayer {
 		} else {
 			this.originalName = this.name = player.name;
 		}
-		if(this.firstJoined == -1) this.firstJoined = Date.now();
+		if(this.firstJoined < 1) this.firstJoined = Date.now();
 
 		//Do not update USID here
 		this.manualAfk = false;
@@ -358,9 +362,11 @@ export class FishPlayer {
 		this.shouldUpdateName = true;
 		this.changedTeam = false;
 		this.ipDetectedVpn = false;
-		this.tstats = {
-			blocksBroken: 0
-		};
+		this.tstats.blocksBroken = 0;
+		if(this.tstats.lastMapPlayedTime != FishPlayer.lastMapStartTime){
+			this.tstats.blockInteractionsThisMap = 0;
+			this.tstats.lastMapPlayedTime = FishPlayer.lastMapStartTime;
+		}
 		this.infoUpdated = true;
 	}
 	updateData(data: Partial<FishPlayerData>){
@@ -369,22 +375,27 @@ export class FishPlayer {
 		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
 		if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
 		if(data.firstJoined != undefined) this.firstJoined = data.firstJoined;
+		if(data.globalLastJoined != undefined) this.globalLastJoined = data.globalLastJoined;
+		if(data.globalFirstJoined != undefined) this.globalFirstJoined = data.globalFirstJoined;
 		if(data.highlight != undefined) this.highlight = data.highlight;
 		if(data.history != undefined) this.history = data.history;
 		if(data.rainbow != undefined) this.rainbow = data.rainbow;
 		if(data.usid != undefined) this.usid = data.usid;
 		if(data.chatStrictness != undefined) this.chatStrictness = data.chatStrictness;
 		if(data.stats != undefined) this.stats = data.stats;
+		if(data.globalStats != undefined) this.globalStats = data.globalStats;
 		if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
 		if(data.rank != undefined) this.rank = Rank.getByName(data.rank) ?? Rank.player;
 		if(data.flags != undefined) this.flags = new Set(data.flags.map(RoleFlag.getByName).filter(Boolean));
+		if(data.achievements != undefined) this.achievements = JsonIO.read(Bits, `{bits:${data.achievements}}`);
 	}
-	getData():FishPlayerData {
+	getData():UploadedFishPlayerData {
 		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix } = this;
 		return {
 			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix,
 			rank: rank.name,
-			flags: [...flags.values()].map(f => f.name)
+			flags: [...flags.values()].map(f => f.name),
+			achievements: JsonIO.write(Reflect.get(this.achievements, "bits"))
 		};
 	}
 	/** Warning: the "update" callback is run twice. */
@@ -402,7 +413,7 @@ export class FishPlayer {
 		//but it's unlikely to happen
 		//could be fixed by transmitting the update operation to the server as a mongo update command
 		afterFetch?.(this);
-		await api.setFishPlayerData(this.getData());
+		await api.setFishPlayerData(this.getData(), 1, false);
 	}
 	//#endregion
 
@@ -526,6 +537,7 @@ export class FishPlayer {
 					fishPlayer.sendMessage(`[scarlet]\u26A0[] [gold]Oh no! Our systems think you are a [scarlet]SUSSY IMPERSONATOR[]!\n[gold]Reason: ${message}\n[gold]Change your name to remove the tag.`);
 				} else if(cleanText(player.name, true).includes("hacker")){
 					fishPlayer.sendMessage("[scarlet]\u26A0 Don't be a script kiddie!");
+					FishEvents.fire("scriptKiddie", [fishPlayer]);
 				}
 			}
 			fishPlayer.updateAdminStatus();
@@ -596,7 +608,7 @@ export class FishPlayer {
 		//Clear temporary states such as menu and taphandler
 		fishP.activeMenus = [];
 		fishP.tapInfo.commandName = null;
-		fishP.stats.timeInGame += (Date.now() - fishP.lastJoined); //Time between joining and leaving
+		fishP.updateStats(stats => stats.timeInGame += (Date.now() - fishP.lastJoined)); //Time between joining and leaving
 		fishP.lastJoined = Date.now();
 		this.recentLeaves.unshift(fishP);
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
@@ -689,7 +701,7 @@ export class FishPlayer {
 			}
 		}
 		fishP.lastActive = Date.now();
-		fishP.stats.chatMessagesSent ++;
+		fishP.updateStats(stats => stats.chatMessagesSent ++);
 	}
 	static onPlayerCommand(player:FishPlayer, command:string, unjoinedRawArgs:string[]){
 		if(command == "msg" && unjoinedRawArgs[1] == "Please do not use that logic, as it is attem83 logic and is bad to use. For more information please read www.mindustry.dev/attem")
@@ -698,26 +710,35 @@ export class FishPlayer {
 	}
 	private static ignoreGameOver = false;
 	static onGameOver(winningTeam:Team){
+		FishEvents.fire("gameOver", [winningTeam]);
 		this.forEachPlayer((fishPlayer) => {
 			//Clear temporary states such as menu and taphandler
 			fishPlayer.activeMenus = [];
 			fishPlayer.tapInfo.commandName = null;
 			//Update stats
 			if(!this.ignoreGameOver && fishPlayer.team() != Team.derelict && winningTeam != Team.derelict){
-				fishPlayer.stats.gamesFinished ++;
+				fishPlayer.updateStats(stats => stats.gamesFinished ++);
 				if(fishPlayer.changedTeam){
 					fishPlayer.sendMessage(`Refusing to update stats due to a team change.`);
 				} else {
-					if(fishPlayer.team() == winningTeam) fishPlayer.stats.gamesWon ++;
+					if(fishPlayer.team() == winningTeam) fishPlayer.updateStats(stats => stats.gamesWon ++);
 				}
 			}
 			fishPlayer.changedTeam = false;
+			fishPlayer.tstats.wavesSurvived = 0;
+			fishPlayer.tstats.blockInteractionsThisMap = 0;
 		});
 	}
 	static ignoreGameover(callback:() => unknown){
 		this.ignoreGameOver = true;
 		callback();
 		this.ignoreGameOver = false;
+	}
+	static onGameBegin(){
+		const startTime = Date.now();
+		FishPlayer.lastMapStartTime = startTime;
+		//wait 7 seconds for players to join
+		Timer.schedule(() => FishPlayer.forEachPlayer(p => p.tstats.lastMapStartTime = startTime), 7);
 	}
 	/** Must be run on UnitChangeEvent. */
 	static onUnitChange(player:mindustryPlayer, unit:Unit | null){
@@ -982,12 +1003,12 @@ We apologize for the inconvenience.`
 		if(this.stelled()) return;
 		for(const rankToAssign of Rank.autoRanks){
 			if(!this.ranksAtLeast(rankToAssign) && rankToAssign.autoRankData){
-				if( //TODO: use global stats
+				if(
 					this.joinsAtLeast(rankToAssign.autoRankData.joins) &&
-					this.stats.blocksPlaced >= rankToAssign.autoRankData.blocksPlaced &&
-					this.stats.timeInGame >= rankToAssign.autoRankData.playtime &&
-					this.stats.chatMessagesSent >= rankToAssign.autoRankData.chatMessagesSent &&
-					(Date.now() - this.firstJoined) >= rankToAssign.autoRankData.timeSinceFirstJoin
+					this.globalStats.blocksPlaced >= rankToAssign.autoRankData.blocksPlaced &&
+					this.globalStats.timeInGame >= rankToAssign.autoRankData.playtime &&
+					this.globalStats.chatMessagesSent >= rankToAssign.autoRankData.chatMessagesSent &&
+					(Date.now() - this.globalFirstJoined) >= rankToAssign.autoRankData.timeSinceFirstJoin
 				){
 					void this.setRank(rankToAssign).then(() =>
 						this.sendMessage(`You have been automatically promoted to rank ${rankToAssign.coloredName()}!`)
@@ -1155,6 +1176,11 @@ We apologize for the inconvenience.`
 	}
 	shouldCache(){
 		return this.ranksAtLeast("mod");
+	}
+	static uploadAll(){
+		FishPlayer.forEachPlayer(fishP =>
+			void api.setFishPlayerData(fishP.getData(), 1, true)
+		);
 	}
 	/** Does not include stats */
 	hasData(){
@@ -1379,6 +1405,11 @@ We apologize for the inconvenience.`
 		return this.info().timesJoined < amount;
 	}
 
+	updateStats(func:(stats:Stats) => void):void {
+		func(this.stats);
+		func(this.globalStats);
+	}
+
 	/**
 	 * Returns a score between 0 and 1, as an estimate of the player's skill level.
 	 * Defaults to 0.2 (guessing that the best trusted players can beat 5 noobs)
@@ -1499,3 +1530,5 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 
 }
 
+//TODO convert all the unnecessary event handlers to simple calls to Events.on
+Events.on(EventType.WaveEvent, () => FishPlayer.forEachPlayer(p => p.tstats.wavesSurvived ++));

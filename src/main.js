@@ -66,5 +66,6 @@ if(12.34.toFixed(1) !== '12.3'){
 	};
 }
 
+this.ArcReflect = Reflect;
 this.Promise = require('/promise').Promise;
 require("index");

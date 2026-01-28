@@ -121,6 +121,10 @@ var FishPlayer = /** @class */ (function () {
         this.tstats = {
             //remember to clear this in updateSavedInfoFromPlayer!
             blocksBroken: 0,
+            blockInteractionsThisMap: 0,
+            lastMapStartTime: 0,
+            lastMapPlayedTime: 0,
+            wavesSurvived: 0,
         };
         /** Whether the player has manually marked themselves as AFK. */
         this.manualAfk = false;
@@ -167,6 +171,10 @@ var FishPlayer = /** @class */ (function () {
         this.lastJoined = -1;
         /** -1 represents unknown */
         this.firstJoined = -1;
+        /** -1 represents unknown */
+        this.globalLastJoined = -1;
+        /** -1 represents unknown */
+        this.globalFirstJoined = -1;
         this.stats = {
             blocksBroken: 0,
             blocksPlaced: 0,
@@ -175,8 +183,10 @@ var FishPlayer = /** @class */ (function () {
             gamesFinished: 0,
             gamesWon: 0,
         };
+        this.globalStats = this.stats;
         /** Used for the /vanish command. */
         this.showRankPrefix = true;
+        this.achievements = new Bits();
         this.uuid = uuid;
         this.player = player;
         this.updateData(data);
@@ -405,7 +415,7 @@ var FishPlayer = /** @class */ (function () {
         else {
             this.originalName = this.name = player.name;
         }
-        if (this.firstJoined == -1)
+        if (this.firstJoined < 1)
             this.firstJoined = Date.now();
         //Do not update USID here
         this.manualAfk = false;
@@ -418,9 +428,11 @@ var FishPlayer = /** @class */ (function () {
         this.shouldUpdateName = true;
         this.changedTeam = false;
         this.ipDetectedVpn = false;
-        this.tstats = {
-            blocksBroken: 0
-        };
+        this.tstats.blocksBroken = 0;
+        if (this.tstats.lastMapPlayedTime != FishPlayer.lastMapStartTime) {
+            this.tstats.blockInteractionsThisMap = 0;
+            this.tstats.lastMapPlayedTime = FishPlayer.lastMapStartTime;
+        }
         this.infoUpdated = true;
     };
     FishPlayer.prototype.updateData = function (data) {
@@ -435,6 +447,10 @@ var FishPlayer = /** @class */ (function () {
             this.lastJoined = data.lastJoined;
         if (data.firstJoined != undefined)
             this.firstJoined = data.firstJoined;
+        if (data.globalLastJoined != undefined)
+            this.globalLastJoined = data.globalLastJoined;
+        if (data.globalFirstJoined != undefined)
+            this.globalFirstJoined = data.globalFirstJoined;
         if (data.highlight != undefined)
             this.highlight = data.highlight;
         if (data.history != undefined)
@@ -447,12 +463,16 @@ var FishPlayer = /** @class */ (function () {
             this.chatStrictness = data.chatStrictness;
         if (data.stats != undefined)
             this.stats = data.stats;
+        if (data.globalStats != undefined)
+            this.globalStats = data.globalStats;
         if (data.showRankPrefix != undefined)
             this.showRankPrefix = data.showRankPrefix;
         if (data.rank != undefined)
             this.rank = (_a = ranks_1.Rank.getByName(data.rank)) !== null && _a !== void 0 ? _a : ranks_1.Rank.player;
         if (data.flags != undefined)
             this.flags = new Set(data.flags.map(ranks_1.RoleFlag.getByName).filter(Boolean));
+        if (data.achievements != undefined)
+            this.achievements = JsonIO.read(Bits, "{bits:".concat(data.achievements, "}"));
     };
     FishPlayer.prototype.getData = function () {
         var _a = this, uuid = _a.uuid, name = _a.name, muted = _a.muted, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
@@ -471,7 +491,8 @@ var FishPlayer = /** @class */ (function () {
             stats: stats,
             showRankPrefix: showRankPrefix,
             rank: rank.name,
-            flags: __spreadArray([], __read(flags.values()), false).map(function (f) { return f.name; })
+            flags: __spreadArray([], __read(flags.values()), false).map(function (f) { return f.name; }),
+            achievements: JsonIO.write(Reflect.get(this.achievements, "bits"))
         };
     };
     /** Warning: the "update" callback is run twice. */
@@ -493,7 +514,7 @@ var FishPlayer = /** @class */ (function () {
                         //but it's unlikely to happen
                         //could be fixed by transmitting the update operation to the server as a mongo update command
                         afterFetch === null || afterFetch === void 0 ? void 0 : afterFetch(this);
-                        return [4 /*yield*/, api.setFishPlayerData(this.getData())];
+                        return [4 /*yield*/, api.setFishPlayerData(this.getData(), 1, false)];
                     case 2:
                         _a.sent();
                         return [2 /*return*/];
@@ -656,6 +677,7 @@ var FishPlayer = /** @class */ (function () {
                 }
                 else if ((0, utils_1.cleanText)(player.name, true).includes("hacker")) {
                     fishPlayer.sendMessage("[scarlet]\u26A0 Don't be a script kiddie!");
+                    globals_1.FishEvents.fire("scriptKiddie", [fishPlayer]);
                 }
             }
             fishPlayer.updateAdminStatus();
@@ -725,7 +747,7 @@ var FishPlayer = /** @class */ (function () {
         //Clear temporary states such as menu and taphandler
         fishP.activeMenus = [];
         fishP.tapInfo.commandName = null;
-        fishP.stats.timeInGame += (Date.now() - fishP.lastJoined); //Time between joining and leaving
+        fishP.updateStats(function (stats) { return stats.timeInGame += (Date.now() - fishP.lastJoined); }); //Time between joining and leaving
         fishP.lastJoined = Date.now();
         this.recentLeaves.unshift(fishP);
         if (this.recentLeaves.length > 10)
@@ -803,7 +825,7 @@ var FishPlayer = /** @class */ (function () {
             }
         }
         fishP.lastActive = Date.now();
-        fishP.stats.chatMessagesSent++;
+        fishP.updateStats(function (stats) { return stats.chatMessagesSent++; });
     };
     FishPlayer.onPlayerCommand = function (player, command, unjoinedRawArgs) {
         if (command == "msg" && unjoinedRawArgs[1] == "Please do not use that logic, as it is attem83 logic and is bad to use. For more information please read www.mindustry.dev/attem")
@@ -812,28 +834,37 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.onGameOver = function (winningTeam) {
         var _this = this;
+        globals_1.FishEvents.fire("gameOver", [winningTeam]);
         this.forEachPlayer(function (fishPlayer) {
             //Clear temporary states such as menu and taphandler
             fishPlayer.activeMenus = [];
             fishPlayer.tapInfo.commandName = null;
             //Update stats
             if (!_this.ignoreGameOver && fishPlayer.team() != Team.derelict && winningTeam != Team.derelict) {
-                fishPlayer.stats.gamesFinished++;
+                fishPlayer.updateStats(function (stats) { return stats.gamesFinished++; });
                 if (fishPlayer.changedTeam) {
                     fishPlayer.sendMessage("Refusing to update stats due to a team change.");
                 }
                 else {
                     if (fishPlayer.team() == winningTeam)
-                        fishPlayer.stats.gamesWon++;
+                        fishPlayer.updateStats(function (stats) { return stats.gamesWon++; });
                 }
             }
             fishPlayer.changedTeam = false;
+            fishPlayer.tstats.wavesSurvived = 0;
+            fishPlayer.tstats.blockInteractionsThisMap = 0;
         });
     };
     FishPlayer.ignoreGameover = function (callback) {
         this.ignoreGameOver = true;
         callback();
         this.ignoreGameOver = false;
+    };
+    FishPlayer.onGameBegin = function () {
+        var startTime = Date.now();
+        FishPlayer.lastMapStartTime = startTime;
+        //wait 7 seconds for players to join
+        Timer.schedule(function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.lastMapStartTime = startTime; }); }, 7);
     };
     /** Must be run on UnitChangeEvent. */
     FishPlayer.onUnitChange = function (player, unit) {
@@ -1128,12 +1159,11 @@ var FishPlayer = /** @class */ (function () {
             return;
         var _loop_1 = function (rankToAssign) {
             if (!this_1.ranksAtLeast(rankToAssign) && rankToAssign.autoRankData) {
-                if ( //TODO: use global stats
-                this_1.joinsAtLeast(rankToAssign.autoRankData.joins) &&
-                    this_1.stats.blocksPlaced >= rankToAssign.autoRankData.blocksPlaced &&
-                    this_1.stats.timeInGame >= rankToAssign.autoRankData.playtime &&
-                    this_1.stats.chatMessagesSent >= rankToAssign.autoRankData.chatMessagesSent &&
-                    (Date.now() - this_1.firstJoined) >= rankToAssign.autoRankData.timeSinceFirstJoin) {
+                if (this_1.joinsAtLeast(rankToAssign.autoRankData.joins) &&
+                    this_1.globalStats.blocksPlaced >= rankToAssign.autoRankData.blocksPlaced &&
+                    this_1.globalStats.timeInGame >= rankToAssign.autoRankData.playtime &&
+                    this_1.globalStats.chatMessagesSent >= rankToAssign.autoRankData.chatMessagesSent &&
+                    (Date.now() - this_1.globalFirstJoined) >= rankToAssign.autoRankData.timeSinceFirstJoin) {
                     void this_1.setRank(rankToAssign).then(function () {
                         return _this.sendMessage("You have been automatically promoted to rank ".concat(rankToAssign.coloredName(), "!"));
                     });
@@ -1337,6 +1367,11 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.shouldCache = function () {
         return this.ranksAtLeast("mod");
+    };
+    FishPlayer.uploadAll = function () {
+        FishPlayer.forEachPlayer(function (fishP) {
+            return void api.setFishPlayerData(fishP.getData(), 1, true);
+        });
     };
     /** Does not include stats */
     FishPlayer.prototype.hasData = function () {
@@ -1568,6 +1603,10 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.joinsLessThan = function (amount) {
         return this.info().timesJoined < amount;
     };
+    FishPlayer.prototype.updateStats = function (func) {
+        func(this.stats);
+        func(this.globalStats);
+    };
     /**
      * Returns a score between 0 and 1, as an estimate of the player's skill level.
      * Defaults to 0.2 (guessing that the best trusted players can beat 5 noobs)
@@ -1730,6 +1769,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.antiBotModePersist = false;
     FishPlayer.antiBotModeOverride = false;
     FishPlayer.lastBotWhacked = 0;
+    FishPlayer.lastMapStartTime = 0;
     FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { return p.player.id.toString() === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
@@ -1744,4 +1784,6 @@ var FishPlayer = /** @class */ (function () {
     return FishPlayer;
 }());
 exports.FishPlayer = FishPlayer;
+//TODO convert all the unnecessary event handlers to simple calls to Events.on
+Events.on(EventType.WaveEvent, function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.wavesSurvived++; }); });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4;

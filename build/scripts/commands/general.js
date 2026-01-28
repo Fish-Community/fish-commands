@@ -81,6 +81,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
+var achievements_1 = require("/achievements");
 var api = require("/api");
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
@@ -1068,12 +1069,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             },
         };
     }), stats: {
-        args: ["target:player"],
+        args: ["target:player", "global:boolean?"],
         perm: commands_1.Perm.none,
         description: "Views a player's stats.",
         handler: function (_a) {
-            var target = _a.args.target, output = _a.output, f = _a.f;
-            output(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["[accent]Statistics for player ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, target.stats.blocksBroken, target.stats.blocksPlaced, target.stats.chatMessagesSent, target.stats.gamesFinished, (0, utils_1.formatTime)(target.stats.timeInGame), target.stats.gamesWon / target.stats.gamesFinished));
+            var _b = _a.args, target = _b.target, _c = _b.global, global = _c === void 0 ? false : _c, output = _a.output, f = _a.f;
+            var stats = global ? target.globalStats : target.stats;
+            output(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, global ? "on this server" : "across all servers", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished));
         }
     }, showworld: {
         args: ["x:number?", "y:number?", "size:number?"],
@@ -1091,7 +1093,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 data: null,
             }); }), Vars.world.width()).reverse();
             var height = Vars.world.height();
-            void menus_1.Menu.scroll(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
+            void menus_1.Menu.scroll2D(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
                 columns: size,
                 rows: size,
                 x: x ? x - Math.trunc(size / 2) : 0,
@@ -1183,5 +1185,111 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             unit.add();
             outputSuccess(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["Spawned a ", " that is partly a ", "."], ["Spawned a ", " that is partly a ", "."])), args.type, args.base));
         }
+    }, achievement: {
+        args: ["name:string?", "verbose:boolean?"],
+        description: "Displays information on a specific achievement.",
+        perm: commands_1.Perm.none,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var matching, achievement, _c;
+                var _d = _b.args, _e = _d.name, name = _e === void 0 ? "" : _e, _f = _d.verbose, verbose = _f === void 0 ? false : _f, sender = _b.sender, f = _b.f, output = _b.output;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            name = Strings.stripColors(name.toLowerCase());
+                            matching = achievements_1.Achievement.all.filter(function (a) { return Strings.stripColors(a.name).toLowerCase().includes(name); });
+                            if (matching.length == 0)
+                                (0, commands_1.fail)(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."], ["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."])), name));
+                            if (!(matching.length > 2)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, menus_1.Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, {
+                                    onCancel: "reject",
+                                    columns: 2,
+                                    optionStringifier: function (a) { return "".concat(a.icon, "[] ").concat(a.name); }
+                                })];
+                        case 1:
+                            _c = _g.sent();
+                            return [3 /*break*/, 3];
+                        case 2:
+                            _c = matching[0];
+                            _g.label = 3;
+                        case 3:
+                            achievement = _c;
+                            output(config_1.FColor.achievement(templateObject_21 || (templateObject_21 = __makeTemplateObject(["Achievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "", "", ""], ["\\\nAchievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n", "\\\n", "\\\n"])), achievement.icon, achievement.name, achievement.description + (achievement.extendedDescription ? ("\n" + "[gray]".concat(achievement.extendedDescription)) : ""), achievement.modesText, f.boolGood(achievement.has(sender)), verbose ? "[gray]ID: (".concat(achievement.nid, ")").concat(achievement.sid, "\n") : "", verbose ? "[gray]Notifies: ".concat(achievement.notify, "\n") : "", achievement.hidden ? "This achievement is secret." : ""));
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
+    }, achievementlist: {
+        args: ["target:player?"],
+        description: "Shows all achievements in a paged menu.",
+        perm: commands_1.Perm.none,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var sender = _b.sender, _c = _b.args.target, target = _c === void 0 ? sender : _c, f = _b.f;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0: return [4 /*yield*/, menus_1.Menu.textPages(sender, achievements_1.Achievement.all.filter(function (a) { return !a.hidden || a.has(target); })
+                                .map(function (a) { return [
+                                "".concat(a.icon, "[] ").concat(a.name),
+                                function () { return config_1.FColor.achievement(templateObject_22 || (templateObject_22 = __makeTemplateObject(["", "\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : ""); }
+                            ]; }))];
+                        case 1:
+                            _d.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
+    }, achievementgrid: {
+        args: ["target:player?"],
+        description: "Shows all achievements in a 2D scrolling menu.",
+        perm: commands_1.Perm.none,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var visibleAchievements, options, numberAchievements, totalAchievements, x, y, a, err_1;
+                var _c;
+                var sender = _b.sender, _d = _b.args.target, target = _d === void 0 ? sender : _d, f = _b.f;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
+                        case 0:
+                            visibleAchievements = achievements_1.Achievement.all.filter(function (a) { return !a.hidden || a.has(target); });
+                            options = (0, funcs_1.to2DArray)(visibleAchievements, 7).map(function (row) { return row.map(function (a) { return ({
+                                data: a,
+                                text: a.has(target) ? a.icon : "[gray]".concat(Strings.stripColors(a.icon)),
+                            }); }); });
+                            numberAchievements = achievements_1.Achievement.all.filter(function (a) { return a.has(target); }).length;
+                            totalAchievements = visibleAchievements.length;
+                            x = 0, y = 0;
+                            a = null;
+                            _e.label = 1;
+                        case 1:
+                            if (!true) return [3 /*break*/, 6];
+                            _e.label = 2;
+                        case 2:
+                            _e.trys.push([2, 4, , 5]);
+                            return [4 /*yield*/, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["\t", " ", "\n\t\n\t", "\n\t\n\tAllowed modes: ", "\n\tUnlocked: ", "\n\t", "\t"], ["\\\n\t", " ", "\n\t\n\t", "\n\t\n\tAllowed modes: ", "\n\tUnlocked: ", "\n\t", "\\\n\t"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") :
+                                    (target == sender ? "You have ".concat(numberAchievements, "/").concat(totalAchievements, " achievements.")
+                                        : config_1.FColor.achievement(templateObject_24 || (templateObject_24 = __makeTemplateObject(["Player ", " has ", "/", " achievements."], ["Player ", " has ", "/", " achievements."])), target.prefixedName, numberAchievements, totalAchievements))
+                                        + "\nClick an achievement icon to show more information.", options, { onCancel: "reject", columns: 5, rows: 4, getCenterText: function () { return String.fromCharCode(Iconc.settings); }, x: x, y: y })];
+                        case 3:
+                            _c = __read.apply(void 0, [_e.sent(), 3]), a = _c[0], x = _c[1], y = _c[2];
+                            return [3 /*break*/, 5];
+                        case 4:
+                            err_1 = _e.sent();
+                            if (err_1 == "cancel")
+                                return [2 /*return*/]; //TODO replace this string "cancel" with a symbol
+                            else
+                                throw err_1;
+                            return [3 /*break*/, 5];
+                        case 5:
+                            if (a == achievements_1.Achievements.click_me && target == sender)
+                                a.grantTo(sender);
+                            return [3 /*break*/, 1];
+                        case 6: return [2 /*return*/];
+                    }
+                });
+            });
+        }
     } }));
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24;

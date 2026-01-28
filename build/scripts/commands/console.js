@@ -161,7 +161,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     var outputString = [""];
                     var _loop_1 = function (playerInfo, fishP) {
                         var flagsText = [
-                            (fishP === null || fishP === void 0 ? void 0 : fishP.marked()) && "&lris marked&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime)),
+                            (fishP === null || fishP === void 0 ? void 0 : fishP.marked()) && (globals_1.maxTime - fishP.unmarkTime < 20000 ?
+                                "&lris marked forever&fr"
+                                : "&lris marked&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime))),
                             (fishP === null || fishP === void 0 ? void 0 : fishP.muted) && "&lris muted&fr",
                             (fishP === null || fishP === void 0 ? void 0 : fishP.hasFlag("member")) && "&lmis member&fr",
                             (fishP === null || fishP === void 0 ? void 0 : fishP.autoflagged) && "&lris autoflagged&fr",
@@ -391,7 +393,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 }
             }
             else if ((range = (0, utils_1.getIPRange)(args.target)) != null) {
-                if (admins.subnetBans.contains(function (ip) { return ip.replace(/\.$/, "") == range; })) {
+                if (admins.subnetBans.contains(boolf(function (ip) { return ip.replace(/\.$/, "") == range; }))) {
                     output("Subnet &c\"".concat(range, "\"&fr is already banned."));
                 }
                 else {
@@ -592,7 +594,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 (0, commands_1.fail)("Please use the setusid command instead.");
             var oldusid = player.usid;
             player.usid = null;
-            api.setFishPlayerData(player.getData()).then(function () {
+            api.setFishPlayerData(player.getData(), 1, true).then(function () {
                 outputSuccess("Removed the usid of player ".concat(player.name, "/").concat(player.uuid, " (was ").concat(oldusid, ")"));
             }).catch(function (err) {
                 Log.err(err);
@@ -611,7 +613,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var player = (_b = players_1.FishPlayer.lastAuthKicked) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("No authorization failures have occurred since the last restart.");
             var oldusid = player.usid;
             player.usid = args.usid;
-            api.setFishPlayerData(player.getData()).then(function () {
+            api.setFishPlayerData(player.getData(), 1, true).then(function () {
                 outputSuccess("Set the usid of player ".concat(player.name, "/").concat(player.uuid, " to ").concat(args.usid, " (was ").concat(oldusid, ")"));
             }).catch(function (err) {
                 Log.err(err);
@@ -741,7 +743,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
         description: "Checks memory usage of various objects.",
         handler: function (_a) {
             var output = _a.output;
-            output("Memory usage:\nTotal: ".concat(Math.round(Core.app.getJavaHeap() / (Math.pow(2, 10))), " KB\nNumber of cached fish players: ").concat(Object.keys(players_1.FishPlayer.cachedPlayers).length, " (has data: ").concat(Object.values(players_1.FishPlayer.cachedPlayers).filter(function (p) { return p.hasData(); }).length, ")\nFish player data string length: ").concat(players_1.FishPlayer.getFishPlayersString.length, " (").concat(Core.settings.getInt("fish-subkeys"), " subkeys)\nLength of tilelog entries: ").concat(Math.round(Object.values(globals_1.tileHistory).reduce(function (acc, a) { return acc + a.length; }, 0) / (Math.pow(2, 10))), " KB"));
+            output("Memory usage:\nTotal: ".concat(Math.round(Core.app.getJavaHeap() / (Math.pow(2, 10))), " KB\nNumber of cached fish players: ").concat(Object.keys(players_1.FishPlayer.cachedPlayers).length, " (stored locally: ").concat(Object.values(players_1.FishPlayer.cachedPlayers).filter(function (p) { return p.shouldCache(); }).length, ")\nFish player data string length: ").concat(players_1.FishPlayer.getFishPlayersString.length, " (").concat(Core.settings.getInt("fish-subkeys"), " subkeys)\nLength of tilelog entries: ").concat(Math.round(Object.values(globals_1.tileHistory).reduce(function (acc, a) { return acc + a.length; }, 0) / (Math.pow(2, 10))), " KB"));
         }
     },
     stopplayer: {
@@ -1049,5 +1051,15 @@ exports.commands = (0, commands_1.consoleCommandList)({
             });
         }
     },
+    say: {
+        args: ["message:string"],
+        description: "Sends a message to the in-game chat.",
+        handler: function (_a) {
+            var message = _a.args.message;
+            Call.sendMessage("[scarlet][[Server]:[] ".concat(message));
+            Log.info("&fi&lcServer: &fr&lw".concat(message));
+            globals_1.FishEvents.fire("serverSays", []);
+        }
+    }
 });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15;

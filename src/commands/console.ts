@@ -9,7 +9,7 @@ import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { consoleCommandList, fail } from "/frameworks/commands";
 import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
-import { fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
+import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
@@ -91,7 +91,9 @@ export const commands = consoleCommandList({
 				const outputString:string[] = [""];
 				for(const [playerInfo, fishP] of infoList){
 					const flagsText = [
-						fishP?.marked() && `&lris marked&fr until ${formatTimeRelative(fishP.unmarkTime)}`,
+						fishP?.marked() && (maxTime - fishP.unmarkTime < 20_000 ?
+							`&lris marked forever&fr`
+						: `&lris marked&fr until ${formatTimeRelative(fishP.unmarkTime)}`),
 						fishP?.muted && "&lris muted&fr",
 						fishP?.hasFlag("member") && "&lmis member&fr",
 						fishP?.autoflagged && "&lris autoflagged&fr",
@@ -201,7 +203,7 @@ export const commands = consoleCommandList({
 					output(`&lrIP &c"${args.target}"&lr was banned. Ban was synced to other servers.`);
 				}
 			} else if((range = getIPRange(args.target)) != null){
-				if(admins.subnetBans.contains(ip => ip.replace(/\.$/, "") == range)){
+				if(admins.subnetBans.contains(boolf<string>(ip => ip.replace(/\.$/, "") == range))){
 					output(`Subnet &c"${range}"&fr is already banned.`);
 				} else {
 					admins.subnetBans.add(range);
@@ -381,7 +383,7 @@ export const commands = consoleCommandList({
 			if(player.ranksAtLeast("admin")) fail(`Please use the setusid command instead.`);
 			const oldusid = player.usid;
 			player.usid = null;
-			api.setFishPlayerData(player.getData()).then(() => {
+			api.setFishPlayerData(player.getData(), 1, true).then(() => {
 				outputSuccess(`Removed the usid of player ${player.name}/${player.uuid} (was ${oldusid})`);
 			}).catch(err => {
 				Log.err(err);
@@ -397,7 +399,7 @@ export const commands = consoleCommandList({
 			const player = FishPlayer.lastAuthKicked ?? fail(`No authorization failures have occurred since the last restart.`);
 			const oldusid = player.usid;
 			player.usid = args.usid;
-			api.setFishPlayerData(player.getData()).then(() => {
+			api.setFishPlayerData(player.getData(), 1, true).then(() => {
 				outputSuccess(`Set the usid of player ${player.name}/${player.uuid} to ${args.usid} (was ${oldusid})`);
 			}).catch(err => {
 				Log.err(err);
@@ -512,7 +514,7 @@ export const commands = consoleCommandList({
 			output(
 `Memory usage:
 Total: ${Math.round(Core.app.getJavaHeap() / (2 ** 10))} KB
-Number of cached fish players: ${Object.keys(FishPlayer.cachedPlayers).length} (has data: ${Object.values(FishPlayer.cachedPlayers).filter(p => p.hasData()).length})
+Number of cached fish players: ${Object.keys(FishPlayer.cachedPlayers).length} (stored locally: ${Object.values(FishPlayer.cachedPlayers).filter(p => p.shouldCache()).length})
 Fish player data string length: ${FishPlayer.getFishPlayersString.length} (${Core.settings.getInt("fish-subkeys")} subkeys)
 Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, a) => acc + a.length, 0) / (2 ** 10))} KB`
 			);
@@ -755,4 +757,14 @@ ${FishPlayer.mapPlayers(p =>
 			}
 		}
 	},
+	
+	say: {
+		args: ["message:string"],
+		description: "Sends a message to the in-game chat.",
+		handler({args: {message}}){
+			Call.sendMessage(`[scarlet][[Server]:[] ${message}`);
+			Log.info(`&fi&lcServer: &fr&lw${message}`);
+			FishEvents.fire("serverSays", []);
+		}
+	}
 });
