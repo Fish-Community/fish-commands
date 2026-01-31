@@ -172,6 +172,7 @@ Events.on(EventType.ServerLoadEvent, function (e) {
     globals_1.FishEvents.fire("dataLoaded", []);
     Core.app.addListener({
         dispose: function () {
+            players_1.FishPlayer.uploadAll();
             globals_1.FishEvents.fire("saveData", []);
             players_1.FishPlayer.saveAll(false);
             Log.info("Saved on exit.");
@@ -212,6 +213,7 @@ Events.on(EventType.GameOverEvent, function (e) {
     }
     players_1.FishPlayer.onGameOver(e.winner);
 });
+Events.on(EventType.WorldLoadEvent, function () { return players_1.FishPlayer.onGameBegin(); });
 Events.on(EventType.PlayerChatEvent, function (e) {
     players_1.FishPlayer.onPlayerChat(e.player, e.message);
 });

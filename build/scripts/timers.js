@@ -33,6 +33,7 @@ function initializeTimers() {
         Core.app.post(function () {
             SaveIO.save(file);
             players_1.FishPlayer.saveAll();
+            players_1.FishPlayer.uploadAll();
             Call.sendMessage('[#4fff8f9f]Game saved.');
             globals_1.FishEvents.fire("saveData", []);
         });

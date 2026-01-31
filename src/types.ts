@@ -36,6 +36,15 @@ export type TileHistoryEntry = {
 }
 
 
+
+export type Stats = {
+	blocksBroken: number;
+	blocksPlaced: number;
+	timeInGame: number;
+	chatMessagesSent: number;
+	gamesFinished: number;
+	gamesWon: number;
+};
 export type FishPlayerData = {
 	uuid: string;
 	name: string;
@@ -50,16 +59,15 @@ export type FishPlayerData = {
 	chatStrictness: "chat" | "strict";
 	lastJoined: number;
 	firstJoined: number;
-	stats: {
-		blocksBroken: number;
-		blocksPlaced: number;
-		timeInGame: number;
-		chatMessagesSent: number;
-		gamesFinished: number;
-		gamesWon: number;
-	};
+	globalLastJoined: number;
+	globalFirstJoined: number;
+	stats: Stats;
+	globalStats: Stats;
 	showRankPrefix: boolean;
+	/** This field contains long values, store it as a string */
+	achievements: string;
 }
+export type UploadedFishPlayerData = Omit<FishPlayerData, "globalLastJoined" | "globalFirstJoined" | "globalStats">;
 
 export type PlayerHistoryEntry = {
 	action:string;
@@ -100,7 +108,6 @@ export type FlaggedIPData = {
 	moderated: boolean;
 };
 
-export type Boolf<T> = (input:T) => boolean;
 export type Expand<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 
 export type TagFunction<Tin = string, Tout = string> = (stringChunks: readonly string[], ...varChunks: readonly Tin[]) =>Tout

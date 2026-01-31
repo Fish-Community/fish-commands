@@ -169,6 +169,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 
 	Core.app.addListener({
 		dispose(){
+			FishPlayer.uploadAll();
 			FishEvents.fire("saveData", []);
 			FishPlayer.saveAll(false);
 			Log.info("Saved on exit.");
@@ -204,6 +205,7 @@ Events.on(EventType.GameOverEvent, (e) => {
 	}
 	FishPlayer.onGameOver(e.winner as Team);
 });
+Events.on(EventType.WorldLoadEvent, () => FishPlayer.onGameBegin());
 Events.on(EventType.PlayerChatEvent, e => {
 	FishPlayer.onPlayerChat(e.player, e.message);
 });

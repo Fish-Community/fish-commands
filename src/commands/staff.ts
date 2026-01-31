@@ -344,6 +344,7 @@ export const commands = commandList({
 		perm: Perm.mod,
 		handler({outputSuccess}){
 			FishPlayer.saveAll();
+			FishPlayer.uploadAll();
 			FishEvents.fire("saveData", []);
 			const file = Vars.saveDirectory.child(`1.${Vars.saveExtension}`);
 			SaveIO.save(file);

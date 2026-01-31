@@ -3,8 +3,9 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains most in-game chat commands that can be run by untrusted players.
 */
 
+import { Achievement, Achievements } from "/achievements";
 import * as api from "/api";
-import { FishServer, Gamemode, rules, text } from "/config";
+import { FColor, FishServer, Gamemode, rules, text } from "/config";
 import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
@@ -1013,20 +1014,21 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		};
 	}),
 	stats: {
-		args: ["target:player"],
+		args: ["target:player", "global:boolean?"],
 		perm: Perm.none,
 		description: "Views a player's stats.",
-		handler({args:{target}, output, f}){
+		handler({args:{target, global = false}, output, f}){
+			const stats = global ? target.globalStats : target.stats;
 			output(f`[accent]\
-Statistics for player ${target}:
+Statistics for player ${target} ${global ? "on this server" : "across all servers"}:
 (note: we started recording statistics on 22 Jan 2024)
 [white]--------------[]
-Blocks broken: ${target.stats.blocksBroken}
-Blocks placed: ${target.stats.blocksPlaced}
-Chat messages sent: ${target.stats.chatMessagesSent}
-Games finished: ${target.stats.gamesFinished}
-Time in-game: ${formatTime(target.stats.timeInGame)}
-Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
+Blocks broken: ${stats.blocksBroken}
+Blocks placed: ${stats.blocksPlaced}
+Chat messages sent: ${stats.chatMessagesSent}
+Games finished: ${stats.gamesFinished}
+Time in-game: ${formatTime(stats.timeInGame)}
+Win rate: ${stats.gamesWon / stats.gamesFinished}`
 			);
 		}
 	},
@@ -1043,7 +1045,7 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 				data: null,
 			})), Vars.world.width()).reverse();
 			const height = Vars.world.height();
-			void Menu.scroll(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
+			void Menu.scroll2D(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, {
 				columns: size,
 				rows: size,
 				x: x ? x - Math.trunc(size / 2) : 0,
@@ -1133,5 +1135,101 @@ Win rate: ${target.stats.gamesWon / target.stats.gamesFinished}`
 			unit.add();
 			outputSuccess(f`Spawned a ${args.type} that is partly a ${args.base}.`);
 		}
-	}
+	},
+
+	achievement: {
+		args: ["name:string?", "verbose:boolean?"],
+		description: "Displays information on a specific achievement.",
+		perm: Perm.none,
+		async handler({args: {name = "", verbose = false}, sender, f, output}){
+			name = Strings.stripColors(name.toLowerCase());
+			
+			const matching = Achievement.all.filter(a => Strings.stripColors(a.name).toLowerCase().includes(name));
+			if(matching.length == 0)
+				fail(f`No achievements found with name ${name}. To view all achievements, run [accent]/achievements[].`);
+			const achievement = matching.length > 2 ?
+				await Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, {
+					onCancel: "reject",
+					columns: 2,
+					optionStringifier: a => `${a.icon}[] ${a.name}`
+				})
+			: matching[0];
+			
+			output(FColor.achievement`\
+Achievement ${achievement.icon} ${achievement.name}
+[white]--------------[]
+${achievement.description + (achievement.extendedDescription ? ("\n" + `[gray]${achievement.extendedDescription}`) : "")}
+Allowed modes: ${achievement.modesText}
+Unlocked: ${f.boolGood(achievement.has(sender))}
+${verbose ? `[gray]ID: (${achievement.nid})${achievement.sid}\n` : ""}\
+${verbose ? `[gray]Notifies: ${achievement.notify}\n` : ""}\
+${achievement.hidden ? "This achievement is secret." : ""}\
+`);
+			//TODO "x% of players have this achievement" tracking, requires backend aggregation endpoint
+		}
+	},
+
+	achievementlist: {
+		args: ["target:player?"],
+		description: "Shows all achievements in a paged menu.",
+		perm: Perm.none,
+		async handler({sender, args: { target = sender }, f}){
+			await Menu.textPages(
+				sender,
+				Achievement.all.filter(a => !a.hidden || a.has(target))
+					.map(a => [
+						`${a.icon}[] ${a.name}`,
+						() => FColor.achievement`\
+${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
+Allowed modes: ${a.modesText}
+Unlocked: ${f.boolGood(a.has(target))}
+${a.hidden ? "This achievement is secret." : ""}\
+`
+					])
+			);
+		}
+	},
+
+	achievementgrid: {
+		args: ["target:player?"],
+		description: "Shows all achievements in a 2D scrolling menu.",
+		perm: Perm.none,
+		async handler({sender, args: { target = sender }, f}){
+			const visibleAchievements = Achievement.all.filter(a => !a.hidden || a.has(target));
+			const options = to2DArray(visibleAchievements, 7).map(row => row.map(a => ({
+				data: a,
+				text: a.has(target) ? a.icon : `[gray]${Strings.stripColors(a.icon)}`,
+			})));
+			const numberAchievements = Achievement.all.filter(a => a.has(target)).length;
+			const totalAchievements = visibleAchievements.length;
+			let x = 0, y = 0;
+			let a: Achievement | null = null;
+			while(true){
+				try {
+					[a, x, y] = await Menu.scroll2D(
+						sender, "Achievements",
+						a ? FColor.achievement`\
+	${a.icon} ${a.name}
+	
+	${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
+	
+	Allowed modes: ${a.modesText}
+	Unlocked: ${f.boolGood(a.has(target))}
+	${a.hidden ? "This achievement is secret." : ""}\
+	` :
+		(target == sender ? `You have ${numberAchievements}/${totalAchievements} achievements.`
+		: FColor.achievement`Player ${target.prefixedName} has ${numberAchievements}/${totalAchievements} achievements.`)
+		+ "\nClick an achievement icon to show more information.",
+						options,
+						{ onCancel: "reject", columns: 5, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
+					);
+				} catch(err){
+					if(err == "cancel") return; //TODO replace this string "cancel" with a symbol
+					else throw err;
+				}
+				if(a == Achievements.click_me && target == sender) a.grantTo(sender);
+			}
+		}
+	},
+	
 });

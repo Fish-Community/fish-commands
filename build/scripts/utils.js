@@ -86,6 +86,7 @@ exports.getHash = getHash;
 exports.match = match;
 exports.fishCommandsRootDirPath = fishCommandsRootDirPath;
 exports.applyEffectMode = applyEffectMode;
+exports.getStatuses = getStatuses;
 var api = require("/api");
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
@@ -581,6 +582,7 @@ function definitelyRealMemoryCorruption() {
     var hexString = Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, "0");
     Call.sendMessage("[scarlet]Error: internal server error.");
     Call.sendMessage("[scarlet]Error: memory corruption: mindustry.world.modules.ItemModule@".concat(hexString));
+    globals_1.FishEvents.fire("memoryCorruption", []);
 }
 function getEnemyTeam() {
     if (config_1.Gamemode.pvp())
@@ -773,7 +775,8 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
                 var fishP = players_1.FishPlayer.get(e.unit.player);
                 //TODO move this code
                 fishP.tstats.blocksBroken++;
-                fishP.stats.blocksBroken++;
+                fishP.tstats.blockInteractionsThisMap++;
+                fishP.updateStats(function (stats) { return stats.blocksBroken++; });
             }
         }
         else {
@@ -782,19 +785,30 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
             if ((_k = (_j = e.unit) === null || _j === void 0 ? void 0 : _j.player) === null || _k === void 0 ? void 0 : _k.uuid()) {
                 var fishP = players_1.FishPlayer.get(e.unit.player);
                 //TODO move this code
-                fishP.stats.blocksPlaced++;
+                fishP.updateStats(function (stats) { return stats.blocksPlaced++; });
+                fishP.tstats.blockInteractionsThisMap++;
             }
         }
     }
     else if (e instanceof EventType.ConfigEvent) {
         tile = e.tile.tile;
         uuid = (_m = (_l = e.player) === null || _l === void 0 ? void 0 : _l.uuid()) !== null && _m !== void 0 ? _m : "unknown";
+        if (uuid != "unknown") {
+            var fishP = players_1.FishPlayer.getById(uuid);
+            if (fishP)
+                fishP.tstats.blockInteractionsThisMap++;
+        }
         action = "configured";
         type = e.tile.block.name;
     }
     else if (e instanceof EventType.BuildRotateEvent) {
         tile = e.build.tile;
         uuid = (_s = (_q = (_p = (_o = e.unit) === null || _o === void 0 ? void 0 : _o.player) === null || _p === void 0 ? void 0 : _p.uuid()) !== null && _q !== void 0 ? _q : (_r = e.unit) === null || _r === void 0 ? void 0 : _r.type.name) !== null && _s !== void 0 ? _s : "unknown";
+        if (uuid != "unknown") {
+            var fishP = players_1.FishPlayer.getById(uuid);
+            if (fishP)
+                fishP.tstats.blockInteractionsThisMap++;
+        }
         action = "rotated";
         type = e.build.block.name;
     }
@@ -1047,4 +1061,35 @@ function applyEffectMode(mode, unit, ticks) {
             finally { if (e_7) throw e_7.error; }
         }
     }
+}
+var sources = [
+    Packages.mindustry.gen.UnitEntity,
+    Packages.mindustry.gen.MechUnit,
+    Packages.mindustry.gen.LegsUnit,
+    Packages.mindustry.gen.CrawlUnit,
+    Packages.mindustry.gen.UnitWaterMove,
+    Packages.mindustry.gen.BlockUnitUnit,
+    Packages.mindustry.gen.ElevationMoveUnit,
+    Packages.mindustry.gen.BuildingTetherPayloadUnit,
+    Packages.mindustry.gen.TimedKillUnit,
+    Packages.mindustry.gen.PayloadUnit,
+    Packages.mindustry.gen.TankUnit,
+];
+function getStatuses(unit) {
+    var e_8, _a;
+    try {
+        for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
+            var clazz = sources_1_1.value;
+            if (unit instanceof clazz)
+                return ArcReflect.get(clazz, unit, "statuses");
+        }
+    }
+    catch (e_8_1) { e_8 = { error: e_8_1 }; }
+    finally {
+        try {
+            if (sources_1_1 && !sources_1_1.done && (_a = sources_1.return)) _a.call(sources_1);
+        }
+        finally { if (e_8) throw e_8.error; }
+    }
+    return new Seq();
 }
