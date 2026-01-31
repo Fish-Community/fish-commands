@@ -61,7 +61,7 @@ exports.bannedWords = {
         "re" + "tard",
         'kill yourself', 'kill urself', /\bkys\b/,
         "kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", //nazi-related words
-        ["co" + "ck", "cockroach", "poppycock", "cocktail"],
+        ["co" + "ck", "cockroach", "poppycock", "cocktail"], "suck dick", "sucking dick",
         "iamasussyimposter",
         ["cu" + "nt", "scunthorpe"],
         ["penis", "peniston"],
