@@ -199,9 +199,11 @@ class Building {
 	team: Team;
 	changeTeam: Team;
 	enabled: boolean;
+	health: number;
 	ammo?: Seq<{item: Item}>;
 	warmup?: number;
 	storageCapacity?: number;
+	dead: boolean;
 	timeScale(): number;
 	kill():void;
 	tileX():number;
@@ -496,6 +498,7 @@ class Seq<T> {
 	each(pred:(item:T) => boolean, func:(item:T) => unknown):void;
 	isEmpty():boolean;
 	map<R>(mapFunc:(item:T) => R):Seq<R>;
+	flatMap<R>(mapFunc:(item:T) => Seq<R>):Seq<R>;
 	toString(separator?:string, stringifier?:(item:T) => string):string;
 	toArray():T[];
 	copy():Seq<T>;
@@ -537,7 +540,9 @@ class ObjectIntMap<K> {
 	get(key:K):number;
 	increment(key:K):void;
 	clear():void;
+	remove(key:K):number | null;
 	size:number;
+	forEach(func:(_:{key:K, value:number}) => void):void;
 	entries(): {
 		toArray():Seq<ObjectIntMapEntry<K>>;
 	};

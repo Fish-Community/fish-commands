@@ -572,14 +572,12 @@ exports.Achievements = {
         modes: ["not", "sandbox"],
         disabled: true
     }), //TODO
-    core_low_hp: new Achievement(["yellow", Blocks.coreNucleus.emoji()], "Close Call", "Have your core reach less than 1% health, but survive.", {
+    core_low_hp: new Achievement(["yellow", Blocks.coreNucleus.emoji()], "Close Call", "Have your core reach less than 50 health, but survive.", {
         modes: ["not", "sandbox"],
-        disabled: true
-    }), //TODO
-    enemy_core_low_hp: new Achievement(["red", Blocks.coreNucleus.emoji()], "So Close", "Cause the enemy core to reach less than 1% health, but survive.", {
+    }),
+    enemy_core_low_hp: new Achievement(["red", Blocks.coreNucleus.emoji()], "So Close", "Cause the enemy core to reach less than 50 health, but survive.", {
         modes: ["not", "sandbox"],
-        disabled: true
-    }), //TODO
+    }),
     verified: new Achievement([ranks_1.Rank.active.color, Iconc.ok], "Verified", "Be promoted automatically to ".concat(ranks_1.Rank.active.coloredName(), " rank."), {
         checkPlayerJoin: function (p) { return p.ranksAtLeast("active"); }, notify: "nobody"
     }),
@@ -694,6 +692,34 @@ Timer.schedule(function () {
     else
         isAlone = 0;
 }, 2, 2);
+var coreHealthTime = new ObjectIntMap();
+if (!config_1.Gamemode.sandbox())
+    Timer.schedule(function () {
+        coreHealthTime.forEach(function (_a) {
+            var core = _a.key, value = _a.value;
+            if (Date.now() > value) {
+                if (core.dead) {
+                    coreHealthTime.remove(core);
+                }
+                else if (core.health > 50) {
+                    //grant achievement
+                    players_1.FishPlayer.forEachPlayer(function (p) {
+                        if (core.team == p.team())
+                            exports.Achievements.core_low_hp.grantTo(p);
+                        else
+                            exports.Achievements.enemy_core_low_hp.grantTo(p);
+                    });
+                    coreHealthTime.remove(core);
+                }
+            }
+        });
+        Vars.state.teams.active.flatMap(function (t) { return t.cores; }).each(function (core) {
+            if (core.health < 50 && !coreHealthTime.get(core))
+                coreHealthTime.put(core, Date.now() + 12000);
+        });
+    }, 1, 1);
+Events.on(EventType.GameOverEvent, function () { return coreHealthTime.clear(); });
+Events.on(EventType.WorldLoadEvent, function () { return coreHealthTime.clear(); });
 globals_1.FishEvents.on("scriptKiddie", function (_, p) { return Timer.schedule(function () { return exports.Achievements.script_kiddie.grantTo(p); }, 2); });
 globals_1.FishEvents.on("memoryCorruption", function () { return exports.Achievements.memory_corruption.grantToAllOnline(); });
 globals_1.FishEvents.on("serverSays", function () { return exports.Achievements.server_speak.grantToAllOnline(); });

@@ -462,14 +462,12 @@ export const Achievements = {
 		modes: ["not", "sandbox"],
 		disabled: true
 	}), //TODO
-	core_low_hp: new Achievement(["yellow", Blocks.coreNucleus.emoji()], "Close Call", "Have your core reach less than 1% health, but survive.", {
+	core_low_hp: new Achievement(["yellow", Blocks.coreNucleus.emoji()], "Close Call", "Have your core reach less than 50 health, but survive.", {
 		modes: ["not", "sandbox"],
-		disabled: true
-	}), //TODO
-	enemy_core_low_hp: new Achievement(["red", Blocks.coreNucleus.emoji()], "So Close", "Cause the enemy core to reach less than 1% health, but survive.", {
+	}),
+	enemy_core_low_hp: new Achievement(["red", Blocks.coreNucleus.emoji()], "So Close", "Cause the enemy core to reach less than 50 health, but survive.", {
 		modes: ["not", "sandbox"],
-		disabled: true
-	}), //TODO
+	}),
 	verified: new Achievement([Rank.active.color, Iconc.ok], "Verified", `Be promoted automatically to ${Rank.active.coloredName()} rank.`, {
 		checkPlayerJoin: p => p.ranksAtLeast("active"), notify: "nobody"
 	}),
@@ -556,6 +554,7 @@ Events.on(EventType.UnitBulletDestroyEvent, ({unit, bullet}:{unit:Unit; bullet: 
 let siliconReached = Team.all.map(_ => false);
 Events.on(EventType.GameOverEvent, () => siliconReached = Team.all.map(_ => false));
 let isAlone = 0;
+
 Timer.schedule(() => {
 	if(!Vars.state.gameOver && !Gamemode.sandbox()){
 		Vars.state.teams.active.each(({team}) => {
@@ -569,6 +568,29 @@ Timer.schedule(() => {
 		else if(Date.now() > isAlone + Duration.minutes(2)) Achievements.alone.grantToAllOnline();
 	} else isAlone = 0;
 }, 2, 2);
+
+const coreHealthTime = new ObjectIntMap<Building>();
+if(!Gamemode.sandbox()) Timer.schedule(() => {
+	coreHealthTime.forEach(({key: core, value}) => {
+		if(Date.now() > value){
+			if(core.dead){
+				coreHealthTime.remove(core);
+			} else if(core.health > 50){
+				//grant achievement
+				FishPlayer.forEachPlayer(p => {
+					if(core.team == p.team()) Achievements.core_low_hp.grantTo(p);
+					else Achievements.enemy_core_low_hp.grantTo(p);
+				});
+				coreHealthTime.remove(core);
+			}
+		}
+	});
+	Vars.state.teams.active.flatMap(t => t.cores).each(core => {
+		if(core.health < 50 && !coreHealthTime.get(core)) coreHealthTime.put(core, Date.now() + 12_000);
+	});
+}, 1, 1);
+Events.on(EventType.GameOverEvent, () => coreHealthTime.clear());
+Events.on(EventType.WorldLoadEvent, () => coreHealthTime.clear());
 
 
 FishEvents.on("scriptKiddie", (_, p) => Timer.schedule(() => Achievements.script_kiddie.grantTo(p), 2));
