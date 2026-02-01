@@ -545,7 +545,7 @@ Events.on(EventType.UnitDrownEvent, ({unit}:{unit: Unit}) => {
 });
 
 Events.on(EventType.UnitBulletDestroyEvent, ({unit, bullet}:{unit:Unit; bullet: Bullet}) => {
-	if(!Gamemode.sandbox() && unit.type == UnitTypes.dagger && (bullet.owner as Building).block == Blocks.foreshadow){
+	if(!Gamemode.sandbox() && unit.type == UnitTypes.dagger && (bullet.owner as Building | null)?.block == Blocks.foreshadow){
 		const build = bullet.owner as Building;
 		if(build.liquids.current() == Liquids.cryofluid && build.timeScale() >= 3) Achievements.foreshadow_overkill.grantToAllOnline(build.team);
 	}

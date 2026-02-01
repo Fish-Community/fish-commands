@@ -663,8 +663,9 @@ Events.on(EventType.UnitDrownEvent, function (_a) {
     }
 });
 Events.on(EventType.UnitBulletDestroyEvent, function (_a) {
+    var _b;
     var unit = _a.unit, bullet = _a.bullet;
-    if (!config_1.Gamemode.sandbox() && unit.type == UnitTypes.dagger && bullet.owner.block == Blocks.foreshadow) {
+    if (!config_1.Gamemode.sandbox() && unit.type == UnitTypes.dagger && ((_b = bullet.owner) === null || _b === void 0 ? void 0 : _b.block) == Blocks.foreshadow) {
         var build = bullet.owner;
         if (build.liquids.current() == Liquids.cryofluid && build.timeScale() >= 3)
             exports.Achievements.foreshadow_overkill.grantToAllOnline(build.team);

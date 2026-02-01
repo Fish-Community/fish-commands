@@ -633,7 +633,7 @@ class Fi {
 	readBytes():number[];
 }
 class Bullet {
-	owner: Unit | Building;
+	owner: Unit | Building | null;
 }
 class Pattern {
 	static matches(regex:string, target:string):boolean;
