@@ -569,24 +569,24 @@ Timer.schedule(() => {
 	} else isAlone = 0;
 }, 2, 2);
 
-const coreHealthTime = new ObjectIntMap<Building>();
+const coreHealthTime = new Map<Building, number>();
 if(!Gamemode.sandbox()) Timer.schedule(() => {
-	coreHealthTime.forEach(({key: core, value}) => {
+	coreHealthTime.forEach((value, core) => {
 		if(Date.now() > value){
 			if(core.dead){
-				coreHealthTime.remove(core);
+				coreHealthTime.delete(core);
 			} else if(core.health > 50){
 				//grant achievement
 				FishPlayer.forEachPlayer(p => {
 					if(core.team == p.team()) Achievements.core_low_hp.grantTo(p);
 					else Achievements.enemy_core_low_hp.grantTo(p);
 				});
-				coreHealthTime.remove(core);
+				coreHealthTime.delete(core);
 			}
 		}
 	});
 	Vars.state.teams.active.flatMap(t => t.cores).each(core => {
-		if(core.health < 50 && !coreHealthTime.get(core)) coreHealthTime.put(core, Date.now() + 12_000);
+		if(core.health < 50 && !coreHealthTime.get(core)) coreHealthTime.set(core, Date.now() + 12_000);
 	});
 }, 1, 1);
 Events.on(EventType.GameOverEvent, () => coreHealthTime.clear());

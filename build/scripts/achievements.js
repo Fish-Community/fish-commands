@@ -692,14 +692,13 @@ Timer.schedule(function () {
     else
         isAlone = 0;
 }, 2, 2);
-var coreHealthTime = new ObjectIntMap();
+var coreHealthTime = new Map();
 if (!config_1.Gamemode.sandbox())
     Timer.schedule(function () {
-        coreHealthTime.forEach(function (_a) {
-            var core = _a.key, value = _a.value;
+        coreHealthTime.forEach(function (value, core) {
             if (Date.now() > value) {
                 if (core.dead) {
-                    coreHealthTime.remove(core);
+                    coreHealthTime.delete(core);
                 }
                 else if (core.health > 50) {
                     //grant achievement
@@ -709,13 +708,13 @@ if (!config_1.Gamemode.sandbox())
                         else
                             exports.Achievements.enemy_core_low_hp.grantTo(p);
                     });
-                    coreHealthTime.remove(core);
+                    coreHealthTime.delete(core);
                 }
             }
         });
         Vars.state.teams.active.flatMap(function (t) { return t.cores; }).each(function (core) {
             if (core.health < 50 && !coreHealthTime.get(core))
-                coreHealthTime.put(core, Date.now() + 12000);
+                coreHealthTime.set(core, Date.now() + 12000);
         });
     }, 1, 1);
 Events.on(EventType.GameOverEvent, function () { return coreHealthTime.clear(); });
