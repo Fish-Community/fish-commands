@@ -462,7 +462,7 @@ exports.Achievements = {
             Groups.powerGraph.each(function (_a) {
                 var graph = _a.graph;
                 //we don't need to actually check for power sources, just assume that ~1mil power is a source
-                if (graph.lastPowerNeeded > graph.lastPowerProduced && graph.lastPowerNeeded < 1e10 && graph.lastPowerProduced >= 999900)
+                if (graph.lastPowerNeeded > graph.lastPowerProduced && graph.lastPowerNeeded < 1e10 && (graph.lastPowerProduced / Time.delta * 60) >= 999900)
                     found = true;
             });
             return found;
@@ -556,13 +556,15 @@ exports.Achievements = {
     //misc
     power_1mil: new Achievement(["green", Blocks.powerSource.emoji()], "Who needs sources?", "Reach a power production of 1 million without using power sources.", {
         modes: ["not", "sandbox"],
-        checkFrequent: function () {
+        checkFrequent: function (team) {
             var found = false;
             //deliberate ordering for performance reasons
             Groups.powerGraph.each(function (_a) {
                 var graph = _a.graph;
-                //we don't need to actually check for power sources, just assume that ~1mil power is a source
-                if (graph.lastPowerProduced > 1e6 && !graph.producers.contains(boolf(function (b) { return b.block == Blocks.powerSource; })))
+                //we need to actually check for power sources
+                if ((graph.lastPowerProduced / Time.delta * 60) > 1e6 &&
+                    !graph.producers.contains(boolf(function (b) { return b.block == Blocks.powerSource; })) &&
+                    graph.producers.first().team == team)
                     found = true;
             });
             return found;
@@ -629,8 +631,7 @@ exports.Achievements = {
             //deliberate ordering for performance reasons
             Groups.powerGraph.each(function (_a) {
                 var graph = _a.graph;
-                //assume that any network running 15 impacts has at least 2 other power sources
-                if (graph.producers.size >= 17 && graph.producers.count(function (b) { return b.block == Blocks.impactReactor && b.warmup > 0.99999; }) > 15 && graph.producers.first().team == team)
+                if (graph.producers.size >= 15 && graph.producers.count(function (b) { return b.block == Blocks.impactReactor && b.warmup > 0.99999; }) > 15 && graph.producers.first().team == team)
                     found = true;
             });
             return found;
