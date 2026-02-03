@@ -398,6 +398,7 @@ class TimerTask {
 }
 const Time: {
 	millis(): number;
+	delta: number;
 	timeSinceMillis(millis: number): number;
 	setDeltaProvider(provider: () => number):void;
 };
