@@ -455,7 +455,7 @@ export const Achievements = {
 				if(
 					(graph.lastPowerProduced / Time.delta * 60) > 1e6 &&
 					!graph.producers.contains(boolf<Building>(b => b.block == Blocks.powerSource)) &&
-					graph.producers.first().team == team
+					graph.producers.firstOpt()?.team == team
 				)
 					found = true;
 			});

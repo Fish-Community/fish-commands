@@ -560,11 +560,12 @@ exports.Achievements = {
             var found = false;
             //deliberate ordering for performance reasons
             Groups.powerGraph.each(function (_a) {
+                var _b;
                 var graph = _a.graph;
                 //we need to actually check for power sources
                 if ((graph.lastPowerProduced / Time.delta * 60) > 1e6 &&
                     !graph.producers.contains(boolf(function (b) { return b.block == Blocks.powerSource; })) &&
-                    graph.producers.first().team == team)
+                    ((_b = graph.producers.firstOpt()) === null || _b === void 0 ? void 0 : _b.team) == team)
                     found = true;
             });
             return found;
