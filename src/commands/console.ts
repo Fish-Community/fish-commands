@@ -766,5 +766,13 @@ ${FishPlayer.mapPlayers(p =>
 			Log.info(`&fi&lcServer: &fr&lw${message}`);
 			FishEvents.fire("serverSays", []);
 		}
+	},
+
+	whitelist: {
+		args: ["_:string?"],
+		description: "Disabled to prevent accidental lag",
+		handler(){
+			fail(`This command has been disabled to prevent lag. Fish servers do not use a whitelist.`);
+		}
 	}
 });

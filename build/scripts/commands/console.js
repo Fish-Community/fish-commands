@@ -1060,6 +1060,13 @@ exports.commands = (0, commands_1.consoleCommandList)({
             Log.info("&fi&lcServer: &fr&lw".concat(message));
             globals_1.FishEvents.fire("serverSays", []);
         }
+    },
+    whitelist: {
+        args: ["_:string?"],
+        description: "Disabled to prevent accidental lag",
+        handler: function () {
+            (0, commands_1.fail)("This command has been disabled to prevent lag. Fish servers do not use a whitelist.");
+        }
     }
 });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15;
