@@ -80,14 +80,14 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         FishPlayer.onBotWhack();
         Log.info(`&yAntibot killed connection ${e.connection.address} due to omni discord link`);
         return;
-    }
-    if(e.packet.name.includes("счастливого 2024 года!")){
+    }*/
+    if (e.packet.name.includes("1`1@everyone")) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
-        FishPlayer.onBotWhack();
-        Log.info(`&yAntibot killed connection ${e.connection.address} due to known bad name`);
+        players_1.FishPlayer.onBotWhack();
+        Log.info("&yAntibot killed connection ".concat(e.connection.address, " due to known bad name"));
         return;
-    }*/
+    }
     if (Vars.netServer.admins.isDosBlacklisted(e.connection.address)) {
         //threading moment, i think
         e.connection.kicked = true;
