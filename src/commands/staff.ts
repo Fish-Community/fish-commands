@@ -1050,5 +1050,15 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 		handler(){
 			definitelyRealMemoryCorruption();
 		}
+	},
+	editor: {
+		args: ["editor:boolean"],
+		description: "Toggles the in-game editor mode.",
+		perm: Perm.trusted,
+		requirements: [Req.mode("testsrv"), Req.cooldownGlobal(20_000)],
+		handler({args:{ editor }}){
+			Vars.state.rules.editor = editor;
+			Call.setRules(Vars.state.rules);
+		}
 	}
 });
