@@ -11,10 +11,10 @@ import type { FishCommandData } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
 import { capitalizeText, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
-import { FMap } from "/maps";
+import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
+import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, outputMessage, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
 
 export const commands = commandList({
@@ -839,6 +839,7 @@ Please stop attacking and [lime]build defenses[] first!`
 	//	 }
 	// },
 
+	// no, it will not get the menu. yes, I know it sucks, but I doubt we nee
 	forcenextmap: {
 		args: ["map:map"],
 		description: 'Override the next map in queue.',
@@ -864,12 +865,12 @@ Please stop attacking and [lime]build defenses[] first!`
 		perm: Perm.none,
 		handler({output}){
 			output(`\
-[yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.
+[yellow]Use [white]/nextmap [lightgray][[map name] [yellow]to vote on a map.
 
 [blue]Available maps:
 _________________________
 ${Vars.maps.customMaps().toArray().map(map =>
-`[yellow]${map.name()}`
+	`[yellow]${map.name()}`
 ).join("\n")}`
 			);
 		}
@@ -883,6 +884,61 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		const voteDuration = Duration.minutes(1.5);
 		let task: TimerTask | null = null;
 
+		async function currentMenu(target: FishPlayer): Promise<MMap> {
+			const result = await Menu.menu(
+				"Select a map",
+				`[accent]---Current Map---
+Map Name: [white]${Vars.state.map.name()}
+[accent]Map Author: [white]${Vars.state.map.author()}
+Fastest Time: [white]${formatTime(FMap.getCreate(Vars.state.map).stats().shortestTime)}
+Current Time: [white]${formatTime(PartialMapRun.current?.duration() ?? FMap.getCreate(Vars.state.map).runs.at(-1)?.duration() ?? 0)}`,
+				["[green]Current Maps", "[yellow]Throwback Maps", "[orange]Campaigns"],
+				target,
+				{ columns: 1, includeCancel: "Close" }
+			);
+			switch (result) {
+				case '[green]Current Maps': {
+					const map = await Menu.pagedList(
+						target,
+						"Current Maps",
+						"Select a map to view more information.",
+						Vars.maps.customMaps().toArray(),
+						{ optionStringifier: map => map.name(), rowsPerPage: 10, columns: 1 }
+					);
+					const res = await Menu.buttons(
+						target,
+						map.name(),
+						`[accent]Description: [white]${map.description()}
+[accent]Author: [white]${map.author()}
+[accent]Fastest Time: [white]${formatTime((FMap.getCreate(map)).stats().shortestTime)}
+[accent]Runs: [white]${(FMap.getCreate(map)).stats().allRunCount}
+[accent]Winrate: [white]${((FMap.getCreate(map)).stats().winRate * 100).toFixed(2)}%`,
+						[[
+							{ data: true, text: "[green]Vote for this Map" }
+						], [
+							{ data: false, text: "[red]Back" }
+						]],
+						{ onCancel: "null" }
+					);
+					if(res) return map;
+					else return currentMenu(target);
+				}
+				case '[yellow]Throwback Maps': fail("Throwback maps have not yet been implemented.");
+				case '[orange]Campaigns': fail("Campaigns have not yet been implemented.");
+			};
+		}
+
+		function sendVote(sender:FishPlayer, map:MMap){
+			votes.set(sender, map);
+			if(voteEndTime == -1){
+				if((Date.now() - lastVoteTime) < Duration.minutes(1)) fail(`Please wait 1 minute before starting a new map vote.`);
+				startVote();
+				Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] started a map vote, and voted for [yellow]${map.name()}[cyan]. Use [white]/nextmap ${map.plainName()}[] to add your vote, or run [white]/maps[] to see other available maps.`);
+			} else {
+				Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] voted for [yellow]${map.name()}[cyan]. Time left: [scarlet]${formatTimeRelative(voteEndTime, true)}`);
+				showVotes();
+			}
+		}
 		function resetVotes(){
 			votes.clear();
 			voteEndTime = -1;
@@ -950,24 +1006,17 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		Events.on(EventType.ServerLoadEvent, resetVotes);
 
 		return {
-			args: ['map:map'],
-			description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
+			args: ['map:map?'],
+			description: 'Allows you to vote for the next map.',
 			perm: Perm.play,
 			data: {votes, voteEndTime: () => voteEndTime, resetVotes, endVote},
 			requirements: [Req.cooldown(10_000)],
-			handler({args:{map}, sender}){
+			async handler({args, sender}){
 				if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
 				if(votes.get(sender)) fail(`You have already voted.`);
-				
-				votes.set(sender, map);
-				if(voteEndTime == -1){
-					if((Date.now() - lastVoteTime) < Duration.minutes(1)) fail(`Please wait 1 minute before starting a new map vote.`);
-					startVote();
-					Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] started a map vote, and voted for [yellow]${map.name()}[cyan]. Use [white]/nextmap ${map.plainName()}[] to add your vote, or run [white]/maps[] to see other available maps.`);
-				} else {
-					Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] voted for [yellow]${map.name()}[cyan]. Time left: [scarlet]${formatTimeRelative(voteEndTime, true)}`);
-					showVotes();
-				}
+
+				args.map ??= await currentMenu(sender);
+				sendVote(sender, args.map);
 			}
 		};
 	}),
