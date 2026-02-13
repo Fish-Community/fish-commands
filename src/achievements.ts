@@ -503,7 +503,7 @@ export const Achievements = {
 		checkPlayerFrequent(player) {
 			const tile = player.unit()?.tile?.();
 			if(!tile) return false;
-			return tile.block == Blocks.duo && tile.ammo!.peek().item == Items.silicon && tile.liquids.current() == Liquids.cryofluid && tile.timeScale() >= 2.5;
+			return tile.block == Blocks.duo && !tile.ammo!.isEmpty() && tile.ammo!.peek().item == Items.silicon && tile.liquids.current() == Liquids.cryofluid && tile.timeScale() >= 2.5;
 		},
 		notify: "everyone",
 		modes: ["not", "sandbox"]

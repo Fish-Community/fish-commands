@@ -46,6 +46,7 @@ class Rules {
 	getClass(): typeof Rules;
 	attackMode: boolean;
 	pvp: boolean;
+	editor: boolean;
 }
 
 const Vars: {

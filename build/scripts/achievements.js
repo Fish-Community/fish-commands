@@ -615,7 +615,7 @@ exports.Achievements = {
             var tile = (_b = (_a = player.unit()) === null || _a === void 0 ? void 0 : _a.tile) === null || _b === void 0 ? void 0 : _b.call(_a);
             if (!tile)
                 return false;
-            return tile.block == Blocks.duo && tile.ammo.peek().item == Items.silicon && tile.liquids.current() == Liquids.cryofluid && tile.timeScale() >= 2.5;
+            return tile.block == Blocks.duo && !tile.ammo.isEmpty() && tile.ammo.peek().item == Items.silicon && tile.liquids.current() == Liquids.cryofluid && tile.timeScale() >= 2.5;
         },
         notify: "everyone",
         modes: ["not", "sandbox"]
