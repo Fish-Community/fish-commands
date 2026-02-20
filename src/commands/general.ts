@@ -1020,7 +1020,7 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		handler({args:{target, global = false}, output, f}){
 			const stats = global ? target.globalStats : target.stats;
 			output(f`[accent]\
-Statistics for player ${target} ${global ? "on this server" : "across all servers"}:
+Statistics for player ${target} ${global ? "across all servers" : "on this server"}:
 (note: we started recording statistics on 22 Jan 2024)
 [white]--------------[]
 Blocks broken: ${stats.blocksBroken}
