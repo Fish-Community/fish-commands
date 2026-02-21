@@ -135,7 +135,7 @@ export const multiCharSubstitutions:Array<[RegExp, string]> = [
 //#endregion
 //#region misc
 /** Used for anti-impersonation. Make sure to replace numbers with letters, for example, balam314 -> balamei4. */
-export const adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl", "cudspent"];
+export const adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl"];
 export const heuristics = {
 	/** Will trip if more than this many blocks are broken within 25 seconds of joining. */
 	blocksBrokenAfterJoin: 40,

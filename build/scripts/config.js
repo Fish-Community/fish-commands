@@ -153,7 +153,7 @@ exports.multiCharSubstitutions = [
 //#endregion
 //#region misc
 /** Used for anti-impersonation. Make sure to replace numbers with letters, for example, balam314 -> balamei4. */
-exports.adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl", "cudspent"];
+exports.adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl"];
 exports.heuristics = {
     /** Will trip if more than this many blocks are broken within 25 seconds of joining. */
     blocksBrokenAfterJoin: 40,
