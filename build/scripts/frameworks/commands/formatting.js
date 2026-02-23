@@ -68,7 +68,7 @@ exports.outputFormatter_server = (0, funcs_1.tagProcessorPartial)(function (chun
         return "&c".concat(chunk.name, "&fr");
     }
     else if (chunk instanceof Item) {
-        return "&c".concat(chunk.name, "&fr");
+        return "&c".concat((0, funcs_1.capitalizeText)(chunk.name, "-"), "&fr");
     }
     else {
         chunk;
@@ -127,7 +127,7 @@ exports.outputFormatter_client = (0, funcs_1.tagProcessorPartial)(function (chun
         return "[white]".concat(chunk.coloredName(), "[][]");
     }
     else if (chunk instanceof Item) {
-        return "[cyan]".concat(chunk.name, "[]");
+        return "[cyan]".concat((0, funcs_1.capitalizeText)(chunk.name, "-"), "[]");
     }
     else {
         chunk;

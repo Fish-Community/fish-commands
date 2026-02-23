@@ -41,7 +41,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addToTileHistory = exports.foolifyChat = void 0;
+exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = void 0;
 exports.memoizeChatFilter = memoizeChatFilter;
 exports.formatTime = formatTime;
 exports.formatTimeShort = formatTimeShort;
@@ -51,7 +51,6 @@ exports.formatTimeRelative = formatTimeRelative;
 exports.getColor = getColor;
 exports.nearbyEnemyTile = nearbyEnemyTile;
 exports.getTeam = getTeam;
-exports.getItem = getItem;
 exports.matchFilter = matchFilter;
 exports.removeFoosChars = removeFoosChars;
 exports.cleanText = cleanText;
@@ -60,9 +59,7 @@ exports.logAction = logAction;
 exports.parseTimeString = parseTimeString;
 exports.serverRestartLoop = serverRestartLoop;
 exports.isBuildable = isBuildable;
-exports.getUnitType = getUnitType;
 exports.isMapValidForGamemode = isMapValidForGamemode;
-exports.getMap = getMap;
 exports.getBlock = getBlock;
 exports.teleportPlayer = teleportPlayer;
 exports.logErrors = logErrors;
@@ -227,14 +224,13 @@ function getTeam(team) {
     return "\"".concat(team, "\" is not a valid team string.");
 }
 /** Attempts to parse an Item from the input. */
-function getItem(item) {
-    var temp;
-    if (item in Items && (temp = Items[item]) instanceof Item)
-        return temp;
-    else if ((temp = Vars.content.items().find(function (t) { return t.name.includes(item.toLowerCase()); })))
-        return temp;
-    return "\"".concat(item, "\" is not a valid item.");
-}
+exports.getItem = (0, funcs_1.searchFixed)(Vars.content.items().toArray(), [
+    function (i, s) { return i.name == s; },
+    function (i, s) { return i.name == s.toLowerCase(); },
+    function (i, s) { return i.name.includes(s.toLowerCase()); },
+    function (i, s) { return i.name.includes(s.toLowerCase().replace(" ", "-")); },
+    function (i, s) { return i.emoji() == s; },
+]);
 /**
  * @param wordList "chat" is least strict, followed by "strict", and "name" is most strict.
  * @returns a
@@ -451,15 +447,10 @@ function serverRestartLoop(sec) {
 function isBuildable(block) {
     return block == Blocks.powerVoid || (block.buildType != Blocks.air.buildType && !(block instanceof ConstructBlock));
 }
-function getUnitType(type) {
-    validUnits !== null && validUnits !== void 0 ? validUnits : (validUnits = Vars.content.units().select(function (u) { return !(u instanceof MissileUnitType || u.internal); }));
-    var temp;
-    if ((temp = validUnits.find(function (u) { return u.name == type; })))
-        return temp;
-    else if ((temp = validUnits.find(function (t) { return t.name.includes(type.toLowerCase()); })))
-        return temp;
-    return "\"".concat(type, "\" is not a valid unit type.");
-}
+exports.getUnitType = (0, funcs_1.searchFixed)(function () { return Vars.content.units().select(function (u) { return !(u instanceof MissileUnitType || u.internal); }).toArray(); }, [
+    function (u, q) { return u.name == q; },
+    function (u, q) { return u.name.includes(q.toLowerCase()); },
+]);
 /** The vanilla validation code doesn't work on servers */
 function isMapValidForGamemode(map) {
     if (map.custom)
@@ -474,51 +465,17 @@ function isMapValidForGamemode(map) {
         default: return false; //unreachable
     }
 }
-function getMap(name) {
-    var e_5, _a;
-    if (name == "")
-        return "none";
-    var maps = Vars.maps.all().select(isMapValidForGamemode); //this doesn't work...
-    var filters = [
-        //m => m.name() === name, //exact match
-        function (m) { return m.name().replace(/ /g, "_") === name; }, //exact match with spaces replaced
-        function (//exact match with spaces replaced
-        m) { return m.name().replace(/ /g, "_").toLowerCase() === name.toLowerCase(); }, //exact match with spaces replaced ignoring case
-        function (//exact match with spaces replaced ignoring case
-        m) { return m.plainName().replace(/ /g, "_").toLowerCase() === name.toLowerCase(); }, //exact match with spaces replaced ignoring case and colors
-        function (//exact match with spaces replaced ignoring case and colors
-        m) { return m.plainName().toLowerCase().includes(name.toLowerCase()); }, //partial match ignoring case and colors
-        function (//partial match ignoring case and colors
-        m) { return m.plainName().replace(/ /g, "_").toLowerCase().includes(name.toLowerCase()); }, //partial match with spaces replaced ignoring case and colors
-        function (//partial match with spaces replaced ignoring case and colors
-        m) { return m.plainName().replace(/ /g, "").toLowerCase().includes(name.toLowerCase()); }, //partial match with spaces removed ignoring case and colors
-        function (//partial match with spaces removed ignoring case and colors
-        m) { return m.plainName().replace(/[^a-zA-Z]/gi, "").toLowerCase().includes(name.toLowerCase()); },
-    ];
-    try {
-        for (var filters_2 = __values(filters), filters_2_1 = filters_2.next(); !filters_2_1.done; filters_2_1 = filters_2.next()) {
-            var filter = filters_2_1.value;
-            var matchingMaps = maps.select(filter);
-            if (matchingMaps.size == 1)
-                return matchingMaps.get(0);
-            else if (matchingMaps.size > 1)
-                return "multiple";
-            //if empty, go to next filter
-        }
-    }
-    catch (e_5_1) { e_5 = { error: e_5_1 }; }
-    finally {
-        try {
-            if (filters_2_1 && !filters_2_1.done && (_a = filters_2.return)) _a.call(filters_2);
-        }
-        finally { if (e_5) throw e_5.error; }
-    }
-    //no filters returned a result
-    return "none";
-}
+exports.getMap = (0, funcs_1.searchFixed)(function () { return Vars.maps.all().select(isMapValidForGamemode).toArray(); }, [
+    function (m, name) { return m.name().replace(/ /g, "_") === name; }, //exact match with spaces replaced
+    function (m, name) { return m.name().replace(/ /g, "_").toLowerCase() === name.toLowerCase(); }, //exact match with spaces replaced ignoring case
+    function (m, name) { return m.plainName().replace(/ /g, "_").toLowerCase() === name.toLowerCase(); }, //exact match with spaces replaced ignoring case and colors
+    function (m, name) { return m.plainName().toLowerCase().includes(name.toLowerCase()); }, //partial match ignoring case and colors
+    function (m, name) { return m.plainName().replace(/ /g, "_").toLowerCase().includes(name.toLowerCase()); }, //partial match with spaces replaced ignoring case and colors
+    function (m, name) { return m.plainName().replace(/ /g, "").toLowerCase().includes(name.toLowerCase()); }, //partial match with spaces removed ignoring case and colors
+    function (m, name) { return m.plainName().replace(/[^a-zA-Z]/gi, "").toLowerCase().includes(name.toLowerCase()); },
+], "recomputeOptions");
 //static cache
 var buildableBlocks = null;
-var validUnits = null;
 function getBlock(block, filter) {
     buildableBlocks !== null && buildableBlocks !== void 0 ? buildableBlocks : (buildableBlocks = Vars.content.blocks().select(isBuildable));
     var check = {
@@ -709,7 +666,7 @@ var replacements = [
 ].map(function (set) { return [set, new RegExp("\\b(?:".concat(set.join("|"), ")(e?s?(?:i?gone)?)\\b"), 'g')]; });
 var foolCounter = 0;
 exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
-    var e_6, _a;
+    var e_5, _a;
     var cleanedMessage = removeFoosChars(message);
     setShuffle: {
         if (foolCounter < 5) {
@@ -727,12 +684,12 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
                 _loop_2(set, regex);
             }
         }
-        catch (e_6_1) { e_6 = { error: e_6_1 }; }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
         finally {
             try {
                 if (replacements_1_1 && !replacements_1_1.done && (_a = replacements_1.return)) _a.call(replacements_1);
             }
-            finally { if (e_6) throw e_6.error; }
+            finally { if (e_5) throw e_5.error; }
         }
         if (replacedMessage !== cleanedMessage) {
             if (foolCounter < 7) {
@@ -980,7 +937,7 @@ function fishCommandsRootDirPath() {
 }
 /** Fails if "mode" is invalid. */
 function applyEffectMode(mode, unit, ticks) {
-    var e_7, _a;
+    var e_6, _a;
     var _b;
     var modes = {
         fast: [StatusEffects.fast],
@@ -1053,12 +1010,12 @@ function applyEffectMode(mode, unit, ticks) {
                 unit.apply(effect, ticks);
             }
         }
-        catch (e_7_1) { e_7 = { error: e_7_1 }; }
+        catch (e_6_1) { e_6 = { error: e_6_1 }; }
         finally {
             try {
                 if (effects_1_1 && !effects_1_1.done && (_a = effects_1.return)) _a.call(effects_1);
             }
-            finally { if (e_7) throw e_7.error; }
+            finally { if (e_6) throw e_6.error; }
         }
     }
 }
@@ -1076,7 +1033,7 @@ var sources = [
     Packages.mindustry.gen.TankUnit,
 ];
 function getStatuses(unit) {
-    var e_8, _a;
+    var e_7, _a;
     try {
         for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
             var clazz = sources_1_1.value;
@@ -1084,12 +1041,12 @@ function getStatuses(unit) {
                 return ArcReflect.get(clazz, unit, "statuses");
         }
     }
-    catch (e_8_1) { e_8 = { error: e_8_1 }; }
+    catch (e_7_1) { e_7 = { error: e_7_1 }; }
     finally {
         try {
             if (sources_1_1 && !sources_1_1.done && (_a = sources_1.return)) _a.call(sources_1);
         }
-        finally { if (e_8) throw e_8.error; }
+        finally { if (e_7) throw e_7.error; }
     }
     return new Seq();
 }

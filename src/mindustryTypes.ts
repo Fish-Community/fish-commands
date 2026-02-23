@@ -216,6 +216,7 @@ const Items: Record<"scrap" | "copper" | "lead" | "graphite" | "coal" | "titaniu
 };
 class Item {
 	name: string;
+	localizedName: string;
 	hidden: boolean;
 	emoji(): string;
 }

@@ -3,7 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the formatting framework.
 */
 import type { Formattable, PartialFormatString } from "/frameworks/commands/types";
-import { escapeStringColorsServer, tagProcessorPartial } from "/funcs";
+import { capitalizeText, escapeStringColorsServer, tagProcessorPartial } from "/funcs";
 import { ipPattern, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
@@ -42,7 +42,7 @@ export const outputFormatter_server = tagProcessorPartial<Formattable, string | 
 	} else if(chunk instanceof Team){
 		return `&c${chunk.name}&fr`;
 	} else if(chunk instanceof Item){
-		return `&c${chunk.name}&fr`;
+		return `&c${capitalizeText(chunk.name, "-")}&fr`;
 	} else {
 		chunk satisfies never;
 		Log.err("Invalid format object!");
@@ -85,7 +85,7 @@ export const outputFormatter_client = tagProcessorPartial<Formattable, string | 
 	} else if(chunk instanceof Team){
 		return `[white]${chunk.coloredName()}[][]`;
 	} else if(chunk instanceof Item){
-		return `[cyan]${chunk.name}[]`;
+		return `[cyan]${capitalizeText(chunk.name, "-")}[]`;
 	} else {
 		chunk satisfies never;
 		Log.err("Invalid format object!");

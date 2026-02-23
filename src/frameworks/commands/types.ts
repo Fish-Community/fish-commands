@@ -14,19 +14,54 @@ export const commandArgTypes = [
 	"string", "number", "boolean", "player", /*"menuPlayer",*/ "team", "time", "unittype", "block",
 	"uuid", "offlinePlayer", "map", "rank", "roleflag", "item"
 ] as const;
-export type CommandArgType = typeof commandArgTypes extends ReadonlyArray<infer T> ? T : never;export type FishCommandArgType = TypeOfArgType<CommandArgType> | undefined;
+export const commandArgNames = {
+	string: "text",
+	number: "number",
+	boolean: "boolean",
+	player: "player",
+	team: "team",
+	time: "duration",
+	unittype: "unit type",
+	block: "block",
+	uuid: "UUID",
+	offlinePlayer: "player",
+	map: "map",
+	rank: "rank",
+	roleflag: "role flag",
+	item: "item"
+} satisfies Record<CommandArgType, string>;
+
+export type CommandArgType = typeof commandArgTypes extends ReadonlyArray<infer T> ? T : never;
+export type FishCommandArgType = TypeOfArgType<CommandArgType> | undefined;
+
 /** Maps an arg type string to the TS type used to store it. Example: returns `number` for "time". */
-export type TypeOfArgType<T> = T extends "string" ? string : T extends "boolean" ? boolean : T extends "number" ? number : T extends "time" ? number : T extends "team" ? Team : T extends "player" ? FishPlayer : T extends "exactPlayer" ? FishPlayer : T extends "offlinePlayer" ? FishPlayer : T extends "unittype" ? UnitType : T extends "block" ? Block : T extends "uuid" ? string : T extends "map" ? MMap : T extends "rank" ? Rank : T extends "roleflag" ? RoleFlag : T extends "item" ? Item : never;
+export type TypeOfArgType<T> =
+	T extends "string" ? string :
+	T extends "boolean" ? boolean :
+	T extends "number" ? number :
+	T extends "time" ? number :
+	T extends "team" ? Team :
+	T extends "player" ? FishPlayer :
+	T extends "exactPlayer" ? FishPlayer :
+	T extends "offlinePlayer" ? FishPlayer :
+	T extends "unittype" ? UnitType :
+	T extends "block" ? Block :
+	T extends "uuid" ? string :
+	T extends "map" ? MMap :
+	T extends "rank" ? Rank :
+	T extends "roleflag" ? RoleFlag :
+	T extends "item" ? Item :
+never;
+
 /**
  * Returns the type of args given a union of the arg string types.
  * Example: given `"player:player?" | "force:boolean"` returns `{player: FishPlayer | null; force: boolean;}`
  **/
-
 export type ArgsFromArgStringUnion<ArgStringUnion extends string> = {
 	[Arg in ArgStringUnion as KeyFor<Arg>]: ValueFor<Arg>;
 };
-/** Reads the key from an arg string. */
 
+/** Reads the key from an arg string. */
 export type KeyFor<ArgString> = ArgString extends `${infer K}:${string}` ? K : never;
 /** Reads the value from an arg string, and determines whether it is optional. */
 export type ValueFor<ArgString> =
@@ -36,8 +71,8 @@ export type ValueFor<ArgString> =
 	ArgString extends `${string}:${infer V}` ? TypeOfArgType<V> : never;
 
 export type TapHandleMode = "off" | "once" | "on";
-/** Anything that can be formatted by the `f` tagged template function. */
 
+/** Anything that can be formatted by the `f` tagged template function. */
 export type Formattable = FishPlayer | Rank | RoleFlag | Error | mindustryPlayer | string | boolean | number | PlayerInfo | UnitType | Block | Team | Item;
 /**
  * A message that requires some other data to complete it.

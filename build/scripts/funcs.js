@@ -274,9 +274,10 @@ function crash(message) {
     throw new Error(message);
 }
 /** Best effort title-capitalization of a word. */
-function capitalizeText(text) {
+function capitalizeText(text, separator) {
+    if (separator === void 0) { separator = " "; }
     return text
-        .split(" ")
+        .split(separator)
         .map(function (word, i, arr) { return (["a", "an", "the", "in", "and", "of", "it", "is"].includes(word) &&
         i !== 0 && i !== arr.length - 1) ? word
         : word[0].toUpperCase() + word.substring(1).toLowerCase(); }).join(" ");
@@ -431,9 +432,19 @@ function search() {
         return null;
     };
 }
-function searchFixed(options, filters) {
+function searchFixed(options, filters, recomputeOptions) {
     var func = search.apply(void 0, __spreadArray([], __read(filters), false));
-    return function (query) { return func(options, query); };
+    var _options = options;
+    return function (query) {
+        if (typeof _options == "function") {
+            if (recomputeOptions)
+                return func(_options(), query);
+            else
+                return func(_options = _options(), query);
+        }
+        else
+            return func(_options, query);
+    };
 }
 exports.Duration = {
     seconds: function (x) { return x * 1000; },

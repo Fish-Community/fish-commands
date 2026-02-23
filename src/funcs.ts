@@ -192,12 +192,12 @@ export class EventEmitter<
 export function crash(message: string): never {
 	throw new Error(message);
 }
+
+
 /** Best effort title-capitalization of a word. */
-
-
-export function capitalizeText(text: string): string {
+export function capitalizeText(text: string, separator = " "): string {
 	return text
-		.split(" ")
+		.split(separator)
 		.map((word, i, arr) => (
 			["a", "an", "the", "in", "and", "of", "it", "is"].includes(word) &&
 			i !== 0 && i !== arr.length - 1
@@ -210,8 +210,8 @@ export function escapeTextDiscord(text: string): string {
 	return pattern.matcher(text).replaceAll("\\\\$1\u200B");
 }
 
-/** Prevents Mindustry from displaying color tags in a string by escaping them. Example: turns [scarlet]red to [[scarlet]red. */
 
+/** Prevents Mindustry from displaying color tags in a string by escaping them. Example: turns [scarlet]red to [[scarlet]red. */
 export function escapeStringColorsClient(str: string): string {
 	return str.replace(/\[/g, "[[");
 }
@@ -345,9 +345,15 @@ export function search<T>(...filters: Array<(x:T, query:string) => boolean>): (o
 		return null;
 	};
 }
-export function searchFixed<T>(options:T[], filters: Array<(x:T, query:string) => boolean>): (query:string | undefined) => T | T[] | null {
+export function searchFixed<T>(options:T[] | (() => T[]), filters: Array<(x:T, query:string) => boolean>, recomputeOptions?: "recomputeOptions"): (query:string | undefined) => T | T[] | null {
 	const func = search(...filters);
-	return query => func(options, query);
+	let _options = options;
+	return query => {
+		if(typeof _options == "function"){
+			if(recomputeOptions) return func(_options(), query);
+			else return func(_options = _options(), query);
+		} else return func(_options, query);
+	};
 }
 
 export const Duration = {

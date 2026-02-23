@@ -1017,7 +1017,7 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 			const core = team.data().cores.firstOpt() ?? fail(f`Team ${team} has no cores.`);
 			core.items.add(item, amount);
 			outputSuccess(f`Gave ${amount} ${item} to ${team}.`);
-			if(!Gamemode.sandbox()) logAction(`gave ${amount} ${item.name} to ${team.name}`, sender);
+			if(!Gamemode.sandbox()) logAction(`gave ${amount} ${item.localizedName.toLowerCase()} to ${team.name}`, sender);
 		}
 	},
 	explosion: {

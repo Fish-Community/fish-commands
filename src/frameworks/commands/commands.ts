@@ -9,9 +9,9 @@ For maintenance information, see docs/frameworks.md
 import { CommandError, fail } from "/frameworks/commands/errors";
 import { f_client, f_server, outputFormatter_client } from "/frameworks/commands/formatting";
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
-import { CommandArgType, commandArgTypes } from "/frameworks/commands/types";
+import { commandArgNames, CommandArgType, commandArgTypes } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
-import { crash, escapeStringColorsClient, parseError, setToArray } from "/funcs";
+import { capitalizeText, crash, escapeStringColorsClient, parseError } from "/funcs";
 import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
@@ -115,6 +115,21 @@ function joinArgs(rawArgs:string[]){
 	return outputArgs;
 }
 
+async function disambiguateArgument<T extends FishCommandArgType>(
+	output:T | T[] | null, arg: string, {name, type}: CommandArg, sender:FishPlayer | null, outputArgs: Record<string, FishCommandArgType>,
+	optionStringifier: (x:T) => string
+){
+	if(output == null) fail(`${capitalizeText(commandArgNames[type])} "${arg}" not found.`);
+	else if(Array.isArray(output)){
+		const word = commandArgNames[type];
+		if(!sender) fail(`Name "${arg}" could refer to more than one ${word}.`);
+		outputArgs[name] = await Menu.menu(`Select a ${word}`, `Select a ${word} for the argument "${name}"`, output, sender, {
+			includeCancel: true,
+			optionStringifier,
+		});
+	} else outputArgs[name] = output;
+}
+
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
@@ -124,7 +139,7 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 			if(cmdArg.isOptional){
 				outputArgs[cmdArg.name] = undefined;
 				continue;
-			} else if(sender && ["player"].includes(cmdArg.type)){
+			} else if(sender && ["player", "offlinePlayer", "unittype", "uuid", "map", "rank", "roleflag", "item"].includes(cmdArg.type)){
 				//it will be resolved later
 			} else {
 				fail(`No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`);
@@ -132,19 +147,16 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 		}
 
 		//Deserialize the arg
+		const commonArgs = [args[i], cmdArg, sender, outputArgs] as const;
 		switch(cmdArg.type){
 			case "player": {
-				const output = FishPlayer.search(FishPlayer.getAllOnline(), args[i]);
-				if(!output) fail(`Player "${args[i]}" not found.`);
-				else if(Array.isArray(output)){
-					if(!sender) fail(`Name "${args[i]}" could refer to more than one player.`);
-					outputArgs[cmdArg.name] = await Menu.menu(`Select a player`, `Select a player for the argument "${cmdArg.name}"`, output, sender, {
-						includeCancel: true,
-						optionStringifier: player => Strings.stripColors(player.name).length >= 3 ?
-							player.name
-							: escapeStringColorsClient(player.name)
-					});
-				} else outputArgs[cmdArg.name] = output;
+				await disambiguateArgument(
+					FishPlayer.search(FishPlayer.getAllOnline(), args[i]),
+					...commonArgs,
+					player => Strings.stripColors(player.name).length >= 3 ?
+						player.name
+					: escapeStringColorsClient(player.name)
+				);
 				break;
 			}
 			case "offlinePlayer":
@@ -159,10 +171,13 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 						)
 					);
 				} else {
-					const output = FishPlayer.getOneOfflineByName(args[i]);
-					if(output == "none") fail(`Player "${args[i]}" not found.`);
-					else if(output == "multiple") fail(`Name "${args[i]}" could refer to more than one player. Try specifying by ID.`);
-					outputArgs[cmdArg.name] = output;
+					await disambiguateArgument(
+						FishPlayer.search(Object.values(FishPlayer.cachedPlayers), args[i]),
+						...commonArgs,
+						player => Strings.stripColors(player.name).length >= 3 ?
+							player.name
+						: escapeStringColorsClient(player.name)
+					);
 				}
 				break;
 			case "team": {
@@ -207,45 +222,45 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 				outputArgs[cmdArg.name] = block;
 				break;
 			}
-			case "unittype": {
-				const unit = getUnitType(args[i]);
-				if(typeof unit == "string") fail(unit);
-				outputArgs[cmdArg.name] = unit;
+			case "unittype":
+				await disambiguateArgument(
+					getUnitType(args[i]),
+					...commonArgs,
+					u => u.name
+				);
 				break;
-			}
 			case "uuid":
 				if(!uuidPattern.test(args[i])) fail(`Invalid uuid string "${args[i]}"`);
 				outputArgs[cmdArg.name] = args[i];
 				break;
-			case "map": {
-				const map = getMap(args[i]);
-				if(map == "none") fail(`Map "${args[i]}" not found.`);
-				else if(map == "multiple") fail(`Name "${args[i]}" could refer to more than one map. Be more specific.`);
-				//TODO change all these "multiple" errors into menu
-				//TODO refactor this function using search() curry, there's a lot of duplicated search code
-				outputArgs[cmdArg.name] = map;
+			case "map":
+				await disambiguateArgument(
+					getMap(args[i]),
+					...commonArgs,
+					r => r.name()
+				);
 				break;
-			}
-			case "rank": {
-				const ranks = Rank.getByInput(args[i]);
-				if(ranks.length == 0) fail(`Unknown rank "${args[i]}"`);
-				if(ranks.length > 1) fail(`Ambiguous rank "${args[i]}"`);
-				outputArgs[cmdArg.name] = ranks[0];
+			case "rank":
+				await disambiguateArgument(
+					Rank.search(args[i]),
+					...commonArgs,
+					r => r.coloredName()
+				);
 				break;
-			}
-			case "roleflag": {
-				const roleflags = RoleFlag.getByInput(args[i]);
-				if(roleflags.length == 0) fail(`Unknown role flag "${args[i]}"`);
-				if(roleflags.length > 1) fail(`Ambiguous role flag "${args[i]}"`);
-				outputArgs[cmdArg.name] = roleflags[0];
+			case "roleflag":
+				await disambiguateArgument(
+					RoleFlag.search(args[i]),
+					...commonArgs,
+					f => f.coloredName()
+				);
 				break;
-			}
-			case "item": {
-				const item = getItem(args[i]);
-				if(typeof item === "string") fail(item);
-				outputArgs[cmdArg.name] = item;
+			case "item":
+				await disambiguateArgument(
+					getItem(args[i]),
+					...commonArgs,
+					i => i.emoji() + capitalizeText(i.name),
+				);
 				break;
-			}
 			default: cmdArg.type satisfies never; crash("impossible");
 		}
 	}

@@ -1323,7 +1323,7 @@ exports.commands = (0, commands_1.commandList)({
             core.items.add(item, amount);
             outputSuccess(f(templateObject_74 || (templateObject_74 = __makeTemplateObject(["Gave ", " ", " to ", "."], ["Gave ", " ", " to ", "."])), amount, item, team));
             if (!config_1.Gamemode.sandbox())
-                (0, utils_1.logAction)("gave ".concat(amount, " ").concat(item.name, " to ").concat(team.name), sender);
+                (0, utils_1.logAction)("gave ".concat(amount, " ").concat(item.localizedName.toLowerCase(), " to ").concat(team.name), sender);
         }
     },
     explosion: {

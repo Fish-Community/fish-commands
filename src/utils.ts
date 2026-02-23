@@ -7,7 +7,7 @@ For functions that don't need values from other files, see funcs.ts.
 import * as api from "/api";
 import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
 import { fail, PartialFormatString } from "/frameworks/commands";
-import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, StringIO } from "/funcs";
+import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
 import { FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { SelectEnumClassKeys } from "/types";
@@ -150,12 +150,13 @@ export function getTeam(team:string):Team | string {
 }
 
 /** Attempts to parse an Item from the input. */
-export function getItem(item:string):Item | string {
-	let temp;
-	if(item in Items && (temp = Items[item as keyof typeof Items]) instanceof Item) return temp;
-	else if((temp = Vars.content.items().find(t => t.name.includes(item.toLowerCase())))) return temp;
-	return `"${item}" is not a valid item.`;
-}
+export const getItem = searchFixed(Vars.content.items().toArray(), [
+	(i, s) => i.name == s,
+	(i, s) => i.name == s.toLowerCase(),
+	(i, s) => i.name.includes(s.toLowerCase()),
+	(i, s) => i.name.includes(s.toLowerCase().replace(" ", "-")),
+	(i, s) => i.emoji() == s,
+]);
 
 
 /**
@@ -334,13 +335,12 @@ export function isBuildable(block:Block){
 	return block == Blocks.powerVoid || (block.buildType != Blocks.air.buildType && !(block instanceof ConstructBlock));
 }
 
-export function getUnitType(type:string):UnitType | string {
-	validUnits ??= Vars.content.units().select((u:UnitType) => !(u instanceof MissileUnitType || u.internal));
-	let temp;
-	if((temp = validUnits.find(u => u.name == type))) return temp;
-	else if((temp = validUnits.find((t:UnitType) => t.name.includes(type.toLowerCase())))) return temp;
-	return `"${type}" is not a valid unit type.`;
-}
+export const getUnitType = searchFixed(
+	() => Vars.content.units().select((u:UnitType) => !(u instanceof MissileUnitType || u.internal)).toArray(), [
+		(u, q) => u.name == q,
+		(u, q) => u.name.includes(q.toLowerCase()),
+	]
+);
 
 /** The vanilla validation code doesn't work on servers */
 export function isMapValidForGamemode(map:MMap):boolean {
@@ -354,34 +354,19 @@ export function isMapValidForGamemode(map:MMap):boolean {
 	}
 }
 
-export function getMap(name:string):MMap | "none" | "multiple" {
-	if(name == "") return "none";
-	const maps = Vars.maps.all().select(isMapValidForGamemode); //this doesn't work...
+export const getMap = searchFixed(() => Vars.maps.all().select(isMapValidForGamemode).toArray(), [
+	(m, name) => m.name().replace(/ /g, "_") === name, //exact match with spaces replaced
+	(m, name) => m.name().replace(/ /g, "_").toLowerCase() === name.toLowerCase(), //exact match with spaces replaced ignoring case
+	(m, name) => m.plainName().replace(/ /g, "_").toLowerCase() === name.toLowerCase(), //exact match with spaces replaced ignoring case and colors
+	(m, name) => m.plainName().toLowerCase().includes(name.toLowerCase()), //partial match ignoring case and colors
+	(m, name) => m.plainName().replace(/ /g, "_").toLowerCase().includes(name.toLowerCase()), //partial match with spaces replaced ignoring case and colors
+	(m, name) => m.plainName().replace(/ /g, "").toLowerCase().includes(name.toLowerCase()), //partial match with spaces removed ignoring case and colors
+	(m, name) => m.plainName().replace(/[^a-zA-Z]/gi, "").toLowerCase().includes(name.toLowerCase()), //partial match with non-alphabetic characters removed ignoring case and colors
+], "recomputeOptions");
 
-	const filters:Array<(m:MMap) => boolean> = [
-		//m => m.name() === name, //exact match
-		m => m.name().replace(/ /g, "_") === name, //exact match with spaces replaced
-		m => m.name().replace(/ /g, "_").toLowerCase() === name.toLowerCase(), //exact match with spaces replaced ignoring case
-		m => m.plainName().replace(/ /g, "_").toLowerCase() === name.toLowerCase(), //exact match with spaces replaced ignoring case and colors
-		m => m.plainName().toLowerCase().includes(name.toLowerCase()), //partial match ignoring case and colors
-		m => m.plainName().replace(/ /g, "_").toLowerCase().includes(name.toLowerCase()), //partial match with spaces replaced ignoring case and colors
-		m => m.plainName().replace(/ /g, "").toLowerCase().includes(name.toLowerCase()), //partial match with spaces removed ignoring case and colors
-		m => m.plainName().replace(/[^a-zA-Z]/gi, "").toLowerCase().includes(name.toLowerCase()), //partial match with non-alphabetic characters removed ignoring case and colors
-	];
-
-	for(const filter of filters){
-		const matchingMaps = maps.select(filter);
-		if(matchingMaps.size == 1) return matchingMaps.get(0);
-		else if(matchingMaps.size > 1) return "multiple";
-		//if empty, go to next filter
-	}
-	//no filters returned a result
-	return "none";
-}
 
 //static cache
 let buildableBlocks:Seq<Block> | null = null;
-let validUnits:Seq<UnitType> | null = null;
 
 export function getBlock(block:string, filter:"buildable" | "air" | "all"):Block | string {
 	buildableBlocks ??= Vars.content.blocks().select(isBuildable);
