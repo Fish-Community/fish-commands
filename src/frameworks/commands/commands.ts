@@ -130,6 +130,8 @@ async function disambiguateArgument<T extends FishCommandArgType>(
 	} else outputArgs[name] = output;
 }
 
+const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "uuid", "map", "rank", "roleflag", "item"];
+
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
@@ -139,7 +141,7 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 			if(cmdArg.isOptional){
 				outputArgs[cmdArg.name] = undefined;
 				continue;
-			} else if(sender && ["player", "offlinePlayer", "unittype", "uuid", "map", "rank", "roleflag", "item"].includes(cmdArg.type)){
+			} else if(sender && argsSupportingBlank.includes(cmdArg.type)){
 				//it will be resolved later
 			} else {
 				fail(`No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`);
@@ -272,7 +274,7 @@ const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map"];
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
 function convertArgs(processedCmdArgs:CommandArg[], allowMenus:boolean):string {
 	return processedCmdArgs.map((arg, index, array) => {
-		const isOptional = (arg.isOptional || (arg.type == "player" && allowMenus)) && !array.slice(index + 1).some(c => !c.isOptional);
+		const isOptional = (arg.isOptional || (argsSupportingBlank.includes(arg.type) && allowMenus)) && !array.slice(index + 1).some(c => !c.isOptional);
 		const brackets = isOptional ? ["[", "]"] : ["<", ">"];
 		//if the arg is a string and last argument, make it variadic (so if `/warn player a b c d` is run, the last arg is "a b c d" not "a")
 		return brackets[0] + arg.name + (variadicArgumentTypes.includes(arg.type) && index + 1 == array.length ? "..." : "") + brackets[1];
