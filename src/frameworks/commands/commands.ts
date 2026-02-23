@@ -258,7 +258,7 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 				await disambiguateArgument(
 					getItem(args[i]),
 					...commonArgs,
-					i => i.emoji() + capitalizeText(i.name),
+					i => i.emoji() + capitalizeText(i.name, "-"),
 				);
 				break;
 			default: cmdArg.type satisfies never; crash("impossible");
