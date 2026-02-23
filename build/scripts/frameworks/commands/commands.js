@@ -200,7 +200,7 @@ function joinArgs(rawArgs) {
 }
 function disambiguateArgument(output_1, arg_1, _a, sender_1, outputArgs_1, optionStringifier_1) {
     return __awaiter(this, arguments, void 0, function (output, arg, _b, sender, outputArgs, optionStringifier) {
-        var word, _c, _d;
+        var word, a_an_word, _c, _d;
         var name = _b.name, type = _b.type;
         return __generator(this, function (_e) {
             switch (_e.label) {
@@ -213,9 +213,10 @@ function disambiguateArgument(output_1, arg_1, _a, sender_1, outputArgs_1, optio
                     word = types_1.commandArgNames[type];
                     if (!sender)
                         (0, errors_1.fail)("Name \"".concat(arg, "\" could refer to more than one ").concat(word, "."));
+                    a_an_word = (0, funcs_1.indefiniteArticle)(word);
                     _c = outputArgs;
                     _d = name;
-                    return [4 /*yield*/, menus_1.Menu.menu("Select a ".concat(word), "Select a ".concat(word, " for the argument \"").concat(name, "\""), output, sender, {
+                    return [4 /*yield*/, menus_1.Menu.menu("Select ".concat(a_an_word), "Select ".concat(a_an_word, " for the argument \"").concat(name, "\""), output, sender, {
                             includeCancel: true,
                             optionStringifier: optionStringifier,
                         })];

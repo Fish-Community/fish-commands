@@ -11,7 +11,7 @@ import { f_client, f_server, outputFormatter_client } from "/frameworks/commands
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
 import { commandArgNames, CommandArgType, commandArgTypes } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
-import { capitalizeText, crash, escapeStringColorsClient, parseError } from "/funcs";
+import { capitalizeText, crash, escapeStringColorsClient, indefiniteArticle, parseError } from "/funcs";
 import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
@@ -123,7 +123,8 @@ async function disambiguateArgument<T extends FishCommandArgType>(
 	else if(output instanceof Array){
 		const word = commandArgNames[type];
 		if(!sender) fail(`Name "${arg}" could refer to more than one ${word}.`);
-		outputArgs[name] = await Menu.menu(`Select a ${word}`, `Select a ${word} for the argument "${name}"`, output, sender, {
+		const a_an_word = indefiniteArticle(word);
+		outputArgs[name] = await Menu.menu(`Select ${a_an_word}`, `Select ${a_an_word} for the argument "${name}"`, output, sender, {
 			includeCancel: true,
 			optionStringifier,
 		});

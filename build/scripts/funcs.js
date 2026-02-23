@@ -42,6 +42,7 @@ exports.to2DArray = to2DArray;
 exports.setToArray = setToArray;
 exports.crash = crash;
 exports.capitalizeText = capitalizeText;
+exports.indefiniteArticle = indefiniteArticle;
 exports.escapeTextDiscord = escapeTextDiscord;
 exports.escapeStringColorsClient = escapeStringColorsClient;
 exports.escapeStringColorsServer = escapeStringColorsServer;
@@ -281,6 +282,14 @@ function capitalizeText(text, separator) {
         .map(function (word, i, arr) { return (["a", "an", "the", "in", "and", "of", "it", "is"].includes(word) &&
         i !== 0 && i !== arr.length - 1) ? word
         : word[0].toUpperCase() + word.substring(1).toLowerCase(); }).join(" ");
+}
+/** Best effort prepends an indefinite article (either "a" or "an") to provided text. */
+function indefiniteArticle(text) {
+    var cText = Strings.stripColors(text);
+    if (/^[aeiou]/.test(cText) || cText == "hour")
+        return "an " + text;
+    else
+        return "a " + text;
 }
 var pattern = Pattern.compile("([*\\_~`|:])");
 function escapeTextDiscord(text) {

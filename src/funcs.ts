@@ -205,6 +205,14 @@ export function capitalizeText(text: string, separator = " "): string {
 			: word[0].toUpperCase() + word.substring(1).toLowerCase()
 		).join(" ");
 }
+
+/** Best effort prepends an indefinite article (either "a" or "an") to provided text. */
+export function indefiniteArticle(text:string):string {
+	const cText = Strings.stripColors(text);
+	if(/^[aeiou]/.test(cText) || cText == "hour") return "an " + text;
+	else return "a " + text;
+}
+
 const pattern = Pattern.compile(`([*\\_~\`|:])`);
 export function escapeTextDiscord(text: string): string {
 	return pattern.matcher(text).replaceAll("\\\\$1\u200B");
