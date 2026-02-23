@@ -424,10 +424,15 @@ function processArgs(args, processedCmdArgs, sender) {
     });
 }
 var variadicArgumentTypes = ["player", "string", "map"];
+function isArgOptional(arg, allowMenus) {
+    return arg.isOptional || (argsSupportingBlank.includes(arg.type) && allowMenus);
+}
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
 function convertArgs(processedCmdArgs, allowMenus) {
     return processedCmdArgs.map(function (arg, index, array) {
-        var isOptional = (arg.isOptional || (argsSupportingBlank.includes(arg.type) && allowMenus)) && !array.slice(index + 1).some(function (c) { return !c.isOptional; });
+        var isOptional = isArgOptional(arg, allowMenus) &&
+            !array.slice(index + 1).some(function (c) { return !isArgOptional(c, allowMenus); }); //this is enforced by the arc command handler
+        //TODO internalize command handler
         var brackets = isOptional ? ["[", "]"] : ["<", ">"];
         //if the arg is a string and last argument, make it variadic (so if `/warn player a b c d` is run, the last arg is "a b c d" not "a")
         return brackets[0] + arg.name + (variadicArgumentTypes.includes(arg.type) && index + 1 == array.length ? "..." : "") + brackets[1];

@@ -272,10 +272,16 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 
 const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map"];
 
+function isArgOptional(arg:CommandArg, allowMenus:boolean){
+	return arg.isOptional || (argsSupportingBlank.includes(arg.type) && allowMenus);
+}
+
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
 function convertArgs(processedCmdArgs:CommandArg[], allowMenus:boolean):string {
 	return processedCmdArgs.map((arg, index, array) => {
-		const isOptional = (arg.isOptional || (argsSupportingBlank.includes(arg.type) && allowMenus)) && !array.slice(index + 1).some(c => !c.isOptional);
+		const isOptional = isArgOptional(arg, allowMenus) &&
+			!array.slice(index + 1).some(c => !isArgOptional(c, allowMenus)); //this is enforced by the arc command handler
+		//TODO internalize command handler
 		const brackets = isOptional ? ["[", "]"] : ["<", ">"];
 		//if the arg is a string and last argument, make it variadic (so if `/warn player a b c d` is run, the last arg is "a b c d" not "a")
 		return brackets[0] + arg.name + (variadicArgumentTypes.includes(arg.type) && index + 1 == array.length ? "..." : "") + brackets[1];
