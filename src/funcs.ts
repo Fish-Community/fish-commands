@@ -345,6 +345,10 @@ export function search<T>(...filters: Array<(x:T, query:string) => boolean>): (o
 		return null;
 	};
 }
+export function searchFixed<T>(options:T[], filters: Array<(x:T, query:string) => boolean>): (query:string | undefined) => T | T[] | null {
+	const func = search(...filters);
+	return query => func(options, query);
+}
 
 export const Duration = {
 	seconds: x => x * 1000,

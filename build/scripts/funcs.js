@@ -55,6 +55,7 @@ exports.invalidtoNull = invalidtoNull;
 exports.cleanColors = cleanColors;
 exports.computeStatistics = computeStatistics;
 exports.search = search;
+exports.searchFixed = searchFixed;
 var storedValues = {};
 /**
  * Stores the output of a function and returns that value
@@ -429,6 +430,10 @@ function search() {
         }
         return null;
     };
+}
+function searchFixed(options, filters) {
+    var func = search.apply(void 0, __spreadArray([], __read(filters), false));
+    return function (query) { return func(options, query); };
 }
 exports.Duration = {
     seconds: function (x) { return x * 1000; },

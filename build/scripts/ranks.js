@@ -33,9 +33,6 @@ var Rank = /** @class */ (function () {
         var _a;
         return (_a = Rank.ranks[name]) !== null && _a !== void 0 ? _a : null;
     };
-    Rank.getByInput = function (input) {
-        return Object.values(Rank.ranks).filter(function (rank) { return rank.name.toLowerCase().includes(input.toLowerCase()); });
-    };
     Rank.prototype.coloredName = function () {
         return this.color + this.name + "[]";
     };
@@ -54,6 +51,10 @@ var Rank = /** @class */ (function () {
     Rank.manager = new Rank("manager", 10, "Managers have file and console access.", "[black]<[scarlet]\uE88E[]>[]", "&c[E]&fr", "[scarlet]");
     Rank.pi = new Rank("pi", 11, "3.14159265358979323846264338327950288419716 (manager)", "[black]<[#FF8000]\u03C0[]>[]", "&b[+]&fr", "[blue]"); //i want pi rank
     Rank.fish = new Rank("fish", 999, "Owner.", "[blue]>|||>[] ", "&b[F]&fr", "[blue]");
+    Rank.search = (0, funcs_1.searchFixed)(Object.values(Rank.ranks), [
+        function (r, str) { return r.name == str.toLowerCase(); },
+        function (r, str) { return r.name.includes(str.toLowerCase()); },
+    ]);
     return Rank;
 }());
 exports.Rank = Rank;
@@ -76,9 +77,6 @@ var RoleFlag = /** @class */ (function () {
         var _a;
         return (_a = RoleFlag.flags[name]) !== null && _a !== void 0 ? _a : null;
     };
-    RoleFlag.getByInput = function (input) {
-        return Object.values(RoleFlag.flags).filter(function (flag) { return flag.name.toLowerCase().includes(input.toLowerCase()); });
-    };
     RoleFlag.prototype.coloredName = function () {
         return this.color + this.name + "[]";
     };
@@ -88,6 +86,10 @@ var RoleFlag = /** @class */ (function () {
     RoleFlag.illusionist = new RoleFlag("illusionist", "", "Assigned to to individuals who have earned access to enhanced visual effect features.", "[lightgrey]", true);
     RoleFlag.chief_map_analyst = new RoleFlag("chief map analyst", "[black]<[#5800FF]\uE833[]>[]", "Assigned to the chief map analyst, who oversees map management.", "[#5800FF]", true);
     RoleFlag.no_effects = new RoleFlag("no_effects", "", "Given to people who have abused the visual effects.", "", true);
+    RoleFlag.search = (0, funcs_1.searchFixed)(Object.values(RoleFlag.flags), [
+        function (r, str) { return r.name == str.toLowerCase(); },
+        function (r, str) { return r.name.includes(str.toLowerCase()); },
+    ]);
     return RoleFlag;
 }());
 exports.RoleFlag = RoleFlag;

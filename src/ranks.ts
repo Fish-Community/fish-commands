@@ -3,7 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the definitions for ranks and role flags.
 */
 
-import { Duration } from "/funcs";
+import { Duration, searchFixed } from "/funcs";
 import type { SelectEnumClassKeys } from "/types";
 
 /** Each player has one rank, which is used to determine their prefix, permissions, and which other players they can perform moderation actions on. */
@@ -57,9 +57,10 @@ export class Rank {
 	static getByName(name:string):Rank | null {
 		return Rank.ranks[name] ?? null;
 	}
-	static getByInput(input:string):Rank[] {
-		return Object.values(Rank.ranks).filter(rank => rank.name.toLowerCase().includes(input.toLowerCase()));
-	}
+	static search = searchFixed(Object.values(Rank.ranks), [
+		(r, str) => r.name == str.toLowerCase(),
+		(r, str) => r.name.includes(str.toLowerCase()),
+	]);
 	coloredName(){
 		return this.color + this.name + "[]";
 	}
@@ -88,9 +89,10 @@ export class RoleFlag {
 	static getByName(this:void, name:string):RoleFlag | null {
 		return RoleFlag.flags[name] ?? null;
 	}
-	static getByInput(this:void, input:string):RoleFlag[] {
-		return Object.values(RoleFlag.flags).filter(flag => flag.name.toLowerCase().includes(input.toLowerCase()));
-	}
+	static search = searchFixed(Object.values(RoleFlag.flags), [
+		(r, str) => r.name == str.toLowerCase(),
+		(r, str) => r.name.includes(str.toLowerCase()),
+	]);
 	coloredName(){
 		return this.color + this.name + "[]";
 	}
