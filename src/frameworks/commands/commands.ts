@@ -120,7 +120,7 @@ async function disambiguateArgument<T extends FishCommandArgType>(
 	optionStringifier: (x:T) => string
 ){
 	if(output == null) fail(`${capitalizeText(commandArgNames[type])} "${arg}" not found.`);
-	else if(Array.isArray(output)){
+	else if(output instanceof Array){
 		const word = commandArgNames[type];
 		if(!sender) fail(`Name "${arg}" could refer to more than one ${word}.`);
 		outputArgs[name] = await Menu.menu(`Select a ${word}`, `Select a ${word} for the argument "${name}"`, output, sender, {

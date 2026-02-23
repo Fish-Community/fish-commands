@@ -209,7 +209,7 @@ function disambiguateArgument(output_1, arg_1, _a, sender_1, outputArgs_1, optio
                     (0, errors_1.fail)("".concat((0, funcs_1.capitalizeText)(types_1.commandArgNames[type]), " \"").concat(arg, "\" not found."));
                     return [3 /*break*/, 4];
                 case 1:
-                    if (!Array.isArray(output)) return [3 /*break*/, 3];
+                    if (!(output instanceof Array)) return [3 /*break*/, 3];
                     word = types_1.commandArgNames[type];
                     if (!sender)
                         (0, errors_1.fail)("Name \"".concat(arg, "\" could refer to more than one ").concat(word, "."));
