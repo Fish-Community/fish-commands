@@ -47,14 +47,7 @@ function downloadFile(url:string, outputPath:string){
 	});
 }
 
-const fcRootDirectory = path.join(process.argv[1], "..", "..");
-const devServerDirectory = path.join(fcRootDirectory, "dev-server");
-
-if(!fs.existsSync(devServerDirectory)){
-	console.log(`Dev server does not exist yet, creating one...`);
-	fs.mkdirSync(devServerDirectory, {
-		recursive: false
-	});
+async function downloadJar(){
 	console.log(`Finding latest server jar...`);
 	const octokit = new Octokit();
 	const [release] = (await octokit.repos.listReleases({
@@ -67,6 +60,17 @@ if(!fs.existsSync(devServerDirectory)){
 	console.log(`Downloading latest server jar from ${file.browser_download_url}...`);
 	const downloadURL = await resolveRedirect(file.browser_download_url);
 	await downloadFile(downloadURL, path.join(devServerDirectory, "server-release.jar"));
+}
+
+const fcRootDirectory = path.join(process.argv[1], "..", "..");
+const devServerDirectory = path.join(fcRootDirectory, "dev-server");
+
+if(!fs.existsSync(devServerDirectory)){
+	console.log(`Dev server does not exist yet, creating one...`);
+	fs.mkdirSync(devServerDirectory, {
+		recursive: false
+	});
+	await downloadJar();
 	console.log(`Linking fish-commands...`);
 	const modsFolder = path.join(devServerDirectory, "config", "mods");
 	fs.mkdirSync(modsFolder, { recursive: true });
@@ -77,6 +81,9 @@ if(!fs.existsSync(devServerDirectory)){
 	console.log(`Successfully set up the development environment.`);
 	runServer();
 } else {
+	if(process.argv.some(a => /^-?-?u(p(date)?)?$/.test(a))){
+		await downloadJar();
+	}
 	runServer();
 }
 
