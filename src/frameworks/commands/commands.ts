@@ -116,19 +116,20 @@ function joinArgs(rawArgs:string[]){
 }
 
 async function disambiguateArgument<T extends FishCommandArgType>(
-	output:T | T[] | null, arg: string, {name, type}: CommandArg, sender:FishPlayer | null, outputArgs: Record<string, FishCommandArgType>,
-	optionStringifier: (x:T) => string
+	options:T | T[] | null, arg: string, {name, type}: CommandArg, sender:FishPlayer | null, outputArgs: Record<string, FishCommandArgType>,
+	optionStringifier: (x:T) => string, columns = 3,
 ){
-	if(output == null) fail(`${capitalizeText(commandArgNames[type])} "${arg}" not found.`);
-	else if(output instanceof Array){
+	if(options == null) fail(`${capitalizeText(commandArgNames[type])} "${arg}" not found.`);
+	else if(options instanceof Array){
 		const word = commandArgNames[type];
 		if(!sender) fail(`Name "${arg}" could refer to more than one ${word}.`);
 		const a_an_word = indefiniteArticle(word);
-		outputArgs[name] = await Menu.menu(`Select ${a_an_word}`, `Select ${a_an_word} for the argument "${name}"`, output, sender, {
+		outputArgs[name] = await Menu.menu(`Select ${a_an_word}`, `Select ${a_an_word} for the argument "${name}"`, options, sender, {
 			includeCancel: true,
 			optionStringifier,
+			columns,
 		});
-	} else outputArgs[name] = output;
+	} else outputArgs[name] = options;
 }
 
 const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "uuid", "map", "rank", "roleflag", "item"];
@@ -158,7 +159,8 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 					...commonArgs,
 					player => Strings.stripColors(player.name).length >= 3 ?
 						player.name
-					: escapeStringColorsClient(player.name)
+					: escapeStringColorsClient(player.name),
+					2
 				);
 				break;
 			}
@@ -179,7 +181,8 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 						...commonArgs,
 						player => Strings.stripColors(player.name).length >= 3 ?
 							player.name
-						: escapeStringColorsClient(player.name)
+						: escapeStringColorsClient(player.name),
+						2
 					);
 				}
 				break;
@@ -229,7 +232,7 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 				await disambiguateArgument(
 					getUnitType(args[i]),
 					...commonArgs,
-					u => u.name
+					u => u.emoji() + capitalizeText(u.name)
 				);
 				break;
 			case "uuid":
@@ -240,7 +243,8 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 				await disambiguateArgument(
 					getMap(args[i]),
 					...commonArgs,
-					r => r.name()
+					r => r.name(),
+					2
 				);
 				break;
 			case "rank":
@@ -262,6 +266,7 @@ async function processArgs(args: string[], processedCmdArgs: CommandArg[], sende
 					getItem(args[i]),
 					...commonArgs,
 					i => i.emoji() + capitalizeText(i.name, "-"),
+					2
 				);
 				break;
 			default: cmdArg.type satisfies never; crash("impossible");

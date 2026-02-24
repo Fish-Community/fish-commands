@@ -198,33 +198,35 @@ function joinArgs(rawArgs) {
     }
     return outputArgs;
 }
-function disambiguateArgument(output_1, arg_1, _a, sender_1, outputArgs_1, optionStringifier_1) {
-    return __awaiter(this, arguments, void 0, function (output, arg, _b, sender, outputArgs, optionStringifier) {
+function disambiguateArgument(options_1, arg_1, _a, sender_1, outputArgs_1, optionStringifier_1) {
+    return __awaiter(this, arguments, void 0, function (options, arg, _b, sender, outputArgs, optionStringifier, columns) {
         var word, a_an_word, _c, _d;
         var name = _b.name, type = _b.type;
+        if (columns === void 0) { columns = 3; }
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
-                    if (!(output == null)) return [3 /*break*/, 1];
+                    if (!(options == null)) return [3 /*break*/, 1];
                     (0, errors_1.fail)("".concat((0, funcs_1.capitalizeText)(types_1.commandArgNames[type]), " \"").concat(arg, "\" not found."));
                     return [3 /*break*/, 4];
                 case 1:
-                    if (!(output instanceof Array)) return [3 /*break*/, 3];
+                    if (!(options instanceof Array)) return [3 /*break*/, 3];
                     word = types_1.commandArgNames[type];
                     if (!sender)
                         (0, errors_1.fail)("Name \"".concat(arg, "\" could refer to more than one ").concat(word, "."));
                     a_an_word = (0, funcs_1.indefiniteArticle)(word);
                     _c = outputArgs;
                     _d = name;
-                    return [4 /*yield*/, menus_1.Menu.menu("Select ".concat(a_an_word), "Select ".concat(a_an_word, " for the argument \"").concat(name, "\""), output, sender, {
+                    return [4 /*yield*/, menus_1.Menu.menu("Select ".concat(a_an_word), "Select ".concat(a_an_word, " for the argument \"").concat(name, "\""), options, sender, {
                             includeCancel: true,
                             optionStringifier: optionStringifier,
+                            columns: columns,
                         })];
                 case 2:
                     _c[_d] = _e.sent();
                     return [3 /*break*/, 4];
                 case 3:
-                    outputArgs[name] = output;
+                    outputArgs[name] = options;
                     _e.label = 4;
                 case 4: return [2 /*return*/];
             }
@@ -283,7 +285,8 @@ function processArgs(args, processedCmdArgs, sender) {
                     return [3 /*break*/, 27];
                 case 3: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([players_1.FishPlayer.search(players_1.FishPlayer.getAllOnline(), args[i])], __read(commonArgs), false), [function (player) { return Strings.stripColors(player.name).length >= 3 ?
                             player.name
-                            : (0, funcs_1.escapeStringColorsClient)(player.name); }], false))];
+                            : (0, funcs_1.escapeStringColorsClient)(player.name); },
+                        2], false))];
                 case 4:
                     _f.sent();
                     return [3 /*break*/, 28];
@@ -300,7 +303,8 @@ function processArgs(args, processedCmdArgs, sender) {
                     return [3 /*break*/, 9];
                 case 7: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([players_1.FishPlayer.search(Object.values(players_1.FishPlayer.cachedPlayers), args[i])], __read(commonArgs), false), [function (player) { return Strings.stripColors(player.name).length >= 3 ?
                             player.name
-                            : (0, funcs_1.escapeStringColorsClient)(player.name); }], false))];
+                            : (0, funcs_1.escapeStringColorsClient)(player.name); },
+                        2], false))];
                 case 8:
                     _f.sent();
                     _f.label = 9;
@@ -375,7 +379,7 @@ function processArgs(args, processedCmdArgs, sender) {
                         return [3 /*break*/, 28];
                     }
                     _f.label = 16;
-                case 16: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getUnitType)(args[i])], __read(commonArgs), false), [function (u) { return u.name; }], false))];
+                case 16: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getUnitType)(args[i])], __read(commonArgs), false), [function (u) { return u.emoji() + (0, funcs_1.capitalizeText)(u.name); }], false))];
                 case 17:
                     _f.sent();
                     return [3 /*break*/, 28];
@@ -384,7 +388,8 @@ function processArgs(args, processedCmdArgs, sender) {
                         (0, errors_1.fail)("Invalid uuid string \"".concat(args[i], "\""));
                     outputArgs[cmdArg.name] = args[i];
                     return [3 /*break*/, 28];
-                case 19: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(args[i])], __read(commonArgs), false), [function (r) { return r.name(); }], false))];
+                case 19: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(args[i])], __read(commonArgs), false), [function (r) { return r.name(); },
+                        2], false))];
                 case 20:
                     _f.sent();
                     return [3 /*break*/, 28];
@@ -396,7 +401,8 @@ function processArgs(args, processedCmdArgs, sender) {
                 case 24:
                     _f.sent();
                     return [3 /*break*/, 28];
-                case 25: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getItem)(args[i])], __read(commonArgs), false), [function (i) { return i.emoji() + (0, funcs_1.capitalizeText)(i.name, "-"); }], false))];
+                case 25: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getItem)(args[i])], __read(commonArgs), false), [function (i) { return i.emoji() + (0, funcs_1.capitalizeText)(i.name, "-"); },
+                        2], false))];
                 case 26:
                     _f.sent();
                     return [3 /*break*/, 28];
