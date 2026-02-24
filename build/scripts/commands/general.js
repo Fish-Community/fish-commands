@@ -361,8 +361,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: server.requiredPerm ? commands_1.Perm.getByName(server.requiredPerm) : commands_1.Perm.none,
         isHidden: true,
         handler: function (_a) {
-            var sender = _a.sender;
-            players_1.FishPlayer.messageAllWithPerm(server.requiredPerm, "".concat(sender.name, "[magenta] has gone to the ").concat(server.name, " server. Use [cyan]/").concat(server.name, " [magenta]to join them!"));
+            var sender = _a.sender, lastUsedSuccessfullySender = _a.lastUsedSuccessfullySender;
+            if (Date.now() - lastUsedSuccessfullySender > funcs_1.Duration.minutes(1))
+                players_1.FishPlayer.messageAllWithPerm(server.requiredPerm, "".concat(sender.name, "[magenta] has gone to the ").concat(server.name, " server. Use [cyan]/").concat(server.name, " [magenta]to join them!"));
             Call.connect(sender.con, server.ip, server.port);
         },
     },
@@ -372,7 +373,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.play,
         handler: function (_a) {
             var _b, _c;
-            var args = _a.args, sender = _a.sender, f = _a.f;
+            var args = _a.args, sender = _a.sender, f = _a.f, lastUsedSuccessfullySender = _a.lastUsedSuccessfullySender;
             if (args.target != null && args.target != sender && !sender.canModerate(args.target, true, "admin", true))
                 (0, commands_1.fail)(f(templateObject_2 || (templateObject_2 = __makeTemplateObject(["You do not have permission to switch player ", "."], ["You do not have permission to switch player ", "."])), args.target));
             var target = (_b = args.target) !== null && _b !== void 0 ? _b : sender;
@@ -386,7 +387,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 //Pretend the server doesn't exist
                 if (server.requiredPerm && !sender.hasPerm(server.requiredPerm))
                     (0, commands_1.fail)(unknownServerMessage);
-                if (target == sender)
+                if (target == sender && Date.now() - lastUsedSuccessfullySender > funcs_1.Duration.minutes(1))
                     players_1.FishPlayer.messageAllWithPerm(server.requiredPerm, "".concat(sender.name, "[magenta] has gone to the ").concat(server.name, " server. Use [cyan]/").concat(server.name, " [magenta]to join them!"));
                 Call.connect(target.con, server.ip, server.port);
             }

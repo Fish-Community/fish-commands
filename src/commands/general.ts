@@ -273,8 +273,11 @@ export const commands = commandList({
 				description: `Switches to the ${server.name} server.`,
 				perm: server.requiredPerm ? Perm.getByName(server.requiredPerm) : Perm.none,
 				isHidden: true,
-				handler({ sender }) {
-					FishPlayer.messageAllWithPerm(server.requiredPerm, `${sender.name}[magenta] has gone to the ${server.name} server. Use [cyan]/${server.name} [magenta]to join them!`);
+				handler({ sender, lastUsedSuccessfullySender }) {
+					if(Date.now() - lastUsedSuccessfullySender > Duration.minutes(1))
+						FishPlayer.messageAllWithPerm(server.requiredPerm,
+							`${sender.name}[magenta] has gone to the ${server.name} server. Use [cyan]/${server.name} [magenta]to join them!`
+						);
 					Call.connect(sender.con, server.ip, server.port);
 				},
 			} satisfies FishCommandData<string, any>,
@@ -285,7 +288,7 @@ export const commands = commandList({
 		args: ["server:string", "target:player?"],
 		description: "Switches to another server.",
 		perm: Perm.play,
-		handler({args, sender, f}){
+		handler({args, sender, f, lastUsedSuccessfullySender}){
 			if(args.target != null && args.target != sender && !sender.canModerate(args.target, true, "admin", true))
 				fail(f`You do not have permission to switch player ${args.target}.`);
 			const target = args.target ?? sender;
@@ -301,8 +304,10 @@ export const commands = commandList({
 				if(server.requiredPerm && !sender.hasPerm(server.requiredPerm))
 					fail(unknownServerMessage);
 
-				if(target == sender)
-					FishPlayer.messageAllWithPerm(server.requiredPerm, `${sender.name}[magenta] has gone to the ${server.name} server. Use [cyan]/${server.name} [magenta]to join them!`);
+				if(target == sender && Date.now() - lastUsedSuccessfullySender > Duration.minutes(1))
+					FishPlayer.messageAllWithPerm(server.requiredPerm,
+						`${sender.name}[magenta] has gone to the ${server.name} server. Use [cyan]/${server.name} [magenta]to join them!`
+					);
 
 				Call.connect(target.con, server.ip, server.port);
 			}
