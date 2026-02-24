@@ -132,7 +132,7 @@ async function disambiguateArgument<T extends FishCommandArgType>(
 	} else outputArgs[name] = options;
 }
 
-const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "uuid", "map", "rank", "roleflag", "item"];
+const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "rank", "roleflag", "item"];
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {

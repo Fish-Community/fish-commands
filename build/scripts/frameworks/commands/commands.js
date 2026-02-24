@@ -233,7 +233,7 @@ function disambiguateArgument(options_1, arg_1, _a, sender_1, outputArgs_1, opti
         });
     });
 }
-var argsSupportingBlank = ["player", "offlinePlayer", "unittype", "uuid", "map", "rank", "roleflag", "item"];
+var argsSupportingBlank = ["player", "offlinePlayer", "unittype", "map", "rank", "roleflag", "item"];
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 function processArgs(args, processedCmdArgs, sender) {
     return __awaiter(this, void 0, void 0, function () {
