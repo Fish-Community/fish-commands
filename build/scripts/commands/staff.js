@@ -876,18 +876,20 @@ exports.commands = (0, commands_1.commandList)({
         requirements: [commands_1.Req.moderate("target", false, "mod", false)],
         handler: function (_a) {
             var _b = _a.args, target = _b.target, duration = _b.duration, outputSuccess = _a.outputSuccess, f = _a.f;
-            target.forceRespawn();
             if (target.blockedFromUnitsUntil == 0)
                 duration !== null && duration !== void 0 ? duration : (duration = funcs_1.Duration.minutes(1));
             else
                 duration !== null && duration !== void 0 ? duration : (duration = 0);
             if (duration == 0) {
-                outputSuccess(f(templateObject_45 || (templateObject_45 = __makeTemplateObject(["Restored ", "'s ability to control units."], ["Restored ", "'s ability to control units."])), target));
                 target.blockedFromUnitsUntil = 0;
+                target.sendMessage("You are allowed to control units again.");
+                outputSuccess(f(templateObject_45 || (templateObject_45 = __makeTemplateObject(["Restored ", "'s ability to control units."], ["Restored ", "'s ability to control units."])), target));
             }
             else {
-                outputSuccess(f(templateObject_46 || (templateObject_46 = __makeTemplateObject(["Blocked ", " from controlling units for ", "."], ["Blocked ", " from controlling units for ", "."])), target, (0, utils_1.formatTime)(duration)));
+                target.forceRespawn();
                 target.blockedFromUnitsUntil = Date.now() + duration;
+                target.sendMessage("You have been blocked from controlling units for ".concat((0, utils_1.formatTime)(duration), "."));
+                outputSuccess(f(templateObject_46 || (templateObject_46 = __makeTemplateObject(["Blocked ", " from controlling units for ", "."], ["Blocked ", " from controlling units for ", "."])), target, (0, utils_1.formatTime)(duration)));
             }
         }
     },

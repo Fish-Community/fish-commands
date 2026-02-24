@@ -609,16 +609,18 @@ export const commands = commandList({
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
 		handler({args: { target, duration }, outputSuccess, f}){
-			target.forceRespawn();
 			if(target.blockedFromUnitsUntil == 0) duration ??= Duration.minutes(1);
 			else duration ??= 0;
-
+			
 			if(duration == 0){
-				outputSuccess(f`Restored ${target}'s ability to control units.`);
 				target.blockedFromUnitsUntil = 0;
+				target.sendMessage(`You are allowed to control units again.`);
+				outputSuccess(f`Restored ${target}'s ability to control units.`);
 			} else {
-				outputSuccess(f`Blocked ${target} from controlling units for ${formatTime(duration)}.`);
+				target.forceRespawn();
 				target.blockedFromUnitsUntil = Date.now() + duration;
+				target.sendMessage(`You have been blocked from controlling units for ${formatTime(duration)}.`);
+				outputSuccess(f`Blocked ${target} from controlling units for ${formatTime(duration)}.`);
 			}
 		}
 	},
