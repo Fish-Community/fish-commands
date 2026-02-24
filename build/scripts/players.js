@@ -145,6 +145,8 @@ var FishPlayer = /** @class */ (function () {
          * they are autoflagged and cannot build or talk in chat.
          */
         this.autoflagged = false;
+        /** Timestamp until which this player will not be allowed to control units. */
+        this.blockedFromUnitsUntil = -1;
         // Used by the data syncing framework.
         this.infoUpdated = false;
         this.dataSynced = false;

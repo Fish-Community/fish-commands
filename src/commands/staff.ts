@@ -603,6 +603,18 @@ export const commands = commandList({
 		}
 	},
 
+	clearunit: {
+		args: ["target:player", "duration:time?"],
+		description: "Forces a player out of the unit they are controlling, and blocks them from controlling units for a specified duration.",
+		perm: Perm.mod,
+		requirements: [Req.moderate("target", false, "mod", false)],
+		handler({args: { target, duration = Duration.minutes(1) }, outputSuccess, f}){
+			target.forceRespawn();
+			outputSuccess(f`Blocked ${target} from controlling units for ${formatTime(duration)}.`);
+			target.blockedFromUnitsUntil = Date.now() + duration;
+		}
+	},
+
 	stealunit: {
 		args: ["target:player", "newcontroller:player?"],
 		description: "Steals the unit of a player, putting you in their unit and forcing them to respawn.",

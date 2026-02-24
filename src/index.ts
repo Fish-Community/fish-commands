@@ -11,7 +11,7 @@ import { FishEvents, fishPlugin, fishState, ipJoins, tileHistory } from "/global
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
-import { addToTileHistory, fishCommandsRootDirPath, processChat, serverRestartLoop } from "/utils";
+import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, processChat, serverRestartLoop } from "/utils";
 
 
 Events.on(EventType.ConnectionEvent, (e) => {
@@ -143,6 +143,9 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 					action: "picked up",
 					type: action.tile!.block()?.name ?? "nothing",
 				});
+			} else if(action.type === Administration.ActionType.control && !action.unit?.spawnedByCore && Date.now() < fishP.blockedFromUnitsUntil){
+				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from controlling units until ${formatTimeRelative(fishP.blockedFromUnitsUntil)}`);
+				return false;
 			}
 			return true;
 		}

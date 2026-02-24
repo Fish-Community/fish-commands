@@ -869,6 +869,18 @@ exports.commands = (0, commands_1.commandList)({
             outputSuccess(f(templateObject_44 || (templateObject_44 = __makeTemplateObject(["Respawned player ", "."], ["Respawned player ", "."])), args.player));
         }
     },
+    clearunit: {
+        args: ["target:player", "duration:time?"],
+        description: "Forces a player out of the unit they are controlling, and blocks them from controlling units for a specified duration.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("target", false, "mod", false)],
+        handler: function (_a) {
+            var _b = _a.args, target = _b.target, _c = _b.duration, duration = _c === void 0 ? funcs_1.Duration.minutes(1) : _c, outputSuccess = _a.outputSuccess, f = _a.f;
+            target.forceRespawn();
+            outputSuccess(f(templateObject_45 || (templateObject_45 = __makeTemplateObject(["Blocked ", " from controlling units for ", "."], ["Blocked ", " from controlling units for ", "."])), target, (0, utils_1.formatTime)(duration)));
+            target.blockedFromUnitsUntil = Date.now() + duration;
+        }
+    },
     stealunit: {
         args: ["target:player", "newcontroller:player?"],
         description: "Steals the unit of a player, putting you in their unit and forcing them to respawn.",
@@ -877,7 +889,7 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             var _b;
             var sender = _a.sender, _c = _a.args, target = _c.target, _d = _c.newcontroller, newcontroller = _d === void 0 ? sender : _d, outputSuccess = _a.outputSuccess, f = _a.f;
-            var unit = (_b = target.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(f(templateObject_45 || (templateObject_45 = __makeTemplateObject(["Targeted player ", " is not in a unit."], ["Targeted player ", " is not in a unit."])), target));
+            var unit = (_b = target.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(f(templateObject_46 || (templateObject_46 = __makeTemplateObject(["Targeted player ", " is not in a unit."], ["Targeted player ", " is not in a unit."])), target));
             if (target.team() !== newcontroller.team()) {
                 if (!sender.hasPerm("changeTeamExternal")) {
                     if (!sender.hasPerm("changeTeam"))
@@ -888,11 +900,11 @@ exports.commands = (0, commands_1.commandList)({
             target.forceRespawn();
             newcontroller.unit(unit);
             if (newcontroller == sender) {
-                outputSuccess(f(templateObject_46 || (templateObject_46 = __makeTemplateObject(["Commandeered the unit of player ", "."], ["Commandeered the unit of player ", "."])), target));
+                outputSuccess(f(templateObject_47 || (templateObject_47 = __makeTemplateObject(["Commandeered the unit of player ", "."], ["Commandeered the unit of player ", "."])), target));
             }
             else {
-                outputSuccess(f(templateObject_47 || (templateObject_47 = __makeTemplateObject(["Transferred player ", " into the unit of ", "."], ["Transferred player ", " into the unit of ", "."])), newcontroller, target));
-                newcontroller.sendMessage(f(templateObject_48 || (templateObject_48 = __makeTemplateObject(["[green]You were transferred to the unit of player ", " by ", "."], ["[green]You were transferred to the unit of player ", " by ", "."])), target, sender)('[green]'));
+                outputSuccess(f(templateObject_48 || (templateObject_48 = __makeTemplateObject(["Transferred player ", " into the unit of ", "."], ["Transferred player ", " into the unit of ", "."])), newcontroller, target));
+                newcontroller.sendMessage(f(templateObject_49 || (templateObject_49 = __makeTemplateObject(["[green]You were transferred to the unit of player ", " by ", "."], ["[green]You were transferred to the unit of player ", " by ", "."])), target, sender)('[green]'));
             }
         }
     },
@@ -915,9 +927,9 @@ exports.commands = (0, commands_1.commandList)({
             var names = args.showColors
                 ? info.names.map(funcs_1.escapeStringColorsClient).toString(", ")
                 : __spreadArray([], __read(new Set(info.names.map(function (n) { return Strings.stripColors(n); }).toArray())), false).join(", ");
-            output(f(templateObject_49 || (templateObject_49 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(args.target.name), args.target.player.id.toString(), args.target.rank, Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" "), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat((0, utils_1.formatTimeRelative)(args.target.unmarkTime)) : "[green]false", f.boolBad(args.target.muted), f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
+            output(f(templateObject_50 || (templateObject_50 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(args.target.name), args.target.player.id.toString(), args.target.rank, Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" "), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat((0, utils_1.formatTimeRelative)(args.target.unmarkTime)) : "[green]false", f.boolBad(args.target.muted), f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
             if (sender.hasPerm("viewUUIDs"))
-                output(f(templateObject_50 || (templateObject_50 = __makeTemplateObject(["\t[#FFAAAA]UUID: ", "\n\t[#FFAAAA]IP: ", ""], ["\\\n\t[#FFAAAA]UUID: ", "\n\t[#FFAAAA]IP: ", ""])), args.target.uuid, args.target.ip()));
+                output(f(templateObject_51 || (templateObject_51 = __makeTemplateObject(["\t[#FFAAAA]UUID: ", "\n\t[#FFAAAA]IP: ", ""], ["\\\n\t[#FFAAAA]UUID: ", "\n\t[#FFAAAA]IP: ", ""])), args.target.uuid, args.target.ip()));
         }
     },
     spawn: {
@@ -944,7 +956,7 @@ exports.commands = (0, commands_1.commandList)({
             }
             if (!config_1.Gamemode.sandbox() && args.effects !== 'paper')
                 (0, utils_1.logAction)("spawned unit ".concat(args.type.name).concat(count == 1 ? '' : " x".concat(count), " at ").concat(Math.round(x / 8), ", ").concat(Math.round(y / 8)) + (args.effects ? "with ".concat(args.effects, " effects") : ''), sender);
-            outputSuccess(f(templateObject_51 || (templateObject_51 = __makeTemplateObject(["Spawned unit ", " at (", ", ", ")"], ["Spawned unit ", " at (", ", ", ")"])), args.type, Math.round(x / 8), Math.round(y / 8)));
+            outputSuccess(f(templateObject_52 || (templateObject_52 = __makeTemplateObject(["Spawned unit ", " at (", ", ", ")"], ["Spawned unit ", " at (", ", ", ")"])), args.type, Math.round(x / 8), Math.round(y / 8)));
         }
     },
     setblock: {
@@ -957,9 +969,9 @@ exports.commands = (0, commands_1.commandList)({
             var team = (_b = args.team) !== null && _b !== void 0 ? _b : sender.team();
             var tile = Vars.world.tile(args.x, args.y);
             if (args.rotation != null && (args.rotation < 0 || args.rotation > 3))
-                (0, commands_1.fail)(f(templateObject_52 || (templateObject_52 = __makeTemplateObject(["Invalid rotation ", ""], ["Invalid rotation ", ""])), args.rotation));
+                (0, commands_1.fail)(f(templateObject_53 || (templateObject_53 = __makeTemplateObject(["Invalid rotation ", ""], ["Invalid rotation ", ""])), args.rotation));
             if (tile == null)
-                (0, commands_1.fail)(f(templateObject_53 || (templateObject_53 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), args.x, args.y));
+                (0, commands_1.fail)(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), args.x, args.y));
             tile.setNet(args.block, team, (_c = args.rotation) !== null && _c !== void 0 ? _c : 0);
             (0, utils_1.addToTileHistory)({
                 pos: "".concat(args.x, ",").concat(args.y),
@@ -969,7 +981,7 @@ exports.commands = (0, commands_1.commandList)({
             });
             if (!config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(args.x, ",").concat(args.y), sender);
-            outputSuccess(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), args.x, args.y, args.block));
+            outputSuccess(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), args.x, args.y, args.block));
         }
     },
     setblockr: {
@@ -984,9 +996,9 @@ exports.commands = (0, commands_1.commandList)({
             var team = (_b = args.team) !== null && _b !== void 0 ? _b : sender.team();
             var tile = Vars.world.tile(x, y);
             if (args.rotation != null && (args.rotation < 0 || args.rotation > 3))
-                (0, commands_1.fail)(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["Invalid rotation ", ""], ["Invalid rotation ", ""])), args.rotation));
+                (0, commands_1.fail)(f(templateObject_56 || (templateObject_56 = __makeTemplateObject(["Invalid rotation ", ""], ["Invalid rotation ", ""])), args.rotation));
             if (tile == null)
-                (0, commands_1.fail)(f(templateObject_56 || (templateObject_56 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), x, y));
+                (0, commands_1.fail)(f(templateObject_57 || (templateObject_57 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), x, y));
             tile.setNet(args.block, team, (_c = args.rotation) !== null && _c !== void 0 ? _c : 0);
             (0, utils_1.addToTileHistory)({
                 pos: "".concat(x, ",").concat(y),
@@ -996,7 +1008,7 @@ exports.commands = (0, commands_1.commandList)({
             });
             if (!config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(x, ",").concat(y), sender);
-            outputSuccess(f(templateObject_57 || (templateObject_57 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), x, y, args.block));
+            outputSuccess(f(templateObject_58 || (templateObject_58 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), x, y, args.block));
         },
         handler: function (_a) {
             var args = _a.args, outputSuccess = _a.outputSuccess, handleTaps = _a.handleTaps, currentTapMode = _a.currentTapMode, f = _a.f;
@@ -1006,7 +1018,7 @@ exports.commands = (0, commands_1.commandList)({
                     outputSuccess("setblockr enabled.\n[scarlet]Be careful, you have the midas touch now![] Turn it off by running /setblockr again.");
                 }
                 else {
-                    outputSuccess(f(templateObject_58 || (templateObject_58 = __makeTemplateObject(["Changed setblockr's block to ", ""], ["Changed setblockr's block to ", ""])), args.block));
+                    outputSuccess(f(templateObject_59 || (templateObject_59 = __makeTemplateObject(["Changed setblockr's block to ", ""], ["Changed setblockr's block to ", ""])), args.block));
                 }
             }
             else {
@@ -1035,7 +1047,7 @@ exports.commands = (0, commands_1.commandList)({
             });
             if (!config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("exterminated ".concat(numKilled, " units"), sender);
-            outputSuccess(f(templateObject_59 || (templateObject_59 = __makeTemplateObject(["Exterminated ", " units."], ["Exterminated ", " units."])), numKilled));
+            outputSuccess(f(templateObject_60 || (templateObject_60 = __makeTemplateObject(["Exterminated ", " units."], ["Exterminated ", " units."])), numKilled));
         }
     },
     js: {
@@ -1125,7 +1137,7 @@ exports.commands = (0, commands_1.commandList)({
                 (0, commands_1.fail)("Invalid chat strictness level: valid levels are \"chat\", \"strict\"");
             player.chatStrictness = value;
             (0, utils_1.logAction)("set chat strictness to ".concat(value, " for"), sender, player);
-            outputSuccess(f(templateObject_60 || (templateObject_60 = __makeTemplateObject(["Set chat strictness for player ", " to \"", "\"."], ["Set chat strictness for player ", " to \"", "\"."])), player, value));
+            outputSuccess(f(templateObject_61 || (templateObject_61 = __makeTemplateObject(["Set chat strictness for player ", " to \"", "\"."], ["Set chat strictness for player ", " to \"", "\"."])), player, value));
         }
     },
     emanate: (0, commands_1.command)(function () {
@@ -1230,29 +1242,29 @@ exports.commands = (0, commands_1.commandList)({
                             fishP = players_1.FishPlayer.getById(input);
                             info = admins.getInfoOptional(input);
                             if (fishP == null && info == null)
-                                (0, commands_1.fail)(f(templateObject_61 || (templateObject_61 = __makeTemplateObject(["No stored data matched uuid ", "."], ["No stored data matched uuid ", "."])), input));
+                                (0, commands_1.fail)(f(templateObject_62 || (templateObject_62 = __makeTemplateObject(["No stored data matched uuid ", "."], ["No stored data matched uuid ", "."])), input));
                             else if (fishP == null && info)
-                                output(f(templateObject_62 || (templateObject_62 = __makeTemplateObject(["[accent]Found player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
+                                output(f(templateObject_63 || (templateObject_63 = __makeTemplateObject(["[accent]Found player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
                             else if (fishP && info)
-                                output(f(templateObject_63 || (templateObject_63 = __makeTemplateObject(["[accent]Found fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, fishP.name, (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
+                                output(f(templateObject_64 || (templateObject_64 = __makeTemplateObject(["[accent]Found fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, fishP.name, (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
                             else
-                                (0, commands_1.fail)(f(templateObject_64 || (templateObject_64 = __makeTemplateObject(["Super weird edge case: found fish player data but no player info for uuid ", "."], ["Super weird edge case: found fish player data but no player info for uuid ", "."])), input));
+                                (0, commands_1.fail)(f(templateObject_65 || (templateObject_65 = __makeTemplateObject(["Super weird edge case: found fish player data but no player info for uuid ", "."], ["Super weird edge case: found fish player data but no player info for uuid ", "."])), input));
                             return [3 /*break*/, 5];
                         case 1:
                             if (!globals_1.ipPattern.test(input)) return [3 /*break*/, 2];
                             matches = admins.findByIPs(input);
                             if (matches.isEmpty())
-                                (0, commands_1.fail)(f(templateObject_65 || (templateObject_65 = __makeTemplateObject(["No stored data matched IP ", ""], ["No stored data matched IP ", ""])), input));
-                            output(f(templateObject_66 || (templateObject_66 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches.size, matches.size == 1 ? "" : "es", input));
-                            matches.each(function (info) { return output(f(templateObject_67 || (templateObject_67 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
+                                (0, commands_1.fail)(f(templateObject_66 || (templateObject_66 = __makeTemplateObject(["No stored data matched IP ", ""], ["No stored data matched IP ", ""])), input));
+                            output(f(templateObject_67 || (templateObject_67 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches.size, matches.size == 1 ? "" : "es", input));
+                            matches.each(function (info) { return output(f(templateObject_68 || (templateObject_68 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
                             return [3 /*break*/, 5];
                         case 2:
                             matches_1 = Vars.netServer.admins.searchNames(input);
                             if (matches_1.isEmpty())
-                                (0, commands_1.fail)(f(templateObject_68 || (templateObject_68 = __makeTemplateObject(["No stored data matched name ", ""], ["No stored data matched name ", ""])), input));
-                            output(f(templateObject_69 || (templateObject_69 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches_1.size, matches_1.size == 1 ? "" : "es", input));
+                                (0, commands_1.fail)(f(templateObject_69 || (templateObject_69 = __makeTemplateObject(["No stored data matched name ", ""], ["No stored data matched name ", ""])), input));
+                            output(f(templateObject_70 || (templateObject_70 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches_1.size, matches_1.size == 1 ? "" : "es", input));
                             displayMatches = function () {
-                                matches_1.each(function (info) { return output(f(templateObject_70 || (templateObject_70 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
+                                matches_1.each(function (info) { return output(f(templateObject_71 || (templateObject_71 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
                             };
                             if (!(matches_1.size > 20)) return [3 /*break*/, 4];
                             return [4 /*yield*/, menus_1.Menu.confirm(sender, "Are you sure you want to view all ".concat(matches_1.size, " matches?"))];
@@ -1298,13 +1310,13 @@ exports.commands = (0, commands_1.commandList)({
             var _b, _c, _d;
             var args = _a.args, sender = _a.sender, f = _a.f, outputSuccess = _a.outputSuccess;
             if ((_b = args.player) === null || _b === void 0 ? void 0 : _b.hasPerm("blockTrolling"))
-                (0, commands_1.fail)(f(templateObject_71 || (templateObject_71 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
+                (0, commands_1.fail)(f(templateObject_72 || (templateObject_72 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
             if (args.player && !sender.canModerate(args.player, false))
                 (0, commands_1.fail)("You do not have permission to perform moderation actions on this player.");
             var target = (_c = args.player) !== null && _c !== void 0 ? _c : sender;
             var unit = target.unit();
             if (!unit || unit.dead)
-                (0, commands_1.fail)(f(templateObject_72 || (templateObject_72 = __makeTemplateObject(["", "'s unit is dead."], ["", "'s unit is dead."])), target));
+                (0, commands_1.fail)(f(templateObject_73 || (templateObject_73 = __makeTemplateObject(["", "'s unit is dead."], ["", "'s unit is dead."])), target));
             var ticks = ((_d = args.duration) !== null && _d !== void 0 ? _d : 1e12) / 1000 * 60;
             (0, utils_1.applyEffectMode)(args.mode, unit, ticks);
             outputSuccess("".concat(args.mode === "clear" ? "Cleared" : "Applied", " effects."));
@@ -1319,9 +1331,9 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             var _b;
             var _c = _a.args, team = _c.team, item = _c.item, amount = _c.amount, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
-            var core = (_b = team.data().cores.firstOpt()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(f(templateObject_73 || (templateObject_73 = __makeTemplateObject(["Team ", " has no cores."], ["Team ", " has no cores."])), team));
+            var core = (_b = team.data().cores.firstOpt()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(f(templateObject_74 || (templateObject_74 = __makeTemplateObject(["Team ", " has no cores."], ["Team ", " has no cores."])), team));
             core.items.add(item, amount);
-            outputSuccess(f(templateObject_74 || (templateObject_74 = __makeTemplateObject(["Gave ", " ", " to ", "."], ["Gave ", " ", " to ", "."])), amount, item, team));
+            outputSuccess(f(templateObject_75 || (templateObject_75 = __makeTemplateObject(["Gave ", " ", " to ", "."], ["Gave ", " ", " to ", "."])), amount, item, team));
             if (!config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("gave ".concat(amount, " ").concat(item.localizedName.toLowerCase(), " to ").concat(team.name), sender);
         }
@@ -1370,4 +1382,4 @@ exports.commands = (0, commands_1.commandList)({
         }
     }
 });
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25, templateObject_26, templateObject_27, templateObject_28, templateObject_29, templateObject_30, templateObject_31, templateObject_32, templateObject_33, templateObject_34, templateObject_35, templateObject_36, templateObject_37, templateObject_38, templateObject_39, templateObject_40, templateObject_41, templateObject_42, templateObject_43, templateObject_44, templateObject_45, templateObject_46, templateObject_47, templateObject_48, templateObject_49, templateObject_50, templateObject_51, templateObject_52, templateObject_53, templateObject_54, templateObject_55, templateObject_56, templateObject_57, templateObject_58, templateObject_59, templateObject_60, templateObject_61, templateObject_62, templateObject_63, templateObject_64, templateObject_65, templateObject_66, templateObject_67, templateObject_68, templateObject_69, templateObject_70, templateObject_71, templateObject_72, templateObject_73, templateObject_74;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25, templateObject_26, templateObject_27, templateObject_28, templateObject_29, templateObject_30, templateObject_31, templateObject_32, templateObject_33, templateObject_34, templateObject_35, templateObject_36, templateObject_37, templateObject_38, templateObject_39, templateObject_40, templateObject_41, templateObject_42, templateObject_43, templateObject_44, templateObject_45, templateObject_46, templateObject_47, templateObject_48, templateObject_49, templateObject_50, templateObject_51, templateObject_52, templateObject_53, templateObject_54, templateObject_55, templateObject_56, templateObject_57, templateObject_58, templateObject_59, templateObject_60, templateObject_61, templateObject_62, templateObject_63, templateObject_64, templateObject_65, templateObject_66, templateObject_67, templateObject_68, templateObject_69, templateObject_70, templateObject_71, templateObject_72, templateObject_73, templateObject_74, templateObject_75;

@@ -579,6 +579,7 @@ type PlayerAction = {
 	player:mindustryPlayer;
 	type:ActionType;
 	tile:Tile | null;
+	unit:Unit | null;
 }
 type ActionType = any;
 const ActionType:Record<string, ActionType>;

@@ -113,6 +113,8 @@ export class FishPlayer {
 	 * they are autoflagged and cannot build or talk in chat.
 	 */
 	autoflagged = false;
+	/** Timestamp until which this player will not be allowed to control units. */
+	blockedFromUnitsUntil = -1;
 	/** The original name that this player used to join the server. */
 	originalName?: string;
 	// Used by the data syncing framework.

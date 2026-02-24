@@ -132,7 +132,7 @@ Events.on(EventType.ServerLoadEvent, function (e) {
     Vars.netServer.admins.addChatFilter(function (player, message) { return (0, utils_1.processChat)(player, message); });
     // Action filters
     Vars.netServer.admins.addActionFilter(function (action) {
-        var _a, _b;
+        var _a, _b, _c;
         var player = action.player;
         var fishP = players_1.FishPlayer.get(player);
         //prevent stopped players from doing anything other than deposit items.
@@ -148,6 +148,10 @@ Events.on(EventType.ServerLoadEvent, function (e) {
                     action: "picked up",
                     type: (_b = (_a = action.tile.block()) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : "nothing",
                 });
+            }
+            else if (action.type === Administration.ActionType.control && !((_c = action.unit) === null || _c === void 0 ? void 0 : _c.spawnedByCore) && Date.now() < fishP.blockedFromUnitsUntil) {
+                action.player.sendMessage("[scarlet]\u26A0 [yellow]You are blocked from controlling units until ".concat((0, utils_1.formatTimeRelative)(fishP.blockedFromUnitsUntil)));
+                return false;
             }
             return true;
         }
