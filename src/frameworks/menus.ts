@@ -49,8 +49,8 @@ type MenuConfirmProps = {
 
 type MenuCancelOption = "ignore" | "reject" | "null";
 type MenuOptions<TOption, TCancelBehavior extends MenuCancelOption> = {
-	/** [red]Cancel[] will be added to the list of options. */
-	includeCancel?: boolean;
+	/** The specified text, or "[red]Cancel[]", will be added to the list of options. */
+	includeCancel?: boolean | string;
 	optionStringifier?: (opt: TOption) => string;
 	columns?: number;
 	/**
@@ -142,7 +142,7 @@ export const Menu = {
 		const arrangedOptions = (options.length == 0 && !includeCancel) ? [] : to2DArray(options, columns);
 
 		if(includeCancel){
-			arrangedOptions.push(["[red]Cancel[]" as never]);
+			arrangedOptions.push([(typeof includeCancel == "string" ? includeCancel : "[red]Cancel[]") as never]);
 			//This is safe because cancelOptionId is set,
 			//so the handler will never get called with "Cancel".
 			cancelOptionId = options.length;
