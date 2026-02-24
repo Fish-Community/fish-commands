@@ -144,7 +144,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 					type: action.tile!.block()?.name ?? "nothing",
 				});
 			} else if(action.type === Administration.ActionType.control && !action.unit?.spawnedByCore && Date.now() < fishP.blockedFromUnitsUntil){
-				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from controlling units until ${formatTimeRelative(fishP.blockedFromUnitsUntil)}`);
+				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from controlling units for ${formatTimeRelative(fishP.blockedFromUnitsUntil, true)}`);
 				return false;
 			}
 			return true;

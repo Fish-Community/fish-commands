@@ -608,10 +608,18 @@ export const commands = commandList({
 		description: "Forces a player out of the unit they are controlling, and blocks them from controlling units for a specified duration.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
-		handler({args: { target, duration = Duration.minutes(1) }, outputSuccess, f}){
+		handler({args: { target, duration }, outputSuccess, f}){
 			target.forceRespawn();
-			outputSuccess(f`Blocked ${target} from controlling units for ${formatTime(duration)}.`);
-			target.blockedFromUnitsUntil = Date.now() + duration;
+			if(target.blockedFromUnitsUntil == 0) duration ??= Duration.minutes(1);
+			else duration ??= 0;
+
+			if(duration == 0){
+				outputSuccess(f`Restored ${target}'s ability to control units.`);
+				target.blockedFromUnitsUntil = 0;
+			} else {
+				outputSuccess(f`Blocked ${target} from controlling units for ${formatTime(duration)}.`);
+				target.blockedFromUnitsUntil = Date.now() + duration;
+			}
 		}
 	},
 

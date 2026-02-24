@@ -150,7 +150,7 @@ Events.on(EventType.ServerLoadEvent, function (e) {
                 });
             }
             else if (action.type === Administration.ActionType.control && !((_c = action.unit) === null || _c === void 0 ? void 0 : _c.spawnedByCore) && Date.now() < fishP.blockedFromUnitsUntil) {
-                action.player.sendMessage("[scarlet]\u26A0 [yellow]You are blocked from controlling units until ".concat((0, utils_1.formatTimeRelative)(fishP.blockedFromUnitsUntil)));
+                action.player.sendMessage("[scarlet]\u26A0 [yellow]You are blocked from controlling units for ".concat((0, utils_1.formatTimeRelative)(fishP.blockedFromUnitsUntil, true)));
                 return false;
             }
             return true;
