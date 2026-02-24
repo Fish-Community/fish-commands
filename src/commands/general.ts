@@ -959,12 +959,13 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 				if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
 				if(votes.get(sender)) fail(`You have already voted.`);
 				
-				votes.set(sender, map);
 				if(voteEndTime == -1){
 					if((Date.now() - lastVoteTime) < Duration.minutes(1)) fail(`Please wait 1 minute before starting a new map vote.`);
 					startVote();
+					votes.set(sender, map);
 					Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] started a map vote, and voted for [yellow]${map.name()}[cyan]. Use [white]/nextmap ${map.plainName()}[] to add your vote, or run [white]/maps[] to see other available maps.`);
 				} else {
+					votes.set(sender, map);
 					Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] voted for [yellow]${map.name()}[cyan]. Time left: [scarlet]${formatTimeRelative(voteEndTime, true)}`);
 					showVotes();
 				}
