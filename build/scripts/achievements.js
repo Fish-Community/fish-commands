@@ -644,7 +644,7 @@ Object.entries(exports.Achievements).forEach(function (_a) {
     return a.sid = id;
 });
 globals_1.FishEvents.on("commandUnauthorized", function (_, player, name) {
-    if (name == "js" || name == "fjs")
+    if (name == "js" || name == "fjs" && !exports.Achievements.run_js_without_perms.has(player))
         exports.Achievements.run_js_without_perms.grantTo(player);
 });
 Events.on(EventType.UnitDrownEvent, function (_a) {
@@ -705,10 +705,9 @@ if (!config_1.Gamemode.sandbox())
                 }
                 else if (core.health > 50) {
                     //grant achievement
+                    exports.Achievements.core_low_hp.grantToAllOnline(core.team);
                     players_1.FishPlayer.forEachPlayer(function (p) {
-                        if (core.team == p.team())
-                            exports.Achievements.core_low_hp.grantTo(p);
-                        else
+                        if (core.team != p.team() && !exports.Achievements.enemy_core_low_hp.has(p))
                             exports.Achievements.enemy_core_low_hp.grantTo(p);
                     });
                     coreHealthTime.delete(core);
@@ -722,7 +721,10 @@ if (!config_1.Gamemode.sandbox())
     }, 1, 1);
 Events.on(EventType.GameOverEvent, function () { return coreHealthTime.clear(); });
 Events.on(EventType.WorldLoadEvent, function () { return coreHealthTime.clear(); });
-globals_1.FishEvents.on("scriptKiddie", function (_, p) { return Timer.schedule(function () { return exports.Achievements.script_kiddie.grantTo(p); }, 2); });
+globals_1.FishEvents.on("scriptKiddie", function (_, p) { return Timer.schedule(function () {
+    if (!exports.Achievements.script_kiddie.has(p))
+        exports.Achievements.script_kiddie.grantTo(p);
+}, 2); });
 globals_1.FishEvents.on("memoryCorruption", function () { return exports.Achievements.memory_corruption.grantToAllOnline(); });
 globals_1.FishEvents.on("serverSays", function () { return exports.Achievements.server_speak.grantToAllOnline(); });
 var templateObject_1, templateObject_2;
