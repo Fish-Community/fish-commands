@@ -788,6 +788,7 @@ export class FishPlayer {
 		this.player!.name = this.prefixedName = prefix + replacedName;
 	}
 	updateAdminStatus(){
+		if(!this.connected()) return;
 		if(this.hasPerm("admin")){
 			Vars.netServer.admins.adminPlayer(this.uuid, this.player!.usid());
 			this.player!.admin = true;

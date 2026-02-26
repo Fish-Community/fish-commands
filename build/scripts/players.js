@@ -928,6 +928,8 @@ var FishPlayer = /** @class */ (function () {
         this.player.name = this.prefixedName = prefix + replacedName;
     };
     FishPlayer.prototype.updateAdminStatus = function () {
+        if (!this.connected())
+            return;
         if (this.hasPerm("admin")) {
             Vars.netServer.admins.adminPlayer(this.uuid, this.player.usid());
             this.player.admin = true;
