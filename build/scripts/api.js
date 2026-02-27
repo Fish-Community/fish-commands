@@ -5,6 +5,7 @@ This file contains wrappers over the API calls to the backend server.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isVpn = isVpn;
+exports.isVpnCached = isVpnCached;
 exports.sendModerationMessage = sendModerationMessage;
 exports.getStaffMessages = getStaffMessages;
 exports.sendStaffMessage = sendStaffMessage;
@@ -35,6 +36,9 @@ function isVpn(ip, callback, callbackError) {
         players_1.FishPlayer.stats.numIpsErrored++;
         callback(false);
     }));
+}
+function isVpnCached(ip) {
+    return cachedIps[ip];
 }
 /** Send text to the moderation logs channel in Discord. */
 function sendModerationMessage(message) {

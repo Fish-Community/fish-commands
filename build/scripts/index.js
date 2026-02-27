@@ -17,6 +17,7 @@ var __values = (this && this.__values) || function(o) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var api = require("/api");
 var aggregate_1 = require("/commands/aggregate");
+var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
 var menus = require("/frameworks/menus");
 var globals_1 = require("/globals");
@@ -36,6 +37,11 @@ Events.on(EventType.ConnectionEvent, function (e) {
             }
         });
     }
+    else if (api.isVpnCached(e.connection.address) && players_1.FishPlayer.shouldWhackFlaggedPlayers()) {
+        Vars.netServer.admins.blacklistDos(e.connection.address);
+        e.connection.kick("You have been DOSblacklisted. Please join our discord for help: " + config_1.text.discordURL + "\nYou won't see this message again.");
+        Log.info("&yAntibot killed connection ".concat(e.connection.address, " due to flagged while under attack"));
+    }
 });
 Events.on(EventType.PlayerConnect, function (e) {
     if (players_1.FishPlayer.shouldKickNewPlayers() && e.player.info.timesJoined == 1) {
@@ -51,7 +57,9 @@ Events.on(EventType.PlayerLeave, function (e) {
     players_1.FishPlayer.onPlayerLeave(e.player);
 });
 Events.on(EventType.ConnectPacketEvent, function (e) {
-    players_1.FishPlayer.playersJoinedRecent++;
+    if (!players_1.FishPlayer.connectRate.allow(5000, 35)) {
+        players_1.FishPlayer.triggerAntibot(300000, "Rate of player connections exceeded 35 / 5s", "automatic");
+    }
     globals_1.ipJoins.increment(e.connection.address);
     var info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
     var underAttack = players_1.FishPlayer.antiBotMode();
@@ -63,23 +71,20 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         (veryLongModName && (underAttack || newPlayer))) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
-        players_1.FishPlayer.onBotWhack();
-        Log.info("&yAntibot killed connection ".concat(e.connection.address, " because ").concat(veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"));
+        players_1.FishPlayer.triggerAntibot(60000, (veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"), "automatic");
         return;
     }
     var suspiciousModName = e.packet.mods.contains(function (str) { return str.includes('\x1B'); });
     if (suspiciousModName || e.packet.name.includes('\x1B')) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
-        players_1.FishPlayer.onBotWhack();
-        Log.info("&yAntibot killed connection ".concat(e.connection.address, " because illegal characters in name or mods"));
+        players_1.FishPlayer.triggerAntibot(5000, "illegal characters in name or mods", "automatic");
         return;
     }
     if (globals_1.ipJoins.get(e.connection.address) >= ((underAttack || veryLongModName) ? 3 : (newPlayer || longModName) ? 7 : 15)) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
-        players_1.FishPlayer.onBotWhack();
-        Log.info("&yAntibot killed connection ".concat(e.connection.address, " due to too many connections"));
+        players_1.FishPlayer.triggerAntibot(5000, "too many connections", "automatic");
         return;
     }
     /*if(e.packet.name.includes("discord.gg/GnEdS9TdV6")){
@@ -92,8 +97,7 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
     if (e.packet.name.includes("1`1@everyone")) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
-        players_1.FishPlayer.onBotWhack();
-        Log.info("&yAntibot killed connection ".concat(e.connection.address, " due to known bad name"));
+        players_1.FishPlayer.triggerAntibot(-1, "known bad name", "automatic");
         return;
     }
     if (Vars.netServer.admins.isDosBlacklisted(e.connection.address)) {

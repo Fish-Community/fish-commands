@@ -982,16 +982,15 @@ var FishPlayer = /** @class */ (function () {
                 Log.warn("IP ".concat(ip, " was flagged as VPN. Flag rate: ").concat(FishPlayer.stats.numIpsFlagged, "/").concat(FishPlayer.stats.numIpsChecked, " (").concat(100 * FishPlayer.stats.numIpsFlagged / FishPlayer.stats.numIpsChecked, "%)"));
                 _this.ipDetectedVpn = true;
                 if (!FishPlayer.autoflagRate.allow(30000, 5)) {
-                    FishPlayer.onBotWhack();
-                    Log.info("&yAntibot triggered: rate of flagged IPs exceeded 5 / 30s");
+                    FishPlayer.triggerAntibot(funcs_1.Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic");
+                    return;
                 }
                 if (info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) { //is this smart?
                     _this.autoflagged = true;
                     _this.stopUnit();
                     _this.updateName();
-                    FishPlayer.flagCount++;
                     if (FishPlayer.shouldWhackFlaggedPlayers()) {
-                        FishPlayer.onBotWhack(); //calls whack all flagged players
+                        FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
                     }
                     else {
                         (0, utils_1.logAction)("autoflagged", "AntiVPN", _this);
@@ -1386,14 +1385,13 @@ var FishPlayer = /** @class */ (function () {
     //#endregion
     //#region antibot
     FishPlayer.antiBotMode = function () {
-        return this.flagCount >= 3 || this.playersJoinedRecent > 50 || this.antiBotModePersist || this.antiBotModeOverride;
+        return Date.now() < this.antibotExpires;
     };
     FishPlayer.shouldKickNewPlayers = function () {
-        //return this.antiBotModeOverride;
         return false;
     };
     FishPlayer.shouldWhackFlaggedPlayers = function () {
-        return (Date.now() - this.lastBotWhacked) < funcs_1.Duration.minutes(5); //5 minutes
+        return Date.now() < this.antibotExpires;
     };
     FishPlayer.whackFlaggedPlayers = function () {
         this.forEachPlayer(function (p) {
@@ -1404,14 +1402,19 @@ var FishPlayer = /** @class */ (function () {
             }
         });
     };
-    FishPlayer.onBotWhack = function () {
-        this.antiBotModePersist = true;
-        if (Date.now() - this.lastBotWhacked > funcs_1.Duration.hours(1))
-            api.sendModerationMessage("!!! <@&1040193678817378305> Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**"));
-        else if (Date.now() - this.lastBotWhacked > funcs_1.Duration.minutes(10))
-            api.sendModerationMessage("!!! Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**"));
-        this.lastBotWhacked = Date.now();
-        this.whackFlaggedPlayers();
+    FishPlayer.triggerAntibot = function (duration, reason, category) {
+        if (category == "automatic") {
+            //Ping reports based on 
+            if (Date.now() - this.antibotExpires > funcs_1.Duration.hours(1))
+                api.sendModerationMessage("!!! <@&1040193678817378305> Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason)));
+            else if (Date.now() - this.antibotExpires > funcs_1.Duration.minutes(10))
+                api.sendModerationMessage("!!! Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason)));
+        }
+        if (Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
+            Log.info("&yAntibot triggered: ".concat((0, funcs_1.escapeStringColorsServer)(reason)));
+        this.antibotExpires = Math.max(this.antibotExpires, Date.now() + duration);
+        if (this.shouldWhackFlaggedPlayers())
+            this.whackFlaggedPlayers();
     };
     FishPlayer.messageStaff = function (arg1, arg2) {
         var message = arg2 ? "[gray]<[cyan]staff[gray]>[white]".concat(arg1, "[green]: [cyan]").concat(arg2) : arg1;
@@ -1733,16 +1736,14 @@ var FishPlayer = /** @class */ (function () {
      * and the IP gets banned.
      */
     FishPlayer.punishedIPs = [];
+    FishPlayer.lastMapStartTime = 0;
     /** Stores the 10 most recent players that left. */
     FishPlayer.recentLeaves = [];
     //Used for the antibot. Some of these values are reset by timers.
-    FishPlayer.flagCount = 0;
-    FishPlayer.playersJoinedRecent = 0;
-    FishPlayer.antiBotModePersist = false;
-    FishPlayer.antiBotModeOverride = false;
-    FishPlayer.lastBotWhacked = 0;
-    FishPlayer.lastMapStartTime = 0;
+    FishPlayer.antibotExpires = -1;
+    FishPlayer.lastAntibotReason = "";
     FishPlayer.autoflagRate = new Ratekeeper();
+    FishPlayer.connectRate = new Ratekeeper();
     FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { return p.player.id.toString() === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 

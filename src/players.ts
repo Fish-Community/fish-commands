@@ -8,7 +8,7 @@ import * as api from "/api";
 import { FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
-import { crash, Duration, escapeStringColorsClient, parseError, search, setToArray, StringIO } from "/funcs";
+import { crash, Duration, escapeStringColorsClient, escapeStringColorsServer, escapeTextDiscord, parseError, search, setToArray, StringIO } from "/funcs";
 import * as globals from "/globals";
 import { uuidPattern, FishEvents } from "/globals";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
@@ -41,16 +41,14 @@ export class FishPlayer {
 	 * and the IP gets banned.
 	 */
 	static punishedIPs = [] as Array<[ip:string, uuid:string, expiryTime:number]>;
+	static lastMapStartTime = 0;
 	/** Stores the 10 most recent players that left. */
 	static recentLeaves:FishPlayer[] = [];
 	//Used for the antibot. Some of these values are reset by timers.
-	static flagCount = 0;
-	static playersJoinedRecent = 0;
-	static antiBotModePersist = false;
-	static antiBotModeOverride = false;
-	static lastBotWhacked = 0;
-	static lastMapStartTime = 0;
+	static antibotExpires = -1;
+	static lastAntibotReason = "";
 	static autoflagRate = new Ratekeeper();
+	static connectRate = new Ratekeeper();
 	//#endregion
 	
 	//#region Transient properties
@@ -834,16 +832,15 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 				Log.warn(`IP ${ip} was flagged as VPN. Flag rate: ${FishPlayer.stats.numIpsFlagged}/${FishPlayer.stats.numIpsChecked} (${100 * FishPlayer.stats.numIpsFlagged / FishPlayer.stats.numIpsChecked}%)`);
 				this.ipDetectedVpn = true;
 				if(!FishPlayer.autoflagRate.allow(30_000, 5)){
-					FishPlayer.onBotWhack();
-					Log.info(`&yAntibot triggered: rate of flagged IPs exceeded 5 / 30s`);
+					FishPlayer.triggerAntibot(Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic");
+					return;
 				}
 				if(info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)){ //is this smart?
 					this.autoflagged = true;
 					this.stopUnit();
 					this.updateName();
-					FishPlayer.flagCount ++;
 					if(FishPlayer.shouldWhackFlaggedPlayers()){
-						FishPlayer.onBotWhack(); //calls whack all flagged players
+						FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
 					} else {
 						logAction("autoflagged", "AntiVPN", this);
 						api.sendStaffMessage(`Autoflagged player ${this.name}[cyan] for suspected vpn!`, "AntiVPN");
@@ -1203,14 +1200,13 @@ We apologize for the inconvenience.`
 	
 	//#region antibot
 	static antiBotMode(){
-		return this.flagCount >= 3 || this.playersJoinedRecent > 50 || this.antiBotModePersist || this.antiBotModeOverride;
+		return Date.now() < this.antibotExpires;
 	}
 	static shouldKickNewPlayers(){
-		//return this.antiBotModeOverride;
 		return false;
 	}
 	static shouldWhackFlaggedPlayers(){
-		return (Date.now() - this.lastBotWhacked) < Duration.minutes(5); //5 minutes
+		return Date.now() < this.antibotExpires;
 	}
 	static whackFlaggedPlayers(){
 		this.forEachPlayer(p => {
@@ -1221,14 +1217,18 @@ We apologize for the inconvenience.`
 			}
 		});
 	}
-	static onBotWhack(){
-		this.antiBotModePersist = true;
-		if(Date.now() - this.lastBotWhacked > Duration.hours(1))
-			api.sendModerationMessage(`!!! <@&1040193678817378305> Possible ongoing bot attack in **${Gamemode.name()}**`);
-		else if(Date.now() - this.lastBotWhacked > Duration.minutes(10))
-			api.sendModerationMessage(`!!! Possible ongoing bot attack in **${Gamemode.name()}**`);
-		this.lastBotWhacked = Date.now();
-		this.whackFlaggedPlayers();
+	static triggerAntibot(duration:number, reason:string, category:"manual" | "automatic"){
+		if(category == "automatic"){
+			//Ping reports based on 
+			if(Date.now() - this.antibotExpires > Duration.hours(1))
+				api.sendModerationMessage(`!!! <@&1040193678817378305> Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`);
+			else if(Date.now() - this.antibotExpires > Duration.minutes(10))
+				api.sendModerationMessage(`!!! Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`);
+		}
+		if(Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
+			Log.info(`&yAntibot triggered: ${escapeStringColorsServer(reason)}`);
+		this.antibotExpires = Math.max(this.antibotExpires, Date.now() + duration);
+		if(this.shouldWhackFlaggedPlayers()) this.whackFlaggedPlayers();
 	}
 	//#endregion
 	

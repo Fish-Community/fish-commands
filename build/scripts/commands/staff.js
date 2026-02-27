@@ -1121,16 +1121,14 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     antibot: {
-        args: ["state:boolean?"],
-        description: "Checks anti bot stats, or force enables anti bot mode, MAKE SURE TO TURN IT OFF",
+        args: ["timeout:time?"],
+        description: "Checks anti bot stats, or force enables anti bot mode.",
         perm: commands_1.Perm.admin,
         handler: function (_a) {
-            var args = _a.args, outputSuccess = _a.outputSuccess, output = _a.output, f = _a.f;
-            if (args.state != undefined) {
-                players_1.FishPlayer.antiBotModeOverride = args.state;
-                outputSuccess("Set antibot mode override to ".concat(f.boolBad(args.state), "."));
-                if (args.state)
-                    output("[scarlet]MAKE SURE TO TURN IT OFF!!!");
+            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, output = _a.output, f = _a.f;
+            if (args.timeout != undefined) {
+                players_1.FishPlayer.triggerAntibot(args.timeout, "Manually triggered by player ".concat(sender.name), "manual");
+                outputSuccess("Set antibot mode override for ".concat((0, utils_1.formatTime)(args.timeout), "."));
             }
             else {
                 output("[acid]Antibot status:\n[acid]Enabled: ".concat(f.boolBad(players_1.FishPlayer.antiBotMode()), "\n").concat((0, utils_1.getAntiBotInfo)("client")));

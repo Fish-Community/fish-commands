@@ -850,14 +850,13 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 		}
 	},
 	antibot: {
-		args: ["state:boolean?"],
-		description: "Checks anti bot stats, or force enables anti bot mode, MAKE SURE TO TURN IT OFF",
+		args: ["timeout:time?"],
+		description: "Checks anti bot stats, or force enables anti bot mode.",
 		perm: Perm.admin,
-		handler({args, outputSuccess, output, f}){
-			if(args.state != undefined){
-				FishPlayer.antiBotModeOverride = args.state;
-				outputSuccess(`Set antibot mode override to ${f.boolBad(args.state)}.`);
-				if(args.state) output(`[scarlet]MAKE SURE TO TURN IT OFF!!!`);
+		handler({args, sender, outputSuccess, output, f}){
+			if(args.timeout != undefined){
+				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by player ${sender.name}`, "manual");
+				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);
 			} else {
 				output(
 `[acid]Antibot status:

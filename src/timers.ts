@@ -72,18 +72,11 @@ export function initializeTimers(){
 	Timer.schedule(() => {
 		FishPlayer.updateAFKCheck();
 	}, 0, 1);
-	//Various bad antibot code TODO fix, dont update state on clock tick
+	//deliberately updating state on clock tick:
+	//avoids memory leak and other complications from Record<ip, IndexedRatekeeper>
 	Timer.schedule(() => {
-		FishPlayer.antiBotModePersist = false;
-		//dubious code, will keep antibot mode on for the next minute after it was triggered by high flag count or high join count
-		if(FishPlayer.flagCount > 10 || FishPlayer.playersJoinedRecent > 50) FishPlayer.antiBotModePersist = true;
-		FishPlayer.flagCount = 0;
 		ipJoins.clear();
 	}, 0, DurationSecs.minutes(1));
-	Timer.schedule(() => {
-		if(FishPlayer.playersJoinedRecent > 50) FishPlayer.antiBotModePersist = true;
-		FishPlayer.playersJoinedRecent = 0;
-	}, 0, 40);
 	Timer.schedule(() => {
 		if(FishPlayer.antiBotMode()){
 			Call.infoToast(`[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ${Vars.netServer.admins.dosBlacklist.size}`, 2);

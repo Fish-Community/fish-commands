@@ -30,6 +30,9 @@ export function isVpn(ip:string, callback: (isVpn:boolean) => unknown, callbackE
 		callback(false);
 	}));
 }
+export function isVpnCached(ip:string):boolean | undefined {
+	return cachedIps[ip];
+}
 
 /** Send text to the moderation logs channel in Discord. */
 export function sendModerationMessage(message: string) {

@@ -472,11 +472,11 @@ export function getAntiBotInfo(side:"client" | "server"){
 	const True = side == "client" ? "[red]true[]" : "&lrtrue";
 	const False = side == "client" ? "[green]false[]" : "&gfalse";
 	return (
-`${color}Flag count(last 1 minute period): ${FishPlayer.flagCount}
+`${color}Flag count: ${FishPlayer.autoflagRate.occurences} / ${formatTimeRelative(FishPlayer.autoflagRate.lastTime, true)}
 ${color}Autobanning flagged players: ${FishPlayer.shouldWhackFlaggedPlayers() ? True : False}
 ${color}Kicking new players: ${FishPlayer.shouldKickNewPlayers() ? True : False}
-${color}Recent connect packets(last 1 minute period): ${FishPlayer.playersJoinedRecent}
-${color}Override: ${FishPlayer.antiBotModeOverride ? True : False}`
+${color}Recent connect packets: ${FishPlayer.connectRate.occurences} / ${formatTimeRelative(FishPlayer.connectRate.lastTime, true)}
+${color}Reason: ${FishPlayer.lastAntibotReason}`
 	);
 }
 
