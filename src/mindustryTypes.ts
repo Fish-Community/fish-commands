@@ -905,5 +905,10 @@ const ArcReflect: {
 	get(clazz:any, thing:any, key:string):any;
 	set(thing:any, key:string, value:any):void;
 };
+class Ratekeeper {
+	occurences:number;
+	lastTime:number;
+	allow(spacingMS:number, cap:number):boolean;
+}
 
 }

@@ -50,6 +50,7 @@ export class FishPlayer {
 	static antiBotModeOverride = false;
 	static lastBotWhacked = 0;
 	static lastMapStartTime = 0;
+	static autoflagRate = new Ratekeeper();
 	//#endregion
 	
 	//#region Transient properties
@@ -832,7 +833,11 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 			if(isVpn){
 				Log.warn(`IP ${ip} was flagged as VPN. Flag rate: ${FishPlayer.stats.numIpsFlagged}/${FishPlayer.stats.numIpsChecked} (${100 * FishPlayer.stats.numIpsFlagged / FishPlayer.stats.numIpsChecked}%)`);
 				this.ipDetectedVpn = true;
-				if(info.timesJoined <= 1){
+				if(!FishPlayer.autoflagRate.allow(30_000, 5)){
+					FishPlayer.onBotWhack();
+					Log.info(`&yAntibot triggered: rate of flagged IPs exceeded 5 / 30s`);
+				}
+				if(info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)){ //is this smart?
 					this.autoflagged = true;
 					this.stopUnit();
 					this.updateName();

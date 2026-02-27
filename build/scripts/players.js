@@ -981,7 +981,11 @@ var FishPlayer = /** @class */ (function () {
             if (isVpn) {
                 Log.warn("IP ".concat(ip, " was flagged as VPN. Flag rate: ").concat(FishPlayer.stats.numIpsFlagged, "/").concat(FishPlayer.stats.numIpsChecked, " (").concat(100 * FishPlayer.stats.numIpsFlagged / FishPlayer.stats.numIpsChecked, "%)"));
                 _this.ipDetectedVpn = true;
-                if (info.timesJoined <= 1) {
+                if (!FishPlayer.autoflagRate.allow(30000, 5)) {
+                    FishPlayer.onBotWhack();
+                    Log.info("&yAntibot triggered: rate of flagged IPs exceeded 5 / 30s");
+                }
+                if (info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) { //is this smart?
                     _this.autoflagged = true;
                     _this.stopUnit();
                     _this.updateName();
@@ -1738,6 +1742,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.antiBotModeOverride = false;
     FishPlayer.lastBotWhacked = 0;
     FishPlayer.lastMapStartTime = 0;
+    FishPlayer.autoflagRate = new Ratekeeper();
     FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { return p.player.id.toString() === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
