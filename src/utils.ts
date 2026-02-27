@@ -467,15 +467,20 @@ export function colorNumber(number:number, getColor:(number:number) => string, s
 	return getColor(number) + number.toString() + (side == "client" ? "[]" : "&fr");
 }
 
+export function formatRatekeeper(x:Ratekeeper):string {
+	if(x.lastTime <= 1) return "0";
+	return `${x.occurences} / ${formatTimeRelative(x.lastTime, true)}`;
+}
+
 export function getAntiBotInfo(side:"client" | "server"){
 	const color = side == "client" ? "[acid]" : "&ly";
 	const True = side == "client" ? "[red]true[]" : "&lrtrue";
 	const False = side == "client" ? "[green]false[]" : "&gfalse";
 	return (
-`${color}Flag count: ${FishPlayer.autoflagRate.occurences} / ${formatTimeRelative(FishPlayer.autoflagRate.lastTime, true)}
+`${color}Flag count: ${formatRatekeeper(FishPlayer.autoflagRate)}
 ${color}Autobanning flagged players: ${FishPlayer.shouldWhackFlaggedPlayers() ? True : False}
 ${color}Kicking new players: ${FishPlayer.shouldKickNewPlayers() ? True : False}
-${color}Recent connect packets: ${FishPlayer.connectRate.occurences} / ${formatTimeRelative(FishPlayer.connectRate.lastTime, true)}
+${color}Recent connect packets: ${formatRatekeeper(FishPlayer.connectRate)}
 ${color}Reason: ${FishPlayer.lastAntibotReason}`
 	);
 }

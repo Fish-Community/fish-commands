@@ -1228,6 +1228,7 @@ We apologize for the inconvenience.`
 		if(Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
 			Log.info(`&yAntibot triggered: ${escapeStringColorsServer(reason)}`);
 		this.antibotExpires = Math.max(this.antibotExpires, Date.now() + duration);
+		this.lastAntibotReason = reason;
 		if(this.shouldWhackFlaggedPlayers()) this.whackFlaggedPlayers();
 	}
 	//#endregion

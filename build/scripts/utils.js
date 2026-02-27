@@ -71,6 +71,7 @@ exports.logHTrip = logHTrip;
 exports.setType = setType;
 exports.untilForever = untilForever;
 exports.colorNumber = colorNumber;
+exports.formatRatekeeper = formatRatekeeper;
 exports.getAntiBotInfo = getAntiBotInfo;
 exports.outputFail = outputFail;
 exports.outputSuccess = outputSuccess;
@@ -579,11 +580,16 @@ function colorNumber(number, getColor, side) {
     if (side === void 0) { side = "client"; }
     return getColor(number) + number.toString() + (side == "client" ? "[]" : "&fr");
 }
+function formatRatekeeper(x) {
+    if (x.lastTime <= 1)
+        return "0";
+    return "".concat(x.occurences, " / ").concat(formatTimeRelative(x.lastTime, true));
+}
 function getAntiBotInfo(side) {
     var color = side == "client" ? "[acid]" : "&ly";
     var True = side == "client" ? "[red]true[]" : "&lrtrue";
     var False = side == "client" ? "[green]false[]" : "&gfalse";
-    return ("".concat(color, "Flag count: ").concat(players_1.FishPlayer.autoflagRate.occurences, " / ").concat(formatTimeRelative(players_1.FishPlayer.autoflagRate.lastTime, true), "\n").concat(color, "Autobanning flagged players: ").concat(players_1.FishPlayer.shouldWhackFlaggedPlayers() ? True : False, "\n").concat(color, "Kicking new players: ").concat(players_1.FishPlayer.shouldKickNewPlayers() ? True : False, "\n").concat(color, "Recent connect packets: ").concat(players_1.FishPlayer.connectRate.occurences, " / ").concat(formatTimeRelative(players_1.FishPlayer.connectRate.lastTime, true), "\n").concat(color, "Reason: ").concat(players_1.FishPlayer.lastAntibotReason));
+    return ("".concat(color, "Flag count: ").concat(formatRatekeeper(players_1.FishPlayer.autoflagRate), "\n").concat(color, "Autobanning flagged players: ").concat(players_1.FishPlayer.shouldWhackFlaggedPlayers() ? True : False, "\n").concat(color, "Kicking new players: ").concat(players_1.FishPlayer.shouldKickNewPlayers() ? True : False, "\n").concat(color, "Recent connect packets: ").concat(formatRatekeeper(players_1.FishPlayer.connectRate), "\n").concat(color, "Reason: ").concat(players_1.FishPlayer.lastAntibotReason));
 }
 var failPrefix = "[scarlet]\u26A0 [yellow]";
 var successPrefix = "[#48e076]\uE800 ";

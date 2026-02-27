@@ -1413,6 +1413,7 @@ var FishPlayer = /** @class */ (function () {
         if (Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
             Log.info("&yAntibot triggered: ".concat((0, funcs_1.escapeStringColorsServer)(reason)));
         this.antibotExpires = Math.max(this.antibotExpires, Date.now() + duration);
+        this.lastAntibotReason = reason;
         if (this.shouldWhackFlaggedPlayers())
             this.whackFlaggedPlayers();
     };
