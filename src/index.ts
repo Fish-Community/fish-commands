@@ -40,7 +40,7 @@ Events.on(EventType.PlayerJoin, (e) => {
 Events.on(EventType.PlayerLeave, (e) => {
 	FishPlayer.onPlayerLeave(e.player);
 });
-Events.on(EventType.ConnectPacketEvent, (e) => {
+Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection: NetConnection }) => {
 	FishPlayer.playersJoinedRecent ++;
 	ipJoins.increment(e.connection.address);
 	const info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
@@ -57,6 +57,14 @@ Events.on(EventType.ConnectPacketEvent, (e) => {
 		e.connection.kicked = true;
 		FishPlayer.onBotWhack();
 		Log.info(`&yAntibot killed connection ${e.connection.address} because ${veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"}`);
+		return;
+	}
+	const suspiciousModName = e.packet.mods.contains((str:string) => str.includes('\x1B'));
+	if(suspiciousModName || e.packet.name.includes('\x1B')){
+		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.kicked = true;
+		FishPlayer.onBotWhack();
+		Log.info(`&yAntibot killed connection ${e.connection.address} because illegal characters in name or mods`);
 		return;
 	}
 	if(ipJoins.get(e.connection.address) >= ( (underAttack || veryLongModName) ? 3 : (newPlayer || longModName) ? 7 : 15 )){
