@@ -852,9 +852,10 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 	antibot: {
 		args: ["timeout:time?"],
 		description: "Checks anti bot stats, or force enables anti bot mode.",
-		perm: Perm.admin,
+		perm: Perm.mod,
 		handler({args, sender, outputSuccess, output, f}){
 			if(args.timeout != undefined){
+				args.timeout = Math.min(args.timeout, sender.hasPerm("admin") ? Duration.hours(1) : Duration.minutes(10));
 				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by player ${sender.name}`, "manual");
 				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);
 			} else {
