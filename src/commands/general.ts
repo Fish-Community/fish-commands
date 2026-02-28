@@ -1239,67 +1239,43 @@ ${a.hidden ? "This achievement is secret." : ""}\
 	},
 
 	report: {
-		args: [],
+		args: ["target:player"],
 		description: 'Report a player to staff with a selected reason.',
-		perm: Perm.play,
-		requirements: [Req.cooldown(4000)],
-		async handler({sender, outputSuccess, outputFail, f}) {
-			const onlinePlayers = setToArray(Groups.player);
-			if(onlinePlayers.length === 0){
-				outputFail('No players online to report.');
-				return;
-			}
-			const target = await Menu.menu<mindustryPlayer>(
-				'Report Player',
-				'Select a player to report.',
-				onlinePlayers,
-				sender,
-				{
-					includeCancel: true,
-					optionStringifier: player => player.name
-				}
-			).catch(() => {
-				outputFail('Report cancelled.');
-				return;
-			});
-			if(!target) return;
-			if(target === sender.player){
-				outputFail('You cannot report yourself.');
-				return;
-			}
+		perm: Perm.chat,
+		requirements: ({sender}) => sender.hasPerm("trusted") ? [Req.cooldown(5_000)] : [Req.cooldown(Duration.minutes(2))],
+		async handler({args: {target}, sender, outputSuccess, outputFail, f}) {
+			if(target === sender) fail('You cannot report yourself.');
+			if(target.ranksAtLeast("manager")) fail(`This user cannot be reported in-game.`);
 
-			const baseReasons = [
+			const reasons = [
 				'Griefing',
+				'False votekick',
 				'Harassment',
-				'Cheating / Exploiting',
+				'Inappropriate content',
 				'Spam',
-				'Trolling',
-				'Other',
+				'Other', //TODO: use the text input menu
 			];
-			const reasons = target.admin ? [...baseReasons, 'Admin Abuse'] : baseReasons;
-			const reason = await Menu.menu<string>(
+			if(target.hasPerm("mod")) reasons.push('Admin Abuse');
+			if(Gamemode.sandbox()) reasons.push("Lag machine");
+			const reason = await Menu.menu(
 				'Report Reason',
-				`Select a reason for reporting [accent]${target.name}[]`,
+				`Select a reason for reporting ${target.name}`,
 				reasons,
 				sender,
 				{ includeCancel: true }
-			).catch(() => {
-				outputFail('Report cancelled.');
-				return;
-			});
-			if(!reason) return;
+			);
 
-			const issuerName = sender.player?.name ?? 'Unknown';
-			const targetName = target.name;
-			const serverName = Gamemode.name();
-			const message =
-				`[Report] Server: ${serverName}\n` +
-				`Issuer: ${Strings.stripColors(issuerName)}\n` +
-				`Target: ${Strings.stripColors(targetName)}${target.admin ? ' (Admin)' : ''}\n` +
-				`Reason: ${reason}`;
+			await Menu.confirm(sender, `Are you sure you want to report player ${target.cleanedName}? This action will notify staff members.`);
 
-			api.sendStaffMessage(message, issuerName, (sent) => {
-				if(sent) outputSuccess(f`Report sent to staff: ${targetName} for "${reason}".`);
+			const message = escapeTextDiscord(
+`[In-game report] Server: ${Gamemode.name()}
+Issuer: ${sender.cleanedName}
+Target: ${target.cleanedName}${target.hasPerm("mod") ? ' (Admin)' : ''}
+Reason: ${reason}
+${text.reportsPing}`);
+
+			api.sendStaffMessage(message, sender.name, (sent) => {
+				if(sent) outputSuccess(f`Report sent to staff: ${target.name} for "${reason}".`);
 				else outputFail('Failed to send report to staff. Please try again later.');
 			});
 		},
