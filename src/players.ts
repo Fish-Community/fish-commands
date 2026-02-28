@@ -3,7 +3,6 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the FishPlayer class, and many player-related functions.
 */
 
-import type { Achievement } from "/achievements";
 import * as api from "/api";
 import { FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
