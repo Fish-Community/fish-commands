@@ -241,6 +241,7 @@ export const prefixes = {
 export const text = {
 	discordURL: `https://discord.gg/VpzcYSQ33Y`,
 	membershipURL: `https://patreon.com/FishServers`,
+	reportsPing: `<@&1040193678817378305>`,
 	welcomeMessage: () => random([
 		`[gold]Welcome![]`
 	]),

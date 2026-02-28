@@ -230,6 +230,7 @@ exports.prefixes = {
 exports.text = {
     discordURL: "https://discord.gg/VpzcYSQ33Y",
     membershipURL: "https://patreon.com/FishServers",
+    reportsPing: "<@&1040193678817378305>",
     welcomeMessage: function () { return (0, funcs_1.random)([
         "[gold]Welcome![]"
     ]); },

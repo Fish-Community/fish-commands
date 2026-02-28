@@ -1406,7 +1406,7 @@ var FishPlayer = /** @class */ (function () {
         if (category == "automatic") {
             //Ping reports based on 
             if (Date.now() - this.antibotExpires > funcs_1.Duration.hours(1))
-                api.sendModerationMessage("!!! <@&1040193678817378305> Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason)));
+                api.sendModerationMessage("!!! ".concat(config_1.text.reportsPing, " Possible ongoing bot attack in **").concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason)));
             else if (Date.now() - this.antibotExpires > funcs_1.Duration.minutes(10))
                 api.sendModerationMessage("!!! Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason)));
         }

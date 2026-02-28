@@ -1220,7 +1220,7 @@ We apologize for the inconvenience.`
 		if(category == "automatic"){
 			//Ping reports based on 
 			if(Date.now() - this.antibotExpires > Duration.hours(1))
-				api.sendModerationMessage(`!!! <@&1040193678817378305> Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`);
+				api.sendModerationMessage(`!!! ${text.reportsPing} Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`);
 			else if(Date.now() - this.antibotExpires > Duration.minutes(10))
 				api.sendModerationMessage(`!!! Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`);
 		}
