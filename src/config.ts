@@ -333,7 +333,8 @@ export const tips = {
 		`If you want to end the current map, DO NOT BREAK DEFENCES! Vote to change the map with [white]/rtv[].`,
 		//misc
 		`Anyone attempting to impersonate a ranked player, or the server, will have [scarlet]SUSSY IMPOSTOR[] prepended to their name. Beware!`,
-		`Griefers will often be found with the text ${prefixes.marked} prepended to their name.`,
+		`Griefers will often be found with the text ${prefixes.marked} prepended to their name: they are harmless and cannot grief again.`,
+		`Don't votekick ${prefixes.marked.slice(0, -3)}[][]s if they aren't breaking the rules: they are incapable of griefing more.`,
 		`Players marked as ${prefixes.flagged} have been flagged as suspicious by our detection systems, but they may not be griefers.`,
 		`Need to appeal a moderation action? Join the discord at ${FColor.discord(text.discordURL)} or type /discord`,
 		`Want to send the phrase [white]"/command"[] in chat? Type [white]"./command"[] and the [white].[] will be removed.`,
