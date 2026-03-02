@@ -911,6 +911,19 @@ class Bits {
 	}
 }
 
+class Ratekeeper {
+	occurences = 0;
+	lastTime = 0;
+	allow(spacing:number, cap:number){
+		if(Date.now() - this.lastTime > spacing){
+			this.occurences = 0;
+			this.lastTime = Date.now();
+		}
+		return ++this.occurences <= cap;
+	}
+}
+
+
 const Iconc = Object.fromEntries(["rotate", "modeSurvival", "power", "left", "redditAlien", "edit", "downOpen", "pencil", "file", "lockOpen", "right", "infoCircle", "pick", "settings", "spray1", "terrain", "exit", "wrench", "lock", "discord", "eye", "none", "play", "diagonal", "eraser", "trash", "liquid", "fileImage", "defense", "layers", "grid", "admin", "steam", "star", "chartBar", "chat", "android", "image", "map", "logic", "menu", "commandRally", "editor", "folder", "units", "commandAttack", "copy", "filter", "cancel", "terminal", "upload", "eyeOff", "save", "planeOutline", "fill", "distribution", "upOpen", "rightOpen", "modePvp", "download", "list", "flipX", "flipY", "effect", "paste", "planet", "waves", "up", "warning", "tree", "add", "down", "host", "spray", "info", "players", "resize", "refresh1", "production", "crafting", "pause", "googleplay", "hammer", "fileText", "modeAttack", "move", "zoom", "bookOpen", "refresh", "ok", "home", "githubSquare", "powerOld", "github", "undo", "box", "trello", "book", "export", "fileTextFill", "rightOpenOut", "turret", "leftOpen", "line", "itchio", "link", "filters", "redo"].map(n => [n, 0xFE60]));
 
 const Packages = {
@@ -925,4 +938,4 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper});
