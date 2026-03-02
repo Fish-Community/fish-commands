@@ -391,7 +391,7 @@ export const Achievements = {
 	fullVault: new Achievement(["green", Blocks.vault.emoji()], "Well Stocked", ["Fill a vault with every obtainable item.", "Requires mixtech."], {
 		modes: ["not", "sandbox"],
 		checkInfrequent(team) {
-			return Vars.indexer.getFlagged(team, BlockFlag.storage).contains(boolf<Building>(b => b.block == Blocks.vault && b.items.has(allItems1k)));
+			return Vars.indexer.getFlagged(team, BlockFlag.storage).contains(boolf<Building>(b => b.block == Blocks.vault && b.items.has(allItems1k) && b.linkedCore == null));
 		},
 	}),
 	full_core: new Achievement(["green", Blocks.coreAcropolis.emoji()], "Multiblock Incinerator", "Completely fill the core with all obtainable items on a map with core incineration enabled.", {

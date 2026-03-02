@@ -205,6 +205,7 @@ class Building {
 	warmup?: number;
 	storageCapacity?: number;
 	dead: boolean;
+	linkedCore: Building | null;
 	timeScale(): number;
 	kill():void;
 	tileX():number;
