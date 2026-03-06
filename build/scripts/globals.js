@@ -22,7 +22,7 @@ exports.fishPlugin = {
     directory: null,
     version: null,
 };
-exports.ipJoins = new ObjectIntMap(); //todo somehow tell java that K is String and not Object
+exports.ipJoins = new ObjectIntMap();
 exports.uuidPattern = /^[a-zA-Z0-9+/]{22}==$/;
 exports.ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 exports.ipPortPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}$/;
