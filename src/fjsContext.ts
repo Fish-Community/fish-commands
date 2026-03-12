@@ -7,6 +7,7 @@ which executes code with access to the plugin's internals.
 import type { FishPlayer as tFishPlayer } from "/players";
 type FishPlayer = tFishPlayer; //absurd
 
+const achievements = require("/achievements");
 const api = require("/api");
 const commands = require("/frameworks/commands");
 const config = require("/config");
@@ -14,6 +15,7 @@ const { commands: consoleCommands } = require("/commands/console");
 const files = require("/files");
 const funcs = require("/funcs");
 const globals = require("/globals");
+const io = require("/frameworks/io");
 const maps = require("/maps");
 const { commands: memberCommands } = require("/commands/member");
 const menus = require("/frameworks/menus");
@@ -28,8 +30,12 @@ const utils = require("/utils");
 const votes = require("/votes");
 const { Promise } = require("/promise");
 
+const { Achievement, Achievements } = achievements;
 const { Perm, allCommands } = commands;
+const { bannedWords, FishServer, Mode, Gamemode, FColor, mapRepoURLs } = config;
 const { FishPlayer } = players;
+const { Serializer } = io;
+const { FishEvents, fishPlugin, fishState, tileHistory } = globals;
 const { FMap } = maps;
 const { Rank, RoleFlag } = ranks;
 const { Menu } = menus;

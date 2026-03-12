@@ -92,7 +92,12 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.consoleCommandList = exports.commandList = exports.allConsoleCommands = exports.allCommands = void 0;
 exports.command = command;
+exports.processArgString = processArgString;
 exports.formatArg = formatArg;
+exports.joinArgs = joinArgs;
+exports.disambiguateArgument = disambiguateArgument;
+exports.processArgs = processArgs;
+exports.convertArgs = convertArgs;
 exports.handleTapEvent = handleTapEvent;
 exports.register = register;
 exports.registerConsole = registerConsole;

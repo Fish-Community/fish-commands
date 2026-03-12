@@ -6,6 +6,7 @@ which executes code with access to the plugin's internals.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runJS = runJS;
+var achievements = require("/achievements");
 var api = require("/api");
 var commands = require("/frameworks/commands");
 var config = require("/config");
@@ -13,6 +14,7 @@ var consoleCommands = require("/commands/console").commands;
 var files = require("/files");
 var funcs = require("/funcs");
 var globals = require("/globals");
+var io = require("/frameworks/io");
 var maps = require("/maps");
 var memberCommands = require("/commands/member").commands;
 var menus = require("/frameworks/menus");
@@ -26,8 +28,12 @@ var timers = require("/timers");
 var utils = require("/utils");
 var votes = require("/votes");
 var Promise = require("/promise").Promise;
+var Achievement = achievements.Achievement, Achievements = achievements.Achievements;
 var Perm = commands.Perm, allCommands = commands.allCommands;
+var bannedWords = config.bannedWords, FishServer = config.FishServer, Mode = config.Mode, Gamemode = config.Gamemode, FColor = config.FColor, mapRepoURLs = config.mapRepoURLs;
 var FishPlayer = players.FishPlayer;
+var Serializer = io.Serializer;
+var FishEvents = globals.FishEvents, fishPlugin = globals.fishPlugin, fishState = globals.fishState, tileHistory = globals.tileHistory;
 var FMap = maps.FMap;
 var Rank = ranks.Rank, RoleFlag = ranks.RoleFlag;
 var Menu = menus.Menu;

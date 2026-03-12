@@ -70,7 +70,7 @@ export function command(input:unknown){
 }
 
 /** Takes an arg string, like `reason:string?` and converts it to a CommandArg. */
-function processArgString(str:string):CommandArg {
+export function processArgString(str:string):CommandArg {
 	//this was copypasted from mlogx haha
 	const matchResult = str.match(/(\w+):(\w+)(\?)?/);
 	if(!matchResult){
@@ -91,7 +91,7 @@ export function formatArg(a:string){
 }
 
 /** Joins multi-word arguments that have been groups with quotes. Ex: turns [`"a`, `b"`] into [`a b`]*/
-function joinArgs(rawArgs:string[]){
+export function joinArgs(rawArgs:string[]){
 	const outputArgs = [];
 	let groupedArg:string[] | null = null;
 	for(const arg of rawArgs){
@@ -115,7 +115,7 @@ function joinArgs(rawArgs:string[]){
 	return outputArgs;
 }
 
-async function disambiguateArgument<T extends FishCommandArgType>(
+export async function disambiguateArgument<T extends FishCommandArgType>(
 	options:T | T[] | null, arg: string, {name, type}: CommandArg, sender:FishPlayer | null, outputArgs: Record<string, FishCommandArgType>,
 	optionStringifier: (x:T) => string, columns = 3,
 ){
@@ -135,7 +135,7 @@ async function disambiguateArgument<T extends FishCommandArgType>(
 const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "rank", "roleflag", "item"];
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
-async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
+export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
 		if(!(i in args) || args[i] === ""){
@@ -282,7 +282,7 @@ function isArgOptional(arg:CommandArg, allowMenus:boolean){
 }
 
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
-function convertArgs(processedCmdArgs:CommandArg[], allowMenus:boolean):string {
+export function convertArgs(processedCmdArgs:CommandArg[], allowMenus:boolean):string {
 	return processedCmdArgs.map((arg, index, array) => {
 		const isOptional = isArgOptional(arg, allowMenus) &&
 			!array.slice(index + 1).some(c => !isArgOptional(c, allowMenus)); //this is enforced by the arc command handler
