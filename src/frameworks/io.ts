@@ -272,15 +272,19 @@ export function serialize<T extends Serializable>(
 				new SettingsSerializer<T>(settingsKey, schema(), oldSchema?.())
 			);
 			FishEvents.on("loadData", () => {
+				Time.mark();
 				let value = serializer().readSettings();
 				if(value){
 					if(fixer) value = fixer(value);
 					access.set(this, value);
 				}
+				Log.debug("serialize read @ @", settingsKey, Time.elapsed());
 			});
 			FishEvents.on("saveData", () => {
 				try {
+					Time.mark();
 					serializer().writeSettings(access.get(this));
+					Log.debug("seralize save @ @", settingsKey, Time.elapsed());
 				} catch(err){
 					Log.err(`Error while saving field ${String(name)} on ${String((this as any as Function)?.name)} using settings key ${settingsKey}`);
 					Log.info(JSON.stringify(access.get(this)));

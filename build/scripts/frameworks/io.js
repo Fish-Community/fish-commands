@@ -349,16 +349,20 @@ function serialize(settingsKey, schema, oldSchema, fixer) {
                 return new SettingsSerializer(settingsKey, schema(), oldSchema === null || oldSchema === void 0 ? void 0 : oldSchema());
             });
             globals_1.FishEvents.on("loadData", function () {
+                Time.mark();
                 var value = serializer().readSettings();
                 if (value) {
                     if (fixer)
                         value = fixer(value);
                     access.set(_this, value);
                 }
+                Log.debug("serialize read @ @", settingsKey, Time.elapsed());
             });
             globals_1.FishEvents.on("saveData", function () {
                 try {
+                    Time.mark();
                     serializer().writeSettings(access.get(_this));
+                    Log.debug("seralize save @ @", settingsKey, Time.elapsed());
                 }
                 catch (err) {
                     Log.err("Error while saving field ".concat(String(name), " on ").concat(String(_this === null || _this === void 0 ? void 0 : _this.name), " using settings key ").concat(settingsKey));
