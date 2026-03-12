@@ -683,7 +683,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     Log.info("Restarting immediately as no players are online.");
                     (0, utils_1.serverRestartLoop)(0);
                 }
-                else if (args.time === -1) {
+                else if (args.time === -1) { //TODO this is bad, -1 and -2 is really weird
                     Log.info("&rRestarting in 15 seconds (this will interrupt the current PVP match).&fr");
                     Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
                     (0, utils_1.serverRestartLoop)(15);
@@ -698,6 +698,12 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 if (args.time == undefined && Groups.player.isEmpty()) {
                     Log.info("Restarting immediately as no players are online.");
                     (0, utils_1.serverRestartLoop)(0);
+                    return;
+                }
+                else if (args.time === -2) {
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---");
+                    Log.info("Restart queued. Restart will occur at the end of the current match. Run \"restartcancel\" to cancel.");
+                    globals_1.fishState.restartQueued = true;
                     return;
                 }
                 var time = (_c = args.time) !== null && _c !== void 0 ? _c : 60;
