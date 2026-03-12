@@ -186,14 +186,27 @@ Events.on(EventType.ServerLoadEvent, function (e) {
         Log.err(err);
     }
     globals_1.FishEvents.fire("dataLoaded", []);
-    Core.app.addListener({
-        dispose: function () {
+    Runtime.getRuntime().addShutdownHook(new Thread(function () {
+        try {
             players_1.FishPlayer.uploadAll();
-            globals_1.FishEvents.fire("saveData", []);
-            players_1.FishPlayer.saveAll(false);
-            Log.info("Saved on exit.");
         }
-    });
+        catch (_a) {
+            Log.err("failed to upload");
+        }
+        try {
+            globals_1.FishEvents.fire("saveData", []);
+        }
+        catch (_b) {
+            Log.err("failed to save misc data");
+        }
+        try {
+            players_1.FishPlayer.saveAll(false);
+        }
+        catch (_c) {
+            Log.err("failed to save player data");
+        }
+        Log.info("Saved on exit.");
+    }));
 });
 // Keeps track of any action performed on a tile for use in tilelog.
 Events.on(EventType.BlockBuildBeginEvent, utils_1.addToTileHistory);

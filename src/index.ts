@@ -193,14 +193,18 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 
 	FishEvents.fire("dataLoaded", []);
 
-	Core.app.addListener({
-		dispose(){
+	Runtime.getRuntime().addShutdownHook(new Thread(() => {
+		try {
 			FishPlayer.uploadAll();
+		} catch { Log.err("failed to upload"); }
+		try {
 			FishEvents.fire("saveData", []);
+		} catch { Log.err("failed to save misc data"); }
+		try {
 			FishPlayer.saveAll(false);
-			Log.info("Saved on exit.");
-		}
-	});
+		} catch { Log.err("failed to save player data"); }
+		Log.info("Saved on exit.");
+	}));
 
 });
 

@@ -10,6 +10,7 @@ importClass(Packages.arc.util.CommandHandler);
 importPackage(Packages.mindustry.type);
 importClass(Packages.mindustry.server.ServerControl);
 importPackage(Packages.java.util.regex);
+importClass(Packages.java.lang.Thread);
 importClass(Packages.java.lang.Runtime);
 importClass(Packages.java.lang.ProcessBuilder);
 importClass(Packages.java.nio.file.Paths);

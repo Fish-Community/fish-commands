@@ -655,6 +655,11 @@ class Matcher {
 class Runtime {
 	static getRuntime():Runtime;
 	exec(command:string, envp:string[] | null, dir:JavaFile):Process;
+	addShutdownHook(callback: Thread):void;
+}
+class Thread {
+	constructor(runnable: () => void);
+	run(): void;
 }
 class ProcessBuilder {
 	constructor(...args:string[]);
