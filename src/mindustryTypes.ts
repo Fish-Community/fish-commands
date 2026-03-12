@@ -22,7 +22,16 @@ const Log: {
 	warn(this:void, message:string):void;
 	err(this:void, message:string):void;
 	err(this:void, error:unknown):void;
+	level: LogLevel;
+	LogLevel: {
+		debug: LogLevel;
+		info: LogLevel;
+		warn: LogLevel;
+		err: LogLevel;
+		none: LogLevel;
+	};
 };
+type LogLevel = { readonly _brand: unique symbol };
 const Strings: {
 	stripColors(string:string):string;
 	sanitizeFilename(name:string):string;

@@ -1072,6 +1072,18 @@ exports.commands = (0, commands_1.consoleCommandList)({
         handler: function () {
             (0, commands_1.fail)("This command has been disabled to prevent lag. Fish servers do not use a whitelist.");
         }
+    },
+    loglevel: {
+        args: ["duration:time?"],
+        description: "Sets log level to debug",
+        handler: function (_a) {
+            var _b = _a.args.duration, duration = _b === void 0 ? funcs_1.Duration.minutes(5) : _b, outputSuccess = _a.outputSuccess;
+            Log.level = Log.LogLevel.debug;
+            Timer.schedule(function () {
+                Log.level = Log.LogLevel.info;
+            }, duration / 1000);
+            outputSuccess("Set log level to debug for ".concat((0, utils_1.formatTime)(duration)));
+        }
     }
 });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15;

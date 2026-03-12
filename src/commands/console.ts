@@ -779,5 +779,17 @@ ${FishPlayer.mapPlayers(p =>
 		handler(){
 			fail(`This command has been disabled to prevent lag. Fish servers do not use a whitelist.`);
 		}
+	},
+
+	loglevel: {
+		args: ["duration:time?"],
+		description: "Sets log level to debug",
+		handler({args: { duration = Duration.minutes(5) }, outputSuccess}){
+			Log.level = Log.LogLevel.debug;
+			Timer.schedule(() => {
+				Log.level = Log.LogLevel.info;
+			}, duration / 1000);
+			outputSuccess(`Set log level to debug for ${formatTime(duration)}`);
+		}
 	}
 });
