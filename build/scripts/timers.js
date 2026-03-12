@@ -28,6 +28,7 @@ var utils_1 = require("/utils");
 function initializeTimers() {
     Timer.schedule(function () {
         var e_1, _a;
+        Time.mark();
         //Autosave
         var file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
         Core.app.post(function () {
@@ -53,6 +54,7 @@ function initializeTimers() {
             }
             finally { if (e_1) throw e_1.error; }
         }
+        Log.debug("autosave @", Time.elapsed());
     }, 10, funcs_1.DurationSecs.minutes(5));
     //Memory corruption prank
     Timer.schedule(function () {

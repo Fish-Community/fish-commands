@@ -16,6 +16,7 @@ import { definitelyRealMemoryCorruption, neutralGameover } from "/utils";
 /** Must be called once, and only once, on server start. */
 export function initializeTimers(){
 	Timer.schedule(() => {
+		Time.mark();
 		//Autosave
 		const file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
 		Core.app.post(() => {
@@ -31,6 +32,7 @@ export function initializeTimers(){
 				Vars.netServer.admins.dosBlacklist.remove(fishP.info().lastIP);
 			}
 		}
+		Log.debug("autosave @", Time.elapsed());
 	}, 10, DurationSecs.minutes(5));
 	//Memory corruption prank
 	Timer.schedule(() => {

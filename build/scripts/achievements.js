@@ -159,6 +159,7 @@ Events.on(EventType.PlayerJoin, function (_a) {
     var e_1, _b;
     var _c;
     var player = _a.player;
+    Time.mark();
     var _loop_1 = function (ach) {
         if (ach.allowedInMode()) {
             var fishP_1 = players_1.FishPlayer.get(player);
@@ -183,10 +184,12 @@ Events.on(EventType.PlayerJoin, function (_a) {
         }
         finally { if (e_1) throw e_1.error; }
     }
+    Log.debug("ach join @", Time.elapsed());
 });
 globals_1.FishEvents.on("gameOver", function (_, winner) {
     var e_2, _a;
     var _b;
+    Time.mark();
     var _loop_2 = function (ach) {
         if (ach.allowedInMode()) {
             if ((_b = ach.checkGameover) === null || _b === void 0 ? void 0 : _b.call(ach, winner))
@@ -213,9 +216,11 @@ globals_1.FishEvents.on("gameOver", function (_, winner) {
         }
         finally { if (e_2) throw e_2.error; }
     }
+    Log.debug("ach gameover @", Time.elapsed());
 });
 Timer.schedule(function () {
     var e_3, _a;
+    Time.mark();
     var _loop_3 = function (ach) {
         if (ach.allowedInMode()) {
             if (ach.checkFrequent) {
@@ -253,9 +258,11 @@ Timer.schedule(function () {
         }
         finally { if (e_3) throw e_3.error; }
     }
+    Log.debug("ach frequent @", Time.elapsed());
 }, 1, 1);
 Timer.schedule(function () {
     var e_4, _a;
+    Time.mark();
     var _loop_4 = function (ach) {
         if (ach.allowedInMode()) {
             if (ach.checkInfrequent) {
@@ -293,6 +300,7 @@ Timer.schedule(function () {
         }
         finally { if (e_4) throw e_4.error; }
     }
+    Log.debug("ach infrequent @", Time.elapsed());
 }, 10, 10);
 exports.Achievements = {
     // ===========================

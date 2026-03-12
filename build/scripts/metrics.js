@@ -66,9 +66,11 @@ var Metrics = function () {
                 return (_b = (_c = this.weeks)[_d = this.weekNumber()]) !== null && _b !== void 0 ? _b : (_c[_d] = this.newWeek());
             };
             Metrics.update = function () {
+                Time.mark();
                 var playerCount = Groups.player.size();
                 this.currentWeek()[this.readingNumber()] =
                     Math.max(playerCount, this.currentWeek()[this.readingNumber()]);
+                Log.debug("metrics update @", Time.elapsed());
             };
             Metrics.exportRange = function (startDate, endDate) {
                 var _this = this;

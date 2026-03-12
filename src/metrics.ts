@@ -45,9 +45,11 @@ export class Metrics {
 		return this.weeks[this.weekNumber()] ??= this.newWeek();
 	}
 	static update(){
+		Time.mark();
 		const playerCount = Groups.player.size();
 		this.currentWeek()[this.readingNumber()] =
-			Math.max(playerCount, this.currentWeek()[this.readingNumber()]);
+		Math.max(playerCount, this.currentWeek()[this.readingNumber()]);
+		Log.debug("metrics update @", Time.elapsed());
 	}
 
 	static exportRange(startDate = this.startDate, endDate = Date.now()){

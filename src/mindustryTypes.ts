@@ -17,7 +17,7 @@ function floatf<T>(input:T):T;
 
 const Call: any;
 const Log: {
-	debug(this:void, message:string):void;
+	debug(this:void, message:string, ...extra:unknown[]):void;
 	info(this:void, message:string):void;
 	warn(this:void, message:string):void;
 	err(this:void, message:string):void;
@@ -401,6 +401,8 @@ class TimerTask {
 }
 const Time: {
 	millis(): number;
+	elapsed(): number;
+	mark(): void;
 	delta: number;
 	timeSinceMillis(millis: number): number;
 	setDeltaProvider(provider: () => number):void;

@@ -128,6 +128,7 @@ export class Achievement {
 }
 
 Events.on(EventType.PlayerJoin, ({player}: {player: mindustryPlayer}) => {
+	Time.mark();
 	for(const ach of Achievement.checkJoin){
 		if(ach.allowedInMode()){
 			const fishP = FishPlayer.get(player);
@@ -137,8 +138,10 @@ Events.on(EventType.PlayerJoin, ({player}: {player: mindustryPlayer}) => {
 			}
 		}
 	}
+	Log.debug("ach join @", Time.elapsed());
 });
 FishEvents.on("gameOver", (_, winner) => {
+	Time.mark();
 	for(const ach of Achievement.checkGameover){
 		if(ach.allowedInMode()){
 			if(ach.checkGameover?.(winner)) ach.grantToAllOnline();
@@ -149,8 +152,10 @@ FishEvents.on("gameOver", (_, winner) => {
 			});
 		}
 	}
+	Log.debug("ach gameover @", Time.elapsed());
 });
 Timer.schedule(() => {
+	Time.mark();
 	for(const ach of Achievement.checkFrequent){
 		if(ach.allowedInMode()){
 			if(ach.checkFrequent){
@@ -168,8 +173,10 @@ Timer.schedule(() => {
 			}
 		}
 	}
+	Log.debug("ach frequent @", Time.elapsed());
 }, 1, 1);
 Timer.schedule(() => {
+	Time.mark();
 	for(const ach of Achievement.checkInfrequent){
 		if(ach.allowedInMode()){
 			if(ach.checkInfrequent){
@@ -187,6 +194,7 @@ Timer.schedule(() => {
 			}
 		}
 	}
+	Log.debug("ach infrequent @", Time.elapsed());
 }, 10, 10);
 
 export const Achievements = {
