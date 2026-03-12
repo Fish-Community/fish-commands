@@ -470,6 +470,11 @@ export const commands = consoleCommandList({
 					fishState.restartQueued = true;
 				}
 			} else {
+				if(args.time == undefined && Groups.player.isEmpty()){
+					Log.info(`Restarting immediately as no players are online.`);
+					serverRestartLoop(0);
+					return;
+				}
 				const time = args.time ?? 60;
 				if(time < 0 || time > 100) fail(`Invalid time: out of valid range.`);
 				Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 15 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---`);

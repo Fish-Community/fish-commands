@@ -695,6 +695,11 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 }
             }
             else {
+                if (args.time == undefined && Groups.player.isEmpty()) {
+                    Log.info("Restarting immediately as no players are online.");
+                    (0, utils_1.serverRestartLoop)(0);
+                    return;
+                }
                 var time = (_c = args.time) !== null && _c !== void 0 ? _c : 60;
                 if (time < 0 || time > 100)
                     (0, commands_1.fail)("Invalid time: out of valid range.");
