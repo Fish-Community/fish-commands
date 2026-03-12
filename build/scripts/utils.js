@@ -58,6 +58,7 @@ exports.isImpersonator = isImpersonator;
 exports.logAction = logAction;
 exports.parseTimeString = parseTimeString;
 exports.serverRestartLoop = serverRestartLoop;
+exports.restartNow = restartNow;
 exports.isBuildable = isBuildable;
 exports.isMapValidForGamemode = isMapValidForGamemode;
 exports.getBlock = getBlock;
@@ -426,21 +427,41 @@ function parseTimeString(str) {
     }
     return null;
 }
-/** Triggers the restart countdown. Execution always returns from this function. */
-function serverRestartLoop(sec) {
+/**
+ * Triggers the restart countdown. Execution always returns from this function.
+ * @param [fake=false] if set, server will not actually restart.
+ */
+function serverRestartLoop(sec, fake) {
+    if (fake === void 0) { fake = false; }
     if (sec > 0) {
         if (sec < 15 || sec % 5 == 0)
             Call.sendMessage("[scarlet]Server restarting in: ".concat(sec));
         globals_1.fishState.restartLoopTask = Timer.schedule(function () { return serverRestartLoop(sec - 1); }, 1);
     }
-    else {
-        Log.info("Restarting...");
-        var file_1 = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
-        Vars.netServer.kickAll(Packets.KickReason.serverRestarting);
-        Vars.net.closeServer();
-        Vars.state.set(GameState.State.menu);
+    else if (!fake) {
+        restartNow();
+    }
+}
+/**
+ * Actually restarts. Kicks all players. Execution always returns from this function.
+ * @param [removeSave=false] If set, save will be deleted instead of saved. Used to start a new game after the restart.
+ */
+function restartNow(removeSave) {
+    if (removeSave === void 0) { removeSave = false; }
+    Log.info("Restarting...");
+    Vars.netServer.kickAll(Packets.KickReason.serverRestarting);
+    Vars.net.closeServer();
+    Vars.state.set(GameState.State.menu);
+    var file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
+    if (removeSave) {
         Core.app.post(function () {
-            SaveIO.save(file_1);
+            file.delete();
+            Core.app.exit();
+        });
+    }
+    else {
+        Core.app.post(function () {
+            SaveIO.save(file);
             Core.app.exit();
         });
     }

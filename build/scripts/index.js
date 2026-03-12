@@ -225,7 +225,11 @@ Events.on(EventType.GameOverEvent, function (e) {
     if (globals_1.fishState.restartQueued) {
         //restart
         Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
-        (0, utils_1.serverRestartLoop)(20);
+        (0, utils_1.serverRestartLoop)(12, true);
+        Events.on(EventType.WorldLoadBeginEvent, function () {
+            //Remove save
+            (0, utils_1.restartNow)(true);
+        });
     }
     players_1.FishPlayer.onGameOver(e.winner);
 });

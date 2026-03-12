@@ -313,17 +313,34 @@ export function parseTimeString(str:string):number | null {
 	return null;
 }
 
-/** Triggers the restart countdown. Execution always returns from this function. */
-export function serverRestartLoop(sec:number):void {
+/**
+ * Triggers the restart countdown. Execution always returns from this function.
+ * @param [fake=false] if set, server will not actually restart. 
+ */
+export function serverRestartLoop(sec:number, fake = false):void {
 	if(sec > 0){
 		if(sec < 15 || sec % 5 == 0) Call.sendMessage(`[scarlet]Server restarting in: ${sec}`);
 		fishState.restartLoopTask = Timer.schedule(() => serverRestartLoop(sec - 1), 1);
+	} else if(!fake){
+		restartNow();
+	}
+}
+/**
+ * Actually restarts. Kicks all players. Execution always returns from this function.
+ * @param [removeSave=false] If set, save will be deleted instead of saved. Used to start a new game after the restart.
+ */
+export function restartNow(removeSave = false){
+	Log.info(`Restarting...`);
+	Vars.netServer.kickAll(Packets.KickReason.serverRestarting);
+	Vars.net.closeServer();
+	Vars.state.set(GameState.State.menu);
+	const file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
+	if(removeSave){
+		Core.app.post(() => {
+			file.delete();
+			Core.app.exit();
+		});
 	} else {
-		Log.info(`Restarting...`);
-		const file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
-		Vars.netServer.kickAll(Packets.KickReason.serverRestarting);
-		Vars.net.closeServer();
-		Vars.state.set(GameState.State.menu);
 		Core.app.post(() => {
 			SaveIO.save(file);
 			Core.app.exit();

@@ -12,7 +12,7 @@ import { FishEvents, fishPlugin, fishState, ipJoins, tileHistory } from "/global
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, processChat, serverRestartLoop } from "/utils";
+import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, processChat, restartNow, serverRestartLoop } from "/utils";
 
 
 Events.on(EventType.ConnectionEvent, (e) => {
@@ -227,7 +227,11 @@ Events.on(EventType.GameOverEvent, (e) => {
 	if(fishState.restartQueued){
 		//restart
 		Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---`);
-		serverRestartLoop(20);
+		serverRestartLoop(12, true);
+		Events.on(EventType.WorldLoadBeginEvent, () => {
+			//Remove save
+			restartNow(true);
+		});
 	}
 	FishPlayer.onGameOver(e.winner as Team);
 });
