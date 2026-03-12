@@ -441,7 +441,7 @@ export class FishPlayer {
 		}));
 	}
 	async setRank(rank:Rank){
-		if(typeof rank === "string"){
+		if(typeof rank === "string" || !rank){
 			rank satisfies never;
 			crash(`Type error in FishPlayer.setFlag(): rank is invalid`);
 		}
@@ -454,8 +454,11 @@ export class FishPlayer {
 	}
 	async setFlag(flag_:RoleFlag | RoleFlagName, value:boolean){
 		const flag = typeof flag_ == "string" ?
-			(RoleFlag.getByName(flag_) ?? crash(`Type error in FishPlayer.setFlag(): flag ${flag_} is invalid`))
+			(RoleFlag.getByName(flag_))
 			: flag_;
+		
+		// eslint-disable-next-line @typescript-eslint/no-base-to-string
+		if(!flag) crash(`Type error in FishPlayer.setFlag(): flag ${String(flag_)} is invalid`);
 		
 		await this.updateSynced(() => {
 			if(value){

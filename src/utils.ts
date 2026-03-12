@@ -518,7 +518,7 @@ export function outputSuccess(message:string | PartialFormatString, sender:mindu
 export function outputMessage(message:string | PartialFormatString, sender:mindustryPlayer | FishPlayer){
 	sender.sendMessage(((typeof message == "function" && "__partialFormatString" in message ? message(null) : message) + "").replace(/\t/g, " ".repeat(4)));
 }
-export function outputConsole(message:string | PartialFormatString, channel:(typeof Log)[keyof typeof Log] = Log.info){
+export function outputConsole(message:string | PartialFormatString, channel:(typeof Log)[LogLevelName] = Log.info){
 	channel(typeof message == "function" && "__partialFormatString" in message ? message("") : message);
 }
 

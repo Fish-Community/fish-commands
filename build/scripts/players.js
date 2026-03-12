@@ -545,7 +545,7 @@ var FishPlayer = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (typeof rank === "string") {
+                        if (typeof rank === "string" || !rank) {
                             rank;
                             (0, funcs_1.crash)("Type error in FishPlayer.setFlag(): rank is invalid");
                         }
@@ -567,13 +567,15 @@ var FishPlayer = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var flag;
             var _this = this;
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         flag = typeof flag_ == "string" ?
-                            ((_a = ranks_1.RoleFlag.getByName(flag_)) !== null && _a !== void 0 ? _a : (0, funcs_1.crash)("Type error in FishPlayer.setFlag(): flag ".concat(flag_, " is invalid")))
+                            (ranks_1.RoleFlag.getByName(flag_))
                             : flag_;
+                        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                        if (!flag)
+                            (0, funcs_1.crash)("Type error in FishPlayer.setFlag(): flag ".concat(String(flag_), " is invalid"));
                         return [4 /*yield*/, this.updateSynced(function () {
                                 if (value) {
                                     _this.flags.add(flag);
@@ -585,7 +587,7 @@ var FishPlayer = /** @class */ (function () {
                                 _this.updateName();
                             })];
                     case 1:
-                        _b.sent();
+                        _a.sent();
                         return [2 /*return*/];
                 }
             });

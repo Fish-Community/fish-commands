@@ -32,6 +32,7 @@ const Log: {
 	};
 };
 type LogLevel = { readonly _brand: unique symbol };
+type LogLevelName = Exclude<keyof (typeof Log)["LogLevel"], "none">;
 const Strings: {
 	stripColors(string:string):string;
 	sanitizeFilename(name:string):string;
