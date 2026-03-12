@@ -32,11 +32,13 @@ function initializeTimers() {
         //Autosave
         var file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
         Core.app.post(function () {
+            Time.mark();
             SaveIO.save(file);
             players_1.FishPlayer.saveAll();
             players_1.FishPlayer.uploadAll();
             Call.sendMessage('[#4fff8f9f]Game saved.');
             globals_1.FishEvents.fire("saveData", []);
+            Log.debug("autosave on main thread @", Time.elapsed());
         });
         try {
             //Unblacklist trusted players
