@@ -43,7 +43,7 @@ exports.Req = {
     },
     teamAlive: function (_a) {
         var sender = _a.sender;
-        return sender.team().active()
+        return sender.team().isAlive()
             || (0, errors_1.fail)("Your team is dead.");
     },
     unitExists: function (message) {

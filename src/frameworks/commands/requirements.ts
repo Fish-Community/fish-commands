@@ -31,7 +31,7 @@ export const Req = {
 		!Vars.state.gameOver
 			|| fail(`This game is over, please wait for the next map to load.`),
 	teamAlive: ({sender}:{sender:FishPlayer}) =>
-		sender.team().active()
+		sender.team().isAlive()
 			|| fail(`Your team is dead.`),
 	unitExists: (message = "You must be in a unit to use this command.") =>
 		({sender}:{sender:FishPlayer}) =>
