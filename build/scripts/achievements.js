@@ -652,7 +652,7 @@ Object.entries(exports.Achievements).forEach(function (_a) {
     return a.sid = id;
 });
 globals_1.FishEvents.on("commandUnauthorized", function (_, player, name) {
-    if (name == "js" || name == "fjs" && !exports.Achievements.run_js_without_perms.has(player))
+    if ((name == "js" || name == "fjs") && !exports.Achievements.run_js_without_perms.has(player))
         exports.Achievements.run_js_without_perms.grantTo(player);
 });
 Events.on(EventType.UnitDrownEvent, function (_a) {

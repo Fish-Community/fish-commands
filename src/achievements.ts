@@ -538,7 +538,7 @@ export const Achievements = {
 Object.entries(Achievements).forEach(([id, a]) => a.sid = id);
 
 FishEvents.on("commandUnauthorized", (_, player, name) => {
-	if(name == "js" || name == "fjs" && !Achievements.run_js_without_perms.has(player))
+	if((name == "js" || name == "fjs") && !Achievements.run_js_without_perms.has(player))
 		Achievements.run_js_without_perms.grantTo(player);
 });
 
