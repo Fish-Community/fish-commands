@@ -1061,8 +1061,17 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             handler: function (_a) {
                 var sender = _a.sender, force = _a.args.force;
                 var manager = managers[sender.team().id];
-                if (sender.hasPerm("admin") && force != undefined)
+                if (sender.hasPerm("admin") && force != undefined) {
+                    if (force) {
+                        manager.messageEligibleVoters(prefix + "Vote forced by admin ".concat(sender.name, "[white]."));
+                        Call.sendMessage(prefix + "Team ".concat(sender.team().coloredName(), " has voted to forfeit this match."));
+                    }
+                    else {
+                        manager.messageEligibleVoters(prefix + "Votes cleared by admin ".concat(sender.name, "[white]."));
+                    }
                     manager.forceVote(force);
+                    return;
+                }
                 if (sender.ranksAtLeast("mod"))
                     commands_1.Req.cooldown(5000);
                 else

@@ -1012,7 +1012,18 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 			data: { managers },
 			handler({ sender, args: {force} }){
 				const manager = managers[sender.team().id];
-				if(sender.hasPerm("admin") && force != undefined) manager.forceVote(force);
+				if(sender.hasPerm("admin") && force != undefined){
+					if(force){
+						manager.messageEligibleVoters(prefix + `Vote forced by admin ${sender.name}[white].`);
+						Call.sendMessage(
+							prefix + `Team ${sender.team().coloredName()} has voted to forfeit this match.`
+						);
+					} else {
+						manager.messageEligibleVoters(prefix + `Votes cleared by admin ${sender.name}[white].`);
+					}
+					manager.forceVote(force);
+					return;
+				}
 				if(sender.ranksAtLeast("mod")) Req.cooldown(5_000);
 				else Req.cooldown(20_000);
 				manager.vote(sender, 1, 0);
