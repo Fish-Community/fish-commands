@@ -1302,5 +1302,54 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 });
             });
         }
+    }, report: {
+        args: ["target:player"],
+        description: 'Report a player to staff with a selected reason.',
+        perm: commands_1.Perm.chat,
+        requirements: function (_a) {
+            var sender = _a.sender;
+            return sender.hasPerm("trusted") ? [commands_1.Req.cooldown(5000)] : [commands_1.Req.cooldown(funcs_1.Duration.minutes(2))];
+        },
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var reasons, reason, message;
+                var target = _b.args.target, sender = _b.sender, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail, f = _b.f;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (target === sender)
+                                (0, commands_1.fail)('You cannot report yourself.');
+                            if (target.ranksAtLeast("manager"))
+                                (0, commands_1.fail)("This user cannot be reported in-game.");
+                            reasons = [
+                                'Griefing',
+                                'False votekick',
+                                'Harassment',
+                                'Inappropriate content',
+                                'Spam',
+                                'Other', //TODO: use the text input menu
+                            ];
+                            if (target.hasPerm("mod"))
+                                reasons.push('Admin Abuse');
+                            if (config_1.Gamemode.sandbox())
+                                reasons.push("Lag machine");
+                            return [4 /*yield*/, menus_1.Menu.menu('Report Reason', "Select a reason for reporting ".concat(target.name), reasons, sender, { includeCancel: true })];
+                        case 1:
+                            reason = _c.sent();
+                            return [4 /*yield*/, menus_1.Menu.confirm(sender, "Are you sure you want to report player ".concat(target.cleanedName, "? This action will notify staff members."))];
+                        case 2:
+                            _c.sent();
+                            message = (0, funcs_1.escapeTextDiscord)("[In-game report] Server: ".concat(config_1.Gamemode.name(), "\nIssuer: ").concat(sender.cleanedName, "\nTarget: ").concat(target.cleanedName).concat(target.hasPerm("mod") ? ' (Admin)' : '', "\nReason: ").concat(reason, "\n").concat(config_1.text.reportsPing));
+                            api.sendStaffMessage(message, sender.name, function (sent) {
+                                if (sent)
+                                    outputSuccess(f(templateObject_25 || (templateObject_25 = __makeTemplateObject(["Report sent to staff: ", " for \"", "\"."], ["Report sent to staff: ", " for \"", "\"."])), target.name, reason));
+                                else
+                                    outputFail('Failed to send report to staff. Please try again later.');
+                            });
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        },
     } }));
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25;
