@@ -55,7 +55,7 @@ exports.bannedWords = {
     normal: processBannedWordList([
         "fanum tax", "gyatt", "rizz", "skibidi", //With love, DarthScion
         //>:( -dart
-        "uwu", //lol
+        // "uwu", //lol
         "nig" + "ger", "nig" + "ga", "niger", "ni8" + "8er", "nig" + "gre", //our apologies to citizens of the Republic of Niger
         "негр", "ниггер",
         "re" + "tard",
