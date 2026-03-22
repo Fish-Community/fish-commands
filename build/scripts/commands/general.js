@@ -708,6 +708,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if (target !== sender) {
                 if (!sender.hasPerm("warn"))
                     (0, commands_1.fail)("You do not have permission to show rules to other players.");
+                if (!sender.canModerate(target))
+                    commands_1.Req.cooldown(funcs_1.Duration.minutes(10));
                 if (target.hasPerm("blockTrolling"))
                     (0, commands_1.fail)(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
             }

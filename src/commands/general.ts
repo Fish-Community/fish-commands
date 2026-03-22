@@ -633,6 +633,7 @@ Available types:[yellow]
 			const target = args.player ?? sender;
 			if(target !== sender){
 				if(!sender.hasPerm("warn")) fail(`You do not have permission to show rules to other players.`);
+				if(!sender.canModerate(target)) Req.cooldown(Duration.minutes(10));
 				if(target.hasPerm("blockTrolling")) fail(f`Player ${args.player!} is insufficiently trollable.`);
 			}
 			void Menu.menu(
