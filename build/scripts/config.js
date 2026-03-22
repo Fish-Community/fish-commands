@@ -56,8 +56,7 @@ exports.bannedWords = {
         "fanum tax", "gyatt", "rizz", "skibidi", //With love, DarthScion
         //>:( -dart
         // "uwu", //lol
-        "nig" + "ger", "nig" + "ga", "niger", "ni8" + "8er", "nig" + "gre", //our apologies to citizens of the Republic of Niger
-        "негр", "ниггер",
+        "nig" + "ger", "nig" + "ga", "niger", "ni8" + "8er", "nig" + "gre", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер", //our apologies to citizens of the Republic of Niger
         "re" + "tard",
         'kill yourself', 'kill urself', /\bkys\b/,
         "kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", //nazi-related words
@@ -320,7 +319,7 @@ exports.tips = {
         //misc
         "Anyone attempting to impersonate a ranked player, or the server, will have [scarlet]SUSSY IMPOSTOR[] prepended to their name. Beware!",
         "Griefers will often be found with the text ".concat(exports.prefixes.marked, " prepended to their name: they are harmless and cannot grief again."),
-        "Don't votekick ".concat(exports.prefixes.marked.slice(0, -3), "[][]s if they aren't breaking the rules: they are incapable of griefing more."),
+        "Don't votekick ".concat(exports.prefixes.marked.slice(0, -3), "[][scarlet]s [gold]if they aren't breaking the rules: they are incapable of griefing more."),
         "Players marked as ".concat(exports.prefixes.flagged, " have been flagged as suspicious by our detection systems, but they may not be griefers."),
         "Need to appeal a moderation action? Join the discord at ".concat(exports.FColor.discord(exports.text.discordURL), " or type /discord"),
         "Want to send the phrase [white]\"/command\"[] in chat? Type [white]\"./command\"[] and the [white].[] will be removed.",
