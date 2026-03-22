@@ -24,6 +24,7 @@ A monolithic plugin that handles all custom features for the >|||>Fish servers. 
 ----
 
 Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks in advance!
+Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks in advance!
 
 Contributors:
 
@@ -40,6 +41,9 @@ Contributors:
 [<img width=80 alt="Darthscion" src="https://github.com/Darthscion55.png">](https://github.com/Darthscion55/)
 [<img width=80 alt="cudspent" src="https://github.com/spentcud.png">](https://github.com/spentcud/)
 [<img width=80 alt="Peanutzy" src="https://github.com/Peanutzy1.png">](https://github.com/Peanutzy1/)
+[<img width=80 alt="ClashGone" src="https://github.com/ClashGone.png">](https://github.com/ClashGone/)
+
+[<img width=80 alt="Rotelanin" src="https://github.com/Rotelanin.png">](https://github.com/Rotelanin/)
 
 Join our Discord: [https://discord.gg/VpzcYSQ33Y](https://discord.gg/VpzcYSQ33Y)
 
