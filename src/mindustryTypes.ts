@@ -269,6 +269,7 @@ class Team {
 	static baseTeams:Team[];
 	name:string;
 	active():boolean;
+	isAlive():boolean;
 	data():TeamData;
 	core():Building | null;
 	items():ItemModule;
