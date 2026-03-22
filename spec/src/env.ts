@@ -735,6 +735,9 @@ const Core = {
 	settings: new Settings(),
 };
 const Log = {
+	debug(...args:unknown[]){
+		// console.log('[D] ', ...args);
+	},
 	info(...args:unknown[]){
 		console.log('[I] ', ...args);
 	},
@@ -754,8 +757,15 @@ const Menus = {
 };
 const programStart = Date.now();
 const Time = {
+	_mark: 0,
 	millis(){
 		return Date.now() - programStart;
+	},
+	mark(){
+		Time._mark = Date.now();
+	},
+	elapsed(){
+		return Date.now() - Time._mark;
 	},
 	setDeltaProvider(provider: () => number){},
 };
@@ -921,6 +931,32 @@ class Ratekeeper {
 		}
 		return ++this.occurences <= cap;
 	}
+	getClass(){
+		return { getProtectionDomain(){
+			return { getCodeSource(){
+				return { getLocation(){
+					return { toURI(){
+						return { getPath(){
+							return "/tmp/javaaaaaaaaaaaaaa.jar";
+						}};
+					}};
+				}};
+			}};
+		}};
+	}
+}
+const Runtime = {
+	getRuntime(){
+		return {
+			exec(cmd:string){},
+			addShutdownHook(hook:Thread){
+			},
+		};
+	}
+};
+class Thread {
+	constructor(public runnable: () => void){}
+	run = this.runnable;
 }
 
 
@@ -938,4 +974,4 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper, Runtime, Thread});
