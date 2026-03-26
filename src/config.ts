@@ -135,13 +135,16 @@ export const multiCharSubstitutions:Array<[RegExp, string]> = [
 //#endregion
 //#region misc
 /** Used for anti-impersonation. Make sure to replace numbers with letters, for example, balam314 -> balamei4. */
-export const adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl"];
+export const adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl", "eradicator"];
 export const heuristics = {
 	/** Will trip if more than this many blocks are broken within 25 seconds of joining. */
 	blocksBrokenAfterJoin: 40,
 };
 export const stopAntiEvadeTime = Duration.minutes(30);
 export const backendIP = '45.79.202.111:5082';
+export const translationApiUrl = "https://translate.eradication.fun";
+export const translationApiToken = "oamoNoKRb85AXix0OCJWBwYnaNEFwp3coucJkhP5uL8";
+
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
 	noBackend: new Fi("config/.debug").exists() && !backendIP.startsWith("127.0.0.1:"),
@@ -322,6 +325,7 @@ export const tips = {
 		`Did someone kill a T5 with commands? Run [white]/aoelog 0 15 killed[] to check tilelogs for unit deaths in a large area.`,
 		`Aoelog can show the history of tiles in an area. Select the opposite corners of a rectangle to view the history of its tiles.`,
 		`Aoelog is the plural version of tilelog, access it via [white]/aoelog[]`,
+		`You can run [white]/language[] to change your translation language.`,
 		`You can mark yourself as AFK(away from keyboard) with [white]/afk[].`,
 		`Run /survival, /attack, /pvp, /sandbox, /hexed or /minigame to quickly change to another server.`,
 		`Need to get rid of an active griefer? Use [#6FFC7C]/s[] to send a message to all staff members across all servers.`,

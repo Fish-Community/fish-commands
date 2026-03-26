@@ -18,7 +18,7 @@ import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, l
 export class FishPlayer {
 	//#region Static constants
 	/** Save version used for serialized FishPlayers. */
-	static readonly saveVersion = 12;
+	static readonly saveVersion = 13;
 	/** Maximum chunk size used when writing FishPlayer data to Core.settings. */
 	static readonly chunkSize = 50000;
 	//#endregion
@@ -143,6 +143,7 @@ export class FishPlayer {
 	usid: string | null = null;
 	/** If chat strictness is set to "strict", the player will not be allowed to swear. */
 	chatStrictness: "chat" | "strict" = "chat";
+	language: string = "";
 	/** -1 represents unknown */
 	lastJoined:number = -1;
 	/** -1 represents unknown */
@@ -358,6 +359,7 @@ export class FishPlayer {
 		if(data.rainbow != undefined) this.rainbow = data.rainbow;
 		if(data.usid != undefined) this.usid = data.usid;
 		if(data.chatStrictness != undefined) this.chatStrictness = data.chatStrictness;
+		if(data.language != undefined) this.language = data.language;
 		if(data.stats != undefined) this.stats = data.stats;
 		if(data.globalStats != undefined) this.globalStats = data.globalStats;
 		if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
@@ -366,9 +368,9 @@ export class FishPlayer {
 		if(data.achievements != undefined) this.achievements = JsonIO.read(Bits, `{bits:${data.achievements}}`);
 	}
 	getData():UploadedFishPlayerData {
-		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix } = this;
+		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix } = this;
 		return {
-			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, lastJoined, firstJoined, stats, showRankPrefix,
+			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix,
 			rank: rank.name,
 			flags: [...flags.values()].map(f => f.name),
 			achievements: JsonIO.write(Reflect.get(this.achievements, "bits"))
@@ -1109,6 +1111,37 @@ We apologize for the inconvenience.`
 					showRankPrefix: fishPlayerData.readBool(),
 				}, player);
 			}
+			case 13: {
+				const uuid = fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null.");
+				return new this(uuid, {
+					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
+					muted: fishPlayerData.readBool(),
+					unmarkTime: fishPlayerData.readNumber(13),
+					highlight: fishPlayerData.readString(2),
+					history: fishPlayerData.readArray(str => ({
+						action: str.readString(2) ?? "null",
+						by: str.readString(2) ?? "null",
+						time: str.readNumber(15)
+					})),
+					rainbow: (n => n == 0 ? null : {speed: n})(fishPlayerData.readNumber(2)),
+					rank: fishPlayerData.readString(2) ?? "",
+					flags: fishPlayerData.readArray(str => str.readString(2), 2).filter((s):s is string => s != null),
+					usid: fishPlayerData.readString(2),
+					chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+					language: fishPlayerData.readString(2) ?? "",
+					lastJoined: fishPlayerData.readNumber(15),
+					firstJoined: fishPlayerData.readNumber(15),
+					stats: {
+						blocksBroken: fishPlayerData.readNumber(10),
+						blocksPlaced: fishPlayerData.readNumber(10),
+						timeInGame: fishPlayerData.readNumber(15),
+						chatMessagesSent: fishPlayerData.readNumber(7),
+						gamesFinished: fishPlayerData.readNumber(5),
+						gamesWon: fishPlayerData.readNumber(5),
+					},
+					showRankPrefix: fishPlayerData.readBool(),
+				}, player);
+			}
 			default: crash(`Unknown save version ${version}`);
 		}
 	}
@@ -1129,6 +1162,7 @@ We apologize for the inconvenience.`
 		out.writeArray(Array.from(this.flags), (f, str) => str.writeString(f.name, 2), 2);
 		out.writeString(this.usid, 2);
 		out.writeEnumString(this.chatStrictness, ["chat", "strict"]);
+		out.writeString(this.language, 2);
 		out.writeNumber(this.lastJoined, 15);
 		out.writeNumber(this.firstJoined, 15);
 		out.writeNumber(this.stats.blocksBroken, 10, true);
