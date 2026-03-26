@@ -259,6 +259,7 @@ export function serialize<T extends Serializable>(
 	settingsKey: string,
 	schema: () => Schema<T>, oldSchema?: () => Schema<T>,
 	fixer?: (raw:T) => T,
+	saveEvent: keyof (typeof FishEvents)["listeners"] = "saveData",
 ){
 	return function decorate<
 		This extends Record<Name, T>, Name extends string | symbol
@@ -280,11 +281,11 @@ export function serialize<T extends Serializable>(
 				}
 				Log.debug("serialize read @ @", settingsKey, Time.elapsed());
 			});
-			FishEvents.on("saveData", () => {
+			FishEvents.on(saveEvent, () => {
 				try {
 					Time.mark();
 					serializer().writeSettings(access.get(this));
-					Log.debug("seralize save @ @", settingsKey, Time.elapsed());
+					Log.debug("serialize save @ @", settingsKey, Time.elapsed());
 				} catch(err){
 					Log.err(`Error while saving field ${String(name)} on ${String((this as any as Function)?.name)} using settings key ${settingsKey}`);
 					Log.info(JSON.stringify(access.get(this)));

@@ -95,6 +95,7 @@ ${finishedRun.success && wave < bestPreviousWave ?
 					);
 				}
 				fmap.runs.push(finishedRun);
+				FishEvents.fire("saveMaps", []);
 			}
 			Core.settings.remove(this.key);
 			this.current = null;
@@ -169,7 +170,7 @@ export class FMap extends dataClass<FMapData>() {
 			["winTeam", ["team"]],
 		]]]],
 		["mapFileName", ["string"]],
-	]]])
+	]]], undefined, "saveMaps")
 	static allMaps:FMap[] = [];
 	private static maps:Record<string, FMap> = {};
 	static {
