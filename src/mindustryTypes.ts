@@ -177,7 +177,35 @@ class Administration {
 
 	static ActionType: ActionType;
 	static PlayerInfo: typeof PlayerInfo;
+	static Config: typeof Config;
 }
+
+class Config {
+	defaultValue: any;
+	name: string;
+	key: string;
+	description: string;
+	changed: ()=>void;
+
+	isNum(): boolean;
+	isBool(): boolean;
+	isString(): boolean;
+
+	get(): any;
+
+	bool(): boolean;
+
+	num(): number;
+
+	string(): string;
+
+	set(value: any): void;
+
+	isDefault(): boolean;
+
+	constructor(name: string, description: string, defaultValue: any);
+}
+
 const Events: {
 	on(event:EventType, handler:(e:any) => void):void;
 	fire(event:MEvent):void;

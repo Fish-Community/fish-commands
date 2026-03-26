@@ -143,7 +143,8 @@ export const heuristics = {
 export const stopAntiEvadeTime = Duration.minutes(30);
 export const backendIP = '45.79.202.111:5082';
 export const translationApiUrl = "https://translate.eradication.fun";
-export const translationApiToken = "insert token to use in prod here";
+
+export const translationApiToken = new Administration.Config("Translation API Token", "Token to use with the translation API.", "unset");
 
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
@@ -214,7 +215,7 @@ export class FishServer {
 		input = input.toLowerCase();
 		return FishServer.all.find(s => s.aliases.concat(s.name).includes(input)) ?? null;
 	}
-};
+}
 
 export type GamemodeName = keyof typeof Gamemode extends infer K extends keyof typeof Gamemode ? K extends unknown ?
 	(typeof Gamemode)[K] extends (() => boolean) ? K : never
