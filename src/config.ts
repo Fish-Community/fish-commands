@@ -143,7 +143,7 @@ export const heuristics = {
 export const stopAntiEvadeTime = Duration.minutes(30);
 export const backendIP = '45.79.202.111:5082';
 export const translationApiUrl = "https://translate.eradication.fun";
-export const translationApiToken = "oamoNoKRb85AXix0OCJWBwYnaNEFwp3coucJkhP5uL8";
+export const translationApiToken = "insert token to use in prod here";
 
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
