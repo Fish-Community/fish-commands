@@ -18,7 +18,6 @@ var io = require("/frameworks/io");
 var maps = require("/maps");
 var memberCommands = require("/commands/member").commands;
 var menus = require("/frameworks/menus");
-var Metrics = require('/metrics').Metrics;
 var packetHandlers = require("/packetHandlers");
 var playerCommands = require("/commands/general").commands;
 var players = require("/players");
