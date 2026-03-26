@@ -84,7 +84,7 @@ export function messageHandoff(sender: Player, message: string) {
 		Log.info(k.code);
 
 		req.header("to", k.code);
-		req.header("token", translationApiToken);
+		req.header("token", translationApiToken.string());
 
 		req.timeout = 2000; //low timeout to not lag chat too much
 
