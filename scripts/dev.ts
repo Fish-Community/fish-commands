@@ -92,7 +92,7 @@ function runServer(){
 	const { status } = spawnSync(`which`, ["rlwrap"]);
 	const memory = "1G";
 	try {
-		execSync(`${status === 0 ? "rlwrap " : ""}java -Xmx${memory} -Xms${memory} -jar "server-release.jar host tendrils sandbox"`, {
+		execSync(`${status === 0 ? "rlwrap " : ""}java -Xmx${memory} -Xms${memory} -jar "server-release.jar"`, {
 			stdio: "inherit",
 			cwd: path.join(fcRootDirectory, "dev-server")
 		});
