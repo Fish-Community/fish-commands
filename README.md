@@ -16,7 +16,7 @@ A monolithic plugin that handles all custom features for the >|||>Fish servers. 
 * Automated moderation
 * Cross-server chat
 * Anti-impersonation
-* Chat filtering
+* Chat filtering && Translation
 * Map management through a discord bot
 * Map run tracking
 * Visual effects
@@ -44,6 +44,7 @@ Contributors:
 [<img width=80 alt="ClashGone" src="https://github.com/ClashGone.png">](https://github.com/ClashGone/)
 
 [<img width=80 alt="Rotelanin" src="https://github.com/Rotelanin.png">](https://github.com/Rotelanin/)
+[<img width=80 alt="Rotelanin" src="https://github.com/TheRadioactiveBanana.png">](https://github.com/TheRadioactiveBanana/)
 
 Join our Discord: [https://discord.gg/VpzcYSQ33Y](https://discord.gg/VpzcYSQ33Y)
 
