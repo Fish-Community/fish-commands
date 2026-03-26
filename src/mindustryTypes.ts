@@ -101,6 +101,7 @@ const Vars: {
 	content: Content;
 	tilesize: 8;
 	world: World;
+	maxPingTextLength: number;
 };
 class Teams {
 	active: Seq<TeamData>;
@@ -316,6 +317,10 @@ class Player {
 	con:NetConnection;
 	mouseX:number; mouseY:number;
 	shooting:boolean;
+	pingX: number;
+	pingY: number;
+	pingTime: number;
+	pingText: string | null;
 	ip():string;
 	kick(kickReason?:KickReason | string, duration?:number):void;
 	uuid():string;
@@ -591,6 +596,9 @@ const EventType: Record<string, EventType>;
 type EventType = any;
 type PlayerAction = {
 	player:mindustryPlayer;
+	pingText:string | null;
+	pingX:number;
+	pingY:number;
 	type:ActionType;
 	tile:Tile | null;
 	unit:Unit | null;
