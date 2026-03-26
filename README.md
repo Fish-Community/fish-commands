@@ -24,7 +24,6 @@ A monolithic plugin that handles all custom features for the >|||>Fish servers. 
 ----
 
 Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks in advance!
-Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks in advance!
 
 Contributors:
 
