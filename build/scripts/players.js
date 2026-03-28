@@ -995,7 +995,8 @@ var FishPlayer = /** @class */ (function () {
                     return;
                 }
                 if ((info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) //is this smart?
-                    && !_this.ranksAtLeast("active")) {
+                    && !_this.ranksAtLeast("active")
+                    && FishPlayer.punishedIPs.length > 0) {
                     _this.autoflagged = true;
                     _this.stopUnit();
                     _this.updateName();

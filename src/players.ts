@@ -847,6 +847,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 				if(
 					(info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) //is this smart?
 					&& !this.ranksAtLeast("active")
+					&& FishPlayer.punishedIPs.length > 0
 				){
 					this.autoflagged = true;
 					this.stopUnit();
