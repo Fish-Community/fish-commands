@@ -46,6 +46,8 @@ export const FishEvents = new EventEmitter<{
 	memoryCorruption: [];
 	/** Called when the "say" console command is run. */
 	serverSays: [];
+	/** Called when map data is updated */
+	saveMaps: [];
 	/** Fired on gameover, but before player data is reset. */
 	gameOver: [winningTeam: Team];
 }>();

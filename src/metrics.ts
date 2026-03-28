@@ -2,7 +2,6 @@
 Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the player count tracking.
 */
-import { serialize } from "/frameworks/io";
 
 
 type MetricsWeek = number[] & {
@@ -18,14 +17,14 @@ export class Metrics {
 	 * Weeks are numbered starting at the week of 4 May 2025.
 	 * A value is taken every 4 minutes, for a total of 15 readings per hour.
 	*/
-	@serialize("player-count-data", () => ["version", 0,
-		["array", "u16", ["array", 2520, ["number", "i8"]]]
-	], undefined, weeks => {
-		for(let i = 0; i <= Metrics.weekNumber(); i ++){
-			weeks[i] ??= Metrics.newWeek();
-		}
-		return weeks;
-	})
+	// @serialize("player-count-data", () => ["version", 0,
+	// 	["array", "u16", ["array", 2520, ["number", "i8"]]]
+	// ], undefined, weeks => {
+	// 	for(let i = 0; i <= Metrics.weekNumber(); i ++){
+	// 		weeks[i] ??= Metrics.newWeek();
+	// 	}
+	// 	return weeks;
+	// })
 	static weeks: MetricsWeek[] = Array(this.weekNumber() + 1).fill(0).map(() => this.newWeek());
 
 	static {

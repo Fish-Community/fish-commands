@@ -200,6 +200,7 @@ var PartialMapRun = /** @class */ (function () {
                         : "[orange]Reached wave [accent]".concat(wave, "[]. Current highscore: [green]").concat(bestPreviousWave, "[]"), "\n[orange]--------"));
                 }
                 fmap.runs.push(finishedRun);
+                globals_1.FishEvents.fire("saveMaps", []);
             }
             Core.settings.remove(_a.key);
             _a.current = null;
@@ -327,7 +328,7 @@ var FMap = function () {
                                             ["winTeam", ["team"]],
                                         ]]]],
                             ["mapFileName", ["string"]],
-                        ]]]; })];
+                        ]]]; }, undefined, "saveMaps")];
             __esDecorate(null, null, _static_allMaps_decorators, { kind: "field", name: "allMaps", static: true, private: false, access: { has: function (obj) { return "allMaps" in obj; }, get: function (obj) { return obj.allMaps; }, set: function (obj, value) { obj.allMaps = value; } }, metadata: _metadata }, _static_allMaps_initializers, _static_allMaps_extraInitializers);
             if (_metadata) Object.defineProperty(_b, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         })(),

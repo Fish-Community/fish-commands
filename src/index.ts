@@ -12,7 +12,7 @@ import { FishEvents, fishPlugin, fishState, ipJoins, tileHistory } from "/global
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, processChat, restartNow, serverRestartLoop } from "/utils";
+import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
 
 
 Events.on(EventType.ConnectionEvent, (e) => {
@@ -169,6 +169,19 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 			} else if(action.type === Administration.ActionType.control && !action.unit?.spawnedByCore && Date.now() < fishP.blockedFromUnitsUntil){
 				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from controlling units for ${formatTimeRelative(fishP.blockedFromUnitsUntil, true)}`);
 				return false;
+			} else if(action.type === Administration.ActionType.pingLocation && action.pingText && action.pingText.length < Vars.maxPingTextLength){
+				const fishP = FishPlayer.get(action.player);
+				if(fishP.muted){
+					action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are muted, you cannot send text through location pings.`);
+					return false;
+				} else if(matchFilter(action.pingText, "chat", false)){
+					//Allow it, but replace
+					player.pingX = action.pingX;
+					player.pingY = action.pingY;
+					player.pingTime = 1;
+					player.pingText = text.chatFilterReplacement.messageShort();
+					return false;
+				}
 			}
 			return true;
 		}

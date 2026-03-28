@@ -340,7 +340,8 @@ if (!Symbol.metadata)
         configurable: false,
         value: Symbol("Symbol.metadata")
     });
-function serialize(settingsKey, schema, oldSchema, fixer) {
+function serialize(settingsKey, schema, oldSchema, fixer, saveEvent) {
+    if (saveEvent === void 0) { saveEvent = "saveData"; }
     return function decorate(_, _a) {
         var addInitializer = _a.addInitializer, access = _a.access, name = _a.name;
         addInitializer(function () {
@@ -358,11 +359,11 @@ function serialize(settingsKey, schema, oldSchema, fixer) {
                 }
                 Log.debug("serialize read @ @", settingsKey, Time.elapsed());
             });
-            globals_1.FishEvents.on("saveData", function () {
+            globals_1.FishEvents.on(saveEvent, function () {
                 try {
                     Time.mark();
                     serializer().writeSettings(access.get(_this));
-                    Log.debug("seralize save @ @", settingsKey, Time.elapsed());
+                    Log.debug("serialize save @ @", settingsKey, Time.elapsed());
                 }
                 catch (err) {
                     Log.err("Error while saving field ".concat(String(name), " on ").concat(String(_this === null || _this === void 0 ? void 0 : _this.name), " using settings key ").concat(settingsKey));

@@ -19,7 +19,6 @@ const io = require("/frameworks/io");
 const maps = require("/maps");
 const { commands: memberCommands } = require("/commands/member");
 const menus = require("/frameworks/menus");
-const { Metrics } = require('/metrics');
 const packetHandlers = require("/packetHandlers");
 const { commands: playerCommands } = require("/commands/general");
 const players = require("/players");

@@ -247,6 +247,7 @@ export const text = {
 	]),
 	chatFilterReplacement: {
 		message: () => `I really hope everyone is having a fun time :) <3`,
+		messageShort: () => `I hope we're all having a fun time :) <3`,
 		highlight: () => `[#f456f]`,
 	// 	`[#22AA22]Merry [#EC4444]Christmas!`,
 	// 	`[gold]Happy Holidays! [white]•*•☃*•`,
@@ -269,6 +270,7 @@ export const text = {
 	// 	]),
 	} satisfies {
 		message: () => string;
+		messageShort: () => string;
 		highlight: () => string;
 	},
 	dataFetchFailed: "[scarlet]\u26A0 Data fetch failed!\n[white]Please disconnect and rejoin the server if you encounter further issues, such as missing rank or statistics.",

@@ -165,6 +165,21 @@ Events.on(EventType.ServerLoadEvent, function (e) {
                 action.player.sendMessage("[scarlet]\u26A0 [yellow]You are blocked from controlling units for ".concat((0, utils_1.formatTimeRelative)(fishP.blockedFromUnitsUntil, true)));
                 return false;
             }
+            else if (action.type === Administration.ActionType.pingLocation && action.pingText && action.pingText.length < Vars.maxPingTextLength) {
+                var fishP_1 = players_1.FishPlayer.get(action.player);
+                if (fishP_1.muted) {
+                    action.player.sendMessage("[scarlet]\u26A0 [yellow]You are muted, you cannot send text through location pings.");
+                    return false;
+                }
+                else if ((0, utils_1.matchFilter)(action.pingText, "chat", false)) {
+                    //Allow it, but replace
+                    player.pingX = action.pingX;
+                    player.pingY = action.pingY;
+                    player.pingTime = 1;
+                    player.pingText = config_1.text.chatFilterReplacement.messageShort();
+                    return false;
+                }
+            }
             return true;
         }
     });

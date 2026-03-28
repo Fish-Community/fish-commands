@@ -236,6 +236,7 @@ exports.text = {
     ]); },
     chatFilterReplacement: {
         message: function () { return "I really hope everyone is having a fun time :) <3"; },
+        messageShort: function () { return "I hope we're all having a fun time :) <3"; },
         highlight: function () { return "[#f456f]"; },
         // 	`[#22AA22]Merry [#EC4444]Christmas!`,
         // 	`[gold]Happy Holidays! [white]•*•☃*•`,
