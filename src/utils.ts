@@ -455,13 +455,14 @@ export function neutralGameover(){
 }
 
 /** Please validate wavesToSkip to ensure it is not huge */
-export function skipWaves(wavesToSkip:number, runIntermediateWaves:boolean){
-	if(runIntermediateWaves){
-		for(let i = 0; i < wavesToSkip; i ++){
+export function skipWaves(wavesToSkip:number, runIntermediateWaves:boolean) {
+ const wavesToActuallySkip = Vars.state.rules.winWave - Vars.state.wave;
+	if (runIntermediateWaves) {
+		for (let i = 0; i < wavesToActuallySkip; i++) {
 			Vars.logic.skipWave();
 		}
 	} else {
-		Vars.state.wave += wavesToSkip - 1;
+		Vars.state.wave += wavesToActuallySkip - 1;
 		Vars.logic.skipWave();
 	}
 }
