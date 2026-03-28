@@ -457,7 +457,7 @@ export function neutralGameover(){
 /** Please validate wavesToSkip to ensure it is not huge */
 export function skipWaves(wavesToSkip:number, runIntermediateWaves:boolean) {
 	const wavesLeft = Vars.state.rules.winWave - Vars.state.wave;
- const wavesToActuallySkip = (wavesToSkip >= wavesLeft) ? wavesLeft : wavesToSkip;
+	const wavesToActuallySkip = (wavesToSkip >= wavesLeft) ? wavesLeft : wavesToSkip;
 	if (runIntermediateWaves) {
 		for (let i = 0; i < wavesToActuallySkip; i++) {
 			Vars.logic.skipWave();
