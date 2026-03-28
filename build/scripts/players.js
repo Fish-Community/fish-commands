@@ -358,12 +358,14 @@ var FishPlayer = /** @class */ (function () {
                 fishP.updateMemberExclusiveState();
                 fishP.updateName();
                 fishP.updateAdminStatus();
+                fishP.updateAutoflaggedStatus();
                 fishP.checkAutoRanks();
                 fishP.sendWelcomeMessage();
             }
         }, function () {
             var fishP = _this.cachedPlayers[uuid];
             fishP.updateAdminStatus();
+            fishP.updateAutoflaggedStatus();
             fishP.sendWelcomeMessage();
             if (fishP === null || fishP === void 0 ? void 0 : fishP.player)
                 fishP.player.sendMessage(config_1.text.dataFetchFailed);
@@ -941,6 +943,11 @@ var FishPlayer = /** @class */ (function () {
             this.player.admin = false;
         }
     };
+    FishPlayer.prototype.updateAutoflaggedStatus = function () {
+        if (this.ranksAtLeast("active")) {
+            this.autoflagged = false;
+        }
+    };
     FishPlayer.prototype.checkAntiEvasion = function () {
         var e_4, _a;
         var _b, _c;
@@ -987,7 +994,8 @@ var FishPlayer = /** @class */ (function () {
                     FishPlayer.triggerAntibot(funcs_1.Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic");
                     return;
                 }
-                if (info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) { //is this smart?
+                if ((info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) //is this smart?
+                    && !_this.ranksAtLeast("active")) {
                     _this.autoflagged = true;
                     _this.stopUnit();
                     _this.updateName();

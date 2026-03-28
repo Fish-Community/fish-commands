@@ -307,12 +307,14 @@ export class FishPlayer {
 				fishP.updateMemberExclusiveState();
 				fishP.updateName();
 				fishP.updateAdminStatus();
+				fishP.updateAutoflaggedStatus();
 				fishP.checkAutoRanks();
 				fishP.sendWelcomeMessage();
 			}
 		}, () => {
 			const fishP = this.cachedPlayers[uuid];
 			fishP.updateAdminStatus();
+			fishP.updateAutoflaggedStatus();
 			fishP.sendWelcomeMessage();
 			if(fishP?.player) fishP.player.sendMessage(text.dataFetchFailed);
 			else this.dataFetchFailedUuids.add(uuid);
@@ -798,6 +800,11 @@ export class FishPlayer {
 			this.player!.admin = false;
 		}
 	}
+	updateAutoflaggedStatus(){
+		if(this.ranksAtLeast("active")){
+			this.autoflagged = false;
+		}
+	}
 	checkAntiEvasion(){
 		FishPlayer.updatePunishedIPs();
 		for(const [ip, uuid] of FishPlayer.punishedIPs){
@@ -837,7 +844,10 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 					FishPlayer.triggerAntibot(Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic");
 					return;
 				}
-				if(info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)){ //is this smart?
+				if(
+					(info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) //is this smart?
+					&& !this.ranksAtLeast("active")
+				){
 					this.autoflagged = true;
 					this.stopUnit();
 					this.updateName();
