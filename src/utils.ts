@@ -455,18 +455,26 @@ export function neutralGameover(){
 }
 
 /** Please validate wavesToSkip to ensure it is not huge */
-export function skipWaves(wavesToSkip:number, runIntermediateWaves:boolean) {
-	const wavesLeft = Vars.state.rules.winWave - Vars.state.wave;
-	const wavesToActuallySkip = (wavesToSkip >= wavesLeft) ? wavesLeft : wavesToSkip;
-	if (runIntermediateWaves) {
-		for (let i = 0; i < wavesToActuallySkip; i++) {
-			Vars.logic.skipWave();
-		}
-	} else {
-		Vars.state.wave += wavesToActuallySkip - 1;
-		Vars.logic.skipWave();
-	}
+export function skipWaves(wavesToSkip: number, runIntermediateWaves: boolean) {
+    const winWave = Vars.state.rules.winWave;
+    let wavesToActuallySkip = wavesToSkip;
+
+    // if winwave is 0 or lower, that means the map has no end wave
+    if (winWave > 0) {
+        const wavesLeft = winWave - Vars.state.wave;
+        wavesToActuallySkip = (wavesToSkip >= wavesLeft) ? wavesLeft : wavesToSkip;
+    }
+
+    if (runIntermediateWaves) {
+        for (let i = 0; i < wavesToActuallySkip; i++) {
+            Vars.logic.skipWave();
+        }
+    } else {
+        Vars.state.wave += (wavesToActuallySkip - 1);
+        Vars.logic.skipWave();
+    }
 }
+
 
 export function logHTrip(player:FishPlayer, name:string, message?:string){
 	Log.warn(`&yPlayer &b"${player.cleanedName}"&y (&b${player.uuid}&y/&b${player.ip()}&y) tripped &c${name}&y` + (message ? `: ${message}` : ""));
