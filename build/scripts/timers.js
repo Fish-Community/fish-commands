@@ -33,9 +33,13 @@ function initializeTimers() {
         var file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
         Core.app.post(function () {
             Time.mark();
+            Time.mark();
+            Time.mark();
             SaveIO.save(file);
+            Log.debug("SaveIO @", Time.elapsed());
             players_1.FishPlayer.saveAll();
             players_1.FishPlayer.uploadAll();
+            Log.debug("Save/upload @", Time.elapsed());
             Call.sendMessage('[#4fff8f9f]Game saved.');
             globals_1.FishEvents.fire("saveData", []);
             Log.debug("autosave on main thread @", Time.elapsed());
