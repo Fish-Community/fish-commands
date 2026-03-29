@@ -42,7 +42,7 @@ export const bannedWords: {
 		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", //our apologies to citizens of the Republic of Niger
 		"re"+"tard",
 		'kill yourself', 'kill urself', /\bkys\b/,
-		"kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", //nazi-related words
+		"kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", /\b1488\b/, //nazi-related words
 		["co"+"ck", "cockroach", "poppycock", "cocktail"], "suck dick", "sucking dick",
 		"iamasussyimposter",
 		["cu"+"nt", "scunthorpe"],
