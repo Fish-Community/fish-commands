@@ -563,6 +563,7 @@ exports.commands = (0, commands_1.commandList)({
         args: [],
         description: "Saves the game state.",
         perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.cooldownGlobal(funcs_1.Duration.seconds(15))],
         handler: function (_a) {
             var outputSuccess = _a.outputSuccess;
             players_1.FishPlayer.saveAll();
