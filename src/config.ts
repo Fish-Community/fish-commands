@@ -35,7 +35,7 @@ export const bannedWords: {
 	// like this: ["badw", "goodbadw"]
 	/** Normal: banned always. */
 	normal: processBannedWordList([
-		"fanum tax", "gyatt", "rizz", "skibidi", //With love, DarthScion
+		"fanum tax", "gyatt", ["rizz", "grizzly", "frizz"], "skibidi", //With love, DarthScion
 		//>:( -dart
 		// "uwu", //lol
 		
