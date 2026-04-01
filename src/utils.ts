@@ -593,7 +593,16 @@ const replacements = ([
 	["attack", "sandbox", "pvp", "hexed", "survival"],
 
 	//teams
-	["crux", "sharded", "malis", "neoplastic"]
+	["crux", "sharded", "malis", "neoplastic"],
+
+	//maps
+	["rampant", "harbor war", "cave canal", "acheron", "wolframfestung", "avast", "fallen omura", "assault"],
+
+	//aquatic animals
+	["fish", "shark", "whale", "dolphin", "salmon", "tuna", "squid", "jellyfish", "turtle"],
+
+	//antonym adjectives
+	["fast", "slow"], ["big", "little"], ["hot", "cold"], ["hard", "easy", "difficult", "ez"], ["hello", "bye"],
 ] satisfies string[][]).map(set => [set, new RegExp(`\\b(?:${set.join("|")})(e?s?(?:i?gone)?)\\b`, 'g')] as const);
 
 let foolCounter = 0;

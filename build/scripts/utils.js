@@ -689,7 +689,13 @@ var replacements = [
     //Gamemodes
     ["attack", "sandbox", "pvp", "hexed", "survival"],
     //teams
-    ["crux", "sharded", "malis", "neoplastic"]
+    ["crux", "sharded", "malis", "neoplastic"],
+    //maps
+    ["rampant", "harbor war", "cave canal", "acheron", "wolframfestung", "avast", "fallen omura", "assault"],
+    //aquatic animals
+    ["fish", "shark", "whale", "dolphin", "salmon", "tuna", "squid", "jellyfish", "turtle"],
+    //antonym adjectives
+    ["fast", "slow"], ["big", "little"], ["hot", "cold"], ["hard", "easy", "difficult", "ez"], ["hello", "bye"],
 ].map(function (set) { return [set, new RegExp("\\b(?:".concat(set.join("|"), ")(e?s?(?:i?gone)?)\\b"), 'g')]; });
 var foolCounter = 0;
 exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
