@@ -28,8 +28,22 @@ var utils_1 = require("/utils");
 function initializeTimers() {
     Timer.schedule(function () {
         var e_1, _a;
-        //Autosave
         Time.mark();
+        //Autosave
+        var file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
+        Core.app.post(function () {
+            Time.mark();
+            Time.mark();
+            Time.mark();
+            SaveIO.save(file);
+            Log.debug("SaveIO @", Time.elapsed());
+            players_1.FishPlayer.saveAll();
+            players_1.FishPlayer.uploadAll();
+            Log.debug("Save/upload @", Time.elapsed());
+            Call.sendMessage('[#4fff8f9f]Game saved.');
+            globals_1.FishEvents.fire("saveData", []);
+            Log.debug("autosave on main thread @", Time.elapsed());
+        });
         try {
             //Unblacklist trusted players
             for (var _b = __values(Object.values(players_1.FishPlayer.cachedPlayers)), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -46,26 +60,7 @@ function initializeTimers() {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        Log.debug("unblacklist trusted @", Time.elapsed());
-        Core.app.post(function () {
-            Time.mark();
-            var file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
-            SaveIO.save(file);
-            Log.debug("SaveIO @", Time.elapsed());
-            Time.mark();
-            players_1.FishPlayer.saveAll();
-            Log.debug("saveAll @", Time.elapsed());
-            Call.sendMessage('[#4fff8f9f]Game saved.');
-            Time.mark();
-            globals_1.FishEvents.fire("saveData", []);
-            Log.debug("saveData @", Time.elapsed());
-        });
-        Threads.daemon(function () {
-            Time.mark();
-            //this should be safe; if some garbled data gets uploaded the backend will reject it
-            players_1.FishPlayer.uploadAll();
-            Log.debug("uploadAll @", Time.elapsed());
-        });
+        Log.debug("autosave @", Time.elapsed());
     }, 10, funcs_1.DurationSecs.minutes(5));
     //Memory corruption prank
     Timer.schedule(function () {

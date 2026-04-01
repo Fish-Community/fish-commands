@@ -342,7 +342,6 @@ export const commands = commandList({
 		args: [],
 		description: "Saves the game state.",
 		perm: Perm.mod,
-		requirements: [Req.cooldownGlobal(Duration.seconds(15))],
 		handler({outputSuccess}){
 			FishPlayer.saveAll();
 			FishPlayer.uploadAll();

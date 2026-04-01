@@ -16,34 +16,29 @@ import { definitelyRealMemoryCorruption, neutralGameover } from "/utils";
 /** Must be called once, and only once, on server start. */
 export function initializeTimers(){
 	Timer.schedule(() => {
-		//Autosave
 		Time.mark();
+		//Autosave
+		const file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
+		Core.app.post(() => {
+			Time.mark();
+			Time.mark();
+			Time.mark();
+			SaveIO.save(file);
+			Log.debug("SaveIO @", Time.elapsed());
+			FishPlayer.saveAll();
+			FishPlayer.uploadAll();
+			Log.debug("Save/upload @", Time.elapsed());
+			Call.sendMessage('[#4fff8f9f]Game saved.');
+			FishEvents.fire("saveData", []);
+			Log.debug("autosave on main thread @", Time.elapsed());
+		});
 		//Unblacklist trusted players
 		for(const fishP of Object.values(FishPlayer.cachedPlayers)){
 			if(fishP.ranksAtLeast("trusted")){
 				Vars.netServer.admins.dosBlacklist.remove(fishP.info().lastIP);
 			}
 		}
-		Log.debug("unblacklist trusted @", Time.elapsed());
-		Core.app.post(() => {
-			Time.mark();
-			const file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
-			SaveIO.save(file);
-			Log.debug("SaveIO @", Time.elapsed());
-			Time.mark();
-			FishPlayer.saveAll();
-			Log.debug("saveAll @", Time.elapsed());
-			Call.sendMessage('[#4fff8f9f]Game saved.');
-			Time.mark();
-			FishEvents.fire("saveData", []);
-			Log.debug("saveData @", Time.elapsed());
-		});
-		Threads.daemon(() => {
-			Time.mark();
-			//this should be safe; if some garbled data gets uploaded the backend will reject it
-			FishPlayer.uploadAll();
-			Log.debug("uploadAll @", Time.elapsed());
-		});
+		Log.debug("autosave @", Time.elapsed());
 	}, 10, DurationSecs.minutes(5));
 	//Memory corruption prank
 	Timer.schedule(() => {
