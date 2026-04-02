@@ -148,7 +148,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 
 	// Mute muted players
 	Vars.netServer.admins.addChatFilter((player, message) => processChat(player, message));
-	Vars.netServer.admins.addChatFilter((p, message) => foolifyChat(message));
+	Vars.netServer.admins.addChatFilter((p, message) => FishPlayer.get(p).hasPerm("member") ? message : foolifyChat(message));
 	// Action filters
 	Vars.netServer.admins.addActionFilter((action:PlayerAction) => {
 		const player = action.player;
