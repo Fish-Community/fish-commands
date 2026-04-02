@@ -142,7 +142,7 @@ Events.on(EventType.ServerLoadEvent, function (e) {
     Time.setDeltaProvider(function () { return Math.min(Core.graphics.getDeltaTime() * 60, 10); });
     // Mute muted players
     Vars.netServer.admins.addChatFilter(function (player, message) { return (0, utils_1.processChat)(player, message); });
-    Vars.netServer.admins.addChatFilter(function (p, message) { return players_1.FishPlayer.get(p).hasPerm("member") ? message : (0, utils_1.foolifyChat)(message); });
+    // Vars.netServer.admins.addChatFilter((p, message) => FishPlayer.get(p).hasPerm("member") ? message : foolifyChat(message));
     // Action filters
     Vars.netServer.admins.addActionFilter(function (action) {
         var _a, _b, _c;
