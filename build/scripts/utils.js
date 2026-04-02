@@ -702,7 +702,7 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
     var e_5, _a;
     var cleanedMessage = removeFoosChars(message);
     setShuffle: {
-        if (foolCounter < 5) {
+        if (foolCounter < 8) {
             //Skip the next 5 messages no matter what
             foolCounter++;
             break setShuffle;
@@ -725,7 +725,7 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
             finally { if (e_5) throw e_5.error; }
         }
         if (replacedMessage !== cleanedMessage) {
-            if (foolCounter < 7) {
+            if (foolCounter < 11) {
                 //Skip the next 2 messages that would get altered
                 foolCounter++;
                 break setShuffle;
@@ -737,11 +737,11 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
             break setShuffle;
         }
     }
-    if (Math.random() < 0.02) {
+    if (Math.random() < 0.01) {
         return cleanedMessage.split("").reverse().join("");
         // eslint-disable-next-line no-dupe-else-if
     }
-    else if (Math.random() < 0.02) {
+    else if (Math.random() < 0.01) {
         return "[scarlet]I really hope everyone is having a fun time :} <3";
     }
     else if (Math.random() < 0.005) {
