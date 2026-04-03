@@ -157,7 +157,7 @@ Vars.net.handleServer(SendChatMessageCallPacket, (connection: NetConnection, pac
 
 		if (filtered == null) return;
 
-		translation.handleMessage(player, message);
+		translation.handleMessage(player, message, false);
 	}else if (response.type != CommandHandler.ResponseType.valid){
 		const text = Vars.netServer.invalidHandler.handle(player, response);
 

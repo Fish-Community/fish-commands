@@ -3,7 +3,6 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains a translation client implementation for https://github.com/TheRadioactiveBanana/translate-api-wrapper
 */
 
-import * as api from "/api";
 import { translationApiToken, translationApiUrl } from "/config";
 import { FishPlayer } from "/players";
 import { removeFoosChars } from "/utils";
@@ -25,15 +24,18 @@ export function initializeTranslation(){
 		const language = getLanguageFromCache(fishPlayer.language || e.player.locale);
 		if(fishPlayer.language != language.code){
 			fishPlayer.language = language.code;
-			void api.setFishPlayerData(fishPlayer.getData(), 1, true);
 		}
 
 		if (languageCache.isEmpty()){
 			//shouldn't ever happen, but by chance it does
-			fetchLanguageCache(true);
+			fetchLanguageCacheCallback(
+				()=>setPlayerLanguageEntry(e.player, language)
+			);
+		}else{
+			setPlayerLanguageEntry(e.player, language);
+
 		}
 
-		setPlayerLanguageEntry(e.player, language);
 	});
 
 	Events.on(EventType.PlayerLeave, e => {
@@ -41,10 +43,12 @@ export function initializeTranslation(){
 	});
 }
 
-export function handleMessage(sender: Player, message: string) {
-	if (languageCache.isEmpty()){
+export function handleMessage(sender: Player, message: string, noRecursion: boolean) {
+	if (languageCache.isEmpty() && !noRecursion){
 		//shouldn't ever happen, but by chance it does
-		fetchLanguageCache(true);
+		fetchLanguageCacheCallback(
+			()=>handleMessage(sender, message, true)
+ 		);
 	}
 
 	sender.sendMessage(Vars.netServer.chatFormatter.format(sender, message)); //return to sender immediately, they don't need to see their own translation
@@ -140,10 +144,6 @@ function sendTranslatedMessage(sender: Player, originalMessage: string, translat
 }
 
 export function getLanguageFromCache(code:string):Language {
-	if (languageCache.isEmpty()){
-		fetchLanguageCache(true);
-	}
-
 	const normalizedCode = code.toLowerCase();
 	if (normalizedCode == "none" || normalizedCode == "off"){
 		return {code: "none", name: "Off"};
@@ -180,5 +180,12 @@ function fetchLanguageCache(blockUntilResponse:boolean) {
 		Core.app.post(() => {
 			languageCache.addAll(parsed);
 		});
+	});
+}
+
+function fetchLanguageCacheCallback(callback: ()=>void){
+	Threads.daemon(()=>{
+		fetchLanguageCache(true);
+		Core.app.post(()=>callback());
 	});
 }

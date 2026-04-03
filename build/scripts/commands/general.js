@@ -162,12 +162,35 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
             if (sender.player == null)
                 return; //???
-            if (args.language == null) {
+            var requestedLanguage = args.language;
+            if (requestedLanguage == null) {
+                if (translation_1.languageCache.isEmpty()) {
+                    (0, translation_1.fetchLanguageCacheAsync)(function () {
+                        var e_2, _a;
+                        var _b, _c;
+                        (_b = sender.player) === null || _b === void 0 ? void 0 : _b.sendMessage("[accent]Available commands:");
+                        try {
+                            for (var _d = __values(translation_1.languageCache.toSeq().toArray()), _e = _d.next(); !_e.done; _e = _d.next()) {
+                                var entry = _e.value;
+                                (_c = sender.player) === null || _c === void 0 ? void 0 : _c.sendMessage(" - " + entry.name + " (" + entry.code + ")");
+                            }
+                        }
+                        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                        finally {
+                            try {
+                                if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+                            }
+                            finally { if (e_2) throw e_2.error; }
+                        }
+                    });
+                    outputSuccess("Loading available translation languages.");
+                    return;
+                }
                 sender.player.sendMessage("[accent]Available commands:");
                 try {
-                    for (var _c = __values(translation_1.playerLanguageCache.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    for (var _c = __values(translation_1.languageCache.toSeq().toArray()), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var entry = _d.value;
-                        sender.player.sendMessage(" - " + entry.key.name + " (" + entry.key.code + ")");
+                        sender.player.sendMessage(" - " + entry.name + " (" + entry.code + ")");
                     }
                 }
                 catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -179,15 +202,28 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 }
                 return;
             }
-            if (!((0, translation_1.isLanguageAvailable)(args.language) || ["off", "none"].includes(args.language.toLowerCase()))) {
-                (0, commands_1.fail)("Invalid language \"".concat(args.language, "\"."));
+            if (translation_1.languageCache.isEmpty()) {
+                (0, translation_1.fetchLanguageCacheAsync)(function () {
+                    var _a, _b;
+                    if (!((0, translation_1.isLanguageAvailable)(requestedLanguage) || ["off", "none"].includes(requestedLanguage.toLowerCase()))) {
+                        (_a = sender.player) === null || _a === void 0 ? void 0 : _a.sendMessage("[scarlet]Invalid language \"".concat(requestedLanguage, "\"."));
+                        return;
+                    }
+                    var targetLanguage = (0, translation_1.getLanguageFromCache)(requestedLanguage);
+                    sender.language = targetLanguage.code;
+                    (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage);
+                    (_b = sender.player) === null || _b === void 0 ? void 0 : _b.sendMessage("[accent]Your translation language is now set to ".concat(targetLanguage.name, "."));
+                });
+                outputSuccess("Loading translation languages. Your selection will be applied if valid.");
+                return;
             }
-            var targetLanguage = (0, translation_1.getLanguageFromCache)(args.language);
+            if (!((0, translation_1.isLanguageAvailable)(requestedLanguage) || ["off", "none"].includes(requestedLanguage.toLowerCase()))) {
+                (0, commands_1.fail)("Invalid language \"".concat(requestedLanguage, "\"."));
+            }
+            var targetLanguage = (0, translation_1.getLanguageFromCache)(requestedLanguage);
             sender.language = targetLanguage.code;
             (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage);
-            void sender.updateSynced(function () {
-                sender.language = targetLanguage.code;
-            });
+            sender.language = targetLanguage.code;
             outputSuccess("Your translation language is now set to ".concat(targetLanguage.name, "."));
         }
     }, clean: {

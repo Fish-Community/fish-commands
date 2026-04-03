@@ -21,27 +21,23 @@ exports.handleMessage = handleMessage;
 exports.setPlayerLanguageEntry = setPlayerLanguageEntry;
 exports.getLanguageFromCache = getLanguageFromCache;
 exports.isLanguageAvailable = isLanguageAvailable;
-var api = require("/api");
+exports.fetchLanguageCacheAsync = fetchLanguageCacheAsync;
 var config_1 = require("/config");
 var players_1 = require("/players");
 var utils_1 = require("/utils");
 exports.languageCache = new ObjectSet();
 exports.playerLanguageCache = new ObjectMap();
 exports.translationCache = new ObjectMap();
+var languageCacheFetchInFlight = false;
+var languageCacheCallbacks = [];
 function initializeTranslation() {
-    fetchLanguageCache(false);
+    fetchLanguageCacheAsync();
     Events.on(EventType.PlayerJoin, function (e) {
-        var fishPlayer = players_1.FishPlayer.get(e.player);
-        var language = getLanguageFromCache(fishPlayer.language || e.player.locale);
-        if (fishPlayer.language != language.code) {
-            fishPlayer.language = language.code;
-            void api.setFishPlayerData(fishPlayer.getData(), 1, true);
-        }
         if (exports.languageCache.isEmpty()) {
-            //shouldn't ever happen, but by chance it does
-            fetchLanguageCache(true);
+            fetchLanguageCacheAsync(function () { return updatePlayerLanguageEntry(e.player); });
+            return;
         }
-        setPlayerLanguageEntry(e.player, language);
+        updatePlayerLanguageEntry(e.player);
     });
     Events.on(EventType.PlayerLeave, function (e) {
         removePlayerLanguageEntry(e.player);
@@ -49,8 +45,7 @@ function initializeTranslation() {
 }
 function handleMessage(sender, message) {
     if (exports.languageCache.isEmpty()) {
-        //shouldn't ever happen, but by chance it does
-        fetchLanguageCache(true);
+        fetchLanguageCacheAsync();
     }
     sender.sendMessage(Vars.netServer.chatFormatter.format(sender, message)); //return to sender immediately, they don't need to see their own translation
     var cleanedMessage = Strings.stripGlyphs(Strings.stripColors((0, utils_1.removeFoosChars)(message)));
@@ -184,9 +179,6 @@ function sendTranslatedMessage(sender, originalMessage, translatedMessage, recip
     }
 }
 function getLanguageFromCache(code) {
-    if (exports.languageCache.isEmpty()) {
-        fetchLanguageCache(true);
-    }
     var normalizedCode = code.toLowerCase();
     if (normalizedCode == "none" || normalizedCode == "off") {
         return { code: "none", name: "Off" };
@@ -204,16 +196,57 @@ function getLanguageFromCache(code) {
 function isLanguageAvailable(code) {
     return getLanguageFromCache(code).code != "none";
 }
-function fetchLanguageCache(blockUntilResponse) {
-    var req = Http.get(config_1.translationApiUrl + "/api/languages");
-    req.error(function (e) {
-        Log.err("Failed to load translation API languages");
-        Log.err(e);
-    });
-    req[blockUntilResponse ? "block" : "submit"](function (t) {
-        var parsed = JSON.parse(t.getResultAsString());
-        Core.app.post(function () {
-            exports.languageCache.addAll(parsed);
+function fetchLanguageCacheAsync(callback) {
+    if (callback != null) {
+        if (!exports.languageCache.isEmpty()) {
+            Core.app.post(callback);
+            return;
+        }
+        languageCacheCallbacks.push(callback);
+    }
+    if (languageCacheFetchInFlight || !exports.languageCache.isEmpty())
+        return;
+    languageCacheFetchInFlight = true;
+    Threads.daemon(function () {
+        var req = Http.get(config_1.translationApiUrl + "/api/languages");
+        req.error(function (e) {
+            Log.err("Failed to load translation API languages");
+            Log.err(e);
+            Core.app.post(finishLanguageCacheFetch);
+        });
+        req.block(function (t) {
+            var parsed = JSON.parse(t.getResultAsString());
+            Core.app.post(function () {
+                exports.languageCache.clear();
+                exports.languageCache.addAll(parsed);
+                finishLanguageCacheFetch();
+            });
         });
     });
+}
+function updatePlayerLanguageEntry(player) {
+    var fishPlayer = players_1.FishPlayer.get(player);
+    var language = getLanguageFromCache(fishPlayer.language || player.locale);
+    if (fishPlayer.language != language.code) {
+        fishPlayer.language = language.code;
+    }
+    setPlayerLanguageEntry(player, language);
+}
+function finishLanguageCacheFetch() {
+    var e_6, _a;
+    languageCacheFetchInFlight = false;
+    var callbacks = languageCacheCallbacks.splice(0);
+    try {
+        for (var callbacks_1 = __values(callbacks), callbacks_1_1 = callbacks_1.next(); !callbacks_1_1.done; callbacks_1_1 = callbacks_1.next()) {
+            var callback = callbacks_1_1.value;
+            callback();
+        }
+    }
+    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+    finally {
+        try {
+            if (callbacks_1_1 && !callbacks_1_1.done && (_a = callbacks_1.return)) _a.call(callbacks_1);
+        }
+        finally { if (e_6) throw e_6.error; }
+    }
 }
