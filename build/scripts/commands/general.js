@@ -165,7 +165,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if (args.language == null) {
                 sender.player.sendMessage("[accent]Available commands:");
                 try {
-                    for (var _c = __values(translation_1.languageCache.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    for (var _c = __values(translation_1.playerLanguageCache.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var entry = _d.value;
                         sender.player.sendMessage(" - " + entry.key.name + " (" + entry.key.code + ")");
                     }
@@ -185,7 +185,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var targetLanguage = (0, translation_1.getLanguageFromCache)(args.language);
             sender.language = targetLanguage.code;
             (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage);
-            sender.language = targetLanguage.code;
+            void sender.updateSynced(function () {
+                sender.language = targetLanguage.code;
+            });
             outputSuccess("Your translation language is now set to ".concat(targetLanguage.name, "."));
         }
     }, clean: {

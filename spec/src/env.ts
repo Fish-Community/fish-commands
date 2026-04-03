@@ -63,6 +63,26 @@ class ObjectIntMap<K> {
 		});
 	}
 }
+class ObjectSet<T> {
+	set = new Set<T>();
+	get size(){ return this.set.size; }
+	select(predicate:(item:T) => boolean){
+		const out = new ObjectSet<T>;
+		for(const item of this.set){
+			if(predicate(item)) out.add(item);
+		}
+		return out;
+	}
+	each(func:(item:T) => unknown){ this.set.forEach(func); }
+	add(item:T){ return this.set.add(item); }
+	remove(item:T){ return this.set.delete(item); }
+	isEmpty(){ return this.set.size == 0; }
+	contains(item:T){ return this.set.has(item); }
+	toSeq(){ return new Seq([...this.set]); }
+	get(key:T){ return this.set.has(key) ? key : null; }
+	first(){ return this.set.values().next().value ?? fail("Set is empty"); }
+	clear(){ this.set.clear(); }
+}
 
 class Seq<T> {
 	constructor(public items:T[] = []){}
@@ -471,6 +491,9 @@ class LabelReliableCallPacket {
 	worldx = 0;
 	worldy = 0;
 }
+class SendChatMessageCallPacket {
+	message:string | null = null;
+}
 class CommandRunner<T> {
 	accept: (args:string[], parameter: T) => void;
 	constructor({ accept }:{ accept: (args:string[], parameter: T) => void; }){
@@ -621,6 +644,9 @@ class Administration {
 	getInfoOptional(id:string){
 		return this.playerInfo.get(id);
 	}
+	static Config = class {
+
+	};
 }
 class MMap {
 	
@@ -646,6 +672,7 @@ const Vars = {
 	},
 	net: {
 		send(object:any, reliable:boolean){},
+		handleServer(packetType:Function, handler:any){}
 	},
 	mods: {
 		getScripts(){
@@ -959,6 +986,14 @@ class Thread {
 	run = this.runnable;
 }
 
+const Http = {
+	post(url:string, content:string){
+		return { submit(){}, block(){}, error(){}, header(){return this;}, };
+	},
+	get(url:string, callback?:(res:HttpResponse) => unknown, error?:(err:any) => unknown){
+		return { submit(){}, block(){}, error(){}, header(){return this;}, };
+	},
+};
 
 const Iconc = Object.fromEntries(["rotate", "modeSurvival", "power", "left", "redditAlien", "edit", "downOpen", "pencil", "file", "lockOpen", "right", "infoCircle", "pick", "settings", "spray1", "terrain", "exit", "wrench", "lock", "discord", "eye", "none", "play", "diagonal", "eraser", "trash", "liquid", "fileImage", "defense", "layers", "grid", "admin", "steam", "star", "chartBar", "chat", "android", "image", "map", "logic", "menu", "commandRally", "editor", "folder", "units", "commandAttack", "copy", "filter", "cancel", "terminal", "upload", "eyeOff", "save", "planeOutline", "fill", "distribution", "upOpen", "rightOpen", "modePvp", "download", "list", "flipX", "flipY", "effect", "paste", "planet", "waves", "up", "warning", "tree", "add", "down", "host", "spray", "info", "players", "resize", "refresh1", "production", "crafting", "pause", "googleplay", "hammer", "fileText", "modeAttack", "move", "zoom", "bookOpen", "refresh", "ok", "home", "githubSquare", "powerOld", "github", "undo", "box", "trello", "book", "export", "fileTextFill", "rightOpenOut", "turret", "leftOpen", "line", "itchio", "link", "filters", "redo"].map(n => [n, 0xFE60]));
 
@@ -974,4 +1009,4 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper, Runtime, Thread});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper, Runtime, Thread, Administration, ObjectSet, ObjectMap, SendChatMessageCallPacket, Http});

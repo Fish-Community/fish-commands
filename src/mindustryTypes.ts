@@ -75,9 +75,9 @@ const Vars: {
 		votesRequired():number;
 	}
 	net: {
-		send(object:any, reliable:boolean):void;
+		send(packet:any, reliable:boolean):void;
 		closeServer():void;
-		handleServer(object: any, handler:(object: any, connection: NetConnection) => void): void
+		handleServer(packetType: new (...args:any[]) => unknown, handler:(packet: any, connection: NetConnection) => void): void;
 	}
 	mods: {
 		getScripts(): Scripts;
@@ -464,6 +464,11 @@ const Time: {
 const GameState: {
 	State: Record<"playing" | "paused" | "menu", any>;
 };
+const Http: {
+	post(url:string, content:string):HttpRequest;
+	get(url:string):HttpRequest;
+	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
+};
 class HttpRequest {
 	submit(func:(response:HttpResponse) => void):void;
 	block(func:(response:HttpResponse) => void):void;
@@ -531,11 +536,7 @@ class ByteArrayOutputStream extends OutputStream {
 class ByteArrayInputStream extends InputStream {
 	constructor(bytes:number[]);
 }
-const Http: {
-	post(url:string, content:string):HttpRequest;
-	get(url:string):HttpRequest;
-	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
-};
+
 class Seq<T> {
 	items: Array<T | null>;
 	size: number;
@@ -580,6 +581,7 @@ class ObjectSet<T> {
 	select(predicate:(item:T) => boolean):ObjectSet<T>;
 	each(func:(item:T) => unknown):void;
 	add(item:T):boolean;
+	addAll(items:T[]):void;
 	remove(item:T):boolean;
 	isEmpty():boolean;
 	contains(item:T):boolean;

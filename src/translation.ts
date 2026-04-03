@@ -4,49 +4,47 @@ This file contains a translation client implementation for https://github.com/Th
 */
 
 import * as api from "/api";
-import {translationApiToken, translationApiUrl} from "/config";
-import {FishPlayer} from "/players";
-import {Language} from "/types";
-import {removeFoosChars} from "/utils";
+import { translationApiToken, translationApiUrl } from "/config";
+import { FishPlayer } from "/players";
+import { removeFoosChars } from "/utils";
 
+export type Language = {
+	name: string;
+	code: string;
+};
 
-export const languageCache: ObjectMap<string, Language> = new ObjectMap<string, Language>();
-
-export const playerLanguageCache: ObjectMap<Language, Seq<Player>> = new ObjectMap<Language, Seq<Player>>();
-
-export const translationCache: ObjectMap<string, string> = new ObjectMap<string, string>();
+export const languageCache = new ObjectSet<Language>();
+export const playerLanguageCache = new ObjectMap<Language, Seq<Player>>();
+export const translationCache = new ObjectMap<string, string>();
 
 export function initializeTranslation(){
-	setLanguageCacheAsync();
+	fetchLanguageCache(false);
 
-	Events.on(EventType.PlayerJoin, t=>{
-		const fishPlayer = FishPlayer.get(t.player);
-		const language = fishPlayer.language
-			? getLanguageFromCache(fishPlayer.language)
-			: getLanguageFromCache(t.player.locale);
+	Events.on(EventType.PlayerJoin, e => {
+		const fishPlayer = FishPlayer.get(e.player);
+		const language = getLanguageFromCache(fishPlayer.language || e.player.locale);
 		if(fishPlayer.language != language.code){
 			fishPlayer.language = language.code;
 			void api.setFishPlayerData(fishPlayer.getData(), 1, true);
 		}
 
 		if (languageCache.isEmpty()){
-			setLanguageCacheAsync(
-				()=>setPlayerLanguageEntry(t.player, getLanguageFromCache(fishPlayer.language || t.player.locale))
-			);
-			return;
+			//shouldn't ever happen, but by chance it does
+			fetchLanguageCache(true);
 		}
 
-		setPlayerLanguageEntry(t.player, language);
+		setPlayerLanguageEntry(e.player, language);
 	});
 
-	Events.on(EventType.PlayerLeave, t=>{
-		removePlayerLanguageEntry(t.player);
+	Events.on(EventType.PlayerLeave, e => {
+		removePlayerLanguageEntry(e.player);
 	});
 }
 
-export function messageHandoff(sender: Player, message: string) {
+export function handleMessage(sender: Player, message: string) {
 	if (languageCache.isEmpty()){
-		setLanguageCacheAsync();
+		//shouldn't ever happen, but by chance it does
+		fetchLanguageCache(true);
 	}
 
 	sender.sendMessage(Vars.netServer.chatFormatter.format(sender, message)); //return to sender immediately, they don't need to see their own translation
@@ -54,22 +52,20 @@ export function messageHandoff(sender: Player, message: string) {
 	const cleanedMessage = Strings.stripGlyphs(Strings.stripColors(removeFoosChars(message)));
 	const delivered = new ObjectSet<string>();
 
-	playerLanguageCache.each((k: Language, v: Seq<Player>)=>{
+	playerLanguageCache.each((lang, players) => {
 		const formatted = Vars.netServer.chatFormatter.format(sender, message);
-		const recipients = uniqueRecipients(v, sender, delivered);
+		const recipients = uniqueRecipients(players, sender, delivered);
 
-		if(recipients.size === 0) return;
+		if(recipients.isEmpty()) return;
 
-		if (k == null || k.code === "off" || k.code === "auto" || k.code === "none") {
+		if(lang == null || lang.code === "off" || lang.code === "auto" || lang.code === "none"){
 			for (const player of recipients.toArray()) player.sendMessage(formatted); //ignore, send it as if nothing changed
-
 			return;
 		}
 
-		const cacheKey = `${(k.code)}\n${cleanedMessage}`;
+		const cacheKey = `${(lang.code)}\n${cleanedMessage}`;
 
 		const cachedTranslation = translationCache.get(cacheKey);
-
 		if (cachedTranslation != null){
 			sendTranslatedMessage(sender, message, cachedTranslation, recipients);
 			return;
@@ -81,30 +77,23 @@ export function messageHandoff(sender: Player, message: string) {
 		);
 
 		req.header("from", "auto");
-
-		Log.info(k.code);
-
-		req.header("to", k.code);
+		req.header("to", lang.code);
 		req.header("token", translationApiToken.string());
 
 		req.timeout = 2000; //low timeout to not lag chat too much
 
-		req.error(e=>{
+		req.error(e => {
 			for (const player of recipients.toArray()) player.sendMessage(formatted); //failed, send it as if nothing changed
 
 			Log.err(e.getMessage());
-
-			if (!e.response) return;
-
-			Log.err(e.response.getResultAsString());
+			if (e.response) Log.err(e.response.getResultAsString());
 		});
 
-		req.submit((t: HttpResponse) =>{
+		req.submit(t => {
 			const result = t.getResultAsString();
 
 			if(t.getStatus().code != 200 || result == message){
 				for (const player of recipients.toArray()) player.sendMessage(formatted); //bad, send it as if nothing changed
-
 				return;
 			}
 
@@ -125,7 +114,7 @@ export function setPlayerLanguageEntry(player: Player, language: Language){
 }
 
 function removePlayerLanguageEntry(player: Player){
-	playerLanguageCache.each((_, players: Seq<Player>)=>{
+	playerLanguageCache.each((_, players) => {
 		players.remove(p => p.uuid() === player.uuid());
 	});
 }
@@ -143,15 +132,16 @@ function uniqueRecipients(players: Seq<Player>, sender: Player, delivered: Objec
 }
 
 function sendTranslatedMessage(sender: Player, originalMessage: string, translatedMessage: string, recipients: Seq<Player>){
-	const formatted:string = Vars.netServer.chatFormatter.format(sender, originalMessage) + "\n[lightgray]Translated: " + translatedMessage + "[]";
+	const formatted = Vars.netServer.chatFormatter.format(sender, originalMessage)
+		+ "\n[lightgray]Translated: " + translatedMessage + "[]";
 	for (const player of recipients.toArray()){
 		Call.sendMessage(player.con, formatted, originalMessage, sender);
 	}
 }
 
-export function getLanguageFromCache(code:string): Language {
+export function getLanguageFromCache(code:string):Language {
 	if (languageCache.isEmpty()){
-		setLanguageCacheAsync();
+		fetchLanguageCache(true);
 	}
 
 	const normalizedCode = code.toLowerCase();
@@ -159,7 +149,12 @@ export function getLanguageFromCache(code:string): Language {
 		return {code: "none", name: "Off"};
 	}
 
-	const language = languageCache.get(normalizedCode);
+	let language: Language | null = null;
+	languageCache.each(t=>{
+		if (t.code.toLowerCase() == normalizedCode){
+			language = t;
+		}
+	});
 
 	if (language != null) return language;
 
@@ -170,33 +165,20 @@ export function isLanguageAvailable(code:string){
 	return getLanguageFromCache(code).code != "none";
 }
 
-function setLanguageCache() {
+function fetchLanguageCache(blockUntilResponse:boolean) {
 	const req = Http.get(translationApiUrl + "/api/languages");
 
-	req.error(e=>{
-		Log.err("Could not reload translation API languages");
+	req.error(e => {
+		Log.err("Failed to load translation API languages");
 		Log.err(e);
 	});
 
-	const cons = (t: HttpResponse)=>{
-		const parsed: [{code:string, name:string}] = JSON.parse(t.getResultAsString());
 
-		Core.app.post(()=>{
-			languageCache.clear();
-			for (const item of parsed){
-				languageCache.put(item.code.toLowerCase(), {name: item.name, code: item.code});
-			}
+	req[blockUntilResponse ? "block" : "submit"](t => {
+		const parsed = JSON.parse(t.getResultAsString());
+
+		Core.app.post(() => {
+			languageCache.addAll(parsed);
 		});
-	};
-
-	req.block(cons);
-}
-
-function setLanguageCacheAsync(callback?: (() => void) | null){
-	Threads.daemon(()=>{
-		setLanguageCache();
-		if (callback != null){
-			Core.app.post(callback);
-		}
 	});
 }
