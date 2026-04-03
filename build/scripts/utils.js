@@ -574,15 +574,19 @@ function neutralGameover() {
         Events.fire(new EventType.GameOverEvent(getEnemyTeam()));
     });
 }
-/** Please validate wavesToSkip to ensure it is not huge */
-function skipWaves(wavesToSkip, runIntermediateWaves) {
+/** Please validate requestedWaves to ensure it is not huge */
+function skipWaves(requestedWaves, runIntermediateWaves) {
+    var winWave = Vars.state.rules.winWave;
+    if (winWave <= 0)
+        winWave = Infinity;
+    var wavesToSkip = Math.min(requestedWaves, winWave - Vars.state.wave);
     if (runIntermediateWaves) {
         for (var i = 0; i < wavesToSkip; i++) {
             Vars.logic.skipWave();
         }
     }
     else {
-        Vars.state.wave += wavesToSkip - 1;
+        Vars.state.wave += (wavesToSkip - 1);
         Vars.logic.skipWave();
     }
 }

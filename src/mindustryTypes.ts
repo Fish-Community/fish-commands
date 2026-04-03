@@ -46,6 +46,7 @@ class Rules {
 	defaultTeam: Team;
 	waveTeam: Team;
 	waves: boolean;
+	winWave: number;
 	waitEnemies: boolean;
 	env: number;
 	fog: boolean;

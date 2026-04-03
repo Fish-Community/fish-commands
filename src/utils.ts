@@ -454,25 +454,20 @@ export function neutralGameover(){
 	});
 }
 
-/** Please validate wavesToSkip to ensure it is not huge */
-export function skipWaves(wavesToSkip: number, runIntermediateWaves: boolean) {
-    const winWave = Vars.state.rules.winWave;
-    let wavesToActuallySkip = wavesToSkip;
+/** Please validate requestedWaves to ensure it is not huge */
+export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean){
+	let winWave = Vars.state.rules.winWave;
+	if(winWave <= 0) winWave = Infinity;
+	const wavesToSkip = Math.min(requestedWaves, winWave - Vars.state.wave);
 
-    // if winwave is 0 or lower, that means the map has no end wave
-    if (winWave > 0) {
-        const wavesLeft = winWave - Vars.state.wave;
-        wavesToActuallySkip = (wavesToSkip >= wavesLeft) ? wavesLeft : wavesToSkip;
-    }
-
-    if (runIntermediateWaves) {
-        for (let i = 0; i < wavesToActuallySkip; i++) {
-            Vars.logic.skipWave();
-        }
-    } else {
-        Vars.state.wave += (wavesToActuallySkip - 1);
-        Vars.logic.skipWave();
-    }
+	if(runIntermediateWaves){
+		for(let i = 0; i < wavesToSkip; i ++){
+			Vars.logic.skipWave();
+		}
+	} else {
+		Vars.state.wave += (wavesToSkip - 1);
+		Vars.logic.skipWave();
+	}
 }
 
 

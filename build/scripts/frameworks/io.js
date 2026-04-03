@@ -273,10 +273,19 @@ var Serializer = /** @class */ (function () {
             }
             case 'class': {
                 var classData = {};
+                try {
                     for (var _f = __values(schema[2]), _g = _f.next(); !_g.done; _g = _f.next()) {
                         var _h = __read(_g.value, 2), key = _h[0], childSchema = _h[1];
                         classData[key] = this.readNode(childSchema, input);
                     }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+                    }
+                    finally { if (e_4) throw e_4.error; }
+                }
                 return new schema[1](classData);
             }
             case 'array': {
