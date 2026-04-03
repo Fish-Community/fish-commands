@@ -21,7 +21,7 @@ First: read [info.md](docs/info.md)
 
 To get started with development:
 1. Create a fork of fish-commands through the GitHub website.
-2. Clone that fork into a folder of your choice by `cd`ing into the folder and running `git clone https://Github.com/`(your username here)`/fish-commands .`
+2. Clone that fork into a folder of your choice by `cd`ing into the folder and running `git clone https://github.com/`(your username here)`/fish-commands .`
 3. Run `npm install`
 4. Run `npm watch` in one terminal. (Or, open VS Code and tell it to trust the project)
 5. In another terminal, run `npm dev` to start up a Mindustry development server with fish-commands installed.
