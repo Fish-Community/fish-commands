@@ -581,6 +581,7 @@ class ObjectSet<T> {
 	select(predicate:(item:T) => boolean):ObjectSet<T>;
 	each(func:(item:T) => unknown):void;
 	add(item:T):boolean;
+	addAll(items:T[]):void;
 	remove(item:T):boolean;
 	isEmpty():boolean;
 	contains(item:T):boolean;
