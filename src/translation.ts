@@ -12,7 +12,7 @@ export type Language = {
 	code: string;
 };
 
-export const languageCache = new ObjectSet<Language>();
+export const languageCache = new ObjectMap<string, Language>();
 export const playerLanguageCache = new ObjectMap<Language, Seq<Player>>();
 export const translationCache = new ObjectMap<string, string>();
 
@@ -149,12 +149,7 @@ export function getLanguageFromCache(code:string):Language {
 		return {code: "none", name: "Off"};
 	}
 
-	let language: Language | null = null;
-	languageCache.each(t=>{
-		if (t.code.toLowerCase() == normalizedCode){
-			language = t;
-		}
-	});
+	const language = languageCache.get(normalizedCode);
 
 	if (language != null) return language;
 
@@ -175,10 +170,13 @@ function fetchLanguageCache(blockUntilResponse:boolean) {
 
 
 	req[blockUntilResponse ? "block" : "submit"](t => {
-		const parsed = JSON.parse(t.getResultAsString());
+		const parsed = JSON.parse(t.getResultAsString()) as Language[];
 
 		Core.app.post(() => {
-			languageCache.addAll(parsed);
+			languageCache.clear();
+			for (const language of parsed){
+				languageCache.put(language.code.toLowerCase(), language);
+			}
 		});
 	});
 }
