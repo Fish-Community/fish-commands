@@ -14,7 +14,7 @@ import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileH
 import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import { getLanguageFromCache, isLanguageAvailable, playerLanguageCache, setPlayerLanguageEntry } from "/translation";
+import { getLanguageFromCache, isLanguageAvailable, languageCache, setPlayerLanguageEntry } from "/translation";
 import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
 
@@ -79,7 +79,7 @@ export const commands = commandList({
 
 			if (args.language == null){
 				sender.player.sendMessage("[accent]Available commands:");
-				for (const entry of playerLanguageCache.entries()){
+				for (const entry of languageCache.entries()){
 					sender.player.sendMessage(" - " + entry.key.name + " (" + entry.key.code + ")");
 				}
 				return;
@@ -93,9 +93,8 @@ export const commands = commandList({
 			sender.language = targetLanguage.code;
 			setPlayerLanguageEntry(sender.player, targetLanguage);
 
-			void sender.updateSynced(() => {
-				sender.language = targetLanguage.code;
-			});
+			sender.language = targetLanguage.code;
+
 			outputSuccess(`Your translation language is now set to ${targetLanguage.name}.`);
 		}
 	},

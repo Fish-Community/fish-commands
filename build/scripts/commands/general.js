@@ -54,6 +54,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -91,6 +102,7 @@ var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
+var translation_1 = require("/translation");
 var utils_1 = require("/utils");
 var votes_1 = require("/votes");
 exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
@@ -123,7 +135,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             data.unpaused = true;
             Core.app.post(function () { return Vars.state.set(GameState.State.playing); });
             outputSuccess("Unpaused.");
-        },
+        }
     }), tp: {
         args: ['player:player'],
         description: 'Teleport to another player.',
@@ -139,7 +151,43 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if ((_d = (_c = sender.unit()).hasPayload) === null || _d === void 0 ? void 0 : _d.call(_c))
                 (0, commands_1.fail)("Cannot teleport to players while holding a payload.");
             (0, utils_1.teleportPlayer)(sender.player, args.player.player);
-        },
+        }
+    }, language: {
+        args: ['language:string?'],
+        description: 'Change your target translation language.',
+        perm: commands_1.Perm.none,
+        requirements: [],
+        handler: function (_a) {
+            var e_1, _b;
+            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
+            if (sender.player == null)
+                return; //???
+            if (args.language == null) {
+                sender.player.sendMessage("[accent]Available commands:");
+                try {
+                    for (var _c = __values(translation_1.languageCache.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                        var entry = _d.value;
+                        sender.player.sendMessage(" - " + entry.key.name + " (" + entry.key.code + ")");
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                return;
+            }
+            if (!((0, translation_1.isLanguageAvailable)(args.language) || ["off", "none"].includes(args.language.toLowerCase()))) {
+                (0, commands_1.fail)("Invalid language \"".concat(args.language, "\"."));
+            }
+            var targetLanguage = (0, translation_1.getLanguageFromCache)(args.language);
+            sender.language = targetLanguage.code;
+            (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage);
+            sender.language = targetLanguage.code;
+            outputSuccess("Your translation language is now set to ".concat(targetLanguage.name, "."));
+        }
     }, clean: {
         args: [],
         description: 'Removes all boulders from the map.',
@@ -334,7 +382,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if (sender.muted)
                 (0, commands_1.fail)("Muted players may not hide flags.");
             if (sender != target && target.hasPerm("blockTrolling"))
-                (0, commands_1.fail)("Target is insufficentlly trollable.");
+                (0, commands_1.fail)("Target is insufficiently trollable.");
             if (sender != target && !sender.ranksAtLeast("mod"))
                 (0, commands_1.fail)("You do not have permission to vanish other players.");
             target.showRankPrefix = !target.showRankPrefix;
@@ -659,7 +707,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     return this.ohnos.length;
                 },
             };
-            Events.on(EventType.GameOverEvent, function (e) {
+            Events.on(EventType.GameOverEvent, function (_) {
                 Ohnos.killAll();
             });
             return Ohnos;
@@ -812,7 +860,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         handler: function (_a) {
             var allCommands = _a.allCommands, sender = _a.sender, _b = _a.args.force, force = _b === void 0 ? true : _b;
             if (allCommands.vnw.data.manager.session == null) {
-                if (force == false)
+                if (!force)
                     (0, commands_1.fail)("Cannot clear votes for VNW because no vote is currently ongoing.");
                 (0, utils_1.skipWaves)(1, true);
             }
@@ -877,7 +925,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         handler: function (_a) {
             var _b = _a.args.force, force = _b === void 0 ? true : _b, sender = _a.sender, allCommands = _a.allCommands;
             if (allCommands.rtv.data.manager.session == null) {
-                if (force == false)
+                if (!force)
                     (0, commands_1.fail)("Cannot clear votes for RTV because no vote is currently ongoing.");
                 allCommands.rtv.data.manager.forceVote(true);
             }

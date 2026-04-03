@@ -10,14 +10,14 @@ import {Language} from "/types";
 import {removeFoosChars} from "/utils";
 
 
-export const languageCache:ObjectSet<Language> = new ObjectSet<Language>();
+export const languageCache: ObjectMap<string, Language> = new ObjectMap<string, Language>();
 
 export const playerLanguageCache: ObjectMap<Language, Seq<Player>> = new ObjectMap<Language, Seq<Player>>();
 
 export const translationCache: ObjectMap<string, string> = new ObjectMap<string, string>();
 
 export function initializeTranslation(){
-	setLanguageCache(false);
+	setLanguageCacheAsync();
 
 	Events.on(EventType.PlayerJoin, t=>{
 		const fishPlayer = FishPlayer.get(t.player);
@@ -30,8 +30,10 @@ export function initializeTranslation(){
 		}
 
 		if (languageCache.isEmpty()){
-			//shouldn't ever happen, but by chance it does
-			setLanguageCache(true);
+			setLanguageCacheAsync(
+				()=>setPlayerLanguageEntry(t.player, getLanguageFromCache(fishPlayer.language || t.player.locale))
+			);
+			return;
 		}
 
 		setPlayerLanguageEntry(t.player, language);
@@ -44,8 +46,7 @@ export function initializeTranslation(){
 
 export function messageHandoff(sender: Player, message: string) {
 	if (languageCache.isEmpty()){
-		//shouldn't ever happen, but by chance it does
-		setLanguageCache(true);
+		setLanguageCacheAsync();
 	}
 
 	sender.sendMessage(Vars.netServer.chatFormatter.format(sender, message)); //return to sender immediately, they don't need to see their own translation
@@ -150,7 +151,7 @@ function sendTranslatedMessage(sender: Player, originalMessage: string, translat
 
 export function getLanguageFromCache(code:string): Language {
 	if (languageCache.isEmpty()){
-		setLanguageCache(true);
+		setLanguageCacheAsync();
 	}
 
 	const normalizedCode = code.toLowerCase();
@@ -158,12 +159,7 @@ export function getLanguageFromCache(code:string): Language {
 		return {code: "none", name: "Off"};
 	}
 
-	let language: Language | null = null;
-	languageCache.each(t=>{
-		if (t.code.toLowerCase() == normalizedCode){
-			language = t;
-		}
-	});
+	const language = languageCache.get(normalizedCode);
 
 	if (language != null) return language;
 
@@ -174,7 +170,7 @@ export function isLanguageAvailable(code:string){
 	return getLanguageFromCache(code).code != "none";
 }
 
-function setLanguageCache(block: boolean) {
+function setLanguageCache() {
 	const req = Http.get(translationApiUrl + "/api/languages");
 
 	req.error(e=>{
@@ -186,10 +182,21 @@ function setLanguageCache(block: boolean) {
 		const parsed: [{code:string, name:string}] = JSON.parse(t.getResultAsString());
 
 		Core.app.post(()=>{
-			for (const item of parsed) languageCache.add({name: item.name, code: item.code});
+			languageCache.clear();
+			for (const item of parsed){
+				languageCache.put(item.code.toLowerCase(), {name: item.name, code: item.code});
+			}
 		});
 	};
 
-	if (block) req.block(cons);
-	else req.submit(cons); //faster startup
+	req.block(cons);
+}
+
+function setLanguageCacheAsync(callback?: (() => void) | null){
+	Threads.daemon(()=>{
+		setLanguageCache();
+		if (callback != null){
+			Core.app.post(callback);
+		}
+	});
 }

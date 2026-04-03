@@ -600,6 +600,7 @@ class ObjectMap<K, V> {
 	size:number;
 	entries():any;
 	each(param: (k: K, v: V) => void):void;
+	isEmpty():boolean;
 }
 class ObjectIntMap<K> {
 	put(key:K, value:number):void;
