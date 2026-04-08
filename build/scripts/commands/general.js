@@ -432,6 +432,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         data: new Set,
         handler: function (_a) {
+            var _b;
             var args = _a.args, data = _a.data, sender = _a.sender, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail;
             if (data.has(sender.uuid)) {
                 outputSuccess("No longer watching a player.");
@@ -439,15 +440,16 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }
             else if (args.player) {
                 data.add(sender.uuid);
-                var senderUnit_1 = sender.unit();
-                var stayX_1 = senderUnit_1 === null || senderUnit_1 === void 0 ? void 0 : senderUnit_1.x;
-                var stayY_1 = senderUnit_1 === null || senderUnit_1 === void 0 ? void 0 : senderUnit_1.y;
+                var senderUnit_1 = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("You do not have a unit.");
+                var stayX_1 = senderUnit_1.x;
+                var stayY_1 = senderUnit_1.y;
                 var target_1 = args.player.player;
                 (function watch() {
                     var _a, _b;
-                    if (data.has(sender.uuid) && target_1.unit()) {
+                    var unit = target_1.unit();
+                    if (data.has(sender.uuid) && unit) {
                         // Self.X+(172.5-Self.X)/10
-                        Call.setCameraPosition(sender.con, target_1.unit().x, target_1.unit().y);
+                        Call.setCameraPosition(sender.con, unit.x, unit.y);
                         if (senderUnit_1)
                             (_b = (_a = sender.unit()) === null || _a === void 0 ? void 0 : _a.set) === null || _b === void 0 ? void 0 : _b.call(_a, stayX_1, stayY_1);
                         Timer.schedule(function () { return watch(); }, 0.1, 0.1, 0);

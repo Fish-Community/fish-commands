@@ -355,15 +355,16 @@ export const commands = commandList({
 				data.delete(sender.uuid);
 			} else if(args.player){
 				data.add(sender.uuid);
-				const senderUnit = sender.unit();
-				const stayX = senderUnit?.x;
-				const stayY = senderUnit?.y;
+				const senderUnit = sender.unit() ?? fail(`You do not have a unit.`);
+				const stayX = senderUnit.x;
+				const stayY = senderUnit.y;
 				const target = args.player.player!;
 				(function watch(){
-					if(data.has(sender.uuid) && target.unit()){
+					const unit = target.unit();
+					if(data.has(sender.uuid) && unit){
 						// Self.X+(172.5-Self.X)/10
-						Call.setCameraPosition(sender.con, target.unit()!.x, target.unit()!.y);
-						if(senderUnit) sender.unit()?.set?.(stayX!, stayY!);
+						Call.setCameraPosition(sender.con, unit.x, unit.y);
+						if(senderUnit) sender.unit()?.set?.(stayX, stayY);
 						Timer.schedule(() => watch(), 0.1, 0.1, 0);
 					} else {
 						Call.setCameraPosition(sender.con, stayX, stayY);
