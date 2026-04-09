@@ -35,6 +35,7 @@ type LogLevel = { readonly _brand: unique symbol };
 type LogLevelName = Exclude<keyof (typeof Log)["LogLevel"], "none">;
 const Strings: {
 	stripColors(string:string):string;
+	stripGlyphs(string: string): string;
 	sanitizeFilename(name:string):string;
 };
 const NetServer: {
@@ -65,6 +66,8 @@ const Vars: {
 		skipWave():void;
 	}
 	netServer: {
+		invalidHandler: any;
+		chatFormatter: any
 		admins: Administration;
 		clientCommands: CommandHandler;
 		kickAll(kickReason:any):void;
@@ -73,8 +76,9 @@ const Vars: {
 		votesRequired():number;
 	}
 	net: {
-		send(object:any, reliable:boolean):void;
+		send(packet:any, reliable:boolean):void;
 		closeServer():void;
+		handleServer(packetType: new (...args:any[]) => unknown, handler:(packet: any, connection: NetConnection) => void): void;
 	}
 	mods: {
 		getScripts(): Scripts;
@@ -103,6 +107,7 @@ const Vars: {
 	tilesize: 8;
 	world: World;
 	maxPingTextLength: number;
+	maxTextLength: number;
 };
 class Teams {
 	active: Seq<TeamData>;
@@ -169,9 +174,39 @@ class Administration {
 	save():void;
 	addChatFilter(filter:(player:mindustryPlayer, message:string) => string | null):void;
 	addActionFilter(filter:(action:PlayerAction) => boolean):void;
+	filterMessage(player: Player, message: string): string;
+
 	static ActionType: ActionType;
 	static PlayerInfo: typeof PlayerInfo;
+	static Config: typeof Config;
 }
+
+class Config {
+	defaultValue: any;
+	name: string;
+	key: string;
+	description: string;
+	changed: ()=>void;
+
+	isNum(): boolean;
+	isBool(): boolean;
+	isString(): boolean;
+
+	get(): any;
+
+	bool(): boolean;
+
+	num(): number;
+
+	string(): string;
+
+	set(value: any): void;
+
+	isDefault(): boolean;
+
+	constructor(name: string, description: string, defaultValue: any);
+}
+
 const Events: {
 	on(event:EventType, handler:(e:any) => void):void;
 	fire(event:MEvent):void;
@@ -318,6 +353,7 @@ class Player {
 	con:NetConnection;
 	mouseX:number; mouseY:number;
 	shooting:boolean;
+	locale:string;
 	pingX: number;
 	pingY: number;
 	pingTime: number;
@@ -335,6 +371,8 @@ class Player {
 	clearUnit():void;
 	checkSpawn():void;
 	getInfo():PlayerInfo;
+	isAdded():boolean;
+	plainName():string;
 }
 type mindustryPlayer = Player;
 class Color {
@@ -427,8 +465,15 @@ const Time: {
 const GameState: {
 	State: Record<"playing" | "paused" | "menu", any>;
 };
+const Http: {
+	post(url:string, content:string):HttpRequest;
+	get(url:string):HttpRequest;
+	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
+};
 class HttpRequest {
 	submit(func:(response:HttpResponse) => void):void;
+	block(func:(response:HttpResponse) => void):void;
+
 	error(func:(exception:any) => void):void;
 	header(name:string, value:string):HttpRequest;
 	timeout: number;
@@ -437,6 +482,7 @@ class HttpResponse {
 	getResultAsString():string;
 	getResultAsStream():InputStream
 	getResult():number[];
+	getStatus():any;
 }
 class InputStream {
 	close():void;
@@ -491,11 +537,7 @@ class ByteArrayOutputStream extends OutputStream {
 class ByteArrayInputStream extends InputStream {
 	constructor(bytes:number[]);
 }
-const Http: {
-	post(url:string, content:string):HttpRequest;
-	get(url:string):HttpRequest;
-	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
-};
+
 class Seq<T> {
 	items: Array<T | null>;
 	size: number;
@@ -540,6 +582,7 @@ class ObjectSet<T> {
 	select(predicate:(item:T) => boolean):ObjectSet<T>;
 	each(func:(item:T) => unknown):void;
 	add(item:T):boolean;
+	addAll(items:T[]):void;
 	remove(item:T):boolean;
 	isEmpty():boolean;
 	contains(item:T):boolean;
@@ -552,11 +595,15 @@ class ObjectSet<T> {
 class ObjectMap<K, V> {
 	put(key:K, value:V):void;
 	get(key:K):V;
+	get(key:K, defaultValue:V):V;
+	get(key:K, prov:(key:K)=>V):V;
 	containsKey(key:K):boolean;
 	remove(key:K):V | null;
 	clear():void;
 	size:number;
-	entries(): unknown;
+	entries():any;
+	each(param: (k: K, v: V) => void):void;
+	isEmpty():boolean;
 }
 class ObjectIntMap<K> {
 	put(key:K, value:number):void;
@@ -701,6 +748,7 @@ class Process {
 const Packets: {
 	KickReason: Record<"kick" | "clientOutdated" | "serverOutdated" | "banned" | "gameover" | "recentKick" | "nameInUse" | "idInUse" | "nameEmpty" | "customClient" | "serverClose" | "vote" | "typeMismatch" | "whitelist" | "playerLimit" | "serverRestarting", KickReason>;
 };
+
 type KickReason = { quiet: boolean };
 
 class ConstructBlock {
@@ -850,6 +898,11 @@ class LabelReliableCallPacket {
 	worldx:number;
 	worldy:number;
 }
+
+class SendChatMessageCallPacket {
+	message: string;
+}
+
 class ConnectPacket {
 	version: number;
 	versionType: string;

@@ -169,6 +169,7 @@ var FishPlayer = /** @class */ (function () {
         this.usid = null;
         /** If chat strictness is set to "strict", the player will not be allowed to swear. */
         this.chatStrictness = "chat";
+        this.language = "";
         /** -1 represents unknown */
         this.lastJoined = -1;
         /** -1 represents unknown */
@@ -429,6 +430,8 @@ var FishPlayer = /** @class */ (function () {
             this.usid = data.usid;
         if (data.chatStrictness != undefined)
             this.chatStrictness = data.chatStrictness;
+        if (data.language != undefined)
+            this.language = data.language;
         if (data.stats != undefined)
             this.stats = data.stats;
         if (data.globalStats != undefined)
@@ -443,7 +446,7 @@ var FishPlayer = /** @class */ (function () {
             this.achievements = JsonIO.read(Bits, "{bits:".concat(data.achievements, "}"));
     };
     FishPlayer.prototype.getData = function () {
-        var _a = this, uuid = _a.uuid, name = _a.name, muted = _a.muted, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
+        var _a = this, uuid = _a.uuid, name = _a.name, muted = _a.muted, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, language = _a.language, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
         return {
             uuid: uuid,
             name: name,
@@ -454,6 +457,7 @@ var FishPlayer = /** @class */ (function () {
             history: history,
             usid: usid,
             chatStrictness: chatStrictness,
+            language: language,
             lastJoined: lastJoined,
             firstJoined: firstJoined,
             stats: stats,
@@ -1170,7 +1174,7 @@ var FishPlayer = /** @class */ (function () {
     //#endregion
     //#region I/O
     FishPlayer.read = function (version, fishPlayerData, player) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         switch (version) {
             case 0:
             case 1:
@@ -1293,6 +1297,40 @@ var FishPlayer = /** @class */ (function () {
                     showRankPrefix: fishPlayerData.readBool(),
                 }, player);
             }
+            case 13: {
+                var uuid = (_k = fishPlayerData.readString(2)) !== null && _k !== void 0 ? _k : (0, funcs_1.crash)("Failed to deserialize FishPlayer: UUID was null.");
+                return new this(uuid, {
+                    name: (_l = fishPlayerData.readString(2)) !== null && _l !== void 0 ? _l : "Unnamed player [ERROR]",
+                    muted: fishPlayerData.readBool(),
+                    unmarkTime: fishPlayerData.readNumber(13),
+                    highlight: fishPlayerData.readString(2),
+                    history: fishPlayerData.readArray(function (str) {
+                        var _a, _b;
+                        return ({
+                            action: (_a = str.readString(2)) !== null && _a !== void 0 ? _a : "null",
+                            by: (_b = str.readString(2)) !== null && _b !== void 0 ? _b : "null",
+                            time: str.readNumber(15)
+                        });
+                    }),
+                    rainbow: (function (n) { return n == 0 ? null : { speed: n }; })(fishPlayerData.readNumber(2)),
+                    rank: (_m = fishPlayerData.readString(2)) !== null && _m !== void 0 ? _m : "",
+                    flags: fishPlayerData.readArray(function (str) { return str.readString(2); }, 2).filter(function (s) { return s != null; }),
+                    usid: fishPlayerData.readString(2),
+                    chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+                    language: (_o = fishPlayerData.readString(2)) !== null && _o !== void 0 ? _o : "",
+                    lastJoined: fishPlayerData.readNumber(15),
+                    firstJoined: fishPlayerData.readNumber(15),
+                    stats: {
+                        blocksBroken: fishPlayerData.readNumber(10),
+                        blocksPlaced: fishPlayerData.readNumber(10),
+                        timeInGame: fishPlayerData.readNumber(15),
+                        chatMessagesSent: fishPlayerData.readNumber(7),
+                        gamesFinished: fishPlayerData.readNumber(5),
+                        gamesWon: fishPlayerData.readNumber(5),
+                    },
+                    showRankPrefix: fishPlayerData.readBool(),
+                }, player);
+            }
             default: (0, funcs_1.crash)("Unknown save version ".concat(version));
         }
     };
@@ -1315,6 +1353,7 @@ var FishPlayer = /** @class */ (function () {
         out.writeArray(Array.from(this.flags), function (f, str) { return str.writeString(f.name, 2); }, 2);
         out.writeString(this.usid, 2);
         out.writeEnumString(this.chatStrictness, ["chat", "strict"]);
+        out.writeString(this.language, 2);
         out.writeNumber(this.lastJoined, 15);
         out.writeNumber(this.firstJoined, 15);
         out.writeNumber(this.stats.blocksBroken, 10, true);
@@ -1727,7 +1766,7 @@ var FishPlayer = /** @class */ (function () {
     };
     //#region Static constants
     /** Save version used for serialized FishPlayers. */
-    FishPlayer.saveVersion = 12;
+    FishPlayer.saveVersion = 13;
     /** Maximum chunk size used when writing FishPlayer data to Core.settings. */
     FishPlayer.chunkSize = 50000;
     //#endregion

@@ -33,7 +33,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
+exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.translationApiToken = exports.translationApiUrl = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
 var globals_1 = require("/globals");
 var ranks_1 = require("/ranks");
 var funcs_1 = require("/funcs");
@@ -153,13 +153,15 @@ exports.multiCharSubstitutions = [
 //#endregion
 //#region misc
 /** Used for anti-impersonation. Make sure to replace numbers with letters, for example, balam314 -> balamei4. */
-exports.adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl"];
+exports.adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl", "eradicator"];
 exports.heuristics = {
     /** Will trip if more than this many blocks are broken within 25 seconds of joining. */
     blocksBrokenAfterJoin: 40,
 };
 exports.stopAntiEvadeTime = funcs_1.Duration.minutes(30);
 exports.backendIP = '45.79.202.111:5082';
+exports.translationApiUrl = "https://translate.eradication.fun";
+exports.translationApiToken = new Administration.Config("Translation API Token", "Token to use with the translation API.", "unset");
 exports.Mode = {
     localDebug: new Fi("config/.debug").exists(),
     noBackend: new Fi("config/.debug").exists() && !exports.backendIP.startsWith("127.0.0.1:"),
@@ -206,7 +208,6 @@ var FishServer = /** @class */ (function () {
     return FishServer;
 }());
 exports.FishServer = FishServer;
-;
 /** Stores functions that return whether the specified gamemode is the current gamemode. */
 exports.Gamemode = {
     attack: function () { return exports.Gamemode.name() == "attack"; },
@@ -306,6 +307,7 @@ exports.tips = {
         "Did someone kill a T5 with commands? Run [white]/aoelog 0 15 killed[] to check tilelogs for unit deaths in a large area.",
         "Aoelog can show the history of tiles in an area. Select the opposite corners of a rectangle to view the history of its tiles.",
         "Aoelog is the plural version of tilelog, access it via [white]/aoelog[]",
+        "You can run [white]/language[] to change your translation language.",
         "You can mark yourself as AFK(away from keyboard) with [white]/afk[].",
         "Run /survival, /attack, /pvp, /sandbox, /hexed or /minigame to quickly change to another server.",
         "Need to get rid of an active griefer? Use [#6FFC7C]/s[] to send a message to all staff members across all servers.",

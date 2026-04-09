@@ -14,6 +14,7 @@ import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileH
 import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
+import { getLanguageFromCache, isLanguageAvailable, languageCache, setPlayerLanguageEntry } from "/translation";
 import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
 
@@ -52,7 +53,7 @@ export const commands = commandList({
 			data.unpaused = true;
 			Core.app.post(() => Vars.state.set(GameState.State.playing));
 			outputSuccess(`Unpaused.`);
-		},
+		}
 	}),
 
 	tp: {
@@ -65,7 +66,37 @@ export const commands = commandList({
 			if(sender.team() !== args.player.team()) fail(`Cannot teleport to players on another team.`);
 			if(sender.unit()!.hasPayload?.()) fail(`Cannot teleport to players while holding a payload.`);
 			teleportPlayer(sender.player!, args.player.player!);
-		},
+		}
+	},
+
+	language: {
+		args: ['language:string?'],
+		description: 'Change your target translation language.',
+		perm: Perm.none,
+		requirements: [],
+		handler({args, sender, outputSuccess}){
+			if (sender.player == null) return; //???
+
+			if (args.language == null){
+				sender.player.sendMessage("[accent]Available commands:");
+				for (const entry of languageCache.entries()){
+					sender.player.sendMessage(" - " + entry.key.name + " (" + entry.key.code + ")");
+				}
+				return;
+			}
+
+			if(!(isLanguageAvailable(args.language) || ["off", "none"].includes(args.language.toLowerCase()))){
+				fail(`Invalid language "${args.language}".`);
+			}
+
+			const targetLanguage = getLanguageFromCache(args.language);
+			sender.language = targetLanguage.code;
+			setPlayerLanguageEntry(sender.player, targetLanguage);
+
+			sender.language = targetLanguage.code;
+
+			outputSuccess(`Your translation language is now set to ${targetLanguage.name}.`);
+		}
 	},
 
 	clean: {
@@ -242,7 +273,7 @@ export const commands = commandList({
 		handler({ sender, args: {target = sender}, outputSuccess }){
 			if(sender.stelled()) fail(`Marked players may not hide flags.`);
 			if(sender.muted) fail(`Muted players may not hide flags.`);
-			if(sender != target && target.hasPerm("blockTrolling")) fail(`Target is insufficentlly trollable.`);
+			if(sender != target && target.hasPerm("blockTrolling")) fail(`Target is insufficiently trollable.`);
 			if(sender != target && !sender.ranksAtLeast("mod")) fail(`You do not have permission to vanish other players.`);
 			target.showRankPrefix = !target.showRankPrefix;
 			outputSuccess(
@@ -585,7 +616,7 @@ Available types:[yellow]
 					return this.ohnos.length;
 				},
 			};
-			Events.on(EventType.GameOverEvent, (e) => {
+			Events.on(EventType.GameOverEvent, (_) => {
 				Ohnos.killAll();
 			});
 			return Ohnos;
@@ -739,7 +770,7 @@ Please stop attacking and [lime]build defenses[] first!`
 		perm: Perm.admin,
 		handler({allCommands, sender, args:{force = true}}){
 			if(allCommands.vnw.data.manager.session == null){
-				if(force == false) fail(`Cannot clear votes for VNW because no vote is currently ongoing.`);
+				if(!force) fail(`Cannot clear votes for VNW because no vote is currently ongoing.`);
 				skipWaves(1, true);
 			} else {
 				if(force) Call.sendMessage(`VNW: [green]Vote was forced by admin [yellow]${sender.name}[green], skipping wave.`);
@@ -796,7 +827,7 @@ Please stop attacking and [lime]build defenses[] first!`
 		perm: Perm.admin,
 		handler({args:{force = true}, sender, allCommands}){
 			if(allCommands.rtv.data.manager.session == null){
-				if(force == false) fail(`Cannot clear votes for RTV because no vote is currently ongoing.`);
+				if(!force) fail(`Cannot clear votes for RTV because no vote is currently ongoing.`);
 				allCommands.rtv.data.manager.forceVote(true);
 			} else {
 				if(force) Call.sendMessage(`RTV: [green]Vote was forced by admin [yellow]${sender.name}[green].`);
