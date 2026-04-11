@@ -312,11 +312,35 @@ export const commands = commandList({
 	},
 
 	restart: {
-		args: [],
-		description: "Stops and restarts the server. Do not run when the player count is high.",
+		args: ["time:number?"],
 		perm: Perm.admin,
-		handler(){
-			serverRestartLoop(30);
+		description: "Restarts the server.",
+		handler({args: {time}}){
+			fishState.restartLoopTask?.cancel();
+			if(Groups.player.isEmpty()){
+				if(time == undefined){
+					Log.info(`Restarting immediately as no players are online.`);
+					time ??= 0;
+				}
+			} else if(Gamemode.pvp()){
+				time ??= -1;
+				Log.info(`PVP: restart will occur at the end of the current match. Specify a time to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr`);
+			} else {
+				time ??= 60;
+			}
+
+			if(time == -1){
+				Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---`);
+				fishState.restartQueued = true;
+			} else {
+				if(time < 0 || time > 100) fail(`Invalid time: out of valid range.`);
+				serverRestartLoop(time);
+				if(Gamemode.pvp()){
+					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---`);
+				} else {
+					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 20 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---`);
+				}
+			}
 		}
 	},
 
