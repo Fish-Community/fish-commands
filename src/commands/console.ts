@@ -454,37 +454,31 @@ export const commands = consoleCommandList({
 	restart: {
 		args: ["time:number?"],
 		description: "Restarts the server.",
-		handler({args}){
+		handler({args: {time}}){
 			fishState.restartLoopTask?.cancel();
-			if(Gamemode.pvp()){
-				if(Groups.player.isEmpty()){
+			if(Groups.player.isEmpty()){
+				if(time == undefined){
 					Log.info(`Restarting immediately as no players are online.`);
-					serverRestartLoop(0);
-				} else if(args.time === -1){ //TODO this is bad, -1 and -2 is really weird
-					Log.info(`&rRestarting in 15 seconds (this will interrupt the current PVP match).&fr`);
-					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---`);
-					serverRestartLoop(15);
-				} else {
-					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---`);
-					Log.info(`PVP detected, restart will occur at the end of the current match. Run "restart -1" to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr`);
-					fishState.restartQueued = true;
+					time ??= 0;
 				}
+			} else if(Gamemode.pvp()){
+				time ??= -1;
+				Log.info(`PVP: restart will occur at the end of the current match. Specify a time to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr`);
 			} else {
-				if(args.time == undefined && Groups.player.isEmpty()){
-					Log.info(`Restarting immediately as no players are online.`);
-					serverRestartLoop(0);
-					return;
-				} else if(args.time === -2){
-					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---`);
-					Log.info(`Restart queued. Restart will occur at the end of the current match. Run "restartcancel" to cancel.`);
-					fishState.restartQueued = true;
-					return;
-				}
-				const time = args.time ?? 60;
+				time ??= 60;
+			}
+
+			if(time == -1){
+				Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---`);
+				fishState.restartQueued = true;
+			} else {
 				if(time < 0 || time > 100) fail(`Invalid time: out of valid range.`);
-				Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 15 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---`);
-				Log.info(`Restarting in ${time} seconds...`);
 				serverRestartLoop(time);
+				if(Gamemode.pvp()){
+					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---`);
+				} else {
+					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 20 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---`);
+				}
 			}
 		}
 	},

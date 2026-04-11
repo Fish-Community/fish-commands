@@ -675,43 +675,36 @@ exports.commands = (0, commands_1.consoleCommandList)({
         args: ["time:number?"],
         description: "Restarts the server.",
         handler: function (_a) {
-            var _b, _c;
-            var args = _a.args;
+            var _b;
+            var time = _a.args.time;
             (_b = globals_1.fishState.restartLoopTask) === null || _b === void 0 ? void 0 : _b.cancel();
-            if (config_1.Gamemode.pvp()) {
-                if (Groups.player.isEmpty()) {
+            if (Groups.player.isEmpty()) {
+                if (time == undefined) {
                     Log.info("Restarting immediately as no players are online.");
-                    (0, utils_1.serverRestartLoop)(0);
-                }
-                else if (args.time === -1) { //TODO this is bad, -1 and -2 is really weird
-                    Log.info("&rRestarting in 15 seconds (this will interrupt the current PVP match).&fr");
-                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
-                    (0, utils_1.serverRestartLoop)(15);
-                }
-                else {
-                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---");
-                    Log.info("PVP detected, restart will occur at the end of the current match. Run \"restart -1\" to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr");
-                    globals_1.fishState.restartQueued = true;
+                    time !== null && time !== void 0 ? time : (time = 0);
                 }
             }
+            else if (config_1.Gamemode.pvp()) {
+                time !== null && time !== void 0 ? time : (time = -1);
+                Log.info("PVP: restart will occur at the end of the current match. Specify a time to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr");
+            }
             else {
-                if (args.time == undefined && Groups.player.isEmpty()) {
-                    Log.info("Restarting immediately as no players are online.");
-                    (0, utils_1.serverRestartLoop)(0);
-                    return;
-                }
-                else if (args.time === -2) {
-                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---");
-                    Log.info("Restart queued. Restart will occur at the end of the current match. Run \"restartcancel\" to cancel.");
-                    globals_1.fishState.restartQueued = true;
-                    return;
-                }
-                var time = (_c = args.time) !== null && _c !== void 0 ? _c : 60;
+                time !== null && time !== void 0 ? time : (time = 60);
+            }
+            if (time == -1) {
+                Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---");
+                globals_1.fishState.restartQueued = true;
+            }
+            else {
                 if (time < 0 || time > 100)
                     (0, commands_1.fail)("Invalid time: out of valid range.");
-                Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 15 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---");
-                Log.info("Restarting in ".concat(time, " seconds..."));
                 (0, utils_1.serverRestartLoop)(time);
+                if (config_1.Gamemode.pvp()) {
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
+                }
+                else {
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 20 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---");
+                }
             }
         }
     },
