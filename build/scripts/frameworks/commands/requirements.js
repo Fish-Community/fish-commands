@@ -44,7 +44,7 @@ exports.Req = {
     teamAlive: function (_a) {
         var sender = _a.sender;
         return sender.team().isAlive()
-            || (0, errors_1.fail)("Your team is dead.");
+            || (0, errors_1.fail)(Math.random() > 0.9 ? "You are already dead." : "Your team is dead.");
     },
     unitExists: function (message) {
         if (message === void 0) { message = "You must be in a unit to use this command."; }

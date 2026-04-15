@@ -32,7 +32,7 @@ export const Req = {
 			|| fail(`This game is over, please wait for the next map to load.`),
 	teamAlive: ({sender}:{sender:FishPlayer}) =>
 		sender.team().isAlive()
-			|| fail(`Your team is dead.`),
+			|| fail(Math.random() > 0.9 ? "You are already dead." : `Your team is dead.`),
 	unitExists: (message = "You must be in a unit to use this command.") =>
 		({sender}:{sender:FishPlayer}) =>
 			(sender.connected() && sender.unit()?.added && !sender.unit()!.dead)
