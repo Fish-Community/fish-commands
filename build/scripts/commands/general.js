@@ -1057,30 +1057,44 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             managers[previous.id].unvote(fishP);
         });
         return {
-            args: ["force:boolean?"],
+            args: ["force:boolean?", "team:team?"],
             description: "Vote to surrender to the enemy team.",
             perm: commands_1.Perm.play,
             requirements: [commands_1.Req.mode("pvp"), commands_1.Req.teamAlive],
             data: { managers: managers },
             handler: function (_a) {
-                var sender = _a.sender, force = _a.args.force;
-                var manager = managers[sender.team().id];
-                if (sender.hasPerm("admin") && force != undefined) {
-                    if (force) {
-                        manager.messageEligibleVoters(prefix + "Vote forced by admin ".concat(sender.name, "[white]."));
-                        Call.sendMessage(prefix + "Team ".concat(sender.team().coloredName(), " has voted to forfeit this match."));
-                    }
-                    else {
-                        manager.messageEligibleVoters(prefix + "Votes cleared by admin ".concat(sender.name, "[white]."));
-                    }
-                    manager.forceVote(force);
-                    return;
-                }
-                if (sender.ranksAtLeast("mod"))
-                    commands_1.Req.cooldown(5000);
-                else
-                    commands_1.Req.cooldown(20000);
-                manager.vote(sender, 1, 0);
+                return __awaiter(this, arguments, void 0, function (_b) {
+                    var t, manager;
+                    var sender = _b.sender, _c = _b.args, force = _c.force, team = _c.team;
+                    return __generator(this, function (_d) {
+                        switch (_d.label) {
+                            case 0:
+                                t = sender.hasPerm("admin") && team ? team : sender.team();
+                                manager = managers[t.id];
+                                if (!(sender.hasPerm("admin") && force != undefined)) return [3 /*break*/, 4];
+                                if (!force) return [3 /*break*/, 2];
+                                return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to force team ".concat(t.coloredName(), "[] to lose?"))];
+                            case 1:
+                                _d.sent();
+                                manager.messageEligibleVoters(prefix + "Vote forced by admin ".concat(sender.name, "[white]."));
+                                Call.sendMessage(prefix + "Team ".concat(t.coloredName(), " has voted to forfeit this match."));
+                                return [3 /*break*/, 3];
+                            case 2:
+                                manager.messageEligibleVoters(prefix + "Votes cleared by admin ".concat(sender.name, "[white]."));
+                                _d.label = 3;
+                            case 3:
+                                manager.forceVote(force);
+                                return [2 /*return*/];
+                            case 4:
+                                if (sender.ranksAtLeast("mod"))
+                                    commands_1.Req.cooldown(5000);
+                                else
+                                    commands_1.Req.cooldown(20000);
+                                manager.vote(sender, 1, 0);
+                                return [2 /*return*/];
+                        }
+                    });
+                });
             },
         };
     }), stats: {

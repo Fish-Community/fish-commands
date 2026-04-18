@@ -1007,18 +1007,20 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		});
 
 		return {
-			args: ["force:boolean?"],
+			args: ["force:boolean?", "team:team?"],
 			description: "Vote to surrender to the enemy team.",
 			perm: Perm.play,
 			requirements: [Req.mode("pvp"), Req.teamAlive],
 			data: { managers },
-			handler({ sender, args: {force} }){
-				const manager = managers[sender.team().id];
+			async handler({ sender, args: {force, team} }){
+				const t = sender.hasPerm("admin") && team ? team : sender.team();
+				const manager = managers[t.id];
 				if(sender.hasPerm("admin") && force != undefined){
 					if(force){
+						await Menu.confirmDangerous(sender, `Are you sure you want to force team ${t.coloredName()}[] to lose?`);
 						manager.messageEligibleVoters(prefix + `Vote forced by admin ${sender.name}[white].`);
 						Call.sendMessage(
-							prefix + `Team ${sender.team().coloredName()} has voted to forfeit this match.`
+							prefix + `Team ${t.coloredName()} has voted to forfeit this match.`
 						);
 					} else {
 						manager.messageEligibleVoters(prefix + `Votes cleared by admin ${sender.name}[white].`);
