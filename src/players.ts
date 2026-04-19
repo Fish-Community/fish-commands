@@ -904,7 +904,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 
 If you are unable to change it, please download Mindustry from Steam or itch.io.`,
 			1);
-		} else if(Strings.stripColors(this.name).trim().length == 0){
+		} else if(Strings.stripColors(this.name.replace(/[\u3164]/g, "")).trim().length == 0){
 			this.kick(
 `[scarlet]"${escapeStringColorsClient(this.name)}[scarlet]" is not an allowed name because it is empty. Please change it.`,
 			1);
