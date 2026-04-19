@@ -20,7 +20,9 @@ var aggregate_1 = require("/commands/aggregate");
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
 var menus = require("/frameworks/menus");
+var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
+var maps_1 = require("/maps");
 var packetHandlers_1 = require("/packetHandlers");
 var players_1 = require("/players");
 var timers = require("/timers");
@@ -224,12 +226,20 @@ Events.on(EventType.ServerLoadEvent, function (e) {
         Log.info("Saved on exit.");
     }));
     Vars.netServer.assigner = function (player, players) {
+        var _a;
         if (Vars.state.rules.pvp) {
             //find team with minimum amount of players and auto-assign player to that.
+            var fishP = players_1.FishPlayer.get(player);
+            var preferredTeam_1 = null;
+            if (fishP.restoreTeam && (Date.now() - fishP.restoreTeam[1] < funcs_1.Duration.minutes(5)) && fishP.restoreTeam[2] == ((_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime))
+                preferredTeam_1 = fishP.restoreTeam[0];
             var re = Vars.state.teams.getActive().select(function (data) { return !((Vars.state.rules.waveTeam == data.team && Vars.state.rules.waves) ||
                 !data.hasCore() ||
                 data.team == Team.derelict ||
                 !data.team.rules().protectCores); }).min(floatf(function (data) {
+                //Only if the team is valid
+                if (data.team == preferredTeam_1)
+                    return -1;
                 var count = 0;
                 players.forEach(function (other) {
                     if (other.team() == data.team && other != player) {

@@ -9,7 +9,8 @@ import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
 import { crash, Duration, escapeStringColorsClient, escapeStringColorsServer, escapeTextDiscord, parseError, search, setToArray, StringIO } from "/funcs";
 import * as globals from "/globals";
-import { uuidPattern, FishEvents } from "/globals";
+import { FishEvents, uuidPattern } from "/globals";
+import { PartialMapRun } from "/maps";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
 import type { FishPlayerData, PlayerHistoryEntry, Stats, UploadedFishPlayerData } from "/types";
 import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, matchFilter } from "/utils";
@@ -118,6 +119,7 @@ export class FishPlayer {
 	// Used by the data syncing framework.
 	infoUpdated = false;
 	dataSynced = false;
+	restoreTeam = null as null | [team:Team, timestamp:number, runStartTime:number];
 	//#endregion
 	
 	//#region Stored data
@@ -586,6 +588,7 @@ export class FishPlayer {
 				Vars.netServer.currentlyKicking = null;
 			}
 		}
+
 		//Clear temporary states such as menu and taphandler
 		fishP.activeMenus = [];
 		fishP.tapInfo.commandName = null;
@@ -594,6 +597,12 @@ export class FishPlayer {
 		this.recentLeaves.unshift(fishP);
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
 		void api.setFishPlayerData(fishP.getData(), 1, true);
+
+		const currentRun = PartialMapRun.current?.startTime;
+		if(currentRun) Core.app.post(() => {
+			//Wait for the /spectate command's handler to fix their team before saving it
+			fishP.restoreTeam = [fishP.player!.team(), Date.now(), currentRun];
+		});
 	}
 	static easterEggVotekickTarget: FishPlayer | null = null;
 	static validateVotekickSession(){

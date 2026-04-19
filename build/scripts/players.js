@@ -88,6 +88,7 @@ var menus_1 = require("/frameworks/menus");
 var funcs_1 = require("/funcs");
 var globals = require("/globals");
 var globals_1 = require("/globals");
+var maps_1 = require("/maps");
 var ranks_1 = require("/ranks");
 var utils_1 = require("/utils");
 var FishPlayer = /** @class */ (function () {
@@ -150,6 +151,7 @@ var FishPlayer = /** @class */ (function () {
         // Used by the data syncing framework.
         this.infoUpdated = false;
         this.dataSynced = false;
+        this.restoreTeam = null;
         this.name = "Unnamed player [ERROR}";
         this.muted = false;
         this.unmarkTime = -1;
@@ -690,6 +692,7 @@ var FishPlayer = /** @class */ (function () {
     };
     /** Must be run on PlayerLeaveEvent. */
     FishPlayer.onPlayerLeave = function (player) {
+        var _a;
         var fishP = this.cachedPlayers[player.uuid()];
         if (!fishP)
             return;
@@ -723,6 +726,12 @@ var FishPlayer = /** @class */ (function () {
         if (this.recentLeaves.length > 10)
             this.recentLeaves.pop();
         void api.setFishPlayerData(fishP.getData(), 1, true);
+        var currentRun = (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime;
+        if (currentRun)
+            Core.app.post(function () {
+                //Wait for the /spectate command's handler to fix their team before saving it
+                fishP.restoreTeam = [fishP.player.team(), Date.now(), currentRun];
+            });
     };
     FishPlayer.validateVotekickSession = function () {
         var _a;

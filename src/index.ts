@@ -8,7 +8,9 @@ import { registerAll } from "/commands/aggregate";
 import { text } from "/config";
 import { handleTapEvent } from "/frameworks/commands";
 import * as menus from "/frameworks/menus";
+import { Duration } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipJoins, tileHistory } from "/globals";
+import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
@@ -222,12 +224,18 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 	Vars.netServer.assigner = (player, players) => {
 		if(Vars.state.rules.pvp){
 			//find team with minimum amount of players and auto-assign player to that.
+			const fishP = FishPlayer.get(player);
+			let preferredTeam: Team | null = null;
+			if(fishP.restoreTeam && (Date.now() - fishP.restoreTeam[1] < Duration.minutes(5)) && fishP.restoreTeam[2] == PartialMapRun.current?.startTime)
+				preferredTeam = fishP.restoreTeam[0];
 			const re = Vars.state.teams.getActive().select(data => !(
 				(Vars.state.rules.waveTeam == data.team && Vars.state.rules.waves) ||
 				!data.hasCore() ||
 				data.team == Team.derelict ||
 				!data.team.rules().protectCores
 			)).min(floatf(data => {
+				//Only if the team is valid
+				if(data.team == preferredTeam) return -1;
 				let count = 0;
 				players.forEach(other => {
 					if(other.team() == data.team && other != player){
