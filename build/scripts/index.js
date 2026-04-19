@@ -223,6 +223,27 @@ Events.on(EventType.ServerLoadEvent, function (e) {
         }
         Log.info("Saved on exit.");
     }));
+    Vars.netServer.assigner = function (player, players) {
+        if (Vars.state.rules.pvp) {
+            //find team with minimum amount of players and auto-assign player to that.
+            var re = Vars.state.teams.getActive().select(function (data) { return !((Vars.state.rules.waveTeam == data.team && Vars.state.rules.waves) ||
+                !data.hasCore() ||
+                data.team == Team.derelict ||
+                !data.team.rules().protectCores); }).min(floatf(function (data) {
+                var count = 0;
+                players.forEach(function (other) {
+                    if (other.team() == data.team && other != player) {
+                        count++;
+                    }
+                });
+                return count + Mathf.random(-0.1, 0.1);
+            }));
+            return re == null ? Vars.state.rules.defaultTeam : re.team;
+        }
+        else {
+            return Vars.state.rules.defaultTeam;
+        }
+    };
 });
 // Keeps track of any action performed on a tile for use in tilelog.
 Events.on(EventType.BlockBuildBeginEvent, utils_1.addToTileHistory);

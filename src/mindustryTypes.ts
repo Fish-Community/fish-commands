@@ -13,7 +13,9 @@ This file contains some of those type definitions, ported over from the Java def
 declare global {
 
 /** Helper function to produce an arc.func.Floatf from a rhino function. */
-function floatf<T>(input:T):T;
+function floatf<T>(func:(input:T) => number):Floatf<T>;
+
+type Floatf<T> = ((input:T) => number) & {__brand: "floatf"};
 
 const Call: any;
 const Log: {
@@ -71,6 +73,7 @@ const Vars: {
 		addPacketHandler(name:string, handler:(player:mindustryPlayer, content:string) => unknown):void;
 		currentlyKicking: VoteSession | null;
 		votesRequired():number;
+		assigner: (player:Player, players:MIterable<Player>) => Team;
 	}
 	net: {
 		send(object:any, reliable:boolean):void;
@@ -106,6 +109,7 @@ const Vars: {
 };
 class Teams {
 	active: Seq<TeamData>;
+	getActive(): Seq<TeamData>;
 }
 class BlockIndexer {
 	getFlagged(team: Team, flag: BlockFlag): Seq<Building>;
@@ -279,6 +283,7 @@ class Team {
 	id:number;
 	static get(index:number):Team;
 	cores(): Seq<Building>;
+	rules(): TeamRules;
 }
 type TeamData = {
 	team: Team;
@@ -286,7 +291,11 @@ type TeamData = {
 	buildings: Seq<Building>;
 	cores: Seq<Building>;
 	countType(type:UnitType):number;
+	hasCore(): boolean;
 };
+type TeamRules = {
+	protectCores: boolean;
+}
 const Units: {
 	getCap(team:Team):number;
 };
@@ -404,6 +413,7 @@ const Mathf: {
 
 	ceil(val:number):number;
 	round(val:number, step?:number):number;
+	random(min:number, max:number):number;
 	len(x:number, y:number):number;
 	atan2(x:number, y:number):number;
 };
@@ -502,7 +512,7 @@ class Seq<T> {
 	constructor();
 	constructor(capacity:number);
 	static with<T>(...items:T[]):Seq<T>;
-	static with<T>(items:Iterable<T>):Seq<T>;
+	static with<T>(items:MIterable<T>):Seq<T>;
 	add(item:T):this;
 	addUnique(item:T):this;
 	contains(item:T):boolean;
@@ -526,7 +536,8 @@ class Seq<T> {
 	toArray():T[];
 	copy():Seq<T>;
 	sort(comparator?:(item:T) => number):Seq<T>;
-	max(comparator?:(item:T) => number):T;
+	min(comparator?:Floatf<T>):T;
+	max(comparator?:Floatf<T>):T;
 	random():T | null;
 	get(index:number):T;
 	first():T;
@@ -937,6 +948,12 @@ class Ratekeeper {
 	occurences:number;
 	lastTime:number;
 	allow(spacingMS:number, cap:number):boolean;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface MIterable<T> {
+	iterator(): Iterator<T>;
+	forEach(_:(item:T) => void):void;
 }
 
 }

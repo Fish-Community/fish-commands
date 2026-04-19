@@ -219,6 +219,29 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 		Log.info("Saved on exit.");
 	}));
 
+	Vars.netServer.assigner = (player, players) => {
+		if(Vars.state.rules.pvp){
+			//find team with minimum amount of players and auto-assign player to that.
+			const re = Vars.state.teams.getActive().select(data => !(
+				(Vars.state.rules.waveTeam == data.team && Vars.state.rules.waves) ||
+				!data.hasCore() ||
+				data.team == Team.derelict ||
+				!data.team.rules().protectCores
+			)).min(floatf(data => {
+				let count = 0;
+				players.forEach(other => {
+					if(other.team() == data.team && other != player){
+						count ++;
+					}
+				});
+				return count + Mathf.random(-0.1, 0.1);
+			}));
+			return re == null ? Vars.state.rules.defaultTeam : re.team;
+		} else {
+			return Vars.state.rules.defaultTeam;
+		}
+	};
+
 });
 
 // Keeps track of any action performed on a tile for use in tilelog.
