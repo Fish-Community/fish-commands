@@ -20,9 +20,9 @@ type Floatf<T> = ((input:T) => number) & {__brand: "floatf"};
 const Call: any;
 const Log: {
 	debug(this:void, message:string, ...extra:unknown[]):void;
-	info(this:void, message:string):void;
-	warn(this:void, message:string):void;
-	err(this:void, message:string):void;
+	info(this:void, message:string, ...extra:unknown[]):void;
+	warn(this:void, message:string, ...extra:unknown[]):void;
+	err(this:void, message:string, ...extra:unknown[]):void;
 	err(this:void, error:unknown):void;
 	level: LogLevel;
 	LogLevel: {
