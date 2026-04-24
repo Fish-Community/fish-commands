@@ -134,10 +134,13 @@ Events.on(EventType.ContentInitEvent, function () {
 });
 Events.on(EventType.PlayerChatEvent, function (e) { return (0, utils_1.processChat)(e.player, e.message, true); });
 Events.on(EventType.ServerLoadEvent, function (e) {
+    Time.mark();
     var clientHandler = Vars.netServer.clientCommands;
     var serverHandler = ServerControl.instance.handler;
+    Time.mark();
     players_1.FishPlayer.loadAll();
     globals_1.FishEvents.fire("loadData", []);
+    Log.info("fish-commands: data loaded in @ms", Time.elapsed());
     timers.initializeTimers();
     menus.registerListeners();
     //Cap delta
@@ -254,6 +257,7 @@ Events.on(EventType.ServerLoadEvent, function (e) {
             return Vars.state.rules.defaultTeam;
         }
     };
+    Log.info("fish-commands: initialized in @ms (incl previous)", Time.elapsed());
 });
 // Keeps track of any action performed on a tile for use in tilelog.
 Events.on(EventType.BlockBuildBeginEvent, utils_1.addToTileHistory);
@@ -297,3 +301,4 @@ Events.on(EventType.WorldLoadEvent, function () { return players_1.FishPlayer.on
 Events.on(EventType.PlayerChatEvent, function (e) {
     players_1.FishPlayer.onPlayerChat(e.player, e.message);
 });
+Log.info("fish-commands: parsing done in @ms", Date.now() - this._startTime);

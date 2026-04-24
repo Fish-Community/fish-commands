@@ -5,6 +5,9 @@ It only contains polyfills, and requires index.js.
 */
 //WARNING: changes to this file must be manually copied to /build/scripts/main.js
 
+this._startTime = Date.now();
+Log.info("fish-commands: loading");
+
 importPackage(Packages.arc);
 importClass(Packages.arc.util.CommandHandler);
 importPackage(Packages.mindustry.type);

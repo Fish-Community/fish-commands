@@ -137,11 +137,14 @@ Events.on(EventType.ContentInitEvent, () => {
 Events.on(EventType.PlayerChatEvent, (e) => processChat(e.player, e.message, true));
 
 Events.on(EventType.ServerLoadEvent, (e) => {
+	Time.mark();
 	const clientHandler = Vars.netServer.clientCommands;
 	const serverHandler = ServerControl.instance.handler;
 
+	Time.mark();
 	FishPlayer.loadAll();
 	FishEvents.fire("loadData", []);
+	Log.info("fish-commands: data loaded in @ms", Time.elapsed());
 	timers.initializeTimers();
 	menus.registerListeners();
 
@@ -250,6 +253,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 		}
 	};
 
+	Log.info("fish-commands: initialized in @ms (incl previous)", Time.elapsed());
 });
 
 // Keeps track of any action performed on a tile for use in tilelog.
@@ -288,3 +292,4 @@ Events.on(EventType.PlayerChatEvent, e => {
 	FishPlayer.onPlayerChat(e.player, e.message);
 });
 
+Log.info("fish-commands: parsing done in @ms", Date.now() - (this as any)._startTime);
