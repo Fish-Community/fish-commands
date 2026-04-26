@@ -340,12 +340,12 @@ if (!Symbol.metadata)
         configurable: false,
         value: Symbol("Symbol.metadata")
     });
-var valuesToSerialize = 0;
+var valuesToSerialize = new AtomicInteger();
 function serialize(settingsKey, schema, oldSchema, fixer, saveEvent) {
     if (saveEvent === void 0) { saveEvent = "saveData"; }
     return function decorate(_, _a) {
         var addInitializer = _a.addInitializer, access = _a.access, name = _a.name;
-        valuesToSerialize++;
+        valuesToSerialize.getAndIncrement();
         addInitializer(function () {
             var _this = this;
             var serializer = (0, funcs_1.lazy)(function () {
@@ -360,7 +360,7 @@ function serialize(settingsKey, schema, oldSchema, fixer, saveEvent) {
                         value = fixer(value);
                     access.set(_this, value);
                 }
-                if (--valuesToSerialize == 0)
+                if (valuesToSerialize.decrementAndGet() == 0)
                     globals_1.FishEvents.fire("dataLoaded", []);
                 Log.debug("serialize read @ @", settingsKey, (Time.nanos() - start) / 1e6);
             }); });
@@ -383,6 +383,6 @@ function serialize(settingsKey, schema, oldSchema, fixer, saveEvent) {
     };
 }
 globals_1.FishEvents.on("loadData", function () {
-    if (valuesToSerialize == 0)
+    if (valuesToSerialize.get() == 0)
         globals_1.FishEvents.fire("dataLoaded", []);
 });

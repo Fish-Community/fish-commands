@@ -960,6 +960,7 @@ interface MIterable<T> {
 class AtomicInteger {
 	constructor(value?:number);
 	decrementAndGet():number;
+	getAndIncrement():number;
 	get():number;
 	set(int:number):void;
 }

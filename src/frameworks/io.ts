@@ -255,7 +255,7 @@ if(!Symbol.metadata)
 		value: Symbol("Symbol.metadata")
 	});
 
-let valuesToSerialize = 0;
+let valuesToSerialize = new AtomicInteger();
 export function serialize<T extends Serializable>(
 	settingsKey: string,
 	schema: () => Schema<T>, oldSchema?: () => Schema<T>,
@@ -269,7 +269,7 @@ export function serialize<T extends Serializable>(
 		name: Name;
 		static: true;
 	}){
-		valuesToSerialize ++;
+		valuesToSerialize.getAndIncrement();
 		addInitializer(function(){
 			const serializer = lazy(() =>
 				new SettingsSerializer<T>(settingsKey, schema(), oldSchema?.())
@@ -282,7 +282,7 @@ export function serialize<T extends Serializable>(
 					if(fixer) value = fixer(value);
 					access.set(this, value);
 				}
-				if(--valuesToSerialize == 0) FishEvents.fire("dataLoaded", []);
+				if(valuesToSerialize.decrementAndGet() == 0) FishEvents.fire("dataLoaded", []);
 				Log.debug("serialize read @ @", settingsKey, (Time.nanos() - start) / 1e6);
 			}));
 			FishEvents.on(saveEvent, () => {
@@ -303,5 +303,5 @@ export function serialize<T extends Serializable>(
 }
 
 FishEvents.on("loadData", () => {
-	if(valuesToSerialize == 0) FishEvents.fire("dataLoaded", []);
+	if(valuesToSerialize.get() == 0) FishEvents.fire("dataLoaded", []);
 });
