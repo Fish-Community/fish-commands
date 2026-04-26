@@ -38,8 +38,8 @@ export const bannedWords: {
 		"fanum tax", "gyatt", ["rizz", "grizzly", "frizz"], "skibidi", //With love, DarthScion
 		//>:( -dart
 		// "uwu", //lol
-		
-		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", //our apologies to citizens of the Republic of Niger
+
+		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "ni"+"ga", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", //our apologies to citizens of the Republic of Niger
 		"re"+"tard",
 		'kill yourself', 'kill urself', /\bkys\b/,
 		"kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", /\b1488\b/, //nazi-related words
@@ -69,7 +69,7 @@ export const bannedWords: {
 	]),
 	/** autoWhack: new players saying one of these words will be automatically stopped and muted. */
 	autoWhack: [
-		"nig"+"ger","nig"+"ga","ni8"+"8er","hit"+"ler","fa"+"gg"+"ot","nazis",
+		"nig"+"ger","nig"+"ga","ni8"+"8er","nig"+"g3r","hit"+"ler","fa"+"gg"+"ot","nazis",
 	],
 };
 

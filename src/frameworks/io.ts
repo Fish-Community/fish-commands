@@ -255,7 +255,7 @@ if(!Symbol.metadata)
 		value: Symbol("Symbol.metadata")
 	});
 
-let valuesToSerialize = new AtomicInteger();
+const valuesToSerialize = new AtomicInteger();
 export function serialize<T extends Serializable>(
 	settingsKey: string,
 	schema: () => Schema<T>, oldSchema?: () => Schema<T>,
