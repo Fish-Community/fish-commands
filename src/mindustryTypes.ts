@@ -428,6 +428,7 @@ class TimerTask {
 }
 const Time: {
 	millis(): number;
+	nanos(): number;
 	elapsed(): number;
 	mark(): void;
 	delta: number;
@@ -954,6 +955,13 @@ class Ratekeeper {
 interface MIterable<T> {
 	iterator(): Iterator<T>;
 	forEach(_:(item:T) => void):void;
+}
+
+class AtomicInteger {
+	constructor(value?:number);
+	decrementAndGet():number;
+	get():number;
+	set(int:number):void;
 }
 
 }

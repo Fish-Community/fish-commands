@@ -184,6 +184,8 @@ var PartialMapRun = /** @class */ (function () {
             if (_a.current) {
                 var finishedRun = _a.current.finish({ winTeam: (_b = e.winner) !== null && _b !== void 0 ? _b : Team.derelict });
                 var fmap = FMap.getCreate(Vars.state.map);
+                if (!fmap)
+                    return;
                 //Highscore message
                 if (config_1.Gamemode.attack() && finishedRun.success) {
                     var bestPreviousTime = fmap.stats().shortestWinTime;
@@ -226,6 +228,8 @@ var FMap = function () {
                 return _this;
             }
             FMap.getCreate = function (map) {
+                if (this.allMaps == null)
+                    return null;
                 var mapFileName = map.file.name();
                 if (Object.prototype.hasOwnProperty.call(this.maps, mapFileName))
                     return this.maps[mapFileName];
@@ -332,7 +336,7 @@ var FMap = function () {
             __esDecorate(null, null, _static_allMaps_decorators, { kind: "field", name: "allMaps", static: true, private: false, access: { has: function (obj) { return "allMaps" in obj; }, get: function (obj) { return obj.allMaps; }, set: function (obj, value) { obj.allMaps = value; } }, metadata: _metadata }, _static_allMaps_initializers, _static_allMaps_extraInitializers);
             if (_metadata) Object.defineProperty(_b, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
         })(),
-        _b.allMaps = __runInitializers(_b, _static_allMaps_initializers, []),
+        _b.allMaps = __runInitializers(_b, _static_allMaps_initializers, null),
         _b.maps = (__runInitializers(_b, _static_allMaps_extraInitializers), {}),
         (function () {
             globals_1.FishEvents.on("dataLoaded", function () {
