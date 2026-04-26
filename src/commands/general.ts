@@ -1082,10 +1082,12 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 		description: "Displays information about a map.",
 		handler({output, args:{map}, f, sender}){
 			if(map){
-				output(FMap.getCreate(map).displayStats(f)!);
+				const fmap = FMap.getCreate(map)
+					?? fail("Map data is still being loaded, try again later.");
+				output(fmap.displayStats(f)!);
 			} else {
 				void Menu.textPages(sender, Vars.maps.customMaps().map(m =>
-					["Map information", () => FMap.getCreate(m).displayStats(f)!] as const
+					["Map information", () => FMap.getCreate(m)?.displayStats(f) ?? fail("Map data is still being loaded, try again later.")] as const
 				).toArray(), {
 					startPage: Vars.maps.customMaps().toArray().indexOf(Vars.state.map),
 				});

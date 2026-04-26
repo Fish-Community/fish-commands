@@ -340,29 +340,37 @@ if (!Symbol.metadata)
         configurable: false,
         value: Symbol("Symbol.metadata")
     });
+var valuesToSerialize = 0;
 function serialize(settingsKey, schema, oldSchema, fixer, saveEvent) {
     if (saveEvent === void 0) { saveEvent = "saveData"; }
     return function decorate(_, _a) {
         var addInitializer = _a.addInitializer, access = _a.access, name = _a.name;
+        valuesToSerialize++;
         addInitializer(function () {
             var _this = this;
             var serializer = (0, funcs_1.lazy)(function () {
                 return new SettingsSerializer(settingsKey, schema(), oldSchema === null || oldSchema === void 0 ? void 0 : oldSchema());
             });
-            globals_1.FishEvents.on("loadData", function () {
-                Time.mark();
+            globals_1.FishEvents.on("loadData", function () { return Threads.daemon(function () {
+                //Load data multithreaded
+                var start = Time.nanos();
                 var value = serializer().readSettings();
                 if (value) {
                     if (fixer)
                         value = fixer(value);
                     access.set(_this, value);
                 }
-                Log.debug("serialize read @ @", settingsKey, Time.elapsed());
-            });
+                if (--valuesToSerialize == 0)
+                    globals_1.FishEvents.fire("dataLoaded", []);
+                Log.debug("serialize read @ @", settingsKey, (Time.nanos() - start) / 1e6);
+            }); });
             globals_1.FishEvents.on(saveEvent, function () {
                 try {
                     Time.mark();
-                    serializer().writeSettings(access.get(_this));
+                    var value = access.get(_this);
+                    if (value == null)
+                        return;
+                    serializer().writeSettings(value);
                     Log.debug("serialize save @ @", settingsKey, Time.elapsed());
                 }
                 catch (err) {
@@ -374,3 +382,7 @@ function serialize(settingsKey, schema, oldSchema, fixer, saveEvent) {
         });
     };
 }
+globals_1.FishEvents.on("loadData", function () {
+    if (valuesToSerialize == 0)
+        globals_1.FishEvents.fire("dataLoaded", []);
+});

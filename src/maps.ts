@@ -71,6 +71,7 @@ export class PartialMapRun {
 			if(this.current){
 				const finishedRun = this.current.finish({ winTeam: e.winner ?? Team.derelict });
 				const fmap = FMap.getCreate(Vars.state.map);
+				if(!fmap) return;
 
 				//Highscore message
 				if(Gamemode.attack() && finishedRun.success){
@@ -171,12 +172,12 @@ export class FMap extends dataClass<FMapData>() {
 		]]]],
 		["mapFileName", ["string"]],
 	]]], undefined, "saveMaps")
-	static allMaps:FMap[] = [];
+	static allMaps:FMap[] | null = null;
 	private static maps:Record<string, FMap> = {};
 	static {
 		FishEvents.on("dataLoaded", () => {
 			//This event listener runs after the data has been loaded into allMaps
-			FMap.allMaps.forEach(map => {
+			FMap.allMaps!.forEach(map => {
 				FMap.maps[map.mapFileName] = map;
 				map.runs.forEach(run => {
 					//this should not even happen, I think GameOverEvent is sending winTeam as null sometimes??
@@ -189,6 +190,7 @@ export class FMap extends dataClass<FMapData>() {
 	}
 
 	static getCreate(map:MMap){
+		if(this.allMaps == null) return null;
 		const mapFileName = map.file.name();
 		if(Object.prototype.hasOwnProperty.call(this.maps, mapFileName))
 			return this.maps[mapFileName];

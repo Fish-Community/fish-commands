@@ -141,10 +141,8 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 	const clientHandler = Vars.netServer.clientCommands;
 	const serverHandler = ServerControl.instance.handler;
 
-	Time.mark();
 	FishPlayer.loadAll();
 	FishEvents.fire("loadData", []);
-	Log.info("fish-commands: data loaded in @ms", Time.elapsed());
 	timers.initializeTimers();
 	menus.registerListeners();
 
@@ -208,8 +206,6 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 		Log.err("Failed to get fish plugin information.");
 		Log.err(err);
 	}
-
-	FishEvents.fire("dataLoaded", []);
 
 	Runtime.getRuntime().addShutdownHook(new Thread(() => {
 		try {

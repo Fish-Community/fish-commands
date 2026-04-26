@@ -137,10 +137,8 @@ Events.on(EventType.ServerLoadEvent, function (e) {
     Time.mark();
     var clientHandler = Vars.netServer.clientCommands;
     var serverHandler = ServerControl.instance.handler;
-    Time.mark();
     players_1.FishPlayer.loadAll();
     globals_1.FishEvents.fire("loadData", []);
-    Log.info("fish-commands: data loaded in @ms", Time.elapsed());
     timers.initializeTimers();
     menus.registerListeners();
     //Cap delta
@@ -206,7 +204,6 @@ Events.on(EventType.ServerLoadEvent, function (e) {
         Log.err("Failed to get fish plugin information.");
         Log.err(err);
     }
-    globals_1.FishEvents.fire("dataLoaded", []);
     Runtime.getRuntime().addShutdownHook(new Thread(function () {
         try {
             players_1.FishPlayer.uploadAll();

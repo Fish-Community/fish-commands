@@ -255,6 +255,7 @@ if(!Symbol.metadata)
 		value: Symbol("Symbol.metadata")
 	});
 
+let valuesToSerialize = 0;
 export function serialize<T extends Serializable>(
 	settingsKey: string,
 	schema: () => Schema<T>, oldSchema?: () => Schema<T>,
@@ -262,29 +263,34 @@ export function serialize<T extends Serializable>(
 	saveEvent: keyof (typeof FishEvents)["listeners"] = "saveData",
 ){
 	return function decorate<
-		This extends Record<Name, T>, Name extends string | symbol
+		This extends Record<Name, T | null>, Name extends string | symbol
 	// eslint-disable-next-line @typescript-eslint/unbound-method
-	>(_: unknown, {addInitializer, access, name}:ClassFieldDecoratorContext<This, T> & {
+	>(_: unknown, {addInitializer, access, name}:ClassFieldDecoratorContext<This, T | null> & {
 		name: Name;
 		static: true;
 	}){
+		valuesToSerialize ++;
 		addInitializer(function(){
 			const serializer = lazy(() =>
 				new SettingsSerializer<T>(settingsKey, schema(), oldSchema?.())
 			);
-			FishEvents.on("loadData", () => {
-				Time.mark();
+			FishEvents.on("loadData", () => Threads.daemon(() => {
+				//Load data multithreaded
+				const start = Time.nanos();
 				let value = serializer().readSettings();
 				if(value){
 					if(fixer) value = fixer(value);
 					access.set(this, value);
 				}
-				Log.debug("serialize read @ @", settingsKey, Time.elapsed());
-			});
+				if(--valuesToSerialize == 0) FishEvents.fire("dataLoaded", []);
+				Log.debug("serialize read @ @", settingsKey, (Time.nanos() - start) / 1e6);
+			}));
 			FishEvents.on(saveEvent, () => {
 				try {
 					Time.mark();
-					serializer().writeSettings(access.get(this));
+					const value = access.get(this);
+					if(value == null) return;
+					serializer().writeSettings(value);
 					Log.debug("serialize save @ @", settingsKey, Time.elapsed());
 				} catch(err){
 					Log.err(`Error while saving field ${String(name)} on ${String((this as any as Function)?.name)} using settings key ${settingsKey}`);
@@ -295,3 +301,7 @@ export function serialize<T extends Serializable>(
 		});
 	};
 }
+
+FishEvents.on("loadData", () => {
+	if(valuesToSerialize == 0) FishEvents.fire("dataLoaded", []);
+});
