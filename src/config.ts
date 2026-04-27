@@ -39,7 +39,8 @@ export const bannedWords: {
 		//>:( -dart
 		// "uwu", //lol
 
-		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "ni"+"ga", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", //our apologies to citizens of the Republic of Niger
+		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", //our apologies to citizens of the Republic of Niger
+		["ni"+"ga", "anniga", "inniga", "unniga", "aniga", "iniga", "eniga", "oniga"],
 		"re"+"tard",
 		'kill yourself', 'kill urself', /\bkys\b/,
 		"kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", /\b1488\b/, //nazi-related words
