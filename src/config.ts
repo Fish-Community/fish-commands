@@ -50,7 +50,7 @@ export const bannedWords: {
 		["penis", "peniston"],
 		"hawk tuah",
 
-		["rape", "grape", "therap", "drape", "scrape", "trapez", "earrape", "atrape"],
+		["rape", "grape", "therap", "drape", "scrape", "trapez", "earrape", "atrape", "traped"],
 		["raping", "draping", "graping", "scraping", "craping"],
 		/\bf(a)g\b/, "fa"+"gg"+"ot",
 		/\bc(u)m\b/, ["semen", "sement", "horsemen", "housemen", "defensemen", "those", "menders"],
