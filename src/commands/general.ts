@@ -107,25 +107,32 @@ export const commands = commandList({
 		},
 	},
 
-	tilelog: {
-		args: ['persist:boolean?'],
+	tilelog: command({
+		args: ['persist:boolean?', 'showUUID:boolean?'],
 		description: 'Checks the history of a tile.',
 		perm: Perm.none,
-		handler({args, output, outputSuccess, currentTapMode, handleTaps}){
-			if(currentTapMode == "off"){
-				if(args.persist){
-					handleTaps("on");
-					outputSuccess(`Tilelog mode enabled. Click tiles to check their recent history. Run /tilelog again to disable.`);
-				} else {
-					handleTaps("once");
-					output(`Click on a tile to check its recent history...`);
-				}
+		data: {showUUID: true},
+		handler({args, output, outputSuccess, currentTapMode, handleTaps, sender, data}){
+			const changed = args.showUUID !== undefined && args.showUUID != data.showUUID;
+			if(args.showUUID !== undefined){
+				if(!sender.hasPerm("viewUUIDs")) fail(`You do not have permission to show UUIDs.`);
+				data.showUUID = args.showUUID;
+			}
+			if(args.persist && currentTapMode !== "on"){
+				outputSuccess(`Tilelog mode enabled. Click tiles to check their recent history. Run /tilelog to disable.`);
+				handleTaps("on");
+			} else if(args.persist && changed){
+				outputSuccess(`${data.showUUID ? "Now showing UUIDs." : "No longer showing UUIDs."} Click tiles to check their recent history. Run /tilelog to disable.`);
+				handleTaps("on");
+			} else if(currentTapMode == "off" || changed){
+				handleTaps("once");
+				output(`Click on a tile to check its recent history...`);
 			} else {
 				handleTaps("off");
 				outputSuccess(`Tilelog disabled.`);
 			}
 		},
-		tapped({tile, x, y, output, sender, admins}){
+		tapped({tile, x, y, output, sender, admins, data}){
 			const historyData = tileHistory[`${x},${y}`] ?? fail(`There is no recorded history for the selected tile (${tile.x}, ${tile.y}).`);
 			const history = StringIO.read(historyData, str => str.readArray(d => ({
 				action: d.readString(2),
@@ -135,13 +142,13 @@ export const commands = commandList({
 			}), 1));
 			output(`[yellow]Tile history for tile (${tile.x}, ${tile.y}):\n` + history.map(e =>
 				uuidPattern.test(e.uuid)
-				? (sender.hasPerm("viewUUIDs")
+				? (sender.hasPerm("viewUUIDs") && data.showUUID
 				? `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()}[lightgray](${e.uuid})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
 				: `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
 				: `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
 			).join('\n'));
 		}
-	},
+	}),
 
 	aoelog: command(() => {
 		const allowedActions = [

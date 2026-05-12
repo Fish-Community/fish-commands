@@ -174,21 +174,30 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var sender = _a.sender;
             Call.openURI(sender.con, config_1.text.discordURL);
         },
-    }, tilelog: {
-        args: ['persist:boolean?'],
+    }, tilelog: (0, commands_1.command)({
+        args: ['persist:boolean?', 'showUUID:boolean?'],
         description: 'Checks the history of a tile.',
         perm: commands_1.Perm.none,
+        data: { showUUID: true },
         handler: function (_a) {
-            var args = _a.args, output = _a.output, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps;
-            if (currentTapMode == "off") {
-                if (args.persist) {
-                    handleTaps("on");
-                    outputSuccess("Tilelog mode enabled. Click tiles to check their recent history. Run /tilelog again to disable.");
-                }
-                else {
-                    handleTaps("once");
-                    output("Click on a tile to check its recent history...");
-                }
+            var args = _a.args, output = _a.output, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps, sender = _a.sender, data = _a.data;
+            var changed = args.showUUID !== undefined && args.showUUID != data.showUUID;
+            if (args.showUUID !== undefined) {
+                if (!sender.hasPerm("viewUUIDs"))
+                    (0, commands_1.fail)("You do not have permission to show UUIDs.");
+                data.showUUID = args.showUUID;
+            }
+            if (args.persist && currentTapMode !== "on") {
+                outputSuccess("Tilelog mode enabled. Click tiles to check their recent history. Run /tilelog to disable.");
+                handleTaps("on");
+            }
+            else if (args.persist && changed) {
+                outputSuccess("".concat(data.showUUID ? "Now showing UUIDs." : "No longer showing UUIDs.", " Click tiles to check their recent history. Run /tilelog to disable."));
+                handleTaps("on");
+            }
+            else if (currentTapMode == "off" || changed) {
+                handleTaps("once");
+                output("Click on a tile to check its recent history...");
             }
             else {
                 handleTaps("off");
@@ -197,7 +206,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         },
         tapped: function (_a) {
             var _b;
-            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, sender = _a.sender, admins = _a.admins;
+            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, sender = _a.sender, admins = _a.admins, data = _a.data;
             var historyData = (_b = globals_1.tileHistory["".concat(x, ",").concat(y)]) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("There is no recorded history for the selected tile (".concat(tile.x, ", ").concat(tile.y, ")."));
             var history = funcs_1.StringIO.read(historyData, function (str) { return str.readArray(function (d) { return ({
                 action: d.readString(2),
@@ -208,13 +217,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             output("[yellow]Tile history for tile (".concat(tile.x, ", ").concat(tile.y, "):\n") + history.map(function (e) {
                 var _a, _b;
                 return globals_1.uuidPattern.test(e.uuid)
-                    ? (sender.hasPerm("viewUUIDs")
+                    ? (sender.hasPerm("viewUUIDs") && data.showUUID
                         ? "[yellow]".concat((_a = admins.getInfoOptional(e.uuid)) === null || _a === void 0 ? void 0 : _a.plainLastName(), "[lightgray](").concat(e.uuid, ")[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time))
                         : "[yellow]".concat((_b = admins.getInfoOptional(e.uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName(), " ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time)))
                     : "[yellow]".concat(e.uuid, "[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
             }).join('\n'));
         }
-    }, aoelog: (0, commands_1.command)(function () {
+    }), aoelog: (0, commands_1.command)(function () {
         var allowedActions = [
             "built", "broke", "rotated", "killed", "configured", "pay-dropped", "picked up", "controlled"
         ];
