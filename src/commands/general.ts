@@ -9,9 +9,9 @@ import { FColor, FishServer, Gamemode, rules, text } from "/config";
 import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
-import { capitalizeText, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
+import { capitalizeText, delay, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
-import { FMap } from "/maps";
+import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
 import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
@@ -68,24 +68,35 @@ export const commands = commandList({
 		},
 	},
 
-	clean: {
+	clean: command({
 		args: [],
 		description: 'Removes all boulders from the map.',
 		perm: Perm.play,
-		requirements: [Req.cooldownGlobal(100_000)],
-		handler({sender, outputSuccess}){
+		requirements: [],
+		data: {lastRanMapStartTime: PartialMapRun.current?.startTime},
+		async handler({sender, outputSuccess, data}){
+			if(!PartialMapRun.current) fail(`This game is already over.`);
+			if(data.lastRanMapStartTime == PartialMapRun.current.startTime)
+				fail(`This command was already run on this map.`);
+			data.lastRanMapStartTime = PartialMapRun.current.startTime;
 			Timer.schedule(
 				() => Call.sound(sender.con, Sounds.rockBreak, 1, 1, 0),
 				0, 0.05, 10
 			);
-			Vars.world.tiles.eachTile((t:Tile) => {
+			const array: Tile[] = ArcReflect.get(Vars.world.tiles, "array");
+			let removed = 0;
+			// eslint-disable-next-line @typescript-eslint/prefer-for-of
+			for(let i = 0; i < array.length; i ++){
+				const t = array[i];
 				if(t.breakable() && t.block() instanceof Prop){
 					t.removeNet();
+					removed ++;
+					if(removed % 500 == 0) await delay(100);
 				}
-			});
+			}
 			outputSuccess(`Cleared the map of boulders.`);
 		}
-	},
+	}),
 
 	die: {
 		args: [],

@@ -79,6 +79,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 var achievements_1 = require("/achievements");
@@ -140,22 +141,51 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 (0, commands_1.fail)("Cannot teleport to players while holding a payload.");
             (0, utils_1.teleportPlayer)(sender.player, args.player.player);
         },
-    }, clean: {
+    }, clean: (0, commands_1.command)({
         args: [],
         description: 'Removes all boulders from the map.',
         perm: commands_1.Perm.play,
-        requirements: [commands_1.Req.cooldownGlobal(100000)],
+        requirements: [],
+        data: { lastRanMapStartTime: (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime },
         handler: function (_a) {
-            var sender = _a.sender, outputSuccess = _a.outputSuccess;
-            Timer.schedule(function () { return Call.sound(sender.con, Sounds.rockBreak, 1, 1, 0); }, 0, 0.05, 10);
-            Vars.world.tiles.eachTile(function (t) {
-                if (t.breakable() && t.block() instanceof Prop) {
-                    t.removeNet();
-                }
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var array, removed, i, t;
+                var sender = _b.sender, outputSuccess = _b.outputSuccess, data = _b.data;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (!maps_1.PartialMapRun.current)
+                                (0, commands_1.fail)("This game is already over.");
+                            if (data.lastRanMapStartTime == maps_1.PartialMapRun.current.startTime)
+                                (0, commands_1.fail)("This command was already run on this map.");
+                            data.lastRanMapStartTime = maps_1.PartialMapRun.current.startTime;
+                            Timer.schedule(function () { return Call.sound(sender.con, Sounds.rockBreak, 1, 1, 0); }, 0, 0.05, 10);
+                            array = ArcReflect.get(Vars.world.tiles, "array");
+                            removed = 0;
+                            i = 0;
+                            _c.label = 1;
+                        case 1:
+                            if (!(i < array.length)) return [3 /*break*/, 4];
+                            t = array[i];
+                            if (!(t.breakable() && t.block() instanceof Prop)) return [3 /*break*/, 3];
+                            t.removeNet();
+                            removed++;
+                            if (!(removed % 500 == 0)) return [3 /*break*/, 3];
+                            return [4 /*yield*/, (0, funcs_1.delay)(100)];
+                        case 2:
+                            _c.sent();
+                            _c.label = 3;
+                        case 3:
+                            i++;
+                            return [3 /*break*/, 1];
+                        case 4:
+                            outputSuccess("Cleared the map of boulders.");
+                            return [2 /*return*/];
+                    }
+                });
             });
-            outputSuccess("Cleared the map of boulders.");
         }
-    }, die: {
+    }), die: {
         args: [],
         description: 'Kills your unit.',
         perm: commands_1.Perm.mod.exceptModes({
