@@ -552,9 +552,11 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 					.map(w => w.replace(/[-_.^*,]/g, ""))
 					.some(w => bannedWords.autoWhack.includes(w))
 			){
-				logHTrip(fishPlayer, "bad words in chat", `message: \`${message}\``);
-				fishPlayer.muted = true;
-				void fishPlayer.stop("automod", maxTime, `Automatic stop due to suspicious activity`, false);
+				if(!fishPlayer.muted){
+					logHTrip(fishPlayer, "bad words in chat", `message: \`${message}\``);
+					fishPlayer.muted = true;
+					void fishPlayer.stop("automod", maxTime, `Automatic stop due to suspicious activity`, false);
+				}
 			}
 			Log.info(`Censored message from player ${player.name}: "${escapeStringColorsServer(message)}"; contained "${filterTripText}"`);
 			FishPlayer.messageStaff(`[yellow]Censored message from player ${fishPlayer.cleanedName}: "${message}" contained "${filterTripText}"`);
