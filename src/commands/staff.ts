@@ -11,9 +11,10 @@ import { command, commandList, fail, Perm, Req } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
 import { crash, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals";
+import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
-import { addToTileHistory, applyEffectMode, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -1105,6 +1106,40 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 		handler({args:{ editor }}){
 			Vars.state.rules.editor = editor;
 			Call.setRules(Vars.state.rules);
+		}
+	},
+	mapruns: {
+		args: ["map:map", "lowestHighscores:boolean?"],
+		description: "Displays all map runs for a selected map, and allows deleting invalid/cheated runs.",
+		perm: Perm.admin,
+		async handler({args: {map, lowestHighscores}, sender, outputSuccess}){
+			const fmap = FMap.getCreate(map) ?? fail(`Map data is still loading, please try again.`);
+			lowestHighscores ??= await Menu.buttons(sender, "[accent]Map runs", "Select a view", [
+				[{data: true, text: "Lowest highscores"}],
+				[{data: false, text: "All runs"}],
+			], {
+				includeCancel: true,
+				onCancel: "ignore"
+			});
+
+			let runs = fmap.runs.slice();
+			if(lowestHighscores) runs = runs.filter(r => r.success)
+				.sort((a, b) => a.duration() - b.duration());
+
+			const [index, _] = await Menu.textPages(sender, runs.map(r => [
+				 formatTimestamp(r.startTime),
+				 () =>
+`Duration: ${formatTime(r.duration())}
+Max player count: ${r.maxPlayerCount}
+Outcome: ${r.outcome()[1]}
+Wave: ${r.wave}`
+			]), ["[scarlet]\uE86FDelete"], {
+				onCancel: "ignore"
+			});
+			await Menu.confirmDangerous(sender, `Are you sure you want to delete this map run? This action is irreversible.`);
+			if(runs[index] != fmap.runs[index]) fail(`Someone else deleted a run, please try again.`);
+			const deleted = fmap.runs.splice(index, 1)[0];
+			outputSuccess(`Deleted run (${formatTimestamp(deleted.startTime)}) with duration ${formatTime(deleted.duration())}.`);
 		}
 	}
 });

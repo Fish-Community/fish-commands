@@ -1183,7 +1183,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             else {
                 void menus_1.Menu.textPages(sender, Vars.maps.customMaps().map(function (m) {
                     return ["Map information", function () { var _a, _b; return (_b = (_a = maps_1.FMap.getCreate(m)) === null || _a === void 0 ? void 0 : _a.displayStats(f)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Map data is still being loaded, try again later."); }];
-                }).toArray(), {
+                }).toArray(), [], {
                     startPage: Vars.maps.customMaps().toArray().indexOf(Vars.state.map),
                 });
             }

@@ -89,6 +89,7 @@ var commands_1 = require("/frameworks/commands");
 var menus_1 = require("/frameworks/menus");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
+var maps_1 = require("/maps");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
 var utils_1 = require("/utils");
@@ -1420,6 +1421,61 @@ exports.commands = (0, commands_1.commandList)({
             var editor = _a.args.editor;
             Vars.state.rules.editor = editor;
             Call.setRules(Vars.state.rules);
+        }
+    },
+    mapruns: {
+        args: ["map:map", "lowestHighscores:boolean?"],
+        description: "Displays all map runs for a selected map, and allows deleting invalid/cheated runs.",
+        perm: commands_1.Perm.admin,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var fmap, _c, runs, _d, index, _, deleted;
+                var _e;
+                var _f = _b.args, map = _f.map, lowestHighscores = _f.lowestHighscores, sender = _b.sender, outputSuccess = _b.outputSuccess;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            fmap = (_e = maps_1.FMap.getCreate(map)) !== null && _e !== void 0 ? _e : (0, commands_1.fail)("Map data is still loading, please try again.");
+                            if (!(lowestHighscores !== null && lowestHighscores !== void 0)) return [3 /*break*/, 1];
+                            _c = lowestHighscores;
+                            return [3 /*break*/, 3];
+                        case 1: return [4 /*yield*/, menus_1.Menu.buttons(sender, "[accent]Map runs", "Select a view", [
+                                [{ data: true, text: "Lowest highscores" }],
+                                [{ data: false, text: "All runs" }],
+                            ], {
+                                includeCancel: true,
+                                onCancel: "ignore"
+                            })];
+                        case 2:
+                            _c = (lowestHighscores = _g.sent());
+                            _g.label = 3;
+                        case 3:
+                            _c;
+                            runs = fmap.runs.slice();
+                            if (lowestHighscores)
+                                runs = runs.filter(function (r) { return r.success; })
+                                    .sort(function (a, b) { return a.duration() - b.duration(); });
+                            return [4 /*yield*/, menus_1.Menu.textPages(sender, runs.map(function (r) { return [
+                                    (0, utils_1.formatTimestamp)(r.startTime),
+                                    function () {
+                                        return "Duration: ".concat((0, utils_1.formatTime)(r.duration()), "\nMax player count: ").concat(r.maxPlayerCount, "\nOutcome: ").concat(r.outcome()[1], "\nWave: ").concat(r.wave);
+                                    }
+                                ]; }), ["[scarlet]\uE86FDelete"], {
+                                    onCancel: "ignore"
+                                })];
+                        case 4:
+                            _d = __read.apply(void 0, [_g.sent(), 2]), index = _d[0], _ = _d[1];
+                            return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to delete this map run? This action is irreversible.")];
+                        case 5:
+                            _g.sent();
+                            if (runs[index] != fmap.runs[index])
+                                (0, commands_1.fail)("Someone else deleted a run, please try again.");
+                            deleted = fmap.runs.splice(index, 1)[0];
+                            outputSuccess("Deleted run (".concat((0, utils_1.formatTimestamp)(deleted.startTime), ") with duration ").concat((0, utils_1.formatTime)(deleted.duration()), "."));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     }
 });

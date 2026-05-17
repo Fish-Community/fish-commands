@@ -1106,7 +1106,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 			} else {
 				void Menu.textPages(sender, Vars.maps.customMaps().map(m =>
 					["Map information", () => FMap.getCreate(m)?.displayStats(f) ?? fail("Map data is still being loaded, try again later.")] as const
-				).toArray(), {
+				).toArray(), [], {
 					startPage: Vars.maps.customMaps().toArray().indexOf(Vars.state.map),
 				});
 			}
