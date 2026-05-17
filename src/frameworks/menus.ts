@@ -230,38 +230,42 @@ export const Menu = {
 	/**
 	 * Displays a menu to a player, returning a Promise.
 	 * Adds left and right arrows to switch pages.
-	 * Does not support options.
 	 * Shows different text based on the current page.
 	 */
-	textPages<TCancelBehavior extends MenuCancelOption>(
+	textPages<TCancelBehavior extends MenuCancelOption, TOpt extends string>(
 		this:void, target:FishPlayer, pages:Array<readonly [title:string, description:() => string]>,
+		options: TOpt[] = [],
 		cfg: Pick<MenuOptions<never, TCancelBehavior>, "onCancel"> & {
 			/** Index or title of the initial page. */
 			startPage?: number | string;
 		} = {},
 	){
 		const { promise, reject, resolve } = Promise.withResolvers<
-			(TCancelBehavior extends "null" ? null : never),
+			(TCancelBehavior extends "null" ? null : never) | readonly [pageNumber:number, option: TOpt],
 			TCancelBehavior extends "reject" ? "cancel" : never
 		>();
 		const pageSkipSize = Math.max(Math.floor(pages.length / 8), 5);
 		function showPage(index:number){
-			const opts:{ data: ["left", number] | ["numbers"] | ["right", number] | ["cancel"]; text: string; }[][] = [
+			const opts:{ data: ["left", number] | ["numbers"] | ["right", number] | ["cancel"] | readonly [number]; text: string; }[][] = [
 				[
 					{ data: ["left", pageSkipSize], text: `[${index == 0 ? "gray" : "accent"}]<<<` },
 					{ data: ["left", 1], text: `[${index == 0 ? "gray" : "accent"}]<--` },
 					{ data: ["right", 1], text: `[${index == pages.length - 1 ? "gray" : "accent"}]-->` },
 					{ data: ["right", pageSkipSize], text: `[${index == pages.length - 1 ? "gray" : "accent"}]>>>` },
-				],
-				[
+				],[
 					{ data: ["numbers"], text: `[accent]Page ${index + 1}/${pages.length}` },
-					{ data: ["cancel"], text: `[red]Close` },
-				]
+				],
+				...options.map((d, i) => [{ data: [i] as const, text: d }]),
+				[
+					{ data: ["cancel"], text: `[lightgray]Close` },
+				],
 			];
 			void Menu.buttons(target, pages[index][0], pages[index][1](), opts, {...cfg, onCancel: "null"}).then<unknown, never>(response => {
 				if(response?.[0] === "right") showPage(Math.min(index + response[1], pages.length - 1));
 				else if(response?.[0] === "left") showPage(Math.max(index - response[1], 0));
-				else {
+				else if(typeof response?.[0] === "number"){
+					resolve([index, options[response[0]]]);
+				} else {
 					//Treat numbers as cancel
 					if(cfg.onCancel == "null") resolve(null as never);
 					else if(cfg.onCancel == "reject") reject("cancel" as never);

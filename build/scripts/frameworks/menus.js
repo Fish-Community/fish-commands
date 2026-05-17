@@ -242,31 +242,36 @@ exports.Menu = {
     /**
      * Displays a menu to a player, returning a Promise.
      * Adds left and right arrows to switch pages.
-     * Does not support options.
      * Shows different text based on the current page.
      */
-    textPages: function (target, pages, cfg) {
+    textPages: function (target, pages, options, cfg) {
+        if (options === void 0) { options = []; }
         if (cfg === void 0) { cfg = {}; }
         var _a = promise_1.Promise.withResolvers(), promise = _a.promise, reject = _a.reject, resolve = _a.resolve;
         var pageSkipSize = Math.max(Math.floor(pages.length / 8), 5);
         function showPage(index) {
-            var opts = [
+            var opts = __spreadArray(__spreadArray([
                 [
                     { data: ["left", pageSkipSize], text: "[".concat(index == 0 ? "gray" : "accent", "]<<<") },
                     { data: ["left", 1], text: "[".concat(index == 0 ? "gray" : "accent", "]<--") },
                     { data: ["right", 1], text: "[".concat(index == pages.length - 1 ? "gray" : "accent", "]-->") },
                     { data: ["right", pageSkipSize], text: "[".concat(index == pages.length - 1 ? "gray" : "accent", "]>>>") },
-                ],
-                [
+                ], [
                     { data: ["numbers"], text: "[accent]Page ".concat(index + 1, "/").concat(pages.length) },
-                    { data: ["cancel"], text: "[red]Close" },
                 ]
-            ];
+            ], __read(options.map(function (d, i) { return [{ data: [i], text: d }]; })), false), [
+                [
+                    { data: ["cancel"], text: "[lightgray]Close" },
+                ],
+            ], false);
             void exports.Menu.buttons(target, pages[index][0], pages[index][1](), opts, __assign(__assign({}, cfg), { onCancel: "null" })).then(function (response) {
                 if ((response === null || response === void 0 ? void 0 : response[0]) === "right")
                     showPage(Math.min(index + response[1], pages.length - 1));
                 else if ((response === null || response === void 0 ? void 0 : response[0]) === "left")
                     showPage(Math.max(index - response[1], 0));
+                else if (typeof (response === null || response === void 0 ? void 0 : response[0]) === "number") {
+                    resolve([index, options[response[0]]]);
+                }
                 else {
                     //Treat numbers as cancel
                     if (cfg.onCancel == "null")
