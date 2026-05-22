@@ -947,28 +947,27 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var sender = _a.sender, manager = _a.data.manager;
             manager.vote(sender, 1, 0); //No weighting for RTV except for removing AFK players
         }
-    }), 
-    // votekick: {
-    //	 args: ["target:player"],
-    //	 description: "Starts a vote to kick a player.",
-    //	 perm: Perm.play,
-    //	 handler({args, sender}){
-    // 		if(votekickmanager.currentSession) fail(`There is already a votekick in progress.`);
-    // 		votekickmanager.start({
-    // 			initiator: sender,
-    // 			target: args.player
-    // 		});
-    //	 }
-    // },
-    // vote: {
-    //	 args: ["vote:boolean"],
-    //	 description: "Use /votekick instead.",
-    //	 perm: Perm.play,
-    //	 handler({sender, args}){
-    // 		votekickmanager.handleVote(sender, args ? 1 : -1);
-    //	 }
-    // },
-    forcenextmap: {
+    }), votekick: (0, commands_1.command)({
+        args: ["target:player"],
+        description: "Starts a vote to kick a player.",
+        perm: commands_1.Perm.play,
+        data: new votes_1.VoteManager(funcs_1.Duration.seconds(20), ["absolute", 3], function (fishP, target) { return fishP.team() == target.team() || fishP.hasPerm("voteOtherTeams"); }),
+        handler: function (_a) {
+            var args = _a.args, sender = _a.sender, votekickmanager = _a.data;
+            if (votekickmanager.session)
+                (0, commands_1.fail)("There is already a votekick in progress.");
+            votekickmanager.start(sender, 1, args.target);
+        }
+    }), vote: {
+        args: ["vote:boolean"],
+        description: "Use /votekick instead.",
+        perm: commands_1.Perm.play,
+        handler: function (_a) {
+            var sender = _a.sender, args = _a.args, allCommands = _a.allCommands;
+            var votekickmanager = allCommands.votekick.data;
+            votekickmanager.handleVote(sender, args ? 1 : -1);
+        }
+    }, forcenextmap: {
         args: ["map:map"],
         description: 'Override the next map in queue.',
         perm: commands_1.Perm.admin.exceptModes({

@@ -706,10 +706,9 @@ export const commands = commandList({
 	[accent]Names used: [[${names}]`
 			);
 			if(sender.hasPerm("viewUUIDs"))
-				output(f`\
-	[#FFAAAA]UUID: ${args.target.uuid}
-	[#FFAAAA]IP: ${args.target.ip()}`
-				);
+				output(f`\t[#FFAAAA]UUID: ${args.target.uuid}`);
+			if(sender.hasPerm("viewIPs"))
+				output(f`\t[#FFAAAA]IP: ${args.target.ip()}`);
 		}
 	},
 
