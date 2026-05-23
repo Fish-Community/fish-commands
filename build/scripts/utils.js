@@ -649,7 +649,7 @@ function processChat(player, message, effects) {
     var fishPlayer = players_1.FishPlayer.get(player);
     var highlight = fishPlayer.highlight;
     var filterTripText;
-    var suspicious = fishPlayer.joinsLessThan(3);
+    var suspicious = fishPlayer.joinsLessThan(3) && !fishPlayer.ranksAtLeast("active");
     if ((!fishPlayer.hasPerm("bypassChatFilter") || fishPlayer.chatStrictness == "strict")
         && (filterTripText = matchFilter(message, fishPlayer.chatStrictness, suspicious))) {
         if (effects) {
