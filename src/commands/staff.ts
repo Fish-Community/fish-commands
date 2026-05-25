@@ -1121,6 +1121,7 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 				onCancel: "ignore"
 			});
 
+			const initialLength = fmap.runs.length;
 			let runs = fmap.runs.slice();
 			if(lowestHighscores) runs = runs.filter(r => r.success)
 				.sort((a, b) => a.duration() - b.duration());
@@ -1136,7 +1137,7 @@ Wave: ${r.wave}`
 				onCancel: "ignore"
 			});
 			await Menu.confirmDangerous(sender, `Are you sure you want to delete this map run? This action is irreversible.`);
-			if(runs[index] != fmap.runs[index]) fail(`Someone else deleted a run, please try again.`);
+			if(initialLength != fmap.runs.length) fail(`Someone else deleted a run, please try again.`);
 			const deleted = fmap.runs.splice(index, 1)[0];
 			outputSuccess(`Deleted run (${formatTimestamp(deleted.startTime)}) with duration ${formatTime(deleted.duration())}.`);
 		}

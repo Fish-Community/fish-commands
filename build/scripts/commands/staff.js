@@ -1431,7 +1431,7 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.admin,
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var fmap, _c, runs, _d, index, _, deleted;
+                var fmap, _c, initialLength, runs, _d, index, _, deleted;
                 var _e;
                 var _f = _b.args, map = _f.map, lowestHighscores = _f.lowestHighscores, sender = _b.sender, outputSuccess = _b.outputSuccess;
                 return __generator(this, function (_g) {
@@ -1453,6 +1453,7 @@ exports.commands = (0, commands_1.commandList)({
                             _g.label = 3;
                         case 3:
                             _c;
+                            initialLength = fmap.runs.length;
                             runs = fmap.runs.slice();
                             if (lowestHighscores)
                                 runs = runs.filter(function (r) { return r.success; })
@@ -1470,7 +1471,7 @@ exports.commands = (0, commands_1.commandList)({
                             return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to delete this map run? This action is irreversible.")];
                         case 5:
                             _g.sent();
-                            if (runs[index] != fmap.runs[index])
+                            if (initialLength != fmap.runs.length)
                                 (0, commands_1.fail)("Someone else deleted a run, please try again.");
                             deleted = fmap.runs.splice(index, 1)[0];
                             outputSuccess("Deleted run (".concat((0, utils_1.formatTimestamp)(deleted.startTime), ") with duration ").concat((0, utils_1.formatTime)(deleted.duration()), "."));
