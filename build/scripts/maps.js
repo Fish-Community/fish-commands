@@ -340,8 +340,9 @@ var FMap = function () {
         _b.maps = (__runInitializers(_b, _static_allMaps_extraInitializers), {}),
         (function () {
             globals_1.FishEvents.on("dataLoaded", function () {
+                var _c;
                 //This event listener runs after the data has been loaded into allMaps
-                _b.allMaps.forEach(function (map) {
+                ((_c = _b.allMaps) !== null && _c !== void 0 ? _c : (_b.allMaps = [])).forEach(function (map) {
                     _b.maps[map.mapFileName] = map;
                     map.runs.forEach(function (run) {
                         var _c;

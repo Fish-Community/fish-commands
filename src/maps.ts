@@ -177,7 +177,7 @@ export class FMap extends dataClass<FMapData>() {
 	static {
 		FishEvents.on("dataLoaded", () => {
 			//This event listener runs after the data has been loaded into allMaps
-			FMap.allMaps!.forEach(map => {
+			(FMap.allMaps ??= []).forEach(map => {
 				FMap.maps[map.mapFileName] = map;
 				map.runs.forEach(run => {
 					//this should not even happen, I think GameOverEvent is sending winTeam as null sometimes??
