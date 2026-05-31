@@ -313,6 +313,7 @@ export const tips = {
 		`You can spawn an [scarlet]Ohno[] with the [scarlet]/ohno[] command. Ohnos are harmless creatures that were created by fusing an alpha and an atrax.`,
 		`Ohnos cannot be spawned near enemy buildings, because they are peaceful and do not want to be used for attacks.`,
 		`You can use [white]/tp[] to teleport directly to any other player! (But only when you're in a core unit)`,
+		`You can unload(with  or ) conveyors that carry items in bulk! (Like  or )`,
 		`Hate boulders? You can remove them with [white]/clean[].`,
 		`You can check our rules at any time by running [white]/rules[].`,
 		// `You can kill your unit by running [white]/die[].`,
