@@ -186,14 +186,32 @@ Events.on(EventType.ServerLoadEvent, function (e) {
     });
 });
 // Keeps track of any action performed on a tile for use in tilelog.
-Events.on(EventType.BlockBuildBeginEvent, utils_1.addToTileHistory);
-Events.on(EventType.BuildRotateEvent, utils_1.addToTileHistory);
-Events.on(EventType.ConfigEvent, utils_1.addToTileHistory);
-Events.on(EventType.PickupEvent, utils_1.addToTileHistory);
-Events.on(EventType.PayloadDropEvent, utils_1.addToTileHistory);
+Events.on(EventType.BlockBuildBeginEvent, function (e) {
+    (0, utils_1.addToTileHistory)(e);
+    players_1.FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
+Events.on(EventType.BuildRotateEvent, function (e) {
+    (0, utils_1.addToTileHistory)(e);
+    players_1.FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
+Events.on(EventType.ConfigEvent, function (e) {
+    (0, utils_1.addToTileHistory)(e);
+    players_1.FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
+Events.on(EventType.PickupEvent, function (e) {
+    (0, utils_1.addToTileHistory)(e);
+    players_1.FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
+Events.on(EventType.PayloadDropEvent, function (e) {
+    (0, utils_1.addToTileHistory)(e);
+    players_1.FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
 Events.on(EventType.UnitDestroyEvent, utils_1.addToTileHistory);
 Events.on(EventType.BlockDestroyEvent, utils_1.addToTileHistory);
-Events.on(EventType.UnitControlEvent, utils_1.addToTileHistory);
+Events.on(EventType.UnitControlEvent, function (e) {
+    (0, utils_1.addToTileHistory)(e);
+    players_1.FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
 Events.on(EventType.TapEvent, commands_1.handleTapEvent);
 Events.on(EventType.GameOverEvent, function (e) {
     var e_1, _a;
