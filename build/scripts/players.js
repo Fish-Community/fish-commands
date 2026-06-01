@@ -681,13 +681,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.updateAFKCheck = function () {
         //TODO better AFK check
         this.forEachPlayer(function (fishP, mp) {
-            if (fishP.lastMousePosition[0] != mp.mouseX || fishP.lastMousePosition[1] != mp.mouseY) {
-                fishP.lastActive = Date.now();
-            }
             fishP.lastMousePosition = [mp.mouseX, mp.mouseY];
-            if (fishP.lastUnitPosition[0] != mp.x || fishP.lastUnitPosition[1] != mp.y) {
-                fishP.lastActive = Date.now();
-            }
             fishP.lastUnitPosition = [mp.x, mp.y];
             fishP.updateName();
         });

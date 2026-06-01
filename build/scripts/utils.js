@@ -82,6 +82,7 @@ exports.outputMessage = outputMessage;
 exports.outputConsole = outputConsole;
 exports.updateBans = updateBans;
 exports.processChat = processChat;
+exports.tilelogAndResetAfk = tilelogAndResetAfk;
 exports.getIPRange = getIPRange;
 exports.getHash = getHash;
 exports.match = match;
@@ -923,6 +924,11 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
         }, 1); });
     });
 });
+function tilelogAndResetAfk(e) {
+    (0, exports.addToTileHistory)(e);
+    players_1.FishPlayer.get(e.unit.player).lastActive = Date.now();
+}
+;
 function getIPRange(input, error) {
     if (globals_1.ipRangeCIDRPattern.test(input)) {
         var _a = __read(input.split("/"), 2), ip = _a[0], maskLength = _a[1];
