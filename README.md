@@ -2,7 +2,9 @@
 
 ![image](docs/images/fish-logo.png)
 
-A monolithic plugin that handles all custom features for the >|||>Fish servers. Created by Brandons404, rewritten by BalaM314.
+A monolithic plugin that handles all custom features for the >|||>Fish servers. Founded by Brandons404, rewritten by BalaM314.
+
+Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks in advance!
 
 **Before reading the code, see [docs/info.md](docs/info.md).**
 
@@ -22,9 +24,6 @@ A monolithic plugin that handles all custom features for the >|||>Fish servers. 
 * Visual effects
 * Tile logs
 ----
-
-Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks in advance!
-Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks in advance!
 
 Contributors:
 
