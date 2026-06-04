@@ -86,7 +86,7 @@ exports.bannedWords = {
     ]),
     /** autoWhack: new players saying one of these words will be automatically stopped and muted. */
     autoWhack: [
-        "nig" + "ger", "nig" + "ga", "ni8" + "8er", "nig" + "g3r", "hit" + "ler", "fa" + "gg" + "ot", "nazis",
+        "nig" + "ger", "nig" + "ga", "ni8" + "8er", "nig" + "g3r", "hit" + "ler", "fa" + "gg" + "ot", "nazis", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер",
     ],
 };
 //for some reason the external mindustry server does not read the files correctly, so we can only use ASCII
