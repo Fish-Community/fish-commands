@@ -169,8 +169,11 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 					action: "picked up",
 					type: action.tile!.block()?.name ?? "nothing",
 				});
-			} else if(action.type === Administration.ActionType.control && !action.unit?.spawnedByCore && Date.now() < fishP.blockedFromUnitsUntil){
-				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from controlling units for ${formatTimeRelative(fishP.blockedFromUnitsUntil, true)}`);
+			} else if(action.type === Administration.ActionType.control && !action.unit?.spawnedByCore && Date.now() < fishP.blockedFromPossessingUnitsUntil){
+				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from controlling units for ${formatTimeRelative(fishP.blockedFromPossessingUnitsUntil, true)}`);
+				return false;
+			} else if(action.type === Administration.ActionType.commandUnits && Date.now() < fishP.blockedFromCommandingUnitsUntil){
+				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from commanding units for ${formatTimeRelative(fishP.blockedFromCommandingUnitsUntil, true)}`);
 				return false;
 			} else if(action.type === Administration.ActionType.pingLocation && action.pingText && action.pingText.length < Vars.maxPingTextLength){
 				const fishP = FishPlayer.get(action.player);

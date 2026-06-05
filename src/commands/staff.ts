@@ -630,22 +630,42 @@ export const commands = commandList({
 
 	clearunit: {
 		args: ["target:player", "duration:time?"],
-		description: "Forces a player out of the unit they are controlling, and blocks them from controlling units for a specified duration.",
+		description: "Forces a player out of the unit they are controlling, and blocks them from possessing units for a specified duration.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
 		handler({args: { target, duration }, outputSuccess, f}){
-			if(target.blockedFromUnitsUntil == 0) duration ??= Duration.minutes(1);
+			if(target.blockedFromPossessingUnitsUntil == 0) duration ??= Duration.minutes(1);
 			else duration ??= 0;
 			
 			if(duration == 0){
-				target.blockedFromUnitsUntil = 0;
+				target.blockedFromPossessingUnitsUntil = 0;
 				target.sendMessage(`You are allowed to control units again.`);
 				outputSuccess(f`Restored ${target}'s ability to control units.`);
 			} else {
 				target.forceRespawn();
-				target.blockedFromUnitsUntil = Date.now() + duration;
+				target.blockedFromPossessingUnitsUntil = Date.now() + duration;
 				target.sendMessage(`You have been blocked from controlling units for ${formatTime(duration)}.`);
 				outputSuccess(f`Blocked ${target} from controlling units for ${formatTime(duration)}.`);
+			}
+		}
+	},
+	clearcommand: {
+		args: ["target:player", "duration:time?"],
+		description: "Blocks a player from commanding units for a specified duration.",
+		perm: Perm.mod,
+		requirements: [Req.moderate("target", false, "mod", false)],
+		handler({args: { target, duration }, outputSuccess, f}){
+			if(target.blockedFromCommandingUnitsUntil == 0) duration ??= Duration.minutes(1);
+			else duration ??= 0;
+
+			if(duration == 0){
+				target.blockedFromCommandingUnitsUntil = 0;
+				target.sendMessage(`You are allowed to command units again.`);
+				outputSuccess(f`Restored ${target}'s ability to command units.`);
+			} else {
+				target.blockedFromCommandingUnitsUntil = Date.now() + duration;
+				target.sendMessage(`You have been blocked from commanding units for ${formatTime(duration)}.`);
+				outputSuccess(f`Blocked ${target} from commanding units for ${formatTime(duration)}.`);
 			}
 		}
 	},

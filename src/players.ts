@@ -113,7 +113,9 @@ export class FishPlayer {
 	 */
 	autoflagged = false;
 	/** Timestamp until which this player will not be allowed to control units. */
-	blockedFromUnitsUntil = -1;
+	blockedFromPossessingUnitsUntil = -1;
+	/** Timestamp until which this player will not be allowed to control units. */
+	blockedFromCommandingUnitsUntil = -1;
 	/** The original name that this player used to join the server. */
 	originalName?: string;
 	// Used by the data syncing framework.
