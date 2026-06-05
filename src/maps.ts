@@ -8,7 +8,7 @@ import { FFunction } from "/frameworks/commands";
 import { dataClass, serialize } from "/frameworks/io";
 import { computeStatistics, Duration } from "/funcs";
 import { FishEvents } from "/globals";
-import { formatTime, formatTimeShort, match } from "/utils";
+import { formatTime, formatTimeShort, formatTimestamp, match } from "/utils";
 
 type FinishedMapRunData = {
 	winTeam:Team;
@@ -210,7 +210,7 @@ export class FMap extends dataClass<FMapData>() {
 	stats(){
 		const runs = this.runs.filter(r => r.maxPlayerCount > 0); //Remove all runs with no players on
 		const allRunCount = runs.length;
-		const victories = runs.filter(r => r.outcome()[1] === "win").length;
+		const victories = runs.filter(r => r.outcome()[1] === "win");
 		const losses = runs.filter(r => r.outcome()[0] === "loss").length;
 		const earlyRTVs = runs.filter(r => r.outcome()[1] === "early rtv").length;
 		const lateRTVs = runs.filter(r => r.outcome()[1] === "late rtv").length;
@@ -229,13 +229,13 @@ export class FMap extends dataClass<FMapData>() {
 		return {
 			allRunCount,
 			significantRunCount,
-			victories,
+			victories: victories.length,
 			losses,
 			totalLosses,
 			earlyRTVs,
 			lateRTVs,
 			earlyRTVRate: earlyRTVs / allRunCount,
-			winRate: victories / significantRunCount,
+			winRate: victories.length / significantRunCount,
 			lossRate: losses / significantRunCount,
 			averagePlaytime: durationStats.average,
 			shortestWinTime: winDurationStats.lowest,
@@ -246,6 +246,7 @@ export class FMap extends dataClass<FMapData>() {
 			teamWinRate,
 			highestWave: waveStats.highest,
 			averageWave: waveStats.average,
+			mostRecentWin: victories.at(-1)?.startTime
 		};
 	}
 	displayStats(f:FFunction):string | null {
@@ -258,7 +259,8 @@ export class FMap extends dataClass<FMapData>() {
 [#CCFFCC]Total runs: ${stats.allRunCount} (${stats.victories} wins, ${stats.totalLosses} losses, ${stats.earlyRTVs} RTVs)
 [#CCFFCC]Outcomes: ${f.percent(stats.winRate, 1)} wins, ${f.percent(stats.lossRate, 1)} losses, ${f.percent(stats.earlyRTVRate, 1)} RTVs
 [#CCFFCC]Average playtime: ${formatTime(stats.averagePlaytime)}
-[#CCFFCC]Shortest win time: ${formatTime(stats.shortestWinTime)}`,
+[#CCFFCC]Shortest win time: ${formatTime(stats.shortestWinTime)}
+[#CCFFCC]Most recent win: ${stats.mostRecentWin ? formatTimestamp(stats.mostRecentWin) : "[red]none[]"}`,
 			survival: `\
 [#CCFFCC]Highest wave reached: ${stats.highestWave}
 [#CCFFCC]Average wave reached: ${stats.averageWave}

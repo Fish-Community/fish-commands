@@ -246,9 +246,10 @@ var FMap = function () {
                 return (_c = this.map) === null || _c === void 0 ? void 0 : _c.rules();
             };
             FMap.prototype.stats = function () {
+                var _c;
                 var runs = this.runs.filter(function (r) { return r.maxPlayerCount > 0; }); //Remove all runs with no players on
                 var allRunCount = runs.length;
-                var victories = runs.filter(function (r) { return r.outcome()[1] === "win"; }).length;
+                var victories = runs.filter(function (r) { return r.outcome()[1] === "win"; });
                 var losses = runs.filter(function (r) { return r.outcome()[0] === "loss"; }).length;
                 var earlyRTVs = runs.filter(function (r) { return r.outcome()[1] === "early rtv"; }).length;
                 var lateRTVs = runs.filter(function (r) { return r.outcome()[1] === "late rtv"; }).length;
@@ -271,13 +272,13 @@ var FMap = function () {
                 return {
                     allRunCount: allRunCount,
                     significantRunCount: significantRunCount,
-                    victories: victories,
+                    victories: victories.length,
                     losses: losses,
                     totalLosses: totalLosses,
                     earlyRTVs: earlyRTVs,
                     lateRTVs: lateRTVs,
                     earlyRTVRate: earlyRTVs / allRunCount,
-                    winRate: victories / significantRunCount,
+                    winRate: victories.length / significantRunCount,
                     lossRate: losses / significantRunCount,
                     averagePlaytime: durationStats.average,
                     shortestWinTime: winDurationStats.lowest,
@@ -288,6 +289,7 @@ var FMap = function () {
                     teamWinRate: teamWinRate,
                     highestWave: waveStats.highest,
                     averageWave: waveStats.average,
+                    mostRecentWin: (_c = victories.at(-1)) === null || _c === void 0 ? void 0 : _c.startTime
                 };
             };
             FMap.prototype.displayStats = function (f) {
@@ -297,7 +299,7 @@ var FMap = function () {
                 var stats = this.stats();
                 var rules = this.rules();
                 var modeSpecificStats = (0, utils_1.match)(config_1.Gamemode.name(), {
-                    attack: "[#CCFFCC]Total runs: ".concat(stats.allRunCount, " (").concat(stats.victories, " wins, ").concat(stats.totalLosses, " losses, ").concat(stats.earlyRTVs, " RTVs)\n[#CCFFCC]Outcomes: ").concat(f.percent(stats.winRate, 1), " wins, ").concat(f.percent(stats.lossRate, 1), " losses, ").concat(f.percent(stats.earlyRTVRate, 1), " RTVs\n[#CCFFCC]Average playtime: ").concat((0, utils_1.formatTime)(stats.averagePlaytime), "\n[#CCFFCC]Shortest win time: ").concat((0, utils_1.formatTime)(stats.shortestWinTime)),
+                    attack: "[#CCFFCC]Total runs: ".concat(stats.allRunCount, " (").concat(stats.victories, " wins, ").concat(stats.totalLosses, " losses, ").concat(stats.earlyRTVs, " RTVs)\n[#CCFFCC]Outcomes: ").concat(f.percent(stats.winRate, 1), " wins, ").concat(f.percent(stats.lossRate, 1), " losses, ").concat(f.percent(stats.earlyRTVRate, 1), " RTVs\n[#CCFFCC]Average playtime: ").concat((0, utils_1.formatTime)(stats.averagePlaytime), "\n[#CCFFCC]Shortest win time: ").concat((0, utils_1.formatTime)(stats.shortestWinTime), "\n[#CCFFCC]Most recent win: ").concat(stats.mostRecentWin ? (0, utils_1.formatTimestamp)(stats.mostRecentWin) : "[red]none[]"),
                     survival: "[#CCFFCC]Highest wave reached: ".concat(stats.highestWave, "\n[#CCFFCC]Average wave reached: ").concat(stats.averageWave, "\n[#CCFFCC]Total runs: ").concat(stats.allRunCount, " (").concat(stats.earlyRTVs, " RTVs)\n[#CCFFCC]RTV rate: ").concat(f.percent(stats.earlyRTVRate, 1), "\n[#CCFFCC]Average duration: ").concat((0, utils_1.formatTime)(stats.averagePlaytime), "\n[#CCFFCC]Longest duration: ").concat((0, utils_1.formatTime)(stats.longestTime)),
                     pvp: "[#CCFFCC]Total runs: ".concat(stats.allRunCount, " (").concat(stats.earlyRTVs, " RTVs)\n[#CCFFCC]Team win rates: ").concat(Object.entries(stats.teamWinRate).map(function (_c) {
                         var _d = __read(_c, 2), team = _d[0], rate = _d[1];
