@@ -907,7 +907,7 @@ exports.commands = (0, commands_1.commandList)({
         requirements: [commands_1.Req.moderate("target", false, "mod", false)],
         handler: function (_a) {
             var _b = _a.args, target = _b.target, duration = _b.duration, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (target.blockedFromPossessingUnitsUntil == 0)
+            if (Date.now() > 1000 + target.blockedFromPossessingUnitsUntil)
                 duration !== null && duration !== void 0 ? duration : (duration = funcs_1.Duration.minutes(1));
             else
                 duration !== null && duration !== void 0 ? duration : (duration = 0);
@@ -931,7 +931,7 @@ exports.commands = (0, commands_1.commandList)({
         requirements: [commands_1.Req.moderate("target", false, "mod", false)],
         handler: function (_a) {
             var _b = _a.args, target = _b.target, duration = _b.duration, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (target.blockedFromCommandingUnitsUntil == 0)
+            if (Date.now() > 1000 + target.blockedFromCommandingUnitsUntil)
                 duration !== null && duration !== void 0 ? duration : (duration = funcs_1.Duration.minutes(1));
             else
                 duration !== null && duration !== void 0 ? duration : (duration = 0);

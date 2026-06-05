@@ -147,9 +147,9 @@ var FishPlayer = /** @class */ (function () {
          */
         this.autoflagged = false;
         /** Timestamp until which this player will not be allowed to control units. */
-        this.blockedFromPossessingUnitsUntil = -1;
+        this.blockedFromPossessingUnitsUntil = 0;
         /** Timestamp until which this player will not be allowed to control units. */
-        this.blockedFromCommandingUnitsUntil = -1;
+        this.blockedFromCommandingUnitsUntil = 0;
         // Used by the data syncing framework.
         this.infoUpdated = false;
         this.dataSynced = false;

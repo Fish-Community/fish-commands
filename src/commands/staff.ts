@@ -634,7 +634,7 @@ export const commands = commandList({
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
 		handler({args: { target, duration }, outputSuccess, f}){
-			if(target.blockedFromPossessingUnitsUntil == 0) duration ??= Duration.minutes(1);
+			if(Date.now() > 1000 + target.blockedFromPossessingUnitsUntil) duration ??= Duration.minutes(1);
 			else duration ??= 0;
 			
 			if(duration == 0){
@@ -655,7 +655,7 @@ export const commands = commandList({
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
 		handler({args: { target, duration }, outputSuccess, f}){
-			if(target.blockedFromCommandingUnitsUntil == 0) duration ??= Duration.minutes(1);
+			if(Date.now() > 1000 + target.blockedFromCommandingUnitsUntil) duration ??= Duration.minutes(1);
 			else duration ??= 0;
 
 			if(duration == 0){
