@@ -12,7 +12,7 @@ import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
-import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
+import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestampFull, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
 
 
 export const commands = consoleCommandList({
@@ -602,7 +602,7 @@ ${Vars.state.rules.waves ? `Wave &c${Vars.state.wave}&fr, &c${Math.ceil(Vars.sta
 &c${Groups.unit.size()}&fr units, &c${Vars.state.enemies}&fr enemies, &c${Groups.build.size()}&fr buildings
 TPS: ${colorNumber(Core.graphics.getFramesPerSecond(), f => f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w", "server")}, \
 Memory: &c${Math.round(Core.app.getJavaHeap() / 1048576)}&fr MB
-Server uptime: ${uptimeColor}${formatTime(uptime)}&fr (since ${formatTimestamp(Date.now() - uptime)})
+Server uptime: ${uptimeColor}${formatTime(uptime)}&fr (since ${formatTimestampFull(Date.now() - uptime)})
 ${[
 	fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
 	fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",

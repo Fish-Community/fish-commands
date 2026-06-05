@@ -46,7 +46,9 @@ exports.memoizeChatFilter = memoizeChatFilter;
 exports.formatTime = formatTime;
 exports.formatTimeShort = formatTimeShort;
 exports.formatModeName = formatModeName;
+exports.formatTimestampFull = formatTimestampFull;
 exports.formatTimestamp = formatTimestamp;
+exports.formatTimestampShort = formatTimestampShort;
 exports.formatTimeRelative = formatTimeRelative;
 exports.getColor = getColor;
 exports.nearbyEnemyTile = nearbyEnemyTile;
@@ -152,9 +154,16 @@ function formatModeName(name) {
         "minigame": "Minigames",
     }[name];
 }
-function formatTimestamp(time) {
+function formatTimestampFull(time) {
     var date = new Date(time);
     return "".concat(date.toDateString(), ", ").concat(date.toTimeString());
+}
+function formatTimestamp(time) {
+    return new Date(time).toLocaleString();
+}
+function formatTimestampShort(time) {
+    var date = new Date(time);
+    return "".concat(date.getFullYear(), "-").concat(date.getMonth() + 1, "-").concat(date.getDate(), " ").concat(date.getHours(), ":").concat(date.getMinutes());
 }
 function formatTimeRelative(time, raw) {
     var difference = Math.abs(time - Date.now());
