@@ -78,9 +78,18 @@ export function formatModeName(name:GamemodeName){
 	}[name];
 }
 
-export function formatTimestamp(time:number){
+export function formatTimestampFull(time:number){
 	const date = new Date(time);
 	return `${date.toDateString()}, ${date.toTimeString()}`;
+}
+
+export function formatTimestamp(time:number){
+	return new Date(time).toLocaleString();
+}
+
+export function formatTimestampShort(time:number){
+	const date = new Date(time);
+	return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 }
 
 export function formatTimeRelative(time:number, raw?:boolean){

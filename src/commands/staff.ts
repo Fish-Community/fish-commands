@@ -630,22 +630,46 @@ export const commands = commandList({
 
 	clearunit: {
 		args: ["target:player", "duration:time?"],
-		description: "Forces a player out of the unit they are controlling, and blocks them from controlling units for a specified duration.",
+		description: "Forces a player out of the unit they are controlling, and blocks them from possessing units for a specified duration.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
-		handler({args: { target, duration }, outputSuccess, f}){
-			if(target.blockedFromUnitsUntil == 0) duration ??= Duration.minutes(1);
+		handler({args: { target, duration }, sender, outputSuccess, f}){
+			if(Date.now() > 1000 + target.blockedFromPossessingUnitsUntil) duration ??= Duration.minutes(1);
 			else duration ??= 0;
 			
 			if(duration == 0){
-				target.blockedFromUnitsUntil = 0;
+				target.blockedFromPossessingUnitsUntil = 0;
 				target.sendMessage(`You are allowed to control units again.`);
 				outputSuccess(f`Restored ${target}'s ability to control units.`);
+				logAction("restored unit possession for", sender, target);
 			} else {
 				target.forceRespawn();
-				target.blockedFromUnitsUntil = Date.now() + duration;
+				target.blockedFromPossessingUnitsUntil = Date.now() + duration;
 				target.sendMessage(`You have been blocked from controlling units for ${formatTime(duration)}.`);
 				outputSuccess(f`Blocked ${target} from controlling units for ${formatTime(duration)}.`);
+				logAction("revoked unit possession for", sender, target, undefined, duration);
+			}
+		}
+	},
+	clearcommand: {
+		args: ["target:player", "duration:time?"],
+		description: "Blocks a player from commanding units for a specified duration.",
+		perm: Perm.mod,
+		requirements: [Req.moderate("target", false, "mod", false)],
+		handler({args: { target, duration }, sender, outputSuccess, f}){
+			if(Date.now() > 1000 + target.blockedFromCommandingUnitsUntil) duration ??= Duration.minutes(1);
+			else duration ??= 0;
+
+			if(duration == 0){
+				target.blockedFromCommandingUnitsUntil = 0;
+				target.sendMessage(`You are allowed to command units again.`);
+				outputSuccess(f`Restored ${target}'s ability to command units.`);
+				logAction("restored command mode for", sender, target, undefined, duration);
+			} else {
+				target.blockedFromCommandingUnitsUntil = Date.now() + duration;
+				target.sendMessage(`You have been blocked from commanding units for ${formatTime(duration)}.`);
+				outputSuccess(f`Blocked ${target} from commanding units for ${formatTime(duration)}.`);
+				logAction("revoked command mode for", sender, target, undefined, duration);
 			}
 		}
 	},
