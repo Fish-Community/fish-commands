@@ -64,12 +64,12 @@ export function getStaffMessages(callback: (messages: string) => unknown) {
 }
 
 /** Send staff messages from server. */
-export function sendStaffMessage(message:string, playerName:string, callback?: (sent:boolean) => unknown){
+export function sendStaffMessage(message:string, playerName:string, isStaff:boolean, callback?: (sent:boolean) => unknown){
 	if(Mode.noBackend) return;
 	const req = Http.post(
 		`http://${backendIP}/api/sendStaffMessage`,
 		// need to send both name variants so one can be sent to the other servers with color and discord can use the clean one
-		JSON.stringify({ message, playerName, cleanedName: Strings.stripColors(playerName), server: Gamemode.name() })
+		JSON.stringify({ message, playerName, cleanedName: Strings.stripColors(playerName), server: Gamemode.name(), isStaff })
 	).header('Content-Type', 'application/json').header('Accept', '*/*');
 	req.timeout = 10000;
 	req.error(() => {
