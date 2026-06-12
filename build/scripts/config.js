@@ -53,7 +53,7 @@ exports.bannedWords = {
     // like this: ["badw", "goodbadw"]
     /** Normal: banned always. */
     normal: processBannedWordList([
-        "fanum tax", "gyatt", ["rizz", "grizzly", "frizz"], "skibidi", //With love, DarthScion
+        "fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon"], "skibidi", //With love, DarthScion
         //>:( -dart
         // "uwu", //lol
         "nig" + "ger", "nig" + "ga", "niger", "ni8" + "8er", "nig" + "gre", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер", //our apologies to citizens of the Republic of Niger
