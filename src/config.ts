@@ -39,7 +39,7 @@ export const bannedWords: {
 		//>:( -dart
 		// "uwu", //lol
 
-		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", /\bnegr\b/ //our apologies to citizens of the Republic of Niger
+		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", /\bnegr\b/, //our apologies to citizens of the Republic of Niger
 		["ni"+"ga", "anniga", "inniga", "unniga", "aniga", "iniga", "eniga", "oniga"],
 		"re"+"tard",
 		'kill yourself', 'kill urself', /\bkys\b/,
