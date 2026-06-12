@@ -70,12 +70,12 @@ function getStaffMessages(callback) {
     });
 }
 /** Send staff messages from server. */
-function sendStaffMessage(message, playerName, callback) {
+function sendStaffMessage(message, playerName, isStaff, callback) {
     if (config_1.Mode.noBackend)
         return;
     var req = Http.post("http://".concat(config_1.backendIP, "/api/sendStaffMessage"), 
     // need to send both name variants so one can be sent to the other servers with color and discord can use the clean one
-    JSON.stringify({ message: message, playerName: playerName, cleanedName: Strings.stripColors(playerName), server: config_1.Gamemode.name() })).header('Content-Type', 'application/json').header('Accept', '*/*');
+    JSON.stringify({ message: message, playerName: playerName, cleanedName: Strings.stripColors(playerName), server: config_1.Gamemode.name(), isStaff: isStaff })).header('Content-Type', 'application/json').header('Accept', '*/*');
     req.timeout = 10000;
     req.error(function () {
         Log.err("[API] Network error when trying to call api.sendStaffMessage()");

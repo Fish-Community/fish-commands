@@ -340,7 +340,7 @@ export const commands = commandList({
 			if(!sender.hasPerm("mod")){
 				if(Date.now() - lastUsedSender < 4000) fail(`This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.`);
 			}
-			api.sendStaffMessage(args.message, sender.name, (sent) => {
+			api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"), (sent) => {
 				if(!sender.hasPerm("mod")){
 					if(sent){
 						outputSuccess(`Message sent to [orange]all online staff.`);

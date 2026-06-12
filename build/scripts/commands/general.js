@@ -441,7 +441,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 if (Date.now() - lastUsedSender < 4000)
                     (0, commands_1.fail)("This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.");
             }
-            api.sendStaffMessage(args.message, sender.name, function (sent) {
+            api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"), function (sent) {
                 if (!sender.hasPerm("mod")) {
                     if (sent) {
                         outputSuccess("Message sent to [orange]all online staff.");
