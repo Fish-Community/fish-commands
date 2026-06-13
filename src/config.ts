@@ -68,7 +68,7 @@ export const bannedWords: {
 		"sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐", "diddy", "epstein",
 		uuidPattern, ipPattern, ipPortPattern
 	]),
-	/** autoWhack: new players saying one of these words will be automatically stopped and muted. Comes with \b so no need to add it." */
+	/** autoWhack: new players saying one of these words will be automatically stopped and muted. Comes with \b so no need to add it. */
 	autoWhack: [
 		"nig"+"ger","nig"+"ga","ni8"+"8er","nig"+"g3r","hit"+"ler","fa"+"gg"+"ot","nazis", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", "negr"
 	],
