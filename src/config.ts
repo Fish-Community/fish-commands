@@ -208,6 +208,11 @@ export class FishServer {
 		"162.248.101.116", "6567",
 		["m", "mg", "mini", "minig", "mgame", "mng", "minigame", "mpvp"]
 	);
+	static testing = new FishServer(
+		"testing",
+		"162.248.101.52", "6567",
+		["test", "testsrv", "t", "testingserver", "testserver"]
+	);
 	static byName(input:string):FishServer | null {
 		input = input.toLowerCase();
 		return FishServer.all.find(s => s.aliases.concat(s.name).includes(input)) ?? null;
