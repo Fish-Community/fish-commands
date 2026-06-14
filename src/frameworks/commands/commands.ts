@@ -132,7 +132,7 @@ export async function disambiguateArgument<T extends FishCommandArgType>(
 	} else outputArgs[name] = options;
 }
 
-const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "rank", "roleflag", "item"];
+const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item"];
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
@@ -247,6 +247,18 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 					2
 				);
 				break;
+			case "mapOrRandom":
+				if(["rand", "random"].includes(args[i].toLowerCase())){
+					outputArgs[cmdArg.name] = "random";
+					break;
+				}
+				await disambiguateArgument(
+					getMap(args[i]),
+					...commonArgs,
+					r => r.name(),
+					2
+				);
+				break;
 			case "rank":
 				await disambiguateArgument(
 					Rank.search(args[i]),
@@ -275,7 +287,7 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 	return outputArgs;
 }
 
-const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map"];
+const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map", "mapOrRandom"];
 
 function isArgOptional(arg:CommandArg, allowMenus:boolean){
 	return arg.isOptional || (argsSupportingBlank.includes(arg.type) && allowMenus);

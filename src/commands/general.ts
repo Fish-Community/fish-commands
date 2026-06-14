@@ -879,19 +879,21 @@ Please stop attacking and [lime]build defenses[] first!`
 	// },
 
 	forcenextmap: {
-		args: ["map:map"],
+		args: ["map:mapOrRandom"],
 		description: 'Override the next map in queue.',
 		perm: Perm.admin.exceptModes({
 			testsrv: Perm.play
 		}),
 		handler({allCommands, args, sender, outputSuccess, f}){
-			Vars.maps.setNextMapOverride(args.map);
+			Vars.maps.setNextMapOverride(args.map == "random" ? null : args.map);
 			if(allCommands.nextmap.data.voteEndTime() > -1){
 				//Cancel /nextmap vote if it's ongoing
 				allCommands.nextmap.data.resetVotes();
-				Call.sendMessage(`[red]Admin ${sender.name}[red] has cancelled the vote. The next map will be [yellow]${args.map.name()}.`);
+				Call.sendMessage(`[red]Admin ${sender.name}[red] has cancelled the vote. The next map will be ${args.map == "random" ? "random" : `[yellow]${args.map.name()}`}.`);
 			} else {
-				outputSuccess(f`Forced the next map to be "${args.map.name()}" by ${args.map.author()}`);
+				outputSuccess(f`Forced the next map to be ${
+					args.map == "random" ? "random" : `"${args.map.name()}" by ${args.map.author()}`
+				}.`);
 			}
 		},
 
@@ -915,7 +917,12 @@ ${Vars.maps.customMaps().toArray().map(map =>
 	},
 
 	nextmap: command(() => {
-		const votes = new Map<FishPlayer, MMap>();
+		const random = {
+			name(){ return "[lightgray]Random"; },
+			plainName(){ return "random"; }
+		};
+		type Random = typeof random;
+		const votes = new Map<FishPlayer, MMap | Random>();
 		let lastVoteCount = 0;
 		let lastVoteTime = 0;
 		let voteEndTime = -1;
@@ -928,9 +935,9 @@ ${Vars.maps.customMaps().toArray().map(map =>
 			task?.cancel();
 		}
 
-		function getMapData():Seq<ObjectIntMapEntry<MMap>> {
+		function getMapData():Seq<ObjectIntMapEntry<MMap | Random>> {
 			return [...votes.values()].reduce(
-				(acc, map) => (acc.increment(map), acc), new ObjectIntMap<MMap>()
+				(acc, map) => (acc.increment(map), acc), new ObjectIntMap<MMap | Random>()
 			).entries().toArray();
 		}
 
@@ -966,7 +973,7 @@ ${getMapData().map(({key:map, value:votes}) =>
 			const mapData = getMapData();
 			const highestVoteCount = mapData.max(floatf(e => e.value)).value;
 			const highestVotedMaps = mapData.select(e => e.value == highestVoteCount);
-			let winner:MMap;
+			let winner:MMap | Random;
 
 			if(highestVotedMaps.size > 1){
 				winner = highestVotedMaps.random()!.key;
@@ -981,7 +988,7 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 				winner = highestVotedMaps.get(0).key;
 				Call.sendMessage(`[green]Map voting complete! The next map will be [yellow]${winner.name()} [green]with [yellow]${highestVoteCount}[green] votes.`);
 			}
-			Vars.maps.setNextMapOverride(winner);
+			Vars.maps.setNextMapOverride(winner == random ? null : null);
 			resetVotes();
 		}
 
@@ -989,12 +996,13 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		Events.on(EventType.ServerLoadEvent, resetVotes);
 
 		return {
-			args: ['map:map'],
+			args: ['map:mapOrRandom'],
 			description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
 			perm: Perm.play,
 			data: {votes, voteEndTime: () => voteEndTime, resetVotes, endVote},
 			requirements: [Req.cooldown(10_000)],
-			handler({args:{map}, sender}){
+			handler({args, sender}){
+				const map = args.map === "random" ? random : args.map;
 				if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
 				if(votes.get(sender)) fail(`You have already voted.`);
 				

@@ -771,7 +771,7 @@ type MapTags = {
 	genfilters?:string;
 }
 class Maps {
-	setNextMapOverride(map:MMap):void;
+	setNextMapOverride(map:MMap | null):void;
 	all():Seq<MMap>;
 	customMaps():Seq<MMap>;
 	byName(name:string):MMap | null;

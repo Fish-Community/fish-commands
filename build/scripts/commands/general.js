@@ -1007,21 +1007,21 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
     // 	 }
     // },
     forcenextmap: {
-        args: ["map:map"],
+        args: ["map:mapOrRandom"],
         description: 'Override the next map in queue.',
         perm: commands_1.Perm.admin.exceptModes({
             testsrv: commands_1.Perm.play
         }),
         handler: function (_a) {
             var allCommands = _a.allCommands, args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
-            Vars.maps.setNextMapOverride(args.map);
+            Vars.maps.setNextMapOverride(args.map == "random" ? null : args.map);
             if (allCommands.nextmap.data.voteEndTime() > -1) {
                 //Cancel /nextmap vote if it's ongoing
                 allCommands.nextmap.data.resetVotes();
-                Call.sendMessage("[red]Admin ".concat(sender.name, "[red] has cancelled the vote. The next map will be [yellow]").concat(args.map.name(), "."));
+                Call.sendMessage("[red]Admin ".concat(sender.name, "[red] has cancelled the vote. The next map will be ").concat(args.map == "random" ? "random" : "[yellow]".concat(args.map.name()), "."));
             }
             else {
-                outputSuccess(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Forced the next map to be \"", "\" by ", ""], ["Forced the next map to be \"", "\" by ", ""])), args.map.name(), args.map.author()));
+                outputSuccess(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Forced the next map to be ", "."], ["Forced the next map to be ", "."])), args.map == "random" ? "random" : "\"".concat(args.map.name(), "\" by ").concat(args.map.author())));
             }
         },
     }, maps: {
@@ -1035,6 +1035,10 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }).join("\n")));
         }
     }, nextmap: (0, commands_1.command)(function () {
+        var random = {
+            name: function () { return "[lightgray]Random"; },
+            plainName: function () { return "random"; }
+        };
         var votes = new Map();
         var lastVoteCount = 0;
         var lastVoteTime = 0;
@@ -1089,19 +1093,20 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 winner = highestVotedMaps.get(0).key;
                 Call.sendMessage("[green]Map voting complete! The next map will be [yellow]".concat(winner.name(), " [green]with [yellow]").concat(highestVoteCount, "[green] votes."));
             }
-            Vars.maps.setNextMapOverride(winner);
+            Vars.maps.setNextMapOverride(winner == random ? null : null);
             resetVotes();
         }
         Events.on(EventType.GameOverEvent, resetVotes);
         Events.on(EventType.ServerLoadEvent, resetVotes);
         return {
-            args: ['map:map'],
+            args: ['map:mapOrRandom'],
             description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
             perm: commands_1.Perm.play,
             data: { votes: votes, voteEndTime: function () { return voteEndTime; }, resetVotes: resetVotes, endVote: endVote },
             requirements: [commands_1.Req.cooldown(10000)],
             handler: function (_a) {
-                var map = _a.args.map, sender = _a.sender;
+                var args = _a.args, sender = _a.sender;
+                var map = args.map === "random" ? random : args.map;
                 if (config_1.Gamemode.testsrv())
                     (0, commands_1.fail)("Please use /forcenextmap instead.");
                 if (votes.get(sender))
