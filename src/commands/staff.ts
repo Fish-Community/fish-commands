@@ -1142,7 +1142,7 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 				[{data: false, text: "All runs"}],
 			], {
 				includeCancel: true,
-				onCancel: "ignore"
+				onCancel: "reject"
 			});
 
 			const initialLength = fmap.runs.length;
@@ -1158,7 +1158,7 @@ Max player count: ${r.maxPlayerCount}
 Outcome: ${r.outcome()[1]}
 Wave: ${r.wave}`
 			]), ["[scarlet]\uE86FDelete"], {
-				onCancel: "ignore"
+				onCancel: "reject"
 			});
 			await Menu.confirmDangerous(sender, `Are you sure you want to delete this map run? This action is irreversible.`);
 			if(initialLength != fmap.runs.length) fail(`Someone else deleted a run, please try again.`);

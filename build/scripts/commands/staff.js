@@ -1473,7 +1473,7 @@ exports.commands = (0, commands_1.commandList)({
                                 [{ data: false, text: "All runs" }],
                             ], {
                                 includeCancel: true,
-                                onCancel: "ignore"
+                                onCancel: "reject"
                             })];
                         case 2:
                             _c = (lowestHighscores = _g.sent());
@@ -1491,7 +1491,7 @@ exports.commands = (0, commands_1.commandList)({
                                         return "Duration: ".concat((0, utils_1.formatTime)(r.duration()), "\nMax player count: ").concat(r.maxPlayerCount, "\nOutcome: ").concat(r.outcome()[1], "\nWave: ").concat(r.wave);
                                     }
                                 ]; }), ["[scarlet]\uE86FDelete"], {
-                                    onCancel: "ignore"
+                                    onCancel: "reject"
                                 })];
                         case 4:
                             _d = __read.apply(void 0, [_g.sent(), 2]), index = _d[0], _ = _d[1];

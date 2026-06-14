@@ -8,7 +8,7 @@ import * as api from "/api";
 import { FColor, FishServer, Gamemode, rules, text } from "/config";
 import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
-import { Menu } from "/frameworks/menus";
+import { Cancel, Menu } from "/frameworks/menus";
 import { capitalizeText, delay, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
 import { FMap, PartialMapRun } from "/maps";
@@ -1249,28 +1249,24 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			let x = 0, y = 0;
 			let a: Achievement | null = null;
 			while(true){
-				try {
-					[a, x, y] = await Menu.scroll2D(
-						sender, "Achievements",
-						a ? FColor.achievement`\
-	${a.icon} ${a.name}
-	
-	${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
-	
-	Allowed modes: ${a.modesText}
-	Unlocked: ${f.boolGood(a.has(target))}
-	${a.hidden ? "This achievement is secret." : ""}\
-	` :
-		(target == sender ? `You have ${numberAchievements}/${totalAchievements} achievements.`
-		: FColor.achievement`Player ${target.prefixedName} has ${numberAchievements}/${totalAchievements} achievements.`)
-		+ "\nClick an achievement icon to show more information.",
-						options,
-						{ onCancel: "reject", columns: 5, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
-					);
-				} catch(err){
-					if(err == "cancel") return; //TODO replace this string "cancel" with a symbol
-					else throw err;
-				}
+				//the loop will be aborted if the menu is cancelled (promise will reject)
+				[a, x, y] = await Menu.scroll2D(
+					sender, "Achievements",
+					a ? FColor.achievement`\
+${a.icon} ${a.name}
+
+${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
+
+Allowed modes: ${a.modesText}
+Unlocked: ${f.boolGood(a.has(target))}
+${a.hidden ? "This achievement is secret." : ""}\
+` :
+	(target == sender ? `You have ${numberAchievements}/${totalAchievements} achievements.`
+	: FColor.achievement`Player ${target.prefixedName} has ${numberAchievements}/${totalAchievements} achievements.`)
+	+ "\nClick an achievement icon to show more information.",
+					options,
+					{ onCancel: "reject", columns: 5, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
+				);
 				if(a == Achievements.click_me && target == sender) a.grantTo(sender);
 			}
 		}

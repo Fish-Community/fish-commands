@@ -65,7 +65,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listeners = exports.Menu = void 0;
+exports.listeners = exports.Menu = exports.Cancel = void 0;
 exports.registerListeners = registerListeners;
 var commands_1 = require("/frameworks/commands");
 var funcs_1 = require("/funcs");
@@ -92,6 +92,7 @@ var listeners = {
         //do nothing
     }
 };
+exports.Cancel = Symbol("Cancel");
 /** Registers all listeners, should be called on server load. */
 function registerListeners() {
     var e_1, _a;
@@ -113,7 +114,7 @@ function registerListeners() {
 exports.Menu = {
     /** Displays a menu to a player, returning a Promise. */
     raw: function (title, description, arrangedOptions, target, _a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.optionStringifier, optionStringifier = _c === void 0 ? String : _c, _d = _b.onCancel, onCancel = _d === void 0 ? "ignore" : _d, _e = _b.cancelOptionId, cancelOptionId = _e === void 0 ? -1 : _e;
+        var _b = _a === void 0 ? {} : _a, _c = _b.optionStringifier, optionStringifier = _c === void 0 ? String : _c, _d = _b.onCancel, onCancel = _d === void 0 ? "reject" : _d, _e = _b.cancelOptionId, cancelOptionId = _e === void 0 ? -1 : _e;
         var _f = promise_1.Promise.withResolvers(), promise = _f.promise, reject = _f.reject, resolve = _f.resolve;
         //The target fishPlayer has a property called activeMenu, which stores information about the last menu triggered.
         //If menu() is being called from a menu calback, add it to the front of the queue so it is processed before any other menus.
@@ -131,7 +132,7 @@ exports.Menu = {
                         if (onCancel == "null")
                             resolve(null);
                         else if (onCancel == "reject")
-                            reject("cancel");
+                            reject(exports.Cancel);
                         else
                             return;
                     }
@@ -155,7 +156,7 @@ exports.Menu = {
     },
     /** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */
     menu: function (title, description, options, target, _a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.includeCancel, includeCancel = _c === void 0 ? false : _c, _d = _b.optionStringifier, optionStringifier = _d === void 0 ? String : _d, _e = _b.columns, columns = _e === void 0 ? 3 : _e, _f = _b.onCancel, onCancel = _f === void 0 ? "ignore" : _f, _g = _b.cancelOptionId, cancelOptionId = _g === void 0 ? -1 : _g;
+        var _b = _a === void 0 ? {} : _a, _c = _b.includeCancel, includeCancel = _c === void 0 ? false : _c, _d = _b.optionStringifier, optionStringifier = _d === void 0 ? String : _d, _e = _b.columns, columns = _e === void 0 ? 3 : _e, _f = _b.onCancel, onCancel = _f === void 0 ? "reject" : _f, _g = _b.cancelOptionId, cancelOptionId = _g === void 0 ? -1 : _g;
         //Set up the 2D array of options, and maybe add cancel
         //Call.menu() with [[]] will cause a client crash, make sure to pass [] instead
         var arrangedOptions = (options.length == 0 && !includeCancel) ? [] : (0, funcs_1.to2DArray)(options, columns);
@@ -175,7 +176,7 @@ exports.Menu = {
     confirm: function (target, description, _a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.cancelOutput, cancelOutput = _c === void 0 ? "Cancelled." : _c, _d = _b.title, title = _d === void 0 ? "Confirm" : _d, _e = _b.confirmText, confirmText = _e === void 0 ? "[green]Confirm" : _e, _f = _b.cancelText, cancelText = _f === void 0 ? "[red]Cancel" : _f;
         return exports.Menu.menu(title, description, [confirmText, cancelText], target, { onCancel: "reject", cancelOptionId: 1 }).catch(function (e) {
-            if (e === "cancel")
+            if (e === exports.Cancel)
                 (0, commands_1.fail)(cancelOutput);
             throw e; //some random error, rethrow it
         });
@@ -221,7 +222,7 @@ exports.Menu = {
                     if (cfg.onCancel == "null")
                         resolve(null);
                     else if (cfg.onCancel == "reject")
-                        reject("cancel");
+                        reject(exports.Cancel);
                     //otherwise, just let the promise hang
                 }
             });
@@ -267,7 +268,7 @@ exports.Menu = {
                     if (cfg.onCancel == "null")
                         resolve(null);
                     else if (cfg.onCancel == "reject")
-                        reject("cancel");
+                        reject(exports.Cancel);
                     //otherwise, just let the promise hang
                 }
             });
@@ -342,7 +343,7 @@ exports.Menu = {
                     if (cfg.onCancel == "null")
                         resolve(null);
                     else if (cfg.onCancel == "reject")
-                        reject("cancel");
+                        reject(exports.Cancel);
                     //otherwise, just let the promise hang
                 }
             });

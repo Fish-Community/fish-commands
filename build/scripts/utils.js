@@ -92,6 +92,7 @@ exports.getStatuses = getStatuses;
 var api = require("/api");
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
+var menus_1 = require("/frameworks/menus");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
@@ -1073,7 +1074,11 @@ function handleError(err, sender, outputFail, context) {
         //If the error is a command error, then just outputFail
         outputFail(err.data, sender);
     }
-    else {
+    else if (err === menus_1.Cancel) {
+        //Menu cancelled, do nothing
+        return;
+    }
+    {
         sender.sendMessage("[scarlet]\u274C An error occurred while executing the command!");
         if (sender.hasPerm("seeErrorMessages"))
             sender.sendMessage((0, funcs_1.parseError)(err));

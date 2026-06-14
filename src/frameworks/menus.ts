@@ -6,8 +6,8 @@ For usage information, see docs/framework-usage-guide.md
 For maintenance information, see docs/frameworks.md
 */
 
-import { CommandError, fail } from "/frameworks/commands";
-import { parseError, to2DArray } from "/funcs";
+import { fail } from "/frameworks/commands";
+import { to2DArray } from "/funcs";
 import { FishPlayer } from "/players";
 import { Promise } from "/promise";
 import { handleError, outputFail } from "/utils";
@@ -32,6 +32,9 @@ const listeners = {
 	}
 } satisfies Record<string, (player:mindustryPlayer, option:number) => void>;
 
+export const Cancel = Symbol("Cancel");
+export type Cancel = typeof Cancel;
+
 /** Registers all listeners, should be called on server load. */
 export function registerListeners(){
 	for(const [key, listener] of Object.entries(listeners)){
@@ -47,7 +50,7 @@ type MenuConfirmProps = {
 	cancelText?: string;
 };
 
-type MenuCancelOption = "ignore" | "reject" | "null";
+type MenuCancelOption = "reject" | "null";
 type MenuOptions<TOption, TCancelBehavior extends MenuCancelOption> = {
 	/** [red]Cancel[] will be added to the list of options. */
 	includeCancel?: boolean;
@@ -55,7 +58,7 @@ type MenuOptions<TOption, TCancelBehavior extends MenuCancelOption> = {
 	columns?: number;
 	/**
 	 * Specifies the behavior when the player cancels the menu (by clicking Cancel, or by pressing Escape).
-	 * @default "ignore"
+	 * @default "reject"
 	 */
 	onCancel?: TCancelBehavior;
 	cancelOptionId?: number;
@@ -63,17 +66,17 @@ type MenuOptions<TOption, TCancelBehavior extends MenuCancelOption> = {
 
 export const Menu = {
 	/** Displays a menu to a player, returning a Promise. */
-	raw<const TOption, TCancelBehavior extends MenuCancelOption = "ignore">(
+	raw<const TOption, TCancelBehavior extends MenuCancelOption = "reject">(
 		this:void, title:string, description:string, arrangedOptions:TOption[][], target:FishPlayer,
 		{
 			optionStringifier = String,
-			onCancel = "ignore" as never,
+			onCancel = "reject" as never,
 			cancelOptionId = -1,
 		}:{
 			optionStringifier?:(opt:TOption) => string;
 			/**
 			 * Specifies the behavior when the player cancels the menu (by clicking Cancel, or by pressing Escape).
-			 * @default "ignore"
+			 * @default "reject"
 			 */
 			onCancel?: TCancelBehavior;
 			cancelOptionId?: number;
@@ -81,7 +84,7 @@ export const Menu = {
 	){
 		const { promise, reject, resolve } = Promise.withResolvers<
 			(TCancelBehavior extends "null" ? null : never) | TOption,
-			TCancelBehavior extends "reject" ? "cancel" : never
+			TCancelBehavior extends "reject" ? Cancel : never
 		>();
 	
 		//The target fishPlayer has a property called activeMenu, which stores information about the last menu triggered.
@@ -99,7 +102,7 @@ export const Menu = {
 				if(option === -1 || option === cancelOptionId || !(option in options)){
 					//Consider any invalid option to be a cancellation
 					if(onCancel == "null") resolve(null as never);
-					else if(onCancel == "reject") reject("cancel" as never);
+					else if(onCancel == "reject") reject(Cancel as never);
 					else return;
 				} else {
 					resolve(options[option]);
@@ -119,13 +122,13 @@ export const Menu = {
 		return promise;
 	},
 	/** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */
-	menu<const TOption, TCancelBehavior extends MenuCancelOption = "ignore">(
+	menu<const TOption, TCancelBehavior extends MenuCancelOption = "reject">(
 		this:void, title:string, description:string, options:TOption[], target:FishPlayer,
 		{
 			includeCancel = false,
 			optionStringifier = String,
 			columns = 3,
-			onCancel = "ignore" as never,
+			onCancel = "reject" as never,
 			cancelOptionId = -1,
 		}:MenuOptions<TOption, TCancelBehavior> = {}
 	){
@@ -155,7 +158,7 @@ export const Menu = {
 			title, description, [confirmText, cancelText], target,
 			{ onCancel: "reject", cancelOptionId: 1 }
 		).catch(e => {
-			if(e === "cancel") fail(cancelOutput);
+			if(e === Cancel) fail(cancelOutput);
 			throw e; //some random error, rethrow it
 		});
 	},
@@ -193,7 +196,7 @@ export const Menu = {
 	){
 		const { promise, reject, resolve } = Promise.withResolvers<
 			(TCancelBehavior extends "null" ? null : never) | TOption,
-			TCancelBehavior extends "reject" ? "cancel" : never
+			TCancelBehavior extends "reject" ? Cancel : never
 		>();
 		function showPage(index:number){
 			const opts:{ data: "left" | "numbers" | "right" | readonly [TOption]; text: string; }[][] = [
@@ -211,7 +214,7 @@ export const Menu = {
 				else {
 					//Treat numbers as cancel
 					if(cfg.onCancel == "null") resolve(null as never);
-					else if(cfg.onCancel == "reject") reject("cancel" as never);
+					else if(cfg.onCancel == "reject") reject(Cancel as never);
 					//otherwise, just let the promise hang
 				}
 			});
@@ -234,7 +237,7 @@ export const Menu = {
 	){
 		const { promise, reject, resolve } = Promise.withResolvers<
 			(TCancelBehavior extends "null" ? null : never) | readonly [pageNumber:number, option: TOpt],
-			TCancelBehavior extends "reject" ? "cancel" : never
+			TCancelBehavior extends "reject" ? Cancel : never
 		>();
 		const pageSkipSize = Math.max(Math.floor(pages.length / 8), 5);
 		function showPage(index:number){
@@ -260,7 +263,7 @@ export const Menu = {
 				} else {
 					//Treat numbers as cancel
 					if(cfg.onCancel == "null") resolve(null as never);
-					else if(cfg.onCancel == "reject") reject("cancel" as never);
+					else if(cfg.onCancel == "reject") reject(Cancel as never);
 					//otherwise, just let the promise hang
 				}
 			});
@@ -296,7 +299,7 @@ export const Menu = {
 	){
 		const { promise, reject, resolve } = Promise.withResolvers<
 			(TCancelBehavior extends "null" ? null : never) | [TOption, x:number, y:number],
-			TCancelBehavior extends "reject" ? "cancel" : never
+			TCancelBehavior extends "reject" ? Cancel : never
 		>();
 		const { rows = 5, columns: cols = 5 } = cfg;
 		const height = options.length;
@@ -332,7 +335,7 @@ export const Menu = {
 				else {
 					//Treat numbers as cancel
 					if(cfg.onCancel == "null") resolve(null as never);
-					else if(cfg.onCancel == "reject") reject("cancel" as never);
+					else if(cfg.onCancel == "reject") reject(Cancel as never);
 					//otherwise, just let the promise hang
 				}
 			});
@@ -345,7 +348,7 @@ export const Menu = {
 	 * Adds left and right arrows to switch pages. Automatically paginates provided options.
 	 * Accepts pre-generated data and text. Alternative to optionStringifier if the text is already generated.
 	 */
-	pagedListButtons<TButtonData, MenuCancelBehavior extends MenuCancelOption = "ignore">(
+	pagedListButtons<TButtonData, MenuCancelBehavior extends MenuCancelOption = "reject">(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:Array<{ data: TButtonData; text: string; }>,
 		{ rowsPerPage = 10, columns = 3, ...cfg }: Pick<MenuOptions<TButtonData, MenuCancelBehavior>, "columns" | "onCancel"> & {
@@ -362,7 +365,7 @@ export const Menu = {
 	 * Displays a menu to a player, returning a Promise.
 	 * Adds left and right arrows to switch pages. Automatically paginates provided options.
 	 */
-	pagedList<TButtonData, MenuCancelBehavior extends MenuCancelOption = "ignore">(
+	pagedList<TButtonData, MenuCancelBehavior extends MenuCancelOption = "reject">(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:TButtonData[],
 		{ rowsPerPage = 10, columns = 3, optionStringifier = String, ...cfg }: Pick<MenuOptions<TButtonData, MenuCancelBehavior>, "columns" | "onCancel" | "optionStringifier"> & {
