@@ -648,7 +648,7 @@ Available types:[yellow]
 		args: ['player:player?'],
 		description: 'Displays the server rules.',
 		perm: Perm.none,
-		handler({args, sender, outputSuccess, f}){
+		handler({args, sender, output, outputSuccess, f}){
 			const target = args.player ?? sender;
 			if(target !== sender){
 				if(!sender.hasPerm("warn")) fail(`You do not have permission to show rules to other players.`);
@@ -658,10 +658,13 @@ Available types:[yellow]
 			void Menu.menu(
 				"Rules for [#0000ff]>|||> FISH [white]servers", rules.join("\n\n"),
 				["[green]I agree to abide by these rules[]", "No"], target,
+				{ onCancel: "null" }
 			).then((option) => {
 				if(option == "No"){
 					target.kick("You must agree to the rules to play on this server. Rejoin to agree to the rules.", 1);
 					outputSuccess('Player rejected the rules and was kicked.');
+				} else if(option == null){
+					output('Player closed the menu.');
 				} else {
 					outputSuccess('Player acknowledged the rules.');
 				}
