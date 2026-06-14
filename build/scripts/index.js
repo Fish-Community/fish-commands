@@ -302,4 +302,7 @@ Events.on(EventType.WorldLoadEvent, function () { return players_1.FishPlayer.on
 Events.on(EventType.PlayerChatEvent, function (e) {
     players_1.FishPlayer.onPlayerChat(e.player, e.message);
 });
+Events.on(EventType.PlayEvent, function () {
+    globals_1.fishState.startTime = Date.now();
+});
 Log.info("fish-commands: parsing done in @ms", Date.now() - this._startTime);

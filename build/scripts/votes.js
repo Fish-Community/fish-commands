@@ -59,6 +59,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoteManager = void 0;
 var commands_1 = require("/frameworks/commands");
 var funcs_1 = require("/funcs");
+var globals_1 = require("/globals");
 var players_1 = require("/players");
 /** Manages a vote. */
 var VoteManager = /** @class */ (function (_super) {
@@ -107,6 +108,7 @@ var VoteManager = /** @class */ (function (_super) {
     };
     /** @throws CommandError */
     VoteManager.prototype.vote = function (player, newVote, data) {
+        var _this = this;
         if (!this.session)
             return this.start(player, newVote, data);
         if (!this.isEligible(player, this.session.data))
@@ -116,7 +118,10 @@ var VoteManager = /** @class */ (function (_super) {
         if (oldVote == null)
             this.fire("player vote", [player, newVote]);
         this.fire("player vote change", [player, oldVote !== null && oldVote !== void 0 ? oldVote : 0, newVote]);
-        this._checkVote(false);
+        if (Date.now() - globals_1.fishState.startTime < 3000)
+            Timer.schedule(function () { return _this._checkVote(false); }, 3);
+        else
+            this._checkVote(false);
     };
     VoteManager.prototype.unvote = function (player) {
         if (!this.session)

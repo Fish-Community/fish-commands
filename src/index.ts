@@ -290,5 +290,8 @@ Events.on(EventType.WorldLoadEvent, () => FishPlayer.onGameBegin());
 Events.on(EventType.PlayerChatEvent, e => {
 	FishPlayer.onPlayerChat(e.player, e.message);
 });
+Events.on(EventType.PlayEvent, () => {
+	fishState.startTime = Date.now();
+});
 
 Log.info("fish-commands: parsing done in @ms", Date.now() - (this as any)._startTime);

@@ -17,6 +17,7 @@ exports.fishState = {
     labels: [],
     peacefulMode: false,
     joinBell: false,
+    startTime: Date.now(),
 };
 exports.fishPlugin = {
     directory: null,

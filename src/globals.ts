@@ -17,6 +17,7 @@ export const fishState = {
 	labels: [] as TimerTask[],
 	peacefulMode: false,
 	joinBell: false,
+	startTime: Date.now(),
 };
 export const fishPlugin = {
 	directory: null as null | string,
