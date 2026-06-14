@@ -655,6 +655,9 @@ exports.Achievements = {
     }),
     ohno: new Achievement(["scarlet", UnitTypes.alpha.emoji()], "Oh no", "Control an ohno unit."),
     sniper_duel: new Achievement(["yellow", UnitTypes.omura.emoji()], "Sniper duel", "Kill a Foreshadow with an Omura from outside its range."),
+    around_the_world: new Achievement(Iconc.planet, "Around the World", "Fly your unit around the entire map without entering it, starting from the lower left.", {
+        notify: "everyone",
+    }),
 };
 Object.entries(exports.Achievements).forEach(function (_a) {
     var _b = __read(_a, 2), id = _b[0], a = _b[1];
@@ -746,6 +749,71 @@ if (!config_1.Gamemode.sandbox())
                 coreHealthTime.set(core, Date.now() + 12000);
         });
     }, 1, 1);
+var aroundTheWorld = {};
+Timer.schedule(function () {
+    var e_5, _a;
+    players_1.FishPlayer.forEachPlayer(function (p) {
+        var _a;
+        var _b;
+        var unit = p.unit();
+        if (unit && unit.x < 0 && unit.y < 0) {
+            (_a = aroundTheWorld[_b = p.uuid]) !== null && _a !== void 0 ? _a : (aroundTheWorld[_b] = { player: p, unit: unit, side: "left" });
+        }
+    });
+    var _loop_5 = function (uuid, entry) {
+        if (!(function () {
+            if (entry.unit.dead)
+                return false;
+            var left = entry.unit.x < 0;
+            var bottom = entry.unit.y < 0;
+            var right = entry.unit.x > (Vars.world.width() - 1) * 8;
+            var top = entry.unit.y > (Vars.world.height() - 1) * 8;
+            switch (entry.side) {
+                case "left":
+                    if (!left)
+                        return false;
+                    if (top)
+                        entry.side = "top";
+                    break;
+                case "top":
+                    if (!top)
+                        return false;
+                    if (right)
+                        entry.side = "right";
+                    break;
+                case "right":
+                    if (!right)
+                        return false;
+                    if (bottom)
+                        entry.side = "bottom";
+                    break;
+                case "bottom":
+                    if (!bottom)
+                        return false;
+                    if (left) {
+                        exports.Achievements.around_the_world.grantTo(entry.player, true);
+                        return false;
+                    }
+                    break;
+            }
+            return true;
+        })())
+            delete aroundTheWorld[uuid];
+    };
+    try {
+        for (var _b = __values(Object.entries(aroundTheWorld)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var _d = __read(_c.value, 2), uuid = _d[0], entry = _d[1];
+            _loop_5(uuid, entry);
+        }
+    }
+    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+        }
+        finally { if (e_5) throw e_5.error; }
+    }
+}, 1, 0.5);
 Events.on(EventType.GameOverEvent, function () { return coreHealthTime.clear(); });
 Events.on(EventType.WorldLoadEvent, function () { return coreHealthTime.clear(); });
 globals_1.FishEvents.on("scriptKiddie", function (_, p) { return Timer.schedule(function () {
