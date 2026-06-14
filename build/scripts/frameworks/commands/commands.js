@@ -489,17 +489,7 @@ function handleTapEvent(event) {
             usageData.tapLastUsedSuccessfully = Date.now();
     }
     catch (err) {
-        if (err instanceof errors_1.CommandError) {
-            //If the error is a command error, then just outputFail
-            (0, utils_1.outputFail)(err.data, sender);
-        }
-        else {
-            sender.sendMessage("[scarlet]\u274C An error occurred while executing the command!");
-            if (sender.hasPerm("seeErrorMessages"))
-                sender.sendMessage((0, funcs_1.parseError)(err));
-            Log.err("Unhandled error in command execution: ".concat(sender.cleanedName, " ran /").concat(sender.tapInfo.commandName, " and tapped"));
-            Log.err(err);
-        }
+        (0, utils_1.handleError)(err, sender, utils_1.outputFail, "".concat(sender.cleanedName, " ran /").concat(sender.tapInfo.commandName, " and tapped"));
     }
     finally {
         if (sender.tapInfo.mode == "once" && !handleTapsUpdated) {
@@ -553,9 +543,7 @@ function register(commands, clientHandler, serverHandler) {
                                 return [3 /*break*/, 4];
                             case 3:
                                 err_1 = _b.sent();
-                                //if args are invalid
-                                if (err_1 instanceof errors_1.CommandError)
-                                    (0, utils_1.outputFail)(err_1.data, sender);
+                                (0, utils_1.handleError)(err_1, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
                                 return [2 /*return*/];
                             case 4:
                                 usageData = fishSender.getUsageData(name);
@@ -604,18 +592,7 @@ function register(commands, clientHandler, serverHandler) {
                                 return [3 /*break*/, 9];
                             case 7:
                                 err_2 = _b.sent();
-                                if (err_2 instanceof errors_1.CommandError) {
-                                    //If the error is a command error, then just outputFail
-                                    (0, utils_1.outputFail)(err_2.data, sender);
-                                }
-                                else {
-                                    sender.sendMessage("[scarlet]\u274C An error occurred while executing the command!");
-                                    if (fishSender.hasPerm("seeErrorMessages"))
-                                        sender.sendMessage((0, funcs_1.parseError)(err_2));
-                                    Log.err("Unhandled error in command execution: ".concat(fishSender.cleanedName, " ran /").concat(name));
-                                    Log.err(err_2);
-                                    Log.err(err_2.stack);
-                                }
+                                (0, utils_1.handleError)(err_2, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
                                 return [3 /*break*/, 9];
                             case 8:
                                 usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();
@@ -667,8 +644,7 @@ function registerConsole(commands, serverHandler) {
                             case 3:
                                 err_3 = _c.sent();
                                 //if args are invalid
-                                if (err_3 instanceof errors_1.CommandError)
-                                    Log.err(err_3);
+                                Log.err(err_3);
                                 return [2 /*return*/];
                             case 4:
                                 usageData = ((_a = globalUsageData[_b = "_console_" + name]) !== null && _a !== void 0 ? _a : (globalUsageData[_b] = { lastUsed: -1, lastUsedSuccessfully: -1 }));

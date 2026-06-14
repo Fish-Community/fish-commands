@@ -10,7 +10,7 @@ import { CommandError, fail } from "/frameworks/commands";
 import { parseError, to2DArray } from "/funcs";
 import { FishPlayer } from "/players";
 import { Promise } from "/promise";
-import { outputFail } from "/utils";
+import { handleError, outputFail } from "/utils";
 
 /** Used to change the behavior of adding another menu when being run in a menu callback. */
 let isInMenuCallback = false;
@@ -105,15 +105,7 @@ export const Menu = {
 					resolve(options[option]);
 				}
 			} catch(err){
-				if(err instanceof CommandError){
-					//If the error is a command error, then just outputFail
-					outputFail(err.data, target);
-				} else {
-					target.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
-					if(target.hasPerm("seeErrorMessages")) target.sendMessage(parseError(err));
-					Log.err(`Unhandled error in menu callback: ${target.cleanedName} submitted menu "${title}" "${description}"`);
-					Log.err(err as Error);
-				}
+				handleError(err, target, outputFail, `${target.cleanedName} submitted menu "${title}" "${description}"`);
 			}
 		}});
 	

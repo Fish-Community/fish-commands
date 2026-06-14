@@ -140,17 +140,7 @@ exports.Menu = {
                     }
                 }
                 catch (err) {
-                    if (err instanceof commands_1.CommandError) {
-                        //If the error is a command error, then just outputFail
-                        (0, utils_1.outputFail)(err.data, target);
-                    }
-                    else {
-                        target.sendMessage("[scarlet]\u274C An error occurred while executing the command!");
-                        if (target.hasPerm("seeErrorMessages"))
-                            target.sendMessage((0, funcs_1.parseError)(err));
-                        Log.err("Unhandled error in menu callback: ".concat(target.cleanedName, " submitted menu \"").concat(title, "\" \"").concat(description, "\""));
-                        Log.err(err);
-                    }
+                    (0, utils_1.handleError)(err, target, utils_1.outputFail, "".concat(target.cleanedName, " submitted menu \"").concat(title, "\" \"").concat(description, "\""));
                 }
             } });
         var i = 0;

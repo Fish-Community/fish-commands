@@ -6,7 +6,7 @@ For functions that don't need values from other files, see funcs.ts.
 
 import * as api from "/api";
 import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
-import { fail, PartialFormatString } from "/frameworks/commands";
+import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
 import { FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
@@ -919,6 +919,21 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 		for(const effect of effects){
 			unit.apply(effect, ticks);
 		}
+	}
+}
+
+export function handleError(err:unknown, sender:FishPlayer, outputFail: (message: string | PartialFormatString, sender: FishPlayer) => void, context?: string){
+	if(err instanceof CommandError){
+		//If the error is a command error, then just outputFail
+		outputFail(err.data, sender);
+	} else {
+		sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
+		if(sender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
+		Log.err(context ?
+			`Unhandled error in command execution: ${context}`
+		: `Unhandled error in command execution.`);
+		Log.err(err);
+		if(typeof err == "object" && err != null && "stack" in err) Log.err(err.stack);
 	}
 }
 

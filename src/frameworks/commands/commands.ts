@@ -16,7 +16,7 @@ import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
 import type { ClientCommandHandler, CommandArg, ServerCommandHandler } from "/types";
-import { getBlock, getItem, getMap, getTeam, getUnitType, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
+import { getBlock, getItem, getMap, getTeam, getUnitType, handleError, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
 
 const hiddenUnauthorizedMessage = "[scarlet]Unknown command. Check [lightgray]/help[scarlet].";
 
@@ -331,15 +331,7 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 			usageData.tapLastUsedSuccessfully = Date.now();
 
 	} catch(err){
-		if(err instanceof CommandError){
-			//If the error is a command error, then just outputFail
-			outputFail(err.data, sender);
-		} else {
-			sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
-			if(sender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
-			Log.err(`Unhandled error in command execution: ${sender.cleanedName} ran /${sender.tapInfo.commandName} and tapped`);
-			Log.err(err as Error);
-		}
+		handleError(err, sender, outputFail, `${sender.cleanedName} ran /${sender.tapInfo.commandName} and tapped`);
 	} finally {
 		if(sender.tapInfo.mode == "once" && !handleTapsUpdated){
 			sender.tapInfo.commandName = null;
@@ -392,8 +384,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 				try {
 					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, fishSender);
 				} catch(err){
-					//if args are invalid
-					if(err instanceof CommandError) outputFail(err.data, sender);
+					handleError(err, fishSender, outputFail, `${fishSender.cleanedName} ran /${name}`);
 					return;
 				}
 
@@ -436,16 +427,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 						usageData.lastUsedSuccessfully = globalUsageData[name].lastUsedSuccessfully = Date.now();
 					}
 				} catch(err){
-					if(err instanceof CommandError){
-						//If the error is a command error, then just outputFail
-						outputFail(err.data, sender);
-					} else {
-						sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
-						if(fishSender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
-						Log.err(`Unhandled error in command execution: ${fishSender.cleanedName} ran /${name}`);
-						Log.err(err as Error);
-						Log.err((err as Error).stack!);
-					}
+					handleError(err, fishSender, outputFail, `${fishSender.cleanedName} ran /${name}`);
 				} finally {
 					usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();
 				}
@@ -476,7 +458,7 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, null);
 				} catch(err){
 					//if args are invalid
-					if(err instanceof CommandError) Log.err(err);
+					Log.err(err);
 					return;
 				}
 

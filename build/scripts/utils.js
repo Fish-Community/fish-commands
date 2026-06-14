@@ -87,6 +87,7 @@ exports.getHash = getHash;
 exports.match = match;
 exports.fishCommandsRootDirPath = fishCommandsRootDirPath;
 exports.applyEffectMode = applyEffectMode;
+exports.handleError = handleError;
 exports.getStatuses = getStatuses;
 var api = require("/api");
 var config_1 = require("/config");
@@ -1065,6 +1066,23 @@ function applyEffectMode(mode, unit, ticks) {
             }
             finally { if (e_6) throw e_6.error; }
         }
+    }
+}
+function handleError(err, sender, outputFail, context) {
+    if (err instanceof commands_1.CommandError) {
+        //If the error is a command error, then just outputFail
+        outputFail(err.data, sender);
+    }
+    else {
+        sender.sendMessage("[scarlet]\u274C An error occurred while executing the command!");
+        if (sender.hasPerm("seeErrorMessages"))
+            sender.sendMessage((0, funcs_1.parseError)(err));
+        Log.err(context ?
+            "Unhandled error in command execution: ".concat(context)
+            : "Unhandled error in command execution.");
+        Log.err(err);
+        if (typeof err == "object" && err != null && "stack" in err)
+            Log.err(err.stack);
     }
 }
 var sources = [
