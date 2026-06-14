@@ -901,7 +901,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }
         },
     }, vnw: (0, commands_1.command)({
-        args: [],
+        args: ["waves:number?"],
         description: "Vote to start the next wave.",
         perm: commands_1.Perm.play,
         init: function () { return ({
@@ -912,36 +912,42 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 .on("player vote change", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has voted on skipping [accent]").concat(t.session.data, "[white] wave(s). [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
                 .on("player vote removed", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has left. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
         }); },
-        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.mode("survival", "testsrv"), commands_1.Req.gameRunning],
+        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.numberRange("waves", 1, 15), commands_1.Req.mode("survival", "testsrv"), commands_1.Req.gameRunning],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var option;
-                var sender = _b.sender, manager = _b.data.manager;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var _c;
+                var sender = _b.sender, waves = _b.args.waves, manager = _b.data.manager;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
-                            if (!!manager.session) return [3 /*break*/, 2];
-                            return [4 /*yield*/, menus_1.Menu.menu("Start a Next Wave Vote", "Select the amount of waves you would like to skip.", [1, 5, 10], sender, {
-                                    includeCancel: true,
-                                    optionStringifier: function (n) { return "".concat(n, " waves"); }
-                                })];
-                        case 1:
-                            option = _c.sent();
+                            if (!!manager.session) return [3 /*break*/, 4];
+                            if (!(waves !== null && waves !== void 0)) return [3 /*break*/, 1];
+                            _c = waves;
+                            return [3 /*break*/, 3];
+                        case 1: return [4 /*yield*/, menus_1.Menu.menu("Start a Next Wave Vote", "Select the amount of waves you would like to skip.", [1, 5, 10], sender, {
+                                includeCancel: true,
+                                optionStringifier: function (n) { return "".concat(n, " waves"); }
+                            })];
+                        case 2:
+                            _c = (waves = _d.sent());
+                            _d.label = 3;
+                        case 3:
+                            _c;
                             if (manager.session) {
                                 //Someone else started a vote
-                                if (manager.session.data != option)
+                                if (manager.session.data != waves)
                                     (0, commands_1.fail)("Someone else started a vote with a different number of waves to skip.");
                                 else
-                                    manager.vote(sender, sender.voteWeight(), option);
+                                    manager.vote(sender, sender.voteWeight(), waves);
                             }
                             else {
-                                manager.start(sender, sender.voteWeight(), option);
+                                manager.start(sender, sender.voteWeight(), waves);
                             }
-                            return [3 /*break*/, 3];
-                        case 2:
+                            return [3 /*break*/, 5];
+                        case 4:
                             manager.vote(sender, sender.voteWeight(), null);
-                            _c.label = 3;
-                        case 3: return [2 /*return*/];
+                            _d.label = 5;
+                        case 5: return [2 /*return*/];
                     }
                 });
             });

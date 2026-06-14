@@ -60,5 +60,12 @@ exports.Req = {
             return (sender.connected() && ((_b = sender.unit()) === null || _b === void 0 ? void 0 : _b.added) && !sender.unit().dead)
                 || (0, errors_1.fail)(message);
         };
+    },
+    numberRange: function (argName, min, max) {
+        return function (_a) {
+            var args = _a.args;
+            return args[argName] == undefined || min <= args[argName] && args[argName] < max
+                || (0, errors_1.fail)("".concat(argName, " must be between ").concat(min, " and ").concat(max));
+        };
     }
 };

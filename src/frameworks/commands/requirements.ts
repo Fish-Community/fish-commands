@@ -36,5 +36,9 @@ export const Req = {
 	unitExists: (message = "You must be in a unit to use this command.") =>
 		({sender}:{sender:FishPlayer}) =>
 			(sender.connected() && sender.unit()?.added && !sender.unit()!.dead)
-				|| fail(message)
+				|| fail(message),
+	numberRange: <T extends string>(argName: T, min:number, max:number) =>
+		({args}:{args:Partial<Record<T, number>>}) =>
+			args[argName] == undefined || min <= args[argName] && args[argName] < max
+				|| fail(`${argName} must be between ${min} and ${max}`)
 };

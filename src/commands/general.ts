@@ -779,7 +779,7 @@ Please stop attacking and [lime]build defenses[] first!`
 	},
 
 	vnw: command({
-		args: [],
+		args: ["waves:number?"],
 		description: "Vote to start the next wave.",
 		perm: Perm.play,
 		init: () => ({
@@ -790,13 +790,13 @@ Please stop attacking and [lime]build defenses[] first!`
 				.on("player vote change", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has voted on skipping [accent]${t.session!.data}[white] wave(s). [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 				.on("player vote removed", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has left. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 		}),
-		requirements: [Req.cooldown(3000), Req.mode("survival", "testsrv"), Req.gameRunning],
-		async handler({sender, data:{manager}}){
+		requirements: [Req.cooldown(3000), Req.numberRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
+		async handler({sender, args: {waves}, data:{manager}}){
 
 			//Disable narrowing, this is async
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 			if(!manager.session as boolean){
-				const option = await Menu.menu(
+				waves ??= await Menu.menu(
 					"Start a Next Wave Vote",
 					"Select the amount of waves you would like to skip.",
 					[1, 5, 10],
@@ -808,10 +808,10 @@ Please stop attacking and [lime]build defenses[] first!`
 				);
 				if(manager.session){
 					//Someone else started a vote
-					if(manager.session.data != option) fail(`Someone else started a vote with a different number of waves to skip.`);
-					else manager.vote(sender, sender.voteWeight(), option);
+					if(manager.session.data != waves) fail(`Someone else started a vote with a different number of waves to skip.`);
+					else manager.vote(sender, sender.voteWeight(), waves);
 				} else {
-					manager.start(sender, sender.voteWeight(), option);
+					manager.start(sender, sender.voteWeight(), waves);
 				}
 			} else {
 				manager.vote(sender, sender.voteWeight(), null);
