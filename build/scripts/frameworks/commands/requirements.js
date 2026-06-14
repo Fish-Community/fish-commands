@@ -9,10 +9,16 @@ var config_1 = require("/config");
 var errors_1 = require("/frameworks/commands/errors");
 var utils_1 = require("/utils");
 exports.Req = {
-    mode: function (mode) { return function () {
-        return config_1.Gamemode[mode]()
-            || (0, errors_1.fail)("This command is only available in ".concat((0, utils_1.formatModeName)(mode)));
-    }; },
+    mode: function () {
+        var modes = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            modes[_i] = arguments[_i];
+        }
+        return function () {
+            return modes.map(function (mode) { return config_1.Gamemode[mode](); }).some(Boolean)
+                || (0, errors_1.fail)("This command is only available in ".concat(modes.map(utils_1.formatModeName).join(" or ")));
+        };
+    },
     modeNot: function (mode) { return function () {
         return !config_1.Gamemode[mode]()
             || (0, errors_1.fail)("This command is disabled in ".concat((0, utils_1.formatModeName)(mode)));

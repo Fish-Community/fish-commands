@@ -11,9 +11,9 @@ import { FishPlayer } from "/players";
 import { formatModeName } from "/utils";
 
 export const Req = {
-	mode: (mode:GamemodeName) => () =>
-		Gamemode[mode]()
-			|| fail(`This command is only available in ${formatModeName(mode)}`),
+	mode: (...modes:GamemodeName[]) => () =>
+		modes.map(mode => Gamemode[mode]()).some(Boolean)
+			|| fail(`This command is only available in ${modes.map(formatModeName).join(" or ")}`),
 	modeNot: (mode:GamemodeName) => () =>
 		!Gamemode[mode]()
 			|| fail(`This command is disabled in ${formatModeName(mode)}`),
