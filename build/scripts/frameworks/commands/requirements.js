@@ -64,8 +64,29 @@ exports.Req = {
     numberRange: function (argName, min, max) {
         return function (_a) {
             var args = _a.args;
-            return args[argName] == undefined || min <= args[argName] && args[argName] < max
+            return args[argName] == undefined || min <= args[argName] && args[argName] <= max
                 || (0, errors_1.fail)("".concat(argName, " must be between ").concat(min, " and ").concat(max));
         };
-    }
+    },
+    integer: function (argName) {
+        return function (_a) {
+            var args = _a.args;
+            return args[argName] == undefined || Number.isSafeInteger(args[argName])
+                || (0, errors_1.fail)("".concat(argName, " must be an integer"));
+        };
+    },
+    integerRange: function (argName, min, max) {
+        return function (_a) {
+            var args = _a.args;
+            return exports.Req.integer(argName)({ args: args }) && exports.Req.numberRange(argName, min, max)({ args: args });
+        };
+    },
+    positiveInteger: function (argName) {
+        return function (_a) {
+            var args = _a.args;
+            return exports.Req.integer(argName)({ args: args }) &&
+                (args[argName] == undefined || args[argName] > 0
+                    || (0, errors_1.fail)("".concat(argName, " must be positive")));
+        };
+    },
 };

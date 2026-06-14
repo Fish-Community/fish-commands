@@ -382,9 +382,8 @@ export const commands = commandList({
 		args: ["wave:number"],
 		description: "Sets the wave number.",
 		perm: Perm.admin,
+		requirements: [Req.positiveInteger("wave")],
 		handler({args, outputSuccess, f}){
-			if(args.wave < 0) fail(`Wave must be positive.`);
-			if(!Number.isSafeInteger(args.wave)) fail(`Wave must be an integer.`);
 			Vars.state.wave = args.wave;
 			outputSuccess(f`Set wave to ${Vars.state.wave}`);
 		}
@@ -772,6 +771,7 @@ export const commands = commandList({
 			testsrv: Perm.trusted,
 		}),
 		data: [],
+		requirements: [Req.positiveInteger("count")],
 		handler({sender, args, data, outputSuccess, f}){
 			const x = args.x ? (args.x * 8) : sender.player!.x;
 			const y = args.y ? (args.y * 8) : sender.player!.y;
@@ -796,10 +796,10 @@ export const commands = commandList({
 		perm: Perm.admin.exceptModes({
 			testsrv: Perm.trusted,
 		}),
+		requirements: [Req.integerRange("rotation", 0, 3)],
 		handler({args, sender, outputSuccess, f}){
 			const team = args.team ?? sender.team();
 			const tile = Vars.world.tile(args.x, args.y);
-			if(args.rotation != null && (args.rotation < 0 || args.rotation > 3)) fail(f`Invalid rotation ${args.rotation}`);
 			if(tile == null)
 				fail(f`Position (${args.x}, ${args.y}) is out of bounds.`);
 			tile.setNet(args.block, team, args.rotation ?? 0);
@@ -817,11 +817,11 @@ export const commands = commandList({
 		args: ["block:block?", "team:team?", "rotation:number?"],
 		description: "Sets the block at tapped locations, repeatedly.",
 		perm: Perm.admin,
+		requirements: [Req.integerRange("rotation", 0, 3)],
 		tapped({args, sender, f, x, y, outputSuccess}){
 			if(!args.block) crash(`uh oh`);
 			const team = args.team ?? sender.team();
 			const tile = Vars.world.tile(x, y);
-			if(args.rotation != null && (args.rotation < 0 || args.rotation > 3)) fail(f`Invalid rotation ${args.rotation}`);
 			if(tile == null)
 				fail(f`Position (${x}, ${y}) is out of bounds.`);
 			tile.setNet(args.block, team, args.rotation ?? 0);
@@ -1120,6 +1120,7 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 		args: ["team:team", "item:item", "amount:number"],
 		description: "Gives items to a team.",
 		perm: Perm.admin,
+		requirements: [Req.integer("amount")],
 		handler({args:{team, item, amount}, sender, outputSuccess, f}){
 			const core = team.data().cores.firstOpt() ?? fail(f`Team ${team} has no cores.`);
 			core.items.add(item, amount);

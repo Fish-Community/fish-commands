@@ -39,6 +39,18 @@ export const Req = {
 				|| fail(message),
 	numberRange: <T extends string>(argName: T, min:number, max:number) =>
 		({args}:{args:Partial<Record<T, number>>}) =>
-			args[argName] == undefined || min <= args[argName] && args[argName] < max
-				|| fail(`${argName} must be between ${min} and ${max}`)
+			args[argName] == undefined || min <= args[argName] && args[argName] <= max
+				|| fail(`${argName} must be between ${min} and ${max}`),
+	integer: <T extends string>(argName: T) =>
+		({args}:{args:Partial<Record<T, number>>}) =>
+			args[argName] == undefined || Number.isSafeInteger(args[argName])
+				|| fail(`${argName} must be an integer`),
+	integerRange: <T extends string>(argName: T, min:number, max:number) =>
+		({args}:{args:Partial<Record<T, number>>}) =>
+			Req.integer(argName)({args}) && Req.numberRange(argName, min, max)({args}),
+	positiveInteger: <T extends string>(argName: T) =>
+		({args}:{args:Partial<Record<T, number>>}) =>
+			Req.integer(argName)({args}) &&
+			(args[argName] == undefined || args[argName] > 0
+				|| fail(`${argName} must be positive`)),
 };

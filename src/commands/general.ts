@@ -790,7 +790,7 @@ Please stop attacking and [lime]build defenses[] first!`
 				.on("player vote change", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has voted on skipping [accent]${t.session!.data}[white] wave(s). [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 				.on("player vote removed", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has left. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 		}),
-		requirements: [Req.cooldown(3000), Req.numberRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
+		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
 		async handler({sender, args: {waves}, data:{manager}}){
 
 			//Disable narrowing, this is async
@@ -1097,9 +1097,8 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 		args: ["x:number?", "y:number?", "size:number?"],
 		perm: Perm.none,
 		description: "Views the world as a 2D scrollable menu.",
-		requirements: [Req.cooldown(4000)],
+		requirements: [Req.cooldown(4000), Req.integerRange("size", 1, 20)],
 		handler({sender, args:{size = 7, x, y}}){
-			if(size > 20) fail(`Size ${size} is too high!`);
 			if(Vars.state.rules.fog) fail(`This command is disabled when fog is enabled.`);
 			const options = to2DArray((Reflect.get(Vars.world.tiles, "array") as Tile[]).map(tile => ({
 				text: tile.block().emoji(),

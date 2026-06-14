@@ -3,7 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains member commands, which are fun cosmetics for donators.
 */
 
-import { Perm, command, commandList, fail } from "/frameworks/commands";
+import { Perm, Req, command, commandList, fail } from "/frameworks/commands";
 import { FishPlayer } from "/players";
 
 
@@ -102,6 +102,7 @@ export const commands = commandList({
 		args: ["speed:number?"],
 		description: 'Make your name change colors.',
 		perm: Perm.member,
+		requirements: [Req.integerRange("speed", 0, 10)],
 		handler({args, sender, outputSuccess}){
 			const colors = ['[red]', '[orange]', '[yellow]', '[acid]', '[blue]', '[purple]'];
 			function rainbowLoop(index:number, fishP:FishPlayer){
@@ -117,10 +118,6 @@ export const commands = commandList({
 				sender.updateName();
 				outputSuccess("Turned off rainbow.");
 			} else {
-				if(args.speed > 10 || args.speed <= 0 || !Number.isInteger(args.speed)){
-					fail('Speed must be an integer between 0 and 10.');
-				}
-	
 				sender.rainbow ??= { speed: args.speed };
 				rainbowLoop(0, sender);
 				outputSuccess(`Activated rainbow name mode with speed ${args.speed}`);

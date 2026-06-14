@@ -912,7 +912,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 .on("player vote change", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has voted on skipping [accent]").concat(t.session.data, "[white] wave(s). [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
                 .on("player vote removed", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has left. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
         }); },
-        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.numberRange("waves", 1, 15), commands_1.Req.mode("survival", "testsrv"), commands_1.Req.gameRunning],
+        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.integerRange("waves", 1, 15), commands_1.Req.mode("survival", "testsrv"), commands_1.Req.gameRunning],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 var _c;
@@ -1198,11 +1198,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         args: ["x:number?", "y:number?", "size:number?"],
         perm: commands_1.Perm.none,
         description: "Views the world as a 2D scrollable menu.",
-        requirements: [commands_1.Req.cooldown(4000)],
+        requirements: [commands_1.Req.cooldown(4000), commands_1.Req.integerRange("size", 1, 20)],
         handler: function (_a) {
             var sender = _a.sender, _b = _a.args, _c = _b.size, size = _c === void 0 ? 7 : _c, x = _b.x, y = _b.y;
-            if (size > 20)
-                (0, commands_1.fail)("Size ".concat(size, " is too high!"));
             if (Vars.state.rules.fog)
                 (0, commands_1.fail)("This command is disabled when fog is enabled.");
             var options = (0, funcs_1.to2DArray)(Reflect.get(Vars.world.tiles, "array").map(function (tile) { return ({

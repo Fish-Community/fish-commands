@@ -109,6 +109,7 @@ exports.commands = (0, commands_1.commandList)({
         args: ["speed:number?"],
         description: 'Make your name change colors.',
         perm: commands_1.Perm.member,
+        requirements: [commands_1.Req.integerRange("speed", 0, 10)],
         handler: function (_a) {
             var _b;
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
@@ -127,9 +128,6 @@ exports.commands = (0, commands_1.commandList)({
                 outputSuccess("Turned off rainbow.");
             }
             else {
-                if (args.speed > 10 || args.speed <= 0 || !Number.isInteger(args.speed)) {
-                    (0, commands_1.fail)('Speed must be an integer between 0 and 10.');
-                }
                 (_b = sender.rainbow) !== null && _b !== void 0 ? _b : (sender.rainbow = { speed: args.speed });
                 rainbowLoop(0, sender);
                 outputSuccess("Activated rainbow name mode with speed ".concat(args.speed));
