@@ -39,7 +39,7 @@ export const bannedWords: {
 		//>:( -dart
 		// "uwu", //lol
 
-		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", //our apologies to citizens of the Republic of Niger
+		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", /\bnegr\b/, //our apologies to citizens of the Republic of Niger
 		["ni"+"ga", "anniga", "inniga", "unniga", "aniga", "iniga", "eniga", "oniga"],
 		"re"+"tard",
 		'kill yourself', 'kill urself', /\bkys\b/,
@@ -68,9 +68,9 @@ export const bannedWords: {
 		"sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐", "diddy", "epstein",
 		uuidPattern, ipPattern, ipPortPattern
 	]),
-	/** autoWhack: new players saying one of these words will be automatically stopped and muted. */
+	/** autoWhack: new players saying one of these words will be automatically stopped and muted. Comes with \b so no need to add it. */
 	autoWhack: [
-		"nig"+"ger","nig"+"ga","ni8"+"8er","nig"+"g3r","hit"+"ler","fa"+"gg"+"ot","nazis", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер",
+		"nig"+"ger","nig"+"ga","ni8"+"8er","nig"+"g3r","hit"+"ler","fa"+"gg"+"ot","nazis", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", "negr"
 	],
 };
 
@@ -208,6 +208,11 @@ export class FishServer {
 		"162.248.101.116", "6567",
 		["m", "mg", "mini", "minig", "mgame", "mng", "minigame", "mpvp"]
 	);
+	static testing = new FishServer(
+		"testing",
+		"162.248.101.52", "6567",
+		["test", "testsrv", "t", "testingserver", "testserver"]
+	);
 	static byName(input:string):FishServer | null {
 		input = input.toLowerCase();
 		return FishServer.all.find(s => s.aliases.concat(s.name).includes(input)) ?? null;
@@ -313,6 +318,7 @@ export const tips = {
 		`You can spawn an [scarlet]Ohno[] with the [scarlet]/ohno[] command. Ohnos are harmless creatures that were created by fusing an alpha and an atrax.`,
 		`Ohnos cannot be spawned near enemy buildings, because they are peaceful and do not want to be used for attacks.`,
 		`You can use [white]/tp[] to teleport directly to any other player! (But only when you're in a core unit)`,
+		`You can unload bulk conveyors ( or ) with unloaders ( or ).`,
 		`Hate boulders? You can remove them with [white]/clean[].`,
 		`You can check our rules at any time by running [white]/rules[].`,
 		// `You can kill your unit by running [white]/die[].`,
