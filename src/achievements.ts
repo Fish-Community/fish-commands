@@ -112,10 +112,13 @@ export class Achievement {
 		});
 	}
 	/** Do not call this in a loop on an achievement set to notify everyone. */
-	public grantTo(player:FishPlayer){
-		if(this.notify == "everyone") Call.sendMessage(this.messageToEveryone(player));
-		else if(this.notify == "player") player.sendMessage(this.message());
-		if(!this.has(player)) this.setObtained(player);
+	public grantTo(player:FishPlayer, allowRepeatMessage = true){ //TODO make this default false
+		const has = this.has(player);
+		if(!has || allowRepeatMessage){
+			if(this.notify == "everyone") Call.sendMessage(this.messageToEveryone(player));
+			else if(this.notify == "player") player.sendMessage(this.message());
+		}
+		if(!has) this.setObtained(player);
 	}
 
 	private setObtained(player:FishPlayer){
@@ -532,6 +535,10 @@ export const Achievements = {
 			});
 			return found;
 		},
+	}),
+
+	help_help: new Achievement(["brown", Iconc.info], "Help with help", "Run /help help", {
+		notify: "everyone"
 	}),
 
 } satisfies Record<string, Achievement>;

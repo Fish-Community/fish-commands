@@ -129,12 +129,16 @@ var Achievement = /** @class */ (function () {
         });
     };
     /** Do not call this in a loop on an achievement set to notify everyone. */
-    Achievement.prototype.grantTo = function (player) {
-        if (this.notify == "everyone")
-            Call.sendMessage(this.messageToEveryone(player));
-        else if (this.notify == "player")
-            player.sendMessage(this.message());
-        if (!this.has(player))
+    Achievement.prototype.grantTo = function (player, allowRepeatMessage) {
+        if (allowRepeatMessage === void 0) { allowRepeatMessage = true; }
+        var has = this.has(player);
+        if (!has || allowRepeatMessage) {
+            if (this.notify == "everyone")
+                Call.sendMessage(this.messageToEveryone(player));
+            else if (this.notify == "player")
+                player.sendMessage(this.message());
+        }
+        if (!has)
             this.setObtained(player);
     };
     Achievement.prototype.setObtained = function (player) {
@@ -645,6 +649,9 @@ exports.Achievements = {
             });
             return found;
         },
+    }),
+    help_help: new Achievement("icon", "Help me", "Run /help help", {
+        notify: "everyone"
     }),
 };
 Object.entries(exports.Achievements).forEach(function (_a) {

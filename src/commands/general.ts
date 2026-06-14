@@ -451,6 +451,7 @@ export const commands = commandList({
 			if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member'].includes(args.name)) {
 				//name is not a number or a category, therefore it is probably a command name
 				if (args.name in allCommands && (!allCommands[args.name].isHidden || allCommands[args.name].perm.check(sender))) {
+					if(args.name == "help") Achievements.help_help.grantTo(sender, false);
 					output(
 `Help for command ${args.name}:
 	${allCommands[args.name].description}
