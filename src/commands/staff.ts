@@ -768,7 +768,9 @@ export const commands = commandList({
 	spawn: {
 		args: ["type:unittype", "x:number?", "y:number?", "count:number?", "team:team?", "effects:string?", "stack:boolean?"],
 		description: "Spawns a unit of specified type at your position. [scarlet]Usage will be logged.[]",
-		perm: Perm.admin,
+		perm: Perm.admin.exceptModes({
+			testsrv: Perm.trusted,
+		}),
 		data: [],
 		handler({sender, args, data, outputSuccess, f}){
 			const x = args.x ? (args.x * 8) : sender.player!.x;
@@ -784,14 +786,16 @@ export const commands = commandList({
 				unit.add();
 				data.push(unit);
 			}
-			if(!Gamemode.sandbox() && args.effects !== 'paper') logAction(`spawned unit ${args.type.name}${count == 1 ? '' : ` x${count}`} at ${Math.round(x / 8)}, ${Math.round(y / 8)}` + (args.effects ? `with ${args.effects} effects` : ''), sender);
+			if(!(Gamemode.sandbox() || Gamemode.testsrv()) && args.effects !== 'paper') logAction(`spawned unit ${args.type.name}${count == 1 ? '' : ` x${count}`} at ${Math.round(x / 8)}, ${Math.round(y / 8)}` + (args.effects ? `with ${args.effects} effects` : ''), sender);
 			outputSuccess(f`Spawned unit ${args.type} at (${Math.round(x / 8)}, ${Math.round(y / 8)})`);
 		}
 	},
 	setblock: {
 		args: ["x:number", "y:number", "block:block", "team:team?", "rotation:number?"],
 		description: "Sets the block at a location.",
-		perm: Perm.admin,
+		perm: Perm.admin.exceptModes({
+			testsrv: Perm.trusted,
+		}),
 		handler({args, sender, outputSuccess, f}){
 			const team = args.team ?? sender.team();
 			const tile = Vars.world.tile(args.x, args.y);
@@ -851,7 +855,9 @@ export const commands = commandList({
 	exterminate: {
 		args: [],
 		description: "Removes all spawned units.",
-		perm: Perm.admin,
+		perm: Perm.admin.exceptModes({
+			testsrv: Perm.trusted,
+		}),
 		handler({sender, outputSuccess, f, allCommands}){
 			let numKilled = 0;
 			(allCommands.spawn.data as Unit[]).forEach(u => {
@@ -1093,7 +1099,9 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 	effects: {
 		args: ["mode:string", "player:player?", "duration:time?"],
 		description: "Applies effects to a player's unit.",
-		perm: Perm.admin,
+		perm: Perm.admin.exceptModes({
+			testsrv: Perm.trusted,
+		}),
 		handler({args, sender, f, outputSuccess}){
 			if(args.player?.hasPerm("blockTrolling"))
 				fail(f`Player ${args.player} is insufficiently trollable.`);

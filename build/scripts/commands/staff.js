@@ -1041,7 +1041,9 @@ exports.commands = (0, commands_1.commandList)({
     spawn: {
         args: ["type:unittype", "x:number?", "y:number?", "count:number?", "team:team?", "effects:string?", "stack:boolean?"],
         description: "Spawns a unit of specified type at your position. [scarlet]Usage will be logged.[]",
-        perm: commands_1.Perm.admin,
+        perm: commands_1.Perm.admin.exceptModes({
+            testsrv: commands_1.Perm.trusted,
+        }),
         data: [],
         handler: function (_a) {
             var _b, _c;
@@ -1060,7 +1062,7 @@ exports.commands = (0, commands_1.commandList)({
                 unit.add();
                 data.push(unit);
             }
-            if (!config_1.Gamemode.sandbox() && args.effects !== 'paper')
+            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()) && args.effects !== 'paper')
                 (0, utils_1.logAction)("spawned unit ".concat(args.type.name).concat(count == 1 ? '' : " x".concat(count), " at ").concat(Math.round(x / 8), ", ").concat(Math.round(y / 8)) + (args.effects ? "with ".concat(args.effects, " effects") : ''), sender);
             outputSuccess(f(templateObject_56 || (templateObject_56 = __makeTemplateObject(["Spawned unit ", " at (", ", ", ")"], ["Spawned unit ", " at (", ", ", ")"])), args.type, Math.round(x / 8), Math.round(y / 8)));
         }
@@ -1068,7 +1070,9 @@ exports.commands = (0, commands_1.commandList)({
     setblock: {
         args: ["x:number", "y:number", "block:block", "team:team?", "rotation:number?"],
         description: "Sets the block at a location.",
-        perm: commands_1.Perm.admin,
+        perm: commands_1.Perm.admin.exceptModes({
+            testsrv: commands_1.Perm.trusted,
+        }),
         handler: function (_a) {
             var _b, _c;
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
@@ -1141,7 +1145,9 @@ exports.commands = (0, commands_1.commandList)({
     exterminate: {
         args: [],
         description: "Removes all spawned units.",
-        perm: commands_1.Perm.admin,
+        perm: commands_1.Perm.admin.exceptModes({
+            testsrv: commands_1.Perm.trusted,
+        }),
         handler: function (_a) {
             var sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f, allCommands = _a.allCommands;
             var numKilled = 0;
@@ -1410,7 +1416,9 @@ exports.commands = (0, commands_1.commandList)({
     effects: {
         args: ["mode:string", "player:player?", "duration:time?"],
         description: "Applies effects to a player's unit.",
-        perm: commands_1.Perm.admin,
+        perm: commands_1.Perm.admin.exceptModes({
+            testsrv: commands_1.Perm.trusted,
+        }),
         handler: function (_a) {
             var _b, _c, _d;
             var args = _a.args, sender = _a.sender, f = _a.f, outputSuccess = _a.outputSuccess;
