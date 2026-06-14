@@ -596,6 +596,12 @@ Available types:[yellow]
 				updateLength(){
 					this.ohnos = this.ohnos.filter(o => o && o.isAdded() && !o.dead);
 				},
+				checkAchievement(){
+					for(const ohno of this.ohnos){
+						const player = ohno.getPlayer();
+						if(player) Achievements.ohno.grantTo(FishPlayer.get(player), false);
+					}
+				},
 				killAll(){
 					this.ohnos.forEach(ohno => ohno?.kill?.());
 					this.ohnos = [];
@@ -607,6 +613,7 @@ Available types:[yellow]
 			Events.on(EventType.GameOverEvent, (e) => {
 				Ohnos.killAll();
 			});
+			Timer.schedule(() => Ohnos.checkAchievement(), 1, 2);
 			return Ohnos;
 		},
 		requirements: [

@@ -540,6 +540,8 @@ export const Achievements = {
 	help_help: new Achievement(["brown", Iconc.info], "Help with help", "Run /help help", {
 		notify: "everyone"
 	}),
+	ohno: new Achievement(["scarlet", UnitTypes.alpha.emoji()], "Oh no", "Control an ohno unit."),
+	sniper_duel: new Achievement(["yellow", UnitTypes.omura.emoji()], "Sniper duel", "Kill a Foreshadow with an Omura from outside its range."),
 
 } satisfies Record<string, Achievement>;
 Object.entries(Achievements).forEach(([id, a]) => a.sid = id);
@@ -567,6 +569,14 @@ Events.on(EventType.UnitBulletDestroyEvent, ({unit, bullet}:{unit:Unit; bullet: 
 	if(!Gamemode.sandbox() && unit.type == UnitTypes.dagger && (bullet.owner as Building | null)?.block == Blocks.foreshadow){
 		const build = bullet.owner as Building;
 		if(build.liquids.current() == Liquids.cryofluid && build.timeScale() >= 3) Achievements.foreshadow_overkill.grantToAllOnline(build.team);
+	}
+});
+
+Events.on(EventType.BuildingBulletDestroyEvent, ({build, bullet}:{build:Building, bullet:Bullet}) => {
+	if(!Gamemode.sandbox() && build.block == Blocks.foreshadow && (bullet.owner as Unit | null)?.type == UnitTypes.omura){
+		const unit = bullet.owner as Unit;
+		const player = unit.getPlayer();
+		if(player && !unit.within(build, build.range!() + unit.hitSize / 2)) Achievements.sniper_duel.grantTo(FishPlayer.get(player));
 	}
 });
 

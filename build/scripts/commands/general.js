@@ -79,6 +79,17 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
@@ -566,6 +577,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member'].includes(args.name)) {
                 //name is not a number or a category, therefore it is probably a command name
                 if (args.name in allCommands && (!allCommands[args.name].isHidden || allCommands[args.name].perm.check(sender))) {
+                    if (args.name == "help")
+                        achievements_1.Achievements.help_help.grantTo(sender, false);
                     output("Help for command ".concat(args.name, ":\n\t").concat(allCommands[args.name].description, "\n\tUsage: [sky]/").concat(args.name, " [white]").concat(allCommands[args.name].args.map(commands_1.formatArg).join(' '), "\n\tPermission required: ").concat(allCommands[args.name].perm.name));
                 }
                 else
@@ -692,6 +705,24 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 updateLength: function () {
                     this.ohnos = this.ohnos.filter(function (o) { return o && o.isAdded() && !o.dead; });
                 },
+                checkAchievement: function () {
+                    var e_1, _a;
+                    try {
+                        for (var _b = __values(this.ohnos), _c = _b.next(); !_c.done; _c = _b.next()) {
+                            var ohno = _c.value;
+                            var player = ohno.getPlayer();
+                            if (player)
+                                achievements_1.Achievements.ohno.grantTo(players_1.FishPlayer.get(player), false);
+                        }
+                    }
+                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    finally {
+                        try {
+                            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                        }
+                        finally { if (e_1) throw e_1.error; }
+                    }
+                },
                 killAll: function () {
                     this.ohnos.forEach(function (ohno) { var _a; return (_a = ohno === null || ohno === void 0 ? void 0 : ohno.kill) === null || _a === void 0 ? void 0 : _a.call(ohno); });
                     this.ohnos = [];
@@ -703,6 +734,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             Events.on(EventType.GameOverEvent, function (e) {
                 Ohnos.killAll();
             });
+            Timer.schedule(function () { return Ohnos.checkAchievement(); }, 1, 2);
             return Ohnos;
         },
         requirements: [

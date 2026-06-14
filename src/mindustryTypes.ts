@@ -218,6 +218,7 @@ class Building {
 	enabled: boolean;
 	health: number;
 	ammo?: Seq<{item: Item}>;
+	range?: () => number;
 	warmup?: number;
 	storageCapacity?: number;
 	dead: boolean;
@@ -631,6 +632,7 @@ type Unit = {
 	spawnedByCore: boolean;
 	added: boolean;
 	id: number;
+	hitSize: number;
 	tileOn():Tile | null;
 	tile?: () => Building;
 	kill():void;
@@ -643,6 +645,7 @@ type Unit = {
 	resetController():void;
 	apply(effect:StatusEffect, ticks:number):void;
 	clearStatuses():void;
+	within(pos: Building | Unit, distance: number):boolean;
 };
 type NetConnection = any;
 class Command {
