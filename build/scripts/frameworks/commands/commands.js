@@ -103,6 +103,7 @@ exports.register = register;
 exports.registerConsole = registerConsole;
 exports.initialize = initialize;
 exports.reset = reset;
+var config_1 = require("/config");
 var errors_1 = require("/frameworks/commands/errors");
 var formatting_1 = require("/frameworks/commands/formatting");
 var types_1 = require("/frameworks/commands/types");
@@ -289,9 +290,9 @@ function processArgs(args, processedCmdArgs, sender) {
                         case "item": return [3 /*break*/, 27];
                     }
                     return [3 /*break*/, 29];
-                case 3: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([players_1.FishPlayer.search(players_1.FishPlayer.getAllOnline(), args[i])], __read(commonArgs), false), [function (player) { return Strings.stripColors(player.name).length >= 3 ?
+                case 3: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([players_1.FishPlayer.search(players_1.FishPlayer.getAllOnline(), args[i])], __read(commonArgs), false), [function (player) { return (player.marked() ? config_1.prefixes.marked : player.autoflagged ? config_1.prefixes.flagged : "") + (Strings.stripColors(player.name).length >= 3 ?
                             player.name
-                            : (0, funcs_1.escapeStringColorsClient)(player.name); },
+                            : (0, funcs_1.escapeStringColorsClient)(player.name)); },
                         2], false))];
                 case 4:
                     _f.sent();

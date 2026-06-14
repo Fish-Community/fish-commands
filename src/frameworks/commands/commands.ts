@@ -6,6 +6,7 @@ For maintenance information, see docs/frameworks.md
 */
 //Behold, the power of typescript!
 
+import { prefixes } from "/config";
 import { CommandError, fail } from "/frameworks/commands/errors";
 import { f_client, f_server, outputFormatter_client } from "/frameworks/commands/formatting";
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
@@ -157,9 +158,9 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				await disambiguateArgument(
 					FishPlayer.search(FishPlayer.getAllOnline(), args[i]),
 					...commonArgs,
-					player => Strings.stripColors(player.name).length >= 3 ?
+					player => (player.marked() ? prefixes.marked : player.autoflagged ? prefixes.flagged : "") + (Strings.stripColors(player.name).length >= 3 ?
 						player.name
-					: escapeStringColorsClient(player.name),
+					: escapeStringColorsClient(player.name)),
 					2
 				);
 				break;
