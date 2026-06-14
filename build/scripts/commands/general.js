@@ -803,7 +803,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 (0, commands_1.fail)("You do not have permission to change teams because peaceful mode is on.");
             if (config_1.Gamemode.sandbox() && team === Vars.state.rules.waveTeam && !sender.hasPerm("admin"))
                 (0, commands_1.fail)("You do not have permission to change to the wave team on sandbox.");
-            if (!config_1.Gamemode.sandbox() && !sender.hasPerm("mod") && !reason)
+            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()) && !sender.hasPerm("mod") && !reason)
                 (0, commands_1.fail)("Please specify a reason for changing teams.");
             if (!sender.hasPerm("changeTeamExternal")) {
                 if (team.data().cores.size <= 0)
