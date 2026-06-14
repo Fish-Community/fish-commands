@@ -930,7 +930,7 @@ export function handleError(err:unknown, sender:FishPlayer, outputFail: (message
 	} else if(err === Cancel){
 		//Menu cancelled, do nothing
 		return;
-	}{
+	} else {
 		sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
 		if(sender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
 		Log.err(context ?

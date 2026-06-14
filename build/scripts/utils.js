@@ -1078,7 +1078,7 @@ function handleError(err, sender, outputFail, context) {
         //Menu cancelled, do nothing
         return;
     }
-    {
+    else {
         sender.sendMessage("[scarlet]\u274C An error occurred while executing the command!");
         if (sender.hasPerm("seeErrorMessages"))
             sender.sendMessage((0, funcs_1.parseError)(err));
