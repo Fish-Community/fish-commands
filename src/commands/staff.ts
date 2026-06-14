@@ -14,6 +14,7 @@ import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals
 import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
+import { Label } from "/types";
 import { addToTileHistory, applyEffectMode, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
@@ -399,21 +400,22 @@ export const commands = commandList({
 			let timeRemaining = args.time / 1000;
 			const labelx = unit.x;
 			const labely = unit.y;
-			fishState.labels.push(Timer.schedule(() => {
-				if(timeRemaining > 0){
+			const task = Timer.schedule(() => {
+				if (timeRemaining > 0) {
 					const timeseconds = timeRemaining % 60;
 					const timeminutes = (timeRemaining - timeseconds) / 60;
 					Call.label(
-`${sender.name}
+						`${sender.name}
 
 [white]${args.message}
 
 [acid]${timeminutes.toString().padStart(2, "0")}:${timeseconds.toString().padStart(2, "0")}`,
 						1, labelx, labely
 					);
-					timeRemaining --;
+					timeRemaining--;
 				}
-			}, 0, 1, args.time));
+			}, 0, 1, args.time);
+			fishState.labels.push({ x: labelx, y: labely, task});
 			outputSuccess(f`Placed label "${args.message}" for ${timeRemaining} seconds.`);
 		}
 	},
@@ -425,12 +427,13 @@ export const commands = commandList({
 		handler({args, outputSuccess, f}){
 			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
 			let timeRemaining = args.time / 1000;
-			fishState.labels.push(Timer.schedule(() => {
+			const task = Timer.schedule(() => {
 				if(timeRemaining > 0){
 					Call.label(args.message, 5, NaN, NaN);
 					timeRemaining -= 5;
 				}
-			}, 0, 5, Math.ceil(args.time / 5)));
+			}, 0, 5, Math.ceil(args.time / 5));
+			fishState.labels.push({ task, x: null, y: null });
 			outputSuccess(f`Placed label "${args.message}" for ${timeRemaining} seconds.`);
 		}
 	},
@@ -440,8 +443,34 @@ export const commands = commandList({
 		description: "Removes all labels.",
 		perm: Perm.mod,
 		handler({outputSuccess}){
-			fishState.labels.forEach(l => l.cancel());
+			if(fishState.labels.length == 0) fail(`No labels found.`);
+			fishState.labels.forEach(l => l.task.cancel());
 			outputSuccess(`Removed all labels.`);
+		}
+	},
+	
+	clearlabel: {
+		args: ["sticky:boolean?"],
+		description: "Removes the closest label, or sticky label if specified",
+		perm: Perm.mod,
+		handler({args: {sticky = false}, sender, outputSuccess}){
+			if(fishState.labels.length == 0) fail(`No labels found.`);
+			let label: Label;
+			if(sticky){
+				const index = fishState.labels.findIndex(l => l.x == null);
+				if(index == -1) fail(`No sticky label found.`);
+				label = fishState.labels.splice(index, 1)[0];
+			} else {
+				const unit = sender.unit() ?? fail(`Cannot remove the closest label because you are dead.`);
+				const dist = function(label: {x: number | null; y: number | null}){
+					if(label.x == null || label.y == null) return Infinity;
+					return Mathf.dst(label.x, label.y, unit.x, unit.y);
+				};
+				const index = [...fishState.labels.entries()].reduce((a, b) => dist(a[1]) < dist(b[1]) ? a : b)[0];
+				label = fishState.labels.splice(index, 1)[0];
+			}
+			label.task.cancel();
+			outputSuccess(`Removed one label.`);
 		}
 	},
 

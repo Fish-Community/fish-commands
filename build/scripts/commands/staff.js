@@ -631,14 +631,15 @@ exports.commands = (0, commands_1.commandList)({
             var timeRemaining = args.time / 1000;
             var labelx = unit.x;
             var labely = unit.y;
-            globals_1.fishState.labels.push(Timer.schedule(function () {
+            var task = Timer.schedule(function () {
                 if (timeRemaining > 0) {
                     var timeseconds = timeRemaining % 60;
                     var timeminutes = (timeRemaining - timeseconds) / 60;
                     Call.label("".concat(sender.name, "\n\n[white]").concat(args.message, "\n\n[acid]").concat(timeminutes.toString().padStart(2, "0"), ":").concat(timeseconds.toString().padStart(2, "0")), 1, labelx, labely);
                     timeRemaining--;
                 }
-            }, 0, 1, args.time));
+            }, 0, 1, args.time);
+            globals_1.fishState.labels.push({ x: labelx, y: labely, task: task });
             outputSuccess(f(templateObject_27 || (templateObject_27 = __makeTemplateObject(["Placed label \"", "\" for ", " seconds."], ["Placed label \"", "\" for ", " seconds."])), args.message, timeRemaining));
         }
     },
@@ -651,12 +652,13 @@ exports.commands = (0, commands_1.commandList)({
             if (args.time > funcs_1.Duration.hours(10))
                 (0, commands_1.fail)("Time must be less than 10 hours.");
             var timeRemaining = args.time / 1000;
-            globals_1.fishState.labels.push(Timer.schedule(function () {
+            var task = Timer.schedule(function () {
                 if (timeRemaining > 0) {
                     Call.label(args.message, 5, NaN, NaN);
                     timeRemaining -= 5;
                 }
-            }, 0, 5, Math.ceil(args.time / 5)));
+            }, 0, 5, Math.ceil(args.time / 5));
+            globals_1.fishState.labels.push({ task: task, x: null, y: null });
             outputSuccess(f(templateObject_28 || (templateObject_28 = __makeTemplateObject(["Placed label \"", "\" for ", " seconds."], ["Placed label \"", "\" for ", " seconds."])), args.message, timeRemaining));
         }
     },
@@ -666,8 +668,40 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.mod,
         handler: function (_a) {
             var outputSuccess = _a.outputSuccess;
-            globals_1.fishState.labels.forEach(function (l) { return l.cancel(); });
+            if (globals_1.fishState.labels.length == 0)
+                (0, commands_1.fail)("No labels found.");
+            globals_1.fishState.labels.forEach(function (l) { return l.task.cancel(); });
             outputSuccess("Removed all labels.");
+        }
+    },
+    clearlabel: {
+        args: ["sticky:boolean?"],
+        description: "Removes the closest label, or sticky label if specified",
+        perm: commands_1.Perm.mod,
+        handler: function (_a) {
+            var _b;
+            var _c = _a.args.sticky, sticky = _c === void 0 ? false : _c, sender = _a.sender, outputSuccess = _a.outputSuccess;
+            if (globals_1.fishState.labels.length == 0)
+                (0, commands_1.fail)("No labels found.");
+            var label;
+            if (sticky) {
+                var index = globals_1.fishState.labels.findIndex(function (l) { return l.x == null; });
+                if (index == -1)
+                    (0, commands_1.fail)("No sticky label found.");
+                label = globals_1.fishState.labels.splice(index, 1)[0];
+            }
+            else {
+                var unit_1 = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Cannot remove the closest label because you are dead.");
+                var dist_1 = function (label) {
+                    if (label.x == null || label.y == null)
+                        return Infinity;
+                    return Mathf.dst(label.x, label.y, unit_1.x, unit_1.y);
+                };
+                var index = __spreadArray([], __read(globals_1.fishState.labels.entries()), false).reduce(function (a, b) { return dist_1(a[1]) < dist_1(b[1]) ? a : b; })[0];
+                label = globals_1.fishState.labels.splice(index, 1)[0];
+            }
+            label.task.cancel();
+            outputSuccess("Removed one label.");
         }
     },
     member: {
