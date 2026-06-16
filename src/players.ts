@@ -738,10 +738,10 @@ export class FishPlayer {
 						admins.banPlayerID(p.uuid);
 						admins.banPlayerIP(p.ip());
 						api.ban({ ip: p.ip(), uuid: p.uuid });
-						logHTrip(p, "votekick bot", p == fishP ? `Player banned automatically` : `Player banned automatically based on previous activity`);
+						logHTrip(p, "votekick abuse", p == fishP ? `Player banned automatically` : `Player banned automatically based on previous activity`);
 					}
 				}
-				updateBans(player => `[scarlet]Player [yellow]${player.name}[scarlet] has been whacked by automatic votekick-bot detection.`);
+				updateBans(player => `[scarlet]Player [yellow]${player.name}[scarlet] has been whacked automatically for suspected votekick abuse.`);
 				//Pardon most of the votekick targets (the ones that weren't voted on by a non-sus player)
 				const candidatePardons = new Set(FishPlayer.lastVKActions.map(a => a.target));
 				for(const action of FishPlayer.lastVKActions){
@@ -759,14 +759,14 @@ export class FishPlayer {
 				}
 			} else {
 				//Just kick the player
-				logHTrip(fishP, "votekick bot", `sus=${sus}`);
-				fishP.kick(`You have been kicked. Please wait 35 seconds before rejoining.`, 30_000);
-				Call.sendMessage(`[scarlet]Player [yellow]${fishP.prefixedName}[scarlet] was kicked due to suspicious behavior.`);
+				logHTrip(fishP, "votekick abuse", `sus=${sus}`);
+				fishP.kick(`You have been kicked [accent]automatically[] due to suspicious behavior. Please wait [accent]35[] seconds before rejoining.`, 30_000);
+				Call.sendMessage(`[scarlet]Player [yellow]${fishP.prefixedName}[scarlet] was kicked due to suspected votekick abuse.`);
 				//If this message is going to start a votekick, cancel it
 				if(message.startsWith("/votekick") && Vars.netServer.currentlyKicking == null) Core.app.post(() => {
 					Call.sendMessage(
 		`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.name}[lightgray].[accent] (-\u221E/${Vars.netServer.votesRequired()})
-		[scarlet]Vote cancelled due to suspicious behavior. [accent]If this is in error, please report it to staff.`
+		[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.`
 					);
 					if(Vars.netServer.currentlyKicking) Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
 					Vars.netServer.currentlyKicking = null;
@@ -775,7 +775,7 @@ export class FishPlayer {
 				else if(FishPlayer.lastVKActions.slice().reverse().find(a => a.type == "start")?.playerSusLevel == 3){
 					Call.sendMessage(
 		`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.name}[lightgray].[accent] (-\u221E/${Vars.netServer.votesRequired()})
-		[scarlet]Vote cancelled due to suspicious behavior. [accent]If this is in error, please report it to staff.`
+		[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.`
 					);
 					if(Vars.netServer.currentlyKicking) Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
 					Vars.netServer.currentlyKicking = null;
@@ -788,7 +788,7 @@ export class FishPlayer {
 						const voted = Reflect.get(Vars.netServer.currentlyKicking, "voted");
 						voted.put(fishP.uuid, 0);
 						voted.put(fishP.ip(), 0);
-						Call.sendMessage(`[scarlet]Vote cancelled due to suspicious behavior. [accent]If this is in error, please report it to staff.`);
+						Call.sendMessage(`[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.`);
 					}
 				});
 			}

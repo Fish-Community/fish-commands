@@ -846,7 +846,7 @@ var FishPlayer = /** @class */ (function () {
                             admins.banPlayerID(p.uuid);
                             admins.banPlayerIP(p.ip());
                             api.ban({ ip: p.ip(), uuid: p.uuid });
-                            (0, utils_1.logHTrip)(p, "votekick bot", p == fishP ? "Player banned automatically" : "Player banned automatically based on previous activity");
+                            (0, utils_1.logHTrip)(p, "votekick abuse", p == fishP ? "Player banned automatically" : "Player banned automatically based on previous activity");
                         }
                     }
                 }
@@ -857,7 +857,7 @@ var FishPlayer = /** @class */ (function () {
                     }
                     finally { if (e_3) throw e_3.error; }
                 }
-                (0, utils_1.updateBans)(function (player) { return "[scarlet]Player [yellow]".concat(player.name, "[scarlet] has been whacked by automatic votekick-bot detection."); });
+                (0, utils_1.updateBans)(function (player) { return "[scarlet]Player [yellow]".concat(player.name, "[scarlet] has been whacked automatically for suspected votekick abuse."); });
                 //Pardon most of the votekick targets (the ones that weren't voted on by a non-sus player)
                 var candidatePardons = new Set(FishPlayer.lastVKActions.map(function (a) { return a.target; }));
                 try {
@@ -897,20 +897,20 @@ var FishPlayer = /** @class */ (function () {
             }
             else {
                 //Just kick the player
-                (0, utils_1.logHTrip)(fishP, "votekick bot", "sus=".concat(sus));
-                fishP.kick("You have been kicked. Please wait 35 seconds before rejoining.", 30000);
-                Call.sendMessage("[scarlet]Player [yellow]".concat(fishP.prefixedName, "[scarlet] was kicked due to suspicious behavior."));
+                (0, utils_1.logHTrip)(fishP, "votekick abuse", "sus=".concat(sus));
+                fishP.kick("You have been kicked [accent]automatically[] due to suspicious behavior. Please wait [accent]35[] seconds before rejoining.", 30000);
+                Call.sendMessage("[scarlet]Player [yellow]".concat(fishP.prefixedName, "[scarlet] was kicked due to suspected votekick abuse."));
                 //If this message is going to start a votekick, cancel it
                 if (message.startsWith("/votekick") && Vars.netServer.currentlyKicking == null)
                     Core.app.post(function () {
-                        Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t\t[scarlet]Vote cancelled due to suspicious behavior. [accent]If this is in error, please report it to staff."));
+                        Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t\t[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff."));
                         if (Vars.netServer.currentlyKicking)
                             Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
                         Vars.netServer.currentlyKicking = null;
                     });
                 //If there is an ongoing votekick and the initiator is suspicious, cancel that
                 else if (((_e = FishPlayer.lastVKActions.slice().reverse().find(function (a) { return a.type == "start"; })) === null || _e === void 0 ? void 0 : _e.playerSusLevel) == 3) {
-                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t\t[scarlet]Vote cancelled due to suspicious behavior. [accent]If this is in error, please report it to staff."));
+                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t\t[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff."));
                     if (Vars.netServer.currentlyKicking)
                         Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
                     Vars.netServer.currentlyKicking = null;
@@ -924,7 +924,7 @@ var FishPlayer = /** @class */ (function () {
                             var voted = Reflect.get(Vars.netServer.currentlyKicking, "voted");
                             voted.put(fishP.uuid, 0);
                             voted.put(fishP.ip(), 0);
-                            Call.sendMessage("[scarlet]Vote cancelled due to suspicious behavior. [accent]If this is in error, please report it to staff.");
+                            Call.sendMessage("[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.");
                         }
                     });
             }
