@@ -820,12 +820,20 @@ var FishPlayer = /** @class */ (function () {
         }
         var targetSusLevel = FishPlayer.get(target).suspicionLevel();
         //Evaluate if this action should be blocked
-        var ratelimitTriggered = !this.votekickActionRate.allow(108000, 8);
-        if (ratelimitTriggered && sus >= 1 ||
-            sus == 3 && this.lastVKActions.find(function (a) { return Date.now() - a.time < 10000 && a.playerSusLevel == 3; }) && timeSinceJoin < 6000 ||
-            sus == 3 && timeSinceJoin < 80000 && this.lastVKActions.find(function (a) { return a.player == fishP; }) && targetSusLevel <= 1 ||
-            sus >= 2 && this.lastVKActions.filter(function (a) { return a.playerSusLevel == 3; }).length >= 3 ||
-            sus >= 2 && this.lastVKActions.filter(function (a) { return a.playerSusLevel >= 2; }).length >= 6 && this.lastVKActions.filter(function (a) { return a.player == fishP; }).length >= 3) {
+        if (sus <= 1)
+            return;
+        var reason = undefined;
+        if (!this.votekickActionRate.allow(108000, 8))
+            reason = "Exceeded 8 votekick actions in the last 2 minutes";
+        else if (sus == 3 && this.lastVKActions.find(function (a) { return Date.now() - a.time < 10000 && a.playerSusLevel == 3; }) && timeSinceJoin < 6000)
+            reason = "Performed votekick within 6 seconds of joining and there was a recent suspicious vote";
+        else if (sus == 3 && timeSinceJoin < 80000 && this.lastVKActions.find(function (a) { return a.player == fishP; }) && targetSusLevel <= 1)
+            reason = "Two votekick actions within 80 seconds of joining and the target is not suspicious";
+        else if (sus >= 2 && this.lastVKActions.filter(function (a) { return a.playerSusLevel == 3 && Date.now() - a.time < 33000; }).length >= 3)
+            reason = "More than 3 recent votekick actions by suspicious players";
+        else if (sus >= 2 && this.lastVKActions.filter(function (a) { return a.playerSusLevel >= 2; }).length >= 6 && this.lastVKActions.filter(function (a) { return a.player == fishP; }).length >= 3)
+            reason = "More than 6 slightly suspicious votekick actions within the past 20 minutes and this player has already performed 3 of them";
+        if (reason != undefined) {
             //Should we ban everyone?
             var suspiciousActions = this.lastVKActions.filter(function (action) {
                 return (action.playerSusLevel == 3 || (action.targetSusLevel <= 2 && action.playerSusLevel >= 2) || action.player == fishP) && Date.now() - action.time < 78000;
@@ -846,7 +854,8 @@ var FishPlayer = /** @class */ (function () {
                             admins.banPlayerID(p.uuid);
                             admins.banPlayerIP(p.ip());
                             api.ban({ ip: p.ip(), uuid: p.uuid });
-                            (0, utils_1.logHTrip)(p, "votekick abuse", p == fishP ? "Player banned automatically" : "Player banned automatically based on previous activity");
+                            (0, utils_1.logHTrip)(p, "votekick abuse", (p == fishP ? "Player banned automatically" : "Player banned automatically based on previous activity") +
+                                ". Trigger reason: ".concat(reason));
                         }
                     }
                 }

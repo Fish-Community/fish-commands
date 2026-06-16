@@ -713,14 +713,19 @@ export class FishPlayer {
 		const targetSusLevel = FishPlayer.get(target).suspicionLevel();
 
 		//Evaluate if this action should be blocked
-		const ratelimitTriggered = !this.votekickActionRate.allow(108_000, 8);
-		if(
-			ratelimitTriggered && sus >= 1 ||
-			sus == 3 && this.lastVKActions.find(a => Date.now() - a.time < 10_000 && a.playerSusLevel == 3) && timeSinceJoin < 6_000 ||
-			sus == 3 && timeSinceJoin < 80_000 && this.lastVKActions.find(a => a.player == fishP) && targetSusLevel <= 1 ||
-			sus >= 2 && this.lastVKActions.filter(a => a.playerSusLevel == 3).length >= 3 ||
-			sus >= 2 && this.lastVKActions.filter(a => a.playerSusLevel >= 2).length >= 6 && this.lastVKActions.filter(a => a.player == fishP).length >= 3
-		){
+		if(sus <= 1) return;
+		let reason: string | undefined = undefined;
+		if(!this.votekickActionRate.allow(108_000, 8))
+			reason = "Exceeded 8 votekick actions in the last 2 minutes";
+		else if(sus == 3 && this.lastVKActions.find(a => Date.now() - a.time < 10_000 && a.playerSusLevel == 3) && timeSinceJoin < 6_000)
+			reason = "Performed votekick within 6 seconds of joining and there was a recent suspicious vote";
+		else if(sus == 3 && timeSinceJoin < 80000 && this.lastVKActions.find(a => a.player == fishP) && targetSusLevel <= 1)
+			reason = "Two votekick actions within 80 seconds of joining and the target is not suspicious";
+		else if(sus >= 2 && this.lastVKActions.filter(a => a.playerSusLevel == 3 && Date.now() - a.time < 33_000).length >= 3)
+			reason = "More than 3 recent votekick actions by suspicious players";
+		else if(sus >= 2 && this.lastVKActions.filter(a => a.playerSusLevel >= 2).length >= 6 && this.lastVKActions.filter(a => a.player == fishP).length >= 3)
+			reason = "More than 6 slightly suspicious votekick actions within the past 20 minutes and this player has already performed 3 of them";
+		if(reason != undefined){
 			//Should we ban everyone?
 			const suspiciousActions = this.lastVKActions.filter(action =>
 				(action.playerSusLevel == 3 || (action.targetSusLevel <= 2 && action.playerSusLevel >= 2) || action.player == fishP) && Date.now() - action.time < 78_000
@@ -738,7 +743,10 @@ export class FishPlayer {
 						admins.banPlayerID(p.uuid);
 						admins.banPlayerIP(p.ip());
 						api.ban({ ip: p.ip(), uuid: p.uuid });
-						logHTrip(p, "votekick abuse", p == fishP ? `Player banned automatically` : `Player banned automatically based on previous activity`);
+						logHTrip(p, "votekick abuse",
+							(p == fishP ? `Player banned automatically` : `Player banned automatically based on previous activity`) +
+							`. Trigger reason: ${reason}`
+						);
 					}
 				}
 				updateBans(player => `[scarlet]Player [yellow]${player.name}[scarlet] has been whacked automatically for suspected votekick abuse.`);
