@@ -29,7 +29,7 @@ See [framework-usage-guide.md](framework-usage-guide.md).
 * This plugin was originally written in js, by Brandons404. It was created in October 2022.
 * See https://github.com/Brandons404/fish-commands/tree/e81bbc9036f7b67b6a503d0b1eb8d3c888d9518c for the state in January 2023.
 * BalaM314 ported it to Typescript in March and April 2023, adding new systems and abstractions.
-* It remains in active development as of October 2024, receiving contributions from other community members.
+* It remains in active development as of June 2026, receiving contributions from other community members.
 
 ## Contributors (by date)
 * [Brandons404](https://github.com/Brandons404/)
