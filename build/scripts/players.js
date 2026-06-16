@@ -213,12 +213,12 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.getFromInfo = function (playerInfo) {
         var _a;
         var _b, _c;
-        return (_a = (_b = this.cachedPlayers)[_c = playerInfo.id]) !== null && _a !== void 0 ? _a : (_b[_c] = this.createFromInfo(playerInfo));
+        return (_a = (_b = FishPlayer.cachedPlayers)[_c = playerInfo.id]) !== null && _a !== void 0 ? _a : (_b[_c] = FishPlayer.createFromInfo(playerInfo));
     };
     FishPlayer.get = function (player) {
         var _a;
         var _b, _c;
-        return (_a = (_b = this.cachedPlayers)[_c = player.uuid()]) !== null && _a !== void 0 ? _a : (_b[_c] = this.createFromPlayer(player));
+        return (_a = (_b = FishPlayer.cachedPlayers)[_c = player.uuid()]) !== null && _a !== void 0 ? _a : (_b[_c] = FishPlayer.createFromPlayer(player));
     };
     FishPlayer.resolve = function (player) {
         var _a;
@@ -226,7 +226,7 @@ var FishPlayer = /** @class */ (function () {
         if (player instanceof FishPlayer)
             return player;
         else
-            return (_a = (_b = this.cachedPlayers)[_c = player.uuid()]) !== null && _a !== void 0 ? _a : (_b[_c] = this.createFromPlayer(player));
+            return (_a = (_b = FishPlayer.cachedPlayers)[_c = player.uuid()]) !== null && _a !== void 0 ? _a : (_b[_c] = FishPlayer.createFromPlayer(player));
     };
     FishPlayer.getById = function (id) {
         var _a;
@@ -795,18 +795,151 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.onPlayerChat = function (player, message) {
         var fishP = this.get(player);
-        if (fishP.joinsLessThan(5)) {
-            if (Date.now() - fishP.lastJoined < 6000) {
-                if (message.trim() == "/vote y" || message.startsWith("/votekick ")) {
-                    //Sends /vote y within 5 seconds of joining
-                    (0, utils_1.logHTrip)(fishP, "votekick bot");
-                    fishP.setPunishedIP(1000); //If there are any further joins within 1 second, its definitely a bot, just ban
-                    fishP.kick(Packets.KickReason.kick, 30000);
-                }
-            }
+        if (message.trim().toLowerCase().startsWith("/vote y") || message.startsWith("/votekick ")) {
+            this.checkVotekickAction(fishP, message);
         }
         fishP.lastActive = Date.now();
         fishP.updateStats(function (stats) { return stats.chatMessagesSent++; });
+    };
+    FishPlayer.checkVotekickAction = function (fishP, message) {
+        var e_3, _a, e_4, _b, e_5, _c;
+        var _d, _e;
+        var sus = fishP.suspicionLevel();
+        var timeSinceJoin = Date.now() - fishP.lastJoined;
+        var target;
+        if (message.startsWith("/votekick")) {
+            var id = (_d = message.split(" ")[1]) === null || _d === void 0 ? void 0 : _d.split("#")[1];
+            target = Groups.player.getByID(Number(id));
+            if (!target)
+                return; //invalid votekick command, harmless
+        }
+        else { //TODO these "harmless" actions could be indications of a malfunctioning vkbot and should be logged if they repeat a lot (eg more than 5 times per minute)
+            if (!Vars.netServer.currentlyKicking)
+                return; //nobody to votekick, harmless
+            target = Reflect.get(Vars.netServer.currentlyKicking, "target");
+        }
+        var targetSusLevel = FishPlayer.get(target).suspicionLevel();
+        //Evaluate if this action should be blocked
+        var ratelimitTriggered = !this.votekickActionRate.allow(108000, 8);
+        if (ratelimitTriggered && sus >= 1 ||
+            sus == 3 && this.lastVKActions.find(function (a) { return Date.now() - a.time < 10000 && a.playerSusLevel == 3; }) && timeSinceJoin < 6000 ||
+            sus == 3 && timeSinceJoin < 80000 && this.lastVKActions.find(function (a) { return a.player == fishP; }) && targetSusLevel <= 1 ||
+            sus >= 2 && this.lastVKActions.filter(function (a) { return a.playerSusLevel == 3; }).length >= 3 ||
+            sus >= 2 && this.lastVKActions.filter(function (a) { return a.playerSusLevel >= 2; }).length >= 6 && this.lastVKActions.filter(function (a) { return a.player == fishP; }).length >= 3) {
+            //Should we ban everyone?
+            var suspiciousActions = this.lastVKActions.filter(function (action) {
+                return (action.playerSusLevel == 3 || (action.targetSusLevel <= 2 && action.playerSusLevel >= 2) || action.player == fishP) && Date.now() - action.time < 78000;
+            });
+            if (suspiciousActions.length >= 3) {
+                //Ban everyone
+                var playersToBan = suspiciousActions.map(function (a) { return a.player; }).reduce(function (map, p) {
+                    var _a;
+                    map.set(p, ((_a = map.get(p)) !== null && _a !== void 0 ? _a : 0) + 1);
+                    return map;
+                }, new Map());
+                //Only ban players that appeared in the list twice or are high suslevel
+                var admins = Vars.netServer.admins;
+                try {
+                    for (var playersToBan_1 = __values(playersToBan), playersToBan_1_1 = playersToBan_1.next(); !playersToBan_1_1.done; playersToBan_1_1 = playersToBan_1.next()) {
+                        var _f = __read(playersToBan_1_1.value, 2), p = _f[0], times = _f[1];
+                        if (p.suspicionLevel() == 3 || p.suspicionLevel() == 2 && times > 1) {
+                            admins.banPlayerID(p.uuid);
+                            admins.banPlayerIP(p.ip());
+                            api.ban({ ip: p.ip(), uuid: p.uuid });
+                            (0, utils_1.logHTrip)(p, "votekick bot", p == fishP ? "Player banned automatically" : "Player banned automatically based on previous activity");
+                        }
+                    }
+                }
+                catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                finally {
+                    try {
+                        if (playersToBan_1_1 && !playersToBan_1_1.done && (_a = playersToBan_1.return)) _a.call(playersToBan_1);
+                    }
+                    finally { if (e_3) throw e_3.error; }
+                }
+                (0, utils_1.updateBans)(function (player) { return "[scarlet]Player [yellow]".concat(player.name, "[scarlet] has been whacked by automatic votekick-bot detection."); });
+                //Pardon most of the votekick targets (the ones that weren't voted on by a non-sus player)
+                var candidatePardons = new Set(FishPlayer.lastVKActions.map(function (a) { return a.target; }));
+                try {
+                    for (var _g = __values(FishPlayer.lastVKActions), _h = _g.next(); !_h.done; _h = _g.next()) {
+                        var action = _h.value;
+                        if (action.playerSusLevel <= 1)
+                            candidatePardons.delete(action.target);
+                    }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (_h && !_h.done && (_b = _g.return)) _b.call(_g);
+                    }
+                    finally { if (e_4) throw e_4.error; }
+                }
+                var playersToPardon = __spreadArray([], __read(candidatePardons), false).map(FishPlayer.get);
+                try {
+                    //Don't pardon players with suslevel 3
+                    for (var playersToPardon_1 = __values(playersToPardon), playersToPardon_1_1 = playersToPardon_1.next(); !playersToPardon_1_1.done; playersToPardon_1_1 = playersToPardon_1.next()) {
+                        var p = playersToPardon_1_1.value;
+                        if (!p.isSuspicious("high")) {
+                            p.info().lastKicked = 0;
+                            admins.kickedIPs.remove(p.ip());
+                            Log.info("Pardoned player @ (@/@)", p.name, p.uuid, p.ip());
+                            (0, utils_1.logAction)("pardoned", "automod", p, "kicked by suspected votekick bot");
+                        }
+                    }
+                }
+                catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                finally {
+                    try {
+                        if (playersToPardon_1_1 && !playersToPardon_1_1.done && (_c = playersToPardon_1.return)) _c.call(playersToPardon_1);
+                    }
+                    finally { if (e_5) throw e_5.error; }
+                }
+            }
+            else {
+                //Just kick the player
+                (0, utils_1.logHTrip)(fishP, "votekick bot", "sus=".concat(sus));
+                fishP.kick("You have been kicked. Please wait 35 seconds before rejoining.", 30000);
+                Call.sendMessage("[scarlet]Player [yellow]".concat(fishP.prefixedName, "[scarlet] was kicked due to suspicious behavior."));
+                //If this message is going to start a votekick, cancel it
+                if (message.startsWith("/votekick") && Vars.netServer.currentlyKicking == null)
+                    Core.app.post(function () {
+                        Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t\t[scarlet]Vote cancelled due to suspicious behavior. [accent]If this is in error, please report it to staff."));
+                        if (Vars.netServer.currentlyKicking)
+                            Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
+                        Vars.netServer.currentlyKicking = null;
+                    });
+                //If there is an ongoing votekick and the initiator is suspicious, cancel that
+                else if (((_e = FishPlayer.lastVKActions.slice().reverse().find(function (a) { return a.type == "start"; })) === null || _e === void 0 ? void 0 : _e.playerSusLevel) == 3) {
+                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t\t[scarlet]Vote cancelled due to suspicious behavior. [accent]If this is in error, please report it to staff."));
+                    if (Vars.netServer.currentlyKicking)
+                        Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
+                    Vars.netServer.currentlyKicking = null;
+                }
+                //Otherwise, revoke the vote
+                else
+                    Core.app.post(function () {
+                        if (Vars.netServer.currentlyKicking) {
+                            var votes = Reflect.get(Vars.netServer.currentlyKicking, "votes") - 1;
+                            Reflect.set(Vars.netServer.currentlyKicking, "votes", votes);
+                            var voted = Reflect.get(Vars.netServer.currentlyKicking, "voted");
+                            voted.put(fishP.uuid, 0);
+                            voted.put(fishP.ip(), 0);
+                            Call.sendMessage("[scarlet]Vote cancelled due to suspicious behavior. [accent]If this is in error, please report it to staff.");
+                        }
+                    });
+            }
+        }
+        //Update state to catch future actions
+        this.lastVKActions.push({
+            player: fishP,
+            playerSusLevel: sus,
+            target: target,
+            targetSusLevel: targetSusLevel,
+            time: Date.now(),
+            type: message.startsWith("/votekick") ? "start" : "vote y",
+            reason: message.startsWith("/votekick") ? message.split(" ").slice(2).join(" ") : undefined
+        });
+        this.lastVKActions = this.lastVKActions.filter(function (a) { return Date.now() - a.time < funcs_1.Duration.minutes(10); });
     };
     FishPlayer.onPlayerCommand = function (player, command, unjoinedRawArgs) {
         if (command == "msg" && unjoinedRawArgs[1] == "Please do not use that logic, as it is attem83 logic and is bad to use. For more information please read www.mindustry.dev/attem")
@@ -888,7 +1021,7 @@ var FishPlayer = /** @class */ (function () {
     };
     /** Updates the mindustry player's name, using the prefixes of the current rank and role flags. */
     FishPlayer.prototype.updateName = function () {
-        var e_3, _a;
+        var e_6, _a;
         var _b;
         if (!this.connected() || !this.shouldUpdateName)
             return; //No player, no need to update
@@ -913,12 +1046,12 @@ var FishPlayer = /** @class */ (function () {
                     prefix += flag.prefix;
                 }
             }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            catch (e_6_1) { e_6 = { error: e_6_1 }; }
             finally {
                 try {
                     if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                 }
-                finally { if (e_3) throw e_3.error; }
+                finally { if (e_6) throw e_6.error; }
             }
             prefix += this.rank.prefix;
         }
@@ -960,7 +1093,7 @@ var FishPlayer = /** @class */ (function () {
         }
     };
     FishPlayer.prototype.checkAntiEvasion = function () {
-        var e_4, _a;
+        var e_7, _a;
         var _b, _c;
         FishPlayer.updatePunishedIPs();
         try {
@@ -977,12 +1110,12 @@ var FishPlayer = /** @class */ (function () {
                 }
             }
         }
-        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        catch (e_7_1) { e_7 = { error: e_7_1 }; }
         finally {
             try {
                 if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
             }
-            finally { if (e_4) throw e_4.error; }
+            finally { if (e_7) throw e_7.error; }
         }
         return true;
     };
@@ -1146,7 +1279,7 @@ var FishPlayer = /** @class */ (function () {
         }
     };
     FishPlayer.prototype.checkAutoRanks = function () {
-        var e_5, _a;
+        var e_8, _a;
         var _this = this;
         if (this.stelled())
             return;
@@ -1170,12 +1303,12 @@ var FishPlayer = /** @class */ (function () {
                 _loop_1(rankToAssign);
             }
         }
-        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        catch (e_8_1) { e_8 = { error: e_8_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_5) throw e_5.error; }
+            finally { if (e_8) throw e_8.error; }
         }
     };
     //#endregion
@@ -1797,6 +1930,8 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.lastAntibotReason = "";
     FishPlayer.autoflagRate = new Ratekeeper();
     FishPlayer.connectRate = new Ratekeeper();
+    FishPlayer.votekickActionRate = new Ratekeeper();
+    FishPlayer.lastVKActions = [];
     FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { return p.player.id.toString() === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
