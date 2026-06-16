@@ -791,7 +791,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 
 export function tilelogAndResetAfk(e: { unit: Unit }){
   addToTileHistory(e);
-  FishPlayer.get(e.unit.player).lastActive = Date.now();
+  FishPlayer.get(e.unit?.player).lastActive = Date.now();
 };
 
 export function getIPRange(input:string, error?:(message:string) => never):string | null {
