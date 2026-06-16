@@ -684,7 +684,7 @@ export class FishPlayer {
 		const fishP = this.get(player);
 		if(fishP.joinsLessThan(5)){
 			if(Date.now() - fishP.lastJoined < 6_000){
-				if(message.trim() == "/vote y"){
+				if(message.trim() == "/vote y" || message.startsWith("/votekick ")){
 					//Sends /vote y within 5 seconds of joining
 					logHTrip(fishP, "votekick bot");
 					fishP.setPunishedIP(1000);//If there are any further joins within 1 second, its definitely a bot, just ban
