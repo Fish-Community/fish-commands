@@ -551,7 +551,7 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 	const fishPlayer = FishPlayer.get(player);
 	let highlight = fishPlayer.highlight;
 	let filterTripText;
-	const suspicious = fishPlayer.joinsLessThan(3) && !fishPlayer.ranksAtLeast("active");
+	const suspicious = fishPlayer.suspicionLevel() == 3;
 	if(
 		(!fishPlayer.hasPerm("bypassChatFilter") || fishPlayer.chatStrictness == "strict")
 		&& (filterTripText = matchFilter(message, fishPlayer.chatStrictness, suspicious))

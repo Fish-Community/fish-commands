@@ -92,7 +92,7 @@ export function initializeTimers(){
 	}, 0, 1);
 	Timer.schedule(() => {
 		FishPlayer.validateVotekickSession();
-	}, 0, 0.5);
+	}, 0, 0.3);
 }
 Timer.schedule(() => {
 	updateMaps()

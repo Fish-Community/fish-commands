@@ -642,7 +642,7 @@ export class FishPlayer {
 					Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
 					Vars.netServer.currentlyKicking = null;
 					return;
-				} else if(initiator?.hasPerm("immediatelyVotekickNewPlayers") && target.firstJoin() && !target.hasPerm("bypassVotekick")){
+				} else if(initiator?.hasPerm("immediatelyVotekickNewPlayers") && target.isSuspicious("high") && !target.hasPerm("bypassVotekick")){
 					Call.sendMessage(
 `[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (${Vars.netServer.votesRequired()}/${Vars.netServer.votesRequired()})
 [scarlet]Vote passed.`
@@ -651,7 +651,7 @@ export class FishPlayer {
 					Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
 					Vars.netServer.currentlyKicking = null;
 					return;
-				} else if(target.firstJoin() && !target.hasPerm("bypassVotekick") && !target.ranksAtLeast("trusted")){
+				} else if(target.isSuspicious("high") && !target.hasPerm("bypassVotekick") && !target.ranksAtLeast("trusted")){
 					//Increase votes by 1, from 1 to 2
 					Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(2));
 					voted.put("__server__", 1);
@@ -1412,6 +1412,37 @@ We apologize for the inconvenience.`
 	}
 	joinsLessThan(amount:number){
 		return this.info().timesJoined < amount;
+	}
+	/**
+	 * 3 for first join or less than 2 minutes in game
+	 * 2 for relatively new players
+	 * 1 for players who we're fairly certain are not griefers (10 joins, 150 chat messages, 2 hours ingame)
+	 * 0 for active ranked players
+	 */
+	suspicionLevel(): 3 | 2 | 1 | 0 {
+		if(this.ranksAtLeast("active") || this.stats.chatMessagesSent > 2000) return 0;
+		if(
+			this.info().timesJoined == 1 && this.stats.timeInGame <= Duration.hours(1) ||
+			this.info().timesJoined == 2 && this.stats.timeInGame < Duration.minutes(8) ||
+			this.stats.timeInGame < 120_000
+		) return 3;
+		if((
+			+ (this.info().timesJoined > 40) +
+			+ (this.info().timesJoined > 10) +
+			+ (this.stats.blocksBroken > 1000 && this.stats.blocksPlaced > 2000) +
+			+ (this.stats.chatMessagesSent > 150) +
+			+ (this.stats.timeInGame > Duration.hours(2)) +
+			+ (this.stats.timeInGame > Duration.hours(5))
+		) < 3) return 2;
+		return 1;
+	}
+	isSuspicious(level: "high" | "medium" | "low"):boolean {
+		const num = this.suspicionLevel();
+		switch(level){
+			case "high": return num >= 3;
+			case "medium": return num >= 2;
+			case "low": return num >= 1;
+		}
 	}
 
 	updateStats(func:(stats:Stats) => void):void {
