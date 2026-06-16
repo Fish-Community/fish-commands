@@ -77,6 +77,9 @@ export default defineConfig([
 			"@typescript-eslint/no-empty-function": ["warn", {
 				allow: ["arrowFunctions"]
 			}],
+			//This rule is really useful but it's generating too many false positives
+			//TODO try to turn it back on, maybe it's a temporary bug?
+			"@typescript-eslint/no-unnecessary-type-assertion": "off",
 		},
 	},
 	{

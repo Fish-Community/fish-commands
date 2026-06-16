@@ -816,7 +816,6 @@ interface Array<T> {
 }
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ReadonlyArray<T> {
-	// eslint-disable-next-line @typescript-eslint/array-type
 	map<TThis extends ReadonlyArray<T>, U>(this:TThis, fn:(v:T, i:number, a:TThis) => U): number extends TThis["length"] ? U[] : { [K in keyof TThis]: U };
 }
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions

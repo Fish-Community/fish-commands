@@ -794,7 +794,6 @@ Please stop attacking and [lime]build defenses[] first!`
 		async handler({sender, args: {waves}, data:{manager}}){
 
 			//Disable narrowing, this is async
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 			if(!manager.session as boolean){
 				waves ??= await Menu.menu(
 					"Start a Next Wave Vote",
