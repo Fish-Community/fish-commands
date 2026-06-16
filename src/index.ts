@@ -257,14 +257,32 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 
 // Keeps track of any action performed on a tile for use in tilelog.
 
-Events.on(EventType.BlockBuildBeginEvent, addToTileHistory);
-Events.on(EventType.BuildRotateEvent, addToTileHistory);
-Events.on(EventType.ConfigEvent, addToTileHistory);
-Events.on(EventType.PickupEvent, addToTileHistory);
-Events.on(EventType.PayloadDropEvent, addToTileHistory);
+Events.on(EventType.BlockBuildBeginEvent, (e) => {
+  addToTileHistory(e);
+  FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
+Events.on(EventType.BuildRotateEvent, (e) => {
+  addToTileHistory(e);
+  FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
+Events.on(EventType.ConfigEvent, (e) => {
+  addToTileHistory(e);
+  FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
+Events.on(EventType.PickupEvent, (e) => {
+  addToTileHistory(e);
+  FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
+Events.on(EventType.PayloadDropEvent, (e) => {
+  addToTileHistory(e);
+  FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
 Events.on(EventType.UnitDestroyEvent, addToTileHistory);
 Events.on(EventType.BlockDestroyEvent, addToTileHistory);
-Events.on(EventType.UnitControlEvent, addToTileHistory);
+Events.on(EventType.UnitControlEvent, (e) => {
+  addToTileHistory(e);
+  FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
 
 
 Events.on(EventType.TapEvent, handleTapEvent);
