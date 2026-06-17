@@ -14,7 +14,7 @@ import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
+import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop, tilelogAndResetAfk } from "/utils";
 
 
 Events.on(EventType.ConnectionEvent, (e) => {
@@ -257,14 +257,14 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 
 // Keeps track of any action performed on a tile for use in tilelog.
 
-Events.on(EventType.BlockBuildBeginEvent, addToTileHistory);
-Events.on(EventType.BuildRotateEvent, addToTileHistory);
-Events.on(EventType.ConfigEvent, addToTileHistory);
-Events.on(EventType.PickupEvent, addToTileHistory);
-Events.on(EventType.PayloadDropEvent, addToTileHistory);
+Events.on(EventType.BlockBuildBeginEvent, tilelogAndResetAfk)
+Events.on(EventType.BuildRotateEvent, tilelogAndResetAfk);
+Events.on(EventType.ConfigEvent, tilelogAndResetAfk);
+Events.on(EventType.PickupEvent, tilelogAndResetAfk);
+Events.on(EventType.PayloadDropEvent, tilelogAndResetAfk);
 Events.on(EventType.UnitDestroyEvent, addToTileHistory);
 Events.on(EventType.BlockDestroyEvent, addToTileHistory);
-Events.on(EventType.UnitControlEvent, addToTileHistory);
+Events.on(EventType.UnitControlEvent, tilelogAndResetAfk);
 
 
 Events.on(EventType.TapEvent, handleTapEvent);

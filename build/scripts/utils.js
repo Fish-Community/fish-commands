@@ -74,7 +74,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = void 0;
+exports.tilelogAndResetAfk = exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = void 0;
 exports.memoizeChatFilter = memoizeChatFilter;
 exports.formatTime = formatTime;
 exports.formatTimeShort = formatTimeShort;
@@ -955,6 +955,10 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
             str.writeString(el.type, 2);
         }, 1); });
     });
+});
+exports.tilelogAndResetAfk = logErrors("Error while saving a tilelog entry and resetting afk", function (e) {
+    (0, exports.addToTileHistory)(e);
+    players_1.FishPlayer.get(e.unit.player).lastActive = Date.now();
 });
 function getIPRange(input, error) {
     if (globals_1.ipRangeCIDRPattern.test(input)) {
