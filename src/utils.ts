@@ -5,7 +5,7 @@ For functions that don't need values from other files, see funcs.ts.
 */
 
 import * as api from "/api";
-import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
+import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, noMultiVnwTag, substitutions, text } from "/config";
 import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
 import { Cancel } from "/frameworks/menus";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
@@ -466,6 +466,10 @@ export function neutralGameover(){
 
 /** Please validate requestedWaves to ensure it is not huge */
 export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean){
+	//Check if the current map has opted out of multi-wave skipping
+	if(Vars.state.rules.tags.get(noMultiVnwTag) == "true"){
+		requestedWaves = Math.min(requestedWaves, 1);
+	}
 	let winWave = Vars.state.rules.winWave;
 	if(winWave <= 0) winWave = Infinity;
 	const wavesToSkip = Math.min(requestedWaves, winWave - Vars.state.wave);

@@ -33,7 +33,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
+exports.noMultiVnwTag = exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.campaigns = exports.Campaign = exports.throwbackMapFileNames = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
 var globals_1 = require("/globals");
 var ranks_1 = require("/ranks");
 var funcs_1 = require("/funcs");
@@ -161,6 +161,26 @@ exports.heuristics = {
 };
 exports.stopAntiEvadeTime = funcs_1.Duration.minutes(30);
 exports.backendIP = '45.79.202.111:5082';
+/** File names of throwback (retired) maps. These will not appear in the normal maps list, but will be available in the throwback maps tab. */
+exports.throwbackMapFileNames = [];
+/** A campaign is a curated sequence of maps that overrides normal map rotation. */
+var Campaign = /** @class */ (function () {
+    function Campaign(
+    /** Display name of the campaign */
+    name, 
+    /** Short description shown in the menu */
+    description, 
+    /** Ordered list of map file names in the campaign */
+    mapFileNames) {
+        this.name = name;
+        this.description = description;
+        this.mapFileNames = mapFileNames;
+    }
+    return Campaign;
+}());
+exports.Campaign = Campaign;
+/** Available campaigns. Maps are listed in order; when a campaign is active, rotation follows this sequence. */
+exports.campaigns = [];
 exports.Mode = {
     localDebug: new Fi("config/.debug").exists(),
     noBackend: new Fi("config/.debug").exists() && !exports.backendIP.startsWith("127.0.0.1:"),
@@ -354,5 +374,8 @@ exports.rules = [
     "# 8: [pink]No uncomfortable trolling or intentionally causing chaos. This includes any actions or messages that create an unpleasant atmosphere.",
     "Failure to follow these rules will result in consequences: likely a ".concat(exports.prefixes.marked, " tag for any game disruption, mute for broken chat rules, and bans for repeated offenses or bypasses.")
 ].map(function (r) { return "[white]".concat(r); });
+/** Map tag key for maps that opt out of multi-wave skipping (Issue #151).
+ * Maps with this tag set to "true" will only allow 1 wave to be skipped per /vnw call. */
+exports.noMultiVnwTag = "no-multi-vnw";
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9;
 //#endregion

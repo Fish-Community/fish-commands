@@ -143,6 +143,21 @@ export const heuristics = {
 };
 export const stopAntiEvadeTime = Duration.minutes(30);
 export const backendIP = '45.79.202.111:5082';
+/** File names of throwback (retired) maps. These will not appear in the normal maps list, but will be available in the throwback maps tab. */
+export const throwbackMapFileNames: string[] = [];
+/** A campaign is a curated sequence of maps that overrides normal map rotation. */
+export class Campaign {
+	constructor(
+		/** Display name of the campaign */
+		public name:string,
+		/** Short description shown in the menu */
+		public description:string,
+		/** Ordered list of map file names in the campaign */
+		public mapFileNames:string[],
+	){}
+}
+/** Available campaigns. Maps are listed in order; when a campaign is active, rotation follows this sequence. */
+export const campaigns:Campaign[] = [];
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
 	noBackend: new Fi("config/.debug").exists() && !backendIP.startsWith("127.0.0.1:"),
@@ -376,5 +391,8 @@ export const rules = [
 	`# 8: [pink]No uncomfortable trolling or intentionally causing chaos. This includes any actions or messages that create an unpleasant atmosphere.`,
 	`Failure to follow these rules will result in consequences: likely a ${prefixes.marked} tag for any game disruption, mute for broken chat rules, and bans for repeated offenses or bypasses.`
 ].map(r => `[white]${r}`);
+/** Map tag key for maps that opt out of multi-wave skipping (Issue #151).
+ * Maps with this tag set to "true" will only allow 1 wave to be skipped per /vnw call. */
+export const noMultiVnwTag = "no-multi-vnw";
 //#endregion
 

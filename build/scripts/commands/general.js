@@ -1069,7 +1069,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         handler: function (_a) {
             var output = _a.output;
-            output("[yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.\n\n[blue]Available maps:\n_________________________\n".concat(Vars.maps.customMaps().toArray().map(function (map) {
+            output("[yellow]Use [white]/nextmap [lightgray][[map name] [yellow]to vote on a map.\n\n[blue]Available maps:\n_________________________\n".concat(Vars.maps.customMaps().toArray().map(function (map) {
                 return "[yellow]".concat(map.name());
             }).join("\n")));
         }
@@ -1084,6 +1084,115 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         var voteEndTime = -1;
         var voteDuration = funcs_1.Duration.minutes(1.5);
         var task = null;
+        var isThrowbackFile = function (file) { return config_1.throwbackMapFileNames.includes(file.name()); };
+        var throwbackMaps = function () { return config_1.throwbackMapFileNames
+            .map(function (f) { return Vars.maps.customMaps().find(function (m) { return m.file.name() == f; }); })
+            .filter(function (m) { return m != null; }); };
+        var normalMaps = function () { return Vars.maps.customMaps().toArray().filter(function (m) { return !isThrowbackFile(m.file); }); };
+        function showMapDetails(target, map) {
+            return __awaiter(this, void 0, void 0, function () {
+                var res;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, menus_1.Menu.buttons(target, map.name(), "[accent]Description: [white]".concat(map.description(), "\n[accent]Author: [white]").concat(map.author(), "\n[accent]Fastest Time: [white]").concat((0, utils_1.formatTime)(maps_1.FMap.getCreate(map).stats().shortestTime), "\n[accent]Runs: [white]").concat(maps_1.FMap.getCreate(map).stats().allRunCount, "\n[accent]Winrate: [white]").concat((maps_1.FMap.getCreate(map).stats().winRate * 100).toFixed(2), "%"), [[
+                                    { data: "vote", text: "[green]Vote for this Map" }
+                                ], [
+                                    { data: "back", text: "[red]Back" }
+                                ]], { onCancel: "null" })];
+                        case 1:
+                            res = _a.sent();
+                            return [2 /*return*/, res !== null && res !== void 0 ? res : "back"];
+                    }
+                });
+            });
+        }
+        function pickMapFromList(target, title, maps) {
+            return __awaiter(this, void 0, void 0, function () {
+                var map, action;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, menus_1.Menu.pagedList(target, title, "Select a map to view more information.", maps, { optionStringifier: function (map) { return map.name(); }, rowsPerPage: 10, columns: 1 })];
+                        case 1:
+                            map = _a.sent();
+                            return [4 /*yield*/, showMapDetails(target, map)];
+                        case 2:
+                            action = _a.sent();
+                            if (action === "vote")
+                                return [2 /*return*/, map];
+                            return [2 /*return*/, null];
+                    }
+                });
+            });
+        }
+        function currentMenu(target) {
+            return __awaiter(this, void 0, void 0, function () {
+                var result, _a, picked, throwback, picked, campaign, campaignMaps, picked;
+                var _b, _c, _d, _e;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0: return [4 /*yield*/, menus_1.Menu.menu("Select a map", "[accent]---Current Map---\nMap Name: [white]".concat(Vars.state.map.name(), "\n[accent]Map Author: [white]").concat(Vars.state.map.author(), "\nFastest Time: [white]").concat((0, utils_1.formatTime)(maps_1.FMap.getCreate(Vars.state.map).stats().shortestTime), "\nCurrent Time: [white]").concat((0, utils_1.formatTime)((_e = (_c = (_b = maps_1.PartialMapRun.current) === null || _b === void 0 ? void 0 : _b.duration()) !== null && _c !== void 0 ? _c : (_d = maps_1.FMap.getCreate(Vars.state.map).runs.at(-1)) === null || _d === void 0 ? void 0 : _d.duration()) !== null && _e !== void 0 ? _e : 0)), ["[green]Current Maps", "[yellow]Throwback Maps", "[orange]Campaigns"], target, { columns: 1, includeCancel: "Close" })];
+                        case 1:
+                            result = _f.sent();
+                            _a = result;
+                            switch (_a) {
+                                case '[green]Current Maps': return [3 /*break*/, 2];
+                                case '[yellow]Throwback Maps': return [3 /*break*/, 4];
+                                case '[orange]Campaigns': return [3 /*break*/, 6];
+                            }
+                            return [3 /*break*/, 9];
+                        case 2: return [4 /*yield*/, pickMapFromList(target, "Current Maps", normalMaps())];
+                        case 3:
+                            picked = _f.sent();
+                            if (picked)
+                                return [2 /*return*/, picked];
+                            return [2 /*return*/, currentMenu(target)];
+                        case 4:
+                            throwback = throwbackMaps();
+                            if (throwback.length == 0)
+                                (0, commands_1.fail)("No throwback maps are currently available.");
+                            return [4 /*yield*/, pickMapFromList(target, "Throwback Maps", throwback)];
+                        case 5:
+                            picked = _f.sent();
+                            if (picked)
+                                return [2 /*return*/, picked];
+                            return [2 /*return*/, currentMenu(target)];
+                        case 6:
+                            if (config_1.campaigns.length == 0)
+                                (0, commands_1.fail)("No campaigns are currently available.");
+                            return [4 /*yield*/, menus_1.Menu.pagedList(target, "Campaigns", "Select a campaign to view its maps.", config_1.campaigns, { optionStringifier: function (c) { return c.name; }, rowsPerPage: 10, columns: 1 })];
+                        case 7:
+                            campaign = _f.sent();
+                            campaignMaps = campaign.mapFileNames
+                                .map(function (f) { return Vars.maps.customMaps().find(function (m) { return m.file.name() == f; }); })
+                                .filter(function (m) { return m != null; });
+                            if (campaignMaps.length == 0)
+                                (0, commands_1.fail)("Campaign \"".concat(campaign.name, "\" has no available maps."));
+                            return [4 /*yield*/, pickMapFromList(target, "Campaign: ".concat(campaign.name), campaignMaps)];
+                        case 8:
+                            picked = _f.sent();
+                            if (picked)
+                                return [2 /*return*/, picked];
+                            return [2 /*return*/, currentMenu(target)];
+                        case 9:
+                            ;
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
+        function sendVote(sender, map) {
+            votes.set(sender, map);
+            if (voteEndTime == -1) {
+                if ((Date.now() - lastVoteTime) < funcs_1.Duration.minutes(1))
+                    (0, commands_1.fail)("Please wait 1 minute before starting a new map vote.");
+                startVote();
+                Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] started a map vote, and voted for [yellow]").concat(map.name(), "[cyan]. Use [white]/nextmap ").concat(map.plainName(), "[] to add your vote, or run [white]/maps[] to see other available maps."));
+            }
+            else {
+                Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] voted for [yellow]").concat(map.name(), "[cyan]. Time left: [scarlet]").concat((0, utils_1.formatTimeRelative)(voteEndTime, true)));
+                showVotes();
+            }
+        }
         function resetVotes() {
             votes.clear();
             voteEndTime = -1;
@@ -1093,7 +1202,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             return __spreadArray([], __read(votes.values()), false).reduce(function (acc, map) { return (acc.increment(map), acc); }, new ObjectIntMap()).entries().toArray();
         }
         function showVotes() {
-            Call.sendMessage("[green]Current votes:\n------------------------------\n".concat(getMapData().map(function (_a) {
+            Call.sendMessage("[green]Current votes:\n-----------------------------\n".concat(getMapData().map(function (_a) {
                 var map = _a.key, votes = _a.value;
                 return "[cyan]".concat(map.name(), "[yellow]: ").concat(votes);
             }).toString("\n")));
@@ -1132,36 +1241,47 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 winner = highestVotedMaps.get(0).key;
                 Call.sendMessage("[green]Map voting complete! The next map will be [yellow]".concat(winner.name(), " [green]with [yellow]").concat(highestVoteCount, "[green] votes."));
             }
-            Vars.maps.setNextMapOverride(winner == random ? null : null);
+            if (winner != random)
+                Vars.maps.setNextMapOverride(winner);
             resetVotes();
         }
         Events.on(EventType.GameOverEvent, resetVotes);
         Events.on(EventType.ServerLoadEvent, resetVotes);
         return {
-            args: ['map:mapOrRandom'],
-            description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
+            args: ['map:mapOrRandom?'],
+            description: 'Allows you to vote for the next map.',
             perm: commands_1.Perm.play,
             data: { votes: votes, voteEndTime: function () { return voteEndTime; }, resetVotes: resetVotes, endVote: endVote },
             requirements: [commands_1.Req.cooldown(10000)],
             handler: function (_a) {
-                var args = _a.args, sender = _a.sender;
-                var map = args.map === "random" ? random : args.map;
-                if (config_1.Gamemode.testsrv())
-                    (0, commands_1.fail)("Please use /forcenextmap instead.");
-                if (votes.get(sender))
-                    (0, commands_1.fail)("You have already voted.");
-                if (voteEndTime == -1) {
-                    if ((Date.now() - lastVoteTime) < funcs_1.Duration.minutes(1))
-                        (0, commands_1.fail)("Please wait 1 minute before starting a new map vote.");
-                    startVote();
-                    votes.set(sender, map);
-                    Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] started a map vote, and voted for [yellow]").concat(map.name(), "[cyan]. Use [white]/nextmap ").concat(map.plainName(), "[] to add your vote, or run [white]/maps[] to see other available maps."));
-                }
-                else {
-                    votes.set(sender, map);
-                    Call.sendMessage("[cyan]Next Map Vote: ".concat(sender.name, "[cyan] voted for [yellow]").concat(map.name(), "[cyan]. Time left: [scarlet]").concat((0, utils_1.formatTimeRelative)(voteEndTime, true)));
-                    showVotes();
-                }
+                return __awaiter(this, arguments, void 0, function (_b) {
+                    var _c, _d, map;
+                    var _e;
+                    var args = _b.args, sender = _b.sender;
+                    return __generator(this, function (_f) {
+                        switch (_f.label) {
+                            case 0:
+                                if (config_1.Gamemode.testsrv())
+                                    (0, commands_1.fail)("Please use /forcenextmap instead.");
+                                if (votes.get(sender))
+                                    (0, commands_1.fail)("You have already voted.");
+                                if (!((_e = args.map) !== null && _e !== void 0)) return [3 /*break*/, 1];
+                                _c = _e;
+                                return [3 /*break*/, 3];
+                            case 1:
+                                _d = args;
+                                return [4 /*yield*/, currentMenu(sender)];
+                            case 2:
+                                _c = (_d.map = _f.sent());
+                                _f.label = 3;
+                            case 3:
+                                _c;
+                                map = args.map === "random" ? random : args.map;
+                                sendVote(sender, map);
+                                return [2 /*return*/];
+                        }
+                    });
+                });
             }
         };
     }), surrender: (0, commands_1.command)(function () {
