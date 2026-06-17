@@ -341,7 +341,7 @@ export const commands = consoleCommandList({
 		args: ["any:string?", "anyb:string?"],
 		description: "Please use the whack and unwhack commands instead.",
 		handler({args, output, admins}){
-			if(args.any) fail(`Use the whack and unwhack commands instead.`);
+			if(args.any && args.any != "list") fail(`Use the whack and unwhack commands instead.`);
 			output(`List of all subnet bans:`);
 			output(admins.subnetBans.toString("\n"));
 		}

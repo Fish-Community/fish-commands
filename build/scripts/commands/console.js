@@ -581,7 +581,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
         description: "Please use the whack and unwhack commands instead.",
         handler: function (_a) {
             var args = _a.args, output = _a.output, admins = _a.admins;
-            if (args.any)
+            if (args.any && args.any != "list")
                 (0, commands_1.fail)("Use the whack and unwhack commands instead.");
             output("List of all subnet bans:");
             output(admins.subnetBans.toString("\n"));
