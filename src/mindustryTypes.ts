@@ -110,6 +110,7 @@ const Vars: {
 class Teams {
 	active: Seq<TeamData>;
 	getActive(): Seq<TeamData>;
+	present: Seq<TeamData>;
 }
 class BlockIndexer {
 	getFlagged(team: Team, flag: BlockFlag): Seq<Building>;
@@ -510,6 +511,7 @@ const Http: {
 	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
 };
 class Seq<T> {
+	iterator():Iterator<T>
 	items: Array<T | null>;
 	size: number;
 	constructor();
@@ -517,6 +519,7 @@ class Seq<T> {
 	static with<T>(...items:T[]):Seq<T>;
 	static with<T>(items:MIterable<T>):Seq<T>;
 	add(item:T):this;
+	add(t:Seq<T>):this;
 	addUnique(item:T):this;
 	contains(item:T):boolean;
 	contains(pred:Boolf<T>):boolean;
@@ -530,6 +533,7 @@ class Seq<T> {
 	removeAll(pred:(item:T) => boolean):Seq<T>;
 	select(pred:(item:T) => boolean):Seq<T>;
 	find(pred:(item:T) => boolean):T | null;
+	forEach(func:(item:T) => unknown):void;
 	each(func:(item:T) => unknown):void;
 	each(pred:(item:T) => boolean, func:(item:T) => unknown):void;
 	isEmpty():boolean;
@@ -588,7 +592,7 @@ class ObjectIntMapEntry<K> {
 	key:K;
 	value:number;
 }
-class EntityGroup<T> {
+class EntityGroup<T> {		
 	add(type:T):void
 	copy():Seq<T>;
 	copy(seq:Seq<T>):Seq<T>;
@@ -602,6 +606,8 @@ class EntityGroup<T> {
 	first():T;
 	index(index:number):T;
 	clear():void;
+	count(pred:(item:T) => boolean):number
+	remove(item:T):void
 	//iterator():Iterator<T>
 }
 

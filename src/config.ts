@@ -149,6 +149,24 @@ export const Mode = {
 	isChristmas: new Date().getMonth() == 11,
 	isAprilFools: new Date().getMonth() == 3 && new Date().getDate() == 1,
 };
+
+export const KillBuildingsConfig = {
+	/** Maximum syncronized killbuilding operations */
+	KILLSYNC_THRESHHOLD: 250,
+	/** Whitelist of blocks to NEVER bulk delete */
+	FORBIDDEN_BLOCKS:[
+		"world-cell",
+		"world-message",
+		"world-processor",
+		"world-switch",
+		"core-shard",
+		"core-foundation",
+		"core-nucleus",
+		"core-bastion",
+		"core-citadel",
+		"core-acropolis"
+	]
+}
 //#endregion
 //#region servers
 /** Stores the repository url for the maps for each gamemode. */

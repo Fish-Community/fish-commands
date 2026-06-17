@@ -4,7 +4,7 @@ This file contains the in-game chat commands that can be run by trusted staff.
 */
 
 import * as api from "/api";
-import { Gamemode, Mode, rules, stopAntiEvadeTime } from "/config";
+import { Gamemode, KillBuildingsConfig, Mode, rules, stopAntiEvadeTime } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { command, commandList, fail, Perm, Req } from "/frameworks/commands";
@@ -621,27 +621,41 @@ export const commands = commandList({
 		}
 	},
 	killbuildings: {
-		args: ["team:team?"],
-		description: "Kills all buildings (except cores), optionally specifying a team.",
+		args: ["team:team?", "block:block?"],
+		description: "Kills all buildings (except cores), optionally specifying a team and building type.",
 		perm: Perm.massKill,
-		async handler({args:{team}, sender, outputSuccess, f}){
-			if(team){
-				await Menu.confirmDangerous(sender,
-					`This will kill [scarlet]every building[] on the team ${team.coloredName()}, except cores.`,
-					{ confirmText: "[orange]Kill buildings[]" },
-				);
-				const count = team.data().buildings.size;
-				team.data().buildings.each(b => !(b.block instanceof CoreBlock), b => b.tile.remove());
-				outputSuccess(f`Killed ${count} buildings on ${team}.`);
-			} else {
-				await Menu.confirmDangerous(sender,
-					`This will kill [scarlet]every building[] except cores.`,
-					{ confirmText: "[orange]Kill buildings[]" },
-				);
-				const count = Groups.build.size();
-				Groups.build.each(b => !(b.block instanceof CoreBlock), b => b.tile.remove());
-				outputSuccess(f`Killed ${count} buildings.`);
+		async handler({args:{team, block}, sender, outputSuccess, f}){
+
+			function filterblock(b:Building) {
+				Log.info(`filter block ${b.block.localizedName}, team ${b.team.id}, ${!(KillBuildingsConfig.FORBIDDEN_BLOCKS.find(str => str == b.block.localizedName))}`);
+				return  !(KillBuildingsConfig.FORBIDDEN_BLOCKS.find(str => str == b.block.localizedName)) && // general block filter
+						(team == undefined || b.team.id == team!.id) &&  //team filter
+						(block == undefined || b.block.localizedName == block!.localizedName); // commands specific block filter
 			}
+			/** removeall properly restores the iterator of t.data.buildings so that every building deletes, not just 1/2 */
+			function queueDeleteTeam(t:Team, sequence:Seq<Building> = new Seq<Building>):Seq<Building>{
+				canidateBuilds = t.data().buildings.copy();
+				t.data().buildings.removeAll(filterblock);
+				canidateBuilds.removeAll((b) => !filterblock(b));
+				return sequence.add(canidateBuilds);
+			}
+			await Menu.confirmDangerous(sender, 
+				`This will kill [scarlet]every ${block?.localizedName ?? 'building'}[] ${(team)?(`on the team ${team.coloredName()}[]`):('on every team')}, ${(!block)?('excluding cores.'):('')}}`,
+				{confirmText: "[orange]Kill Buildings[]"});
+				
+			let canidateBuilds:Seq<Building> = new Seq<Building>;
+			if(team){
+				canidateBuilds = queueDeleteTeam(team);
+		    } else {
+				// the old groups.build did not include power-nodes or conveyor belts
+				let deleteBlocks = new Seq<Building>;
+				for(let t of Vars.state.teams.present.toArray()){
+					queueDeleteTeam(t.team,deleteBlocks);
+				}
+			}
+			if(canidateBuilds.size > KillBuildingsConfig.KILLSYNC_THRESHHOLD) canidateBuilds.each(b => b.tile.remove());
+			else canidateBuilds.each(b => b.kill());
+			outputSuccess(f`Successfully removed ${canidateBuilds.size} blocks.`);
 		}
 	},
 

@@ -33,7 +33,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
+exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.KillBuildingsConfig = exports.Mode = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
 var globals_1 = require("/globals");
 var ranks_1 = require("/ranks");
 var funcs_1 = require("/funcs");
@@ -166,6 +166,23 @@ exports.Mode = {
     noBackend: new Fi("config/.debug").exists() && !exports.backendIP.startsWith("127.0.0.1:"),
     isChristmas: new Date().getMonth() == 11,
     isAprilFools: new Date().getMonth() == 3 && new Date().getDate() == 1,
+};
+exports.KillBuildingsConfig = {
+    /** Maximum syncronized killbuilding operations */
+    KILLSYNC_THRESHHOLD: 250,
+    /** Whitelist of blocks to NEVER bulk delete */
+    FORBIDDEN_BLOCKS: [
+        "world-cell",
+        "world-message",
+        "world-processor",
+        "world-switch",
+        "core-shard",
+        "core-foundation",
+        "core-nucleus",
+        "core-bastion",
+        "core-citadel",
+        "core-acropolis"
+    ]
 };
 //#endregion
 //#region servers
