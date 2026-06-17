@@ -789,10 +789,10 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 
 });
 
-export function tilelogAndResetAfk(e: { unit: Unit }){
+export const tilelogAndResetAfk = logErrors("Error while saving a tilelog entry and resetting afk", (e:any) => {
   addToTileHistory(e);
-  FishPlayer.get(e.unit?.player).lastActive = Date.now();
-};
+  FishPlayer.get(e.unit.player).lastActive = Date.now();
+});
 
 export function getIPRange(input:string, error?:(message:string) => never):string | null {
 	if(ipRangeCIDRPattern.test(input)){
