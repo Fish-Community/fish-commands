@@ -413,9 +413,10 @@ export class FishPlayer {
 	stop(by:FishPlayer | string, duration:number, message?:string, notify = true){
 		if(duration > 60_000) this.setPunishedIP(stopAntiEvadeTime);
 		this.showRankPrefix = true;
+		let unmarkTime = Date.now() + duration;
+		if(unmarkTime > globals.maxTime) unmarkTime = globals.maxTime;
 		return this.updateSynced(() => {
-			this.unmarkTime = Date.now() + duration;
-			if(this.unmarkTime > globals.maxTime) this.unmarkTime = globals.maxTime;
+			this.unmarkTime = unmarkTime;
 			this.updateName();
 		}, () => {
 			this.setUnmarkTimer(duration);

@@ -535,10 +535,11 @@ var FishPlayer = /** @class */ (function () {
         if (duration > 60000)
             this.setPunishedIP(config_1.stopAntiEvadeTime);
         this.showRankPrefix = true;
+        var unmarkTime = Date.now() + duration;
+        if (unmarkTime > globals.maxTime)
+            unmarkTime = globals.maxTime;
         return this.updateSynced(function () {
-            _this.unmarkTime = Date.now() + duration;
-            if (_this.unmarkTime > globals.maxTime)
-                _this.unmarkTime = globals.maxTime;
+            _this.unmarkTime = unmarkTime;
             _this.updateName();
         }, function () {
             _this.setUnmarkTimer(duration);
