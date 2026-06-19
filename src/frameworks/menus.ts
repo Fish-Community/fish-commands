@@ -143,6 +143,59 @@ export const Menu = {
 		Call.menu(target.con, registeredListeners.generic, title, description, stringifiedOptions);
 		return promise;
 	},
+	/** Displays a text input menu to a player, returning a Promise. */
+	text<TPositiveIntegers extends boolean = false, TCancelBehavior extends MenuCancelOption = "reject">(
+		this:void, title:string, description:string, target:FishPlayer,
+		{
+			onCancel = "reject" as never,
+			defaultValue = "",
+			maxTextLength = 9999,
+			positiveIntegersOnly = false as never,
+			allowEmpty = false,
+		}:{
+			/**
+			 * Specifies the behavior when the player cancels the menu (by clicking Cancel, or by pressing Escape).
+			 * @default "reject"
+			 */
+			onCancel?: TCancelBehavior;
+			/** Default, not placeholder. This value will be present in the text box and editable. */
+			defaultValue?: string;
+			maxTextLength?: number;
+			positiveIntegersOnly?: TPositiveIntegers;
+			allowEmpty?: boolean;
+		} = {}
+	){
+		const { promise, reject, resolve } = Promise.withResolvers<
+			(TCancelBehavior extends "null" ? null : never) | (TPositiveIntegers extends true ? number : string),
+			TCancelBehavior extends "reject" ? Cancel : never
+		>();
+	
+		//The target fishPlayer has a property called activeMenu, which stores information about the last menu triggered.
+		//If menu() is being called from a menu calback, add it to the front of the queue so it is processed before any other menus.
+		//Otherwise, two multi-step menus queued together would alternate, which would confuse the player.
+		target.activeMenus[isInMenuCallback ? "unshift" : "push"]({ type: "text", callback(text){
+			//Additional permission validation could be done here, but the only way that callback() can be called is if the above statement executed,
+			//and on sensitive menus such as the stop menu, the only way to reach that is if menu() was called by the /stop command,
+			//which already checks permissions.
+			//Additionally, the callback is cleared by the generic menu listener after it is executed.
+	
+			try {
+				if(positiveIntegersOnly && text != null){
+					const number = Number(text);
+					if(isNaN(number)){
+						if(onCancel == "reject") reject(Cancel as never);
+						else resolve(null as never);
+					} else resolve(number as never);
+				} else if(text == null && onCancel == "reject") reject(Cancel as never);
+				else resolve(text as never);
+			} catch(err){
+				handleError(err, target, outputFail, `${target.cleanedName} submitted menu "${title}" "${description}"`);
+			}
+		}});
+	
+		Call.textInput(target.con, registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
+		return promise;
+	},
 	/** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */
 	menu<const TOption, TCancelBehavior extends MenuCancelOption = "reject">(
 		this:void, title:string, description:string, options:TOption[], target:FishPlayer,

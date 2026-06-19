@@ -189,6 +189,42 @@ exports.Menu = {
         Call.menu(target.con, registeredListeners.generic, title, description, stringifiedOptions);
         return promise;
     },
+    /** Displays a text input menu to a player, returning a Promise. */
+    text: function (title, description, target, _a) {
+        var _b = _a === void 0 ? {} : _a, _c = _b.onCancel, onCancel = _c === void 0 ? "reject" : _c, _d = _b.defaultValue, defaultValue = _d === void 0 ? "" : _d, _e = _b.maxTextLength, maxTextLength = _e === void 0 ? 9999 : _e, _f = _b.positiveIntegersOnly, positiveIntegersOnly = _f === void 0 ? false : _f, _g = _b.allowEmpty, allowEmpty = _g === void 0 ? false : _g;
+        var _h = promise_1.Promise.withResolvers(), promise = _h.promise, reject = _h.reject, resolve = _h.resolve;
+        //The target fishPlayer has a property called activeMenu, which stores information about the last menu triggered.
+        //If menu() is being called from a menu calback, add it to the front of the queue so it is processed before any other menus.
+        //Otherwise, two multi-step menus queued together would alternate, which would confuse the player.
+        target.activeMenus[isInMenuCallback ? "unshift" : "push"]({ type: "text", callback: function (text) {
+                //Additional permission validation could be done here, but the only way that callback() can be called is if the above statement executed,
+                //and on sensitive menus such as the stop menu, the only way to reach that is if menu() was called by the /stop command,
+                //which already checks permissions.
+                //Additionally, the callback is cleared by the generic menu listener after it is executed.
+                try {
+                    if (positiveIntegersOnly && text != null) {
+                        var number = Number(text);
+                        if (isNaN(number)) {
+                            if (onCancel == "reject")
+                                reject(exports.Cancel);
+                            else
+                                resolve(null);
+                        }
+                        else
+                            resolve(number);
+                    }
+                    else if (text == null && onCancel == "reject")
+                        reject(exports.Cancel);
+                    else
+                        resolve(text);
+                }
+                catch (err) {
+                    (0, utils_1.handleError)(err, target, utils_1.outputFail, "".concat(target.cleanedName, " submitted menu \"").concat(title, "\" \"").concat(description, "\""));
+                }
+            } });
+        Call.textInput(target.con, registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
+        return promise;
+    },
     /** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */
     menu: function (title, description, options, target, _a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.includeCancel, includeCancel = _c === void 0 ? false : _c, _d = _b.optionStringifier, optionStringifier = _d === void 0 ? String : _d, _e = _b.columns, columns = _e === void 0 ? 3 : _e, _f = _b.onCancel, onCancel = _f === void 0 ? "reject" : _f, _g = _b.cancelOptionId, cancelOptionId = _g === void 0 ? -1 : _g;
