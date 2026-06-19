@@ -23,6 +23,7 @@ const listeners = {
 
 		const prevCallback = fishSender.activeMenus.shift();
 		if(!prevCallback) return; //No menu to process, do nothing
+		if(prevCallback.type != "menu") return;
 		isInMenuCallback = true;
 		prevCallback.callback(option);
 		isInMenuCallback = false;
@@ -30,7 +31,25 @@ const listeners = {
 	none(player, option){
 		//do nothing
 	}
-} satisfies Record<string, (player:mindustryPlayer, option:number) => void>;
+} satisfies Record<string, BuiltinMenuListener>;
+/** Stores a mapping from name to the numeric id of a listener that has been registered. */
+const registeredTextListeners: Record<string, number> = {};
+/** Stores all listeners in use by fish-commands. */
+const textListeners = {
+	generic(player, text){
+		const fishSender = FishPlayer.get(player);
+
+		const prevCallback = fishSender.activeMenus.shift();
+		if(!prevCallback) return; //No menu to process, do nothing
+		if(prevCallback.type != "text") return;
+		isInMenuCallback = true;
+		prevCallback.callback(text);
+		isInMenuCallback = false;
+	},
+	none(player, option){
+		//do nothing
+	}
+} satisfies Record<string, BuiltinTextInputListener>;
 
 export const Cancel = Symbol("Cancel");
 export type Cancel = typeof Cancel;
@@ -39,6 +58,9 @@ export type Cancel = typeof Cancel;
 export function registerListeners(){
 	for(const [key, listener] of Object.entries(listeners)){
 		registeredListeners[key] ??= Menus.registerMenu(listener);
+	}
+	for(const [key, listener] of Object.entries(textListeners)){
+		registeredTextListeners[key] ??= Menus.registerTextInput(listener);
 	}
 }
 
@@ -90,7 +112,7 @@ export const Menu = {
 		//The target fishPlayer has a property called activeMenu, which stores information about the last menu triggered.
 		//If menu() is being called from a menu calback, add it to the front of the queue so it is processed before any other menus.
 		//Otherwise, two multi-step menus queued together would alternate, which would confuse the player.
-		target.activeMenus[isInMenuCallback ? "unshift" : "push"]({ callback(option){
+		target.activeMenus[isInMenuCallback ? "unshift" : "push"]({ type: "menu", callback(option){
 			//Additional permission validation could be done here, but the only way that callback() can be called is if the above statement executed,
 			//and on sensitive menus such as the stop menu, the only way to reach that is if menu() was called by the /stop command,
 			//which already checks permissions.
@@ -382,5 +404,5 @@ export const Menu = {
 	}
 };
 
-export { registeredListeners as listeners };
+export { registeredListeners as listeners, registeredTextListeners as textListeners };
 

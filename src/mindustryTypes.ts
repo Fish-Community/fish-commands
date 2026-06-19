@@ -17,7 +17,14 @@ function floatf<T>(func:(input:T) => number):Floatf<T>;
 
 type Floatf<T> = ((input:T) => number) & {__brand: "floatf"};
 
-const Call: any;
+const Call: {
+	menu(target: NetConnection, menuId: number, title: string, message: string, options: string[][]): void;
+	/**
+	 * @param allowEmpty {boolean} Default false
+	 */
+	textInput(target: NetConnection, textInputId: number, title:string, message:string, textLength:number, def:string, numeric:boolean, allowEmpty?:boolean): void;
+	[index: string]: any;
+};
 const Log: {
 	debug(this:void, message:string, ...extra:unknown[]):void;
 	info(this:void, message:string, ...extra:unknown[]):void;
@@ -194,8 +201,10 @@ class Tile {
 }
 const Menus: {
 	registerMenu(listener:BuiltinMenuListener):number;
+	registerTextInput(listener:BuiltinTextInputListener):number;
 };
 type BuiltinMenuListener = (player:mindustryPlayer, option:number) => unknown;
+type BuiltinTextInputListener = (player:mindustryPlayer, text:string | null) => unknown;
 const UnitTypes: Record<string, UnitType>;
 const Sounds: Record<string, Sound>;
 type Sound = any;
