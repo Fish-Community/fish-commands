@@ -935,6 +935,79 @@ export function handleError(err:unknown, sender:FishPlayer, outputFail: (message
 	}
 }
 
+export function syncManual(player: mindustryPlayer, rules = Vars.state.rules, emptyMap?: {
+	width: number;
+	height: number;
+	floor: Block;
+	overlay: Block;
+	build: Block;
+}):Promise<void> {
+	return new Promise(resolve => {
+		Threads.daemon(() => {
+			Call.worldDataBegin(player.con);
+			const os = new ByteArrayOutputStream();
+			const stream = new DataOutputStream(new FastDeflaterOutputStream(os));
+			
+			stream.writeUTF(JsonIO.write(rules));
+			stream.writeUTF(JsonIO.write(Vars.state.mapLocales));
+			SaveIO.getSaveWriter().writeStringMap(stream, Vars.state.map.tags);
+		
+			stream.writeInt(Vars.state.wave);
+			stream.writeFloat(Vars.state.wavetime);
+			stream.writeDouble(Vars.state.tick);
+			stream.writeLong(GlobalVars.rand.seed0);
+			stream.writeLong(GlobalVars.rand.seed1);
+		
+			stream.writeInt(player.id);
+			player.write(new Writes(stream));
+		
+			SaveIO.getSaveWriter().writeContentHeader(stream);
+			SaveIO.getSaveWriter().writeContentPatches(stream);
+			if(emptyMap){
+				//fake world, all the same tile
+				stream.writeShort(emptyMap.width);
+				stream.writeShort(emptyMap.height);
+				const area = emptyMap.width * emptyMap.height;
+				for(let i = 0; i < area;){
+					stream.writeShort(emptyMap.floor.id);
+					stream.writeShort(emptyMap.overlay.id);
+					const needed = area - i - 1;
+					if(needed > 255){
+						stream.writeByte(255);
+						i += 256;
+					} else {
+						stream.writeByte(needed);
+						break;
+					}
+				}
+				for(let i = 0; i < area;){
+					stream.writeShort(emptyMap.build.id);
+					stream.writeByte(0);
+					const needed = area - i - 1;
+					if(needed > 255){
+						stream.writeByte(255);
+						i += 256;
+					} else {
+						stream.writeByte(needed);
+						break;
+					}
+				}
+			} else SaveIO.getSaveWriter().writeMap(stream);
+			SaveIO.getSaveWriter().writeTeamBlocks(stream);
+			SaveIO.getSaveWriter().writeMarkers(stream);
+			SaveIO.getSaveWriter().writeCustomChunks(stream, true);
+
+			stream.close();
+		
+			const data = Object.assign(new Packets.WorldStream(), {
+				stream: new ByteArrayInputStream(os.toByteArray())
+			});
+			player.con.sendStream(data);
+			resolve();
+		});
+	});
+}
+
 const sources = [
 	Packages.mindustry.gen.UnitEntity,
 	Packages.mindustry.gen.MechUnit,

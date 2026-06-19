@@ -67,6 +67,9 @@ class Rules {
 	attackMode: boolean;
 	pvp: boolean;
 	editor: boolean;
+	copy(): Rules;
+	dynamicColor: Color;
+	planetParams: any;
 }
 
 const Vars: {
@@ -92,6 +95,7 @@ const Vars: {
 	maps: Maps;
 	state: {
 		rules: Rules;
+		mapLocales: any;
 		planet: Planet | null;
 		set(state:State):void;
 		gameOver:boolean;
@@ -114,6 +118,7 @@ const Vars: {
 	world: World;
 	maxPingTextLength: number;
 };
+const GlobalVars: any;
 class Teams {
 	active: Seq<TeamData>;
 	getActive(): Seq<TeamData>;
@@ -356,6 +361,7 @@ class Player {
 	clearUnit():void;
 	checkSpawn():void;
 	getInfo():PlayerInfo;
+	write(writes: Writes):void;
 }
 type mindustryPlayer = Player;
 class Color {
@@ -432,6 +438,7 @@ const Mathf: {
 };
 const SaveIO: {
 	save(file:Fi):void;
+	getSaveWriter():any;
 };
 const Timer: {
 	schedule(func:() => unknown, delaySeconds:number, intervalSeconds?:number, repeatCount?:number):TimerTask;
@@ -488,6 +495,9 @@ class DataOutputStream extends OutputStream {
 	writeShort(v:number):void;
 	writeUTF(s:string):void;
 }
+class FastDeflaterOutputStream extends OutputStream {
+	constructor(stream: OutputStream);
+}
 class DataInputStream extends InputStream {
 	constructor(stream:InputStream);
 	read(b:number[]):number;
@@ -514,6 +524,9 @@ class ByteArrayOutputStream extends OutputStream {
 }
 class ByteArrayInputStream extends InputStream {
 	constructor(bytes:number[]);
+}
+class Writes {
+	constructor(output: DataOutputStream);
 }
 const Http: {
 	post(url:string, content:string):HttpRequest;
@@ -599,6 +612,7 @@ class ObjectIntMapEntry<K> {
 	key:K;
 	value:number;
 }
+class StringMap {}
 class EntityGroup<T> {
 	add(type:T):void
 	copy():Seq<T>;
@@ -727,6 +741,7 @@ class Process {
 
 const Packets: {
 	KickReason: Record<"kick" | "clientOutdated" | "serverOutdated" | "banned" | "gameover" | "recentKick" | "nameInUse" | "idInUse" | "nameEmpty" | "customClient" | "serverClose" | "vote" | "typeMismatch" | "whitelist" | "playerLimit" | "serverRestarting", KickReason>;
+	WorldStream: any;
 };
 type KickReason = { quiet: boolean };
 
@@ -795,6 +810,7 @@ class MMap {
 	width:number;
 	height:number;
 	build:number;
+	tags:StringMap;
 	name():string;
 	author():string;
 	description():string;

@@ -120,6 +120,7 @@ exports.match = match;
 exports.fishCommandsRootDirPath = fishCommandsRootDirPath;
 exports.applyEffectMode = applyEffectMode;
 exports.handleError = handleError;
+exports.syncManual = syncManual;
 exports.getStatuses = getStatuses;
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
@@ -1112,6 +1113,71 @@ function handleError(err, sender, outputFail, context) {
         if (typeof err == "object" && err != null && "stack" in err)
             Log.err(err.stack);
     }
+}
+function syncManual(player, rules, emptyMap) {
+    if (rules === void 0) { rules = Vars.state.rules; }
+    return new Promise(function (resolve) {
+        Threads.daemon(function () {
+            Call.worldDataBegin(player.con);
+            var os = new ByteArrayOutputStream();
+            var stream = new DataOutputStream(new FastDeflaterOutputStream(os));
+            stream.writeUTF(JsonIO.write(rules));
+            stream.writeUTF(JsonIO.write(Vars.state.mapLocales));
+            SaveIO.getSaveWriter().writeStringMap(stream, Vars.state.map.tags);
+            stream.writeInt(Vars.state.wave);
+            stream.writeFloat(Vars.state.wavetime);
+            stream.writeDouble(Vars.state.tick);
+            stream.writeLong(GlobalVars.rand.seed0);
+            stream.writeLong(GlobalVars.rand.seed1);
+            stream.writeInt(player.id);
+            player.write(new Writes(stream));
+            SaveIO.getSaveWriter().writeContentHeader(stream);
+            SaveIO.getSaveWriter().writeContentPatches(stream);
+            if (emptyMap) {
+                //fake world, all the same tile
+                stream.writeShort(emptyMap.width);
+                stream.writeShort(emptyMap.height);
+                var area = emptyMap.width * emptyMap.height;
+                for (var i = 0; i < area;) {
+                    stream.writeShort(emptyMap.floor.id);
+                    stream.writeShort(emptyMap.overlay.id);
+                    var needed = area - i - 1;
+                    if (needed > 255) {
+                        stream.writeByte(255);
+                        i += 256;
+                    }
+                    else {
+                        stream.writeByte(needed);
+                        break;
+                    }
+                }
+                for (var i = 0; i < area;) {
+                    stream.writeShort(emptyMap.build.id);
+                    stream.writeByte(0);
+                    var needed = area - i - 1;
+                    if (needed > 255) {
+                        stream.writeByte(255);
+                        i += 256;
+                    }
+                    else {
+                        stream.writeByte(needed);
+                        break;
+                    }
+                }
+            }
+            else
+                SaveIO.getSaveWriter().writeMap(stream);
+            SaveIO.getSaveWriter().writeTeamBlocks(stream);
+            SaveIO.getSaveWriter().writeMarkers(stream);
+            SaveIO.getSaveWriter().writeCustomChunks(stream, true);
+            stream.close();
+            var data = Object.assign(new Packets.WorldStream(), {
+                stream: new ByteArrayInputStream(os.toByteArray())
+            });
+            player.con.sendStream(data);
+            resolve();
+        });
+    });
 }
 var sources = [
     Packages.mindustry.gen.UnitEntity,
