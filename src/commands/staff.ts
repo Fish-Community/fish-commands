@@ -8,8 +8,8 @@ import { Gamemode, Mode, rules, stopAntiEvadeTime } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { command, commandList, fail, Perm, Req } from "/frameworks/commands";
-import { Menu } from "/frameworks/menus";
-import { crash, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from "/funcs";
+import { listeners, Menu } from "/frameworks/menus";
+import { crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals";
 import { FMap } from "/maps";
 import { FishPlayer } from "/players";
@@ -1229,6 +1229,22 @@ Wave: ${r.wave}`
 			await syncManual(target.player!, undefined, world);
 			outputSuccess(f`Sent ${target} to a parallel universe.`);
 		}
-		
+	},
+	menuspam: {
+		args: ["target:player"],
+		description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
+		perm: Perm.admin,
+		requirements: [Req.moderate("target", false, "admin")],
+		async handler({args: {target}, f, output, outputSuccess}){
+			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
+			output(`Sending menus.`);
+			for(let i = 0; i < 10; i ++){
+				for(let j = 0; j < 100; j ++){
+					Call.menu(target.con, listeners.generic, "", "", []);
+				}
+				await delay(100);
+			}
+			outputSuccess(f`Spammed ${target} with menus.`);
+		}
 	}
 });
