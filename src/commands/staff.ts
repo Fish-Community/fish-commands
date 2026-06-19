@@ -15,7 +15,7 @@ import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { Label } from "/types";
-import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -1206,7 +1206,7 @@ Wave: ${r.wave}`
 	},
 	crash: {
 		args: ["target:player"],
-		description: "Crashes a player's game",
+		description: "Crashes the target player's Mindustry client.",
 		perm: Perm.admin,
 		requirements: [Req.moderate("target", false, "admin")],
 		handler({args: {target}, f, output, outputSuccess}){
@@ -1218,4 +1218,17 @@ Wave: ${r.wave}`
 			}
 		}
 	},
+	yeet: {
+		args: ["target:player", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
+		description: "Sends the target player to a parallel universe.",
+		perm: Perm.admin,
+		requirements: [Req.moderate("target", false, "admin")],
+		async handler({args: {target, ...world}, f, outputSuccess}){
+			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
+			outputSuccess(`Aligning QPUs...`);
+			await syncManual(target.player!, undefined, world);
+			outputSuccess(f`Sent ${target} to a parallel universe.`);
+		}
+		
+	}
 });
