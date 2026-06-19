@@ -249,7 +249,7 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				);
 				break;
 			case "mapOrRandom":
-				if(["rand", "random"].includes(args[i].toLowerCase())){
+				if(["rand", "random"].includes(args[i]?.toLowerCase())){
 					outputArgs[cmdArg.name] = "random";
 					break;
 				}

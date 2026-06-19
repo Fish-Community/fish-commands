@@ -1132,7 +1132,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 winner = highestVotedMaps.get(0).key;
                 Call.sendMessage("[green]Map voting complete! The next map will be [yellow]".concat(winner.name(), " [green]with [yellow]").concat(highestVoteCount, "[green] votes."));
             }
-            Vars.maps.setNextMapOverride(winner == random ? null : null);
+            Vars.maps.setNextMapOverride(winner == random ? null : winner);
             resetVotes();
         }
         Events.on(EventType.GameOverEvent, resetVotes);

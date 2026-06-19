@@ -245,15 +245,16 @@ function processArgs(args, processedCmdArgs, sender) {
     return __awaiter(this, void 0, void 0, function () {
         var outputArgs, _a, _b, _c, i, cmdArg, commonArgs, _d, player, team, number, milliseconds, block, e_2_1;
         var e_2, _e;
-        return __generator(this, function (_f) {
-            switch (_f.label) {
+        var _f;
+        return __generator(this, function (_g) {
+            switch (_g.label) {
                 case 0:
                     outputArgs = {};
-                    _f.label = 1;
+                    _g.label = 1;
                 case 1:
-                    _f.trys.push([1, 32, 33, 34]);
+                    _g.trys.push([1, 32, 33, 34]);
                     _a = __values(processedCmdArgs.entries()), _b = _a.next();
-                    _f.label = 2;
+                    _g.label = 2;
                 case 2:
                     if (!!_b.done) return [3 /*break*/, 31];
                     _c = __read(_b.value, 2), i = _c[0], cmdArg = _c[1];
@@ -295,7 +296,7 @@ function processArgs(args, processedCmdArgs, sender) {
                             : (0, funcs_1.escapeStringColorsClient)(player.name)); },
                         2], false))];
                 case 4:
-                    _f.sent();
+                    _g.sent();
                     return [3 /*break*/, 30];
                 case 5:
                     if (!globals_1.uuidPattern.test(args[i])) return [3 /*break*/, 6];
@@ -313,8 +314,8 @@ function processArgs(args, processedCmdArgs, sender) {
                             : (0, funcs_1.escapeStringColorsClient)(player.name); },
                         2], false))];
                 case 8:
-                    _f.sent();
-                    _f.label = 9;
+                    _g.sent();
+                    _g.label = 9;
                 case 9: return [3 /*break*/, 30];
                 case 10:
                     {
@@ -324,7 +325,7 @@ function processArgs(args, processedCmdArgs, sender) {
                         outputArgs[cmdArg.name] = team;
                         return [3 /*break*/, 30];
                     }
-                    _f.label = 11;
+                    _g.label = 11;
                 case 11:
                     {
                         number = Number(args[i]);
@@ -339,7 +340,7 @@ function processArgs(args, processedCmdArgs, sender) {
                         outputArgs[cmdArg.name] = number;
                         return [3 /*break*/, 30];
                     }
-                    _f.label = 12;
+                    _g.label = 12;
                 case 12:
                     {
                         milliseconds = (0, utils_1.parseTimeString)(args[i]);
@@ -348,7 +349,7 @@ function processArgs(args, processedCmdArgs, sender) {
                         outputArgs[cmdArg.name] = milliseconds;
                         return [3 /*break*/, 30];
                     }
-                    _f.label = 13;
+                    _g.label = 13;
                 case 13:
                     outputArgs[cmdArg.name] = args[i];
                     return [3 /*break*/, 30];
@@ -385,10 +386,10 @@ function processArgs(args, processedCmdArgs, sender) {
                         outputArgs[cmdArg.name] = block;
                         return [3 /*break*/, 30];
                     }
-                    _f.label = 16;
+                    _g.label = 16;
                 case 16: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getUnitType)(args[i])], __read(commonArgs), false), [function (u) { return u.emoji() + (0, funcs_1.capitalizeText)(u.name); }], false))];
                 case 17:
-                    _f.sent();
+                    _g.sent();
                     return [3 /*break*/, 30];
                 case 18:
                     if (!globals_1.uuidPattern.test(args[i]))
@@ -398,41 +399,41 @@ function processArgs(args, processedCmdArgs, sender) {
                 case 19: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(args[i])], __read(commonArgs), false), [function (r) { return r.name(); },
                         2], false))];
                 case 20:
-                    _f.sent();
+                    _g.sent();
                     return [3 /*break*/, 30];
                 case 21:
-                    if (["rand", "random"].includes(args[i].toLowerCase())) {
+                    if (["rand", "random"].includes((_f = args[i]) === null || _f === void 0 ? void 0 : _f.toLowerCase())) {
                         outputArgs[cmdArg.name] = "random";
                         return [3 /*break*/, 30];
                     }
                     return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(args[i])], __read(commonArgs), false), [function (r) { return r.name(); },
                             2], false))];
                 case 22:
-                    _f.sent();
+                    _g.sent();
                     return [3 /*break*/, 30];
                 case 23: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([ranks_1.Rank.search(args[i])], __read(commonArgs), false), [function (r) { return r.coloredName(); }], false))];
                 case 24:
-                    _f.sent();
+                    _g.sent();
                     return [3 /*break*/, 30];
                 case 25: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([ranks_1.RoleFlag.search(args[i])], __read(commonArgs), false), [function (f) { return f.coloredName(); }], false))];
                 case 26:
-                    _f.sent();
+                    _g.sent();
                     return [3 /*break*/, 30];
                 case 27: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getItem)(args[i])], __read(commonArgs), false), [function (i) { return i.emoji() + (0, funcs_1.capitalizeText)(i.name, "-"); },
                         2], false))];
                 case 28:
-                    _f.sent();
+                    _g.sent();
                     return [3 /*break*/, 30];
                 case 29:
                     cmdArg.type;
                     (0, funcs_1.crash)("impossible");
-                    _f.label = 30;
+                    _g.label = 30;
                 case 30:
                     _b = _a.next();
                     return [3 /*break*/, 2];
                 case 31: return [3 /*break*/, 34];
                 case 32:
-                    e_2_1 = _f.sent();
+                    e_2_1 = _g.sent();
                     e_2 = { error: e_2_1 };
                     return [3 /*break*/, 34];
                 case 33:
