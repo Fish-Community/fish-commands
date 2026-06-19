@@ -15,7 +15,7 @@ import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { Label } from "/types";
-import { addToTileHistory, applyEffectMode, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -1203,5 +1203,19 @@ Wave: ${r.wave}`
 			const deleted = fmap.runs.splice(index, 1)[0];
 			outputSuccess(`Deleted run (${formatTimestamp(deleted.startTime)}) with duration ${formatTime(deleted.duration())}.`);
 		}
-	}
+	},
+	crash: {
+		args: ["target:player"],
+		description: "Crashes a player's game",
+		perm: Perm.admin,
+		requirements: [Req.moderate("target", false, "admin")],
+		handler({args: {target}, f, output, outputSuccess}){
+			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
+			if(crashClient(target.player!)){
+				outputSuccess(f`Crashed client of ${target}.`);
+			} else {
+				output(f`Attempted to crash client of ${target}. The crash will only occur once the sync completes.`);
+			}
+		}
+	},
 });

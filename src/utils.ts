@@ -1008,6 +1008,25 @@ export function syncManual(player: mindustryPlayer, rules = Vars.state.rules, em
 	});
 }
 
+export function crashClient(player: mindustryPlayer):boolean {
+	const planetBackground = Object.assign(new Packages.mindustry.graphics.g3d.PlanetParams(), {planet: null});
+	if(Vars.state.rules.planetBackground){
+		//There are already planet params, need to force sync
+		const rules = Object.assign(Vars.state.rules.copy(), { planetBackground });
+		void syncManual(player, rules, {
+			width: 1,
+			height: 1,
+			floor: Blocks.space,
+			build: Blocks.air,
+			overlay: Blocks.air,
+		});
+		return false;
+	} else {
+		Call.setRule(player.con, "planetBackground", JsonIO.write(planetBackground));
+		return true;
+	}
+}
+
 const sources = [
 	Packages.mindustry.gen.UnitEntity,
 	Packages.mindustry.gen.MechUnit,

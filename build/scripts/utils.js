@@ -121,6 +121,7 @@ exports.fishCommandsRootDirPath = fishCommandsRootDirPath;
 exports.applyEffectMode = applyEffectMode;
 exports.handleError = handleError;
 exports.syncManual = syncManual;
+exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
@@ -1178,6 +1179,25 @@ function syncManual(player, rules, emptyMap) {
             resolve();
         });
     });
+}
+function crashClient(player) {
+    var planetBackground = Object.assign(new Packages.mindustry.graphics.g3d.PlanetParams(), { planet: null });
+    if (Vars.state.rules.planetBackground) {
+        //There are already planet params, need to force sync
+        var rules = Object.assign(Vars.state.rules.copy(), { planetBackground: planetBackground });
+        void syncManual(player, rules, {
+            width: 1,
+            height: 1,
+            floor: Blocks.space,
+            build: Blocks.air,
+            overlay: Blocks.air,
+        });
+        return false;
+    }
+    else {
+        Call.setRule(player.con, "planetBackground", JsonIO.write(planetBackground));
+        return true;
+    }
 }
 var sources = [
     Packages.mindustry.gen.UnitEntity,

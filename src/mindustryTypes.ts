@@ -69,7 +69,7 @@ class Rules {
 	editor: boolean;
 	copy(): Rules;
 	dynamicColor: Color;
-	planetParams: any;
+	planetBackground: any;
 }
 
 const Vars: {
