@@ -145,19 +145,13 @@ export function nearbyEnemyTile(unit:Unit, dist:number):Building | null {
 }
 
 /** Attempts to parse a Team from the input. */
-export function getTeam(team:string):Team | string {
-	if(team in Team && Team[team as keyof typeof Team] instanceof Team) return Team[team as keyof typeof Team] as Team;
-	else if(Team.baseTeams.find(t => t.name.includes(team.toLowerCase()))) return Team.baseTeams.find(t => t.name.includes(team.toLowerCase()))!;
-	else if(!isNaN(Number(team))) return `"${team}" is not a valid team string. Did you mean "#${team}"?`;
-	else if(!isNaN(Number(team.slice(1)))){
-		const num = Number(team.slice(1));
-		if(num <= 255 && num >= 0 && Number.isInteger(num))
-			return Team.all[Number(team.slice(1))];
-		else
-			return `Team ${team} is outside the valid range (integers 0-255).`;
-	}
-	return `"${team}" is not a valid team string.`;
-}
+export const getTeam = searchFixed(Team.baseTeams.concat(Team.neoplastic), [
+	(i, s) => i.name == s,
+	(i, s) => i.name == s.toLowerCase(),
+	(i, s) => i.emoji == s,
+	(i, s) => i.name.includes(s.toLowerCase()),
+	(i, s) => i.name.includes(s.toLowerCase().replace(" ", "-")),
+]);
 
 /** Attempts to parse an Item from the input. */
 export const getItem = searchFixed(Vars.content.items().toArray(), [

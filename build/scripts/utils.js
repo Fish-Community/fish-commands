@@ -74,7 +74,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = void 0;
+exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = exports.getTeam = void 0;
 exports.memoizeChatFilter = memoizeChatFilter;
 exports.formatTime = formatTime;
 exports.formatTimeShort = formatTimeShort;
@@ -85,7 +85,6 @@ exports.formatTimestampShort = formatTimestampShort;
 exports.formatTimeRelative = formatTimeRelative;
 exports.getColor = getColor;
 exports.nearbyEnemyTile = nearbyEnemyTile;
-exports.getTeam = getTeam;
 exports.matchFilter = matchFilter;
 exports.removeFoosChars = removeFoosChars;
 exports.cleanText = cleanText;
@@ -253,22 +252,13 @@ function nearbyEnemyTile(unit, dist) {
     return null;
 }
 /** Attempts to parse a Team from the input. */
-function getTeam(team) {
-    if (team in Team && Team[team] instanceof Team)
-        return Team[team];
-    else if (Team.baseTeams.find(function (t) { return t.name.includes(team.toLowerCase()); }))
-        return Team.baseTeams.find(function (t) { return t.name.includes(team.toLowerCase()); });
-    else if (!isNaN(Number(team)))
-        return "\"".concat(team, "\" is not a valid team string. Did you mean \"#").concat(team, "\"?");
-    else if (!isNaN(Number(team.slice(1)))) {
-        var num = Number(team.slice(1));
-        if (num <= 255 && num >= 0 && Number.isInteger(num))
-            return Team.all[Number(team.slice(1))];
-        else
-            return "Team ".concat(team, " is outside the valid range (integers 0-255).");
-    }
-    return "\"".concat(team, "\" is not a valid team string.");
-}
+exports.getTeam = (0, funcs_1.searchFixed)(Team.baseTeams.concat(Team.neoplastic), [
+    function (i, s) { return i.name == s; },
+    function (i, s) { return i.name == s.toLowerCase(); },
+    function (i, s) { return i.emoji == s; },
+    function (i, s) { return i.name.includes(s.toLowerCase()); },
+    function (i, s) { return i.name.includes(s.toLowerCase().replace(" ", "-")); },
+]);
 /** Attempts to parse an Item from the input. */
 exports.getItem = (0, funcs_1.searchFixed)(Vars.content.items().toArray(), [
     function (i, s) { return i.name == s; },

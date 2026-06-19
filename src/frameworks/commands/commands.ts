@@ -133,7 +133,7 @@ export async function disambiguateArgument<T extends FishCommandArgType>(
 	} else outputArgs[name] = options;
 }
 
-const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item"];
+const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
@@ -188,9 +188,20 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				}
 				break;
 			case "team": {
-				const team = getTeam(args[i]);
-				if(typeof team == "string") fail(team);
-				outputArgs[cmdArg.name] = team;
+				let num;
+				if(args[i] && (
+					!isNaN(num = Number(args[i])) ||
+					!isNaN(num = Number(args[i].slice(1))) || //discard leading #
+					!isNaN(num = Number(args[i].slice(5))) //discard leading team#
+				)){
+					if(num <= 255 && num >= 0 && Number.isInteger(num))
+						outputArgs[cmdArg.name] = Team.all[num];
+					else fail(`Team ${num} is not inside the valid range (integers 0-255).`);
+				} else await disambiguateArgument(
+					getTeam(args[i]),
+					...commonArgs,
+					t => t.coloredName(),
+				);
 				break;
 			}
 			case "number": {

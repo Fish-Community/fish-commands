@@ -272,9 +272,11 @@ class Team {
 	static malis:Team;
 	static green:Team;
 	static blue:Team;
+	static neoplastic:Team;
 	static all:Team[];
 	static baseTeams:Team[];
 	name:string;
+	emoji:string;
 	active():boolean;
 	isAlive():boolean;
 	data():TeamData;
