@@ -641,6 +641,7 @@ class ObjectMap<K, V> {
 	clear():void;
 	size:number;
 	entries():any;
+	values():{ toSeq(): Seq<V>; };
 	each(param: (k: K, v: V) => void):void;
 	isEmpty():boolean;
 }

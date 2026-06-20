@@ -74,16 +74,14 @@ export const commands = commandList({
 		description: 'Change your target translation language.',
 		perm: Perm.none,
 		requirements: [],
-		handler({args, sender, outputSuccess}){
-			if (sender.player == null) return; //???
-
-			if (args.language == null){
-				sender.player.sendMessage("[accent]Available commands:");
-				for (const entry of languageCache.entries()){
-					sender.player.sendMessage(" - " + entry.key.name + " (" + entry.key.code + ")");
-				}
-				return;
-			}
+		async handler({args, sender, outputSuccess}){
+			args.language ??= (await Menu.menu(
+				"Translation Language",
+				"Select a language. Messages will be translated to this language.",
+				languageCache.values().toSeq().toArray(),
+				sender,
+				{ optionStringifier: l => `${l.name} (${l.code})`, includeCancel: true }
+			)).code;
 
 			if(!(isLanguageAvailable(args.language) || ["off", "none"].includes(args.language.toLowerCase()))){
 				fail(`Invalid language "${args.language}".`);
@@ -91,10 +89,9 @@ export const commands = commandList({
 
 			const targetLanguage = getLanguageFromCache(args.language);
 			sender.language = targetLanguage.code;
-			setPlayerLanguageEntry(sender.player, targetLanguage);
+			setPlayerLanguageEntry(sender.player!, targetLanguage);
 
 			sender.language = targetLanguage.code;
-
 			outputSuccess(`Your translation language is now set to ${targetLanguage.name}.`);
 		}
 	},
