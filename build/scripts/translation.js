@@ -131,7 +131,7 @@ function handleMessage(sender, message) {
                         var recipients = uniqueRecipients(players, sender, delivered);
                         if (recipients.isEmpty())
                             return;
-                        if (lang == null || lang.code === "off" || lang.code === "auto" || lang.code === "none") {
+                        if (lang == null || lang.code === "off" || lang.code === "auto" || lang.code === "none" || config_1.translationApiToken.string() == "unset") {
                             try {
                                 for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
                                     var player = _c.value;

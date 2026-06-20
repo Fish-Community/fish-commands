@@ -67,7 +67,7 @@ export async function handleMessage(sender: Player, message: string) {
 
 		if(recipients.isEmpty()) return;
 
-		if(lang == null || lang.code === "off" || lang.code === "auto" || lang.code === "none"){
+		if(lang == null || lang.code === "off" || lang.code === "auto" || lang.code === "none" || translationApiToken.string() == "unset"){
 			for (const player of recipients.toArray()) player.sendMessage(formatted); //ignore, send it as if nothing changed
 			return;
 		}
