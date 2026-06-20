@@ -87,17 +87,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -122,6 +111,17 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -192,35 +192,36 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         requirements: [],
         handler: function (_a) {
-            var e_1, _b;
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
-            if (sender.player == null)
-                return; //???
-            if (args.language == null) {
-                sender.player.sendMessage("[accent]Available commands:");
-                try {
-                    for (var _c = __values(translation_1.languageCache.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
-                        var entry = _d.value;
-                        sender.player.sendMessage(" - " + entry.key.name + " (" + entry.key.code + ")");
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var _c, _d, targetLanguage;
+                var _e;
+                var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            if (!((_e = args.language) !== null && _e !== void 0)) return [3 /*break*/, 1];
+                            _c = _e;
+                            return [3 /*break*/, 3];
+                        case 1:
+                            _d = args;
+                            return [4 /*yield*/, menus_1.Menu.menu("Translation Language", "Select a language. Messages will be translated to this language.", translation_1.languageCache.values().toSeq().toArray(), sender, { optionStringifier: function (l) { return "".concat(l.name, " (").concat(l.code, ")"); }, includeCancel: true })];
+                        case 2:
+                            _c = (_d.language = (_f.sent()).code);
+                            _f.label = 3;
+                        case 3:
+                            _c;
+                            if (!((0, translation_1.isLanguageAvailable)(args.language) || ["off", "none"].includes(args.language.toLowerCase()))) {
+                                (0, commands_1.fail)("Invalid language \"".concat(args.language, "\"."));
+                            }
+                            targetLanguage = (0, translation_1.getLanguageFromCache)(args.language);
+                            sender.language = targetLanguage.code;
+                            (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage);
+                            sender.language = targetLanguage.code;
+                            outputSuccess("Your translation language is now set to ".concat(targetLanguage.name, "."));
+                            return [2 /*return*/];
                     }
-                }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
-                    try {
-                        if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
-                    }
-                    finally { if (e_1) throw e_1.error; }
-                }
-                return;
-            }
-            if (!((0, translation_1.isLanguageAvailable)(args.language) || ["off", "none"].includes(args.language.toLowerCase()))) {
-                (0, commands_1.fail)("Invalid language \"".concat(args.language, "\"."));
-            }
-            var targetLanguage = (0, translation_1.getLanguageFromCache)(args.language);
-            sender.language = targetLanguage.code;
-            (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage);
-            sender.language = targetLanguage.code;
-            outputSuccess("Your translation language is now set to ".concat(targetLanguage.name, "."));
+                });
+            });
         }
     }, clean: (0, commands_1.command)({
         args: [],
@@ -776,7 +777,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     this.ohnos = this.ohnos.filter(function (o) { return o && o.isAdded() && !o.dead; });
                 },
                 checkAchievement: function () {
-                    var e_2, _a;
+                    var e_1, _a;
                     try {
                         for (var _b = __values(this.ohnos), _c = _b.next(); !_c.done; _c = _b.next()) {
                             var ohno = _c.value;
@@ -785,12 +786,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                 achievements_1.Achievements.ohno.grantTo(players_1.FishPlayer.get(player), false);
                         }
                     }
-                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
                     finally {
                         try {
                             if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                         }
-                        finally { if (e_2) throw e_2.error; }
+                        finally { if (e_1) throw e_1.error; }
                     }
                 },
                 killAll: function () {

@@ -13,29 +13,33 @@ export type Language = {
 };
 
 export const languageCache = new ObjectMap<string, Language>();
+let lastFailure = 0;
 export const playerLanguageCache = new ObjectMap<Language, Seq<Player>>();
 export const translationCache = new ObjectMap<string, string>();
 
 export function initializeTranslation(){
-	fetchLanguageCache(false);
+	void fetchLanguageCache();
 
-	Events.on(EventType.PlayerJoin, e => {
+	// eslint-disable-next-line @typescript-eslint/no-misused-promises
+	Events.on(EventType.PlayerJoin, async (e) => {
 		const fishPlayer = FishPlayer.get(e.player);
 		const language = getLanguageFromCache(fishPlayer.language || e.player.locale);
 		if(fishPlayer.language != language.code){
 			fishPlayer.language = language.code;
 		}
 
-		if (languageCache.isEmpty()){
-			//shouldn't ever happen, but by chance it does
-			fetchLanguageCacheCallback(
-				()=>setPlayerLanguageEntry(e.player, language)
-			);
-		}else{
-			setPlayerLanguageEntry(e.player, language);
-
+		if(languageCache.isEmpty()){
+			if(Date.now() - lastFailure < 60_000) return;
+			try {
+				await fetchLanguageCache();
+			} catch(err){
+				Log.err("Network error while fetching language cache");
+				lastFailure = Date.now();
+				return;
+			}
 		}
 
+		setPlayerLanguageEntry(e.player, language);
 	});
 
 	Events.on(EventType.PlayerLeave, e => {
@@ -43,12 +47,13 @@ export function initializeTranslation(){
 	});
 }
 
-export function handleMessage(sender: Player, message: string, noRecursion: boolean) {
-	if (languageCache.isEmpty() && !noRecursion){
-		//shouldn't ever happen, but by chance it does
-		fetchLanguageCacheCallback(
-			()=>handleMessage(sender, message, true)
- 		);
+export async function handleMessage(sender: Player, message: string) {
+	if(languageCache.isEmpty() && Date.now() - lastFailure > 60_000){
+		try {
+			await fetchLanguageCache();
+		} catch(err){
+			Log.err("Network error while fetching language cache");
+		}
 	}
 
 	sender.sendMessage(Vars.netServer.chatFormatter.format(sender, message)); //return to sender immediately, they don't need to see their own translation
@@ -112,7 +117,7 @@ export function setPlayerLanguageEntry(player: Player, language: Language){
 
 	const bucket = playerLanguageCache.get(
 		language,
-		()=>new Seq<Player>()
+		() => new Seq<Player>()
 	);
 	bucket.add(player);
 }
@@ -160,30 +165,21 @@ export function isLanguageAvailable(code:string){
 	return getLanguageFromCache(code).code != "none";
 }
 
-function fetchLanguageCache(blockUntilResponse:boolean) {
-	const req = Http.get(translationApiUrl + "/api/languages");
-
-	req.error(e => {
-		Log.err("Failed to load translation API languages");
-		Log.err(e);
-	});
-
-
-	req[blockUntilResponse ? "block" : "submit"](t => {
-		const parsed = JSON.parse(t.getResultAsString()) as Language[];
-
-		Core.app.post(() => {
-			languageCache.clear();
-			for (const language of parsed){
-				languageCache.put(language.code.toLowerCase(), language);
+function fetchLanguageCache() {
+	return new Promise<void>((resolve, reject) => {
+		const req = Http.get(translationApiUrl + "/api/languages");
+		req.error(reject);
+		req.submit(t => {
+			try {
+				const parsed = JSON.parse(t.getResultAsString()) as Language[];
+				languageCache.clear();
+				for (const language of parsed){
+					languageCache.put(language.code.toLowerCase(), language);
+				}
+				resolve();
+			} catch(err){
+				reject(err);
 			}
 		});
-	});
-}
-
-function fetchLanguageCacheCallback(callback: ()=>void){
-	Threads.daemon(()=>{
-		fetchLanguageCache(true);
-		Core.app.post(()=>callback());
 	});
 }
