@@ -777,10 +777,15 @@ const Log = {
 };
 const Menus = {
 	menuListeners: new Seq<BuiltinMenuListener>(),
+	textListeners: new Seq<BuiltinTextInputListener>(),
 	registerMenu(listener:BuiltinMenuListener){
 		this.menuListeners.add(listener);
 		return this.menuListeners.size - 1;
-	}
+	},
+	registerTextInput(listener:BuiltinTextInputListener){
+		this.textListeners.add(listener);
+		return this.textListeners.size - 1;
+	},
 };
 const programStart = Date.now();
 const Time = {
