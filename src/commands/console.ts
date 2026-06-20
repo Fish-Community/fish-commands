@@ -26,6 +26,7 @@ export const commands = consoleCommandList({
 			await args.player.setRank(args.rank);
 			logAction(`set rank to ${args.rank.name} for`, "console", args.player);
 			outputSuccess(f`Set rank of player ${args.player} to ${args.rank}`);
+			args.player.sendMessage(`[royal]Your rank has been set to ${args.rank.coloredName()}.`);
 		}
 	},
 	admin: {

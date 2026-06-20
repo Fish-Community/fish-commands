@@ -156,6 +156,7 @@ export const commands = commandList({
 			await player.setRank(rank);
 			logAction(`set rank to ${rank.name} for`, sender, player);
 			outputSuccess(f`Set rank of player ${player} to ${rank}`);
+			if(player !== sender) player.sendMessage(`[royal]Your rank has been set to ${rank.coloredName()}.`);
 		}
 	},
 
