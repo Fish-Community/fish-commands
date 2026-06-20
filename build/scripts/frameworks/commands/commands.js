@@ -320,8 +320,8 @@ function processArgs(args, processedCmdArgs, sender) {
                 case 10:
                     num = void 0;
                     if (!(args[i] && (!isNaN(num = Number(args[i])) ||
-                        !isNaN(num = Number(args[i].slice(1))) || //discard leading #
-                        !isNaN(num = Number(args[i].slice(5))) //discard leading team#
+                        args[i].slice(1) && !isNaN(num = Number(args[i].slice(1))) || //discard leading #
+                        args[i].slice(5) && !isNaN(num = Number(args[i].slice(5))) //discard leading team#
                     ))) return [3 /*break*/, 11];
                     if (num <= 255 && num >= 0 && Number.isInteger(num))
                         outputArgs[cmdArg.name] = Team.all[num];
