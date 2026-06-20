@@ -147,6 +147,10 @@ export const commands = commandList({
 				fail(f`You do not have permission to promote players to rank ${rank}, because your current rank is ${sender.rank}`);
 			if(rank == Rank.pi && !Mode.localDebug) fail(f`Rank ${rank} is immutable.`);
 			if(player.immutable() && !Mode.localDebug) fail(f`Player ${player} is immutable.`);
+			if(rank == player.rank){
+				outputSuccess(f`Player ${player} is already at rank ${rank}.`);
+				return;
+			}
 			if(player == sender && rank.level < sender.rank.level){
 				await Menu.confirmDangerous(
 					sender, 
