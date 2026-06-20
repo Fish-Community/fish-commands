@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES5",
+		"ignoreDeprecations": "6.0", //we have no choice but to continue targeting ES5
 		"module": "CommonJS",
 		"moduleDetection": "force",
 		"forceConsistentCasingInFileNames": true,

@@ -6,7 +6,8 @@ For functions that don't need values from other files, see funcs.ts.
 
 import * as api from "/api";
 import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
-import { fail, PartialFormatString } from "/frameworks/commands";
+import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
+import { Cancel } from "/frameworks/menus";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
 import { FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
@@ -78,9 +79,18 @@ export function formatModeName(name:GamemodeName){
 	}[name];
 }
 
-export function formatTimestamp(time:number){
+export function formatTimestampFull(time:number){
 	const date = new Date(time);
 	return `${date.toDateString()}, ${date.toTimeString()}`;
+}
+
+export function formatTimestamp(time:number){
+	return new Date(time).toLocaleString();
+}
+
+export function formatTimestampShort(time:number){
+	const date = new Date(time);
+	return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 }
 
 export function formatTimeRelative(time:number, raw?:boolean){
@@ -135,19 +145,13 @@ export function nearbyEnemyTile(unit:Unit, dist:number):Building | null {
 }
 
 /** Attempts to parse a Team from the input. */
-export function getTeam(team:string):Team | string {
-	if(team in Team && Team[team as keyof typeof Team] instanceof Team) return Team[team as keyof typeof Team] as Team;
-	else if(Team.baseTeams.find(t => t.name.includes(team.toLowerCase()))) return Team.baseTeams.find(t => t.name.includes(team.toLowerCase()))!;
-	else if(!isNaN(Number(team))) return `"${team}" is not a valid team string. Did you mean "#${team}"?`;
-	else if(!isNaN(Number(team.slice(1)))){
-		const num = Number(team.slice(1));
-		if(num <= 255 && num >= 0 && Number.isInteger(num))
-			return Team.all[Number(team.slice(1))];
-		else
-			return `Team ${team} is outside the valid range (integers 0-255).`;
-	}
-	return `"${team}" is not a valid team string.`;
-}
+export const getTeam = searchFixed(Team.baseTeams.concat(Team.neoplastic), [
+	(i, s) => i.name == s,
+	(i, s) => i.name == s.toLowerCase(),
+	(i, s) => i.emoji == s,
+	(i, s) => i.name.includes(s.toLowerCase()),
+	(i, s) => i.name.includes(s.toLowerCase().replace(" ", "-")),
+]);
 
 /** Attempts to parse an Item from the input. */
 export const getItem = searchFixed(Vars.content.items().toArray(), [
@@ -454,17 +458,22 @@ export function neutralGameover(){
 	});
 }
 
-/** Please validate wavesToSkip to ensure it is not huge */
-export function skipWaves(wavesToSkip:number, runIntermediateWaves:boolean){
+/** Please validate requestedWaves to ensure it is not huge */
+export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean){
+	let winWave = Vars.state.rules.winWave;
+	if(winWave <= 0) winWave = Infinity;
+	const wavesToSkip = Math.min(requestedWaves, winWave - Vars.state.wave);
+
 	if(runIntermediateWaves){
 		for(let i = 0; i < wavesToSkip; i ++){
 			Vars.logic.skipWave();
 		}
 	} else {
-		Vars.state.wave += wavesToSkip - 1;
+		Vars.state.wave += (wavesToSkip - 1);
 		Vars.logic.skipWave();
 	}
 }
+
 
 export function logHTrip(player:FishPlayer, name:string, message?:string){
 	Log.warn(`&yPlayer &b"${player.cleanedName}"&y (&b${player.uuid}&y/&b${player.ip()}&y) tripped &c${name}&y` + (message ? `: ${message}` : ""));
@@ -536,7 +545,7 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 	const fishPlayer = FishPlayer.get(player);
 	let highlight = fishPlayer.highlight;
 	let filterTripText;
-	const suspicious = fishPlayer.joinsLessThan(3);
+	const suspicious = fishPlayer.suspicionLevel() == 3;
 	if(
 		(!fishPlayer.hasPerm("bypassChatFilter") || fishPlayer.chatStrictness == "strict")
 		&& (filterTripText = matchFilter(message, fishPlayer.chatStrictness, suspicious))
@@ -547,9 +556,11 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 					.map(w => w.replace(/[-_.^*,]/g, ""))
 					.some(w => bannedWords.autoWhack.includes(w))
 			){
-				logHTrip(fishPlayer, "bad words in chat", `message: \`${message}\``);
-				fishPlayer.muted = true;
-				void fishPlayer.stop("automod", maxTime, `Automatic stop due to suspicious activity`, false);
+				if(!fishPlayer.muted){
+					logHTrip(fishPlayer, "bad words in chat", `message: \`${message}\``);
+					fishPlayer.muted = true;
+					void fishPlayer.stop("automod", maxTime, `Automatic stop due to suspicious activity`, false);
+				}
 			}
 			Log.info(`Censored message from player ${player.name}: "${escapeStringColorsServer(message)}"; contained "${filterTripText}"`);
 			FishPlayer.messageStaff(`[yellow]Censored message from player ${fishPlayer.cleanedName}: "${message}" contained "${filterTripText}"`);
@@ -593,14 +604,23 @@ const replacements = ([
 	["attack", "sandbox", "pvp", "hexed", "survival"],
 
 	//teams
-	["crux", "sharded", "malis", "neoplastic"]
+	["crux", "sharded", "malis", "neoplastic"],
+
+	//maps
+	["rampant", "harbor war", "cave canal", "acheron", "wolframfestung", "avast", "fallen omura", "assault"],
+
+	//aquatic animals
+	["fish", "shark", "whale", "dolphin", "salmon", "tuna", "squid", "jellyfish", "turtle"],
+
+	//antonym adjectives
+	["fast", "slow"], ["big", "little"], ["hot", "cold"], ["hard", "easy", "difficult", "ez"], ["hello", "bye"],
 ] satisfies string[][]).map(set => [set, new RegExp(`\\b(?:${set.join("|")})(e?s?(?:i?gone)?)\\b`, 'g')] as const);
 
 let foolCounter = 0;
 export const foolifyChat = memoizeChatFilter(function foolifyChat(message:string){
 	const cleanedMessage = removeFoosChars(message);
 	setShuffle: {
-		if(foolCounter < 5){
+		if(foolCounter < 8){
 			//Skip the next 5 messages no matter what
 			foolCounter ++;
 			break setShuffle;
@@ -614,7 +634,7 @@ export const foolifyChat = memoizeChatFilter(function foolifyChat(message:string
 			//this was unintended but it's funny so I'm keeping it
 		}
 		if(replacedMessage !== cleanedMessage){
-			if(foolCounter < 7){
+			if(foolCounter < 11){
 				//Skip the next 2 messages that would get altered
 				foolCounter ++;
 				break setShuffle;
@@ -625,10 +645,10 @@ export const foolifyChat = memoizeChatFilter(function foolifyChat(message:string
 			break setShuffle;
 		}
 	}
-	if(Math.random() < 0.02){
+	if(Math.random() < 0.01){
 		return cleanedMessage.split("").reverse().join("");
 	// eslint-disable-next-line no-dupe-else-if
-	} else if(Math.random() < 0.02){
+	} else if(Math.random() < 0.01){
 		return "[scarlet]I really hope everyone is having a fun time :} <3";
 	} else if(Math.random() < 0.005){
 		return "[cyan]AMOGUS";
@@ -894,6 +914,116 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 		for(const effect of effects){
 			unit.apply(effect, ticks);
 		}
+	}
+}
+
+export function handleError(err:unknown, sender:FishPlayer, outputFail: (message: string | PartialFormatString, sender: FishPlayer) => void, context?: string){
+	if(err instanceof CommandError){
+		//If the error is a command error, then just outputFail
+		outputFail(err.data, sender);
+	} else if(err === Cancel){
+		//Menu cancelled, do nothing
+		return;
+	} else {
+		sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
+		if(sender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
+		Log.err(context ?
+			`Unhandled error in command execution: ${context}`
+		: `Unhandled error in command execution.`);
+		Log.err(err);
+		if(typeof err == "object" && err != null && "stack" in err) Log.err(err.stack);
+	}
+}
+
+export function syncManual(player: mindustryPlayer, rules = Vars.state.rules, emptyMap?: {
+	width: number;
+	height: number;
+	floor: Block;
+	overlay: Block;
+	build: Block;
+}):Promise<void> {
+	return new Promise(resolve => {
+		Threads.daemon(() => {
+			Call.worldDataBegin(player.con);
+			const os = new ByteArrayOutputStream();
+			const stream = new DataOutputStream(new FastDeflaterOutputStream(os));
+			
+			stream.writeUTF(JsonIO.write(rules));
+			stream.writeUTF(JsonIO.write(Vars.state.mapLocales));
+			SaveIO.getSaveWriter().writeStringMap(stream, Vars.state.map.tags);
+		
+			stream.writeInt(Vars.state.wave);
+			stream.writeFloat(Vars.state.wavetime);
+			stream.writeDouble(Vars.state.tick);
+			stream.writeLong(GlobalVars.rand.seed0);
+			stream.writeLong(GlobalVars.rand.seed1);
+		
+			stream.writeInt(player.id);
+			player.write(new Writes(stream));
+		
+			SaveIO.getSaveWriter().writeContentHeader(stream);
+			SaveIO.getSaveWriter().writeContentPatches(stream);
+			if(emptyMap){
+				//fake world, all the same tile
+				stream.writeShort(emptyMap.width);
+				stream.writeShort(emptyMap.height);
+				const area = emptyMap.width * emptyMap.height;
+				for(let i = 0; i < area;){
+					stream.writeShort(emptyMap.floor.id);
+					stream.writeShort(emptyMap.overlay.id);
+					const needed = area - i - 1;
+					if(needed > 255){
+						stream.writeByte(255);
+						i += 256;
+					} else {
+						stream.writeByte(needed);
+						break;
+					}
+				}
+				for(let i = 0; i < area;){
+					stream.writeShort(emptyMap.build.id);
+					stream.writeByte(0);
+					const needed = area - i - 1;
+					if(needed > 255){
+						stream.writeByte(255);
+						i += 256;
+					} else {
+						stream.writeByte(needed);
+						break;
+					}
+				}
+			} else SaveIO.getSaveWriter().writeMap(stream);
+			SaveIO.getSaveWriter().writeTeamBlocks(stream);
+			SaveIO.getSaveWriter().writeMarkers(stream);
+			SaveIO.getSaveWriter().writeCustomChunks(stream, true);
+
+			stream.close();
+		
+			const data = Object.assign(new Packets.WorldStream(), {
+				stream: new ByteArrayInputStream(os.toByteArray())
+			});
+			player.con.sendStream(data);
+			resolve();
+		});
+	});
+}
+
+export function crashClient(player: mindustryPlayer):boolean {
+	const planetBackground = Object.assign(new Packages.mindustry.graphics.g3d.PlanetParams(), {planet: null});
+	if(Vars.state.rules.planetBackground){
+		//There are already planet params, need to force sync
+		const rules = Object.assign(Vars.state.rules.copy(), { planetBackground });
+		void syncManual(player, rules, {
+			width: 1,
+			height: 1,
+			floor: Blocks.space,
+			build: Blocks.air,
+			overlay: Blocks.air,
+		});
+		return false;
+	} else {
+		Call.setRule(player.con, "planetBackground", JsonIO.write(planetBackground));
+		return true;
 	}
 }
 

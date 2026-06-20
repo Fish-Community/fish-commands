@@ -8,10 +8,10 @@ import * as api from "/api";
 import { FColor, FishServer, Gamemode, rules, text } from "/config";
 import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
-import { Menu } from "/frameworks/menus";
-import { capitalizeText, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
+import { Cancel, Menu } from "/frameworks/menus";
+import { capitalizeText, delay, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
-import { FMap } from "/maps";
+import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
 import { getLanguageFromCache, isLanguageAvailable, languageCache, setPlayerLanguageEntry } from "/translation";
@@ -99,24 +99,35 @@ export const commands = commandList({
 		}
 	},
 
-	clean: {
+	clean: command({
 		args: [],
 		description: 'Removes all boulders from the map.',
 		perm: Perm.play,
-		requirements: [Req.cooldownGlobal(100_000)],
-		handler({sender, outputSuccess}){
+		requirements: [],
+		data: {lastRanMapStartTime: PartialMapRun.current?.startTime},
+		async handler({sender, outputSuccess, data}){
+			if(!PartialMapRun.current) fail(`This game is already over.`);
+			if(data.lastRanMapStartTime == PartialMapRun.current.startTime)
+				fail(`This command was already run on this map.`);
+			data.lastRanMapStartTime = PartialMapRun.current.startTime;
 			Timer.schedule(
 				() => Call.sound(sender.con, Sounds.rockBreak, 1, 1, 0),
 				0, 0.05, 10
 			);
-			Vars.world.tiles.eachTile((t:Tile) => {
+			const array: Tile[] = ArcReflect.get(Vars.world.tiles, "array");
+			let removed = 0;
+			// eslint-disable-next-line @typescript-eslint/prefer-for-of
+			for(let i = 0; i < array.length; i ++){
+				const t = array[i];
 				if(t.breakable() && t.block() instanceof Prop){
 					t.removeNet();
+					removed ++;
+					if(removed % 500 == 0) await delay(100);
 				}
-			});
+			}
 			outputSuccess(`Cleared the map of boulders.`);
 		}
-	},
+	}),
 
 	die: {
 		args: [],
@@ -138,25 +149,32 @@ export const commands = commandList({
 		},
 	},
 
-	tilelog: {
-		args: ['persist:boolean?'],
+	tilelog: command({
+		args: ['persist:boolean?', 'showUUID:boolean?'],
 		description: 'Checks the history of a tile.',
 		perm: Perm.none,
-		handler({args, output, outputSuccess, currentTapMode, handleTaps}){
-			if(currentTapMode == "off"){
-				if(args.persist){
-					handleTaps("on");
-					outputSuccess(`Tilelog mode enabled. Click tiles to check their recent history. Run /tilelog again to disable.`);
-				} else {
-					handleTaps("once");
-					output(`Click on a tile to check its recent history...`);
-				}
+		data: {showUUID: true},
+		handler({args, output, outputSuccess, currentTapMode, handleTaps, sender, data}){
+			const changed = args.showUUID !== undefined && args.showUUID != data.showUUID;
+			if(args.showUUID !== undefined){
+				if(!sender.hasPerm("viewUUIDs")) fail(`You do not have permission to show UUIDs.`);
+				data.showUUID = args.showUUID;
+			}
+			if(args.persist && currentTapMode !== "on"){
+				outputSuccess(`Tilelog mode enabled. Click tiles to check their recent history. Run /tilelog to disable.`);
+				handleTaps("on");
+			} else if(args.persist && changed){
+				outputSuccess(`${data.showUUID ? "Now showing UUIDs." : "No longer showing UUIDs."} Click tiles to check their recent history. Run /tilelog to disable.`);
+				handleTaps("on");
+			} else if(currentTapMode == "off" || changed){
+				handleTaps("once");
+				output(`Click on a tile to check its recent history...`);
 			} else {
 				handleTaps("off");
 				outputSuccess(`Tilelog disabled.`);
 			}
 		},
-		tapped({tile, x, y, output, sender, admins}){
+		tapped({tile, x, y, output, sender, admins, data}){
 			const historyData = tileHistory[`${x},${y}`] ?? fail(`There is no recorded history for the selected tile (${tile.x}, ${tile.y}).`);
 			const history = StringIO.read(historyData, str => str.readArray(d => ({
 				action: d.readString(2),
@@ -166,13 +184,13 @@ export const commands = commandList({
 			}), 1));
 			output(`[yellow]Tile history for tile (${tile.x}, ${tile.y}):\n` + history.map(e =>
 				uuidPattern.test(e.uuid)
-				? (sender.hasPerm("viewUUIDs")
+				? (sender.hasPerm("viewUUIDs") && data.showUUID
 				? `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()}[lightgray](${e.uuid})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
 				: `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
 				: `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
 			).join('\n'));
 		}
-	},
+	}),
 
 	aoelog: command(() => {
 		const allowedActions = [
@@ -353,7 +371,7 @@ export const commands = commandList({
 			if(!sender.hasPerm("mod")){
 				if(Date.now() - lastUsedSender < 4000) fail(`This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.`);
 			}
-			api.sendStaffMessage(args.message, sender.name, (sent) => {
+			api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"), (sent) => {
 				if(!sender.hasPerm("mod")){
 					if(sent){
 						outputSuccess(`Message sent to [orange]all online staff.`);
@@ -386,15 +404,16 @@ export const commands = commandList({
 				data.delete(sender.uuid);
 			} else if(args.player){
 				data.add(sender.uuid);
-				const senderUnit = sender.unit();
-				const stayX = senderUnit?.x;
-				const stayY = senderUnit?.y;
+				const senderUnit = sender.unit() ?? fail(`You do not have a unit.`);
+				const stayX = senderUnit.x;
+				const stayY = senderUnit.y;
 				const target = args.player.player!;
 				(function watch(){
-					if(data.has(sender.uuid) && target.unit()){
+					const unit = target.unit();
+					if(data.has(sender.uuid) && unit){
 						// Self.X+(172.5-Self.X)/10
-						Call.setCameraPosition(sender.con, target.unit()!.x, target.unit()!.y);
-						if(senderUnit) sender.unit()?.set?.(stayX!, stayY!);
+						Call.setCameraPosition(sender.con, unit.x, unit.y);
+						if(senderUnit) sender.unit()?.set?.(stayX, stayY);
 						Timer.schedule(() => watch(), 0.1, 0.1, 0);
 					} else {
 						Call.setCameraPosition(sender.con, stayX, stayY);
@@ -463,6 +482,7 @@ export const commands = commandList({
 			if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member'].includes(args.name)) {
 				//name is not a number or a category, therefore it is probably a command name
 				if (args.name in allCommands && (!allCommands[args.name].isHidden || allCommands[args.name].perm.check(sender))) {
+					if(args.name == "help") Achievements.help_help.grantTo(sender, false);
 					output(
 `Help for command ${args.name}:
 	${allCommands[args.name].description}
@@ -607,6 +627,12 @@ Available types:[yellow]
 				updateLength(){
 					this.ohnos = this.ohnos.filter(o => o && o.isAdded() && !o.dead);
 				},
+				checkAchievement(){
+					for(const ohno of this.ohnos){
+						const player = ohno.getPlayer();
+						if(player) Achievements.ohno.grantTo(FishPlayer.get(player), false);
+					}
+				},
 				killAll(){
 					this.ohnos.forEach(ohno => ohno?.kill?.());
 					this.ohnos = [];
@@ -618,6 +644,7 @@ Available types:[yellow]
 			Events.on(EventType.GameOverEvent, (_) => {
 				Ohnos.killAll();
 			});
+			Timer.schedule(() => Ohnos.checkAchievement(), 1, 2);
 			return Ohnos;
 		},
 		requirements: [
@@ -660,7 +687,7 @@ Available types:[yellow]
 		args: ['player:player?'],
 		description: 'Displays the server rules.',
 		perm: Perm.none,
-		handler({args, sender, outputSuccess, f}){
+		handler({args, sender, output, outputSuccess, f}){
 			const target = args.player ?? sender;
 			if(target !== sender){
 				if(!sender.hasPerm("warn")) fail(`You do not have permission to show rules to other players.`);
@@ -670,10 +697,13 @@ Available types:[yellow]
 			void Menu.menu(
 				"Rules for [#0000ff]>|||> FISH [white]servers", rules.join("\n\n"),
 				["[green]I agree to abide by these rules[]", "No"], target,
+				{ onCancel: "null" }
 			).then((option) => {
 				if(option == "No"){
 					target.kick("You must agree to the rules to play on this server. Rejoin to agree to the rules.", 1);
 					outputSuccess('Player rejected the rules and was kicked.');
+				} else if(option == null){
+					output('Player closed the menu.');
 				} else {
 					outputSuccess('Player acknowledged the rules.');
 				}
@@ -723,7 +753,7 @@ Please stop attacking and [lime]build defenses[] first!`
 				fail(`You do not have permission to change teams because peaceful mode is on.`);
 			if(Gamemode.sandbox() && team === Vars.state.rules.waveTeam && !sender.hasPerm("admin"))
 				fail(`You do not have permission to change to the wave team on sandbox.`);
-			if(!Gamemode.sandbox() && !sender.hasPerm("mod") && !reason) fail(`Please specify a reason for changing teams.`);
+			if(!(Gamemode.sandbox() || Gamemode.testsrv()) && !sender.hasPerm("mod") && !reason) fail(`Please specify a reason for changing teams.`);
 			if(!sender.hasPerm("changeTeamExternal")){
 				if(team.data().cores.size <= 0) fail(`You do not have permission to change to a team with no cores.`);
 				if(!sender.player!.dead() && !sender.unit()?.spawnedByCore)
@@ -780,7 +810,7 @@ Please stop attacking and [lime]build defenses[] first!`
 	},
 
 	vnw: command({
-		args: [],
+		args: ["waves:number?"],
 		description: "Vote to start the next wave.",
 		perm: Perm.play,
 		init: () => ({
@@ -791,13 +821,12 @@ Please stop attacking and [lime]build defenses[] first!`
 				.on("player vote change", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has voted on skipping [accent]${t.session!.data}[white] wave(s). [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 				.on("player vote removed", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has left. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 		}),
-		requirements: [Req.cooldown(3000), Req.mode("survival"), Req.gameRunning],
-		async handler({sender, data:{manager}}){
+		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
+		async handler({sender, args: {waves}, data:{manager}}){
 
 			//Disable narrowing, this is async
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 			if(!manager.session as boolean){
-				const option = await Menu.menu(
+				waves ??= await Menu.menu(
 					"Start a Next Wave Vote",
 					"Select the amount of waves you would like to skip.",
 					[1, 5, 10],
@@ -809,10 +838,10 @@ Please stop attacking and [lime]build defenses[] first!`
 				);
 				if(manager.session){
 					//Someone else started a vote
-					if(manager.session.data != option) fail(`Someone else started a vote with a different number of waves to skip.`);
-					else manager.vote(sender, sender.voteWeight(), option);
+					if(manager.session.data != waves) fail(`Someone else started a vote with a different number of waves to skip.`);
+					else manager.vote(sender, sender.voteWeight(), waves);
 				} else {
-					manager.start(sender, sender.voteWeight(), option);
+					manager.start(sender, sender.voteWeight(), waves);
 				}
 			} else {
 				manager.vote(sender, sender.voteWeight(), null);
@@ -854,42 +883,47 @@ Please stop attacking and [lime]build defenses[] first!`
 		}
 	}),
 
-	// votekick: {
-	//	 args: ["target:player"],
-	//	 description: "Starts a vote to kick a player.",
-	//	 perm: Perm.play,
-	//	 handler({args, sender}){
-	// 		if(votekickmanager.currentSession) fail(`There is already a votekick in progress.`);
-	// 		votekickmanager.start({
-	// 			initiator: sender,
-	// 			target: args.player
-	// 		});
-	//	 }
-	// },
+	// votekick: command({
+	// 	args: ["target:player"],
+	// 	description: "Starts a vote to kick a player.",
+	// 	perm: Perm.play,
+	// 	data: new VoteManager<FishPlayer>(
+	// 		Duration.seconds(20),
+	// 		["absolute", 3],
+	// 		(fishP, target) => fishP.team() == target.team() || fishP.hasPerm("voteOtherTeams")
+	// 	),
+	// 	handler({args, sender, data: votekickmanager}){
+	// 		if(votekickmanager.session) fail(`There is already a votekick in progress.`);
+	// 		votekickmanager.start(sender, 1, args.target);
+	// 	}
+	// }),
 
 	// vote: {
-	//	 args: ["vote:boolean"],
-	//	 description: "Use /votekick instead.",
-	//	 perm: Perm.play,
-	//	 handler({sender, args}){
+	// 	 args: ["vote:boolean"],
+	// 	 description: "Use /votekick instead.",
+	// 	 perm: Perm.play,
+	// 	 handler({sender, args, allCommands}){
+	// 		const votekickmanager = allCommands.votekick.data;
 	// 		votekickmanager.handleVote(sender, args ? 1 : -1);
-	//	 }
+	// 	 }
 	// },
 
 	forcenextmap: {
-		args: ["map:map"],
+		args: ["map:mapOrRandom"],
 		description: 'Override the next map in queue.',
 		perm: Perm.admin.exceptModes({
 			testsrv: Perm.play
 		}),
 		handler({allCommands, args, sender, outputSuccess, f}){
-			Vars.maps.setNextMapOverride(args.map);
+			Vars.maps.setNextMapOverride(args.map == "random" ? null : args.map);
 			if(allCommands.nextmap.data.voteEndTime() > -1){
 				//Cancel /nextmap vote if it's ongoing
 				allCommands.nextmap.data.resetVotes();
-				Call.sendMessage(`[red]Admin ${sender.name}[red] has cancelled the vote. The next map will be [yellow]${args.map.name()}.`);
+				Call.sendMessage(`[red]Admin ${sender.name}[red] has cancelled the vote. The next map will be ${args.map == "random" ? "random" : `[yellow]${args.map.name()}`}.`);
 			} else {
-				outputSuccess(f`Forced the next map to be "${args.map.name()}" by ${args.map.author()}`);
+				outputSuccess(f`Forced the next map to be ${
+					args.map == "random" ? "random" : `"${args.map.name()}" by ${args.map.author()}`
+				}.`);
 			}
 		},
 
@@ -913,7 +947,12 @@ ${Vars.maps.customMaps().toArray().map(map =>
 	},
 
 	nextmap: command(() => {
-		const votes = new Map<FishPlayer, MMap>();
+		const random = {
+			name(){ return "[lightgray]Random"; },
+			plainName(){ return "random"; }
+		};
+		type Random = typeof random;
+		const votes = new Map<FishPlayer, MMap | Random>();
 		let lastVoteCount = 0;
 		let lastVoteTime = 0;
 		let voteEndTime = -1;
@@ -926,9 +965,9 @@ ${Vars.maps.customMaps().toArray().map(map =>
 			task?.cancel();
 		}
 
-		function getMapData():Seq<ObjectIntMapEntry<MMap>> {
+		function getMapData():Seq<ObjectIntMapEntry<MMap | Random>> {
 			return [...votes.values()].reduce(
-				(acc, map) => (acc.increment(map), acc), new ObjectIntMap<MMap>()
+				(acc, map) => (acc.increment(map), acc), new ObjectIntMap<MMap | Random>()
 			).entries().toArray();
 		}
 
@@ -964,7 +1003,7 @@ ${getMapData().map(({key:map, value:votes}) =>
 			const mapData = getMapData();
 			const highestVoteCount = mapData.max(floatf(e => e.value)).value;
 			const highestVotedMaps = mapData.select(e => e.value == highestVoteCount);
-			let winner:MMap;
+			let winner:MMap | Random;
 
 			if(highestVotedMaps.size > 1){
 				winner = highestVotedMaps.random()!.key;
@@ -979,7 +1018,7 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 				winner = highestVotedMaps.get(0).key;
 				Call.sendMessage(`[green]Map voting complete! The next map will be [yellow]${winner.name()} [green]with [yellow]${highestVoteCount}[green] votes.`);
 			}
-			Vars.maps.setNextMapOverride(winner);
+			Vars.maps.setNextMapOverride(winner == random ? null : (winner as MMap));
 			resetVotes();
 		}
 
@@ -987,12 +1026,13 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		Events.on(EventType.ServerLoadEvent, resetVotes);
 
 		return {
-			args: ['map:map'],
+			args: ['map:mapOrRandom'],
 			description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
 			perm: Perm.play,
 			data: {votes, voteEndTime: () => voteEndTime, resetVotes, endVote},
 			requirements: [Req.cooldown(10_000)],
-			handler({args:{map}, sender}){
+			handler({args, sender}){
+				const map = args.map === "random" ? random : args.map;
 				if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
 				if(votes.get(sender)) fail(`You have already voted.`);
 				
@@ -1037,18 +1077,20 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		});
 
 		return {
-			args: ["force:boolean?"],
+			args: ["force:boolean?", "team:team?"],
 			description: "Vote to surrender to the enemy team.",
 			perm: Perm.play,
 			requirements: [Req.mode("pvp"), Req.teamAlive],
 			data: { managers },
-			handler({ sender, args: {force} }){
-				const manager = managers[sender.team().id];
+			async handler({ sender, args: {force, team} }){
+				const t = sender.hasPerm("admin") && team ? team : sender.team();
+				const manager = managers[t.id];
 				if(sender.hasPerm("admin") && force != undefined){
 					if(force){
+						await Menu.confirmDangerous(sender, `Are you sure you want to force team ${t.coloredName()}[] to lose?`);
 						manager.messageEligibleVoters(prefix + `Vote forced by admin ${sender.name}[white].`);
 						Call.sendMessage(
-							prefix + `Team ${sender.team().coloredName()} has voted to forfeit this match.`
+							prefix + `Team ${t.coloredName()} has voted to forfeit this match.`
 						);
 					} else {
 						manager.messageEligibleVoters(prefix + `Votes cleared by admin ${sender.name}[white].`);
@@ -1085,9 +1127,8 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 		args: ["x:number?", "y:number?", "size:number?"],
 		perm: Perm.none,
 		description: "Views the world as a 2D scrollable menu.",
-		requirements: [Req.cooldown(4000)],
+		requirements: [Req.cooldown(4000), Req.integerRange("size", 1, 20)],
 		handler({sender, args:{size = 7, x, y}}){
-			if(size > 20) fail(`Size ${size} is too high!`);
 			if(Vars.state.rules.fog) fail(`This command is disabled when fog is enabled.`);
 			const options = to2DArray((Reflect.get(Vars.world.tiles, "array") as Tile[]).map(tile => ({
 				text: tile.block().emoji(),
@@ -1110,11 +1151,13 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 		description: "Displays information about a map.",
 		handler({output, args:{map}, f, sender}){
 			if(map){
-				output(FMap.getCreate(map).displayStats(f)!);
+				const fmap = FMap.getCreate(map)
+					?? fail("Map data is still being loaded, try again later.");
+				output(fmap.displayStats(f)!);
 			} else {
 				void Menu.textPages(sender, Vars.maps.customMaps().map(m =>
-					["Map information", () => FMap.getCreate(m).displayStats(f)!] as const
-				).toArray(), {
+					["Map information", () => FMap.getCreate(m)?.displayStats(f) ?? fail("Map data is still being loaded, try again later.")] as const
+				).toArray(), [], {
 					startPage: Vars.maps.customMaps().toArray().indexOf(Vars.state.map),
 				});
 			}
@@ -1254,28 +1297,24 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			let x = 0, y = 0;
 			let a: Achievement | null = null;
 			while(true){
-				try {
-					[a, x, y] = await Menu.scroll2D(
-						sender, "Achievements",
-						a ? FColor.achievement`\
-	${a.icon} ${a.name}
-	
-	${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
-	
-	Allowed modes: ${a.modesText}
-	Unlocked: ${f.boolGood(a.has(target))}
-	${a.hidden ? "This achievement is secret." : ""}\
-	` :
-		(target == sender ? `You have ${numberAchievements}/${totalAchievements} achievements.`
-		: FColor.achievement`Player ${target.prefixedName} has ${numberAchievements}/${totalAchievements} achievements.`)
-		+ "\nClick an achievement icon to show more information.",
-						options,
-						{ onCancel: "reject", columns: 5, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
-					);
-				} catch(err){
-					if(err == "cancel") return; //TODO replace this string "cancel" with a symbol
-					else throw err;
-				}
+				//the loop will be aborted if the menu is cancelled (promise will reject)
+				[a, x, y] = await Menu.scroll2D(
+					sender, "Achievements",
+					a ? FColor.achievement`\
+${a.icon} ${a.name}
+
+${a.description + (a.extendedDescription ? ("\n" + `[gray]${a.extendedDescription}`) : "")}
+
+Allowed modes: ${a.modesText}
+Unlocked: ${f.boolGood(a.has(target))}
+${a.hidden ? "This achievement is secret." : ""}\
+` :
+	(target == sender ? `You have ${numberAchievements}/${totalAchievements} achievements.`
+	: FColor.achievement`Player ${target.prefixedName} has ${numberAchievements}/${totalAchievements} achievements.`)
+	+ "\nClick an achievement icon to show more information.",
+					options,
+					{ onCancel: "reject", columns: 5, rows: 4, getCenterText: () => String.fromCharCode(Iconc.settings), x, y }
+				);
 				if(a == Achievements.click_me && target == sender) a.grantTo(sender);
 			}
 		}

@@ -5,11 +5,13 @@ It only contains polyfills, and requires index.js.
 */
 //WARNING: changes to this file must be manually copied to /build/scripts/main.js
 
+this._startTime = Date.now();
+Log.info("fish-commands: loading");
+
 importPackage(Packages.arc);
 importClass(Packages.arc.util.CommandHandler);
 importPackage(Packages.mindustry.type);
 importClass(Packages.mindustry.server.ServerControl);
-importPackage(Packages.java.util.regex);
 importClass(Packages.java.lang.Thread);
 importClass(Packages.java.lang.Runtime);
 importClass(Packages.java.lang.ProcessBuilder);
@@ -18,6 +20,8 @@ importClass(Packages.java.io.ByteArrayOutputStream);
 importClass(Packages.java.io.DataOutputStream);
 importClass(Packages.java.io.ByteArrayInputStream);
 importClass(Packages.java.io.DataInputStream);
+importPackage(Packages.java.util.concurrent.atomic);
+importPackage(Packages.java.util.regex);
 
 //Polyfills
 Object.entries = o => Object.keys(o).map(k => [k, o[k]]);

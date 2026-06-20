@@ -21,31 +21,36 @@ exports.handleMessage = handleMessage;
 exports.setPlayerLanguageEntry = setPlayerLanguageEntry;
 exports.getLanguageFromCache = getLanguageFromCache;
 exports.isLanguageAvailable = isLanguageAvailable;
-exports.fetchLanguageCacheAsync = fetchLanguageCacheAsync;
 var config_1 = require("/config");
 var players_1 = require("/players");
 var utils_1 = require("/utils");
-exports.languageCache = new ObjectSet();
+exports.languageCache = new ObjectMap();
 exports.playerLanguageCache = new ObjectMap();
 exports.translationCache = new ObjectMap();
-var languageCacheFetchInFlight = false;
-var languageCacheCallbacks = [];
 function initializeTranslation() {
-    fetchLanguageCacheAsync();
+    fetchLanguageCache(false);
     Events.on(EventType.PlayerJoin, function (e) {
-        if (exports.languageCache.isEmpty()) {
-            fetchLanguageCacheAsync(function () { return updatePlayerLanguageEntry(e.player); });
-            return;
+        var fishPlayer = players_1.FishPlayer.get(e.player);
+        var language = getLanguageFromCache(fishPlayer.language || e.player.locale);
+        if (fishPlayer.language != language.code) {
+            fishPlayer.language = language.code;
         }
-        updatePlayerLanguageEntry(e.player);
+        if (exports.languageCache.isEmpty()) {
+            //shouldn't ever happen, but by chance it does
+            fetchLanguageCacheCallback(function () { return setPlayerLanguageEntry(e.player, language); });
+        }
+        else {
+            setPlayerLanguageEntry(e.player, language);
+        }
     });
     Events.on(EventType.PlayerLeave, function (e) {
         removePlayerLanguageEntry(e.player);
     });
 }
-function handleMessage(sender, message) {
-    if (exports.languageCache.isEmpty()) {
-        fetchLanguageCacheAsync();
+function handleMessage(sender, message, noRecursion) {
+    if (exports.languageCache.isEmpty() && !noRecursion) {
+        //shouldn't ever happen, but by chance it does
+        fetchLanguageCacheCallback(function () { return handleMessage(sender, message, true); });
     }
     sender.sendMessage(Vars.netServer.chatFormatter.format(sender, message)); //return to sender immediately, they don't need to see their own translation
     var cleanedMessage = Strings.stripGlyphs(Strings.stripColors((0, utils_1.removeFoosChars)(message)));
@@ -183,12 +188,7 @@ function getLanguageFromCache(code) {
     if (normalizedCode == "none" || normalizedCode == "off") {
         return { code: "none", name: "Off" };
     }
-    var language = null;
-    exports.languageCache.each(function (t) {
-        if (t.code.toLowerCase() == normalizedCode) {
-            language = t;
-        }
-    });
+    var language = exports.languageCache.get(normalizedCode);
     if (language != null)
         return language;
     return { code: "none", name: "Off" }; //unsupported
@@ -196,57 +196,36 @@ function getLanguageFromCache(code) {
 function isLanguageAvailable(code) {
     return getLanguageFromCache(code).code != "none";
 }
-function fetchLanguageCacheAsync(callback) {
-    if (callback != null) {
-        if (!exports.languageCache.isEmpty()) {
-            Core.app.post(callback);
-            return;
-        }
-        languageCacheCallbacks.push(callback);
-    }
-    if (languageCacheFetchInFlight || !exports.languageCache.isEmpty())
-        return;
-    languageCacheFetchInFlight = true;
-    Threads.daemon(function () {
-        var req = Http.get(config_1.translationApiUrl + "/api/languages");
-        req.error(function (e) {
-            Log.err("Failed to load translation API languages");
-            Log.err(e);
-            Core.app.post(finishLanguageCacheFetch);
-        });
-        req.block(function (t) {
-            var parsed = JSON.parse(t.getResultAsString());
-            Core.app.post(function () {
-                exports.languageCache.clear();
-                exports.languageCache.addAll(parsed);
-                finishLanguageCacheFetch();
-            });
+function fetchLanguageCache(blockUntilResponse) {
+    var req = Http.get(config_1.translationApiUrl + "/api/languages");
+    req.error(function (e) {
+        Log.err("Failed to load translation API languages");
+        Log.err(e);
+    });
+    req[blockUntilResponse ? "block" : "submit"](function (t) {
+        var parsed = JSON.parse(t.getResultAsString());
+        Core.app.post(function () {
+            var e_6, _a;
+            exports.languageCache.clear();
+            try {
+                for (var parsed_1 = __values(parsed), parsed_1_1 = parsed_1.next(); !parsed_1_1.done; parsed_1_1 = parsed_1.next()) {
+                    var language = parsed_1_1.value;
+                    exports.languageCache.put(language.code.toLowerCase(), language);
+                }
+            }
+            catch (e_6_1) { e_6 = { error: e_6_1 }; }
+            finally {
+                try {
+                    if (parsed_1_1 && !parsed_1_1.done && (_a = parsed_1.return)) _a.call(parsed_1);
+                }
+                finally { if (e_6) throw e_6.error; }
+            }
         });
     });
 }
-function updatePlayerLanguageEntry(player) {
-    var fishPlayer = players_1.FishPlayer.get(player);
-    var language = getLanguageFromCache(fishPlayer.language || player.locale);
-    if (fishPlayer.language != language.code) {
-        fishPlayer.language = language.code;
-    }
-    setPlayerLanguageEntry(player, language);
-}
-function finishLanguageCacheFetch() {
-    var e_6, _a;
-    languageCacheFetchInFlight = false;
-    var callbacks = languageCacheCallbacks.splice(0);
-    try {
-        for (var callbacks_1 = __values(callbacks), callbacks_1_1 = callbacks_1.next(); !callbacks_1_1.done; callbacks_1_1 = callbacks_1.next()) {
-            var callback = callbacks_1_1.value;
-            callback();
-        }
-    }
-    catch (e_6_1) { e_6 = { error: e_6_1 }; }
-    finally {
-        try {
-            if (callbacks_1_1 && !callbacks_1_1.done && (_a = callbacks_1.return)) _a.call(callbacks_1);
-        }
-        finally { if (e_6) throw e_6.error; }
-    }
+function fetchLanguageCacheCallback(callback) {
+    Threads.daemon(function () {
+        fetchLanguageCache(true);
+        Core.app.post(function () { return callback(); });
+    });
 }

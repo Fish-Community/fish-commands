@@ -8,12 +8,14 @@ import { Gamemode, Mode, rules, stopAntiEvadeTime } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { command, commandList, fail, Perm, Req } from "/frameworks/commands";
-import { Menu } from "/frameworks/menus";
-import { crash, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from "/funcs";
+import { listeners, Menu } from "/frameworks/menus";
+import { crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals";
+import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
-import { addToTileHistory, applyEffectMode, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
+import { Label } from "/types";
+import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -312,11 +314,35 @@ export const commands = commandList({
 	},
 
 	restart: {
-		args: [],
-		description: "Stops and restarts the server. Do not run when the player count is high.",
+		args: ["time:number?"],
 		perm: Perm.admin,
-		handler(){
-			serverRestartLoop(30);
+		description: "Restarts the server.",
+		handler({args: {time}}){
+			fishState.restartLoopTask?.cancel();
+			if(Groups.player.isEmpty()){
+				if(time == undefined){
+					Log.info(`Restarting immediately as no players are online.`);
+					time ??= 0;
+				}
+			} else if(Gamemode.pvp()){
+				time ??= -1;
+				Log.info(`PVP: restart will occur at the end of the current match. Specify a time to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr`);
+			} else {
+				time ??= 60;
+			}
+
+			if(time == -1){
+				Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---`);
+				fishState.restartQueued = true;
+			} else {
+				if(time < 0 || time > 100) fail(`Invalid time: out of valid range.`);
+				serverRestartLoop(time);
+				if(Gamemode.pvp()){
+					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---`);
+				} else {
+					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 20 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---`);
+				}
+			}
 		}
 	},
 
@@ -356,9 +382,8 @@ export const commands = commandList({
 		args: ["wave:number"],
 		description: "Sets the wave number.",
 		perm: Perm.admin,
+		requirements: [Req.positiveInteger("wave")],
 		handler({args, outputSuccess, f}){
-			if(args.wave < 0) fail(`Wave must be positive.`);
-			if(!Number.isSafeInteger(args.wave)) fail(`Wave must be an integer.`);
 			Vars.state.wave = args.wave;
 			outputSuccess(f`Set wave to ${Vars.state.wave}`);
 		}
@@ -374,21 +399,22 @@ export const commands = commandList({
 			let timeRemaining = args.time / 1000;
 			const labelx = unit.x;
 			const labely = unit.y;
-			fishState.labels.push(Timer.schedule(() => {
-				if(timeRemaining > 0){
+			const task = Timer.schedule(() => {
+				if (timeRemaining > 0) {
 					const timeseconds = timeRemaining % 60;
 					const timeminutes = (timeRemaining - timeseconds) / 60;
 					Call.label(
-`${sender.name}
+						`${sender.name}
 
 [white]${args.message}
 
 [acid]${timeminutes.toString().padStart(2, "0")}:${timeseconds.toString().padStart(2, "0")}`,
 						1, labelx, labely
 					);
-					timeRemaining --;
+					timeRemaining--;
 				}
-			}, 0, 1, args.time));
+			}, 0, 1, args.time);
+			fishState.labels.push({ x: labelx, y: labely, task});
 			outputSuccess(f`Placed label "${args.message}" for ${timeRemaining} seconds.`);
 		}
 	},
@@ -400,12 +426,13 @@ export const commands = commandList({
 		handler({args, outputSuccess, f}){
 			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
 			let timeRemaining = args.time / 1000;
-			fishState.labels.push(Timer.schedule(() => {
+			const task = Timer.schedule(() => {
 				if(timeRemaining > 0){
 					Call.label(args.message, 5, NaN, NaN);
 					timeRemaining -= 5;
 				}
-			}, 0, 5, Math.ceil(args.time / 5)));
+			}, 0, 5, Math.ceil(args.time / 5));
+			fishState.labels.push({ task, x: null, y: null });
 			outputSuccess(f`Placed label "${args.message}" for ${timeRemaining} seconds.`);
 		}
 	},
@@ -415,8 +442,34 @@ export const commands = commandList({
 		description: "Removes all labels.",
 		perm: Perm.mod,
 		handler({outputSuccess}){
-			fishState.labels.forEach(l => l.cancel());
+			if(fishState.labels.length == 0) fail(`No labels found.`);
+			fishState.labels.forEach(l => l.task.cancel());
 			outputSuccess(`Removed all labels.`);
+		}
+	},
+	
+	clearlabel: {
+		args: ["sticky:boolean?"],
+		description: "Removes the closest label, or sticky label if specified",
+		perm: Perm.mod,
+		handler({args: {sticky = false}, sender, outputSuccess}){
+			if(fishState.labels.length == 0) fail(`No labels found.`);
+			let label: Label;
+			if(sticky){
+				const index = fishState.labels.findIndex(l => l.x == null);
+				if(index == -1) fail(`No sticky label found.`);
+				label = fishState.labels.splice(index, 1)[0];
+			} else {
+				const unit = sender.unit() ?? fail(`Cannot remove the closest label because you are dead.`);
+				const dist = function(label: {x: number | null; y: number | null}){
+					if(label.x == null || label.y == null) return Infinity;
+					return Mathf.dst(label.x, label.y, unit.x, unit.y);
+				};
+				const index = [...fishState.labels.entries()].reduce((a, b) => dist(a[1]) < dist(b[1]) ? a : b)[0];
+				label = fishState.labels.splice(index, 1)[0];
+			}
+			label.task.cancel();
+			outputSuccess(`Removed one label.`);
 		}
 	},
 
@@ -605,22 +658,46 @@ export const commands = commandList({
 
 	clearunit: {
 		args: ["target:player", "duration:time?"],
-		description: "Forces a player out of the unit they are controlling, and blocks them from controlling units for a specified duration.",
+		description: "Forces a player out of the unit they are controlling, and blocks them from possessing units for a specified duration.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
-		handler({args: { target, duration }, outputSuccess, f}){
-			if(target.blockedFromUnitsUntil == 0) duration ??= Duration.minutes(1);
+		handler({args: { target, duration }, sender, outputSuccess, f}){
+			if(Date.now() > 1000 + target.blockedFromPossessingUnitsUntil) duration ??= Duration.minutes(1);
 			else duration ??= 0;
 			
 			if(duration == 0){
-				target.blockedFromUnitsUntil = 0;
+				target.blockedFromPossessingUnitsUntil = 0;
 				target.sendMessage(`You are allowed to control units again.`);
 				outputSuccess(f`Restored ${target}'s ability to control units.`);
+				logAction("restored unit possession for", sender, target);
 			} else {
 				target.forceRespawn();
-				target.blockedFromUnitsUntil = Date.now() + duration;
+				target.blockedFromPossessingUnitsUntil = Date.now() + duration;
 				target.sendMessage(`You have been blocked from controlling units for ${formatTime(duration)}.`);
 				outputSuccess(f`Blocked ${target} from controlling units for ${formatTime(duration)}.`);
+				logAction("revoked unit possession for", sender, target, undefined, duration);
+			}
+		}
+	},
+	clearcommand: {
+		args: ["target:player", "duration:time?"],
+		description: "Blocks a player from commanding units for a specified duration.",
+		perm: Perm.mod,
+		requirements: [Req.moderate("target", false, "mod", false)],
+		handler({args: { target, duration }, sender, outputSuccess, f}){
+			if(Date.now() > 1000 + target.blockedFromCommandingUnitsUntil) duration ??= Duration.minutes(1);
+			else duration ??= 0;
+
+			if(duration == 0){
+				target.blockedFromCommandingUnitsUntil = 0;
+				target.sendMessage(`You are allowed to command units again.`);
+				outputSuccess(f`Restored ${target}'s ability to command units.`);
+				logAction("restored command mode for", sender, target, undefined, duration);
+			} else {
+				target.blockedFromCommandingUnitsUntil = Date.now() + duration;
+				target.sendMessage(`You have been blocked from commanding units for ${formatTime(duration)}.`);
+				outputSuccess(f`Blocked ${target} from commanding units for ${formatTime(duration)}.`);
+				logAction("revoked command mode for", sender, target, undefined, duration);
 			}
 		}
 	},
@@ -681,18 +758,20 @@ export const commands = commandList({
 	[accent]Names used: [[${names}]`
 			);
 			if(sender.hasPerm("viewUUIDs"))
-				output(f`\
-	[#FFAAAA]UUID: ${args.target.uuid}
-	[#FFAAAA]IP: ${args.target.ip()}`
-				);
+				output(f`\t[#FFAAAA]UUID: ${args.target.uuid}`);
+			if(sender.hasPerm("viewIPs"))
+				output(f`\t[#FFAAAA]IP: ${args.target.ip()}`);
 		}
 	},
 
 	spawn: {
 		args: ["type:unittype", "x:number?", "y:number?", "count:number?", "team:team?", "effects:string?", "stack:boolean?"],
 		description: "Spawns a unit of specified type at your position. [scarlet]Usage will be logged.[]",
-		perm: Perm.admin,
+		perm: Perm.admin.exceptModes({
+			testsrv: Perm.trusted,
+		}),
 		data: [],
+		requirements: [Req.positiveInteger("count")],
 		handler({sender, args, data, outputSuccess, f}){
 			const x = args.x ? (args.x * 8) : sender.player!.x;
 			const y = args.y ? (args.y * 8) : sender.player!.y;
@@ -707,18 +786,20 @@ export const commands = commandList({
 				unit.add();
 				data.push(unit);
 			}
-			if(!Gamemode.sandbox() && args.effects !== 'paper') logAction(`spawned unit ${args.type.name}${count == 1 ? '' : ` x${count}`} at ${Math.round(x / 8)}, ${Math.round(y / 8)}` + (args.effects ? `with ${args.effects} effects` : ''), sender);
+			if(!(Gamemode.sandbox() || Gamemode.testsrv()) && args.effects !== 'paper') logAction(`spawned unit ${args.type.name}${count == 1 ? '' : ` x${count}`} at ${Math.round(x / 8)}, ${Math.round(y / 8)}` + (args.effects ? `with ${args.effects} effects` : ''), sender);
 			outputSuccess(f`Spawned unit ${args.type} at (${Math.round(x / 8)}, ${Math.round(y / 8)})`);
 		}
 	},
 	setblock: {
 		args: ["x:number", "y:number", "block:block", "team:team?", "rotation:number?"],
 		description: "Sets the block at a location.",
-		perm: Perm.admin,
+		perm: Perm.admin.exceptModes({
+			testsrv: Perm.trusted,
+		}),
+		requirements: [Req.integerRange("rotation", 0, 3)],
 		handler({args, sender, outputSuccess, f}){
 			const team = args.team ?? sender.team();
 			const tile = Vars.world.tile(args.x, args.y);
-			if(args.rotation != null && (args.rotation < 0 || args.rotation > 3)) fail(f`Invalid rotation ${args.rotation}`);
 			if(tile == null)
 				fail(f`Position (${args.x}, ${args.y}) is out of bounds.`);
 			tile.setNet(args.block, team, args.rotation ?? 0);
@@ -736,11 +817,11 @@ export const commands = commandList({
 		args: ["block:block?", "team:team?", "rotation:number?"],
 		description: "Sets the block at tapped locations, repeatedly.",
 		perm: Perm.admin,
+		requirements: [Req.integerRange("rotation", 0, 3)],
 		tapped({args, sender, f, x, y, outputSuccess}){
 			if(!args.block) crash(`uh oh`);
 			const team = args.team ?? sender.team();
 			const tile = Vars.world.tile(x, y);
-			if(args.rotation != null && (args.rotation < 0 || args.rotation > 3)) fail(f`Invalid rotation ${args.rotation}`);
 			if(tile == null)
 				fail(f`Position (${x}, ${y}) is out of bounds.`);
 			tile.setNet(args.block, team, args.rotation ?? 0);
@@ -774,7 +855,9 @@ export const commands = commandList({
 	exterminate: {
 		args: [],
 		description: "Removes all spawned units.",
-		perm: Perm.admin,
+		perm: Perm.admin.exceptModes({
+			testsrv: Perm.trusted,
+		}),
 		handler({sender, outputSuccess, f, allCommands}){
 			let numKilled = 0;
 			(allCommands.spawn.data as Unit[]).forEach(u => {
@@ -1016,7 +1099,9 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 	effects: {
 		args: ["mode:string", "player:player?", "duration:time?"],
 		description: "Applies effects to a player's unit.",
-		perm: Perm.admin,
+		perm: Perm.admin.exceptModes({
+			testsrv: Perm.trusted,
+		}),
 		handler({args, sender, f, outputSuccess}){
 			if(args.player?.hasPerm("blockTrolling"))
 				fail(f`Player ${args.player} is insufficiently trollable.`);
@@ -1035,6 +1120,7 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 		args: ["team:team", "item:item", "amount:number"],
 		description: "Gives items to a team.",
 		perm: Perm.admin,
+		requirements: [Req.integer("amount")],
 		handler({args:{team, item, amount}, sender, outputSuccess, f}){
 			const core = team.data().cores.firstOpt() ?? fail(f`Team ${team} has no cores.`);
 			core.items.add(item, amount);
@@ -1081,6 +1167,84 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 		handler({args:{ editor }}){
 			Vars.state.rules.editor = editor;
 			Call.setRules(Vars.state.rules);
+		}
+	},
+	mapruns: {
+		args: ["map:map", "lowestHighscores:boolean?"],
+		description: "Displays all map runs for a selected map, and allows deleting invalid/cheated runs.",
+		perm: Perm.admin,
+		async handler({args: {map, lowestHighscores}, sender, outputSuccess}){
+			const fmap = FMap.getCreate(map) ?? fail(`Map data is still loading, please try again.`);
+			lowestHighscores ??= await Menu.buttons(sender, "[accent]Map runs", "Select a view", [
+				[{data: true, text: "Lowest highscores"}],
+				[{data: false, text: "All runs"}],
+			], {
+				includeCancel: true,
+				onCancel: "reject"
+			});
+
+			const initialLength = fmap.runs.length;
+			let runs = fmap.runs.slice();
+			if(lowestHighscores) runs = runs.filter(r => r.success)
+				.sort((a, b) => a.duration() - b.duration());
+
+			const [index, _] = await Menu.textPages(sender, runs.map(r => [
+				 formatTimestamp(r.startTime),
+				 () =>
+`Duration: ${formatTime(r.duration())}
+Max player count: ${r.maxPlayerCount}
+Outcome: ${r.outcome()[1]}
+Wave: ${r.wave}`
+			]), ["[scarlet]\uE86FDelete"], {
+				onCancel: "reject"
+			});
+			await Menu.confirmDangerous(sender, `Are you sure you want to delete this map run? This action is irreversible.`);
+			if(initialLength != fmap.runs.length) fail(`Someone else deleted a run, please try again.`);
+			const deleted = fmap.runs.splice(index, 1)[0];
+			outputSuccess(`Deleted run (${formatTimestamp(deleted.startTime)}) with duration ${formatTime(deleted.duration())}.`);
+		}
+	},
+	crash: {
+		args: ["target:player"],
+		description: "Crashes the target player's Mindustry client.",
+		perm: Perm.admin,
+		requirements: [Req.moderate("target", false, "admin")],
+		handler({args: {target}, f, output, outputSuccess}){
+			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
+			if(crashClient(target.player!)){
+				outputSuccess(f`Crashed client of ${target}.`);
+			} else {
+				output(f`Attempted to crash client of ${target}. The crash will only occur once the sync completes.`);
+			}
+		}
+	},
+	yeet: {
+		args: ["target:player", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
+		description: "Sends the target player to a parallel universe.",
+		perm: Perm.admin,
+		requirements: [Req.moderate("target", false, "admin")],
+		async handler({args: {target, ...world}, f, outputSuccess}){
+			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
+			outputSuccess(`Aligning QPUs...`);
+			await syncManual(target.player!, undefined, world);
+			outputSuccess(f`Sent ${target} to a parallel universe.`);
+		}
+	},
+	menuspam: {
+		args: ["target:player"],
+		description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
+		perm: Perm.admin,
+		requirements: [Req.moderate("target", false, "admin")],
+		async handler({args: {target}, f, output, outputSuccess}){
+			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
+			output(`Sending menus.`);
+			for(let i = 0; i < 10; i ++){
+				for(let j = 0; j < 100; j ++){
+					Call.menu(target.con, listeners.generic, "", "", []);
+				}
+				await delay(100);
+			}
+			outputSuccess(f`Spammed ${target} with menus.`);
 		}
 	}
 });

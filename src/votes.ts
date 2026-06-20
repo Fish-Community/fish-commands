@@ -6,6 +6,7 @@ Some contributions: @author Jurorno9
 
 import { fail } from "/frameworks/commands";
 import { crash, EventEmitter } from "/funcs";
+import { fishState } from "/globals";
 import { FishPlayer } from "/players";
 
 /** Event data for each voting event. */
@@ -71,7 +72,8 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 		this.session.votes.set(player.uuid, newVote);
 		if(oldVote == null) this.fire("player vote", [player, newVote]);
 		this.fire("player vote change", [player, oldVote ?? 0, newVote]);
-		this._checkVote(false);
+		if(Date.now() - fishState.startTime < 3000) Timer.schedule(() => this._checkVote(false), 3);
+		else this._checkVote(false);
 	}
 
 	unvote(player:FishPlayer){

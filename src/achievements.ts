@@ -112,10 +112,13 @@ export class Achievement {
 		});
 	}
 	/** Do not call this in a loop on an achievement set to notify everyone. */
-	public grantTo(player:FishPlayer){
-		if(this.notify == "everyone") Call.sendMessage(this.messageToEveryone(player));
-		else if(this.notify == "player") player.sendMessage(this.message());
-		if(!this.has(player)) this.setObtained(player);
+	public grantTo(player:FishPlayer, allowRepeatMessage = true){ //TODO make this default false
+		const has = this.has(player);
+		if(!has || allowRepeatMessage){
+			if(this.notify == "everyone") Call.sendMessage(this.messageToEveryone(player));
+			else if(this.notify == "player") player.sendMessage(this.message());
+		}
+		if(!has) this.setObtained(player);
 	}
 
 	private setObtained(player:FishPlayer){
@@ -534,6 +537,14 @@ export const Achievements = {
 		},
 	}),
 
+	help_help: new Achievement(["brown", Iconc.info], "Help with help", "Run /help help", {
+		notify: "everyone"
+	}),
+	ohno: new Achievement(["scarlet", UnitTypes.alpha.emoji()], "Oh no", "Control an ohno unit."),
+	sniper_duel: new Achievement(["yellow", UnitTypes.omura.emoji()], "Sniper duel", "Kill a Foreshadow with an Omura from outside its range."),
+	around_the_world: new Achievement(Iconc.planet, "Around the World", "Fly your unit around the entire map without entering it, starting from the lower left.", {
+		notify: "everyone",
+	}),
 } satisfies Record<string, Achievement>;
 Object.entries(Achievements).forEach(([id, a]) => a.sid = id);
 
@@ -560,6 +571,14 @@ Events.on(EventType.UnitBulletDestroyEvent, ({unit, bullet}:{unit:Unit; bullet: 
 	if(!Gamemode.sandbox() && unit.type == UnitTypes.dagger && (bullet.owner as Building | null)?.block == Blocks.foreshadow){
 		const build = bullet.owner as Building;
 		if(build.liquids.current() == Liquids.cryofluid && build.timeScale() >= 3) Achievements.foreshadow_overkill.grantToAllOnline(build.team);
+	}
+});
+
+Events.on(EventType.BuildingBulletDestroyEvent, ({build, bullet}:{build:Building, bullet:Bullet}) => {
+	if(!Gamemode.sandbox() && build.block == Blocks.foreshadow && (bullet.owner as Unit | null)?.type == UnitTypes.omura){
+		const unit = bullet.owner as Unit;
+		const player = unit.getPlayer();
+		if(player && !unit.within(build, build.range!() + unit.hitSize / 2)) Achievements.sniper_duel.grantTo(FishPlayer.get(player));
 	}
 });
 
@@ -602,6 +621,50 @@ if(!Gamemode.sandbox()) Timer.schedule(() => {
 		if(core.health < 50 && !coreHealthTime.get(core)) coreHealthTime.set(core, Date.now() + 12_000);
 	});
 }, 1, 1);
+const aroundTheWorld: Record<string, {
+	unit: Unit;
+	player: FishPlayer;
+	side: "left" | "top" | "right" | "bottom";
+}> = {};
+Timer.schedule(() => {
+	FishPlayer.forEachPlayer(p => {
+		const unit = p.unit();
+		if(unit && unit.x < 0 && unit.y < 0){
+			aroundTheWorld[p.uuid] ??= { player: p, unit, side: "left" };
+		}
+	});
+	for(const [uuid, entry] of Object.entries(aroundTheWorld)){
+		if(!(() => {
+			if(entry.unit.dead) return false;
+			const left = entry.unit.x < 0;
+			const bottom = entry.unit.y < 0;
+			const right = entry.unit.x > (Vars.world.width() - 1) * 8;
+			const top = entry.unit.y > (Vars.world.height() - 1) * 8;
+			switch(entry.side){
+				case "left":
+					if(!left) return false;
+					if(top) entry.side = "top";
+					break;
+				case "top":
+					if(!top) return false;
+					if(right) entry.side = "right";
+					break;
+				case "right":
+					if(!right) return false;
+					if(bottom) entry.side = "bottom";
+					break;
+				case "bottom":
+					if(!bottom) return false;
+					if(left){
+						Achievements.around_the_world.grantTo(entry.player, true);
+						return false;
+					}
+					break;
+			}
+			return true;
+		})()) delete aroundTheWorld[uuid];
+	}
+}, 1, 0.5);
 Events.on(EventType.GameOverEvent, () => coreHealthTime.clear());
 Events.on(EventType.WorldLoadEvent, () => coreHealthTime.clear());
 

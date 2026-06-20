@@ -9,10 +9,16 @@ var config_1 = require("/config");
 var errors_1 = require("/frameworks/commands/errors");
 var utils_1 = require("/utils");
 exports.Req = {
-    mode: function (mode) { return function () {
-        return config_1.Gamemode[mode]()
-            || (0, errors_1.fail)("This command is only available in ".concat((0, utils_1.formatModeName)(mode)));
-    }; },
+    mode: function () {
+        var modes = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            modes[_i] = arguments[_i];
+        }
+        return function () {
+            return modes.map(function (mode) { return config_1.Gamemode[mode](); }).some(Boolean)
+                || (0, errors_1.fail)("This command is only available in ".concat(modes.map(utils_1.formatModeName).join(" or ")));
+        };
+    },
     modeNot: function (mode) { return function () {
         return !config_1.Gamemode[mode]()
             || (0, errors_1.fail)("This command is disabled in ".concat((0, utils_1.formatModeName)(mode)));
@@ -44,7 +50,7 @@ exports.Req = {
     teamAlive: function (_a) {
         var sender = _a.sender;
         return sender.team().isAlive()
-            || (0, errors_1.fail)("Your team is dead.");
+            || (0, errors_1.fail)(Math.random() > 0.9 ? "You are already dead." : "Your team is dead.");
     },
     unitExists: function (message) {
         if (message === void 0) { message = "You must be in a unit to use this command."; }
@@ -54,5 +60,33 @@ exports.Req = {
             return (sender.connected() && ((_b = sender.unit()) === null || _b === void 0 ? void 0 : _b.added) && !sender.unit().dead)
                 || (0, errors_1.fail)(message);
         };
-    }
+    },
+    numberRange: function (argName, min, max) {
+        return function (_a) {
+            var args = _a.args;
+            return args[argName] == undefined || min <= args[argName] && args[argName] <= max
+                || (0, errors_1.fail)("".concat(argName, " must be between ").concat(min, " and ").concat(max));
+        };
+    },
+    integer: function (argName) {
+        return function (_a) {
+            var args = _a.args;
+            return args[argName] == undefined || Number.isSafeInteger(args[argName])
+                || (0, errors_1.fail)("".concat(argName, " must be an integer"));
+        };
+    },
+    integerRange: function (argName, min, max) {
+        return function (_a) {
+            var args = _a.args;
+            return exports.Req.integer(argName)({ args: args }) && exports.Req.numberRange(argName, min, max)({ args: args });
+        };
+    },
+    positiveInteger: function (argName) {
+        return function (_a) {
+            var args = _a.args;
+            return exports.Req.integer(argName)({ args: args }) &&
+                (args[argName] == undefined || args[argName] > 0
+                    || (0, errors_1.fail)("".concat(argName, " must be positive")));
+        };
+    },
 };

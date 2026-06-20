@@ -6,6 +6,7 @@ For maintenance information, see docs/frameworks.md
 */
 //Behold, the power of typescript!
 
+import { prefixes } from "/config";
 import { CommandError, fail } from "/frameworks/commands/errors";
 import { f_client, f_server, outputFormatter_client } from "/frameworks/commands/formatting";
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
@@ -16,7 +17,7 @@ import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
 import type { ClientCommandHandler, CommandArg, ServerCommandHandler } from "/types";
-import { getBlock, getItem, getMap, getTeam, getUnitType, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
+import { getBlock, getItem, getMap, getTeam, getUnitType, handleError, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
 
 const hiddenUnauthorizedMessage = "[scarlet]Unknown command. Check [lightgray]/help[scarlet].";
 
@@ -132,7 +133,7 @@ export async function disambiguateArgument<T extends FishCommandArgType>(
 	} else outputArgs[name] = options;
 }
 
-const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "rank", "roleflag", "item"];
+const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
@@ -157,9 +158,9 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				await disambiguateArgument(
 					FishPlayer.search(FishPlayer.getAllOnline(), args[i]),
 					...commonArgs,
-					player => Strings.stripColors(player.name).length >= 3 ?
+					player => (player.marked() ? prefixes.marked : player.autoflagged ? prefixes.flagged : "") + (Strings.stripColors(player.name).length >= 3 ?
 						player.name
-					: escapeStringColorsClient(player.name),
+					: escapeStringColorsClient(player.name)),
 					2
 				);
 				break;
@@ -187,9 +188,20 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				}
 				break;
 			case "team": {
-				const team = getTeam(args[i]);
-				if(typeof team == "string") fail(team);
-				outputArgs[cmdArg.name] = team;
+				let num;
+				if(args[i] && (
+					!isNaN(num = Number(args[i])) ||
+					args[i].slice(1) && !isNaN(num = Number(args[i].slice(1))) || //discard leading #
+					args[i].slice(5) && !isNaN(num = Number(args[i].slice(5))) //discard leading team#
+				)){
+					if(num <= 255 && num >= 0 && Number.isInteger(num))
+						outputArgs[cmdArg.name] = Team.all[num];
+					else fail(`Team ${num} is not inside the valid range (integers 0-255).`);
+				} else await disambiguateArgument(
+					getTeam(args[i]),
+					...commonArgs,
+					t => t.coloredName(),
+				);
 				break;
 			}
 			case "number": {
@@ -247,6 +259,18 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 					2
 				);
 				break;
+			case "mapOrRandom":
+				if(["rand", "random"].includes(args[i]?.toLowerCase())){
+					outputArgs[cmdArg.name] = "random";
+					break;
+				}
+				await disambiguateArgument(
+					getMap(args[i]),
+					...commonArgs,
+					r => r.name(),
+					2
+				);
+				break;
 			case "rank":
 				await disambiguateArgument(
 					Rank.search(args[i]),
@@ -275,7 +299,7 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 	return outputArgs;
 }
 
-const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map"];
+const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map", "mapOrRandom"];
 
 function isArgOptional(arg:CommandArg, allowMenus:boolean){
 	return arg.isOptional || (argsSupportingBlank.includes(arg.type) && allowMenus);
@@ -331,15 +355,7 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 			usageData.tapLastUsedSuccessfully = Date.now();
 
 	} catch(err){
-		if(err instanceof CommandError){
-			//If the error is a command error, then just outputFail
-			outputFail(err.data, sender);
-		} else {
-			sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
-			if(sender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
-			Log.err(`Unhandled error in command execution: ${sender.cleanedName} ran /${sender.tapInfo.commandName} and tapped`);
-			Log.err(err as Error);
-		}
+		handleError(err, sender, outputFail, `${sender.cleanedName} ran /${sender.tapInfo.commandName} and tapped`);
 	} finally {
 		if(sender.tapInfo.mode == "once" && !handleTapsUpdated){
 			sender.tapInfo.commandName = null;
@@ -392,8 +408,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 				try {
 					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, fishSender);
 				} catch(err){
-					//if args are invalid
-					if(err instanceof CommandError) outputFail(err.data, sender);
+					handleError(err, fishSender, outputFail, `${fishSender.cleanedName} ran /${name}`);
 					return;
 				}
 
@@ -436,16 +451,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 						usageData.lastUsedSuccessfully = globalUsageData[name].lastUsedSuccessfully = Date.now();
 					}
 				} catch(err){
-					if(err instanceof CommandError){
-						//If the error is a command error, then just outputFail
-						outputFail(err.data, sender);
-					} else {
-						sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
-						if(fishSender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
-						Log.err(`Unhandled error in command execution: ${fishSender.cleanedName} ran /${name}`);
-						Log.err(err as Error);
-						Log.err((err as Error).stack!);
-					}
+					handleError(err, fishSender, outputFail, `${fishSender.cleanedName} ran /${name}`);
 				} finally {
 					usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();
 				}
@@ -476,7 +482,7 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, null);
 				} catch(err){
 					//if args are invalid
-					if(err instanceof CommandError) Log.err(err);
+					Log.err(err);
 					return;
 				}
 

@@ -11,9 +11,9 @@ import { FishPlayer } from "/players";
 import { formatModeName } from "/utils";
 
 export const Req = {
-	mode: (mode:GamemodeName) => () =>
-		Gamemode[mode]()
-			|| fail(`This command is only available in ${formatModeName(mode)}`),
+	mode: (...modes:GamemodeName[]) => () =>
+		modes.map(mode => Gamemode[mode]()).some(Boolean)
+			|| fail(`This command is only available in ${modes.map(formatModeName).join(" or ")}`),
 	modeNot: (mode:GamemodeName) => () =>
 		!Gamemode[mode]()
 			|| fail(`This command is disabled in ${formatModeName(mode)}`),
@@ -32,9 +32,25 @@ export const Req = {
 			|| fail(`This game is over, please wait for the next map to load.`),
 	teamAlive: ({sender}:{sender:FishPlayer}) =>
 		sender.team().isAlive()
-			|| fail(`Your team is dead.`),
+			|| fail(Math.random() > 0.9 ? "You are already dead." : `Your team is dead.`),
 	unitExists: (message = "You must be in a unit to use this command.") =>
 		({sender}:{sender:FishPlayer}) =>
 			(sender.connected() && sender.unit()?.added && !sender.unit()!.dead)
-				|| fail(message)
+				|| fail(message),
+	numberRange: <T extends string>(argName: T, min:number, max:number) =>
+		({args}:{args:Partial<Record<T, number>>}) =>
+			args[argName] == undefined || min <= args[argName] && args[argName] <= max
+				|| fail(`${argName} must be between ${min} and ${max}`),
+	integer: <T extends string>(argName: T) =>
+		({args}:{args:Partial<Record<T, number>>}) =>
+			args[argName] == undefined || Number.isSafeInteger(args[argName])
+				|| fail(`${argName} must be an integer`),
+	integerRange: <T extends string>(argName: T, min:number, max:number) =>
+		({args}:{args:Partial<Record<T, number>>}) =>
+			Req.integer(argName)({args}) && Req.numberRange(argName, min, max)({args}),
+	positiveInteger: <T extends string>(argName: T) =>
+		({args}:{args:Partial<Record<T, number>>}) =>
+			Req.integer(argName)({args}) &&
+			(args[argName] == undefined || args[argName] > 0
+				|| fail(`${argName} must be positive`)),
 };

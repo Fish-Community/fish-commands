@@ -12,7 +12,7 @@ import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
-import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
+import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestampFull, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
 
 
 export const commands = consoleCommandList({
@@ -341,7 +341,7 @@ export const commands = consoleCommandList({
 		args: ["any:string?", "anyb:string?"],
 		description: "Please use the whack and unwhack commands instead.",
 		handler({args, output, admins}){
-			if(args.any) fail(`Use the whack and unwhack commands instead.`);
+			if(args.any && args.any != "list") fail(`Use the whack and unwhack commands instead.`);
 			output(`List of all subnet bans:`);
 			output(admins.subnetBans.toString("\n"));
 		}
@@ -454,37 +454,35 @@ export const commands = consoleCommandList({
 	restart: {
 		args: ["time:number?"],
 		description: "Restarts the server.",
-		handler({args}){
+		handler({args: {time}}){
 			fishState.restartLoopTask?.cancel();
-			if(Gamemode.pvp()){
-				if(Groups.player.isEmpty()){
+			const timeInferred = time == undefined;
+			if(Groups.player.isEmpty()){
+				if(time == undefined){
 					Log.info(`Restarting immediately as no players are online.`);
-					serverRestartLoop(0);
-				} else if(args.time === -1){ //TODO this is bad, -1 and -2 is really weird
-					Log.info(`&rRestarting in 15 seconds (this will interrupt the current PVP match).&fr`);
-					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---`);
-					serverRestartLoop(15);
-				} else {
-					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---`);
-					Log.info(`PVP detected, restart will occur at the end of the current match. Run "restart -1" to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr`);
-					fishState.restartQueued = true;
+					time ??= 0;
 				}
+			} else if(Gamemode.pvp()){
+				time ??= -1;
 			} else {
-				if(args.time == undefined && Groups.player.isEmpty()){
-					Log.info(`Restarting immediately as no players are online.`);
-					serverRestartLoop(0);
-					return;
-				} else if(args.time === -2){
-					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---`);
-					Log.info(`Restart queued. Restart will occur at the end of the current match. Run "restartcancel" to cancel.`);
-					fishState.restartQueued = true;
-					return;
-				}
-				const time = args.time ?? 60;
+				time ??= 60;
+			}
+
+			if(time == -1){
+				Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---`);
+				if(Gamemode.pvp() && timeInferred) Log.info(`PVP: restart will occur at the end of the current game. Specify a time to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr`);
+				else Log.info(`Restarting once the current game ends.`);
+				fishState.restartQueued = true;
+			} else {
 				if(time < 0 || time > 100) fail(`Invalid time: out of valid range.`);
-				Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 15 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---`);
-				Log.info(`Restarting in ${time} seconds...`);
 				serverRestartLoop(time);
+				if(time == 0) Log.info(`Restarting now.`);
+				else Log.info(`Restarting in ${time} second${time == 1 ? "" : "s"}.`);
+				if(Gamemode.pvp()){
+					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 20 seconds.[]\n[accent]---[[[coral]+++[]]---`);
+				} else {
+					Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 20 seconds, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---`);
+				}
 			}
 		}
 	},
@@ -604,7 +602,7 @@ ${Vars.state.rules.waves ? `Wave &c${Vars.state.wave}&fr, &c${Math.ceil(Vars.sta
 &c${Groups.unit.size()}&fr units, &c${Vars.state.enemies}&fr enemies, &c${Groups.build.size()}&fr buildings
 TPS: ${colorNumber(Core.graphics.getFramesPerSecond(), f => f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w", "server")}, \
 Memory: &c${Math.round(Core.app.getJavaHeap() / 1048576)}&fr MB
-Server uptime: ${uptimeColor}${formatTime(uptime)}&fr (since ${formatTimestamp(Date.now() - uptime)})
+Server uptime: ${uptimeColor}${formatTime(uptime)}&fr (since ${formatTimestampFull(Date.now() - uptime)})
 ${[
 	fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
 	fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",

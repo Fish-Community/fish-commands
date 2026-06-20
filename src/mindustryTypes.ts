@@ -13,14 +13,23 @@ This file contains some of those type definitions, ported over from the Java def
 declare global {
 
 /** Helper function to produce an arc.func.Floatf from a rhino function. */
-function floatf<T>(input:T):T;
+function floatf<T>(func:(input:T) => number):Floatf<T>;
 
-const Call: any;
+type Floatf<T> = ((input:T) => number) & {__brand: "floatf"};
+
+const Call: {
+	menu(target: NetConnection, menuId: number, title: string, message: string, options: string[][]): void;
+	/**
+	 * @param allowEmpty {boolean} Default false
+	 */
+	textInput(target: NetConnection, textInputId: number, title:string, message:string, textLength:number, def:string, numeric:boolean, allowEmpty?:boolean): void;
+	[index: string]: any;
+};
 const Log: {
 	debug(this:void, message:string, ...extra:unknown[]):void;
-	info(this:void, message:string):void;
-	warn(this:void, message:string):void;
-	err(this:void, message:string):void;
+	info(this:void, message:string, ...extra:unknown[]):void;
+	warn(this:void, message:string, ...extra:unknown[]):void;
+	err(this:void, message:string, ...extra:unknown[]):void;
 	err(this:void, error:unknown):void;
 	level: LogLevel;
 	LogLevel: {
@@ -47,6 +56,7 @@ class Rules {
 	defaultTeam: Team;
 	waveTeam: Team;
 	waves: boolean;
+	winWave: number;
 	waitEnemies: boolean;
 	env: number;
 	fog: boolean;
@@ -58,6 +68,9 @@ class Rules {
 	attackMode: boolean;
 	pvp: boolean;
 	editor: boolean;
+	copy(): Rules;
+	dynamicColor: Color;
+	planetBackground: any;
 }
 
 const Vars: {
@@ -73,6 +86,7 @@ const Vars: {
 		addPacketHandler(name:string, handler:(player:mindustryPlayer, content:string) => unknown):void;
 		currentlyKicking: VoteSession | null;
 		votesRequired():number;
+		assigner: (player:Player, players:MIterable<Player>) => Team;
 	}
 	net: {
 		send(packet:any, reliable:boolean):void;
@@ -85,6 +99,7 @@ const Vars: {
 	maps: Maps;
 	state: {
 		rules: Rules;
+		mapLocales: any;
 		planet: Planet | null;
 		set(state:State):void;
 		gameOver:boolean;
@@ -108,8 +123,10 @@ const Vars: {
 	maxPingTextLength: number;
 	maxTextLength: number;
 };
+const GlobalVars: any;
 class Teams {
 	active: Seq<TeamData>;
+	getActive(): Seq<TeamData>;
 }
 class BlockIndexer {
 	getFlagged(team: Team, flag: BlockFlag): Seq<Building>;
@@ -224,8 +241,10 @@ class Tile {
 }
 const Menus: {
 	registerMenu(listener:BuiltinMenuListener):number;
+	registerTextInput(listener:BuiltinTextInputListener):number;
 };
 type BuiltinMenuListener = (player:mindustryPlayer, option:number) => unknown;
+type BuiltinTextInputListener = (player:mindustryPlayer, text:string | null) => unknown;
 const UnitTypes: Record<string, UnitType>;
 const Sounds: Record<string, Sound>;
 type Sound = any;
@@ -248,6 +267,7 @@ class Building {
 	enabled: boolean;
 	health: number;
 	ammo?: Seq<{item: Item}>;
+	range?: () => number;
 	warmup?: number;
 	storageCapacity?: number;
 	dead: boolean;
@@ -301,9 +321,11 @@ class Team {
 	static malis:Team;
 	static green:Team;
 	static blue:Team;
+	static neoplastic:Team;
 	static all:Team[];
 	static baseTeams:Team[];
 	name:string;
+	emoji:string;
 	active():boolean;
 	isAlive():boolean;
 	data():TeamData;
@@ -313,6 +335,7 @@ class Team {
 	id:number;
 	static get(index:number):Team;
 	cores(): Seq<Building>;
+	rules(): TeamRules;
 }
 type TeamData = {
 	team: Team;
@@ -320,7 +343,11 @@ type TeamData = {
 	buildings: Seq<Building>;
 	cores: Seq<Building>;
 	countType(type:UnitType):number;
+	hasCore(): boolean;
 };
+type TeamRules = {
+	protectCores: boolean;
+}
 const Units: {
 	getCap(team:Team):number;
 };
@@ -372,6 +399,7 @@ class Player {
 	getInfo():PlayerInfo;
 	isAdded():boolean;
 	plainName():string;
+	write(writes: Writes):void;
 }
 type mindustryPlayer = Player;
 class Color {
@@ -441,11 +469,14 @@ const Mathf: {
 
 	ceil(val:number):number;
 	round(val:number, step?:number):number;
+	random(min:number, max:number):number;
 	len(x:number, y:number):number;
 	atan2(x:number, y:number):number;
+	dst(x1:number, y1:number, x2:number, y2:number):number;
 };
 const SaveIO: {
 	save(file:Fi):void;
+	getSaveWriter():any;
 };
 const Timer: {
 	schedule(func:() => unknown, delaySeconds:number, intervalSeconds?:number, repeatCount?:number):TimerTask;
@@ -455,6 +486,7 @@ class TimerTask {
 }
 const Time: {
 	millis(): number;
+	nanos(): number;
 	elapsed(): number;
 	mark(): void;
 	delta: number;
@@ -509,6 +541,9 @@ class DataOutputStream extends OutputStream {
 	writeShort(v:number):void;
 	writeUTF(s:string):void;
 }
+class FastDeflaterOutputStream extends OutputStream {
+	constructor(stream: OutputStream);
+}
 class DataInputStream extends InputStream {
 	constructor(stream:InputStream);
 	read(b:number[]):number;
@@ -537,13 +572,17 @@ class ByteArrayInputStream extends InputStream {
 	constructor(bytes:number[]);
 }
 
+class Writes {
+	constructor(output: DataOutputStream);
+}
+
 class Seq<T> {
 	items: Array<T | null>;
 	size: number;
 	constructor();
 	constructor(capacity:number);
 	static with<T>(...items:T[]):Seq<T>;
-	static with<T>(items:Iterable<T>):Seq<T>;
+	static with<T>(items:MIterable<T>):Seq<T>;
 	add(item:T):this;
 	addUnique(item:T):this;
 	contains(item:T):boolean;
@@ -567,7 +606,8 @@ class Seq<T> {
 	toArray():T[];
 	copy():Seq<T>;
 	sort(comparator?:(item:T) => number):Seq<T>;
-	max(comparator?:(item:T) => number):T;
+	min(comparator?:Floatf<T>):T;
+	max(comparator?:Floatf<T>):T;
 	random():T | null;
 	get(index:number):T;
 	first():T;
@@ -620,6 +660,7 @@ class ObjectIntMapEntry<K> {
 	key:K;
 	value:number;
 }
+class StringMap {}
 class EntityGroup<T> {
 	add(type:T):void
 	copy():Seq<T>;
@@ -664,6 +705,7 @@ type Unit = {
 	spawnedByCore: boolean;
 	added: boolean;
 	id: number;
+	hitSize: number;
 	tileOn():Tile | null;
 	tile?: () => Building;
 	kill():void;
@@ -676,6 +718,7 @@ type Unit = {
 	resetController():void;
 	apply(effect:StatusEffect, ticks:number):void;
 	clearStatuses():void;
+	within(pos: Building | Unit, distance: number):boolean;
 };
 type NetConnection = any;
 class Command {
@@ -746,6 +789,7 @@ class Process {
 
 const Packets: {
 	KickReason: Record<"kick" | "clientOutdated" | "serverOutdated" | "banned" | "gameover" | "recentKick" | "nameInUse" | "idInUse" | "nameEmpty" | "customClient" | "serverClose" | "vote" | "typeMismatch" | "whitelist" | "playerLimit" | "serverRestarting", KickReason>;
+	WorldStream: any;
 };
 
 type KickReason = { quiet: boolean };
@@ -802,7 +846,7 @@ type MapTags = {
 	genfilters?:string;
 }
 class Maps {
-	setNextMapOverride(map:MMap):void;
+	setNextMapOverride(map:MMap | null):void;
 	all():Seq<MMap>;
 	customMaps():Seq<MMap>;
 	byName(name:string):MMap | null;
@@ -815,6 +859,7 @@ class MMap {
 	width:number;
 	height:number;
 	build:number;
+	tags:StringMap;
 	name():string;
 	author():string;
 	description():string;
@@ -847,7 +892,6 @@ interface Array<T> {
 }
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ReadonlyArray<T> {
-	// eslint-disable-next-line @typescript-eslint/array-type
 	map<TThis extends ReadonlyArray<T>, U>(this:TThis, fn:(v:T, i:number, a:TThis) => U): number extends TThis["length"] ? U[] : { [K in keyof TThis]: U };
 }
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -989,6 +1033,20 @@ class Ratekeeper {
 	occurences:number;
 	lastTime:number;
 	allow(spacingMS:number, cap:number):boolean;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface MIterable<T> {
+	iterator(): Iterator<T>;
+	forEach(_:(item:T) => void):void;
+}
+
+class AtomicInteger {
+	constructor(value?:number);
+	decrementAndGet():number;
+	getAndIncrement():number;
+	get():number;
+	set(int:number):void;
 }
 
 }

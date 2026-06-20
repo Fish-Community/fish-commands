@@ -7,6 +7,39 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -81,10 +114,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
-var api = require("/api");
+var api = __importStar(require("/api"));
 var config_1 = require("/config");
 var files_1 = require("/files");
-var fjsContext = require("/fjsContext");
+var fjsContext = __importStar(require("/fjsContext"));
 var commands_1 = require("/frameworks/commands");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
@@ -548,7 +581,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
         description: "Please use the whack and unwhack commands instead.",
         handler: function (_a) {
             var args = _a.args, output = _a.output, admins = _a.admins;
-            if (args.any)
+            if (args.any && args.any != "list")
                 (0, commands_1.fail)("Use the whack and unwhack commands instead.");
             output("List of all subnet bans:");
             output(admins.subnetBans.toString("\n"));
@@ -675,43 +708,44 @@ exports.commands = (0, commands_1.consoleCommandList)({
         args: ["time:number?"],
         description: "Restarts the server.",
         handler: function (_a) {
-            var _b, _c;
-            var args = _a.args;
+            var _b;
+            var time = _a.args.time;
             (_b = globals_1.fishState.restartLoopTask) === null || _b === void 0 ? void 0 : _b.cancel();
-            if (config_1.Gamemode.pvp()) {
-                if (Groups.player.isEmpty()) {
+            var timeInferred = time == undefined;
+            if (Groups.player.isEmpty()) {
+                if (time == undefined) {
                     Log.info("Restarting immediately as no players are online.");
-                    (0, utils_1.serverRestartLoop)(0);
-                }
-                else if (args.time === -1) { //TODO this is bad, -1 and -2 is really weird
-                    Log.info("&rRestarting in 15 seconds (this will interrupt the current PVP match).&fr");
-                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
-                    (0, utils_1.serverRestartLoop)(15);
-                }
-                else {
-                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---");
-                    Log.info("PVP detected, restart will occur at the end of the current match. Run \"restart -1\" to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr");
-                    globals_1.fishState.restartQueued = true;
+                    time !== null && time !== void 0 ? time : (time = 0);
                 }
             }
+            else if (config_1.Gamemode.pvp()) {
+                time !== null && time !== void 0 ? time : (time = -1);
+            }
             else {
-                if (args.time == undefined && Groups.player.isEmpty()) {
-                    Log.info("Restarting immediately as no players are online.");
-                    (0, utils_1.serverRestartLoop)(0);
-                    return;
-                }
-                else if (args.time === -2) {
-                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---");
-                    Log.info("Restart queued. Restart will occur at the end of the current match. Run \"restartcancel\" to cancel.");
-                    globals_1.fishState.restartQueued = true;
-                    return;
-                }
-                var time = (_c = args.time) !== null && _c !== void 0 ? _c : 60;
+                time !== null && time !== void 0 ? time : (time = 60);
+            }
+            if (time == -1) {
+                Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---");
+                if (config_1.Gamemode.pvp() && timeInferred)
+                    Log.info("PVP: restart will occur at the end of the current game. Specify a time to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr");
+                else
+                    Log.info("Restarting once the current game ends.");
+                globals_1.fishState.restartQueued = true;
+            }
+            else {
                 if (time < 0 || time > 100)
                     (0, commands_1.fail)("Invalid time: out of valid range.");
-                Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 15 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---");
-                Log.info("Restarting in ".concat(time, " seconds..."));
                 (0, utils_1.serverRestartLoop)(time);
+                if (time == 0)
+                    Log.info("Restarting now.");
+                else
+                    Log.info("Restarting in ".concat(time, " second").concat(time == 1 ? "" : "s", "."));
+                if (config_1.Gamemode.pvp()) {
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 20 seconds.[]\n[accent]---[[[coral]+++[]]---");
+                }
+                else {
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 20 seconds, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---");
+                }
             }
         }
     },
@@ -855,7 +889,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 uptime < funcs_1.Duration.days(5) ? "&ly" :
                     uptime < funcs_1.Duration.days(9) ? "&y" :
                         "&br";
-            output("\nStatus:\nPlaying on map &fi".concat(Vars.state.map.plainName(), "&fr for ").concat((0, utils_1.formatTime)(1000 * Vars.state.tick / 60), "\n").concat(Vars.state.rules.waves ? "Wave &c".concat(Vars.state.wave, "&fr, &c").concat(Math.ceil(Vars.state.wavetime / 60), "&fr seconds until next wave.\n") : "", "&c").concat(Groups.unit.size(), "&fr units, &c").concat(Vars.state.enemies, "&fr enemies, &c").concat(Groups.build.size(), "&fr buildings\nTPS: ").concat((0, utils_1.colorNumber)(Core.graphics.getFramesPerSecond(), function (f) { return f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w"; }, "server"), ", Memory: &c").concat(Math.round(Core.app.getJavaHeap() / 1048576), "&fr MB\nServer uptime: ").concat(uptimeColor).concat((0, utils_1.formatTime)(uptime), "&fr (since ").concat((0, utils_1.formatTimestamp)(Date.now() - uptime), ")\n").concat([
+            output("\nStatus:\nPlaying on map &fi".concat(Vars.state.map.plainName(), "&fr for ").concat((0, utils_1.formatTime)(1000 * Vars.state.tick / 60), "\n").concat(Vars.state.rules.waves ? "Wave &c".concat(Vars.state.wave, "&fr, &c").concat(Math.ceil(Vars.state.wavetime / 60), "&fr seconds until next wave.\n") : "", "&c").concat(Groups.unit.size(), "&fr units, &c").concat(Vars.state.enemies, "&fr enemies, &c").concat(Groups.build.size(), "&fr buildings\nTPS: ").concat((0, utils_1.colorNumber)(Core.graphics.getFramesPerSecond(), function (f) { return f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w"; }, "server"), ", Memory: &c").concat(Math.round(Core.app.getJavaHeap() / 1048576), "&fr MB\nServer uptime: ").concat(uptimeColor).concat((0, utils_1.formatTime)(uptime), "&fr (since ").concat((0, utils_1.formatTimestampFull)(Date.now() - uptime), ")\n").concat([
                 globals_1.fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
                 globals_1.fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",
                 players_1.FishPlayer.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + (0, utils_1.getAntiBotInfo)("server") : "",

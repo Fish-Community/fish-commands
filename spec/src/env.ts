@@ -375,7 +375,7 @@ class ByteArrayOutputStream extends OutputStream {
 
 
 const triggerNames = ["shock", "cannotUpgrade", "openConsole", "blastFreeze", "impactPower", "blastGenerator", "shockwaveTowerUse", "forceProjectorBreak", "thoriumReactorOverheat", "neoplasmReact", "fireExtinguish", "acceleratorUse", "newGame", "tutorialComplete", "flameAmmo", "resupplyTurret", "turretCool", "enablePixelation", "exclusionDeath", "suicideBomb", "openWiki", "teamCoreDamage", "socketConfigChanged", "update", "beforeGameUpdate", "afterGameUpdate", "unitCommandChange", "unitCommandPosition", "unitCommandAttack", "importMod", "draw", "drawOver", "preDraw", "postDraw", "uiDrawBegin", "uiDrawEnd", "universeDrawBegin", "universeDraw", "universeDrawEnd"];
-const Trigger = Object.fromEntries(triggerNames.map(k => [k, {__brand: 'trigger'} as Trigger]));
+const Trigger: Record<string, Trigger> = Object.fromEntries(triggerNames.map(k => [k, {__brand: 'trigger'}]));
 
 class Events {
 	static events = new Map<{}, Array<(...args:any[]) => void>>();
@@ -788,6 +788,9 @@ const Time = {
 	millis(){
 		return Date.now() - programStart;
 	},
+	nanos(){
+		return performance.now() * 1e6;
+	},
 	mark(){
 		Time._mark = Date.now();
 	},
@@ -985,6 +988,13 @@ class Thread {
 	constructor(public runnable: () => void){}
 	run = this.runnable;
 }
+class AtomicInteger {
+	constructor(public value:number = 0){}
+	decrementAndGet():number { return --this.value; }
+	getAndIncrement():number { return this.value++; }
+	get():number { return this.value; }
+	set(int:number) { this.value = int; }
+}
 
 const Http = {
 	post(url:string, content:string){
@@ -1009,4 +1019,4 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper, Runtime, Thread, Administration, ObjectSet, ObjectMap, SendChatMessageCallPacket, Http});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper, Runtime, Thread, Administration, ObjectSet, ObjectMap, SendChatMessageCallPacket, Http, AtomicInteger});

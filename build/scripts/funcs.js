@@ -57,6 +57,7 @@ exports.cleanColors = cleanColors;
 exports.computeStatistics = computeStatistics;
 exports.search = search;
 exports.searchFixed = searchFixed;
+exports.delay = delay;
 var storedValues = {};
 /**
  * Stores the output of a function and returns that value
@@ -454,6 +455,9 @@ function searchFixed(options, filters, recomputeOptions) {
         else
             return func(_options, query);
     };
+}
+function delay(millis) {
+    return new Promise(function (res) { return Timer.schedule(res, millis / 1000); });
 }
 exports.Duration = {
     seconds: function (x) { return x * 1000; },

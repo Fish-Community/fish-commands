@@ -53,19 +53,20 @@ exports.bannedWords = {
     // like this: ["badw", "goodbadw"]
     /** Normal: banned always. */
     normal: processBannedWordList([
-        "fanum tax", "gyatt", "rizz", "skibidi", //With love, DarthScion
+        "fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon"], "skibidi", //With love, DarthScion
         //>:( -dart
         // "uwu", //lol
-        "nig" + "ger", "nig" + "ga", "niger", "ni8" + "8er", "nig" + "gre", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер", //our apologies to citizens of the Republic of Niger
+        "nig" + "ger", "nig" + "ga", "niger", "ni8" + "8er", "nig" + "gre", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер", /\bnegr\b/, //our apologies to citizens of the Republic of Niger
+        ["ni" + "ga", "anniga", "inniga", "unniga", "aniga", "iniga", "eniga", "oniga"],
         "re" + "tard",
         'kill yourself', 'kill urself', /\bkys\b/,
-        "kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", //nazi-related words
+        "kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", /\b1488\b/, //nazi-related words
         ["co" + "ck", "cockroach", "poppycock", "cocktail"], "suck dick", "sucking dick",
         "iamasussyimposter",
         ["cu" + "nt", "scunthorpe"],
         ["penis", "peniston"],
         "hawk tuah",
-        ["rape", "grape", "therap", "drape", "scrape", "trapez", "earrape", "atrape"],
+        ["rape", "grape", "therap", "drape", "scrape", "trapez", "earrape", "atrape", "traped"],
         ["raping", "draping", "graping", "scraping", "craping"],
         /\bf(a)g\b/, "fa" + "gg" + "ot",
         /\bc(u)m\b/, ["semen", "sement", "horsemen", "housemen", "defensemen", "those", "menders"],
@@ -83,9 +84,9 @@ exports.bannedWords = {
         "sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐", "diddy", "epstein",
         globals_1.uuidPattern, globals_1.ipPattern, globals_1.ipPortPattern
     ]),
-    /** autoWhack: new players saying one of these words will be automatically stopped and muted. */
+    /** autoWhack: new players saying one of these words will be automatically stopped and muted. Comes with \b so no need to add it. */
     autoWhack: [
-        "nig" + "ger", "nig" + "ga", "ni8" + "8er", "hit" + "ler", "fa" + "gg" + "ot", "nazis",
+        "nig" + "ger", "nig" + "ga", "ni8" + "8er", "nig" + "g3r", "hit" + "ler", "fa" + "gg" + "ot", "nazis", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер", "negr"
     ],
 };
 //for some reason the external mindustry server does not read the files correctly, so we can only use ASCII
@@ -205,6 +206,7 @@ var FishServer = /** @class */ (function () {
     FishServer.sandbox = new FishServer("sandbox", "162.248.101.53", "6567", ["sand", "box", "sa", "sb"]);
     FishServer.hexed = new FishServer("hexed", "162.248.100.133", "6567", ["h", "hx", "hxd", "hpvp", "hxpvp", "hexpvp"]);
     FishServer.minigame = new FishServer("minigame", "162.248.101.116", "6567", ["m", "mg", "mini", "minig", "mgame", "mng", "minigame", "mpvp"]);
+    FishServer.testing = new FishServer("testing", "162.248.101.52", "6567", ["test", "testsrv", "t", "testingserver", "testserver"]);
     return FishServer;
 }());
 exports.FishServer = FishServer;
@@ -297,6 +299,7 @@ exports.tips = {
         "You can spawn an [scarlet]Ohno[] with the [scarlet]/ohno[] command. Ohnos are harmless creatures that were created by fusing an alpha and an atrax.",
         "Ohnos cannot be spawned near enemy buildings, because they are peaceful and do not want to be used for attacks.",
         "You can use [white]/tp[] to teleport directly to any other player! (But only when you're in a core unit)",
+        "You can unload bulk conveyors (\uF819 or \uF732) with unloaders (\uF864 or \uF731).",
         "Hate boulders? You can remove them with [white]/clean[].",
         "You can check our rules at any time by running [white]/rules[].",
         // `You can kill your unit by running [white]/die[].`,

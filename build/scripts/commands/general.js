@@ -18,6 +18,39 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -90,10 +123,11 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 var achievements_1 = require("/achievements");
-var api = require("/api");
+var api = __importStar(require("/api"));
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
 var menus_1 = require("/frameworks/menus");
@@ -162,35 +196,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
             if (sender.player == null)
                 return; //???
-            var requestedLanguage = args.language;
-            if (requestedLanguage == null) {
-                if (translation_1.languageCache.isEmpty()) {
-                    (0, translation_1.fetchLanguageCacheAsync)(function () {
-                        var e_2, _a;
-                        var _b, _c;
-                        (_b = sender.player) === null || _b === void 0 ? void 0 : _b.sendMessage("[accent]Available commands:");
-                        try {
-                            for (var _d = __values(translation_1.languageCache.toSeq().toArray()), _e = _d.next(); !_e.done; _e = _d.next()) {
-                                var entry = _e.value;
-                                (_c = sender.player) === null || _c === void 0 ? void 0 : _c.sendMessage(" - " + entry.name + " (" + entry.code + ")");
-                            }
-                        }
-                        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                        finally {
-                            try {
-                                if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
-                            }
-                            finally { if (e_2) throw e_2.error; }
-                        }
-                    });
-                    outputSuccess("Loading available translation languages.");
-                    return;
-                }
+            if (args.language == null) {
                 sender.player.sendMessage("[accent]Available commands:");
                 try {
-                    for (var _c = __values(translation_1.languageCache.toSeq().toArray()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    for (var _c = __values(translation_1.languageCache.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var entry = _d.value;
-                        sender.player.sendMessage(" - " + entry.name + " (" + entry.code + ")");
+                        sender.player.sendMessage(" - " + entry.key.name + " (" + entry.key.code + ")");
                     }
                 }
                 catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -202,46 +213,60 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 }
                 return;
             }
-            if (translation_1.languageCache.isEmpty()) {
-                (0, translation_1.fetchLanguageCacheAsync)(function () {
-                    var _a, _b;
-                    if (!((0, translation_1.isLanguageAvailable)(requestedLanguage) || ["off", "none"].includes(requestedLanguage.toLowerCase()))) {
-                        (_a = sender.player) === null || _a === void 0 ? void 0 : _a.sendMessage("[scarlet]Invalid language \"".concat(requestedLanguage, "\"."));
-                        return;
-                    }
-                    var targetLanguage = (0, translation_1.getLanguageFromCache)(requestedLanguage);
-                    sender.language = targetLanguage.code;
-                    (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage);
-                    (_b = sender.player) === null || _b === void 0 ? void 0 : _b.sendMessage("[accent]Your translation language is now set to ".concat(targetLanguage.name, "."));
-                });
-                outputSuccess("Loading translation languages. Your selection will be applied if valid.");
-                return;
+            if (!((0, translation_1.isLanguageAvailable)(args.language) || ["off", "none"].includes(args.language.toLowerCase()))) {
+                (0, commands_1.fail)("Invalid language \"".concat(args.language, "\"."));
             }
-            if (!((0, translation_1.isLanguageAvailable)(requestedLanguage) || ["off", "none"].includes(requestedLanguage.toLowerCase()))) {
-                (0, commands_1.fail)("Invalid language \"".concat(requestedLanguage, "\"."));
-            }
-            var targetLanguage = (0, translation_1.getLanguageFromCache)(requestedLanguage);
+            var targetLanguage = (0, translation_1.getLanguageFromCache)(args.language);
             sender.language = targetLanguage.code;
             (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage);
             sender.language = targetLanguage.code;
             outputSuccess("Your translation language is now set to ".concat(targetLanguage.name, "."));
         }
-    }, clean: {
+    }, clean: (0, commands_1.command)({
         args: [],
         description: 'Removes all boulders from the map.',
         perm: commands_1.Perm.play,
-        requirements: [commands_1.Req.cooldownGlobal(100000)],
+        requirements: [],
+        data: { lastRanMapStartTime: (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime },
         handler: function (_a) {
-            var sender = _a.sender, outputSuccess = _a.outputSuccess;
-            Timer.schedule(function () { return Call.sound(sender.con, Sounds.rockBreak, 1, 1, 0); }, 0, 0.05, 10);
-            Vars.world.tiles.eachTile(function (t) {
-                if (t.breakable() && t.block() instanceof Prop) {
-                    t.removeNet();
-                }
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var array, removed, i, t;
+                var sender = _b.sender, outputSuccess = _b.outputSuccess, data = _b.data;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (!maps_1.PartialMapRun.current)
+                                (0, commands_1.fail)("This game is already over.");
+                            if (data.lastRanMapStartTime == maps_1.PartialMapRun.current.startTime)
+                                (0, commands_1.fail)("This command was already run on this map.");
+                            data.lastRanMapStartTime = maps_1.PartialMapRun.current.startTime;
+                            Timer.schedule(function () { return Call.sound(sender.con, Sounds.rockBreak, 1, 1, 0); }, 0, 0.05, 10);
+                            array = ArcReflect.get(Vars.world.tiles, "array");
+                            removed = 0;
+                            i = 0;
+                            _c.label = 1;
+                        case 1:
+                            if (!(i < array.length)) return [3 /*break*/, 4];
+                            t = array[i];
+                            if (!(t.breakable() && t.block() instanceof Prop)) return [3 /*break*/, 3];
+                            t.removeNet();
+                            removed++;
+                            if (!(removed % 500 == 0)) return [3 /*break*/, 3];
+                            return [4 /*yield*/, (0, funcs_1.delay)(100)];
+                        case 2:
+                            _c.sent();
+                            _c.label = 3;
+                        case 3:
+                            i++;
+                            return [3 /*break*/, 1];
+                        case 4:
+                            outputSuccess("Cleared the map of boulders.");
+                            return [2 /*return*/];
+                    }
+                });
             });
-            outputSuccess("Cleared the map of boulders.");
         }
-    }, die: {
+    }), die: {
         args: [],
         description: 'Kills your unit.',
         perm: commands_1.Perm.mod.exceptModes({
@@ -260,21 +285,30 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var sender = _a.sender;
             Call.openURI(sender.con, config_1.text.discordURL);
         },
-    }, tilelog: {
-        args: ['persist:boolean?'],
+    }, tilelog: (0, commands_1.command)({
+        args: ['persist:boolean?', 'showUUID:boolean?'],
         description: 'Checks the history of a tile.',
         perm: commands_1.Perm.none,
+        data: { showUUID: true },
         handler: function (_a) {
-            var args = _a.args, output = _a.output, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps;
-            if (currentTapMode == "off") {
-                if (args.persist) {
-                    handleTaps("on");
-                    outputSuccess("Tilelog mode enabled. Click tiles to check their recent history. Run /tilelog again to disable.");
-                }
-                else {
-                    handleTaps("once");
-                    output("Click on a tile to check its recent history...");
-                }
+            var args = _a.args, output = _a.output, outputSuccess = _a.outputSuccess, currentTapMode = _a.currentTapMode, handleTaps = _a.handleTaps, sender = _a.sender, data = _a.data;
+            var changed = args.showUUID !== undefined && args.showUUID != data.showUUID;
+            if (args.showUUID !== undefined) {
+                if (!sender.hasPerm("viewUUIDs"))
+                    (0, commands_1.fail)("You do not have permission to show UUIDs.");
+                data.showUUID = args.showUUID;
+            }
+            if (args.persist && currentTapMode !== "on") {
+                outputSuccess("Tilelog mode enabled. Click tiles to check their recent history. Run /tilelog to disable.");
+                handleTaps("on");
+            }
+            else if (args.persist && changed) {
+                outputSuccess("".concat(data.showUUID ? "Now showing UUIDs." : "No longer showing UUIDs.", " Click tiles to check their recent history. Run /tilelog to disable."));
+                handleTaps("on");
+            }
+            else if (currentTapMode == "off" || changed) {
+                handleTaps("once");
+                output("Click on a tile to check its recent history...");
             }
             else {
                 handleTaps("off");
@@ -283,7 +317,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         },
         tapped: function (_a) {
             var _b;
-            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, sender = _a.sender, admins = _a.admins;
+            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, sender = _a.sender, admins = _a.admins, data = _a.data;
             var historyData = (_b = globals_1.tileHistory["".concat(x, ",").concat(y)]) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("There is no recorded history for the selected tile (".concat(tile.x, ", ").concat(tile.y, ")."));
             var history = funcs_1.StringIO.read(historyData, function (str) { return str.readArray(function (d) { return ({
                 action: d.readString(2),
@@ -294,13 +328,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             output("[yellow]Tile history for tile (".concat(tile.x, ", ").concat(tile.y, "):\n") + history.map(function (e) {
                 var _a, _b;
                 return globals_1.uuidPattern.test(e.uuid)
-                    ? (sender.hasPerm("viewUUIDs")
+                    ? (sender.hasPerm("viewUUIDs") && data.showUUID
                         ? "[yellow]".concat((_a = admins.getInfoOptional(e.uuid)) === null || _a === void 0 ? void 0 : _a.plainLastName(), "[lightgray](").concat(e.uuid, ")[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time))
                         : "[yellow]".concat((_b = admins.getInfoOptional(e.uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName(), " ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time)))
                     : "[yellow]".concat(e.uuid, "[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
             }).join('\n'));
         }
-    }, aoelog: (0, commands_1.command)(function () {
+    }), aoelog: (0, commands_1.command)(function () {
         var allowedActions = [
             "built", "broke", "rotated", "killed", "configured", "pay-dropped", "picked up", "controlled"
         ];
@@ -488,7 +522,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 if (Date.now() - lastUsedSender < 4000)
                     (0, commands_1.fail)("This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.");
             }
-            api.sendStaffMessage(args.message, sender.name, function (sent) {
+            api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"), function (sent) {
                 if (!sender.hasPerm("mod")) {
                     if (sent) {
                         outputSuccess("Message sent to [orange]all online staff.");
@@ -518,6 +552,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         data: new Set,
         handler: function (_a) {
+            var _b;
             var args = _a.args, data = _a.data, sender = _a.sender, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail;
             if (data.has(sender.uuid)) {
                 outputSuccess("No longer watching a player.");
@@ -525,15 +560,16 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }
             else if (args.player) {
                 data.add(sender.uuid);
-                var senderUnit_1 = sender.unit();
-                var stayX_1 = senderUnit_1 === null || senderUnit_1 === void 0 ? void 0 : senderUnit_1.x;
-                var stayY_1 = senderUnit_1 === null || senderUnit_1 === void 0 ? void 0 : senderUnit_1.y;
+                var senderUnit_1 = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("You do not have a unit.");
+                var stayX_1 = senderUnit_1.x;
+                var stayY_1 = senderUnit_1.y;
                 var target_1 = args.player.player;
                 (function watch() {
                     var _a, _b;
-                    if (data.has(sender.uuid) && target_1.unit()) {
+                    var unit = target_1.unit();
+                    if (data.has(sender.uuid) && unit) {
                         // Self.X+(172.5-Self.X)/10
-                        Call.setCameraPosition(sender.con, target_1.unit().x, target_1.unit().y);
+                        Call.setCameraPosition(sender.con, unit.x, unit.y);
                         if (senderUnit_1)
                             (_b = (_a = sender.unit()) === null || _a === void 0 ? void 0 : _a.set) === null || _b === void 0 ? void 0 : _b.call(_a, stayX_1, stayY_1);
                         Timer.schedule(function () { return watch(); }, 0.1, 0.1, 0);
@@ -611,6 +647,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member'].includes(args.name)) {
                 //name is not a number or a category, therefore it is probably a command name
                 if (args.name in allCommands && (!allCommands[args.name].isHidden || allCommands[args.name].perm.check(sender))) {
+                    if (args.name == "help")
+                        achievements_1.Achievements.help_help.grantTo(sender, false);
                     output("Help for command ".concat(args.name, ":\n\t").concat(allCommands[args.name].description, "\n\tUsage: [sky]/").concat(args.name, " [white]").concat(allCommands[args.name].args.map(commands_1.formatArg).join(' '), "\n\tPermission required: ").concat(allCommands[args.name].perm.name));
                 }
                 else
@@ -737,6 +775,24 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 updateLength: function () {
                     this.ohnos = this.ohnos.filter(function (o) { return o && o.isAdded() && !o.dead; });
                 },
+                checkAchievement: function () {
+                    var e_2, _a;
+                    try {
+                        for (var _b = __values(this.ohnos), _c = _b.next(); !_c.done; _c = _b.next()) {
+                            var ohno = _c.value;
+                            var player = ohno.getPlayer();
+                            if (player)
+                                achievements_1.Achievements.ohno.grantTo(players_1.FishPlayer.get(player), false);
+                        }
+                    }
+                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                    finally {
+                        try {
+                            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                        }
+                        finally { if (e_2) throw e_2.error; }
+                    }
+                },
                 killAll: function () {
                     this.ohnos.forEach(function (ohno) { var _a; return (_a = ohno === null || ohno === void 0 ? void 0 : ohno.kill) === null || _a === void 0 ? void 0 : _a.call(ohno); });
                     this.ohnos = [];
@@ -748,6 +804,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             Events.on(EventType.GameOverEvent, function (_) {
                 Ohnos.killAll();
             });
+            Timer.schedule(function () { return Ohnos.checkAchievement(); }, 1, 2);
             return Ohnos;
         },
         requirements: [
@@ -789,7 +846,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         handler: function (_a) {
             var _b;
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
+            var args = _a.args, sender = _a.sender, output = _a.output, outputSuccess = _a.outputSuccess, f = _a.f;
             var target = (_b = args.player) !== null && _b !== void 0 ? _b : sender;
             if (target !== sender) {
                 if (!sender.hasPerm("warn"))
@@ -799,10 +856,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 if (target.hasPerm("blockTrolling"))
                     (0, commands_1.fail)(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
             }
-            void menus_1.Menu.menu("Rules for [#0000ff]>|||> FISH [white]servers", config_1.rules.join("\n\n"), ["[green]I agree to abide by these rules[]", "No"], target).then(function (option) {
+            void menus_1.Menu.menu("Rules for [#0000ff]>|||> FISH [white]servers", config_1.rules.join("\n\n"), ["[green]I agree to abide by these rules[]", "No"], target, { onCancel: "null" }).then(function (option) {
                 if (option == "No") {
                     target.kick("You must agree to the rules to play on this server. Rejoin to agree to the rules.", 1);
                     outputSuccess('Player rejected the rules and was kicked.');
+                }
+                else if (option == null) {
+                    output('Player closed the menu.');
                 }
                 else {
                     outputSuccess('Player acknowledged the rules.');
@@ -848,7 +908,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 (0, commands_1.fail)("You do not have permission to change teams because peaceful mode is on.");
             if (config_1.Gamemode.sandbox() && team === Vars.state.rules.waveTeam && !sender.hasPerm("admin"))
                 (0, commands_1.fail)("You do not have permission to change to the wave team on sandbox.");
-            if (!config_1.Gamemode.sandbox() && !sender.hasPerm("mod") && !reason)
+            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()) && !sender.hasPerm("mod") && !reason)
                 (0, commands_1.fail)("Please specify a reason for changing teams.");
             if (!sender.hasPerm("changeTeamExternal")) {
                 if (team.data().cores.size <= 0)
@@ -911,7 +971,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }
         },
     }, vnw: (0, commands_1.command)({
-        args: [],
+        args: ["waves:number?"],
         description: "Vote to start the next wave.",
         perm: commands_1.Perm.play,
         init: function () { return ({
@@ -922,36 +982,42 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 .on("player vote change", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has voted on skipping [accent]").concat(t.session.data, "[white] wave(s). [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
                 .on("player vote removed", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has left. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
         }); },
-        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.mode("survival"), commands_1.Req.gameRunning],
+        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.integerRange("waves", 1, 15), commands_1.Req.mode("survival", "testsrv"), commands_1.Req.gameRunning],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var option;
-                var sender = _b.sender, manager = _b.data.manager;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var _c;
+                var sender = _b.sender, waves = _b.args.waves, manager = _b.data.manager;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
-                            if (!!manager.session) return [3 /*break*/, 2];
-                            return [4 /*yield*/, menus_1.Menu.menu("Start a Next Wave Vote", "Select the amount of waves you would like to skip.", [1, 5, 10], sender, {
-                                    includeCancel: true,
-                                    optionStringifier: function (n) { return "".concat(n, " waves"); }
-                                })];
-                        case 1:
-                            option = _c.sent();
+                            if (!!manager.session) return [3 /*break*/, 4];
+                            if (!(waves !== null && waves !== void 0)) return [3 /*break*/, 1];
+                            _c = waves;
+                            return [3 /*break*/, 3];
+                        case 1: return [4 /*yield*/, menus_1.Menu.menu("Start a Next Wave Vote", "Select the amount of waves you would like to skip.", [1, 5, 10], sender, {
+                                includeCancel: true,
+                                optionStringifier: function (n) { return "".concat(n, " waves"); }
+                            })];
+                        case 2:
+                            _c = (waves = _d.sent());
+                            _d.label = 3;
+                        case 3:
+                            _c;
                             if (manager.session) {
                                 //Someone else started a vote
-                                if (manager.session.data != option)
+                                if (manager.session.data != waves)
                                     (0, commands_1.fail)("Someone else started a vote with a different number of waves to skip.");
                                 else
-                                    manager.vote(sender, sender.voteWeight(), option);
+                                    manager.vote(sender, sender.voteWeight(), waves);
                             }
                             else {
-                                manager.start(sender, sender.voteWeight(), option);
+                                manager.start(sender, sender.voteWeight(), waves);
                             }
-                            return [3 /*break*/, 3];
-                        case 2:
+                            return [3 /*break*/, 5];
+                        case 4:
                             manager.vote(sender, sender.voteWeight(), null);
-                            _c.label = 3;
-                        case 3: return [2 /*return*/];
+                            _d.label = 5;
+                        case 5: return [2 /*return*/];
                     }
                 });
             });
@@ -993,42 +1059,45 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             manager.vote(sender, 1, 0); //No weighting for RTV except for removing AFK players
         }
     }), 
-    // votekick: {
-    //	 args: ["target:player"],
-    //	 description: "Starts a vote to kick a player.",
-    //	 perm: Perm.play,
-    //	 handler({args, sender}){
-    // 		if(votekickmanager.currentSession) fail(`There is already a votekick in progress.`);
-    // 		votekickmanager.start({
-    // 			initiator: sender,
-    // 			target: args.player
-    // 		});
-    //	 }
-    // },
+    // votekick: command({
+    // 	args: ["target:player"],
+    // 	description: "Starts a vote to kick a player.",
+    // 	perm: Perm.play,
+    // 	data: new VoteManager<FishPlayer>(
+    // 		Duration.seconds(20),
+    // 		["absolute", 3],
+    // 		(fishP, target) => fishP.team() == target.team() || fishP.hasPerm("voteOtherTeams")
+    // 	),
+    // 	handler({args, sender, data: votekickmanager}){
+    // 		if(votekickmanager.session) fail(`There is already a votekick in progress.`);
+    // 		votekickmanager.start(sender, 1, args.target);
+    // 	}
+    // }),
     // vote: {
-    //	 args: ["vote:boolean"],
-    //	 description: "Use /votekick instead.",
-    //	 perm: Perm.play,
-    //	 handler({sender, args}){
+    // 	 args: ["vote:boolean"],
+    // 	 description: "Use /votekick instead.",
+    // 	 perm: Perm.play,
+    // 	 handler({sender, args, allCommands}){
+    // 		const votekickmanager = allCommands.votekick.data;
     // 		votekickmanager.handleVote(sender, args ? 1 : -1);
-    //	 }
+    // 	 }
     // },
     forcenextmap: {
-        args: ["map:map"],
+        args: ["map:mapOrRandom"],
         description: 'Override the next map in queue.',
         perm: commands_1.Perm.admin.exceptModes({
             testsrv: commands_1.Perm.play
         }),
         handler: function (_a) {
             var allCommands = _a.allCommands, args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
-            Vars.maps.setNextMapOverride(args.map);
+            Vars.maps.setNextMapOverride(args.map == "random" ? null : args.map);
             if (allCommands.nextmap.data.voteEndTime() > -1) {
                 //Cancel /nextmap vote if it's ongoing
                 allCommands.nextmap.data.resetVotes();
-                Call.sendMessage("[red]Admin ".concat(sender.name, "[red] has cancelled the vote. The next map will be [yellow]").concat(args.map.name(), "."));
+                Call.sendMessage("[red]Admin ".concat(sender.name, "[red] has cancelled the vote. The next map will be ").concat(args.map == "random" ? "random" : "[yellow]".concat(args.map.name()), "."));
             }
             else {
-                outputSuccess(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Forced the next map to be \"", "\" by ", ""], ["Forced the next map to be \"", "\" by ", ""])), args.map.name(), args.map.author()));
+                outputSuccess(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Forced the next map to be ", "."], ["Forced the next map to be ", "."])), args.map == "random" ? "random" : "\"".concat(args.map.name(), "\" by ").concat(args.map.author())));
             }
         },
     }, maps: {
@@ -1042,6 +1111,10 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }).join("\n")));
         }
     }, nextmap: (0, commands_1.command)(function () {
+        var random = {
+            name: function () { return "[lightgray]Random"; },
+            plainName: function () { return "random"; }
+        };
         var votes = new Map();
         var lastVoteCount = 0;
         var lastVoteTime = 0;
@@ -1096,19 +1169,20 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 winner = highestVotedMaps.get(0).key;
                 Call.sendMessage("[green]Map voting complete! The next map will be [yellow]".concat(winner.name(), " [green]with [yellow]").concat(highestVoteCount, "[green] votes."));
             }
-            Vars.maps.setNextMapOverride(winner);
+            Vars.maps.setNextMapOverride(winner == random ? null : winner);
             resetVotes();
         }
         Events.on(EventType.GameOverEvent, resetVotes);
         Events.on(EventType.ServerLoadEvent, resetVotes);
         return {
-            args: ['map:map'],
+            args: ['map:mapOrRandom'],
             description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
             perm: commands_1.Perm.play,
             data: { votes: votes, voteEndTime: function () { return voteEndTime; }, resetVotes: resetVotes, endVote: endVote },
             requirements: [commands_1.Req.cooldown(10000)],
             handler: function (_a) {
-                var map = _a.args.map, sender = _a.sender;
+                var args = _a.args, sender = _a.sender;
+                var map = args.map === "random" ? random : args.map;
                 if (config_1.Gamemode.testsrv())
                     (0, commands_1.fail)("Please use /forcenextmap instead.");
                 if (votes.get(sender))
@@ -1141,30 +1215,44 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             managers[previous.id].unvote(fishP);
         });
         return {
-            args: ["force:boolean?"],
+            args: ["force:boolean?", "team:team?"],
             description: "Vote to surrender to the enemy team.",
             perm: commands_1.Perm.play,
             requirements: [commands_1.Req.mode("pvp"), commands_1.Req.teamAlive],
             data: { managers: managers },
             handler: function (_a) {
-                var sender = _a.sender, force = _a.args.force;
-                var manager = managers[sender.team().id];
-                if (sender.hasPerm("admin") && force != undefined) {
-                    if (force) {
-                        manager.messageEligibleVoters(prefix + "Vote forced by admin ".concat(sender.name, "[white]."));
-                        Call.sendMessage(prefix + "Team ".concat(sender.team().coloredName(), " has voted to forfeit this match."));
-                    }
-                    else {
-                        manager.messageEligibleVoters(prefix + "Votes cleared by admin ".concat(sender.name, "[white]."));
-                    }
-                    manager.forceVote(force);
-                    return;
-                }
-                if (sender.ranksAtLeast("mod"))
-                    commands_1.Req.cooldown(5000);
-                else
-                    commands_1.Req.cooldown(20000);
-                manager.vote(sender, 1, 0);
+                return __awaiter(this, arguments, void 0, function (_b) {
+                    var t, manager;
+                    var sender = _b.sender, _c = _b.args, force = _c.force, team = _c.team;
+                    return __generator(this, function (_d) {
+                        switch (_d.label) {
+                            case 0:
+                                t = sender.hasPerm("admin") && team ? team : sender.team();
+                                manager = managers[t.id];
+                                if (!(sender.hasPerm("admin") && force != undefined)) return [3 /*break*/, 4];
+                                if (!force) return [3 /*break*/, 2];
+                                return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to force team ".concat(t.coloredName(), "[] to lose?"))];
+                            case 1:
+                                _d.sent();
+                                manager.messageEligibleVoters(prefix + "Vote forced by admin ".concat(sender.name, "[white]."));
+                                Call.sendMessage(prefix + "Team ".concat(t.coloredName(), " has voted to forfeit this match."));
+                                return [3 /*break*/, 3];
+                            case 2:
+                                manager.messageEligibleVoters(prefix + "Votes cleared by admin ".concat(sender.name, "[white]."));
+                                _d.label = 3;
+                            case 3:
+                                manager.forceVote(force);
+                                return [2 /*return*/];
+                            case 4:
+                                if (sender.ranksAtLeast("mod"))
+                                    commands_1.Req.cooldown(5000);
+                                else
+                                    commands_1.Req.cooldown(20000);
+                                manager.vote(sender, 1, 0);
+                                return [2 /*return*/];
+                        }
+                    });
+                });
             },
         };
     }), stats: {
@@ -1180,11 +1268,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         args: ["x:number?", "y:number?", "size:number?"],
         perm: commands_1.Perm.none,
         description: "Views the world as a 2D scrollable menu.",
-        requirements: [commands_1.Req.cooldown(4000)],
+        requirements: [commands_1.Req.cooldown(4000), commands_1.Req.integerRange("size", 1, 20)],
         handler: function (_a) {
             var sender = _a.sender, _b = _a.args, _c = _b.size, size = _c === void 0 ? 7 : _c, x = _b.x, y = _b.y;
-            if (size > 20)
-                (0, commands_1.fail)("Size ".concat(size, " is too high!"));
             if (Vars.state.rules.fog)
                 (0, commands_1.fail)("This command is disabled when fog is enabled.");
             var options = (0, funcs_1.to2DArray)(Reflect.get(Vars.world.tiles, "array").map(function (tile) { return ({
@@ -1205,14 +1291,16 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         description: "Displays information about a map.",
         handler: function (_a) {
+            var _b;
             var output = _a.output, map = _a.args.map, f = _a.f, sender = _a.sender;
             if (map) {
-                output(maps_1.FMap.getCreate(map).displayStats(f));
+                var fmap = (_b = maps_1.FMap.getCreate(map)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Map data is still being loaded, try again later.");
+                output(fmap.displayStats(f));
             }
             else {
                 void menus_1.Menu.textPages(sender, Vars.maps.customMaps().map(function (m) {
-                    return ["Map information", function () { return maps_1.FMap.getCreate(m).displayStats(f); }];
-                }).toArray(), {
+                    return ["Map information", function () { var _a, _b; return (_b = (_a = maps_1.FMap.getCreate(m)) === null || _a === void 0 ? void 0 : _a.displayStats(f)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Map data is still being loaded, try again later."); }];
+                }).toArray(), [], {
                     startPage: Vars.maps.customMaps().toArray().indexOf(Vars.state.map),
                 });
             }
@@ -1346,7 +1434,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var visibleAchievements, options, numberAchievements, totalAchievements, x, y, a, err_1;
+                var visibleAchievements, options, numberAchievements, totalAchievements, x, y, a;
                 var _c;
                 var sender = _b.sender, _d = _b.args.target, target = _d === void 0 ? sender : _d, f = _b.f;
                 return __generator(this, function (_e) {
@@ -1363,29 +1451,18 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             a = null;
                             _e.label = 1;
                         case 1:
-                            if (!true) return [3 /*break*/, 6];
-                            _e.label = 2;
-                        case 2:
-                            _e.trys.push([2, 4, , 5]);
-                            return [4 /*yield*/, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["\t", " ", "\n\t\n\t", "\n\t\n\tAllowed modes: ", "\n\tUnlocked: ", "\n\t", "\t"], ["\\\n\t", " ", "\n\t\n\t", "\n\t\n\tAllowed modes: ", "\n\tUnlocked: ", "\n\t", "\\\n\t"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") :
+                            if (!true) return [3 /*break*/, 3];
+                            return [4 /*yield*/, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") :
                                     (target == sender ? "You have ".concat(numberAchievements, "/").concat(totalAchievements, " achievements.")
                                         : config_1.FColor.achievement(templateObject_24 || (templateObject_24 = __makeTemplateObject(["Player ", " has ", "/", " achievements."], ["Player ", " has ", "/", " achievements."])), target.prefixedName, numberAchievements, totalAchievements))
                                         + "\nClick an achievement icon to show more information.", options, { onCancel: "reject", columns: 5, rows: 4, getCenterText: function () { return String.fromCharCode(Iconc.settings); }, x: x, y: y })];
-                        case 3:
+                        case 2:
+                            //the loop will be aborted if the menu is cancelled (promise will reject)
                             _c = __read.apply(void 0, [_e.sent(), 3]), a = _c[0], x = _c[1], y = _c[2];
-                            return [3 /*break*/, 5];
-                        case 4:
-                            err_1 = _e.sent();
-                            if (err_1 == "cancel")
-                                return [2 /*return*/]; //TODO replace this string "cancel" with a symbol
-                            else
-                                throw err_1;
-                            return [3 /*break*/, 5];
-                        case 5:
                             if (a == achievements_1.Achievements.click_me && target == sender)
                                 a.grantTo(sender);
                             return [3 /*break*/, 1];
-                        case 6: return [2 /*return*/];
+                        case 3: return [2 /*return*/];
                     }
                 });
             });

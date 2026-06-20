@@ -7,6 +7,39 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,6 +75,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
 };
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -81,14 +125,15 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
-var api = require("/api");
+var api = __importStar(require("/api"));
 var config_1 = require("/config");
 var files_1 = require("/files");
-var fjsContext = require("/fjsContext");
+var fjsContext = __importStar(require("/fjsContext"));
 var commands_1 = require("/frameworks/commands");
 var menus_1 = require("/frameworks/menus");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
+var maps_1 = require("/maps");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
 var utils_1 = require("/utils");
@@ -535,11 +580,41 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     restart: {
-        args: [],
-        description: "Stops and restarts the server. Do not run when the player count is high.",
+        args: ["time:number?"],
         perm: commands_1.Perm.admin,
-        handler: function () {
-            (0, utils_1.serverRestartLoop)(30);
+        description: "Restarts the server.",
+        handler: function (_a) {
+            var _b;
+            var time = _a.args.time;
+            (_b = globals_1.fishState.restartLoopTask) === null || _b === void 0 ? void 0 : _b.cancel();
+            if (Groups.player.isEmpty()) {
+                if (time == undefined) {
+                    Log.info("Restarting immediately as no players are online.");
+                    time !== null && time !== void 0 ? time : (time = 0);
+                }
+            }
+            else if (config_1.Gamemode.pvp()) {
+                time !== null && time !== void 0 ? time : (time = -1);
+                Log.info("PVP: restart will occur at the end of the current match. Specify a time to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr");
+            }
+            else {
+                time !== null && time !== void 0 ? time : (time = 60);
+            }
+            if (time == -1) {
+                Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---");
+                globals_1.fishState.restartQueued = true;
+            }
+            else {
+                if (time < 0 || time > 100)
+                    (0, commands_1.fail)("Invalid time: out of valid range.");
+                (0, utils_1.serverRestartLoop)(time);
+                if (config_1.Gamemode.pvp()) {
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
+                }
+                else {
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 20 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---");
+                }
+            }
         }
     },
     history: {
@@ -577,12 +652,9 @@ exports.commands = (0, commands_1.commandList)({
         args: ["wave:number"],
         description: "Sets the wave number.",
         perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.positiveInteger("wave")],
         handler: function (_a) {
             var args = _a.args, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (args.wave < 0)
-                (0, commands_1.fail)("Wave must be positive.");
-            if (!Number.isSafeInteger(args.wave))
-                (0, commands_1.fail)("Wave must be an integer.");
             Vars.state.wave = args.wave;
             outputSuccess(f(templateObject_26 || (templateObject_26 = __makeTemplateObject(["Set wave to ", ""], ["Set wave to ", ""])), Vars.state.wave));
         }
@@ -600,14 +672,15 @@ exports.commands = (0, commands_1.commandList)({
             var timeRemaining = args.time / 1000;
             var labelx = unit.x;
             var labely = unit.y;
-            globals_1.fishState.labels.push(Timer.schedule(function () {
+            var task = Timer.schedule(function () {
                 if (timeRemaining > 0) {
                     var timeseconds = timeRemaining % 60;
                     var timeminutes = (timeRemaining - timeseconds) / 60;
                     Call.label("".concat(sender.name, "\n\n[white]").concat(args.message, "\n\n[acid]").concat(timeminutes.toString().padStart(2, "0"), ":").concat(timeseconds.toString().padStart(2, "0")), 1, labelx, labely);
                     timeRemaining--;
                 }
-            }, 0, 1, args.time));
+            }, 0, 1, args.time);
+            globals_1.fishState.labels.push({ x: labelx, y: labely, task: task });
             outputSuccess(f(templateObject_27 || (templateObject_27 = __makeTemplateObject(["Placed label \"", "\" for ", " seconds."], ["Placed label \"", "\" for ", " seconds."])), args.message, timeRemaining));
         }
     },
@@ -620,12 +693,13 @@ exports.commands = (0, commands_1.commandList)({
             if (args.time > funcs_1.Duration.hours(10))
                 (0, commands_1.fail)("Time must be less than 10 hours.");
             var timeRemaining = args.time / 1000;
-            globals_1.fishState.labels.push(Timer.schedule(function () {
+            var task = Timer.schedule(function () {
                 if (timeRemaining > 0) {
                     Call.label(args.message, 5, NaN, NaN);
                     timeRemaining -= 5;
                 }
-            }, 0, 5, Math.ceil(args.time / 5)));
+            }, 0, 5, Math.ceil(args.time / 5));
+            globals_1.fishState.labels.push({ task: task, x: null, y: null });
             outputSuccess(f(templateObject_28 || (templateObject_28 = __makeTemplateObject(["Placed label \"", "\" for ", " seconds."], ["Placed label \"", "\" for ", " seconds."])), args.message, timeRemaining));
         }
     },
@@ -635,8 +709,40 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.mod,
         handler: function (_a) {
             var outputSuccess = _a.outputSuccess;
-            globals_1.fishState.labels.forEach(function (l) { return l.cancel(); });
+            if (globals_1.fishState.labels.length == 0)
+                (0, commands_1.fail)("No labels found.");
+            globals_1.fishState.labels.forEach(function (l) { return l.task.cancel(); });
             outputSuccess("Removed all labels.");
+        }
+    },
+    clearlabel: {
+        args: ["sticky:boolean?"],
+        description: "Removes the closest label, or sticky label if specified",
+        perm: commands_1.Perm.mod,
+        handler: function (_a) {
+            var _b;
+            var _c = _a.args.sticky, sticky = _c === void 0 ? false : _c, sender = _a.sender, outputSuccess = _a.outputSuccess;
+            if (globals_1.fishState.labels.length == 0)
+                (0, commands_1.fail)("No labels found.");
+            var label;
+            if (sticky) {
+                var index = globals_1.fishState.labels.findIndex(function (l) { return l.x == null; });
+                if (index == -1)
+                    (0, commands_1.fail)("No sticky label found.");
+                label = globals_1.fishState.labels.splice(index, 1)[0];
+            }
+            else {
+                var unit_1 = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Cannot remove the closest label because you are dead.");
+                var dist_1 = function (label) {
+                    if (label.x == null || label.y == null)
+                        return Infinity;
+                    return Mathf.dst(label.x, label.y, unit_1.x, unit_1.y);
+                };
+                var index = __spreadArray([], __read(globals_1.fishState.labels.entries()), false).reduce(function (a, b) { return dist_1(a[1]) < dist_1(b[1]) ? a : b; })[0];
+                label = globals_1.fishState.labels.splice(index, 1)[0];
+            }
+            label.task.cancel();
+            outputSuccess("Removed one label.");
         }
     },
     member: {
@@ -871,25 +977,52 @@ exports.commands = (0, commands_1.commandList)({
     },
     clearunit: {
         args: ["target:player", "duration:time?"],
-        description: "Forces a player out of the unit they are controlling, and blocks them from controlling units for a specified duration.",
+        description: "Forces a player out of the unit they are controlling, and blocks them from possessing units for a specified duration.",
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("target", false, "mod", false)],
         handler: function (_a) {
-            var _b = _a.args, target = _b.target, duration = _b.duration, outputSuccess = _a.outputSuccess, f = _a.f;
-            if (target.blockedFromUnitsUntil == 0)
+            var _b = _a.args, target = _b.target, duration = _b.duration, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
+            if (Date.now() > 1000 + target.blockedFromPossessingUnitsUntil)
                 duration !== null && duration !== void 0 ? duration : (duration = funcs_1.Duration.minutes(1));
             else
                 duration !== null && duration !== void 0 ? duration : (duration = 0);
             if (duration == 0) {
-                target.blockedFromUnitsUntil = 0;
+                target.blockedFromPossessingUnitsUntil = 0;
                 target.sendMessage("You are allowed to control units again.");
                 outputSuccess(f(templateObject_45 || (templateObject_45 = __makeTemplateObject(["Restored ", "'s ability to control units."], ["Restored ", "'s ability to control units."])), target));
+                (0, utils_1.logAction)("restored unit possession for", sender, target);
             }
             else {
                 target.forceRespawn();
-                target.blockedFromUnitsUntil = Date.now() + duration;
+                target.blockedFromPossessingUnitsUntil = Date.now() + duration;
                 target.sendMessage("You have been blocked from controlling units for ".concat((0, utils_1.formatTime)(duration), "."));
                 outputSuccess(f(templateObject_46 || (templateObject_46 = __makeTemplateObject(["Blocked ", " from controlling units for ", "."], ["Blocked ", " from controlling units for ", "."])), target, (0, utils_1.formatTime)(duration)));
+                (0, utils_1.logAction)("revoked unit possession for", sender, target, undefined, duration);
+            }
+        }
+    },
+    clearcommand: {
+        args: ["target:player", "duration:time?"],
+        description: "Blocks a player from commanding units for a specified duration.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("target", false, "mod", false)],
+        handler: function (_a) {
+            var _b = _a.args, target = _b.target, duration = _b.duration, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
+            if (Date.now() > 1000 + target.blockedFromCommandingUnitsUntil)
+                duration !== null && duration !== void 0 ? duration : (duration = funcs_1.Duration.minutes(1));
+            else
+                duration !== null && duration !== void 0 ? duration : (duration = 0);
+            if (duration == 0) {
+                target.blockedFromCommandingUnitsUntil = 0;
+                target.sendMessage("You are allowed to command units again.");
+                outputSuccess(f(templateObject_47 || (templateObject_47 = __makeTemplateObject(["Restored ", "'s ability to command units."], ["Restored ", "'s ability to command units."])), target));
+                (0, utils_1.logAction)("restored command mode for", sender, target, undefined, duration);
+            }
+            else {
+                target.blockedFromCommandingUnitsUntil = Date.now() + duration;
+                target.sendMessage("You have been blocked from commanding units for ".concat((0, utils_1.formatTime)(duration), "."));
+                outputSuccess(f(templateObject_48 || (templateObject_48 = __makeTemplateObject(["Blocked ", " from commanding units for ", "."], ["Blocked ", " from commanding units for ", "."])), target, (0, utils_1.formatTime)(duration)));
+                (0, utils_1.logAction)("revoked command mode for", sender, target, undefined, duration);
             }
         }
     },
@@ -901,7 +1034,7 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             var _b;
             var sender = _a.sender, _c = _a.args, target = _c.target, _d = _c.newcontroller, newcontroller = _d === void 0 ? sender : _d, outputSuccess = _a.outputSuccess, f = _a.f;
-            var unit = (_b = target.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(f(templateObject_47 || (templateObject_47 = __makeTemplateObject(["Targeted player ", " is not in a unit."], ["Targeted player ", " is not in a unit."])), target));
+            var unit = (_b = target.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(f(templateObject_49 || (templateObject_49 = __makeTemplateObject(["Targeted player ", " is not in a unit."], ["Targeted player ", " is not in a unit."])), target));
             if (target.team() !== newcontroller.team()) {
                 if (!sender.hasPerm("changeTeamExternal")) {
                     if (!sender.hasPerm("changeTeam"))
@@ -912,11 +1045,11 @@ exports.commands = (0, commands_1.commandList)({
             target.forceRespawn();
             newcontroller.unit(unit);
             if (newcontroller == sender) {
-                outputSuccess(f(templateObject_48 || (templateObject_48 = __makeTemplateObject(["Commandeered the unit of player ", "."], ["Commandeered the unit of player ", "."])), target));
+                outputSuccess(f(templateObject_50 || (templateObject_50 = __makeTemplateObject(["Commandeered the unit of player ", "."], ["Commandeered the unit of player ", "."])), target));
             }
             else {
-                outputSuccess(f(templateObject_49 || (templateObject_49 = __makeTemplateObject(["Transferred player ", " into the unit of ", "."], ["Transferred player ", " into the unit of ", "."])), newcontroller, target));
-                newcontroller.sendMessage(f(templateObject_50 || (templateObject_50 = __makeTemplateObject(["[green]You were transferred to the unit of player ", " by ", "."], ["[green]You were transferred to the unit of player ", " by ", "."])), target, sender)('[green]'));
+                outputSuccess(f(templateObject_51 || (templateObject_51 = __makeTemplateObject(["Transferred player ", " into the unit of ", "."], ["Transferred player ", " into the unit of ", "."])), newcontroller, target));
+                newcontroller.sendMessage(f(templateObject_52 || (templateObject_52 = __makeTemplateObject(["[green]You were transferred to the unit of player ", " by ", "."], ["[green]You were transferred to the unit of player ", " by ", "."])), target, sender)('[green]'));
             }
         }
     },
@@ -939,16 +1072,21 @@ exports.commands = (0, commands_1.commandList)({
             var names = args.showColors
                 ? info.names.map(funcs_1.escapeStringColorsClient).toString(", ")
                 : __spreadArray([], __read(new Set(info.names.map(function (n) { return Strings.stripColors(n); }).toArray())), false).join(", ");
-            output(f(templateObject_51 || (templateObject_51 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(args.target.name), args.target.player.id.toString(), args.target.rank, Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" "), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat((0, utils_1.formatTimeRelative)(args.target.unmarkTime)) : "[green]false", f.boolBad(args.target.muted), f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
+            output(f(templateObject_53 || (templateObject_53 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(args.target.name), args.target.player.id.toString(), args.target.rank, Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" "), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat((0, utils_1.formatTimeRelative)(args.target.unmarkTime)) : "[green]false", f.boolBad(args.target.muted), f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
             if (sender.hasPerm("viewUUIDs"))
-                output(f(templateObject_52 || (templateObject_52 = __makeTemplateObject(["\t[#FFAAAA]UUID: ", "\n\t[#FFAAAA]IP: ", ""], ["\\\n\t[#FFAAAA]UUID: ", "\n\t[#FFAAAA]IP: ", ""])), args.target.uuid, args.target.ip()));
+                output(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["\t[#FFAAAA]UUID: ", ""], ["\\t[#FFAAAA]UUID: ", ""])), args.target.uuid));
+            if (sender.hasPerm("viewIPs"))
+                output(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["\t[#FFAAAA]IP: ", ""], ["\\t[#FFAAAA]IP: ", ""])), args.target.ip()));
         }
     },
     spawn: {
         args: ["type:unittype", "x:number?", "y:number?", "count:number?", "team:team?", "effects:string?", "stack:boolean?"],
         description: "Spawns a unit of specified type at your position. [scarlet]Usage will be logged.[]",
-        perm: commands_1.Perm.admin,
+        perm: commands_1.Perm.admin.exceptModes({
+            testsrv: commands_1.Perm.trusted,
+        }),
         data: [],
+        requirements: [commands_1.Req.positiveInteger("count")],
         handler: function (_a) {
             var _b, _c;
             var sender = _a.sender, args = _a.args, data = _a.data, outputSuccess = _a.outputSuccess, f = _a.f;
@@ -966,24 +1104,25 @@ exports.commands = (0, commands_1.commandList)({
                 unit.add();
                 data.push(unit);
             }
-            if (!config_1.Gamemode.sandbox() && args.effects !== 'paper')
+            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()) && args.effects !== 'paper')
                 (0, utils_1.logAction)("spawned unit ".concat(args.type.name).concat(count == 1 ? '' : " x".concat(count), " at ").concat(Math.round(x / 8), ", ").concat(Math.round(y / 8)) + (args.effects ? "with ".concat(args.effects, " effects") : ''), sender);
-            outputSuccess(f(templateObject_53 || (templateObject_53 = __makeTemplateObject(["Spawned unit ", " at (", ", ", ")"], ["Spawned unit ", " at (", ", ", ")"])), args.type, Math.round(x / 8), Math.round(y / 8)));
+            outputSuccess(f(templateObject_56 || (templateObject_56 = __makeTemplateObject(["Spawned unit ", " at (", ", ", ")"], ["Spawned unit ", " at (", ", ", ")"])), args.type, Math.round(x / 8), Math.round(y / 8)));
         }
     },
     setblock: {
         args: ["x:number", "y:number", "block:block", "team:team?", "rotation:number?"],
         description: "Sets the block at a location.",
-        perm: commands_1.Perm.admin,
+        perm: commands_1.Perm.admin.exceptModes({
+            testsrv: commands_1.Perm.trusted,
+        }),
+        requirements: [commands_1.Req.integerRange("rotation", 0, 3)],
         handler: function (_a) {
             var _b, _c;
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
             var team = (_b = args.team) !== null && _b !== void 0 ? _b : sender.team();
             var tile = Vars.world.tile(args.x, args.y);
-            if (args.rotation != null && (args.rotation < 0 || args.rotation > 3))
-                (0, commands_1.fail)(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["Invalid rotation ", ""], ["Invalid rotation ", ""])), args.rotation));
             if (tile == null)
-                (0, commands_1.fail)(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), args.x, args.y));
+                (0, commands_1.fail)(f(templateObject_57 || (templateObject_57 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), args.x, args.y));
             tile.setNet(args.block, team, (_c = args.rotation) !== null && _c !== void 0 ? _c : 0);
             (0, utils_1.addToTileHistory)({
                 pos: "".concat(args.x, ",").concat(args.y),
@@ -993,13 +1132,14 @@ exports.commands = (0, commands_1.commandList)({
             });
             if (!config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(args.x, ",").concat(args.y), sender);
-            outputSuccess(f(templateObject_56 || (templateObject_56 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), args.x, args.y, args.block));
+            outputSuccess(f(templateObject_58 || (templateObject_58 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), args.x, args.y, args.block));
         }
     },
     setblockr: {
         args: ["block:block?", "team:team?", "rotation:number?"],
         description: "Sets the block at tapped locations, repeatedly.",
         perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.integerRange("rotation", 0, 3)],
         tapped: function (_a) {
             var _b, _c;
             var args = _a.args, sender = _a.sender, f = _a.f, x = _a.x, y = _a.y, outputSuccess = _a.outputSuccess;
@@ -1007,10 +1147,8 @@ exports.commands = (0, commands_1.commandList)({
                 (0, funcs_1.crash)("uh oh");
             var team = (_b = args.team) !== null && _b !== void 0 ? _b : sender.team();
             var tile = Vars.world.tile(x, y);
-            if (args.rotation != null && (args.rotation < 0 || args.rotation > 3))
-                (0, commands_1.fail)(f(templateObject_57 || (templateObject_57 = __makeTemplateObject(["Invalid rotation ", ""], ["Invalid rotation ", ""])), args.rotation));
             if (tile == null)
-                (0, commands_1.fail)(f(templateObject_58 || (templateObject_58 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), x, y));
+                (0, commands_1.fail)(f(templateObject_59 || (templateObject_59 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), x, y));
             tile.setNet(args.block, team, (_c = args.rotation) !== null && _c !== void 0 ? _c : 0);
             (0, utils_1.addToTileHistory)({
                 pos: "".concat(x, ",").concat(y),
@@ -1020,7 +1158,7 @@ exports.commands = (0, commands_1.commandList)({
             });
             if (!config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(x, ",").concat(y), sender);
-            outputSuccess(f(templateObject_59 || (templateObject_59 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), x, y, args.block));
+            outputSuccess(f(templateObject_60 || (templateObject_60 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), x, y, args.block));
         },
         handler: function (_a) {
             var args = _a.args, outputSuccess = _a.outputSuccess, handleTaps = _a.handleTaps, currentTapMode = _a.currentTapMode, f = _a.f;
@@ -1030,7 +1168,7 @@ exports.commands = (0, commands_1.commandList)({
                     outputSuccess("setblockr enabled.\n[scarlet]Be careful, you have the midas touch now![] Turn it off by running /setblockr again.");
                 }
                 else {
-                    outputSuccess(f(templateObject_60 || (templateObject_60 = __makeTemplateObject(["Changed setblockr's block to ", ""], ["Changed setblockr's block to ", ""])), args.block));
+                    outputSuccess(f(templateObject_61 || (templateObject_61 = __makeTemplateObject(["Changed setblockr's block to ", ""], ["Changed setblockr's block to ", ""])), args.block));
                 }
             }
             else {
@@ -1047,7 +1185,9 @@ exports.commands = (0, commands_1.commandList)({
     exterminate: {
         args: [],
         description: "Removes all spawned units.",
-        perm: commands_1.Perm.admin,
+        perm: commands_1.Perm.admin.exceptModes({
+            testsrv: commands_1.Perm.trusted,
+        }),
         handler: function (_a) {
             var sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f, allCommands = _a.allCommands;
             var numKilled = 0;
@@ -1059,7 +1199,7 @@ exports.commands = (0, commands_1.commandList)({
             });
             if (!config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("exterminated ".concat(numKilled, " units"), sender);
-            outputSuccess(f(templateObject_61 || (templateObject_61 = __makeTemplateObject(["Exterminated ", " units."], ["Exterminated ", " units."])), numKilled));
+            outputSuccess(f(templateObject_62 || (templateObject_62 = __makeTemplateObject(["Exterminated ", " units."], ["Exterminated ", " units."])), numKilled));
         }
     },
     js: {
@@ -1148,7 +1288,7 @@ exports.commands = (0, commands_1.commandList)({
                 (0, commands_1.fail)("Invalid chat strictness level: valid levels are \"chat\", \"strict\"");
             player.chatStrictness = value;
             (0, utils_1.logAction)("set chat strictness to ".concat(value, " for"), sender, player);
-            outputSuccess(f(templateObject_62 || (templateObject_62 = __makeTemplateObject(["Set chat strictness for player ", " to \"", "\"."], ["Set chat strictness for player ", " to \"", "\"."])), player, value));
+            outputSuccess(f(templateObject_63 || (templateObject_63 = __makeTemplateObject(["Set chat strictness for player ", " to \"", "\"."], ["Set chat strictness for player ", " to \"", "\"."])), player, value));
         }
     },
     emanate: (0, commands_1.command)(function () {
@@ -1253,29 +1393,29 @@ exports.commands = (0, commands_1.commandList)({
                             fishP = players_1.FishPlayer.getById(input);
                             info = admins.getInfoOptional(input);
                             if (fishP == null && info == null)
-                                (0, commands_1.fail)(f(templateObject_63 || (templateObject_63 = __makeTemplateObject(["No stored data matched uuid ", "."], ["No stored data matched uuid ", "."])), input));
+                                (0, commands_1.fail)(f(templateObject_64 || (templateObject_64 = __makeTemplateObject(["No stored data matched uuid ", "."], ["No stored data matched uuid ", "."])), input));
                             else if (fishP == null && info)
-                                output(f(templateObject_64 || (templateObject_64 = __makeTemplateObject(["[accent]Found player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
+                                output(f(templateObject_65 || (templateObject_65 = __makeTemplateObject(["[accent]Found player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
                             else if (fishP && info)
-                                output(f(templateObject_65 || (templateObject_65 = __makeTemplateObject(["[accent]Found fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, fishP.name, (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
+                                output(f(templateObject_66 || (templateObject_66 = __makeTemplateObject(["[accent]Found fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, fishP.name, (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
                             else
-                                (0, commands_1.fail)(f(templateObject_66 || (templateObject_66 = __makeTemplateObject(["Super weird edge case: found fish player data but no player info for uuid ", "."], ["Super weird edge case: found fish player data but no player info for uuid ", "."])), input));
+                                (0, commands_1.fail)(f(templateObject_67 || (templateObject_67 = __makeTemplateObject(["Super weird edge case: found fish player data but no player info for uuid ", "."], ["Super weird edge case: found fish player data but no player info for uuid ", "."])), input));
                             return [3 /*break*/, 5];
                         case 1:
                             if (!globals_1.ipPattern.test(input)) return [3 /*break*/, 2];
                             matches = admins.findByIPs(input);
                             if (matches.isEmpty())
-                                (0, commands_1.fail)(f(templateObject_67 || (templateObject_67 = __makeTemplateObject(["No stored data matched IP ", ""], ["No stored data matched IP ", ""])), input));
-                            output(f(templateObject_68 || (templateObject_68 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches.size, matches.size == 1 ? "" : "es", input));
-                            matches.each(function (info) { return output(f(templateObject_69 || (templateObject_69 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
+                                (0, commands_1.fail)(f(templateObject_68 || (templateObject_68 = __makeTemplateObject(["No stored data matched IP ", ""], ["No stored data matched IP ", ""])), input));
+                            output(f(templateObject_69 || (templateObject_69 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches.size, matches.size == 1 ? "" : "es", input));
+                            matches.each(function (info) { return output(f(templateObject_70 || (templateObject_70 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
                             return [3 /*break*/, 5];
                         case 2:
                             matches_1 = Vars.netServer.admins.searchNames(input);
                             if (matches_1.isEmpty())
-                                (0, commands_1.fail)(f(templateObject_70 || (templateObject_70 = __makeTemplateObject(["No stored data matched name ", ""], ["No stored data matched name ", ""])), input));
-                            output(f(templateObject_71 || (templateObject_71 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches_1.size, matches_1.size == 1 ? "" : "es", input));
+                                (0, commands_1.fail)(f(templateObject_71 || (templateObject_71 = __makeTemplateObject(["No stored data matched name ", ""], ["No stored data matched name ", ""])), input));
+                            output(f(templateObject_72 || (templateObject_72 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches_1.size, matches_1.size == 1 ? "" : "es", input));
                             displayMatches = function () {
-                                matches_1.each(function (info) { return output(f(templateObject_72 || (templateObject_72 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
+                                matches_1.each(function (info) { return output(f(templateObject_73 || (templateObject_73 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
                             };
                             if (!(matches_1.size > 20)) return [3 /*break*/, 4];
                             return [4 /*yield*/, menus_1.Menu.confirm(sender, "Are you sure you want to view all ".concat(matches_1.size, " matches?"))];
@@ -1316,18 +1456,20 @@ exports.commands = (0, commands_1.commandList)({
     effects: {
         args: ["mode:string", "player:player?", "duration:time?"],
         description: "Applies effects to a player's unit.",
-        perm: commands_1.Perm.admin,
+        perm: commands_1.Perm.admin.exceptModes({
+            testsrv: commands_1.Perm.trusted,
+        }),
         handler: function (_a) {
             var _b, _c, _d;
             var args = _a.args, sender = _a.sender, f = _a.f, outputSuccess = _a.outputSuccess;
             if ((_b = args.player) === null || _b === void 0 ? void 0 : _b.hasPerm("blockTrolling"))
-                (0, commands_1.fail)(f(templateObject_73 || (templateObject_73 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
+                (0, commands_1.fail)(f(templateObject_74 || (templateObject_74 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
             if (args.player && !sender.canModerate(args.player, false))
                 (0, commands_1.fail)("You do not have permission to perform moderation actions on this player.");
             var target = (_c = args.player) !== null && _c !== void 0 ? _c : sender;
             var unit = target.unit();
             if (!unit || unit.dead)
-                (0, commands_1.fail)(f(templateObject_74 || (templateObject_74 = __makeTemplateObject(["", "'s unit is dead."], ["", "'s unit is dead."])), target));
+                (0, commands_1.fail)(f(templateObject_75 || (templateObject_75 = __makeTemplateObject(["", "'s unit is dead."], ["", "'s unit is dead."])), target));
             var ticks = ((_d = args.duration) !== null && _d !== void 0 ? _d : 1e12) / 1000 * 60;
             (0, utils_1.applyEffectMode)(args.mode, unit, ticks);
             outputSuccess("".concat(args.mode === "clear" ? "Cleared" : "Applied", " effects."));
@@ -1339,12 +1481,13 @@ exports.commands = (0, commands_1.commandList)({
         args: ["team:team", "item:item", "amount:number"],
         description: "Gives items to a team.",
         perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.integer("amount")],
         handler: function (_a) {
             var _b;
             var _c = _a.args, team = _c.team, item = _c.item, amount = _c.amount, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
-            var core = (_b = team.data().cores.firstOpt()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(f(templateObject_75 || (templateObject_75 = __makeTemplateObject(["Team ", " has no cores."], ["Team ", " has no cores."])), team));
+            var core = (_b = team.data().cores.firstOpt()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(f(templateObject_76 || (templateObject_76 = __makeTemplateObject(["Team ", " has no cores."], ["Team ", " has no cores."])), team));
             core.items.add(item, amount);
-            outputSuccess(f(templateObject_76 || (templateObject_76 = __makeTemplateObject(["Gave ", " ", " to ", "."], ["Gave ", " ", " to ", "."])), amount, item, team));
+            outputSuccess(f(templateObject_77 || (templateObject_77 = __makeTemplateObject(["Gave ", " ", " to ", "."], ["Gave ", " ", " to ", "."])), amount, item, team));
             if (!config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("gave ".concat(amount, " ").concat(item.localizedName.toLowerCase(), " to ").concat(team.name), sender);
         }
@@ -1391,6 +1534,140 @@ exports.commands = (0, commands_1.commandList)({
             Vars.state.rules.editor = editor;
             Call.setRules(Vars.state.rules);
         }
+    },
+    mapruns: {
+        args: ["map:map", "lowestHighscores:boolean?"],
+        description: "Displays all map runs for a selected map, and allows deleting invalid/cheated runs.",
+        perm: commands_1.Perm.admin,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var fmap, _c, initialLength, runs, _d, index, _, deleted;
+                var _e;
+                var _f = _b.args, map = _f.map, lowestHighscores = _f.lowestHighscores, sender = _b.sender, outputSuccess = _b.outputSuccess;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            fmap = (_e = maps_1.FMap.getCreate(map)) !== null && _e !== void 0 ? _e : (0, commands_1.fail)("Map data is still loading, please try again.");
+                            if (!(lowestHighscores !== null && lowestHighscores !== void 0)) return [3 /*break*/, 1];
+                            _c = lowestHighscores;
+                            return [3 /*break*/, 3];
+                        case 1: return [4 /*yield*/, menus_1.Menu.buttons(sender, "[accent]Map runs", "Select a view", [
+                                [{ data: true, text: "Lowest highscores" }],
+                                [{ data: false, text: "All runs" }],
+                            ], {
+                                includeCancel: true,
+                                onCancel: "reject"
+                            })];
+                        case 2:
+                            _c = (lowestHighscores = _g.sent());
+                            _g.label = 3;
+                        case 3:
+                            _c;
+                            initialLength = fmap.runs.length;
+                            runs = fmap.runs.slice();
+                            if (lowestHighscores)
+                                runs = runs.filter(function (r) { return r.success; })
+                                    .sort(function (a, b) { return a.duration() - b.duration(); });
+                            return [4 /*yield*/, menus_1.Menu.textPages(sender, runs.map(function (r) { return [
+                                    (0, utils_1.formatTimestamp)(r.startTime),
+                                    function () {
+                                        return "Duration: ".concat((0, utils_1.formatTime)(r.duration()), "\nMax player count: ").concat(r.maxPlayerCount, "\nOutcome: ").concat(r.outcome()[1], "\nWave: ").concat(r.wave);
+                                    }
+                                ]; }), ["[scarlet]\uE86FDelete"], {
+                                    onCancel: "reject"
+                                })];
+                        case 4:
+                            _d = __read.apply(void 0, [_g.sent(), 2]), index = _d[0], _ = _d[1];
+                            return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to delete this map run? This action is irreversible.")];
+                        case 5:
+                            _g.sent();
+                            if (initialLength != fmap.runs.length)
+                                (0, commands_1.fail)("Someone else deleted a run, please try again.");
+                            deleted = fmap.runs.splice(index, 1)[0];
+                            outputSuccess("Deleted run (".concat((0, utils_1.formatTimestamp)(deleted.startTime), ") with duration ").concat((0, utils_1.formatTime)(deleted.duration()), "."));
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
+    },
+    crash: {
+        args: ["target:player"],
+        description: "Crashes the target player's Mindustry client.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.moderate("target", false, "admin")],
+        handler: function (_a) {
+            var target = _a.args.target, f = _a.f, output = _a.output, outputSuccess = _a.outputSuccess;
+            if (target.hasPerm("blockTrolling"))
+                (0, commands_1.fail)(f(templateObject_78 || (templateObject_78 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), target));
+            if ((0, utils_1.crashClient)(target.player)) {
+                outputSuccess(f(templateObject_79 || (templateObject_79 = __makeTemplateObject(["Crashed client of ", "."], ["Crashed client of ", "."])), target));
+            }
+            else {
+                output(f(templateObject_80 || (templateObject_80 = __makeTemplateObject(["Attempted to crash client of ", ". The crash will only occur once the sync completes."], ["Attempted to crash client of ", ". The crash will only occur once the sync completes."])), target));
+            }
+        }
+    },
+    yeet: {
+        args: ["target:player", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
+        description: "Sends the target player to a parallel universe.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.moderate("target", false, "admin")],
+        handler: function (_a) {
+            return __awaiter(this, void 0, void 0, function () {
+                var _b = _a.args, target = _b.target, world = __rest(_b, ["target"]), f = _a.f, outputSuccess = _a.outputSuccess;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (target.hasPerm("blockTrolling"))
+                                (0, commands_1.fail)(f(templateObject_81 || (templateObject_81 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), target));
+                            outputSuccess("Aligning QPUs...");
+                            return [4 /*yield*/, (0, utils_1.syncManual)(target.player, undefined, world)];
+                        case 1:
+                            _c.sent();
+                            outputSuccess(f(templateObject_82 || (templateObject_82 = __makeTemplateObject(["Sent ", " to a parallel universe."], ["Sent ", " to a parallel universe."])), target));
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
+    },
+    menuspam: {
+        args: ["target:player"],
+        description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.moderate("target", false, "admin")],
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var i, j;
+                var target = _b.args.target, f = _b.f, output = _b.output, outputSuccess = _b.outputSuccess;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (target.hasPerm("blockTrolling"))
+                                (0, commands_1.fail)(f(templateObject_83 || (templateObject_83 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), target));
+                            output("Sending menus.");
+                            i = 0;
+                            _c.label = 1;
+                        case 1:
+                            if (!(i < 10)) return [3 /*break*/, 4];
+                            for (j = 0; j < 100; j++) {
+                                Call.menu(target.con, menus_1.listeners.generic, "", "", []);
+                            }
+                            return [4 /*yield*/, (0, funcs_1.delay)(100)];
+                        case 2:
+                            _c.sent();
+                            _c.label = 3;
+                        case 3:
+                            i++;
+                            return [3 /*break*/, 1];
+                        case 4:
+                            outputSuccess(f(templateObject_84 || (templateObject_84 = __makeTemplateObject(["Spammed ", " with menus."], ["Spammed ", " with menus."])), target));
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
     }
 });
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25, templateObject_26, templateObject_27, templateObject_28, templateObject_29, templateObject_30, templateObject_31, templateObject_32, templateObject_33, templateObject_34, templateObject_35, templateObject_36, templateObject_37, templateObject_38, templateObject_39, templateObject_40, templateObject_41, templateObject_42, templateObject_43, templateObject_44, templateObject_45, templateObject_46, templateObject_47, templateObject_48, templateObject_49, templateObject_50, templateObject_51, templateObject_52, templateObject_53, templateObject_54, templateObject_55, templateObject_56, templateObject_57, templateObject_58, templateObject_59, templateObject_60, templateObject_61, templateObject_62, templateObject_63, templateObject_64, templateObject_65, templateObject_66, templateObject_67, templateObject_68, templateObject_69, templateObject_70, templateObject_71, templateObject_72, templateObject_73, templateObject_74, templateObject_75, templateObject_76;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25, templateObject_26, templateObject_27, templateObject_28, templateObject_29, templateObject_30, templateObject_31, templateObject_32, templateObject_33, templateObject_34, templateObject_35, templateObject_36, templateObject_37, templateObject_38, templateObject_39, templateObject_40, templateObject_41, templateObject_42, templateObject_43, templateObject_44, templateObject_45, templateObject_46, templateObject_47, templateObject_48, templateObject_49, templateObject_50, templateObject_51, templateObject_52, templateObject_53, templateObject_54, templateObject_55, templateObject_56, templateObject_57, templateObject_58, templateObject_59, templateObject_60, templateObject_61, templateObject_62, templateObject_63, templateObject_64, templateObject_65, templateObject_66, templateObject_67, templateObject_68, templateObject_69, templateObject_70, templateObject_71, templateObject_72, templateObject_73, templateObject_74, templateObject_75, templateObject_76, templateObject_77, templateObject_78, templateObject_79, templateObject_80, templateObject_81, templateObject_82, templateObject_83, templateObject_84;

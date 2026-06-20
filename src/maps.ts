@@ -8,7 +8,7 @@ import { FFunction } from "/frameworks/commands";
 import { dataClass, serialize } from "/frameworks/io";
 import { computeStatistics, Duration } from "/funcs";
 import { FishEvents } from "/globals";
-import { formatTime, formatTimeShort, match } from "/utils";
+import { formatTime, formatTimeShort, formatTimestamp, match } from "/utils";
 
 type FinishedMapRunData = {
 	winTeam:Team;
@@ -71,6 +71,7 @@ export class PartialMapRun {
 			if(this.current){
 				const finishedRun = this.current.finish({ winTeam: e.winner ?? Team.derelict });
 				const fmap = FMap.getCreate(Vars.state.map);
+				if(!fmap) return;
 
 				//Highscore message
 				if(Gamemode.attack() && finishedRun.success){
@@ -171,12 +172,12 @@ export class FMap extends dataClass<FMapData>() {
 		]]]],
 		["mapFileName", ["string"]],
 	]]], undefined, "saveMaps")
-	static allMaps:FMap[] = [];
+	static allMaps:FMap[] | null = null;
 	private static maps:Record<string, FMap> = {};
 	static {
 		FishEvents.on("dataLoaded", () => {
 			//This event listener runs after the data has been loaded into allMaps
-			FMap.allMaps.forEach(map => {
+			(FMap.allMaps ??= []).forEach(map => {
 				FMap.maps[map.mapFileName] = map;
 				map.runs.forEach(run => {
 					//this should not even happen, I think GameOverEvent is sending winTeam as null sometimes??
@@ -189,6 +190,7 @@ export class FMap extends dataClass<FMapData>() {
 	}
 
 	static getCreate(map:MMap){
+		if(this.allMaps == null) return null;
 		const mapFileName = map.file.name();
 		if(Object.prototype.hasOwnProperty.call(this.maps, mapFileName))
 			return this.maps[mapFileName];
@@ -208,7 +210,7 @@ export class FMap extends dataClass<FMapData>() {
 	stats(){
 		const runs = this.runs.filter(r => r.maxPlayerCount > 0); //Remove all runs with no players on
 		const allRunCount = runs.length;
-		const victories = runs.filter(r => r.outcome()[1] === "win").length;
+		const victories = runs.filter(r => r.outcome()[1] === "win");
 		const losses = runs.filter(r => r.outcome()[0] === "loss").length;
 		const earlyRTVs = runs.filter(r => r.outcome()[1] === "early rtv").length;
 		const lateRTVs = runs.filter(r => r.outcome()[1] === "late rtv").length;
@@ -227,13 +229,13 @@ export class FMap extends dataClass<FMapData>() {
 		return {
 			allRunCount,
 			significantRunCount,
-			victories,
+			victories: victories.length,
 			losses,
 			totalLosses,
 			earlyRTVs,
 			lateRTVs,
 			earlyRTVRate: earlyRTVs / allRunCount,
-			winRate: victories / significantRunCount,
+			winRate: victories.length / significantRunCount,
 			lossRate: losses / significantRunCount,
 			averagePlaytime: durationStats.average,
 			shortestWinTime: winDurationStats.lowest,
@@ -244,6 +246,7 @@ export class FMap extends dataClass<FMapData>() {
 			teamWinRate,
 			highestWave: waveStats.highest,
 			averageWave: waveStats.average,
+			mostRecentWin: victories.at(-1)?.startTime
 		};
 	}
 	displayStats(f:FFunction):string | null {
@@ -256,7 +259,8 @@ export class FMap extends dataClass<FMapData>() {
 [#CCFFCC]Total runs: ${stats.allRunCount} (${stats.victories} wins, ${stats.totalLosses} losses, ${stats.earlyRTVs} RTVs)
 [#CCFFCC]Outcomes: ${f.percent(stats.winRate, 1)} wins, ${f.percent(stats.lossRate, 1)} losses, ${f.percent(stats.earlyRTVRate, 1)} RTVs
 [#CCFFCC]Average playtime: ${formatTime(stats.averagePlaytime)}
-[#CCFFCC]Shortest win time: ${formatTime(stats.shortestWinTime)}`,
+[#CCFFCC]Shortest win time: ${formatTime(stats.shortestWinTime)}
+[#CCFFCC]Most recent win: ${stats.mostRecentWin ? formatTimestamp(stats.mostRecentWin) : "[red]none[]"}`,
 			survival: `\
 [#CCFFCC]Highest wave reached: ${stats.highestWave}
 [#CCFFCC]Average wave reached: ${stats.averageWave}

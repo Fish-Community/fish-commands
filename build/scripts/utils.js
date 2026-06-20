@@ -4,6 +4,39 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains many utility functions that need access to any values from other files.
 For functions that don't need values from other files, see funcs.ts.
 */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -41,16 +74,17 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = void 0;
+exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = exports.getTeam = void 0;
 exports.memoizeChatFilter = memoizeChatFilter;
 exports.formatTime = formatTime;
 exports.formatTimeShort = formatTimeShort;
 exports.formatModeName = formatModeName;
+exports.formatTimestampFull = formatTimestampFull;
 exports.formatTimestamp = formatTimestamp;
+exports.formatTimestampShort = formatTimestampShort;
 exports.formatTimeRelative = formatTimeRelative;
 exports.getColor = getColor;
 exports.nearbyEnemyTile = nearbyEnemyTile;
-exports.getTeam = getTeam;
 exports.matchFilter = matchFilter;
 exports.removeFoosChars = removeFoosChars;
 exports.cleanText = cleanText;
@@ -85,10 +119,14 @@ exports.getHash = getHash;
 exports.match = match;
 exports.fishCommandsRootDirPath = fishCommandsRootDirPath;
 exports.applyEffectMode = applyEffectMode;
+exports.handleError = handleError;
+exports.syncManual = syncManual;
+exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
-var api = require("/api");
+var api = __importStar(require("/api"));
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
+var menus_1 = require("/frameworks/menus");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
@@ -152,9 +190,16 @@ function formatModeName(name) {
         "minigame": "Minigames",
     }[name];
 }
-function formatTimestamp(time) {
+function formatTimestampFull(time) {
     var date = new Date(time);
     return "".concat(date.toDateString(), ", ").concat(date.toTimeString());
+}
+function formatTimestamp(time) {
+    return new Date(time).toLocaleString();
+}
+function formatTimestampShort(time) {
+    var date = new Date(time);
+    return "".concat(date.getFullYear(), "-").concat(date.getMonth() + 1, "-").concat(date.getDate(), " ").concat(date.getHours(), ":").concat(date.getMinutes());
 }
 function formatTimeRelative(time, raw) {
     var difference = Math.abs(time - Date.now());
@@ -209,22 +254,13 @@ function nearbyEnemyTile(unit, dist) {
     return null;
 }
 /** Attempts to parse a Team from the input. */
-function getTeam(team) {
-    if (team in Team && Team[team] instanceof Team)
-        return Team[team];
-    else if (Team.baseTeams.find(function (t) { return t.name.includes(team.toLowerCase()); }))
-        return Team.baseTeams.find(function (t) { return t.name.includes(team.toLowerCase()); });
-    else if (!isNaN(Number(team)))
-        return "\"".concat(team, "\" is not a valid team string. Did you mean \"#").concat(team, "\"?");
-    else if (!isNaN(Number(team.slice(1)))) {
-        var num = Number(team.slice(1));
-        if (num <= 255 && num >= 0 && Number.isInteger(num))
-            return Team.all[Number(team.slice(1))];
-        else
-            return "Team ".concat(team, " is outside the valid range (integers 0-255).");
-    }
-    return "\"".concat(team, "\" is not a valid team string.");
-}
+exports.getTeam = (0, funcs_1.searchFixed)(Team.baseTeams.concat(Team.neoplastic), [
+    function (i, s) { return i.name == s; },
+    function (i, s) { return i.name == s.toLowerCase(); },
+    function (i, s) { return i.emoji == s; },
+    function (i, s) { return i.name.includes(s.toLowerCase()); },
+    function (i, s) { return i.name.includes(s.toLowerCase().replace(" ", "-")); },
+]);
 /** Attempts to parse an Item from the input. */
 exports.getItem = (0, funcs_1.searchFixed)(Vars.content.items().toArray(), [
     function (i, s) { return i.name == s; },
@@ -574,15 +610,19 @@ function neutralGameover() {
         Events.fire(new EventType.GameOverEvent(getEnemyTeam()));
     });
 }
-/** Please validate wavesToSkip to ensure it is not huge */
-function skipWaves(wavesToSkip, runIntermediateWaves) {
+/** Please validate requestedWaves to ensure it is not huge */
+function skipWaves(requestedWaves, runIntermediateWaves) {
+    var winWave = Vars.state.rules.winWave;
+    if (winWave <= 0)
+        winWave = Infinity;
+    var wavesToSkip = Math.min(requestedWaves, winWave - Vars.state.wave);
     if (runIntermediateWaves) {
         for (var i = 0; i < wavesToSkip; i++) {
             Vars.logic.skipWave();
         }
     }
     else {
-        Vars.state.wave += wavesToSkip - 1;
+        Vars.state.wave += (wavesToSkip - 1);
         Vars.logic.skipWave();
     }
 }
@@ -645,16 +685,18 @@ function processChat(player, message, effects) {
     var fishPlayer = players_1.FishPlayer.get(player);
     var highlight = fishPlayer.highlight;
     var filterTripText;
-    var suspicious = fishPlayer.joinsLessThan(3);
+    var suspicious = fishPlayer.suspicionLevel() == 3;
     if ((!fishPlayer.hasPerm("bypassChatFilter") || fishPlayer.chatStrictness == "strict")
         && (filterTripText = matchFilter(message, fishPlayer.chatStrictness, suspicious))) {
         if (effects) {
             if (suspicious && removeFoosChars(message).split(" ")
                 .map(function (w) { return w.replace(/[-_.^*,]/g, ""); })
                 .some(function (w) { return config_1.bannedWords.autoWhack.includes(w); })) {
-                logHTrip(fishPlayer, "bad words in chat", "message: `".concat(message, "`"));
-                fishPlayer.muted = true;
-                void fishPlayer.stop("automod", globals_1.maxTime, "Automatic stop due to suspicious activity", false);
+                if (!fishPlayer.muted) {
+                    logHTrip(fishPlayer, "bad words in chat", "message: `".concat(message, "`"));
+                    fishPlayer.muted = true;
+                    void fishPlayer.stop("automod", globals_1.maxTime, "Automatic stop due to suspicious activity", false);
+                }
             }
             Log.info("Censored message from player ".concat(player.name, ": \"").concat((0, funcs_1.escapeStringColorsServer)(message), "\"; contained \"").concat(filterTripText, "\""));
             players_1.FishPlayer.messageStaff("[yellow]Censored message from player ".concat(fishPlayer.cleanedName, ": \"").concat(message, "\" contained \"").concat(filterTripText, "\""));
@@ -689,14 +731,20 @@ var replacements = [
     //Gamemodes
     ["attack", "sandbox", "pvp", "hexed", "survival"],
     //teams
-    ["crux", "sharded", "malis", "neoplastic"]
+    ["crux", "sharded", "malis", "neoplastic"],
+    //maps
+    ["rampant", "harbor war", "cave canal", "acheron", "wolframfestung", "avast", "fallen omura", "assault"],
+    //aquatic animals
+    ["fish", "shark", "whale", "dolphin", "salmon", "tuna", "squid", "jellyfish", "turtle"],
+    //antonym adjectives
+    ["fast", "slow"], ["big", "little"], ["hot", "cold"], ["hard", "easy", "difficult", "ez"], ["hello", "bye"],
 ].map(function (set) { return [set, new RegExp("\\b(?:".concat(set.join("|"), ")(e?s?(?:i?gone)?)\\b"), 'g')]; });
 var foolCounter = 0;
 exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
     var e_5, _a;
     var cleanedMessage = removeFoosChars(message);
     setShuffle: {
-        if (foolCounter < 5) {
+        if (foolCounter < 8) {
             //Skip the next 5 messages no matter what
             foolCounter++;
             break setShuffle;
@@ -719,7 +767,7 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
             finally { if (e_5) throw e_5.error; }
         }
         if (replacedMessage !== cleanedMessage) {
-            if (foolCounter < 7) {
+            if (foolCounter < 11) {
                 //Skip the next 2 messages that would get altered
                 foolCounter++;
                 break setShuffle;
@@ -731,11 +779,11 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
             break setShuffle;
         }
     }
-    if (Math.random() < 0.02) {
+    if (Math.random() < 0.01) {
         return cleanedMessage.split("").reverse().join("");
         // eslint-disable-next-line no-dupe-else-if
     }
-    else if (Math.random() < 0.02) {
+    else if (Math.random() < 0.01) {
         return "[scarlet]I really hope everyone is having a fun time :} <3";
     }
     else if (Math.random() < 0.005) {
@@ -1044,6 +1092,111 @@ function applyEffectMode(mode, unit, ticks) {
             }
             finally { if (e_6) throw e_6.error; }
         }
+    }
+}
+function handleError(err, sender, outputFail, context) {
+    if (err instanceof commands_1.CommandError) {
+        //If the error is a command error, then just outputFail
+        outputFail(err.data, sender);
+    }
+    else if (err === menus_1.Cancel) {
+        //Menu cancelled, do nothing
+        return;
+    }
+    else {
+        sender.sendMessage("[scarlet]\u274C An error occurred while executing the command!");
+        if (sender.hasPerm("seeErrorMessages"))
+            sender.sendMessage((0, funcs_1.parseError)(err));
+        Log.err(context ?
+            "Unhandled error in command execution: ".concat(context)
+            : "Unhandled error in command execution.");
+        Log.err(err);
+        if (typeof err == "object" && err != null && "stack" in err)
+            Log.err(err.stack);
+    }
+}
+function syncManual(player, rules, emptyMap) {
+    if (rules === void 0) { rules = Vars.state.rules; }
+    return new Promise(function (resolve) {
+        Threads.daemon(function () {
+            Call.worldDataBegin(player.con);
+            var os = new ByteArrayOutputStream();
+            var stream = new DataOutputStream(new FastDeflaterOutputStream(os));
+            stream.writeUTF(JsonIO.write(rules));
+            stream.writeUTF(JsonIO.write(Vars.state.mapLocales));
+            SaveIO.getSaveWriter().writeStringMap(stream, Vars.state.map.tags);
+            stream.writeInt(Vars.state.wave);
+            stream.writeFloat(Vars.state.wavetime);
+            stream.writeDouble(Vars.state.tick);
+            stream.writeLong(GlobalVars.rand.seed0);
+            stream.writeLong(GlobalVars.rand.seed1);
+            stream.writeInt(player.id);
+            player.write(new Writes(stream));
+            SaveIO.getSaveWriter().writeContentHeader(stream);
+            SaveIO.getSaveWriter().writeContentPatches(stream);
+            if (emptyMap) {
+                //fake world, all the same tile
+                stream.writeShort(emptyMap.width);
+                stream.writeShort(emptyMap.height);
+                var area = emptyMap.width * emptyMap.height;
+                for (var i = 0; i < area;) {
+                    stream.writeShort(emptyMap.floor.id);
+                    stream.writeShort(emptyMap.overlay.id);
+                    var needed = area - i - 1;
+                    if (needed > 255) {
+                        stream.writeByte(255);
+                        i += 256;
+                    }
+                    else {
+                        stream.writeByte(needed);
+                        break;
+                    }
+                }
+                for (var i = 0; i < area;) {
+                    stream.writeShort(emptyMap.build.id);
+                    stream.writeByte(0);
+                    var needed = area - i - 1;
+                    if (needed > 255) {
+                        stream.writeByte(255);
+                        i += 256;
+                    }
+                    else {
+                        stream.writeByte(needed);
+                        break;
+                    }
+                }
+            }
+            else
+                SaveIO.getSaveWriter().writeMap(stream);
+            SaveIO.getSaveWriter().writeTeamBlocks(stream);
+            SaveIO.getSaveWriter().writeMarkers(stream);
+            SaveIO.getSaveWriter().writeCustomChunks(stream, true);
+            stream.close();
+            var data = Object.assign(new Packets.WorldStream(), {
+                stream: new ByteArrayInputStream(os.toByteArray())
+            });
+            player.con.sendStream(data);
+            resolve();
+        });
+    });
+}
+function crashClient(player) {
+    var planetBackground = Object.assign(new Packages.mindustry.graphics.g3d.PlanetParams(), { planet: null });
+    if (Vars.state.rules.planetBackground) {
+        //There are already planet params, need to force sync
+        var rules = Object.assign(Vars.state.rules.copy(), { planetBackground: planetBackground });
+        void syncManual(player, rules, {
+            width: 1,
+            height: 1,
+            floor: Blocks.space,
+            build: Blocks.air,
+            overlay: Blocks.air,
+        });
+        return false;
+    }
+    else {
+        Call.setRule(player.con, "planetBackground", JsonIO.write(planetBackground));
+        return true;
     }
 }
 var sources = [

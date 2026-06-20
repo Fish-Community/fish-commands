@@ -363,6 +363,9 @@ export function searchFixed<T>(options:T[] | (() => T[]), filters: Array<(x:T, q
 		} else return func(_options, query);
 	};
 }
+export function delay(millis:number):Promise<void> {
+	return new Promise(res => Timer.schedule(res, millis / 1000));
+}
 
 export const Duration = {
 	seconds: x => x * 1000,

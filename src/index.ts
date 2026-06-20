@@ -8,7 +8,9 @@ import { registerAll } from "/commands/aggregate";
 import { text } from "/config";
 import { handleTapEvent } from "/frameworks/commands";
 import * as menus from "/frameworks/menus";
+import { Duration } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipJoins, tileHistory } from "/globals";
+import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
@@ -167,7 +169,8 @@ Vars.net.handleServer(SendChatMessageCallPacket, (connection: NetConnection, pac
 
 Events.on(EventType.PlayerChatEvent, (e) => processChat(e.player, e.message, true));
 
-Events.on(EventType.ServerLoadEvent, (_) => {
+Events.on(EventType.ServerLoadEvent, () => {
+	Time.mark();
 	const clientHandler = Vars.netServer.clientCommands;
 	const serverHandler = ServerControl.instance.handler;
 
@@ -182,7 +185,7 @@ Events.on(EventType.ServerLoadEvent, (_) => {
 
 	// Mute muted players
 	Vars.netServer.admins.addChatFilter((player, message) => processChat(player, message));
-
+	// Vars.netServer.admins.addChatFilter((p, message) => FishPlayer.get(p).hasPerm("member") ? message : foolifyChat(message));
 	// Action filters
 	Vars.netServer.admins.addActionFilter((action:PlayerAction) => {
 		const player = action.player;
@@ -200,8 +203,11 @@ Events.on(EventType.ServerLoadEvent, (_) => {
 					action: "picked up",
 					type: action.tile!.block()?.name ?? "nothing",
 				});
-			} else if(action.type === Administration.ActionType.control && !action.unit?.spawnedByCore && Date.now() < fishP.blockedFromUnitsUntil){
-				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from controlling units for ${formatTimeRelative(fishP.blockedFromUnitsUntil, true)}`);
+			} else if(action.type === Administration.ActionType.control && !action.unit?.spawnedByCore && Date.now() < fishP.blockedFromPossessingUnitsUntil){
+				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from controlling units for ${formatTimeRelative(fishP.blockedFromPossessingUnitsUntil, true)}`);
+				return false;
+			} else if(action.type === Administration.ActionType.commandUnits && Date.now() < fishP.blockedFromCommandingUnitsUntil){
+				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from commanding units for ${formatTimeRelative(fishP.blockedFromCommandingUnitsUntil, true)}`);
 				return false;
 			} else if(action.type === Administration.ActionType.pingLocation && action.pingText && action.pingText.length < Vars.maxPingTextLength){
 				const fishP = FishPlayer.get(action.player);
@@ -238,8 +244,6 @@ Events.on(EventType.ServerLoadEvent, (_) => {
 		Log.err(err);
 	}
 
-	FishEvents.fire("dataLoaded", []);
-
 	Runtime.getRuntime().addShutdownHook(new Thread(() => {
 		try {
 			FishPlayer.uploadAll();
@@ -253,6 +257,36 @@ Events.on(EventType.ServerLoadEvent, (_) => {
 		Log.info("Saved on exit.");
 	}));
 
+	Vars.netServer.assigner = (player, players) => {
+		if(Vars.state.rules.pvp){
+			//find team with minimum amount of players and auto-assign player to that.
+			const fishP = FishPlayer.get(player);
+			let preferredTeam: Team | null = null;
+			if(fishP.restoreTeam && (Date.now() - fishP.restoreTeam[1] < Duration.minutes(5)) && fishP.restoreTeam[2] == PartialMapRun.current?.startTime)
+				preferredTeam = fishP.restoreTeam[0];
+			const re = Vars.state.teams.getActive().select(data => !(
+				(Vars.state.rules.waveTeam == data.team && Vars.state.rules.waves) ||
+				!data.hasCore() ||
+				data.team == Team.derelict ||
+				!data.team.rules().protectCores
+			)).min(floatf(data => {
+				//Only if the team is valid
+				if(data.team == preferredTeam) return -1;
+				let count = 0;
+				players.forEach(other => {
+					if(other.team() == data.team && other != player){
+						count ++;
+					}
+				});
+				return count + Mathf.random(-0.1, 0.1);
+			}));
+			return re == null ? Vars.state.rules.defaultTeam : re.team;
+		} else {
+			return Vars.state.rules.defaultTeam;
+		}
+	};
+
+	Log.info("fish-commands: initialized in @ms (incl previous)", Time.elapsed());
 });
 
 // Keeps track of any action performed on a tile for use in tilelog.
@@ -290,3 +324,8 @@ Events.on(EventType.WorldLoadEvent, () => FishPlayer.onGameBegin());
 Events.on(EventType.PlayerChatEvent, e => {
 	FishPlayer.onPlayerChat(e.player, e.message);
 });
+Events.on(EventType.PlayEvent, () => {
+	fishState.startTime = Date.now();
+});
+
+Log.info("fish-commands: parsing done in @ms", Date.now() - (this as any)._startTime);

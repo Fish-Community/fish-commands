@@ -21,9 +21,13 @@ export function initializeTimers(){
 		const file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
 		Core.app.post(() => {
 			Time.mark();
+			Time.mark();
+			Time.mark();
 			SaveIO.save(file);
+			Log.debug("SaveIO @", Time.elapsed());
 			FishPlayer.saveAll();
 			FishPlayer.uploadAll();
+			Log.debug("Save/upload @", Time.elapsed());
 			Call.sendMessage('[#4fff8f9f]Game saved.');
 			FishEvents.fire("saveData", []);
 			Log.debug("autosave on main thread @", Time.elapsed());
@@ -88,7 +92,7 @@ export function initializeTimers(){
 	}, 0, 1);
 	Timer.schedule(() => {
 		FishPlayer.validateVotekickSession();
-	}, 0, 0.5);
+	}, 0, 0.3);
 }
 Timer.schedule(() => {
 	updateMaps()

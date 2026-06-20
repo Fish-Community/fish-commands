@@ -3,6 +3,39 @@
 Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains timers that run code at regular intervals.
 */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -17,7 +50,7 @@ var __values = (this && this.__values) || function(o) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeTimers = initializeTimers;
 var api_1 = require("/api");
-var config = require("/config");
+var config = __importStar(require("/config"));
 var config_1 = require("/config");
 var files_1 = require("/files");
 var funcs_1 = require("/funcs");
@@ -33,9 +66,13 @@ function initializeTimers() {
         var file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
         Core.app.post(function () {
             Time.mark();
+            Time.mark();
+            Time.mark();
             SaveIO.save(file);
+            Log.debug("SaveIO @", Time.elapsed());
             players_1.FishPlayer.saveAll();
             players_1.FishPlayer.uploadAll();
+            Log.debug("Save/upload @", Time.elapsed());
             Call.sendMessage('[#4fff8f9f]Game saved.');
             globals_1.FishEvents.fire("saveData", []);
             Log.debug("autosave on main thread @", Time.elapsed());
@@ -110,7 +147,7 @@ function initializeTimers() {
     }, 0, 1);
     Timer.schedule(function () {
         players_1.FishPlayer.validateVotekickSession();
-    }, 0, 0.5);
+    }, 0, 0.3);
 }
 Timer.schedule(function () {
     (0, files_1.updateMaps)()
