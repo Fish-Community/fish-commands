@@ -15,6 +15,7 @@ export type Language = {
 export const languageCache = new ObjectMap<string, Language>();
 let lastFailure = 0;
 export const playerLanguageCache = new ObjectMap<Language, Seq<Player>>();
+/** Only modify on main thread */
 export const translationCache = new ObjectMap<string, string>();
 
 export function initializeTranslation(){
@@ -106,8 +107,8 @@ export async function handleMessage(sender: Player, message: string) {
 				return;
 			}
 
-			translationCache.put(cacheKey, result);
 			sendTranslatedMessage(sender, message, result, recipients);
+			Core.app.post(() => translationCache.put(cacheKey, result));
 		});
 	});
 }
@@ -169,7 +170,7 @@ function fetchLanguageCache() {
 	return new Promise<void>((resolve, reject) => {
 		const req = Http.get(translationApiUrl + "/api/languages");
 		req.error(reject);
-		req.submit(t => {
+		req.submit(t => Core.app.post(() => {
 			try {
 				const parsed = JSON.parse(t.getResultAsString()) as Language[];
 				languageCache.clear();
@@ -180,6 +181,6 @@ function fetchLanguageCache() {
 			} catch(err){
 				reject(err);
 			}
-		});
+		}));
 	});
 }

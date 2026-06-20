@@ -63,6 +63,7 @@ var utils_1 = require("/utils");
 exports.languageCache = new ObjectMap();
 var lastFailure = 0;
 exports.playerLanguageCache = new ObjectMap();
+/** Only modify on main thread */
 exports.translationCache = new ObjectMap();
 function initializeTranslation() {
     var _this = this;
@@ -196,8 +197,8 @@ function handleMessage(sender, message) {
                                 }
                                 return;
                             }
-                            exports.translationCache.put(cacheKey, result);
                             sendTranslatedMessage(sender, message, result, recipients);
+                            Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
                         });
                     });
                     return [2 /*return*/];
@@ -274,7 +275,7 @@ function fetchLanguageCache() {
     return new Promise(function (resolve, reject) {
         var req = Http.get(config_1.translationApiUrl + "/api/languages");
         req.error(reject);
-        req.submit(function (t) {
+        req.submit(function (t) { return Core.app.post(function () {
             var e_6, _a;
             try {
                 var parsed = JSON.parse(t.getResultAsString());
@@ -297,6 +298,6 @@ function fetchLanguageCache() {
             catch (err) {
                 reject(err);
             }
-        });
+        }); });
     });
 }
