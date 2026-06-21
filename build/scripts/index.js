@@ -183,7 +183,7 @@ Vars.net.handleServer(SendChatMessageCallPacket, function (connection, packet) {
         var filtered = Vars.netServer.admins.filterMessage(player, message);
         if (filtered == null)
             return;
-        void translation.handleMessage(player, message);
+        void translation.handleMessage(player, filtered);
     }
     else if (response.type != CommandHandler.ResponseType.valid) {
         var text_1 = Vars.netServer.invalidHandler.handle(player, response);
