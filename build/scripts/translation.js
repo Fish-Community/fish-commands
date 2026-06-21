@@ -67,7 +67,7 @@ exports.playerLanguageCache = new ObjectMap();
 exports.translationCache = new ObjectMap();
 function initializeTranslation() {
     var _this = this;
-    void fetchLanguageCache();
+    void fetchLanguageCache().catch(Log.err);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     Events.on(EventType.PlayerJoin, function (e) { return __awaiter(_this, void 0, void 0, function () {
         var fishPlayer, language, err_1;
@@ -275,29 +275,31 @@ function fetchLanguageCache() {
     return new Promise(function (resolve, reject) {
         var req = Http.get(config_1.translationApiUrl + "/api/languages");
         req.error(reject);
-        req.submit(function (t) { return Core.app.post(function () {
-            var e_6, _a;
-            try {
-                var parsed = JSON.parse(t.getResultAsString());
-                exports.languageCache.clear();
+        req.submit(function (t) {
+            var parsed = JSON.parse(t.getResultAsString());
+            Core.app.post(function () {
+                var e_6, _a;
                 try {
-                    for (var parsed_1 = __values(parsed), parsed_1_1 = parsed_1.next(); !parsed_1_1.done; parsed_1_1 = parsed_1.next()) {
-                        var language = parsed_1_1.value;
-                        exports.languageCache.put(language.code.toLowerCase(), language);
-                    }
-                }
-                catch (e_6_1) { e_6 = { error: e_6_1 }; }
-                finally {
+                    exports.languageCache.clear();
                     try {
-                        if (parsed_1_1 && !parsed_1_1.done && (_a = parsed_1.return)) _a.call(parsed_1);
+                        for (var parsed_1 = __values(parsed), parsed_1_1 = parsed_1.next(); !parsed_1_1.done; parsed_1_1 = parsed_1.next()) {
+                            var language = parsed_1_1.value;
+                            exports.languageCache.put(language.code.toLowerCase(), language);
+                        }
                     }
-                    finally { if (e_6) throw e_6.error; }
+                    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                    finally {
+                        try {
+                            if (parsed_1_1 && !parsed_1_1.done && (_a = parsed_1.return)) _a.call(parsed_1);
+                        }
+                        finally { if (e_6) throw e_6.error; }
+                    }
+                    resolve();
                 }
-                resolve();
-            }
-            catch (err) {
-                reject(err);
-            }
-        }); });
+                catch (err) {
+                    reject(err);
+                }
+            });
+        });
     });
 }

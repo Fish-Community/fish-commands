@@ -19,7 +19,7 @@ export const playerLanguageCache = new ObjectMap<Language, Seq<Player>>();
 export const translationCache = new ObjectMap<string, string>();
 
 export function initializeTranslation(){
-	void fetchLanguageCache();
+	void fetchLanguageCache().catch(Log.err);
 
 	// eslint-disable-next-line @typescript-eslint/no-misused-promises
 	Events.on(EventType.PlayerJoin, async (e) => {
@@ -170,17 +170,19 @@ function fetchLanguageCache() {
 	return new Promise<void>((resolve, reject) => {
 		const req = Http.get(translationApiUrl + "/api/languages");
 		req.error(reject);
-		req.submit(t => Core.app.post(() => {
-			try {
-				const parsed = JSON.parse(t.getResultAsString()) as Language[];
-				languageCache.clear();
-				for (const language of parsed){
-					languageCache.put(language.code.toLowerCase(), language);
+		req.submit(t => {
+			const parsed = JSON.parse(t.getResultAsString()) as Language[];
+			Core.app.post(() => {
+				try {
+					languageCache.clear();
+					for (const language of parsed){
+						languageCache.put(language.code.toLowerCase(), language);
+					}
+					resolve();
+				} catch(err){
+					reject(err);
 				}
-				resolve();
-			} catch(err){
-				reject(err);
-			}
-		}));
+			});
+		});
 	});
 }
