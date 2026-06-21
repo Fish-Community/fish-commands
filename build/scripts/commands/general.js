@@ -206,7 +206,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             _d = args;
                             return [4 /*yield*/, menus_1.Menu.menu("Translation Language", "Select a language. Messages will be translated to this language.", translation_1.languageCache.values().toSeq()
                                     .sort(Packages.java.util.Comparator({ compare: function (a, b) {
-                                        return Packages.java.lang.String(a.code).compareTo(b);
+                                        return Packages.java.lang.String(a.code).compareTo(Packages.java.lang.String(b));
                                     } }))
                                     .sort(floatf(function (l) { return l.code == "en" ? -2 : l.code == "ru" ? -1 : 0; }))
                                     .toArray(), sender, {

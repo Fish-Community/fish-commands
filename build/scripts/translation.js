@@ -226,6 +226,8 @@ function fetchLanguageCache() {
                     try {
                         for (var parsed_1 = __values(parsed), parsed_1_1 = parsed_1.next(); !parsed_1_1.done; parsed_1_1 = parsed_1.next()) {
                             var language = parsed_1_1.value;
+                            if (language.code == "auto")
+                                continue;
                             exports.languageCache.put(language.code.toLowerCase(), language);
                         }
                     }

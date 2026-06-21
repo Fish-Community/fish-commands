@@ -80,7 +80,7 @@ export const commands = commandList({
 				"Select a language. Messages will be translated to this language.",
 				languageCache.values().toSeq()
 					.sort(Packages.java.util.Comparator({ compare(a:Language, b:Language){
-						return Packages.java.lang.String(a.code).compareTo(b);
+						return Packages.java.lang.String(a.code).compareTo(Packages.java.lang.String(b));
 					}}))
 					.sort(floatf(l => l.code == "en" ? -2 : l.code == "ru" ? -1 : 0))
 					.toArray(),

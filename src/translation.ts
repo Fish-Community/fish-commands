@@ -133,6 +133,7 @@ function fetchLanguageCache() {
 				try {
 					languageCache.clear();
 					for (const language of parsed){
+						if(language.code == "auto") continue;
 						languageCache.put(language.code.toLowerCase(), language);
 					}
 					resolve();
