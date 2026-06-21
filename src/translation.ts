@@ -161,7 +161,7 @@ function requestTranslate(message:string, lang:string){
 		req.timeout = 2000; //low timeout to not lag chat too much
 		req.error(e => {
 			Log.err('request error');
-			Log.err(`Network error in translation request: ${e.response.getResultAsString()}`);
+			Log.err(`Network error in translation request: ${"response" in e ? e.response.getResultAsString() : e}`);
 			reject();
 		});
 		Log.info('request submitting');
