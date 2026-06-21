@@ -5,7 +5,7 @@ This file contains most in-game chat commands that can be run by untrusted playe
 
 import { Achievement, Achievements } from "/achievements";
 import * as api from "/api";
-import { FColor, FishServer, Gamemode, rules, text } from "/config";
+import { campaigns as campaignConfig, FColor, FishServer, Gamemode, rules, text, throwbackMapFileNames } from "/config";
 import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
 import { Cancel, Menu } from "/frameworks/menus";
@@ -14,7 +14,7 @@ import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileH
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
+import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, outputMessage, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
 
 export const commands = commandList({
@@ -904,12 +904,12 @@ Please stop attacking and [lime]build defenses[] first!`
 		perm: Perm.none,
 		handler({output}){
 			output(`\
-[yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.
+[yellow]Use [white]/nextmap [lightgray][[map name] [yellow]to vote on a map.
 
 [blue]Available maps:
 _________________________
 ${Vars.maps.customMaps().toArray().map(map =>
-`[yellow]${map.name()}`
+	`[yellow]${map.name()}`
 ).join("\n")}`
 			);
 		}
@@ -928,6 +928,101 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		const voteDuration = Duration.minutes(1.5);
 		let task: TimerTask | null = null;
 
+		const isThrowbackFile = (file:Fi) => throwbackMapFileNames.includes(file.name());
+		const throwbackMaps = () => throwbackMapFileNames
+			.map(f => Vars.maps.customMaps().find(m => m.file.name() == f))
+			.filter((m): m is MMap => m != null);
+		const normalMaps = () => Vars.maps.customMaps().toArray().filter(m => !isThrowbackFile(m.file));
+
+		async function showMapDetails(target: FishPlayer, map: MMap): Promise<"vote" | "back"> {
+			const res = await Menu.buttons(
+				target,
+				map.name(),
+				`[accent]Description: [white]${map.description()}
+[accent]Author: [white]${map.author()}
+[accent]Fastest Time: [white]${formatTime(FMap.getCreate(map)!.stats().shortestTime)}
+[accent]Runs: [white]${FMap.getCreate(map)!.stats().allRunCount}
+[accent]Winrate: [white]${(FMap.getCreate(map)!.stats().winRate * 100).toFixed(2)}%`,
+				[[
+					{ data: "vote" as const, text: "[green]Vote for this Map" }
+				], [
+					{ data: "back" as const, text: "[red]Back" }
+				]],
+				{ onCancel: "null" }
+			);
+			return res ?? "back";
+		}
+
+		async function pickMapFromList(target: FishPlayer, title: string, maps: MMap[]): Promise<MMap | null> {
+			const map = await Menu.pagedList(
+				target,
+				title,
+				"Select a map to view more information.",
+				maps,
+				{ optionStringifier: map => map.name(), rowsPerPage: 10, columns: 1 }
+			);
+			const action = await showMapDetails(target, map);
+			if(action === "vote") return map;
+			return null;
+		}
+
+		async function currentMenu(target: FishPlayer): Promise<MMap> {
+			const result = await Menu.menu(
+				"Select a map",
+				`[accent]---Current Map---
+Map Name: [white]${Vars.state.map.name()}
+[accent]Map Author: [white]${Vars.state.map.author()}
+Fastest Time: [white]${formatTime(FMap.getCreate(Vars.state.map)!.stats().shortestTime)}
+Current Time: [white]${formatTime(PartialMapRun.current?.duration() ?? FMap.getCreate(Vars.state.map)!.runs.at(-1)?.duration() ?? 0)}`,
+				["[green]Current Maps", "[yellow]Throwback Maps", "[orange]Campaigns"],
+				target,
+				{ columns: 1, includeCancel: "Close" }
+			);
+			switch (result) {
+				case '[green]Current Maps': {
+					const picked = await pickMapFromList(target, "Current Maps", normalMaps());
+					if(picked) return picked;
+					return currentMenu(target);
+				}
+				case '[yellow]Throwback Maps': {
+					const throwback = throwbackMaps();
+					if(throwback.length == 0) fail("No throwback maps are currently available.");
+					const picked = await pickMapFromList(target, "Throwback Maps", throwback);
+					if(picked) return picked;
+					return currentMenu(target);
+				}
+				case '[orange]Campaigns': {
+					if(campaignConfig.length == 0) fail("No campaigns are currently available.");
+					const campaign = await Menu.pagedList(
+						target,
+						"Campaigns",
+						"Select a campaign to view its maps.",
+						campaignConfig,
+						{ optionStringifier: c => c.name, rowsPerPage: 10, columns: 1 }
+					);
+					const campaignMaps = campaign.mapFileNames
+						.map(f => Vars.maps.customMaps().find(m => m.file.name() == f))
+						.filter((m): m is MMap => m != null);
+					if(campaignMaps.length == 0) fail(`Campaign "${campaign.name}" has no available maps.`);
+					const picked = await pickMapFromList(target, `Campaign: ${campaign.name}`, campaignMaps);
+					if(picked) return picked;
+					return currentMenu(target);
+				}
+			};
+		}
+
+		function sendVote(sender:FishPlayer, map:MMap | Random){
+			votes.set(sender, map);
+			if(voteEndTime == -1){
+				if((Date.now() - lastVoteTime) < Duration.minutes(1)) fail(`Please wait 1 minute before starting a new map vote.`);
+				startVote();
+				Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] started a map vote, and voted for [yellow]${map.name()}[cyan]. Use [white]/nextmap ${map.plainName()}[] to add your vote, or run [white]/maps[] to see other available maps.`);
+			} else {
+				Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] voted for [yellow]${map.name()}[cyan]. Time left: [scarlet]${formatTimeRelative(voteEndTime, true)}`);
+				showVotes();
+			}
+		}
+
 		function resetVotes(){
 			votes.clear();
 			voteEndTime = -1;
@@ -943,7 +1038,7 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		function showVotes(){
 			Call.sendMessage(`\
 [green]Current votes:
-------------------------------
+-----------------------------
 ${getMapData().map(({key:map, value:votes}) =>
 `[cyan]${map.name()}[yellow]: ${votes}`
 ).toString("\n")}`
@@ -995,26 +1090,18 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		Events.on(EventType.ServerLoadEvent, resetVotes);
 
 		return {
-			args: ['map:mapOrRandom'],
-			description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
+			args: ['map:mapOrRandom?'],
+			description: 'Allows you to vote for the next map.',
 			perm: Perm.play,
 			data: {votes, voteEndTime: () => voteEndTime, resetVotes, endVote},
 			requirements: [Req.cooldown(10_000)],
-			handler({args, sender}){
-				const map = args.map === "random" ? random : args.map;
+			async handler({args, sender}){
 				if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
 				if(votes.get(sender)) fail(`You have already voted.`);
-				
-				if(voteEndTime == -1){
-					if((Date.now() - lastVoteTime) < Duration.minutes(1)) fail(`Please wait 1 minute before starting a new map vote.`);
-					startVote();
-					votes.set(sender, map);
-					Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] started a map vote, and voted for [yellow]${map.name()}[cyan]. Use [white]/nextmap ${map.plainName()}[] to add your vote, or run [white]/maps[] to see other available maps.`);
-				} else {
-					votes.set(sender, map);
-					Call.sendMessage(`[cyan]Next Map Vote: ${sender.name}[cyan] voted for [yellow]${map.name()}[cyan]. Time left: [scarlet]${formatTimeRelative(voteEndTime, true)}`);
-					showVotes();
-				}
+
+				args.map ??= await currentMenu(sender);
+				const map = args.map === "random" ? random : args.map;
+				sendVote(sender, map);
 			}
 		};
 	}),

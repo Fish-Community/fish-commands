@@ -67,6 +67,7 @@ class Rules {
 	attackMode: boolean;
 	pvp: boolean;
 	editor: boolean;
+	tags: ObjectMap<string, string>;
 	copy(): Rules;
 	dynamicColor: Color;
 	planetBackground: any;

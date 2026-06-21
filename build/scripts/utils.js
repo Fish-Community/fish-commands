@@ -612,6 +612,10 @@ function neutralGameover() {
 }
 /** Please validate requestedWaves to ensure it is not huge */
 function skipWaves(requestedWaves, runIntermediateWaves) {
+    //Check if the current map has opted out of multi-wave skipping
+    if (Vars.state.rules.tags.get(config_1.noMultiVnwTag) == "true") {
+        requestedWaves = Math.min(requestedWaves, 1);
+    }
     var winWave = Vars.state.rules.winWave;
     if (winWave <= 0)
         winWave = Infinity;

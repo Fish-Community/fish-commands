@@ -753,6 +753,11 @@ const Menus = {
 	registerMenu(listener:BuiltinMenuListener){
 		this.menuListeners.add(listener);
 		return this.menuListeners.size - 1;
+	},
+	textInputListeners: new Seq<BuiltinTextInputListener>(),
+	registerTextInput(listener:BuiltinTextInputListener){
+		this.textInputListeners.add(listener);
+		return this.textInputListeners.size - 1;
 	}
 };
 const programStart = Date.now();
