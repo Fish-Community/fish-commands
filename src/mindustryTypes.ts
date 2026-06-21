@@ -17,7 +17,14 @@ function floatf<T>(func:(input:T) => number):Floatf<T>;
 
 type Floatf<T> = ((input:T) => number) & {__brand: "floatf"};
 
-const Call: any;
+const Call: {
+	menu(target: NetConnection, menuId: number, title: string, message: string, options: string[][]): void;
+	/**
+	 * @param allowEmpty {boolean} Default false
+	 */
+	textInput(target: NetConnection, textInputId: number, title:string, message:string, textLength:number, def:string, numeric:boolean, allowEmpty?:boolean): void;
+	[index: string]: any;
+};
 const Log: {
 	debug(this:void, message:string, ...extra:unknown[]):void;
 	info(this:void, message:string, ...extra:unknown[]):void;
@@ -61,6 +68,9 @@ class Rules {
 	pvp: boolean;
 	editor: boolean;
 	tags: ObjectMap<string, string>;
+	copy(): Rules;
+	dynamicColor: Color;
+	planetBackground: any;
 }
 
 const Vars: {
@@ -86,6 +96,7 @@ const Vars: {
 	maps: Maps;
 	state: {
 		rules: Rules;
+		mapLocales: any;
 		planet: Planet | null;
 		set(state:State):void;
 		gameOver:boolean;
@@ -108,6 +119,7 @@ const Vars: {
 	world: World;
 	maxPingTextLength: number;
 };
+const GlobalVars: any;
 class Teams {
 	active: Seq<TeamData>;
 	getActive(): Seq<TeamData>;
@@ -195,8 +207,10 @@ class Tile {
 }
 const Menus: {
 	registerMenu(listener:BuiltinMenuListener):number;
+	registerTextInput(listener:BuiltinTextInputListener):number;
 };
 type BuiltinMenuListener = (player:mindustryPlayer, option:number) => unknown;
+type BuiltinTextInputListener = (player:mindustryPlayer, text:string | null) => unknown;
 const UnitTypes: Record<string, UnitType>;
 const Sounds: Record<string, Sound>;
 type Sound = any;
@@ -273,9 +287,11 @@ class Team {
 	static malis:Team;
 	static green:Team;
 	static blue:Team;
+	static neoplastic:Team;
 	static all:Team[];
 	static baseTeams:Team[];
 	name:string;
+	emoji:string;
 	active():boolean;
 	isAlive():boolean;
 	data():TeamData;
@@ -346,6 +362,7 @@ class Player {
 	clearUnit():void;
 	checkSpawn():void;
 	getInfo():PlayerInfo;
+	write(writes: Writes):void;
 }
 type mindustryPlayer = Player;
 class Color {
@@ -422,6 +439,7 @@ const Mathf: {
 };
 const SaveIO: {
 	save(file:Fi):void;
+	getSaveWriter():any;
 };
 const Timer: {
 	schedule(func:() => unknown, delaySeconds:number, intervalSeconds?:number, repeatCount?:number):TimerTask;
@@ -478,6 +496,9 @@ class DataOutputStream extends OutputStream {
 	writeShort(v:number):void;
 	writeUTF(s:string):void;
 }
+class FastDeflaterOutputStream extends OutputStream {
+	constructor(stream: OutputStream);
+}
 class DataInputStream extends InputStream {
 	constructor(stream:InputStream);
 	read(b:number[]):number;
@@ -504,6 +525,9 @@ class ByteArrayOutputStream extends OutputStream {
 }
 class ByteArrayInputStream extends InputStream {
 	constructor(bytes:number[]);
+}
+class Writes {
+	constructor(output: DataOutputStream);
 }
 const Http: {
 	post(url:string, content:string):HttpRequest;
@@ -589,6 +613,7 @@ class ObjectIntMapEntry<K> {
 	key:K;
 	value:number;
 }
+class StringMap {}
 class EntityGroup<T> {
 	add(type:T):void
 	copy():Seq<T>;
@@ -717,6 +742,7 @@ class Process {
 
 const Packets: {
 	KickReason: Record<"kick" | "clientOutdated" | "serverOutdated" | "banned" | "gameover" | "recentKick" | "nameInUse" | "idInUse" | "nameEmpty" | "customClient" | "serverClose" | "vote" | "typeMismatch" | "whitelist" | "playerLimit" | "serverRestarting", KickReason>;
+	WorldStream: any;
 };
 type KickReason = { quiet: boolean };
 
@@ -785,6 +811,7 @@ class MMap {
 	width:number;
 	height:number;
 	build:number;
+	tags:StringMap;
 	name():string;
 	author():string;
 	description():string;

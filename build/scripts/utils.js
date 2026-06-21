@@ -74,7 +74,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = void 0;
+exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = exports.getTeam = void 0;
 exports.memoizeChatFilter = memoizeChatFilter;
 exports.formatTime = formatTime;
 exports.formatTimeShort = formatTimeShort;
@@ -85,7 +85,6 @@ exports.formatTimestampShort = formatTimestampShort;
 exports.formatTimeRelative = formatTimeRelative;
 exports.getColor = getColor;
 exports.nearbyEnemyTile = nearbyEnemyTile;
-exports.getTeam = getTeam;
 exports.matchFilter = matchFilter;
 exports.removeFoosChars = removeFoosChars;
 exports.cleanText = cleanText;
@@ -121,6 +120,8 @@ exports.match = match;
 exports.fishCommandsRootDirPath = fishCommandsRootDirPath;
 exports.applyEffectMode = applyEffectMode;
 exports.handleError = handleError;
+exports.syncManual = syncManual;
+exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
@@ -253,22 +254,13 @@ function nearbyEnemyTile(unit, dist) {
     return null;
 }
 /** Attempts to parse a Team from the input. */
-function getTeam(team) {
-    if (team in Team && Team[team] instanceof Team)
-        return Team[team];
-    else if (Team.baseTeams.find(function (t) { return t.name.includes(team.toLowerCase()); }))
-        return Team.baseTeams.find(function (t) { return t.name.includes(team.toLowerCase()); });
-    else if (!isNaN(Number(team)))
-        return "\"".concat(team, "\" is not a valid team string. Did you mean \"#").concat(team, "\"?");
-    else if (!isNaN(Number(team.slice(1)))) {
-        var num = Number(team.slice(1));
-        if (num <= 255 && num >= 0 && Number.isInteger(num))
-            return Team.all[Number(team.slice(1))];
-        else
-            return "Team ".concat(team, " is outside the valid range (integers 0-255).");
-    }
-    return "\"".concat(team, "\" is not a valid team string.");
-}
+exports.getTeam = (0, funcs_1.searchFixed)(Team.baseTeams.concat(Team.neoplastic), [
+    function (i, s) { return i.name == s; },
+    function (i, s) { return i.name == s.toLowerCase(); },
+    function (i, s) { return i.emoji == s; },
+    function (i, s) { return i.name.includes(s.toLowerCase()); },
+    function (i, s) { return i.name.includes(s.toLowerCase().replace(" ", "-")); },
+]);
 /** Attempts to parse an Item from the input. */
 exports.getItem = (0, funcs_1.searchFixed)(Vars.content.items().toArray(), [
     function (i, s) { return i.name == s; },
@@ -1125,6 +1117,90 @@ function handleError(err, sender, outputFail, context) {
         Log.err(err);
         if (typeof err == "object" && err != null && "stack" in err)
             Log.err(err.stack);
+    }
+}
+function syncManual(player, rules, emptyMap) {
+    if (rules === void 0) { rules = Vars.state.rules; }
+    return new Promise(function (resolve) {
+        Threads.daemon(function () {
+            Call.worldDataBegin(player.con);
+            var os = new ByteArrayOutputStream();
+            var stream = new DataOutputStream(new FastDeflaterOutputStream(os));
+            stream.writeUTF(JsonIO.write(rules));
+            stream.writeUTF(JsonIO.write(Vars.state.mapLocales));
+            SaveIO.getSaveWriter().writeStringMap(stream, Vars.state.map.tags);
+            stream.writeInt(Vars.state.wave);
+            stream.writeFloat(Vars.state.wavetime);
+            stream.writeDouble(Vars.state.tick);
+            stream.writeLong(GlobalVars.rand.seed0);
+            stream.writeLong(GlobalVars.rand.seed1);
+            stream.writeInt(player.id);
+            player.write(new Writes(stream));
+            SaveIO.getSaveWriter().writeContentHeader(stream);
+            SaveIO.getSaveWriter().writeContentPatches(stream);
+            if (emptyMap) {
+                //fake world, all the same tile
+                stream.writeShort(emptyMap.width);
+                stream.writeShort(emptyMap.height);
+                var area = emptyMap.width * emptyMap.height;
+                for (var i = 0; i < area;) {
+                    stream.writeShort(emptyMap.floor.id);
+                    stream.writeShort(emptyMap.overlay.id);
+                    var needed = area - i - 1;
+                    if (needed > 255) {
+                        stream.writeByte(255);
+                        i += 256;
+                    }
+                    else {
+                        stream.writeByte(needed);
+                        break;
+                    }
+                }
+                for (var i = 0; i < area;) {
+                    stream.writeShort(emptyMap.build.id);
+                    stream.writeByte(0);
+                    var needed = area - i - 1;
+                    if (needed > 255) {
+                        stream.writeByte(255);
+                        i += 256;
+                    }
+                    else {
+                        stream.writeByte(needed);
+                        break;
+                    }
+                }
+            }
+            else
+                SaveIO.getSaveWriter().writeMap(stream);
+            SaveIO.getSaveWriter().writeTeamBlocks(stream);
+            SaveIO.getSaveWriter().writeMarkers(stream);
+            SaveIO.getSaveWriter().writeCustomChunks(stream, true);
+            stream.close();
+            var data = Object.assign(new Packets.WorldStream(), {
+                stream: new ByteArrayInputStream(os.toByteArray())
+            });
+            player.con.sendStream(data);
+            resolve();
+        });
+    });
+}
+function crashClient(player) {
+    var planetBackground = Object.assign(new Packages.mindustry.graphics.g3d.PlanetParams(), { planet: null });
+    if (Vars.state.rules.planetBackground) {
+        //There are already planet params, need to force sync
+        var rules = Object.assign(Vars.state.rules.copy(), { planetBackground: planetBackground });
+        void syncManual(player, rules, {
+            width: 1,
+            height: 1,
+            floor: Blocks.space,
+            build: Blocks.air,
+            overlay: Blocks.air,
+        });
+        return false;
+    }
+    else {
+        Call.setRule(player.con, "planetBackground", JsonIO.write(planetBackground));
+        return true;
     }
 }
 var sources = [

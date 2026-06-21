@@ -65,7 +65,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listeners = exports.Menu = exports.Cancel = void 0;
+exports.textListeners = exports.listeners = exports.Menu = exports.Cancel = void 0;
 exports.registerListeners = registerListeners;
 var commands_1 = require("/frameworks/commands");
 var funcs_1 = require("/funcs");
@@ -84,8 +84,30 @@ var listeners = {
         var prevCallback = fishSender.activeMenus.shift();
         if (!prevCallback)
             return; //No menu to process, do nothing
+        if (prevCallback.type != "menu")
+            return;
         isInMenuCallback = true;
         prevCallback.callback(option);
+        isInMenuCallback = false;
+    },
+    none: function (player, option) {
+        //do nothing
+    }
+};
+/** Stores a mapping from name to the numeric id of a listener that has been registered. */
+var registeredTextListeners = {};
+exports.textListeners = registeredTextListeners;
+/** Stores all listeners in use by fish-commands. */
+var textListeners = {
+    generic: function (player, text) {
+        var fishSender = players_1.FishPlayer.get(player);
+        var prevCallback = fishSender.activeMenus.shift();
+        if (!prevCallback)
+            return; //No menu to process, do nothing
+        if (prevCallback.type != "text")
+            return;
+        isInMenuCallback = true;
+        prevCallback.callback(text);
         isInMenuCallback = false;
     },
     none: function (player, option) {
@@ -95,20 +117,33 @@ var listeners = {
 exports.Cancel = Symbol("Cancel");
 /** Registers all listeners, should be called on server load. */
 function registerListeners() {
-    var e_1, _a;
-    var _b;
+    var e_1, _a, e_2, _b;
+    var _c, _d;
     try {
-        for (var _c = __values(Object.entries(listeners)), _d = _c.next(); !_d.done; _d = _c.next()) {
-            var _e = __read(_d.value, 2), key = _e[0], listener = _e[1];
-            (_b = registeredListeners[key]) !== null && _b !== void 0 ? _b : (registeredListeners[key] = Menus.registerMenu(listener));
+        for (var _e = __values(Object.entries(listeners)), _f = _e.next(); !_f.done; _f = _e.next()) {
+            var _g = __read(_f.value, 2), key = _g[0], listener = _g[1];
+            (_c = registeredListeners[key]) !== null && _c !== void 0 ? _c : (registeredListeners[key] = Menus.registerMenu(listener));
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }
     finally {
         try {
-            if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+            if (_f && !_f.done && (_a = _e.return)) _a.call(_e);
         }
         finally { if (e_1) throw e_1.error; }
+    }
+    try {
+        for (var _h = __values(Object.entries(textListeners)), _j = _h.next(); !_j.done; _j = _h.next()) {
+            var _k = __read(_j.value, 2), key = _k[0], listener = _k[1];
+            (_d = registeredTextListeners[key]) !== null && _d !== void 0 ? _d : (registeredTextListeners[key] = Menus.registerTextInput(listener));
+        }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (_j && !_j.done && (_b = _h.return)) _b.call(_h);
+        }
+        finally { if (e_2) throw e_2.error; }
     }
 }
 exports.Menu = {
@@ -119,7 +154,7 @@ exports.Menu = {
         //The target fishPlayer has a property called activeMenu, which stores information about the last menu triggered.
         //If menu() is being called from a menu calback, add it to the front of the queue so it is processed before any other menus.
         //Otherwise, two multi-step menus queued together would alternate, which would confuse the player.
-        target.activeMenus[isInMenuCallback ? "unshift" : "push"]({ callback: function (option) {
+        target.activeMenus[isInMenuCallback ? "unshift" : "push"]({ type: "menu", callback: function (option) {
                 //Additional permission validation could be done here, but the only way that callback() can be called is if the above statement executed,
                 //and on sensitive menus such as the stop menu, the only way to reach that is if menu() was called by the /stop command,
                 //which already checks permissions.
@@ -152,6 +187,42 @@ exports.Menu = {
             return optionStringifier(item);
         }); });
         Call.menu(target.con, registeredListeners.generic, title, description, stringifiedOptions);
+        return promise;
+    },
+    /** Displays a text input menu to a player, returning a Promise. */
+    text: function (title, description, target, _a) {
+        var _b = _a === void 0 ? {} : _a, _c = _b.onCancel, onCancel = _c === void 0 ? "reject" : _c, _d = _b.defaultValue, defaultValue = _d === void 0 ? "" : _d, _e = _b.maxTextLength, maxTextLength = _e === void 0 ? 9999 : _e, _f = _b.positiveIntegersOnly, positiveIntegersOnly = _f === void 0 ? false : _f, _g = _b.allowEmpty, allowEmpty = _g === void 0 ? false : _g;
+        var _h = promise_1.Promise.withResolvers(), promise = _h.promise, reject = _h.reject, resolve = _h.resolve;
+        //The target fishPlayer has a property called activeMenu, which stores information about the last menu triggered.
+        //If menu() is being called from a menu calback, add it to the front of the queue so it is processed before any other menus.
+        //Otherwise, two multi-step menus queued together would alternate, which would confuse the player.
+        target.activeMenus[isInMenuCallback ? "unshift" : "push"]({ type: "text", callback: function (text) {
+                //Additional permission validation could be done here, but the only way that callback() can be called is if the above statement executed,
+                //and on sensitive menus such as the stop menu, the only way to reach that is if menu() was called by the /stop command,
+                //which already checks permissions.
+                //Additionally, the callback is cleared by the generic menu listener after it is executed.
+                try {
+                    if (positiveIntegersOnly && text != null) {
+                        var number = Number(text);
+                        if (isNaN(number)) {
+                            if (onCancel == "reject")
+                                reject(exports.Cancel);
+                            else
+                                resolve(null);
+                        }
+                        else
+                            resolve(number);
+                    }
+                    else if (text == null && onCancel == "reject")
+                        reject(exports.Cancel);
+                    else
+                        resolve(text);
+                }
+                catch (err) {
+                    (0, utils_1.handleError)(err, target, utils_1.outputFail, "".concat(target.cleanedName, " submitted menu \"").concat(title, "\" \"").concat(description, "\""));
+                }
+            } });
+        Call.textInput(target.con, registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
         return promise;
     },
     /** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */

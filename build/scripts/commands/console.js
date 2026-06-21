@@ -143,6 +143,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                             _c.sent();
                             (0, utils_1.logAction)("set rank to ".concat(args.rank.name, " for"), "console", args.player);
                             outputSuccess(f(templateObject_3 || (templateObject_3 = __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), args.player, args.rank));
+                            args.player.sendMessage("[royal]Your rank has been set to ".concat(args.rank.coloredName(), "."));
                             return [2 /*return*/];
                     }
                 });

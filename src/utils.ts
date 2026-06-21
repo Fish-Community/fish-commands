@@ -145,19 +145,13 @@ export function nearbyEnemyTile(unit:Unit, dist:number):Building | null {
 }
 
 /** Attempts to parse a Team from the input. */
-export function getTeam(team:string):Team | string {
-	if(team in Team && Team[team as keyof typeof Team] instanceof Team) return Team[team as keyof typeof Team] as Team;
-	else if(Team.baseTeams.find(t => t.name.includes(team.toLowerCase()))) return Team.baseTeams.find(t => t.name.includes(team.toLowerCase()))!;
-	else if(!isNaN(Number(team))) return `"${team}" is not a valid team string. Did you mean "#${team}"?`;
-	else if(!isNaN(Number(team.slice(1)))){
-		const num = Number(team.slice(1));
-		if(num <= 255 && num >= 0 && Number.isInteger(num))
-			return Team.all[Number(team.slice(1))];
-		else
-			return `Team ${team} is outside the valid range (integers 0-255).`;
-	}
-	return `"${team}" is not a valid team string.`;
-}
+export const getTeam = searchFixed(Team.baseTeams.concat(Team.neoplastic), [
+	(i, s) => i.name == s,
+	(i, s) => i.name == s.toLowerCase(),
+	(i, s) => i.emoji == s,
+	(i, s) => i.name.includes(s.toLowerCase()),
+	(i, s) => i.name.includes(s.toLowerCase().replace(" ", "-")),
+]);
 
 /** Attempts to parse an Item from the input. */
 export const getItem = searchFixed(Vars.content.items().toArray(), [
@@ -942,6 +936,98 @@ export function handleError(err:unknown, sender:FishPlayer, outputFail: (message
 		: `Unhandled error in command execution.`);
 		Log.err(err);
 		if(typeof err == "object" && err != null && "stack" in err) Log.err(err.stack);
+	}
+}
+
+export function syncManual(player: mindustryPlayer, rules = Vars.state.rules, emptyMap?: {
+	width: number;
+	height: number;
+	floor: Block;
+	overlay: Block;
+	build: Block;
+}):Promise<void> {
+	return new Promise(resolve => {
+		Threads.daemon(() => {
+			Call.worldDataBegin(player.con);
+			const os = new ByteArrayOutputStream();
+			const stream = new DataOutputStream(new FastDeflaterOutputStream(os));
+			
+			stream.writeUTF(JsonIO.write(rules));
+			stream.writeUTF(JsonIO.write(Vars.state.mapLocales));
+			SaveIO.getSaveWriter().writeStringMap(stream, Vars.state.map.tags);
+		
+			stream.writeInt(Vars.state.wave);
+			stream.writeFloat(Vars.state.wavetime);
+			stream.writeDouble(Vars.state.tick);
+			stream.writeLong(GlobalVars.rand.seed0);
+			stream.writeLong(GlobalVars.rand.seed1);
+		
+			stream.writeInt(player.id);
+			player.write(new Writes(stream));
+		
+			SaveIO.getSaveWriter().writeContentHeader(stream);
+			SaveIO.getSaveWriter().writeContentPatches(stream);
+			if(emptyMap){
+				//fake world, all the same tile
+				stream.writeShort(emptyMap.width);
+				stream.writeShort(emptyMap.height);
+				const area = emptyMap.width * emptyMap.height;
+				for(let i = 0; i < area;){
+					stream.writeShort(emptyMap.floor.id);
+					stream.writeShort(emptyMap.overlay.id);
+					const needed = area - i - 1;
+					if(needed > 255){
+						stream.writeByte(255);
+						i += 256;
+					} else {
+						stream.writeByte(needed);
+						break;
+					}
+				}
+				for(let i = 0; i < area;){
+					stream.writeShort(emptyMap.build.id);
+					stream.writeByte(0);
+					const needed = area - i - 1;
+					if(needed > 255){
+						stream.writeByte(255);
+						i += 256;
+					} else {
+						stream.writeByte(needed);
+						break;
+					}
+				}
+			} else SaveIO.getSaveWriter().writeMap(stream);
+			SaveIO.getSaveWriter().writeTeamBlocks(stream);
+			SaveIO.getSaveWriter().writeMarkers(stream);
+			SaveIO.getSaveWriter().writeCustomChunks(stream, true);
+
+			stream.close();
+		
+			const data = Object.assign(new Packets.WorldStream(), {
+				stream: new ByteArrayInputStream(os.toByteArray())
+			});
+			player.con.sendStream(data);
+			resolve();
+		});
+	});
+}
+
+export function crashClient(player: mindustryPlayer):boolean {
+	const planetBackground = Object.assign(new Packages.mindustry.graphics.g3d.PlanetParams(), {planet: null});
+	if(Vars.state.rules.planetBackground){
+		//There are already planet params, need to force sync
+		const rules = Object.assign(Vars.state.rules.copy(), { planetBackground });
+		void syncManual(player, rules, {
+			width: 1,
+			height: 1,
+			floor: Blocks.space,
+			build: Blocks.air,
+			overlay: Blocks.air,
+		});
+		return false;
+	} else {
+		Call.setRule(player.con, "planetBackground", JsonIO.write(planetBackground));
+		return true;
 	}
 }
 

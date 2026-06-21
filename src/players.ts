@@ -65,7 +65,11 @@ export class FishPlayer {
 	//Commands framework
 	/** Front-to-back queue of menus to show. */
 	activeMenus: Array<{
+		type: "menu";
 		callback: (option:number) => void;
+	} | {
+		type: "text";
+		callback: (option:string | null) => void;
 	}> = [];
 	/** Mapping from command to usage data. */
 	usageData: Record<string, {

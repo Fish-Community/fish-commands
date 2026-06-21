@@ -1082,7 +1082,7 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 				winner = highestVotedMaps.get(0).key;
 				Call.sendMessage(`[green]Map voting complete! The next map will be [yellow]${winner.name()} [green]with [yellow]${highestVoteCount}[green] votes.`);
 			}
-			if(winner != random) Vars.maps.setNextMapOverride(winner as MMap);
+			Vars.maps.setNextMapOverride(winner == random ? null : (winner as MMap));
 			resetVotes();
 		}
 

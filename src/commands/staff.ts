@@ -8,14 +8,14 @@ import { Gamemode, Mode, rules, stopAntiEvadeTime } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { command, commandList, fail, Perm, Req } from "/frameworks/commands";
-import { Menu } from "/frameworks/menus";
-import { crash, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from "/funcs";
+import { listeners, Menu } from "/frameworks/menus";
+import { crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals";
 import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { Label } from "/types";
-import { addToTileHistory, applyEffectMode, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -147,6 +147,10 @@ export const commands = commandList({
 				fail(f`You do not have permission to promote players to rank ${rank}, because your current rank is ${sender.rank}`);
 			if(rank == Rank.pi && !Mode.localDebug) fail(f`Rank ${rank} is immutable.`);
 			if(player.immutable() && !Mode.localDebug) fail(f`Player ${player} is immutable.`);
+			if(rank == player.rank){
+				outputSuccess(f`Player ${player} is already at rank ${rank}.`);
+				return;
+			}
 			if(player == sender && rank.level < sender.rank.level){
 				await Menu.confirmDangerous(
 					sender, 
@@ -156,6 +160,7 @@ export const commands = commandList({
 			await player.setRank(rank);
 			logAction(`set rank to ${rank.name} for`, sender, player);
 			outputSuccess(f`Set rank of player ${player} to ${rank}`);
+			if(player !== sender) player.sendMessage(`[royal]Your rank has been set to ${rank.coloredName()}.`);
 		}
 	},
 
@@ -809,7 +814,7 @@ export const commands = commandList({
 				action: `setblocked`,
 				type: args.block.localizedName
 			});
-			if(!Gamemode.sandbox()) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
+			if(!(Gamemode.sandbox() || Gamemode.testsrv())) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
 			outputSuccess(f`Set block at ${args.x}, ${args.y} to ${args.block}`);
 		}
 	},
@@ -831,7 +836,7 @@ export const commands = commandList({
 				action: `setblocked`,
 				type: args.block.localizedName
 			});
-			if(!Gamemode.sandbox()) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
+			if(!(Gamemode.sandbox() || Gamemode.testsrv())) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
 			outputSuccess(f`Set block at ${x}, ${y} to ${args.block}`);
 		},
 		handler({args, outputSuccess, handleTaps, currentTapMode, f}){
@@ -1202,6 +1207,49 @@ Wave: ${r.wave}`
 			if(initialLength != fmap.runs.length) fail(`Someone else deleted a run, please try again.`);
 			const deleted = fmap.runs.splice(index, 1)[0];
 			outputSuccess(`Deleted run (${formatTimestamp(deleted.startTime)}) with duration ${formatTime(deleted.duration())}.`);
+		}
+	},
+	crash: {
+		args: ["target:player"],
+		description: "Crashes the target player's Mindustry client.",
+		perm: Perm.admin,
+		requirements: [Req.moderate("target", false, "admin")],
+		handler({args: {target}, f, output, outputSuccess}){
+			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
+			if(crashClient(target.player!)){
+				outputSuccess(f`Crashed client of ${target}.`);
+			} else {
+				output(f`Attempted to crash client of ${target}. The crash will only occur once the sync completes.`);
+			}
+		}
+	},
+	yeet: {
+		args: ["target:player", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
+		description: "Sends the target player to a parallel universe.",
+		perm: Perm.admin,
+		requirements: [Req.moderate("target", false, "admin")],
+		async handler({args: {target, ...world}, f, outputSuccess}){
+			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
+			outputSuccess(`Aligning QPUs...`);
+			await syncManual(target.player!, undefined, world);
+			outputSuccess(f`Sent ${target} to a parallel universe.`);
+		}
+	},
+	menuspam: {
+		args: ["target:player"],
+		description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
+		perm: Perm.admin,
+		requirements: [Req.moderate("target", false, "admin")],
+		async handler({args: {target}, f, output, outputSuccess}){
+			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
+			output(`Sending menus.`);
+			for(let i = 0; i < 10; i ++){
+				for(let j = 0; j < 100; j ++){
+					Call.menu(target.con, listeners.generic, "", "", []);
+				}
+				await delay(100);
+			}
+			outputSuccess(f`Spammed ${target} with menus.`);
 		}
 	}
 });
