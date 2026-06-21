@@ -167,7 +167,7 @@ function requestTranslate(message:string, lang:string){
 				Log.err(`Network error in translation request: ${t.getStatus().code} ${result}`);
 				reject();
 			} else {
-				resolve(result);
+				resolve(result.trim());
 			}
 		});
 	});

@@ -265,7 +265,7 @@ function requestTranslate(message, lang) {
                 reject();
             }
             else {
-                resolve(result);
+                resolve(result.trim());
             }
         });
     });
