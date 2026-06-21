@@ -251,9 +251,9 @@ function requestTranslate(message, lang) {
         req.header("from", "auto");
         req.header("to", lang);
         req.header("token", config_1.translationApiToken.string());
-        req.timeout = 2000; //low timeout to not lag chat too much
+        req.timeout = 3500; //low timeout to not lag chat too much
         req.error(function (e) {
-            Log.err("Network error in translation request: ".concat(e.response.getResultAsString()));
+            Log.err("Network error in translation request: ".concat("response" in e ? e.response.getResultAsString() : e));
             reject();
         });
         req.submit(function (t) {
