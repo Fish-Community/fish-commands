@@ -1136,7 +1136,7 @@ exports.commands = (0, commands_1.commandList)({
                 action: "setblocked",
                 type: args.block.localizedName
             });
-            if (!config_1.Gamemode.sandbox())
+            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()))
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(args.x, ",").concat(args.y), sender);
             outputSuccess(f(templateObject_59 || (templateObject_59 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), args.x, args.y, args.block));
         }
@@ -1162,7 +1162,7 @@ exports.commands = (0, commands_1.commandList)({
                 action: "setblocked",
                 type: args.block.localizedName
             });
-            if (!config_1.Gamemode.sandbox())
+            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()))
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(x, ",").concat(y), sender);
             outputSuccess(f(templateObject_61 || (templateObject_61 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), x, y, args.block));
         },
