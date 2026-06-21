@@ -594,6 +594,8 @@ class Seq<T> {
 	retainAll(pred:(item:T) => boolean):Seq<T>;
 	/** @returns whether an item was removed */
 	remove(pred:(item:T) => boolean):boolean;
+	/** @returns whether an item was removed */
+	remove(item:T):boolean;
 	removeAll(pred:(item:T) => boolean):Seq<T>;
 	select(pred:(item:T) => boolean):Seq<T>;
 	find(pred:(item:T) => boolean):T | null;

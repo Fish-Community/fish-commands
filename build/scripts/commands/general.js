@@ -215,8 +215,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             }
                             targetLanguage = (0, translation_1.getLanguageFromCache)(args.language);
                             sender.language = targetLanguage.code;
-                            (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage);
-                            sender.language = targetLanguage.code;
+                            (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage.code);
                             outputSuccess("Your translation language is now set to ".concat(targetLanguage.name, "."));
                             return [2 /*return*/];
                     }

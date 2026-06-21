@@ -162,7 +162,7 @@ exports.heuristics = {
 exports.stopAntiEvadeTime = funcs_1.Duration.minutes(30);
 exports.backendIP = '45.79.202.111:5082';
 exports.translationApiUrl = "https://translate.eradication.fun";
-exports.translationApiToken = new Administration.Config("Translation API Token", "Token to use with the translation API.", "unset");
+exports.translationApiToken = new Administration.Config("translationApiToken", "Token to use with the translation API.", "unset");
 exports.Mode = {
     localDebug: new Fi("config/.debug").exists(),
     noBackend: new Fi("config/.debug").exists() && !exports.backendIP.startsWith("127.0.0.1:"),

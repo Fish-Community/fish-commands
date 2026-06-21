@@ -76,9 +76,7 @@ function initializeTranslation() {
                 case 0:
                     fishPlayer = players_1.FishPlayer.get(e.player);
                     language = getLanguageFromCache(fishPlayer.language || e.player.locale);
-                    if (fishPlayer.language != language.code) {
-                        fishPlayer.language = language.code;
-                    }
+                    fishPlayer.language = language.code;
                     if (!exports.languageCache.isEmpty()) return [3 /*break*/, 4];
                     if (Date.now() - lastFailure < 60000)
                         return [2 /*return*/];
@@ -95,7 +93,7 @@ function initializeTranslation() {
                     lastFailure = Date.now();
                     return [2 /*return*/];
                 case 4:
-                    setPlayerLanguageEntry(e.player, language);
+                    setPlayerLanguageEntry(e.player, language.code);
                     return [2 /*return*/];
             }
         });
@@ -106,7 +104,7 @@ function initializeTranslation() {
 }
 function handleMessage(sender, message) {
     return __awaiter(this, void 0, void 0, function () {
-        var err_2, cleanedMessage, delivered;
+        var err_2, cleanedMessage;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -125,14 +123,13 @@ function handleMessage(sender, message) {
                 case 4:
                     sender.sendMessage(Vars.netServer.chatFormatter.format(sender, message)); //return to sender immediately, they don't need to see their own translation
                     cleanedMessage = Strings.stripGlyphs(Strings.stripColors((0, utils_1.removeFoosChars)(message)));
-                    delivered = new ObjectSet();
                     exports.playerLanguageCache.each(function (lang, players) {
                         var e_1, _a;
                         var formatted = Vars.netServer.chatFormatter.format(sender, message);
-                        var recipients = uniqueRecipients(players, sender, delivered);
+                        var recipients = players.select(function (p) { return p != sender; });
                         if (recipients.isEmpty())
                             return;
-                        if (lang == null || lang.code === "off" || lang.code === "auto" || lang.code === "none" || config_1.translationApiToken.string() == "unset") {
+                        if (lang === "off" || lang === "auto" || lang === "none" || config_1.translationApiToken.string() == "unset") {
                             try {
                                 for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
                                     var player = _c.value;
@@ -148,24 +145,22 @@ function handleMessage(sender, message) {
                             }
                             return;
                         }
-                        var cacheKey = "".concat((lang.code), "\n").concat(cleanedMessage);
+                        var cacheKey = "".concat(lang, "\n").concat(cleanedMessage);
                         var cachedTranslation = exports.translationCache.get(cacheKey);
                         if (cachedTranslation != null) {
                             sendTranslatedMessage(sender, message, cachedTranslation, recipients);
                             return;
                         }
-                        var req = Http.post(config_1.translationApiUrl + "/api/translate", cleanedMessage);
-                        req.header("from", "auto");
-                        req.header("to", lang.code);
-                        req.header("token", config_1.translationApiToken.string());
-                        req.timeout = 2000; //low timeout to not lag chat too much
-                        req.error(function (e) {
+                        requestTranslate(cleanedMessage, lang).then(function (result) {
+                            sendTranslatedMessage(sender, message, result, recipients);
+                            Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
+                        }).catch(function () {
                             var e_2, _a;
                             try {
                                 for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
                                     var player = _c.value;
                                     player.sendMessage(formatted);
-                                } //failed, send it as if nothing changed
+                                }
                             }
                             catch (e_2_1) { e_2 = { error: e_2_1 }; }
                             finally {
@@ -174,31 +169,6 @@ function handleMessage(sender, message) {
                                 }
                                 finally { if (e_2) throw e_2.error; }
                             }
-                            Log.err(e.getMessage());
-                            if (e.response)
-                                Log.err(e.response.getResultAsString());
-                        });
-                        req.submit(function (t) {
-                            var e_3, _a;
-                            var result = t.getResultAsString();
-                            if (t.getStatus().code != 200 || result == message) {
-                                try {
-                                    for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                                        var player = _c.value;
-                                        player.sendMessage(formatted);
-                                    } //bad, send it as if nothing changed
-                                }
-                                catch (e_3_1) { e_3 = { error: e_3_1 }; }
-                                finally {
-                                    try {
-                                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-                                    }
-                                    finally { if (e_3) throw e_3.error; }
-                                }
-                                return;
-                            }
-                            sendTranslatedMessage(sender, message, result, recipients);
-                            Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
                         });
                     });
                     return [2 /*return*/];
@@ -212,36 +182,10 @@ function setPlayerLanguageEntry(player, language) {
     bucket.add(player);
 }
 function removePlayerLanguageEntry(player) {
-    exports.playerLanguageCache.each(function (_, players) {
-        players.remove(function (p) { return p.uuid() === player.uuid(); });
-    });
-}
-function uniqueRecipients(players, sender, delivered) {
-    var e_4, _a;
-    var recipients = new Seq();
-    try {
-        for (var _b = __values(players.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var player = _c.value;
-            var uuid = player.uuid();
-            if (uuid === sender.uuid())
-                continue;
-            if (delivered.contains(uuid))
-                continue;
-            delivered.add(uuid);
-            recipients.add(player);
-        }
-    }
-    catch (e_4_1) { e_4 = { error: e_4_1 }; }
-    finally {
-        try {
-            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-        }
-        finally { if (e_4) throw e_4.error; }
-    }
-    return recipients;
+    exports.playerLanguageCache.each(function (_, players) { return players.remove(player); });
 }
 function sendTranslatedMessage(sender, originalMessage, translatedMessage, recipients) {
-    var e_5, _a;
+    var e_3, _a;
     var formatted = Vars.netServer.chatFormatter.format(sender, originalMessage)
         + "\n[lightgray]Translated: " + translatedMessage + "[]";
     try {
@@ -250,23 +194,21 @@ function sendTranslatedMessage(sender, originalMessage, translatedMessage, recip
             Call.sendMessage(player.con, formatted, originalMessage, sender);
         }
     }
-    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+    catch (e_3_1) { e_3 = { error: e_3_1 }; }
     finally {
         try {
             if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
         }
-        finally { if (e_5) throw e_5.error; }
+        finally { if (e_3) throw e_3.error; }
     }
 }
 function getLanguageFromCache(code) {
+    var _a;
     var normalizedCode = code.toLowerCase();
     if (normalizedCode == "none" || normalizedCode == "off") {
         return { code: "none", name: "Off" };
     }
-    var language = exports.languageCache.get(normalizedCode);
-    if (language != null)
-        return language;
-    return { code: "none", name: "Off" }; //unsupported
+    return (_a = exports.languageCache.get(normalizedCode)) !== null && _a !== void 0 ? _a : { code: "none", name: "Off" }; //unsupported
 }
 function isLanguageAvailable(code) {
     return getLanguageFromCache(code).code != "none";
@@ -278,7 +220,7 @@ function fetchLanguageCache() {
         req.submit(function (t) {
             var parsed = JSON.parse(t.getResultAsString());
             Core.app.post(function () {
-                var e_6, _a;
+                var e_4, _a;
                 try {
                     exports.languageCache.clear();
                     try {
@@ -287,12 +229,12 @@ function fetchLanguageCache() {
                             exports.languageCache.put(language.code.toLowerCase(), language);
                         }
                     }
-                    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                    catch (e_4_1) { e_4 = { error: e_4_1 }; }
                     finally {
                         try {
                             if (parsed_1_1 && !parsed_1_1.done && (_a = parsed_1.return)) _a.call(parsed_1);
                         }
-                        finally { if (e_6) throw e_6.error; }
+                        finally { if (e_4) throw e_4.error; }
                     }
                     resolve();
                 }
@@ -300,6 +242,29 @@ function fetchLanguageCache() {
                     reject(err);
                 }
             });
+        });
+    });
+}
+function requestTranslate(message, lang) {
+    return new Promise(function (resolve, reject) {
+        var req = Http.post(config_1.translationApiUrl + "/api/translate", message);
+        req.header("from", "auto");
+        req.header("to", lang);
+        req.header("token", config_1.translationApiToken.string());
+        req.timeout = 2000; //low timeout to not lag chat too much
+        req.error(function (e) {
+            Log.err("Network error in translation request: ".concat(e.response.getResultAsString()));
+            reject();
+        });
+        req.submit(function (t) {
+            var result = t.getResultAsString();
+            if (t.getStatus().code != 200) {
+                Log.err("Network error in translation request: ".concat(t.getStatus().code, " ").concat(result));
+                reject();
+            }
+            else {
+                resolve(result);
+            }
         });
     });
 }

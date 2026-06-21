@@ -89,9 +89,8 @@ export const commands = commandList({
 
 			const targetLanguage = getLanguageFromCache(args.language);
 			sender.language = targetLanguage.code;
-			setPlayerLanguageEntry(sender.player!, targetLanguage);
+			setPlayerLanguageEntry(sender.player!, targetLanguage.code);
 
-			sender.language = targetLanguage.code;
 			outputSuccess(`Your translation language is now set to ${targetLanguage.name}.`);
 		}
 	},

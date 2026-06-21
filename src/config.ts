@@ -145,7 +145,7 @@ export const stopAntiEvadeTime = Duration.minutes(30);
 export const backendIP = '45.79.202.111:5082';
 export const translationApiUrl = "https://translate.eradication.fun";
 
-export const translationApiToken = new Administration.Config("Translation API Token", "Token to use with the translation API.", "unset");
+export const translationApiToken = new Administration.Config("translationApiToken", "Token to use with the translation API.", "unset");
 
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
