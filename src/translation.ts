@@ -160,10 +160,13 @@ function requestTranslate(message:string, lang:string){
 		req.header("token", translationApiToken.string());
 		req.timeout = 2000; //low timeout to not lag chat too much
 		req.error(e => {
+			Log.err('request error');
 			Log.err(`Network error in translation request: ${e.response.getResultAsString()}`);
 			reject();
 		});
+		Log.info('request submitting');
 		req.submit(t => {
+			Log.info('submit returned');
 			const result = t.getResultAsString();
 
 			if(t.getStatus().code != 200){
