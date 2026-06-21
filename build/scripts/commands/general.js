@@ -204,7 +204,16 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             return [3 /*break*/, 3];
                         case 1:
                             _d = args;
-                            return [4 /*yield*/, menus_1.Menu.menu("Translation Language", "Select a language. Messages will be translated to this language.", translation_1.languageCache.values().toSeq().toArray(), sender, { optionStringifier: function (l) { return "".concat(l.name, " (").concat(l.code, ")"); }, includeCancel: true })];
+                            return [4 /*yield*/, menus_1.Menu.menu("Translation Language", "Select a language. Messages will be translated to this language.", translation_1.languageCache.values().toSeq()
+                                    .sort(Packages.java.util.Comparator({ compare: function (a, b) {
+                                        return Packages.java.lang.String(a.code).compareTo(b);
+                                    } }))
+                                    .sort(floatf(function (l) { return l.code == "en" ? -2 : l.code == "ru" ? -1 : 0; }))
+                                    .toArray(), sender, {
+                                    optionStringifier: function (l) { return "".concat(l.name, " (").concat(l.code, ")"); },
+                                    includeCancel: true,
+                                    columns: 2,
+                                })];
                         case 2:
                             _c = (_d.language = (_f.sent()).code);
                             _f.label = 3;

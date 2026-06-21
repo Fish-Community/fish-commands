@@ -14,7 +14,7 @@ import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileH
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import { getLanguageFromCache, isLanguageAvailable, languageCache, setPlayerLanguageEntry } from "/translation";
+import { getLanguageFromCache, isLanguageAvailable, Language, languageCache, setPlayerLanguageEntry } from "/translation";
 import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
 
@@ -78,9 +78,18 @@ export const commands = commandList({
 			args.language ??= (await Menu.menu(
 				"Translation Language",
 				"Select a language. Messages will be translated to this language.",
-				languageCache.values().toSeq().toArray(),
+				languageCache.values().toSeq()
+					.sort(Packages.java.util.Comparator({ compare(a:Language, b:Language){
+						return Packages.java.lang.String(a.code).compareTo(b);
+					}}))
+					.sort(floatf(l => l.code == "en" ? -2 : l.code == "ru" ? -1 : 0))
+					.toArray(),
 				sender,
-				{ optionStringifier: l => `${l.name} (${l.code})`, includeCancel: true }
+				{
+					optionStringifier: l => `${l.name} (${l.code})`,
+					includeCancel: true,
+					columns: 2,
+				}
 			)).code;
 
 			if(!(isLanguageAvailable(args.language) || ["off", "none"].includes(args.language.toLowerCase()))){
