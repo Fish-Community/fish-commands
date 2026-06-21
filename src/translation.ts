@@ -62,10 +62,11 @@ export async function handleMessage(sender: Player, message: string) {
 	playerLanguageCache.each((lang, players) => {
 		const formatted = Vars.netServer.chatFormatter.format(sender, message);
 		const recipients = players.select(p => p != sender);
-
+		Log.info("Need to send message to @", recipients.map(p => p.name).toString(" and "));
 		if(recipients.isEmpty()) return;
 
 		if(lang === "off" || lang === "auto" || lang === "none" || translationApiToken.string() == "unset"){
+			Log.info("translating failed");
 			for (const player of recipients.toArray()) player.sendMessage(formatted); //ignore, send it as if nothing changed
 			return;
 		}
@@ -74,14 +75,17 @@ export async function handleMessage(sender: Player, message: string) {
 
 		const cachedTranslation = translationCache.get(cacheKey);
 		if (cachedTranslation != null){
+			Log.info("using cached translation");
 			sendTranslatedMessage(sender, message, cachedTranslation, recipients);
 			return;
 		}
 
 		requestTranslate(cleanedMessage, lang).then(result => {
+			Log.info("request resolved");
 			sendTranslatedMessage(sender, message, result, recipients);
 			Core.app.post(() => translationCache.put(cacheKey, result));
 		}).catch(() => {
+			Log.info("request rejected");
 			for (const player of recipients.toArray()) player.sendMessage(formatted);
 		});
 

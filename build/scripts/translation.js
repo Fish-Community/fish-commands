@@ -127,9 +127,11 @@ function handleMessage(sender, message) {
                         var e_1, _a;
                         var formatted = Vars.netServer.chatFormatter.format(sender, message);
                         var recipients = players.select(function (p) { return p != sender; });
+                        Log.info("Need to send message to @", recipients.map(function (p) { return p.name; }).toString(" and "));
                         if (recipients.isEmpty())
                             return;
                         if (lang === "off" || lang === "auto" || lang === "none" || config_1.translationApiToken.string() == "unset") {
+                            Log.info("translating failed");
                             try {
                                 for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
                                     var player = _c.value;
@@ -148,14 +150,17 @@ function handleMessage(sender, message) {
                         var cacheKey = "".concat(lang, "\n").concat(cleanedMessage);
                         var cachedTranslation = exports.translationCache.get(cacheKey);
                         if (cachedTranslation != null) {
+                            Log.info("using cached translation");
                             sendTranslatedMessage(sender, message, cachedTranslation, recipients);
                             return;
                         }
                         requestTranslate(cleanedMessage, lang).then(function (result) {
+                            Log.info("request resolved");
                             sendTranslatedMessage(sender, message, result, recipients);
                             Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
                         }).catch(function () {
                             var e_2, _a;
+                            Log.info("request rejected");
                             try {
                                 for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
                                     var player = _c.value;
