@@ -708,8 +708,9 @@ export class FishPlayer {
 		const timeSinceJoin = Date.now() - fishP.lastJoined;
 		let target: mindustryPlayer;
 		if(message.startsWith("/votekick")){
-			const id = message.split(" ")[1]?.split("#")[1];
-			target = Groups.player.getByID(Number(id));
+			const id = Number(message.split(" ")[1]?.split("#")[1]);
+			if(isNaN(id)) return;
+			target = Groups.player.getByID(id);
 			if(!target) return; //invalid votekick command, harmless
 		} else { //TODO these "harmless" actions could be indications of a malfunctioning vkbot and should be logged if they repeat a lot (eg more than 5 times per minute)
 			if(!Vars.netServer.currentlyKicking) return; //nobody to votekick, harmless
