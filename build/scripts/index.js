@@ -169,7 +169,7 @@ Events.on(EventType.ContentInitEvent, function () {
 Vars.net.handleServer(SendChatMessageCallPacket, function (connection, packet) {
     var player = connection.player;
     var message = packet.message;
-    if (player == null || !player.isAdded() || message == null)
+    if (!(player === null || player === void 0 ? void 0 : player.isAdded()) || message == null)
         return;
     if (message.length > Vars.maxTextLength) {
         player.sendMessage("[scarlet]Message too long. Maximum length is ".concat(Vars.maxTextLength, " characters."));
@@ -178,7 +178,7 @@ Vars.net.handleServer(SendChatMessageCallPacket, function (connection, packet) {
     message = message.replace("\n", "");
     Events.fire(new EventType.PlayerChatEvent(player, message));
     var response = Vars.netServer.clientCommands.handleMessage(message, player);
-    Log.info("[CHAT] &fi&lc:" + player.plainName() + ": &lw" + Strings.stripColors(message) + "&fr");
+    Log.info("&fi&lc".concat((0, funcs_1.escapeStringColorsServer)(player.plainName()), ": &lw").concat((0, funcs_1.escapeStringColorsServer)((0, utils_1.removeFoosChars)(message)), "&fr"));
     if (response.type == CommandHandler.ResponseType.noCommand) {
         var filtered = Vars.netServer.admins.filterMessage(player, message);
         if (filtered == null)

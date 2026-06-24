@@ -8,13 +8,13 @@ import { registerAll } from "/commands/aggregate";
 import { text } from "/config";
 import { handleTapEvent } from "/frameworks/commands";
 import * as menus from "/frameworks/menus";
-import { Duration } from "/funcs";
+import { Duration, escapeStringColorsServer } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipJoins, tileHistory } from "/globals";
 import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
+import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, removeFoosChars, restartNow, serverRestartLoop } from "/utils";
 import * as translation from "/translation";
 
 Events.on(EventType.ConnectionEvent, (e) => {
@@ -139,7 +139,7 @@ Vars.net.handleServer(SendChatMessageCallPacket, (connection: NetConnection, pac
 	const player: Player = connection.player;
 	let message = packet.message;
 
-	if (player == null || !player.isAdded() || message == null) return;
+	if (!player?.isAdded() || message == null) return;
 
 	if (message.length > Vars.maxTextLength){
 		player.sendMessage(`[scarlet]Message too long. Maximum length is ${Vars.maxTextLength} characters.`);
@@ -152,7 +152,7 @@ Vars.net.handleServer(SendChatMessageCallPacket, (connection: NetConnection, pac
 
 	const response = Vars.netServer.clientCommands.handleMessage(message, player);
 
-	Log.info("[CHAT] &fi&lc:" + player.plainName() + ": &lw" + Strings.stripColors(message) + "&fr");
+	Log.info(`&fi&lc${escapeStringColorsServer(player.plainName())}: &lw${escapeStringColorsServer(removeFoosChars(message))}&fr`);
 
 	if (response.type == CommandHandler.ResponseType.noCommand){
 		const filtered = Vars.netServer.admins.filterMessage(player, message);
