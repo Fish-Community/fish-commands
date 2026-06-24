@@ -184,9 +184,13 @@ function setPlayerLanguageEntry(player, language) {
 function removePlayerLanguageEntry(player) {
     exports.playerLanguageCache.each(function (_, players) { return players.remove(player); });
 }
+var NonAlpha = Pattern.compile("[^\\p{IsAlphabetic}0-9_]");
+function stripNonWordChars(string) {
+    return NonAlpha.matcher(string).replaceAll("");
+}
 function sendTranslatedMessage(sender, originalMessage, cleanedMessage, formattedOriginal, translatedMessage, recipients) {
     var e_3, _a, e_4, _b;
-    if (translatedMessage.trim().toLowerCase() == cleanedMessage.toLowerCase()) {
+    if (stripNonWordChars(translatedMessage.toLowerCase()) == stripNonWordChars(cleanedMessage.toLowerCase())) {
         try {
             for (var _c = __values(recipients.toArray()), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var player = _d.value;

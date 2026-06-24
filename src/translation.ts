@@ -102,8 +102,13 @@ function removePlayerLanguageEntry(player: Player){
 	playerLanguageCache.each((_, players) => players.remove(player));
 }
 
+const NonAlpha = Pattern.compile("[^\\p{IsAlphabetic}0-9_]");
+function stripNonWordChars(string:string):string {
+	return NonAlpha.matcher(string).replaceAll("");
+}
+
 function sendTranslatedMessage(sender: Player, originalMessage: string, cleanedMessage: string, formattedOriginal: string, translatedMessage: string, recipients: Seq<Player>){
-	if(translatedMessage.trim().toLowerCase() == cleanedMessage.toLowerCase()){
+	if(stripNonWordChars(translatedMessage.toLowerCase()) == stripNonWordChars(cleanedMessage.toLowerCase())){
 		for (const player of recipients.toArray()) player.sendMessage(formattedOriginal); //ignore, send it as if nothing changed
 		return;
 	}
