@@ -148,11 +148,11 @@ function handleMessage(sender, message) {
                         var cacheKey = "".concat(lang, "\n").concat(cleanedMessage);
                         var cachedTranslation = exports.translationCache.get(cacheKey);
                         if (cachedTranslation != null) {
-                            sendTranslatedMessage(sender, message, formatted, cachedTranslation, recipients);
+                            sendTranslatedMessage(sender, message, cleanedMessage, formatted, cachedTranslation, recipients);
                             return;
                         }
                         requestTranslate(cleanedMessage, lang).then(function (result) {
-                            sendTranslatedMessage(sender, message, formatted, result, recipients);
+                            sendTranslatedMessage(sender, message, cleanedMessage, formatted, result, recipients);
                             Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
                         }).catch(function () {
                             var e_2, _a;
@@ -184,9 +184,9 @@ function setPlayerLanguageEntry(player, language) {
 function removePlayerLanguageEntry(player) {
     exports.playerLanguageCache.each(function (_, players) { return players.remove(player); });
 }
-function sendTranslatedMessage(sender, originalMessage, formattedOriginal, translatedMessage, recipients) {
+function sendTranslatedMessage(sender, originalMessage, cleanedMessage, formattedOriginal, translatedMessage, recipients) {
     var e_3, _a, e_4, _b;
-    if (translatedMessage.trim().toLowerCase() == originalMessage.toLowerCase()) {
+    if (translatedMessage.trim().toLowerCase() == cleanedMessage.toLowerCase()) {
         try {
             for (var _c = __values(recipients.toArray()), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var player = _d.value;
