@@ -55,7 +55,7 @@ export async function handleMessage(sender: Player, message: string) {
 		}
 	}
 
-	sender.sendMessage(Vars.netServer.chatFormatter.format(sender, message)); //return to sender immediately, they don't need to see their own translation
+	Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender); //return to sender immediately, they don't need to see their own translation
 
 	const cleanedMessage = Strings.stripGlyphs(Strings.stripColors(removeFoosChars(message)));
 
@@ -66,7 +66,7 @@ export async function handleMessage(sender: Player, message: string) {
 		if(recipients.isEmpty()) return;
 
 		if(lang === "off" || lang === "auto" || lang === "none" || translationApiToken.string() == "unset"){
-			for (const player of recipients.toArray()) player.sendMessage(formatted); //ignore, send it as if nothing changed
+			for (const player of recipients.toArray()) Call.sendMessage(player.con, formatted, message, sender);
 			return;
 		}
 
@@ -74,17 +74,15 @@ export async function handleMessage(sender: Player, message: string) {
 
 		const cachedTranslation = translationCache.get(cacheKey);
 		if (cachedTranslation != null){
-			sendTranslatedMessage(sender, message, cleanedMessage, formatted, cachedTranslation, recipients);
-			return;
+			for (const player of recipients.toArray()) Call.sendMessage(player.con, formatted, message, sender);
+			sendTranslatedMessage(cleanedMessage, cachedTranslation, recipients);
+		} else {
+			requestTranslate(cleanedMessage, lang).then(result => {
+				for (const player of recipients.toArray()) Call.sendMessage(player.con, formatted, message, sender);
+				sendTranslatedMessage(cleanedMessage, result, recipients);
+				Core.app.post(() => translationCache.put(cacheKey, result));
+			}).catch(() => {});
 		}
-
-		requestTranslate(cleanedMessage, lang).then(result => {
-			sendTranslatedMessage(sender, message, cleanedMessage, formatted, result, recipients);
-			Core.app.post(() => translationCache.put(cacheKey, result));
-		}).catch(() => {
-			for (const player of recipients.toArray()) player.sendMessage(formatted);
-		});
-
 	});
 }
 
@@ -107,15 +105,11 @@ function stripNonWordChars(string:string):string {
 	return NonAlpha.matcher(string).replaceAll("");
 }
 
-function sendTranslatedMessage(sender: Player, originalMessage: string, cleanedMessage: string, formattedOriginal: string, translatedMessage: string, recipients: Seq<Player>){
-	if(stripNonWordChars(translatedMessage.toLowerCase()) == stripNonWordChars(cleanedMessage.toLowerCase())){
-		for (const player of recipients.toArray()) player.sendMessage(formattedOriginal); //ignore, send it as if nothing changed
-		return;
-	}
-	const formatted = Vars.netServer.chatFormatter.format(sender, originalMessage)
-		+ "\n[lightgray]Translated: " + translatedMessage + "[]";
-	for (const player of recipients.toArray()){
-		Call.sendMessage(player.con, formatted, originalMessage, sender);
+function sendTranslatedMessage(cleanedMessage: string, translatedMessage: string, recipients: Seq<Player>){
+	if(stripNonWordChars(translatedMessage.toLowerCase()) != stripNonWordChars(cleanedMessage.toLowerCase())){
+		for (const player of recipients.toArray()){
+			Call.sendMessage(player.con, "[lightgray]Translated: " + translatedMessage + "[]", translatedMessage, null);
+		}
 	}
 }
 

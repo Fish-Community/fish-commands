@@ -121,25 +121,25 @@ function handleMessage(sender, message) {
                     Log.err("Network error while fetching language cache");
                     return [3 /*break*/, 4];
                 case 4:
-                    sender.sendMessage(Vars.netServer.chatFormatter.format(sender, message)); //return to sender immediately, they don't need to see their own translation
+                    Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender); //return to sender immediately, they don't need to see their own translation
                     cleanedMessage = Strings.stripGlyphs(Strings.stripColors((0, utils_1.removeFoosChars)(message)));
                     exports.playerLanguageCache.each(function (lang, players) {
-                        var e_1, _a;
+                        var e_1, _a, e_2, _b;
                         var formatted = Vars.netServer.chatFormatter.format(sender, message);
                         var recipients = players.select(function (p) { return p != sender; });
                         if (recipients.isEmpty())
                             return;
                         if (lang === "off" || lang === "auto" || lang === "none" || config_1.translationApiToken.string() == "unset") {
                             try {
-                                for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                                    var player = _c.value;
-                                    player.sendMessage(formatted);
-                                } //ignore, send it as if nothing changed
+                                for (var _c = __values(recipients.toArray()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                                    var player = _d.value;
+                                    Call.sendMessage(player.con, formatted, message, sender);
+                                }
                             }
                             catch (e_1_1) { e_1 = { error: e_1_1 }; }
                             finally {
                                 try {
-                                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                                    if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                                 }
                                 finally { if (e_1) throw e_1.error; }
                             }
@@ -148,28 +148,41 @@ function handleMessage(sender, message) {
                         var cacheKey = "".concat(lang, "\n").concat(cleanedMessage);
                         var cachedTranslation = exports.translationCache.get(cacheKey);
                         if (cachedTranslation != null) {
-                            sendTranslatedMessage(sender, message, cleanedMessage, formatted, cachedTranslation, recipients);
-                            return;
-                        }
-                        requestTranslate(cleanedMessage, lang).then(function (result) {
-                            sendTranslatedMessage(sender, message, cleanedMessage, formatted, result, recipients);
-                            Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
-                        }).catch(function () {
-                            var e_2, _a;
                             try {
-                                for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                                    var player = _c.value;
-                                    player.sendMessage(formatted);
+                                for (var _e = __values(recipients.toArray()), _f = _e.next(); !_f.done; _f = _e.next()) {
+                                    var player = _f.value;
+                                    Call.sendMessage(player.con, formatted, message, sender);
                                 }
                             }
                             catch (e_2_1) { e_2 = { error: e_2_1 }; }
                             finally {
                                 try {
-                                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                                    if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
                                 }
                                 finally { if (e_2) throw e_2.error; }
                             }
-                        });
+                            sendTranslatedMessage(cleanedMessage, cachedTranslation, recipients);
+                        }
+                        else {
+                            requestTranslate(cleanedMessage, lang).then(function (result) {
+                                var e_3, _a;
+                                try {
+                                    for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                                        var player = _c.value;
+                                        Call.sendMessage(player.con, formatted, message, sender);
+                                    }
+                                }
+                                catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                                finally {
+                                    try {
+                                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                                    }
+                                    finally { if (e_3) throw e_3.error; }
+                                }
+                                sendTranslatedMessage(cleanedMessage, result, recipients);
+                                Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
+                            }).catch(function () { });
+                        }
                     });
                     return [2 /*return*/];
             }
@@ -188,38 +201,22 @@ var NonAlpha = Pattern.compile("[^\\p{IsAlphabetic}0-9_]");
 function stripNonWordChars(string) {
     return NonAlpha.matcher(string).replaceAll("");
 }
-function sendTranslatedMessage(sender, originalMessage, cleanedMessage, formattedOriginal, translatedMessage, recipients) {
-    var e_3, _a, e_4, _b;
-    if (stripNonWordChars(translatedMessage.toLowerCase()) == stripNonWordChars(cleanedMessage.toLowerCase())) {
+function sendTranslatedMessage(cleanedMessage, translatedMessage, recipients) {
+    var e_4, _a;
+    if (stripNonWordChars(translatedMessage.toLowerCase()) != stripNonWordChars(cleanedMessage.toLowerCase())) {
         try {
-            for (var _c = __values(recipients.toArray()), _d = _c.next(); !_d.done; _d = _c.next()) {
-                var player = _d.value;
-                player.sendMessage(formattedOriginal);
-            } //ignore, send it as if nothing changed
+            for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var player = _c.value;
+                Call.sendMessage(player.con, "[lightgray]Translated: " + translatedMessage + "[]", translatedMessage, null);
+            }
         }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        catch (e_4_1) { e_4 = { error: e_4_1 }; }
         finally {
             try {
-                if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_3) throw e_3.error; }
+            finally { if (e_4) throw e_4.error; }
         }
-        return;
-    }
-    var formatted = Vars.netServer.chatFormatter.format(sender, originalMessage)
-        + "\n[lightgray]Translated: " + translatedMessage + "[]";
-    try {
-        for (var _e = __values(recipients.toArray()), _f = _e.next(); !_f.done; _f = _e.next()) {
-            var player = _f.value;
-            Call.sendMessage(player.con, formatted, originalMessage, sender);
-        }
-    }
-    catch (e_4_1) { e_4 = { error: e_4_1 }; }
-    finally {
-        try {
-            if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
-        }
-        finally { if (e_4) throw e_4.error; }
     }
 }
 function getLanguageFromCache(code) {
