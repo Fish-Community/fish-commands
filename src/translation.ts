@@ -74,12 +74,12 @@ export async function handleMessage(sender: Player, message: string) {
 
 		const cachedTranslation = translationCache.get(cacheKey);
 		if (cachedTranslation != null){
-			sendTranslatedMessage(sender, message, cachedTranslation, recipients);
+			sendTranslatedMessage(sender, message, formatted, cachedTranslation, recipients);
 			return;
 		}
 
 		requestTranslate(cleanedMessage, lang).then(result => {
-			sendTranslatedMessage(sender, message, result, recipients);
+			sendTranslatedMessage(sender, message, formatted, result, recipients);
 			Core.app.post(() => translationCache.put(cacheKey, result));
 		}).catch(() => {
 			for (const player of recipients.toArray()) player.sendMessage(formatted);
@@ -102,7 +102,11 @@ function removePlayerLanguageEntry(player: Player){
 	playerLanguageCache.each((_, players) => players.remove(player));
 }
 
-function sendTranslatedMessage(sender: Player, originalMessage: string, translatedMessage: string, recipients: Seq<Player>){
+function sendTranslatedMessage(sender: Player, originalMessage: string, formattedOriginal: string, translatedMessage: string, recipients: Seq<Player>){
+	if(translatedMessage.trim().toLowerCase() == originalMessage.toLowerCase()){
+		for (const player of recipients.toArray()) player.sendMessage(formattedOriginal); //ignore, send it as if nothing changed
+		return;
+	}
 	const formatted = Vars.netServer.chatFormatter.format(sender, originalMessage)
 		+ "\n[lightgray]Translated: " + translatedMessage + "[]";
 	for (const player of recipients.toArray()){

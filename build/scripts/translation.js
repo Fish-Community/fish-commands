@@ -148,11 +148,11 @@ function handleMessage(sender, message) {
                         var cacheKey = "".concat(lang, "\n").concat(cleanedMessage);
                         var cachedTranslation = exports.translationCache.get(cacheKey);
                         if (cachedTranslation != null) {
-                            sendTranslatedMessage(sender, message, cachedTranslation, recipients);
+                            sendTranslatedMessage(sender, message, formatted, cachedTranslation, recipients);
                             return;
                         }
                         requestTranslate(cleanedMessage, lang).then(function (result) {
-                            sendTranslatedMessage(sender, message, result, recipients);
+                            sendTranslatedMessage(sender, message, formatted, result, recipients);
                             Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
                         }).catch(function () {
                             var e_2, _a;
@@ -184,22 +184,38 @@ function setPlayerLanguageEntry(player, language) {
 function removePlayerLanguageEntry(player) {
     exports.playerLanguageCache.each(function (_, players) { return players.remove(player); });
 }
-function sendTranslatedMessage(sender, originalMessage, translatedMessage, recipients) {
-    var e_3, _a;
+function sendTranslatedMessage(sender, originalMessage, formattedOriginal, translatedMessage, recipients) {
+    var e_3, _a, e_4, _b;
+    if (translatedMessage.trim().toLowerCase() == originalMessage.toLowerCase()) {
+        try {
+            for (var _c = __values(recipients.toArray()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var player = _d.value;
+                player.sendMessage(formattedOriginal);
+            } //ignore, send it as if nothing changed
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+            }
+            finally { if (e_3) throw e_3.error; }
+        }
+        return;
+    }
     var formatted = Vars.netServer.chatFormatter.format(sender, originalMessage)
         + "\n[lightgray]Translated: " + translatedMessage + "[]";
     try {
-        for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var player = _c.value;
+        for (var _e = __values(recipients.toArray()), _f = _e.next(); !_f.done; _f = _e.next()) {
+            var player = _f.value;
             Call.sendMessage(player.con, formatted, originalMessage, sender);
         }
     }
-    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+    catch (e_4_1) { e_4 = { error: e_4_1 }; }
     finally {
         try {
-            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
         }
-        finally { if (e_3) throw e_3.error; }
+        finally { if (e_4) throw e_4.error; }
     }
 }
 function getLanguageFromCache(code) {
@@ -220,7 +236,7 @@ function fetchLanguageCache() {
         req.submit(function (t) {
             var parsed = JSON.parse(t.getResultAsString());
             Core.app.post(function () {
-                var e_4, _a;
+                var e_5, _a;
                 try {
                     exports.languageCache.clear();
                     try {
@@ -231,12 +247,12 @@ function fetchLanguageCache() {
                             exports.languageCache.put(language.code.toLowerCase(), language);
                         }
                     }
-                    catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                    catch (e_5_1) { e_5 = { error: e_5_1 }; }
                     finally {
                         try {
                             if (parsed_1_1 && !parsed_1_1.done && (_a = parsed_1.return)) _a.call(parsed_1);
                         }
-                        finally { if (e_4) throw e_4.error; }
+                        finally { if (e_5) throw e_5.error; }
                     }
                     resolve();
                 }
