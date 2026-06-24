@@ -846,8 +846,10 @@ var FishPlayer = /** @class */ (function () {
         var timeSinceJoin = Date.now() - fishP.lastJoined;
         var target;
         if (message.startsWith("/votekick")) {
-            var id = (_d = message.split(" ")[1]) === null || _d === void 0 ? void 0 : _d.split("#")[1];
-            target = Groups.player.getByID(Number(id));
+            var id = Number((_d = message.split(" ")[1]) === null || _d === void 0 ? void 0 : _d.split("#")[1]);
+            if (isNaN(id))
+                return;
+            target = Groups.player.getByID(id);
             if (!target)
                 return; //invalid votekick command, harmless
         }

@@ -368,6 +368,7 @@ function isImpersonator(name, isAdmin) {
         "admin", "moderator", "staff", "owner",
         [">|||>", "Name contains >|||> which is reserved for the server owner"],
         "\uE817", "\uE82C", "\uE88E", "\uE813",
+        ["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
         [/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
         [function (replacedText) { return !isAdmin && config_1.adminNames.includes(replacedText.replace(/ /g, "")); }, "One of our admins uses this name"]
     ]);

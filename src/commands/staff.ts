@@ -147,6 +147,10 @@ export const commands = commandList({
 				fail(f`You do not have permission to promote players to rank ${rank}, because your current rank is ${sender.rank}`);
 			if(rank == Rank.pi && !Mode.localDebug) fail(f`Rank ${rank} is immutable.`);
 			if(player.immutable() && !Mode.localDebug) fail(f`Player ${player} is immutable.`);
+			if(rank == player.rank){
+				outputSuccess(f`Player ${player} is already at rank ${rank}.`);
+				return;
+			}
 			if(player == sender && rank.level < sender.rank.level){
 				await Menu.confirmDangerous(
 					sender, 
@@ -156,6 +160,7 @@ export const commands = commandList({
 			await player.setRank(rank);
 			logAction(`set rank to ${rank.name} for`, sender, player);
 			outputSuccess(f`Set rank of player ${player} to ${rank}`);
+			if(player !== sender) player.sendMessage(`[royal]Your rank has been set to ${rank.coloredName()}.`);
 		}
 	},
 
@@ -809,7 +814,7 @@ export const commands = commandList({
 				action: `setblocked`,
 				type: args.block.localizedName
 			});
-			if(!Gamemode.sandbox()) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
+			if(!(Gamemode.sandbox() || Gamemode.testsrv())) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
 			outputSuccess(f`Set block at ${args.x}, ${args.y} to ${args.block}`);
 		}
 	},
@@ -831,7 +836,7 @@ export const commands = commandList({
 				action: `setblocked`,
 				type: args.block.localizedName
 			});
-			if(!Gamemode.sandbox()) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
+			if(!(Gamemode.sandbox() || Gamemode.testsrv())) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
 			outputSuccess(f`Set block at ${x}, ${y} to ${args.block}`);
 		},
 		handler({args, outputSuccess, handleTaps, currentTapMode, f}){
