@@ -82,7 +82,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		);
 		return;
 	}
-	if(ipJoins.get(e.connection.address) >= ( (underAttack || veryLongModName) ? 3 : (newPlayer || longModName) ? 7 : 15 )){
+	if(ipJoins.get(e.connection.address) >= ( (underAttack || veryLongModName) ? (newPlayer ? 4 : 5) : (newPlayer || longModName) ? 7 : 15 )){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
 		FishPlayer.triggerAntibot(

@@ -116,7 +116,7 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         players_1.FishPlayer.triggerAntibot(5000, "illegal characters in name or mods", "automatic");
         return;
     }
-    if (globals_1.ipJoins.get(e.connection.address) >= ((underAttack || veryLongModName) ? 3 : (newPlayer || longModName) ? 7 : 15)) {
+    if (globals_1.ipJoins.get(e.connection.address) >= ((underAttack || veryLongModName) ? (newPlayer ? 4 : 5) : (newPlayer || longModName) ? 7 : 15)) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
         players_1.FishPlayer.triggerAntibot(5000, "too many connections", "automatic");
