@@ -537,6 +537,7 @@ class Seq<T> {
 	items: Array<T | null>;
 	size: number;
 	constructor();
+	constructor(ordered:boolean);
 	constructor(capacity:number);
 	static with<T>(...items:T[]):Seq<T>;
 	static with<T>(items:MIterable<T>):Seq<T>;
@@ -584,6 +585,18 @@ class ObjectSet<T> {
 	toSeq():Seq<T>;
 	get(key:T):T;
 	first():T;
+	clear():void;
+	toString():string;
+}
+class IntSet {
+	size:number;
+	each(func:(item:number) => unknown):void;
+	add(item:number):boolean;
+	remove(item:number):boolean;
+	isEmpty():boolean;
+	contains(item:number):boolean;
+	toSeq():Seq<number>;
+	first():number;
 	clear():void;
 	toString():string;
 }

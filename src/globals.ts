@@ -25,6 +25,8 @@ export const fishPlugin = {
 	version: null as null | string,
 };
 export const ipJoins = new ObjectIntMap<string>();
+export const joinDemographics = new ObjectMap<number, string>();
+export const joinDemographics2 = new ObjectMap<number, string>();
 
 export const uuidPattern = /^[a-zA-Z0-9+/]{22}==$/;
 export const ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;

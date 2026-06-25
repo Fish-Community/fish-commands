@@ -8,7 +8,7 @@ import * as config from "/config";
 import { Gamemode } from "/config";
 import { updateMaps } from "/files";
 import { DurationSecs } from "/funcs";
-import { FishEvents, ipJoins } from "/globals";
+import { FishEvents, ipJoins, joinDemographics } from "/globals";
 import { FishPlayer } from "/players";
 import { definitelyRealMemoryCorruption, neutralGameover } from "/utils";
 
@@ -84,6 +84,7 @@ export function initializeTimers(){
 	//avoids memory leak and other complications from Record<ip, IndexedRatekeeper>
 	Timer.schedule(() => {
 		ipJoins.clear();
+		if(joinDemographics.size > 1000) joinDemographics.clear();
 	}, 0, DurationSecs.minutes(1));
 	Timer.schedule(() => {
 		if(FishPlayer.antiBotMode()){

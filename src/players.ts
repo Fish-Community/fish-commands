@@ -1367,13 +1367,15 @@ We apologize for the inconvenience.`
 			}
 		});
 	}
-	static triggerAntibot(duration:number, reason:string, category:"manual" | "automatic"){
+	static triggerAntibot(duration:number, reason:string, category:"manual" | "automatic", pingConsole = false){
 		if(category == "automatic"){
-			//Ping reports based on 
+			//Ping reports based on time
+			let message;
 			if(Date.now() - this.antibotExpires > Duration.hours(1))
-				api.sendModerationMessage(`!!! ${text.reportsPing} Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`);
+				message = `!!! ${text.reportsPing} Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`;
 			else if(Date.now() - this.antibotExpires > Duration.minutes(10))
-				api.sendModerationMessage(`!!! Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`);
+				message = `!!! Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`;
+			if(message) api.sendModerationMessage(pingConsole ? message + ` <@&1096094397625532558>` : message);
 		}
 		if(Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
 			Log.info(`&yAntibot triggered: ${escapeStringColorsServer(reason)}`);

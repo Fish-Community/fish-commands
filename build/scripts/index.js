@@ -109,6 +109,22 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         players_1.FishPlayer.triggerAntibot(60000, (veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"), "automatic");
         return;
     }
+    var region = Reflect.invoke(e.packet.uuid, "hashCode");
+    var cachedRegion = globals_1.joinDemographics.get(region);
+    if (!cachedRegion) {
+        globals_1.joinDemographics.put(region, e.packet.uuid);
+    }
+    else if (cachedRegion != e.packet.uuid) {
+        var cachedRegion2 = globals_1.joinDemographics2.get(region);
+        if (!cachedRegion2) {
+            globals_1.joinDemographics2.put(region, e.packet.uuid);
+        }
+        else if (cachedRegion2 != e.packet.uuid) {
+            Vars.netServer.admins.blacklistDos(e.connection.address);
+            e.connection.kicked = true;
+            players_1.FishPlayer.triggerAntibot(480000, "suspicious UUIDs", "automatic", true);
+        }
+    }
     var suspiciousModName = e.packet.mods.contains(function (str) { return str.includes('\x1B'); });
     if (suspiciousModName || e.packet.name.includes('\x1B')) {
         Vars.netServer.admins.blacklistDos(e.connection.address);

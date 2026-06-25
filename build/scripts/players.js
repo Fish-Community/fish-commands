@@ -1602,13 +1602,17 @@ var FishPlayer = /** @class */ (function () {
             }
         });
     };
-    FishPlayer.triggerAntibot = function (duration, reason, category) {
+    FishPlayer.triggerAntibot = function (duration, reason, category, pingConsole) {
+        if (pingConsole === void 0) { pingConsole = false; }
         if (category == "automatic") {
-            //Ping reports based on 
+            //Ping reports based on time
+            var message = void 0;
             if (Date.now() - this.antibotExpires > funcs_1.Duration.hours(1))
-                api.sendModerationMessage("!!! ".concat(config_1.text.reportsPing, " Possible ongoing bot attack in **").concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason)));
+                message = "!!! ".concat(config_1.text.reportsPing, " Possible ongoing bot attack in **").concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason));
             else if (Date.now() - this.antibotExpires > funcs_1.Duration.minutes(10))
-                api.sendModerationMessage("!!! Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason)));
+                message = "!!! Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason));
+            if (message)
+                api.sendModerationMessage(pingConsole ? message + " <@&1096094397625532558>" : message);
         }
         if (Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
             Log.info("&yAntibot triggered: ".concat((0, funcs_1.escapeStringColorsServer)(reason)));
