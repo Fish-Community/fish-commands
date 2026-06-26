@@ -187,6 +187,7 @@ var FishPlayer = /** @class */ (function () {
         this.infoUpdated = false;
         this.dataSynced = false;
         this.restoreTeam = null;
+        this.autoConfirmSkipWaveUntil = -1;
         this.name = "Unnamed player [ERROR}";
         this.muted = false;
         this.unmarkTime = -1;

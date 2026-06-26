@@ -60,6 +60,7 @@ var packetHandlers_1 = require("/packetHandlers");
 var players_1 = require("/players");
 var timers = __importStar(require("/timers"));
 var utils_1 = require("/utils");
+var Menu = menus.Menu;
 Events.on(EventType.ConnectionEvent, function (e) {
     if (Vars.netServer.admins.bannedIPs.contains(e.connection.address)) {
         api.getBanned({
@@ -353,5 +354,35 @@ Events.on(EventType.PlayerChatEvent, function (e) {
 });
 Events.on(EventType.PlayEvent, function () {
     globals_1.fishState.startTime = Date.now();
+});
+Events.on(EventType.AdminRequestEvent, function (e) {
+    if (e.action == Packets.AdminAction.wave) {
+        var fishP_2 = players_1.FishPlayer.get(e.player);
+        if (Date.now() > fishP_2.autoConfirmSkipWaveUntil) {
+            Menu.buttons(fishP_2, "Confirm", "Are you sure you want to skip the wave?", [
+                [{ data: "yes", text: "[orange]Yes" }],
+                [{ data: "suppress", text: "[orange]Yes, don't ask again" }],
+                [{ data: null, text: "[green]Cancel" }],
+            ], {
+                onCancel: "null",
+            }).then(function (d) {
+                if (!d)
+                    return;
+                Vars.logic.skipWave();
+                Log.info("&lc@ &fi&lk[&lb@&fi&lk]&fb has skipped a wave.", e.player.plainName(), fishP_2.uuid);
+                if (d == "suppress") {
+                    fishP_2.sendMessage("Wave skipped. You won't be asked again for the next 1 minute.");
+                    fishP_2.autoConfirmSkipWaveUntil = Date.now() + funcs_1.Duration.minutes(1);
+                }
+                else
+                    fishP_2.sendMessage("Wave skipped.");
+            }).catch(Log.err);
+            // throw new ValidateException(e.player, "Skip wave admin action blocked, requesting confirmation");
+            //Bizarre hack
+            //We cannot throw a validate exception directly because it gets wrapped by rhino
+            //so we send invalid data to this random java function so it can throw the exception for us
+            Packages.mindustry.input.InputHandler.tileConfig(null, null, null);
+        }
+    }
 });
 Log.info("fish-commands: parsing done in @ms", Date.now() - this._startTime);

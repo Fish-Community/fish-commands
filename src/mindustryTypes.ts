@@ -755,8 +755,10 @@ class Process {
 const Packets: {
 	KickReason: Record<"kick" | "clientOutdated" | "serverOutdated" | "banned" | "gameover" | "recentKick" | "nameInUse" | "idInUse" | "nameEmpty" | "customClient" | "serverClose" | "vote" | "typeMismatch" | "whitelist" | "playerLimit" | "serverRestarting", KickReason>;
 	WorldStream: any;
+	AdminAction: Record<"kick" | "ban" | "trace" | "wave" | "switchTeam", AdminAction>;
 };
 type KickReason = { quiet: boolean };
+type AdminAction = {};
 
 class ConstructBlock {
 	static ConstructBuild: any;
@@ -1006,6 +1008,9 @@ class AtomicInteger {
 	getAndIncrement():number;
 	get():number;
 	set(int:number):void;
+}
+class ValidateException extends Error {
+	constructor(player:Player, s: string);
 }
 
 }

@@ -16,6 +16,7 @@ import { FishPlayer } from "/players";
 import * as timers from "/timers";
 import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
 
+const { Menu } = menus;
 
 Events.on(EventType.ConnectionEvent, (e) => {
 	if(Vars.netServer.admins.bannedIPs.contains(e.connection.address)){
@@ -311,6 +312,34 @@ Events.on(EventType.PlayerChatEvent, e => {
 });
 Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
+});
+
+Events.on(EventType.AdminRequestEvent, e => {
+	if(e.action == Packets.AdminAction.wave){
+		const fishP = FishPlayer.get(e.player);
+		if(Date.now() > fishP.autoConfirmSkipWaveUntil){
+			Menu.buttons(fishP, "Confirm", "Are you sure you want to skip the wave?", [
+				[{data: "yes", text: "[orange]Yes"}],
+				[{data: "suppress", text: "[orange]Yes, don't ask again"}],
+				[{data: null, text: "[green]Cancel"}],
+			] as const, {
+				onCancel: "null",
+			}).then(d => {
+				if(!d) return;
+				Vars.logic.skipWave();
+				Log.info("&lc@ &fi&lk[&lb@&fi&lk]&fb has skipped a wave.", e.player.plainName(), fishP.uuid);
+				if(d == "suppress"){
+					fishP.sendMessage("Wave skipped. You won't be asked again for the next 1 minute.");
+					fishP.autoConfirmSkipWaveUntil = Date.now() + Duration.minutes(1);
+				} else fishP.sendMessage("Wave skipped.");
+			}).catch(Log.err);
+			// throw new ValidateException(e.player, "Skip wave admin action blocked, requesting confirmation");
+			//Bizarre hack
+			//We cannot throw a validate exception directly because it gets wrapped by rhino
+			//so we send invalid data to this random java function so it can throw the exception for us
+			Packages.mindustry.input.InputHandler.tileConfig(null, null, null);
+		}
+	}
 });
 
 Log.info("fish-commands: parsing done in @ms", Date.now() - (this as any)._startTime);

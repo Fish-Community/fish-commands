@@ -136,6 +136,7 @@ export class FishPlayer {
 	infoUpdated = false;
 	dataSynced = false;
 	restoreTeam = null as null | [team:Team, timestamp:number, runStartTime:number];
+	autoConfirmSkipWaveUntil: number = -1;
 	//#endregion
 	
 	//#region Stored data

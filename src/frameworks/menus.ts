@@ -252,7 +252,7 @@ export const Menu = {
 	buttons<TButtonData, TCancelBehavior extends MenuCancelOption>(
 		this:void, target:FishPlayer, title:string, description:string,
 		options:{ data: TButtonData; text: string; }[][],
-		cfg: Omit<MenuOptions<TButtonData, TCancelBehavior>, "optionStringifier" | "columns"> = {},
+		cfg: Omit<MenuOptions<TButtonData, TCancelBehavior>, "optionStringifier" | "columns" | "includeCancel"> = {},
 	){
 		return Menu.raw(title, description, options, target, {
 			...cfg,
