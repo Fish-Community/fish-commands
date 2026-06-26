@@ -822,13 +822,16 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             void menus_1.Menu.menu("Rules for [#0000ff]>|||> FISH [white]servers", config_1.rules.join("\n\n"), ["[green]I agree to abide by these rules[]", "No"], target, { onCancel: "null" }).then(function (option) {
                 if (option == "No") {
                     target.kick("You must agree to the rules to play on this server. Rejoin to agree to the rules.", 1);
-                    outputSuccess('Player rejected the rules and was kicked.');
+                    if (target !== sender)
+                        outputSuccess('Player rejected the rules and was kicked.');
                 }
                 else if (option == null) {
-                    output('Player closed the menu.');
+                    if (target !== sender)
+                        output('Player closed the menu.');
                 }
                 else {
-                    outputSuccess('Player acknowledged the rules.');
+                    if (target !== sender)
+                        outputSuccess('Player acknowledged the rules.');
                 }
             });
             if (target !== sender)
