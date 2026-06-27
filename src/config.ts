@@ -47,6 +47,7 @@ export const bannedWords: {
 		["co"+"ck", "cockroach", "poppycock", "cocktail"], "suck dick", "sucking dick",
 		"iamasussyimposter",
 		["cu"+"nt", "scunthorpe"],
+		"vagina",
 		["penis", "peniston"],
 		"hawk tuah",
 
@@ -55,7 +56,7 @@ export const bannedWords: {
 		/\bf(a)g\b/, "fa"+"gg"+"ot",
 		/\bc(u)m\b/, ["semen", "sement", "horsemen", "housemen", "defensemen", "those", "menders"],
 		["porn", "maporn"],
-		"futa"+"nari", "futa",
+		"futa"+"nari", /\futa\b/,
 		"ur gay", "your gay", "youre gay", "you're gay",
 		"gooning", "gooner", "dildo", "loli", /\banal\b/, "cunny"
 	]),
