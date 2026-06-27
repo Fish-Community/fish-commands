@@ -112,7 +112,7 @@ export class Achievement {
 		});
 	}
 	/** Do not call this in a loop on an achievement set to notify everyone. */
-	public grantTo(player:FishPlayer, allowRepeatMessage = true){ //TODO make this default false
+	public grantTo(player:FishPlayer, allowRepeatMessage = false){
 		const has = this.has(player);
 		if(!has || allowRepeatMessage){
 			if(this.notify == "everyone") Call.sendMessage(this.messageToEveryone(player));
@@ -149,7 +149,7 @@ FishEvents.on("gameOver", (_, winner) => {
 		if(ach.allowedInMode()){
 			if(ach.checkGameover?.(winner)) ach.grantToAllOnline();
 			else FishPlayer.forEachPlayer(fishP => {
-				if(!ach.has(fishP) && ach.checkPlayerGameover?.(fishP, winner)){
+				if(ach.checkPlayerGameover?.(fishP, winner)){
 					ach.grantTo(fishP);
 				}
 			});
@@ -171,7 +171,7 @@ Timer.schedule(() => {
 				}
 			} else {
 				FishPlayer.forEachPlayer(fishP => {
-					if(!ach.has(fishP) && ach.checkPlayerFrequent?.(fishP)) ach.grantTo(fishP);
+					if(ach.checkPlayerFrequent?.(fishP)) ach.grantTo(fishP);
 				});
 			}
 		}
@@ -192,7 +192,7 @@ Timer.schedule(() => {
 				}
 			} else {
 				FishPlayer.forEachPlayer(fishP => {
-					if(!ach.has(fishP) && ach.checkPlayerInfrequent?.(fishP)) ach.grantTo(fishP);
+					if(ach.checkPlayerInfrequent?.(fishP)) ach.grantTo(fishP);
 				});
 			}
 		}
@@ -549,8 +549,7 @@ export const Achievements = {
 Object.entries(Achievements).forEach(([id, a]) => a.sid = id);
 
 FishEvents.on("commandUnauthorized", (_, player, name) => {
-	if((name == "js" || name == "fjs") && !Achievements.run_js_without_perms.has(player))
-		Achievements.run_js_without_perms.grantTo(player);
+	if(name == "js" || name == "fjs") Achievements.run_js_without_perms.grantTo(player);
 });
 
 
@@ -610,8 +609,7 @@ if(!Gamemode.sandbox()) Timer.schedule(() => {
 				//grant achievement
 				Achievements.core_low_hp.grantToAllOnline(core.team);
 				FishPlayer.forEachPlayer(p => {
-					if(core.team != p.team() && !Achievements.enemy_core_low_hp.has(p))
-						Achievements.enemy_core_low_hp.grantTo(p);
+					if(core.team != p.team()) Achievements.enemy_core_low_hp.grantTo(p);
 				});
 				coreHealthTime.delete(core);
 			}
@@ -669,8 +667,6 @@ Events.on(EventType.GameOverEvent, () => coreHealthTime.clear());
 Events.on(EventType.WorldLoadEvent, () => coreHealthTime.clear());
 
 
-FishEvents.on("scriptKiddie", (_, p) => Timer.schedule(() => {
-	if(!Achievements.script_kiddie.has(p)) Achievements.script_kiddie.grantTo(p);
-}, 2));
+FishEvents.on("scriptKiddie", (_, p) => Timer.schedule(() => Achievements.script_kiddie.grantTo(p), 2));
 FishEvents.on("memoryCorruption", () => Achievements.memory_corruption.grantToAllOnline());
 FishEvents.on("serverSays", () => Achievements.server_speak.grantToAllOnline());

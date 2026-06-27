@@ -130,7 +130,7 @@ var Achievement = /** @class */ (function () {
     };
     /** Do not call this in a loop on an achievement set to notify everyone. */
     Achievement.prototype.grantTo = function (player, allowRepeatMessage) {
-        if (allowRepeatMessage === void 0) { allowRepeatMessage = true; }
+        if (allowRepeatMessage === void 0) { allowRepeatMessage = false; }
         var has = this.has(player);
         if (!has || allowRepeatMessage) {
             if (this.notify == "everyone")
@@ -201,7 +201,7 @@ globals_1.FishEvents.on("gameOver", function (_, winner) {
             else
                 players_1.FishPlayer.forEachPlayer(function (fishP) {
                     var _a;
-                    if (!ach.has(fishP) && ((_a = ach.checkPlayerGameover) === null || _a === void 0 ? void 0 : _a.call(ach, fishP, winner))) {
+                    if ((_a = ach.checkPlayerGameover) === null || _a === void 0 ? void 0 : _a.call(ach, fishP, winner)) {
                         ach.grantTo(fishP);
                     }
                 });
@@ -243,7 +243,7 @@ Timer.schedule(function () {
             else {
                 players_1.FishPlayer.forEachPlayer(function (fishP) {
                     var _a;
-                    if (!ach.has(fishP) && ((_a = ach.checkPlayerFrequent) === null || _a === void 0 ? void 0 : _a.call(ach, fishP)))
+                    if ((_a = ach.checkPlayerFrequent) === null || _a === void 0 ? void 0 : _a.call(ach, fishP))
                         ach.grantTo(fishP);
                 });
             }
@@ -285,7 +285,7 @@ Timer.schedule(function () {
             else {
                 players_1.FishPlayer.forEachPlayer(function (fishP) {
                     var _a;
-                    if (!ach.has(fishP) && ((_a = ach.checkPlayerInfrequent) === null || _a === void 0 ? void 0 : _a.call(ach, fishP)))
+                    if ((_a = ach.checkPlayerInfrequent) === null || _a === void 0 ? void 0 : _a.call(ach, fishP))
                         ach.grantTo(fishP);
                 });
             }
@@ -664,7 +664,7 @@ Object.entries(exports.Achievements).forEach(function (_a) {
     return a.sid = id;
 });
 globals_1.FishEvents.on("commandUnauthorized", function (_, player, name) {
-    if ((name == "js" || name == "fjs") && !exports.Achievements.run_js_without_perms.has(player))
+    if (name == "js" || name == "fjs")
         exports.Achievements.run_js_without_perms.grantTo(player);
 });
 Events.on(EventType.UnitDrownEvent, function (_a) {
@@ -737,7 +737,7 @@ if (!config_1.Gamemode.sandbox())
                     //grant achievement
                     exports.Achievements.core_low_hp.grantToAllOnline(core.team);
                     players_1.FishPlayer.forEachPlayer(function (p) {
-                        if (core.team != p.team() && !exports.Achievements.enemy_core_low_hp.has(p))
+                        if (core.team != p.team())
                             exports.Achievements.enemy_core_low_hp.grantTo(p);
                     });
                     coreHealthTime.delete(core);
@@ -816,10 +816,7 @@ Timer.schedule(function () {
 }, 1, 0.5);
 Events.on(EventType.GameOverEvent, function () { return coreHealthTime.clear(); });
 Events.on(EventType.WorldLoadEvent, function () { return coreHealthTime.clear(); });
-globals_1.FishEvents.on("scriptKiddie", function (_, p) { return Timer.schedule(function () {
-    if (!exports.Achievements.script_kiddie.has(p))
-        exports.Achievements.script_kiddie.grantTo(p);
-}, 2); });
+globals_1.FishEvents.on("scriptKiddie", function (_, p) { return Timer.schedule(function () { return exports.Achievements.script_kiddie.grantTo(p); }, 2); });
 globals_1.FishEvents.on("memoryCorruption", function () { return exports.Achievements.memory_corruption.grantToAllOnline(); });
 globals_1.FishEvents.on("serverSays", function () { return exports.Achievements.server_speak.grantToAllOnline(); });
 var templateObject_1, templateObject_2;
