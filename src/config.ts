@@ -47,7 +47,6 @@ export const bannedWords: {
 		["co"+"ck", "cockroach", "poppycock", "cocktail"], "suck dick", "sucking dick",
 		"iamasussyimposter",
 		["cu"+"nt", "scunthorpe"],
-		"vagina",
 		["penis", "peniston"],
 		"hawk tuah",
 
