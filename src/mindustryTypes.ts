@@ -241,6 +241,7 @@ class Building {
 	kill():void;
 	tileX():number;
 	tileY():number;
+	unit?: Unit;
 }
 const Items: Record<"scrap" | "copper" | "lead" | "graphite" | "coal" | "titanium" | "thorium" | "silicon" | "plastanium" | "phaseFabric" | "surgeAlloy" | "sporePod" | "sand" | "blastCompound" | "pyratite" | "metaglass" | "beryllium" | "tungsten" | "oxide" | "carbide" | "fissileMatter" | "dormantCyst", Item> & {
 	serpuloItems: Seq<Item>;

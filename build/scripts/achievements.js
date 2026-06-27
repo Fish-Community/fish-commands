@@ -658,6 +658,9 @@ exports.Achievements = {
     around_the_world: new Achievement(Iconc.planet, "Around the World", "Fly your unit around the entire map without entering it, starting from the lower left.", {
         notify: "everyone",
     }),
+    human_routerchain: new Achievement(["accent", Blocks.router.emoji()], "Human Routerchain", ["Form a human routerchain with 3 other players.", "Does not work with Distributors. Routers must be in a horizontal or vertical line."], {
+        notify: "everyone"
+    }),
 };
 Object.entries(exports.Achievements).forEach(function (_a) {
     var _b = __read(_a, 2), id = _b[0], a = _b[1];
@@ -691,6 +694,58 @@ Events.on(EventType.UnitBulletDestroyEvent, function (_a) {
         var build = bullet.owner;
         if (build.liquids.current() == Liquids.cryofluid && build.timeScale() >= 3)
             exports.Achievements.foreshadow_overkill.grantToAllOnline(build.team);
+    }
+});
+function getPlayerRouter(x, y) {
+    var _a;
+    var build = Vars.world.build(x, y);
+    if ((build === null || build === void 0 ? void 0 : build.block) == Blocks.router)
+        return (_a = build.unit) === null || _a === void 0 ? void 0 : _a.getPlayer();
+    else
+        return null;
+}
+Events.on(EventType.UnitControlEvent, function (_a) {
+    var _b, _c;
+    var player = _a.player, unit = _a.unit;
+    var tile = (_c = (_b = player.unit()) === null || _b === void 0 ? void 0 : _b.tile) === null || _c === void 0 ? void 0 : _c.call(_b);
+    if (!tile)
+        return;
+    if (tile.block == Blocks.router) {
+        var x = tile.tileX();
+        var y = tile.tileY();
+        var players = [player];
+        var temp = void 0;
+        for (var i = 1; i <= 3; i++) {
+            if ((temp = getPlayerRouter(x + i, y)))
+                players.push(temp);
+            else
+                break;
+        }
+        for (var i = 1; i <= 3; i++) {
+            if ((temp = getPlayerRouter(x - i, y)))
+                players.push(temp);
+            else
+                break;
+        }
+        if (players.length >= 4) {
+            players.forEach(function (p) { return exports.Achievements.human_routerchain.grantTo(players_1.FishPlayer.get(p)); });
+        }
+        players = [player];
+        for (var i = 1; i <= 3; i++) {
+            if ((temp = getPlayerRouter(x, y + i)))
+                players.push(temp);
+            else
+                break;
+        }
+        for (var i = 1; i <= 3; i++) {
+            if ((temp = getPlayerRouter(x, y - i)))
+                players.push(temp);
+            else
+                break;
+        }
+        if (players.length >= 4) {
+            players.forEach(function (p) { return exports.Achievements.human_routerchain.grantTo(players_1.FishPlayer.get(p)); });
+        }
     }
 });
 Events.on(EventType.BuildingBulletDestroyEvent, function (_a) {

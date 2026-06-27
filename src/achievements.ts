@@ -545,6 +545,10 @@ export const Achievements = {
 	around_the_world: new Achievement(Iconc.planet, "Around the World", "Fly your unit around the entire map without entering it, starting from the lower left.", {
 		notify: "everyone",
 	}),
+
+	human_routerchain: new Achievement(["accent", Blocks.router.emoji()], "Human Routerchain", ["Form a human routerchain with 3 other players.", "Does not work with Distributors. Routers must be in a horizontal or vertical line."], {
+		notify: "everyone"
+	}),
 } satisfies Record<string, Achievement>;
 Object.entries(Achievements).forEach(([id, a]) => a.sid = id);
 
@@ -570,6 +574,46 @@ Events.on(EventType.UnitBulletDestroyEvent, ({unit, bullet}:{unit:Unit; bullet: 
 	if(!Gamemode.sandbox() && unit.type == UnitTypes.dagger && (bullet.owner as Building | null)?.block == Blocks.foreshadow){
 		const build = bullet.owner as Building;
 		if(build.liquids.current() == Liquids.cryofluid && build.timeScale() >= 3) Achievements.foreshadow_overkill.grantToAllOnline(build.team);
+	}
+});
+
+function getPlayerRouter(x: number, y: number){
+	const build = Vars.world.build(x, y);
+	if(build?.block == Blocks.router) return build.unit?.getPlayer();
+	else return null;
+}
+
+Events.on(EventType.UnitControlEvent, ({player, unit}:{player: Player; unit: Unit;}) => {
+	const tile = player.unit()?.tile?.();
+	if(!tile) return;
+	if(tile.block == Blocks.router){
+		const x = tile.tileX();
+		const y = tile.tileY();
+		let players = [player];
+		let temp;
+		for(let i = 1; i <= 3; i ++){
+			if((temp = getPlayerRouter(x + i, y))) players.push(temp);
+			else break;
+		}
+		for(let i = 1; i <= 3; i ++){
+			if((temp = getPlayerRouter(x - i, y))) players.push(temp);
+			else break;
+		}
+		if(players.length >= 4){
+			players.forEach(p => Achievements.human_routerchain.grantTo(FishPlayer.get(p)));
+		}
+		players = [player];
+		for(let i = 1; i <= 3; i ++){
+			if((temp = getPlayerRouter(x, y + i))) players.push(temp);
+			else break;
+		}
+		for(let i = 1; i <= 3; i ++){
+			if((temp = getPlayerRouter(x, y - i))) players.push(temp);
+			else break;
+		}
+		if(players.length >= 4){
+			players.forEach(p => Achievements.human_routerchain.grantTo(FishPlayer.get(p)));
+		}
 	}
 });
 
