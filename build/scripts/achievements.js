@@ -661,6 +661,13 @@ exports.Achievements = {
     human_routerchain: new Achievement(["accent", Blocks.router.emoji()], "Human Routerchain", ["Form a human routerchain with 3 other players.", "Does not work with Distributors. Routers must be in a horizontal or vertical line."], {
         notify: "everyone"
     }),
+    no_enemy_blocks: new Achievement(["scarlet", Iconc.commandAttack], "Eradication", ["Complete an attack map with no enemy blocks remaining.", "The map must have started with at least 500 enemy blocks"], {
+        modes: ["only", "attack"],
+        notify: "everyone",
+        checkGameover: function () {
+            return eligibleForClearAllBuildings && !Groups.build.contains(function (b) { return b.team != Vars.state.rules.defaultTeam && b.team != Team.derelict && !b.block.privileged; });
+        }
+    }),
 };
 Object.entries(exports.Achievements).forEach(function (_a) {
     var _b = __read(_a, 2), id = _b[0], a = _b[1];
@@ -705,9 +712,9 @@ function getPlayerRouter(x, y) {
         return null;
 }
 Events.on(EventType.UnitControlEvent, function (_a) {
-    var _b, _c;
+    var _b;
     var player = _a.player, unit = _a.unit;
-    var tile = (_c = (_b = player.unit()) === null || _b === void 0 ? void 0 : _b.tile) === null || _c === void 0 ? void 0 : _c.call(_b);
+    var tile = (_b = unit === null || unit === void 0 ? void 0 : unit.tile) === null || _b === void 0 ? void 0 : _b.call(unit);
     if (!tile)
         return;
     if (tile.block == Blocks.router) {
@@ -870,7 +877,11 @@ Timer.schedule(function () {
     }
 }, 1, 0.5);
 Events.on(EventType.GameOverEvent, function () { return coreHealthTime.clear(); });
-Events.on(EventType.WorldLoadEvent, function () { return coreHealthTime.clear(); });
+var eligibleForClearAllBuildings = false;
+Events.on(EventType.WorldLoadEvent, function () {
+    coreHealthTime.clear();
+    eligibleForClearAllBuildings = Groups.build.count(function (b) { return b.team != Vars.state.rules.defaultTeam && b.team != Team.derelict && !b.block.privileged; }) > 500;
+});
 globals_1.FishEvents.on("scriptKiddie", function (_, p) { return Timer.schedule(function () { return exports.Achievements.script_kiddie.grantTo(p); }, 2); });
 globals_1.FishEvents.on("memoryCorruption", function () { return exports.Achievements.memory_corruption.grantToAllOnline(); });
 globals_1.FishEvents.on("serverSays", function () { return exports.Achievements.server_speak.grantToAllOnline(); });

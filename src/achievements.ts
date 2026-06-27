@@ -549,6 +549,13 @@ export const Achievements = {
 	human_routerchain: new Achievement(["accent", Blocks.router.emoji()], "Human Routerchain", ["Form a human routerchain with 3 other players.", "Does not work with Distributors. Routers must be in a horizontal or vertical line."], {
 		notify: "everyone"
 	}),
+	no_enemy_blocks: new Achievement(["scarlet", Iconc.commandAttack], "Eradication", ["Complete an attack map with no enemy blocks remaining.", "The map must have started with at least 500 enemy blocks"], {
+		modes: ["only", "attack"],
+		notify: "everyone",
+		checkGameover(){
+			return eligibleForClearAllBuildings && !Groups.build.contains(b => b.team != Vars.state.rules.defaultTeam && b.team != Team.derelict && !b.block.privileged);
+		}
+	}),
 } satisfies Record<string, Achievement>;
 Object.entries(Achievements).forEach(([id, a]) => a.sid = id);
 
@@ -577,6 +584,8 @@ Events.on(EventType.UnitBulletDestroyEvent, ({unit, bullet}:{unit:Unit; bullet: 
 	}
 });
 
+
+
 function getPlayerRouter(x: number, y: number){
 	const build = Vars.world.build(x, y);
 	if(build?.block == Blocks.router) return build.unit?.getPlayer();
@@ -584,7 +593,7 @@ function getPlayerRouter(x: number, y: number){
 }
 
 Events.on(EventType.UnitControlEvent, ({player, unit}:{player: Player; unit: Unit;}) => {
-	const tile = player.unit()?.tile?.();
+	const tile = unit?.tile?.();
 	if(!tile) return;
 	if(tile.block == Blocks.router){
 		const x = tile.tileX();
@@ -708,7 +717,11 @@ Timer.schedule(() => {
 	}
 }, 1, 0.5);
 Events.on(EventType.GameOverEvent, () => coreHealthTime.clear());
-Events.on(EventType.WorldLoadEvent, () => coreHealthTime.clear());
+let eligibleForClearAllBuildings = false;
+Events.on(EventType.WorldLoadEvent, () => {
+	coreHealthTime.clear();
+	eligibleForClearAllBuildings = Groups.build.count(b => b.team != Vars.state.rules.defaultTeam && b.team != Team.derelict && !b.block.privileged) > 500;
+});
 
 
 FishEvents.on("scriptKiddie", (_, p) => Timer.schedule(() => Achievements.script_kiddie.grantTo(p), 2));

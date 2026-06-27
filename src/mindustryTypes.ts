@@ -219,6 +219,7 @@ class Block {
 	buildType: Building;
 	id: number;
 	localizedName: string;
+	privileged: boolean;
 	emoji(): string;
 }
 class Building {
@@ -641,6 +642,7 @@ class EntityGroup<T> {
 	first():T;
 	index(index:number):T;
 	clear():void;
+	count(pred: (item: T) => boolean): number;
 	//iterator():Iterator<T>
 }
 
