@@ -800,14 +800,14 @@ var FishPlayer = /** @class */ (function () {
                     Vars.netServer.currentlyKicking = null;
                     return;
                 }
-                else if ((initiator === null || initiator === void 0 ? void 0 : initiator.hasPerm("immediatelyVotekickNewPlayers")) && target.isSuspicious("high") && !target.hasPerm("bypassVotekick")) {
+                else if ((initiator === null || initiator === void 0 ? void 0 : initiator.hasPerm("immediatelyVotekickNewPlayers")) && target.isSuspicious("high")) {
                     Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (").concat(Vars.netServer.votesRequired(), "/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Vote passed."));
                     target.kick(Packets.KickReason.vote, funcs_1.Duration.minutes(30));
                     Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
                     Vars.netServer.currentlyKicking = null;
                     return;
                 }
-                else if (target.isSuspicious("high") && !target.hasPerm("bypassVotekick") && !target.ranksAtLeast("trusted")) {
+                else if (target.isSuspicious("high") && !target.hasPerm("bypassVotekick")) {
                     //Increase votes by 1, from 1 to 2
                     Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(2));
                     voted.put("__server__", 1);
