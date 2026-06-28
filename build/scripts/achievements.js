@@ -860,11 +860,11 @@ Timer.schedule(function () {
             }
             return true;
         })()) {
-            Call.effect(Fx.shieldBreak, entry.unit.x, entry.unit.y, 0, "red");
+            Call.effect(Fx.shieldBreak, entry.unit.x, entry.unit.y, 0, Color.red);
             delete aroundTheWorld[uuid];
         }
         else
-            Call.effect(Fx.shieldBreak, entry.unit.x, entry.unit.y, 0, "green");
+            Call.effect(Fx.shieldBreak, entry.unit.x, entry.unit.y, 0, Color.green);
     };
     try {
         for (var _b = __values(Object.entries(aroundTheWorld)), _c = _b.next(); !_c.done; _c = _b.next()) {
