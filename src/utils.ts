@@ -849,11 +849,8 @@ export function fishCommandsRootDirPath():Path {
 /** Fails if "mode" is invalid. */
 export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 	const modes = {
-		fast: [StatusEffects.fast],
 		fast2: [StatusEffects.fast, StatusEffects.overdrive, StatusEffects.overclock],
-		boss: [StatusEffects.boss],
 		health: [StatusEffects.boss, StatusEffects.shielded],
-		slow: [StatusEffects.slow],
 		slow2: [
 			StatusEffects.slow,
 			StatusEffects.freezing,
@@ -866,7 +863,6 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 		],
 		freeze: [StatusEffects.unmoving],
 		disarm: [StatusEffects.disarmed],
-		invincible: [StatusEffects.invincible],
 		boost: [
 			StatusEffects.fast,
 			StatusEffects.overdrive,
@@ -889,6 +885,7 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 			StatusEffects.electrified,
 			StatusEffects.fast,
 		],
+		all: Vars.content.statusEffects().toArray(),
 		clear(unit){
 			unit.clearStatuses();
 			unit.maxHealth = unit.type.health;
@@ -908,7 +905,9 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 			unit.shield = 1e15;
 		}
 	} satisfies Record<string, StatusEffect[] | ((u:Unit) => void)>;
-	const effects = match(mode, modes, null) ?? fail(`Invalid mode. Supported modes: ${Object.keys(modes).join(", ")}`);
+	const effects = match(mode, modes, null) ??
+		(mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
+		fail(`Invalid mode. Supported modes: ${Object.keys(modes).join(", ")}`));
 	if(typeof effects === "function"){
 		effects(unit);
 	} else {

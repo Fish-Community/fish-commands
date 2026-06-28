@@ -1016,11 +1016,8 @@ function applyEffectMode(mode, unit, ticks) {
     var e_6, _a;
     var _b;
     var modes = {
-        fast: [StatusEffects.fast],
         fast2: [StatusEffects.fast, StatusEffects.overdrive, StatusEffects.overclock],
-        boss: [StatusEffects.boss],
         health: [StatusEffects.boss, StatusEffects.shielded],
-        slow: [StatusEffects.slow],
         slow2: [
             StatusEffects.slow,
             StatusEffects.freezing,
@@ -1033,7 +1030,6 @@ function applyEffectMode(mode, unit, ticks) {
         ],
         freeze: [StatusEffects.unmoving],
         disarm: [StatusEffects.disarmed],
-        invincible: [StatusEffects.invincible],
         boost: [
             StatusEffects.fast,
             StatusEffects.overdrive,
@@ -1056,6 +1052,7 @@ function applyEffectMode(mode, unit, ticks) {
             StatusEffects.electrified,
             StatusEffects.fast,
         ],
+        all: Vars.content.statusEffects().toArray(),
         clear: function (unit) {
             unit.clearStatuses();
             unit.maxHealth = unit.type.health;
@@ -1075,7 +1072,8 @@ function applyEffectMode(mode, unit, ticks) {
             unit.shield = 1e15;
         }
     };
-    var effects = (_b = match(mode, modes, null)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Invalid mode. Supported modes: ".concat(Object.keys(modes).join(", ")));
+    var effects = (_b = match(mode, modes, null)) !== null && _b !== void 0 ? _b : (mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
+        (0, commands_1.fail)("Invalid mode. Supported modes: ".concat(Object.keys(modes).join(", "))));
     if (typeof effects === "function") {
         effects(unit);
     }

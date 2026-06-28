@@ -140,6 +140,7 @@ type Content = {
 	items(): Seq<Item>;
 	units(): Seq<UnitType>;
 	blocks(): Seq<Block>;
+	statusEffects(): Seq<StatusEffect>;
 };
 class World {
 	build(x:number, y:number):Building | null;
@@ -319,7 +320,10 @@ const Units: {
 	getCap(team:Team):number;
 };
 const StatusEffects: Record<string, StatusEffect>;
-type StatusEffect = any;
+class StatusEffect {
+	show: boolean;
+	color: Color;
+}
 const Fx: Record<string, Effect>;
 type Effect = any;
 const Align: Record<string, any>;
@@ -553,7 +557,8 @@ class Seq<T> {
 	filter(pred:(item:T) => boolean):Seq<T>;
 	retainAll(pred:(item:T) => boolean):Seq<T>;
 	/** @returns whether an item was removed */
-	remove(pred:(item:T) => boolean):boolean;
+	remove(item: T):boolean;
+	remove(pred:Boolf<T>):boolean;
 	removeAll(pred:(item:T) => boolean):Seq<T>;
 	select(pred:(item:T) => boolean):Seq<T>;
 	find(pred:(item:T) => boolean):T | null;
