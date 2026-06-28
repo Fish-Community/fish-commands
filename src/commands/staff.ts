@@ -558,7 +558,8 @@ export const commands = commandList({
 			});
 			if(option.admin) fail(`Cannot ban an admin.`);
 			await Menu.confirmDangerous(sender, `Are you sure you want to ban ${option.name}?`);
-			admins.banPlayerIP(option.ip()); //this also bans the UUID
+			admins.bannedIPs.add(option.ip());
+			admins.banPlayerID(option.uuid());
 			api.ban({ip: option.ip(), uuid: option.uuid()});
 			Log.info(`${option.ip()}/${option.uuid()} was banned.`);
 			logAction("banned", sender, option.getInfo());

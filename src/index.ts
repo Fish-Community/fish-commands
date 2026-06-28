@@ -25,7 +25,7 @@ Events.on(EventType.ConnectionEvent, (e) => {
 		}, (banned) => {
 			if(!banned){
 				//If they were previously banned locally, but the API says they aren't banned, then unban them and clear the kick that the outer function already did
-				Vars.netServer.admins.unbanPlayerIP(e.connection.address);
+				Vars.netServer.admins.bannedIPs.remove(e.connection.address);
 				Vars.netServer.admins.kickedIPs.remove(e.connection.address);
 			}
 		});
@@ -137,10 +137,10 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		if(banned){
 			Log.info(`&lrSynced ban of ${e.packet.uuid}/${e.connection.address}.`);
 			e.connection.kick(Packets.KickReason.banned, 1);
-			Vars.netServer.admins.banPlayerIP(e.connection.address);
+			Vars.netServer.admins.bannedIPs.add(e.connection.address);
 			Vars.netServer.admins.banPlayerID(e.packet.uuid);
 		} else {
-			Vars.netServer.admins.unbanPlayerIP(e.connection.address);
+			Vars.netServer.admins.bannedIPs.remove(e.connection.address);
 			Vars.netServer.admins.unbanPlayerID(e.packet.uuid);
 		}
 	});
@@ -177,7 +177,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 		const player = action.player;
 		const fishP = FishPlayer.get(player);
 
-		//prevent stopped players from doing anything other than deposit items.
+		//prevent stopped players from doing anything
 		if(!fishP.hasPerm("play")){
 			action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
 			return false;

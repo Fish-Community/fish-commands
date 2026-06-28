@@ -857,7 +857,8 @@ exports.commands = (0, commands_1.commandList)({
                             return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to ban ".concat(option.name, "?"))];
                         case 6:
                             _c.sent();
-                            admins.banPlayerIP(option.ip()); //this also bans the UUID
+                            admins.bannedIPs.add(option.ip());
+                            admins.banPlayerID(option.uuid());
                             api.ban({ ip: option.ip(), uuid: option.uuid() });
                             Log.info("".concat(option.ip(), "/").concat(option.uuid(), " was banned."));
                             (0, utils_1.logAction)("banned", sender, option.getInfo());

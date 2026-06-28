@@ -172,11 +172,14 @@ class Administration {
 	getInfoOptional(uuid:string):PlayerInfo | null;
 	findByIP(ip:string):PlayerInfo | null;
 	findByIPs(ip:string):Seq<PlayerInfo>;
+	/** @deprecated do not use this, it iterates over all playerinfo unnecessarily */
 	isIPBanned(ip:string):boolean;
 	isIDBanned(uuid:string):boolean;
+	/** @deprecated do not use this, it iterates over all playerinfo unnecessarily */
 	banPlayerIP(ip:string):boolean;
 	banPlayerID(uuid:string):boolean;
 	banPlayer(uuid:string):boolean;
+	/** @deprecated do not use this, it iterates over all playerinfo unnecessarily */
 	unbanPlayerIP(ip:string):boolean;
 	unbanPlayerID(uuid:string):boolean;
 	adminPlayer(uuid:string, usid:string):boolean;

@@ -418,7 +418,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     (0, utils_1.logAction)("whacked", "console", info);
                 else
                     (0, utils_1.logAction)("console ip-whacked ".concat(args.target));
-                if (admins.isIPBanned(args.target)) {
+                if (admins.bannedIPs.contains(args.target)) {
                     output("IP &c\"".concat(args.target, "\"&fr is already banned. Ban was synced to other servers."));
                 }
                 else {
@@ -505,8 +505,8 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     else {
                         output("IP &c\"".concat(args.target, "\"&fr is not globally banned."));
                     }
-                    if (admins.isIPBanned(args.target)) {
-                        admins.unbanPlayerIP(args.target);
+                    if (admins.bannedIPs.contains(args.target)) {
+                        admins.bannedIPs.remove(args.target);
                         output("IP &c\"".concat(args.target, "\"&fr has been locally unbanned."));
                     }
                     else {
@@ -520,7 +520,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 });
             }
             else if ((range = (0, utils_1.getIPRange)(args.target)) != null) {
-                if (admins.subnetBans.remove(function (b) { return b.replace(/\.$/, ".") == range.replace(/\.$/, "."); })) {
+                if (admins.subnetBans.remove(boolf(function (b) { return b.replace(/\.$/, ".") == range.replace(/\.$/, "."); }))) {
                     output("IP range &c\"".concat(range, "\"&fr was unbanned."));
                 }
                 else {

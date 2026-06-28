@@ -748,7 +748,7 @@ export class FishPlayer {
 				for(const [p, times] of playersToBan){
 					if(p.suspicionLevel() == 3 || p.suspicionLevel() == 2 && times > 1){
 						admins.banPlayerID(p.uuid);
-						admins.banPlayerIP(p.ip());
+						admins.bannedIPs.add(p.ip());
 						api.ban({ ip: p.ip(), uuid: p.uuid });
 						logHTrip(p, "votekick abuse",
 							(p == fishP ? `Player banned automatically` : `Player banned automatically based on previous activity`) +
@@ -956,7 +956,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 &yPreviously used UUID &b${uuid}&y(&b${Vars.netServer.admins.getInfoOptional(uuid)?.plainLastName()}&y), currently using UUID &b${this.uuid}&y from the same IP address.`
 				);
 				FishPlayer.messageStaff(`[yellow]Automatically banned player [cyan]${this.cleanedName}[] for suspected punishment evasion.`);
-				Vars.netServer.admins.banPlayerIP(ip);
+				Vars.netServer.admins.bannedIPs.add(ip);
 				api.ban({ip, uuid});
 				this.kick(Packets.KickReason.banned);
 				return false;

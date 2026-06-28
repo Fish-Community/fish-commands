@@ -889,7 +889,7 @@ var FishPlayer = /** @class */ (function () {
                         var _f = __read(playersToBan_1_1.value, 2), p = _f[0], times = _f[1];
                         if (p.suspicionLevel() == 3 || p.suspicionLevel() == 2 && times > 1) {
                             admins.banPlayerID(p.uuid);
-                            admins.banPlayerIP(p.ip());
+                            admins.bannedIPs.add(p.ip());
                             api.ban({ ip: p.ip(), uuid: p.uuid });
                             (0, utils_1.logHTrip)(p, "votekick abuse", (p == fishP ? "Player banned automatically" : "Player banned automatically based on previous activity") +
                                 ". Trigger reason: ".concat(reason));
@@ -1149,7 +1149,7 @@ var FishPlayer = /** @class */ (function () {
                     api.sendModerationMessage("Automatically banned player `".concat(this.cleanedName, "` (`").concat(this.uuid, "`/`").concat(this.ip(), "`) for suspected punishment evasion.\nPreviously used UUID `").concat(uuid, "`(").concat((_b = Vars.netServer.admins.getInfoOptional(uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName(), "), currently using UUID `").concat(this.uuid, "` from the same IP address."));
                     Log.warn("&yAutomatically banned player &b".concat(this.cleanedName, "&y (&b").concat(this.uuid, "&y/&b").concat(this.ip(), "&y) for suspected punishment evasion.\n&yPreviously used UUID &b").concat(uuid, "&y(&b").concat((_c = Vars.netServer.admins.getInfoOptional(uuid)) === null || _c === void 0 ? void 0 : _c.plainLastName(), "&y), currently using UUID &b").concat(this.uuid, "&y from the same IP address."));
                     FishPlayer.messageStaff("[yellow]Automatically banned player [cyan]".concat(this.cleanedName, "[] for suspected punishment evasion."));
-                    Vars.netServer.admins.banPlayerIP(ip);
+                    Vars.netServer.admins.bannedIPs.add(ip);
                     api.ban({ ip: ip, uuid: uuid });
                     this.kick(Packets.KickReason.banned);
                     return false;
