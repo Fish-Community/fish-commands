@@ -480,24 +480,34 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: "Sends a message to staff only.",
         perm: commands_1.Perm.chat,
         handler: function (_a) {
-            var sender = _a.sender, args = _a.args, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail, lastUsedSender = _a.lastUsedSender;
-            if (!sender.hasPerm("mod")) {
-                if (Date.now() - lastUsedSender < 4000)
-                    (0, commands_1.fail)("This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.");
-            }
-            api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"), function (sent) {
-                if (!sender.hasPerm("mod")) {
-                    if (sent) {
-                        outputSuccess("Message sent to [orange]all online staff.");
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var _c;
+                var sender = _b.sender, args = _b.args, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail, lastUsedSender = _b.lastUsedSender;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            if (!sender.hasPerm("mod")) {
+                                if (Date.now() - lastUsedSender < 4000)
+                                    (0, commands_1.fail)("This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.");
+                            }
+                            players_1.FishPlayer.messageStaff(sender.prefixedName, args.message, sender.hasPerm("mod"));
+                            _d.label = 1;
+                        case 1:
+                            _d.trys.push([1, 3, , 4]);
+                            return [4 /*yield*/, api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"))];
+                        case 2:
+                            _d.sent();
+                            if (!sender.hasPerm("mod")) {
+                                outputSuccess("Message sent to [orange]all online staff.");
+                            }
+                            return [3 /*break*/, 4];
+                        case 3:
+                            _c = _d.sent();
+                            outputFail("Failed to send message to other servers.");
+                            return [3 /*break*/, 4];
+                        case 4: return [2 /*return*/];
                     }
-                    else {
-                        var wasReceived = players_1.FishPlayer.messageStaff(sender.prefixedName, args.message);
-                        if (wasReceived)
-                            outputSuccess("Message sent to staff.");
-                        else
-                            outputFail("No staff were online to receive your message.");
-                    }
-                }
+                });
             });
         },
     }, 

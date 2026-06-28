@@ -64,23 +64,24 @@ export function getStaffMessages(callback: (messages: string) => unknown) {
 }
 
 /** Send staff messages from server. */
-export function sendStaffMessage(message:string, playerName:string, isStaff:boolean, callback?: (sent:boolean) => unknown){
-	if(Mode.noBackend) return;
+export function sendStaffMessage(message:string, playerName:string, isStaff:boolean){
+	const { promise, resolve, reject } = Promise.withResolvers<string, unknown>();
+	if(Mode.noBackend) return reject('local debug mode'), promise;
 	const req = Http.post(
-		`http://${backendIP}/api/sendStaffMessage`,
+		`http://${backendIP}/api/sendStaffMessage/v2`,
 		// need to send both name variants so one can be sent to the other servers with color and discord can use the clean one
 		JSON.stringify({ message, playerName, cleanedName: Strings.stripColors(playerName), server: Gamemode.name(), isStaff })
 	).header('Content-Type', 'application/json').header('Accept', '*/*');
 	req.timeout = 10000;
-	req.error(() => {
+	req.error(err => {
 		Log.err(`[API] Network error when trying to call api.sendStaffMessage()`);
-		callback?.(false);
+		reject(err);
 	});
 	req.submit((response) => {
 		const temp = response.getResultAsString();
-		if(!temp.length) Log.err(`[API] Network error(empty response) when trying to call api.sendStaffMessage()`);
-		else callback?.(JSON.parse(temp).data);
+		resolve(JSON.parse(temp).data);
 	});
+	return promise;
 }
 
 /** Bans the provided ip and/or uuid. */

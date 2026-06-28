@@ -1195,7 +1195,7 @@ var FishPlayer = /** @class */ (function () {
                     }
                     else {
                         (0, utils_1.logAction)("autoflagged", "AntiVPN", _this);
-                        api.sendStaffMessage("Autoflagged player ".concat(_this.name, "[cyan] for suspected vpn!"), "AntiVPN", true);
+                        void api.sendStaffMessage("Autoflagged player ".concat(_this.name, "[cyan] for suspected vpn!"), "AntiVPN", true);
                         FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".concat(_this.name, "[cyan]\"[yellow] is new (").concat(info.timesJoined - 1, " joins) and using a vpn. They have been automatically stopped and muted. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free."));
                         Log.warn("Player ".concat(_this.name, " (").concat(_this.uuid, ") was autoflagged."));
                         void menus_1.Menu.buttons(_this, "[gold]Welcome to Fish Community!", "[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".concat(config_1.FColor.discord(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."), [[
@@ -1622,8 +1622,11 @@ var FishPlayer = /** @class */ (function () {
         if (this.shouldWhackFlaggedPlayers())
             this.whackFlaggedPlayers();
     };
-    FishPlayer.messageStaff = function (arg1, arg2) {
-        var message = arg2 ? "[gray]<[cyan]staff[gray]>[white]".concat(arg1, "[green]: [cyan]").concat(arg2) : arg1;
+    FishPlayer.messageStaff = function (arg1, arg2, wasStaff) {
+        var message = arg2 ?
+            wasStaff ? "[#696969]<[cyan]staff[#696969]>[white]".concat(arg1, "[green]: [cyan]").concat(arg2)
+                : "[#696969]<[tan]player[#696969]>".concat(arg1, "[tan]: [tan]").concat(arg2)
+            : arg1;
         var messageReceived = false;
         Groups.player.each(function (pl) {
             var fishP = FishPlayer.get(pl);

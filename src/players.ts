@@ -994,7 +994,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 						FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
 					} else {
 						logAction("autoflagged", "AntiVPN", this);
-						api.sendStaffMessage(`Autoflagged player ${this.name}[cyan] for suspected vpn!`, "AntiVPN", true);
+						void api.sendStaffMessage(`Autoflagged player ${this.name}[cyan] for suspected vpn!`, "AntiVPN", true);
 						FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.name}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn. They have been automatically stopped and muted. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free.`);
 						Log.warn(`Player ${this.name} (${this.uuid}) was autoflagged.`);
 						void Menu.buttons(
@@ -1391,10 +1391,13 @@ We apologize for the inconvenience.`
 	 * Sends a message to staff only.
 	 * @returns if the message was received by anyone.
 	 */
-	static messageStaff(senderName:string, message:string):boolean;
+	static messageStaff(senderName:string, message:string, wasStaff:boolean):boolean;
 	static messageStaff(message:string):boolean;
-	static messageStaff(arg1:string, arg2?:string):boolean {
-		const message = arg2 ? `[gray]<[cyan]staff[gray]>[white]${arg1}[green]: [cyan]${arg2}` : arg1;
+	static messageStaff(arg1:string, arg2?:string, wasStaff?:boolean):boolean {
+		const message = arg2 ?
+			wasStaff ? `[#696969]<[cyan]staff[#696969]>[white]${arg1}[green]: [cyan]${arg2}`
+			: `[#696969]<[tan]player[#696969]>${arg1}[tan]: [tan]${arg2}`
+		: arg1;
 		let messageReceived = false;
 		Groups.player.each(pl => {
 			const fishP = FishPlayer.get(pl);
