@@ -515,36 +515,50 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         data: new Set,
         handler: function (_a) {
-            var _b;
-            var args = _a.args, data = _a.data, sender = _a.sender, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail;
-            if (data.has(sender.uuid)) {
-                outputSuccess("No longer watching a player.");
-                data.delete(sender.uuid);
-            }
-            else if (args.player) {
-                data.add(sender.uuid);
-                var senderUnit_1 = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("You do not have a unit.");
-                var stayX_1 = senderUnit_1.x;
-                var stayY_1 = senderUnit_1.y;
-                var target_1 = args.player.player;
-                (function watch() {
-                    var _a, _b;
-                    var unit = target_1.unit();
-                    if (data.has(sender.uuid) && unit) {
-                        // Self.X+(172.5-Self.X)/10
-                        Call.setCameraPosition(sender.con, unit.x, unit.y);
-                        if (senderUnit_1)
-                            (_b = (_a = sender.unit()) === null || _a === void 0 ? void 0 : _a.set) === null || _b === void 0 ? void 0 : _b.call(_a, stayX_1, stayY_1);
-                        Timer.schedule(function () { return watch(); }, 0.1, 0.1, 0);
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var senderUnit_1, stayX_1, stayY_1, target_1;
+                var _c;
+                var args = _b.args, data = _b.data, sender = _b.sender, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            if (!!sender.con.mobile) return [3 /*break*/, 2];
+                            return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.")];
+                        case 1:
+                            _d.sent();
+                            _d.label = 2;
+                        case 2:
+                            if (data.has(sender.uuid)) {
+                                outputSuccess("No longer watching a player.");
+                                data.delete(sender.uuid);
+                            }
+                            else if (args.player) {
+                                data.add(sender.uuid);
+                                senderUnit_1 = (_c = sender.unit()) !== null && _c !== void 0 ? _c : (0, commands_1.fail)("You do not have a unit.");
+                                stayX_1 = senderUnit_1.x;
+                                stayY_1 = senderUnit_1.y;
+                                target_1 = args.player.player;
+                                (function watch() {
+                                    var unit = target_1.unit();
+                                    if (data.has(sender.uuid) && unit) {
+                                        // Self.X+(172.5-Self.X)/10
+                                        Call.setCameraPosition(sender.con, unit.x, unit.y);
+                                        if (senderUnit_1)
+                                            senderUnit_1.set(stayX_1, stayY_1);
+                                        Timer.schedule(function () { return watch(); }, 0.1, 0.1, 0);
+                                    }
+                                    else {
+                                        Call.setCameraPosition(sender.con, stayX_1, stayY_1);
+                                    }
+                                })();
+                            }
+                            else {
+                                outputFail("No player to unwatch.");
+                            }
+                            return [2 /*return*/];
                     }
-                    else {
-                        Call.setCameraPosition(sender.con, stayX_1, stayY_1);
-                    }
-                })();
-            }
-            else {
-                outputFail("No player to unwatch.");
-            }
+                });
+            });
         },
     }), spectate: (0, commands_1.command)(function () {
         //TODO revise code

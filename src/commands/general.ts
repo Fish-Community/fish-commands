@@ -367,7 +367,8 @@ export const commands = commandList({
 		description: `Watch/unwatch a player.`,
 		perm: Perm.none,
 		data: new Set<string>,
-		handler({ args, data, sender, outputSuccess, outputFail }) {
+		async handler({ args, data, sender, outputSuccess, outputFail }) {
+			if(!sender.con.mobile) await Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.");
 			if(data.has(sender.uuid)){
 				outputSuccess(`No longer watching a player.`);
 				data.delete(sender.uuid);
@@ -382,7 +383,7 @@ export const commands = commandList({
 					if(data.has(sender.uuid) && unit){
 						// Self.X+(172.5-Self.X)/10
 						Call.setCameraPosition(sender.con, unit.x, unit.y);
-						if(senderUnit) sender.unit()?.set?.(stayX, stayY);
+						if(senderUnit) senderUnit.set(stayX, stayY);
 						Timer.schedule(() => watch(), 0.1, 0.1, 0);
 					} else {
 						Call.setCameraPosition(sender.con, stayX, stayY);
