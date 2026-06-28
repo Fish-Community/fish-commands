@@ -326,6 +326,7 @@ const StatusEffects: Record<string, StatusEffect>;
 class StatusEffect {
 	show: boolean;
 	color: Color;
+	emoji(): string;
 }
 const Fx: Record<string, Effect>;
 type Effect = any;
