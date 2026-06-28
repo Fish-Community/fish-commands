@@ -1184,8 +1184,8 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 				[{data: true, text: "Lowest highscores"}],
 				[{data: false, text: "All runs"}],
 			], {
+				onCancel: "reject",
 				includeCancel: true,
-				onCancel: "reject"
 			});
 
 			const initialLength = fmap.runs.length;

@@ -264,7 +264,16 @@ exports.Menu = {
      */
     buttons: function (target, title, description, options, cfg) {
         if (cfg === void 0) { cfg = {}; }
-        return exports.Menu.raw(title, description, options, target, __assign(__assign({}, cfg), { optionStringifier: function (o) { return o.text; } })).then(function (o) { return o === null || o === void 0 ? void 0 : o.data; });
+        var cancelOptionId, i;
+        var flatOptions = options.flat();
+        if (cfg.includeCancel) {
+            cancelOptionId = flatOptions.length;
+            options = __spreadArray(__spreadArray([], __read(options), false), [[{ text: "[red]Cancel", data: exports.Cancel }]], false);
+        }
+        else if ((i = flatOptions.findIndex(function (o) { return o.data == exports.Cancel; })) != -1) {
+            cancelOptionId = i;
+        }
+        return exports.Menu.raw(title, description, options, target, __assign(__assign({}, cfg), { cancelOptionId: cancelOptionId, optionStringifier: function (o) { return o.text; } })).then(function (o) { return o === null || o === void 0 ? void 0 : o.data; });
     },
     /**
      * Displays a menu to a player, returning a Promise.

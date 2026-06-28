@@ -1561,8 +1561,8 @@ exports.commands = (0, commands_1.commandList)({
                                 [{ data: true, text: "Lowest highscores" }],
                                 [{ data: false, text: "All runs" }],
                             ], {
+                                onCancel: "reject",
                                 includeCancel: true,
-                                onCancel: "reject"
                             })];
                         case 2:
                             _c = (lowestHighscores = _g.sent());
