@@ -136,7 +136,7 @@ export const Menu = {
 	
 		let i = 0;
 		const stringifiedOptions = arrangedOptions.map(r => r.map(item => {
-			if(i === cancelOptionId) return item as string;
+			if(i === cancelOptionId && !(item && typeof item == "object" && "data" in item && item.data == Cancel)) return item as string;
 			i ++;
 			return optionStringifier(item);
 		}));

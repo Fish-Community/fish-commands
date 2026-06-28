@@ -181,7 +181,7 @@ exports.Menu = {
             } });
         var i = 0;
         var stringifiedOptions = arrangedOptions.map(function (r) { return r.map(function (item) {
-            if (i === cancelOptionId)
+            if (i === cancelOptionId && !(item && typeof item == "object" && "data" in item && item.data == exports.Cancel))
                 return item;
             i++;
             return optionStringifier(item);
