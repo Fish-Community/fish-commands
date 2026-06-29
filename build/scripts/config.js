@@ -344,15 +344,16 @@ exports.tips = {
     staff: [],
 };
 exports.rules = [
-    "# 1: [red]No griefing. This refers to intentionally hurting your own team in any way.",
-    "# 2: [orange]False votekicking isn't allowed. Avoid votekicking if there's an active staff member in the server.",
-    "# 3: [yellow]Gore, pornography, suggestive content and jokes, and flashing images aren't allowed here. Being horny and a creep in chat will result in a ban.",
-    "# 4: [green]Do not harass other people. We have zero tolerance for any bigotry. Please respect everyone.",
-    "# 5: [#00D8D8]Spamming is prohibited. Be reasonable with messaging staff in-game. Misuse may result in a mute.",
-    "# 6: [blue]Impersonating people or ranks is prohibited.",
-    "# 7: [purple]Talking about controversial or sensitive topics is not allowed in-game. Hate symbols, such as swastikas, are not permitted.",
-    "# 8: [pink]No uncomfortable trolling or intentionally causing chaos. This includes any actions or messages that create an unpleasant atmosphere.",
-    "Failure to follow these rules will result in consequences: likely a ".concat(exports.prefixes.marked, " tag for any game disruption, mute for broken chat rules, and bans for repeated offenses or bypasses.")
+    "# 1: [#FF3F3F]No griefing. This refers to intentionally hurting your own team in any way.",
+    "# 2: [#FFBF3F]False votekicking isn't allowed. Avoid votekicking if there's an active staff member in the server.",
+    "# 3: [#BFFF3F]Treat beginners with politeness, this is not a ranked server.",
+    "# 4: [#3FFF3F]Gore, pornography, suggestive content and jokes, and flashing images aren't allowed here. Being horny and a creep in chat will result in a ban.",
+    "# 5: [#3FFFBF]Do not harass other people. We have zero tolerance for any bigotry. Please respect everyone.",
+    "# 6: [#3FBFFF]Spamming is prohibited. Be reasonable with messaging staff in-game. Misuse may result in a mute.",
+    "# 7: [#3F3FFF]Impersonating people or ranks is prohibited.",
+    "# 8: [#BF3FFF]Talking about controversial or sensitive topics is not allowed in-game. Hate symbols, such as swastikas, are not permitted.",
+    "# 9: [#FF3FBF]Do not ragebait people. If someone tells you they are uncomfortable, respect it.",
+    "Failure to follow these rules may result in a ".concat(exports.prefixes.marked, " tag blocking you from playing, a mute for broken chat rules, and bans for repeated offenses or bypasses.")
 ].map(function (r) { return "[white]".concat(r); });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9;
 //#endregion
