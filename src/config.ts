@@ -136,7 +136,7 @@ export const multiCharSubstitutions:Array<[RegExp, string]> = [
 //#endregion
 //#region misc
 /** Used for anti-impersonation. Make sure to replace numbers with letters, for example, balam314 -> balamei4. */
-export const adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl"];
+export const adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl", "eradicator"];
 export const heuristics = {
 	/** Will trip if more than this many blocks are broken within 25 seconds of joining. */
 	blocksBrokenAfterJoin: 40,
@@ -367,8 +367,8 @@ export const tips = {
 };
 export const rules = [
 	`# 1: [#FF3F3F]No griefing. This refers to intentionally hurting your own team in any way.`,
-	`# 2: [#FFBF3F]False votekicking isn't allowed. Avoid votekicking if there's an active staff member in the server.`,
-	`# 3: [#BFFF3F]Treat beginners with politeness, this is not a ranked server.`,
+	`# 2: [orange]False votekicking isn't allowed. Avoid votekicking if there's an active staff member in the server.`,
+	`# 3: [yellow]Treat beginners with politeness, this is not a ranked server.`,
 	`# 4: [#3FFF3F]Gore, pornography, suggestive content and jokes, and flashing images aren't allowed here. Being horny and a creep in chat will result in a ban.`,
 	`# 5: [#3FFFBF]Do not harass other people. We have zero tolerance for any bigotry. Please respect everyone.`,
 	`# 6: [#3FBFFF]Spamming is prohibited. Be reasonable with messaging staff in-game. Misuse may result in a mute.`,
