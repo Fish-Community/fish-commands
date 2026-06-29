@@ -375,7 +375,7 @@ export const rules = [
 	`# 7: [#3F3FFF]Impersonating people or ranks is prohibited.`,
 	`# 8: [#BF3FFF]Talking about controversial or sensitive topics is not allowed in-game. Hate symbols, such as swastikas, are not permitted.`,
 	`# 9: [#FF3FBF]Do not ragebait people. If someone tells you they are uncomfortable, respect it.`,
-	`Failure to follow these rules will result in consequences: likely a ${prefixes.marked} tag for any game disruption, mute for broken chat rules, and bans for repeated offenses or bypasses.`
+	`Failure to follow these rules may result in a ${prefixes.marked} tag blocking you from playing, a mute for broken chat rules, and bans for repeated offenses or bypasses.`
 ].map(r => `[white]${r}`);
 //#endregion
 
