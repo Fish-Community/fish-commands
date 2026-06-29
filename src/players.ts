@@ -545,12 +545,7 @@ export class FishPlayer {
 			fishPlayer.checkVPNAndJoins();
 			fishPlayer.updateName();
 			//I think this is a better spot for this
-			if(fishPlayer.firstJoin()) void Menu.menu(
-				"Rules for [#0000ff] >|||> FISH [white] servers [white]",
-				rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].",
-				["[green]I understand and agree to these terms"],
-				fishPlayer
-			);
+			if(fishPlayer.firstJoin()) void fishPlayer.showRules();
 
 		}
 	}
@@ -1515,6 +1510,15 @@ We apologize for the inconvenience.`
 			this.player?.sendMessage(message);
 			this.lastRatelimitedMessage = Date.now();
 		}
+	}
+	showRules<T extends string>(options: T[] = []){
+		return Menu.menu(
+			"Rules for [#0000ff] >|||> FISH [white] servers [white]",
+			rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].",
+			["[green]I agree to abide by these rules", ...options],
+			this,
+			{ onCancel: "null" },
+		);
 	}
 	hasFlag(flagName:RoleFlagName){
 		const flag = RoleFlag.getByName(flagName);

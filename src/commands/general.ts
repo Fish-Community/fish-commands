@@ -662,11 +662,7 @@ Available types:[yellow]
 				if(!sender.canModerate(target)) Req.cooldown(Duration.minutes(10));
 				if(target.hasPerm("blockTrolling")) fail(f`Player ${args.player!} is insufficiently trollable.`);
 			}
-			void Menu.menu(
-				"Rules for [#0000ff]>|||> FISH [white]servers", rules.join("\n\n"),
-				["[green]I agree to abide by these rules[]", "No"], target,
-				{ onCancel: "null" }
-			).then((option) => {
+			void target.showRules(["No"]).then((option) => {
 				if(option == "No"){
 					target.kick("You must agree to the rules to play on this server. Rejoin to agree to the rules.", 1);
 					if(target !== sender) outputSuccess('Player rejected the rules and was kicked.');
