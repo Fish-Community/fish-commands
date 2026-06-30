@@ -191,6 +191,11 @@ class Administration {
 	addActionFilter(filter:(action:PlayerAction) => boolean):void;
 	static ActionType: ActionType;
 	static PlayerInfo: typeof PlayerInfo;
+	static Config: typeof Config;
+}
+class Config {
+	static strict: Config;
+	bool(): boolean;
 }
 const Events: {
 	on(event:EventType, handler:(e:any) => void):void;

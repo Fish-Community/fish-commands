@@ -53,6 +53,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		FishPlayer.triggerAntibot(300_000, "Rate of player connections exceeded 35 / 5s", "automatic");
 	}
 	ipJoins.increment(e.connection.address);
+	if(e.connection.hasBegunConnecting) return; //will get kicked
 	const info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
 	const underAttack = FishPlayer.antiBotMode();
 	const newPlayer = !info || info.timesJoined < 10;
