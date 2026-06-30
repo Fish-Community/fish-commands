@@ -795,5 +795,25 @@ ${FishPlayer.mapPlayers(p =>
 			}, duration / 1000);
 			outputSuccess(`Set log level to debug for ${formatTime(duration)}`);
 		}
-	}
+	},
+	antibot: {
+		args: ["timeout:time?"],
+		description: "Checks anti bot stats, or force enables anti bot mode.",
+		handler({args, outputSuccess, output, f}){
+			if(args.timeout == 0){
+				FishPlayer.antibotExpires = Date.now() - 1;
+				FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+				outputSuccess(`Disabled antibot mode.`);
+			} else if(args.timeout != undefined){
+				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by console`, "manual", false);
+				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);
+			} else {
+				output(
+`[acid]Antibot status:
+[acid]Enabled: ${f.boolBad(FishPlayer.antiBotMode())}
+${getAntiBotInfo("server")}`
+				);
+			}
+		}
+	},
 });
