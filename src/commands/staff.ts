@@ -9,7 +9,7 @@ import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { command, commandList, fail, Perm, Req } from "/frameworks/commands";
 import { listeners, Menu } from "/frameworks/menus";
-import { crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from "/funcs";
+import { crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray, to2DArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals";
 import { FMap } from "/maps";
 import { FishPlayer } from "/players";
@@ -73,6 +73,39 @@ export const commands = commandList({
 			logAction("kicked", sender, args.player, args.reason ?? undefined, duration);
 			if(duration > 60_000) args.player.setPunishedIP(stopAntiEvadeTime);
 			outputSuccess(f`Kicked player ${args.player} for ${formatTime(duration)} with reason "${reason}"`);
+		}
+	},
+	masskick: {
+		args: ["blacklist:boolean?"],
+		description: "Kick new players en masse. They are only kicked for 60 seconds if blacklist=false.",
+		perm: Perm.mod,
+		async handler({args: { blacklist = true }, sender, outputSuccess, f}){
+			while(true){
+				// eslint-disable-next-line @typescript-eslint/array-type
+				const options: {
+					data: Player | "refresh";
+					text: string;
+				}[][] = to2DArray(
+					setToArray(Groups.player).filter(p =>
+						p.getInfo().timesJoined < 5 &&
+						!FishPlayer.get(p).ranksAtLeast("trusted")
+					).map(p => ({data: p, text: escapeStringColorsClient(p.name)})),
+					2
+				);
+				options.push([{text: "[accent]\uE86A Refresh", data: "refresh"}]);
+				const result = await Menu.buttons(
+					sender,
+					"Kick",
+					"Choose a player to kick. The player will be kicked immediately, please be careful.",
+					options,
+					{ includeCancel: true, onCancel: "reject" }
+				);
+				if(result != "refresh"){
+					if(blacklist) Vars.netServer.admins.dosBlacklist.add(result.con.address);
+					result.kick(Packets.KickReason.kick, 60_000);
+					outputSuccess(f`Kicked ${result}.`);
+				}
+			}
 		}
 	},
 
@@ -943,7 +976,11 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 		description: "Checks anti bot stats, or force enables anti bot mode.",
 		perm: Perm.mod,
 		handler({args, sender, outputSuccess, output, f}){
-			if(args.timeout != undefined){
+			if(args.timeout == 0){
+				FishPlayer.antibotExpires = Date.now() - 1;
+				FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+				outputSuccess(`Disabled antibot mode.`);
+			} else if(args.timeout != undefined){
 				args.timeout = Math.min(args.timeout, sender.hasPerm("admin") ? Duration.hours(1) : Duration.minutes(10));
 				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by player ${sender.name}`, "manual", false);
 				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);

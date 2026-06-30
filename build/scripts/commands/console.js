@@ -1125,6 +1125,25 @@ exports.commands = (0, commands_1.consoleCommandList)({
             }, duration / 1000);
             outputSuccess("Set log level to debug for ".concat((0, utils_1.formatTime)(duration)));
         }
-    }
+    },
+    antibot: {
+        args: ["timeout:time?"],
+        description: "Checks anti bot stats, or force enables anti bot mode.",
+        handler: function (_a) {
+            var args = _a.args, outputSuccess = _a.outputSuccess, output = _a.output, f = _a.f;
+            if (args.timeout == 0) {
+                players_1.FishPlayer.antibotExpires = Date.now() - 1;
+                players_1.FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+                outputSuccess("Disabled antibot mode.");
+            }
+            else if (args.timeout != undefined) {
+                players_1.FishPlayer.triggerAntibot(args.timeout, "Manually triggered by console", "manual", false);
+                outputSuccess("Set antibot mode override for ".concat((0, utils_1.formatTime)(args.timeout), "."));
+            }
+            else {
+                output("[acid]Antibot status:\n[acid]Enabled: ".concat(f.boolBad(players_1.FishPlayer.antiBotMode()), "\n").concat((0, utils_1.getAntiBotInfo)("server")));
+            }
+        }
+    },
 });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15;
