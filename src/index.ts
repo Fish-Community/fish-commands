@@ -49,8 +49,9 @@ Events.on(EventType.PlayerLeave, (e) => {
 	FishPlayer.onPlayerLeave(e.player);
 });
 Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection: NetConnection }) => {
-	if(!FishPlayer.connectRate.allow(5_000, 35)){
-		FishPlayer.triggerAntibot(300_000, "Rate of player connections exceeded 35 / 5s", "automatic");
+	const limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30_000 ? 6 : 35;
+	if(!FishPlayer.connectRate.allow(5_000, limit)){
+		FishPlayer.triggerAntibot(300_000, `Rate of player connections exceeded ${limit} / 5s`, "automatic");
 	}
 	ipJoins.increment(e.connection.address);
 	if(e.connection.hasBegunConnecting) return; //will get kicked

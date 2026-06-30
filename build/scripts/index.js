@@ -93,8 +93,9 @@ Events.on(EventType.PlayerLeave, function (e) {
     players_1.FishPlayer.onPlayerLeave(e.player);
 });
 Events.on(EventType.ConnectPacketEvent, function (e) {
-    if (!players_1.FishPlayer.connectRate.allow(5000, 35)) {
-        players_1.FishPlayer.triggerAntibot(300000, "Rate of player connections exceeded 35 / 5s", "automatic");
+    var limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30000 ? 6 : 35;
+    if (!players_1.FishPlayer.connectRate.allow(5000, limit)) {
+        players_1.FishPlayer.triggerAntibot(300000, "Rate of player connections exceeded ".concat(limit, " / 5s"), "automatic");
     }
     globals_1.ipJoins.increment(e.connection.address);
     if (e.connection.hasBegunConnecting)

@@ -1935,8 +1935,6 @@ var FishPlayer = /** @class */ (function () {
             }
         }
     };
-    //#endregion
-    //#region heuristics
     FishPlayer.prototype.activateHeuristics = function () {
         var _this = this;
         if (config_1.Gamemode.hexed() || config_1.Gamemode.sandbox())
@@ -1954,6 +1952,22 @@ var FishPlayer = /** @class */ (function () {
                     }
                 }
             }, 0, 1, this.firstJoin() ? 30 : this.joinsLessThan(3) ? 25 : 15);
+        }
+        if (this.firstJoin()) {
+            Timer.schedule(function () {
+                if (_this.stats.chatMessagesSent >= 3) {
+                    if (FishPlayer.antiBotMode())
+                        Vars.netServer.admins.dosBlacklist.add(_this.ip());
+                    else if (!FishPlayer.chatSpam.allow(10000, 2)) {
+                        Vars.netServer.admins.dosBlacklist.add(_this.ip());
+                        FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat", "automatic", false);
+                    }
+                    else {
+                        _this.muted = true;
+                        (0, utils_1.logHTrip)(_this, "new player spamming chat");
+                    }
+                }
+            }, 4);
         }
     };
     //#region Static constants
@@ -2000,6 +2014,9 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.dataFetchFailedUuids = new Set();
     FishPlayer.easterEggVotekickTarget = null;
     FishPlayer.ignoreGameOver = false;
+    //#endregion
+    //#region heuristics
+    FishPlayer.chatSpam = new Ratekeeper();
     return FishPlayer;
 }());
 exports.FishPlayer = FishPlayer;

@@ -1683,6 +1683,7 @@ We apologize for the inconvenience.`
 	//#endregion
 
 	//#region heuristics
+	static chatSpam = new Ratekeeper();
 	activateHeuristics(){
 		if(Gamemode.hexed() || Gamemode.sandbox()) return;
 		//Blocks broken check
@@ -1700,6 +1701,20 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 					}
 				}
 			}, 0, 1, this.firstJoin() ? 30 : this.joinsLessThan(3) ? 25 : 15);
+		}
+		if(this.firstJoin()){
+			Timer.schedule(() => {
+				if(this.stats.chatMessagesSent >= 3){
+					if(FishPlayer.antiBotMode()) Vars.netServer.admins.dosBlacklist.add(this.ip());
+					else if(!FishPlayer.chatSpam.allow(10_000, 2)){
+						Vars.netServer.admins.dosBlacklist.add(this.ip());
+						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat", "automatic", false);
+					} else {
+						this.muted = true;
+						logHTrip(this, "new player spamming chat");
+					}
+				}
+			}, 4);
 		}
 	}
 	//#endregion
