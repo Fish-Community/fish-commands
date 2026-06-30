@@ -46,6 +46,7 @@ export class FishPlayer {
 	static recentLeaves:FishPlayer[] = [];
 	//Used for the antibot. Some of these values are reset by timers.
 	static antibotExpires = -1;
+	static kickNewPlayersExpires = -1;
 	static lastAntibotReason = "";
 	static autoflagRate = new Ratekeeper();
 	static connectRate = new Ratekeeper();
@@ -974,7 +975,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 				Log.warn(`IP ${ip} was flagged as VPN. Flag rate: ${FishPlayer.stats.numIpsFlagged}/${FishPlayer.stats.numIpsChecked} (${100 * FishPlayer.stats.numIpsFlagged / FishPlayer.stats.numIpsChecked}%)`);
 				this.ipDetectedVpn = true;
 				if(!FishPlayer.autoflagRate.allow(30_000, 5)){
-					FishPlayer.triggerAntibot(Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic");
+					FishPlayer.triggerAntibot(Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic", false);
 					return;
 				}
 				if(
@@ -1363,7 +1364,7 @@ We apologize for the inconvenience.`
 			}
 		});
 	}
-	static triggerAntibot(duration:number, reason:string, category:"manual" | "automatic", pingConsole = false){
+	static triggerAntibot(duration:number, reason:string, category:"manual" | "automatic", kickNewPlayers:boolean, pingConsole = false){
 		if(category == "automatic"){
 			//Ping reports based on time
 			let message;
@@ -1376,6 +1377,7 @@ We apologize for the inconvenience.`
 		if(Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
 			Log.info(`&yAntibot triggered: ${escapeStringColorsServer(reason)}`);
 		this.antibotExpires = Math.max(this.antibotExpires, Date.now() + duration);
+		if(kickNewPlayers) this.kickNewPlayersExpires = Date.now() + 8_000;
 		this.lastAntibotReason = reason;
 		if(this.shouldWhackFlaggedPlayers()) this.whackFlaggedPlayers();
 	}
@@ -1711,7 +1713,7 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 					if(FishPlayer.antiBotMode()) Vars.netServer.admins.dosBlacklist.add(this.ip());
 					else if(!FishPlayer.chatSpam.allow(10_000, 2)){
 						Vars.netServer.admins.dosBlacklist.add(this.ip());
-						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat", "automatic", false);
+						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat", "automatic", true);
 					} else {
 						this.muted = true;
 						logHTrip(this, "new player spamming chat");
@@ -1723,7 +1725,7 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 					tripped = true;
 					if(!FishPlayer.chatSpamSlow.allow(30_000, 3)){
 						Vars.netServer.admins.dosBlacklist.add(this.ip());
-						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat slowly", "automatic", false);
+						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat slowly", "automatic", true);
 					}
 				}
 			}, 1, 2, 10);

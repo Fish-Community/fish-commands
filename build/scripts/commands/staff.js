@@ -1275,7 +1275,7 @@ exports.commands = (0, commands_1.commandList)({
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, output = _a.output, f = _a.f;
             if (args.timeout != undefined) {
                 args.timeout = Math.min(args.timeout, sender.hasPerm("admin") ? funcs_1.Duration.hours(1) : funcs_1.Duration.minutes(10));
-                players_1.FishPlayer.triggerAntibot(args.timeout, "Manually triggered by player ".concat(sender.name), "manual");
+                players_1.FishPlayer.triggerAntibot(args.timeout, "Manually triggered by player ".concat(sender.name), "manual", false);
                 outputSuccess("Set antibot mode override for ".concat((0, utils_1.formatTime)(args.timeout), "."));
             }
             else {

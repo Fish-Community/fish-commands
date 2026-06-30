@@ -1181,7 +1181,7 @@ var FishPlayer = /** @class */ (function () {
                 Log.warn("IP ".concat(ip, " was flagged as VPN. Flag rate: ").concat(FishPlayer.stats.numIpsFlagged, "/").concat(FishPlayer.stats.numIpsChecked, " (").concat(100 * FishPlayer.stats.numIpsFlagged / FishPlayer.stats.numIpsChecked, "%)"));
                 _this.ipDetectedVpn = true;
                 if (!FishPlayer.autoflagRate.allow(30000, 5)) {
-                    FishPlayer.triggerAntibot(funcs_1.Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic");
+                    FishPlayer.triggerAntibot(funcs_1.Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic", false);
                     return;
                 }
                 if ((info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) //is this smart?
@@ -1603,7 +1603,7 @@ var FishPlayer = /** @class */ (function () {
             }
         });
     };
-    FishPlayer.triggerAntibot = function (duration, reason, category, pingConsole) {
+    FishPlayer.triggerAntibot = function (duration, reason, category, kickNewPlayers, pingConsole) {
         if (pingConsole === void 0) { pingConsole = false; }
         if (category == "automatic") {
             //Ping reports based on time
@@ -1618,6 +1618,8 @@ var FishPlayer = /** @class */ (function () {
         if (Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
             Log.info("&yAntibot triggered: ".concat((0, funcs_1.escapeStringColorsServer)(reason)));
         this.antibotExpires = Math.max(this.antibotExpires, Date.now() + duration);
+        if (kickNewPlayers)
+            this.kickNewPlayersExpires = Date.now() + 8000;
         this.lastAntibotReason = reason;
         if (this.shouldWhackFlaggedPlayers())
             this.whackFlaggedPlayers();
@@ -1962,7 +1964,7 @@ var FishPlayer = /** @class */ (function () {
                         Vars.netServer.admins.dosBlacklist.add(_this.ip());
                     else if (!FishPlayer.chatSpam.allow(10000, 2)) {
                         Vars.netServer.admins.dosBlacklist.add(_this.ip());
-                        FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat", "automatic", false);
+                        FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat", "automatic", true);
                     }
                     else {
                         _this.muted = true;
@@ -1975,7 +1977,7 @@ var FishPlayer = /** @class */ (function () {
                     tripped_2 = true;
                     if (!FishPlayer.chatSpamSlow.allow(30000, 3)) {
                         Vars.netServer.admins.dosBlacklist.add(_this.ip());
-                        FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat slowly", "automatic", false);
+                        FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat slowly", "automatic", true);
                     }
                 }
             }, 1, 2, 10);
@@ -2009,6 +2011,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.recentLeaves = [];
     //Used for the antibot. Some of these values are reset by timers.
     FishPlayer.antibotExpires = -1;
+    FishPlayer.kickNewPlayersExpires = -1;
     FishPlayer.lastAntibotReason = "";
     FishPlayer.autoflagRate = new Ratekeeper();
     FishPlayer.connectRate = new Ratekeeper();

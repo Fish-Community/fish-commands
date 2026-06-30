@@ -38,9 +38,8 @@ Events.on(EventType.ConnectionEvent, (e) => {
 Events.on(EventType.PlayerConnect, (e) => {
 	if(FishPlayer.shouldKickNewPlayers() && e.player.info.timesJoined == 1){
 		//do not use the helper function, for maximum performance
-		e.player.kick(Packets.KickReason.kick, 3600_000);
-	}
-	FishPlayer.onPlayerConnect(e.player);
+		e.player.kick("Please rejoin the server in 20 seconds. We apologize for the inconvenience, we are currently under DDoS attack.", 3600_000);
+	} else FishPlayer.onPlayerConnect(e.player);
 });
 Events.on(EventType.PlayerJoin, (e) => {
 	FishPlayer.onPlayerJoin(e.player);
@@ -51,7 +50,7 @@ Events.on(EventType.PlayerLeave, (e) => {
 Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection: NetConnection }) => {
 	const limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30_000 ? 6 : 35;
 	if(!FishPlayer.connectRate.allow(5_000, limit)){
-		FishPlayer.triggerAntibot(300_000, `Rate of player connections exceeded ${limit} / 5s`, "automatic");
+		FishPlayer.triggerAntibot(300_000, `Rate of player connections exceeded ${limit} / 5s`, "automatic", true);
 	}
 	ipJoins.increment(e.connection.address);
 	if(e.connection.hasBegunConnecting) return; //will get kicked
@@ -70,7 +69,8 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		FishPlayer.triggerAntibot(
 			60_000,
 			(veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"),
-			"automatic"
+			"automatic",
+			false
 		);
 		return;
 	}
@@ -89,6 +89,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 				480_000,
 				"suspicious UUIDs",
 				"automatic",
+				false,
 				true
 			);
 		}
@@ -100,7 +101,8 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		FishPlayer.triggerAntibot(
 			5_000,
 			"illegal characters in name or mods",
-			"automatic"
+			"automatic",
+			false,
 		);
 		return;
 	}
@@ -110,7 +112,8 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		FishPlayer.triggerAntibot(
 			5_000,
 			"too many connections",
-			"automatic"
+			"automatic",
+			false
 		);
 		return;
 	}
@@ -124,7 +127,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	if(e.packet.name.includes("1`1@everyone")){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
-		FishPlayer.triggerAntibot(-1, "known bad name", "automatic");
+		FishPlayer.triggerAntibot(-1, "known bad name", "automatic", false);
 		return;
 	}
 	if(Vars.netServer.admins.isDosBlacklisted(e.connection.address)){
