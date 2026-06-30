@@ -1356,7 +1356,7 @@ We apologize for the inconvenience.`
 	}
 	static whackFlaggedPlayers(){
 		this.forEachPlayer(p => {
-			if(p.autoflagged){
+			if(p.ipDetectedVpn && p.suspicionLevel() == 3){
 				Vars.netServer.admins.blacklistDos(p.ip());
 				Log.info(`&yAntibot killed connection ${p.ip()} due to flagged while under attack`);
 				p.player!.kick(Packets.KickReason.banned, 10000000);
