@@ -1954,8 +1954,10 @@ var FishPlayer = /** @class */ (function () {
             }, 0, 1, this.firstJoin() ? 30 : this.joinsLessThan(3) ? 25 : 15);
         }
         if (this.firstJoin()) {
+            var tripped_2 = false;
             Timer.schedule(function () {
-                if (_this.stats.chatMessagesSent >= 3) {
+                if (_this.stats.chatMessagesSent >= 3 && !tripped_2) {
+                    tripped_2 = true;
                     if (FishPlayer.antiBotMode())
                         Vars.netServer.admins.dosBlacklist.add(_this.ip());
                     else if (!FishPlayer.chatSpam.allow(10000, 2)) {
@@ -1967,7 +1969,16 @@ var FishPlayer = /** @class */ (function () {
                         (0, utils_1.logHTrip)(_this, "new player spamming chat");
                     }
                 }
-            }, 4);
+            }, 1, 1, 4);
+            Timer.schedule(function () {
+                if (_this.stats.chatMessagesSent >= 4 && !tripped_2) {
+                    tripped_2 = true;
+                    if (!FishPlayer.chatSpamSlow.allow(30000, 3)) {
+                        Vars.netServer.admins.dosBlacklist.add(_this.ip());
+                        FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat slowly", "automatic", false);
+                    }
+                }
+            }, 1, 2, 10);
         }
     };
     //#region Static constants
@@ -2017,6 +2028,7 @@ var FishPlayer = /** @class */ (function () {
     //#endregion
     //#region heuristics
     FishPlayer.chatSpam = new Ratekeeper();
+    FishPlayer.chatSpamSlow = new Ratekeeper();
     return FishPlayer;
 }());
 exports.FishPlayer = FishPlayer;

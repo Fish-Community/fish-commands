@@ -1684,6 +1684,7 @@ We apologize for the inconvenience.`
 
 	//#region heuristics
 	static chatSpam = new Ratekeeper();
+	static chatSpamSlow = new Ratekeeper();
 	activateHeuristics(){
 		if(Gamemode.hexed() || Gamemode.sandbox()) return;
 		//Blocks broken check
@@ -1703,8 +1704,10 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 			}, 0, 1, this.firstJoin() ? 30 : this.joinsLessThan(3) ? 25 : 15);
 		}
 		if(this.firstJoin()){
+			let tripped = false;
 			Timer.schedule(() => {
-				if(this.stats.chatMessagesSent >= 3){
+				if(this.stats.chatMessagesSent >= 3 && !tripped){
+					tripped = true;
 					if(FishPlayer.antiBotMode()) Vars.netServer.admins.dosBlacklist.add(this.ip());
 					else if(!FishPlayer.chatSpam.allow(10_000, 2)){
 						Vars.netServer.admins.dosBlacklist.add(this.ip());
@@ -1714,7 +1717,16 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 						logHTrip(this, "new player spamming chat");
 					}
 				}
-			}, 4);
+			}, 1, 1, 4);
+			Timer.schedule(() => {
+				if(this.stats.chatMessagesSent >= 4 && !tripped){
+					tripped = true;
+					if(!FishPlayer.chatSpamSlow.allow(30_000, 3)){
+						Vars.netServer.admins.dosBlacklist.add(this.ip());
+						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat slowly", "automatic", false);
+					}
+				}
+			}, 1, 2, 10);
 		}
 	}
 	//#endregion
