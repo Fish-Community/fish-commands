@@ -25,6 +25,7 @@ const players = require("/players");
 const ranks = require("/ranks");
 const { commands: staffCommands } = require("/commands/staff");
 const timers = require("/timers");
+const translation = require("/translation");
 const utils = require("/utils");
 const votes = require("/votes");
 const { Promise } = require("/promise");

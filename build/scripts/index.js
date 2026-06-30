@@ -59,6 +59,7 @@ var maps_1 = require("/maps");
 var packetHandlers_1 = require("/packetHandlers");
 var players_1 = require("/players");
 var timers = __importStar(require("/timers"));
+var translation = __importStar(require("/translation"));
 var utils_1 = require("/utils");
 var Menu = menus.Menu;
 Events.on(EventType.ConnectionEvent, function (e) {
@@ -186,8 +187,33 @@ Events.on(EventType.ContentInitEvent, function () {
     UnitTypes.latum.hidden = false;
     UnitTypes.renale.hidden = false;
 });
+Vars.net.handleServer(SendChatMessageCallPacket, function (connection, packet) {
+    var player = connection.player;
+    var message = packet.message;
+    if (!(player === null || player === void 0 ? void 0 : player.isAdded()) || message == null)
+        return;
+    if (message.length > Vars.maxTextLength) {
+        player.sendMessage("[scarlet]Message too long. Maximum length is ".concat(Vars.maxTextLength, " characters."));
+        return;
+    }
+    message = message.replace("\n", "");
+    Events.fire(new EventType.PlayerChatEvent(player, message));
+    var response = Vars.netServer.clientCommands.handleMessage(message, player);
+    Log.info("&fi&lc".concat((0, funcs_1.escapeStringColorsServer)(player.plainName()), ": &lw").concat((0, funcs_1.escapeStringColorsServer)((0, utils_1.removeFoosChars)(message)), "&fr"));
+    if (response.type == CommandHandler.ResponseType.noCommand) {
+        var filtered = Vars.netServer.admins.filterMessage(player, message);
+        if (filtered == null)
+            return;
+        void translation.handleMessage(player, filtered);
+    }
+    else if (response.type != CommandHandler.ResponseType.valid) {
+        var text_1 = Vars.netServer.invalidHandler.handle(player, response);
+        if (text_1 != null)
+            player.sendMessage(text_1);
+    }
+});
 Events.on(EventType.PlayerChatEvent, function (e) { return (0, utils_1.processChat)(e.player, e.message, true); });
-Events.on(EventType.ServerLoadEvent, function (e) {
+Events.on(EventType.ServerLoadEvent, function () {
     Time.mark();
     var clientHandler = Vars.netServer.clientCommands;
     var serverHandler = ServerControl.instance.handler;
@@ -195,6 +221,7 @@ Events.on(EventType.ServerLoadEvent, function (e) {
     globals_1.FishEvents.fire("loadData", []);
     timers.initializeTimers();
     menus.registerListeners();
+    translation.initializeTranslation();
     //Cap delta
     Time.setDeltaProvider(function () { return Math.min(Core.graphics.getDeltaTime() * 60, 10); });
     // Mute muted players

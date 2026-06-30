@@ -51,6 +51,7 @@ export type FishPlayerData = {
 	muted: boolean;
 	unmarkTime: number;
 	rank: string;
+	language: string;
 	flags: string[];
 	highlight: string | null;
 	rainbow: { speed:number; } | null;
