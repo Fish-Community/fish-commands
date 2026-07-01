@@ -205,7 +205,7 @@ export function setFishPlayerData(data: UploadedFishPlayerData, repeats:number, 
 export function fetchAntibotData() {
 	const { promise, resolve, reject } = Promise.withResolvers<AntibotData, unknown>();
 	if(Mode.noBackend){
-		resolve({ nameBlacklistRegex: null });
+		resolve({ nameBlacklistRegex: null, nameGraylistRegex: null });
 		return promise;
 	}
 	const req = Http.get(`http://${backendIP}/api/antibotData`)

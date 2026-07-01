@@ -20,7 +20,8 @@ export const fishState = {
 	joinBell: false,
 	startTime: Date.now(),
 	antibotData: {
-		nameBlacklist: null as null | [string, Pattern]
+		nameBlacklist: null as null | [string, Pattern],
+		nameGraylist: null as null | [string, Pattern],
 	},
 };
 export const fishPlugin = {

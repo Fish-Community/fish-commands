@@ -19,7 +19,8 @@ exports.fishState = {
     joinBell: false,
     startTime: Date.now(),
     antibotData: {
-        nameBlacklist: null
+        nameBlacklist: null,
+        nameGraylist: null,
     },
 };
 exports.fishPlugin = {

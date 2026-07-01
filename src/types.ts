@@ -121,4 +121,5 @@ export type Label = {
 
 export type AntibotData = {
 	nameBlacklistRegex: string | null;
+	nameGraylistRegex: string | null;
 };

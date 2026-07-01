@@ -61,6 +61,9 @@ export function initializeTimers(){
 				if(fishState.antibotData.nameBlacklist?.[0] != m.nameBlacklistRegex){
 					fishState.antibotData.nameBlacklist = m.nameBlacklistRegex == null ? null : [m.nameBlacklistRegex, Pattern.compile(m.nameBlacklistRegex)];
 				}
+				if(fishState.antibotData.nameGraylist?.[0] != m.nameGraylistRegex){
+					fishState.antibotData.nameGraylist = m.nameGraylistRegex == null ? null : [m.nameGraylistRegex, Pattern.compile(m.nameGraylistRegex)];
+				}
 			}).catch(() => {});
 		}, 5, 2);
 	//Tip
