@@ -5,7 +5,7 @@ This file contains mutable global variables, and global constants.
 
 import { EventEmitter } from "/funcs";
 import { FishPlayer } from "/players";
-import { Label } from "/types";
+import { AntibotData, Label } from "/types";
 
 export const tileHistory:Record<string, string> = {};
 export const recentWhispers:Record<string, string> = {};
@@ -19,6 +19,9 @@ export const fishState = {
 	peacefulMode: false,
 	joinBell: false,
 	startTime: Date.now(),
+	antibotData: {
+		nameBlacklist: null as null | [string, Pattern]
+	},
 };
 export const fishPlugin = {
 	directory: null as null | string,

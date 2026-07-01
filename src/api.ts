@@ -6,7 +6,7 @@ This file contains wrappers over the API calls to the backend server.
 import { backendIP, Gamemode, Mode } from "/config";
 import { FishPlayer } from "/players";
 import { Promise } from "/promise";
-import type { FishPlayerData, UploadedFishPlayerData } from "/types";
+import type { AntibotData, FishPlayerData, UploadedFishPlayerData } from "/types";
 
 
 const cachedIps:Record<string, boolean | undefined> = {};
@@ -197,6 +197,29 @@ export function setFishPlayerData(data: UploadedFishPlayerData, repeats:number, 
 	});
 	req.submit((response) => {
 		resolve();
+	});
+	return promise;
+}
+
+/** Pushes fish player data to the backend. */
+export function fetchAntibotData() {
+	const { promise, resolve, reject } = Promise.withResolvers<AntibotData, unknown>();
+	if(Mode.noBackend){
+		resolve({ nameBlacklistRegex: null });
+		return promise;
+	}
+	const req = Http.get(`http://${backendIP}/api/antibotData`)
+		.header('Content-Type', 'application/json')
+		.header('Accept', '*/*');
+	req.timeout = 10000;
+	req.error((err) => {
+		Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
+		Log.err(err);
+		if(err?.response) Log.err(err.response.getResultAsString());
+		reject(err);
+	});
+	req.submit((response) => {
+		resolve(JSON.parse(response.getResultAsString()));
 	});
 	return promise;
 }

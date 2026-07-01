@@ -1703,7 +1703,7 @@ We apologize for the inconvenience.`
 					if(this.tstats.blocksBroken > limit){
 						tripped = true;
 						logHTrip(this, "blocks broken after join", `${this.tstats.blocksBroken}/${limit}`);
-						void this.stop("automod", this.tstats.blocksBroken > 40 ? globals.maxTime : Duration.minutes(1), `Automatic stop due to suspicious activity`);
+						void this.stop("automod", this.tstats.blocksBroken > 40 ? globals.maxTime : Duration.minutes(3), `Automatic stop due to suspicious activity`);
 						FishPlayer.messageAllExcept(this,
 `[yellow]Player ${this.cleanedName} has been stopped automatically due to suspected griefing.
 Please look at ${this.position()} and see if they were actually griefing. If they were not, please inform a staff member.`);

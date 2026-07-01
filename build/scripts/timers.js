@@ -113,6 +113,12 @@ function initializeTimers() {
                 if (messages.length)
                     players_1.FishPlayer.messageStaff(messages);
             });
+            (0, api_1.fetchAntibotData)().then(function (m) {
+                var _a;
+                if (((_a = globals_1.fishState.antibotData.nameBlacklist) === null || _a === void 0 ? void 0 : _a[0]) != m.nameBlacklistRegex) {
+                    globals_1.fishState.antibotData.nameBlacklist = m.nameBlacklistRegex == null ? null : [m.nameBlacklistRegex, Pattern.compile(m.nameBlacklistRegex)];
+                }
+            }).catch(function () { });
         }, 5, 2);
     //Tip
     Timer.schedule(function () {

@@ -98,6 +98,7 @@ Events.on(EventType.PlayerLeave, function (e) {
     players_1.FishPlayer.onPlayerLeave(e.player);
 });
 Events.on(EventType.ConnectPacketEvent, function (e) {
+    var _a, _b;
     var limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30000 ? 6 : 35;
     if (!players_1.FishPlayer.connectRate.allow(5000, limit)) {
         players_1.FishPlayer.triggerAntibot(300000, "Rate of player connections exceeded ".concat(limit, " / 5s"), "automatic", true);
@@ -108,6 +109,17 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
     var info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
     var underAttack = players_1.FishPlayer.antiBotMode();
     var newPlayer = !info || info.timesJoined < 10;
+    if (newPlayer && ((_b = (_a = globals_1.fishState.antibotData.nameBlacklist) === null || _a === void 0 ? void 0 : _a[1]) === null || _b === void 0 ? void 0 : _b.matcher(e.packet.name).matches())) {
+        Vars.netServer.admins.blacklistDos(e.connection.address);
+        e.connection.kicked = true;
+        var udpAddress = void 0;
+        try {
+            Vars.netServer.admins.blacklistDos(udpAddress = e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
+        }
+        catch (_c) { }
+        Log.info("Blacklisting ip @ with name @ because it matched the configured regex.", udpAddress ? e.connection.address + "/" + udpAddress : e.connection.address, e.packet.name);
+        return;
+    }
     var longModName = e.packet.mods.contains(function (str) { return str.length > 50; });
     var veryLongModName = e.packet.mods.contains(function (str) { return str.length > 100; });
     if ((underAttack && e.packet.mods.size > 2) ||
@@ -145,19 +157,6 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
         players_1.FishPlayer.triggerAntibot(5000, "too many connections", "automatic", false);
-        return;
-    }
-    /*if(e.packet.name.includes("discord.gg/GnEdS9TdV6")){
-        Vars.netServer.admins.blacklistDos(e.connection.address);
-        e.connection.kicked = true;
-        FishPlayer.onBotWhack();
-        Log.info(`&yAntibot killed connection ${e.connection.address} due to omni discord link`);
-        return;
-    }*/
-    if (e.packet.name.includes("1`1@everyone")) {
-        Vars.netServer.admins.blacklistDos(e.connection.address);
-        e.connection.kicked = true;
-        players_1.FishPlayer.triggerAntibot(-1, "known bad name", "automatic", false);
         return;
     }
     if (Vars.netServer.admins.isDosBlacklisted(e.connection.address)) {

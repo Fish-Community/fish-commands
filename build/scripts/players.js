@@ -1956,7 +1956,7 @@ var FishPlayer = /** @class */ (function () {
                     if (_this.tstats.blocksBroken > limit) {
                         tripped_1 = true;
                         (0, utils_1.logHTrip)(_this, "blocks broken after join", "".concat(_this.tstats.blocksBroken, "/").concat(limit));
-                        void _this.stop("automod", _this.tstats.blocksBroken > 40 ? globals.maxTime : funcs_1.Duration.minutes(1), "Automatic stop due to suspicious activity");
+                        void _this.stop("automod", _this.tstats.blocksBroken > 40 ? globals.maxTime : funcs_1.Duration.minutes(3), "Automatic stop due to suspicious activity");
                         FishPlayer.messageAllExcept(_this, "[yellow]Player ".concat(_this.cleanedName, " has been stopped automatically due to suspected griefing.\nPlease look at ").concat(_this.position(), " and see if they were actually griefing. If they were not, please inform a staff member."));
                     }
                 }
