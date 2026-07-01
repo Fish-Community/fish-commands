@@ -3,12 +3,12 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains timers that run code at regular intervals.
 */
 
-import { getStaffMessages } from "/api";
+import { fetchAntibotData, getStaffMessages } from "/api";
 import * as config from "/config";
 import { Gamemode } from "/config";
 import { updateMaps } from "/files";
 import { DurationSecs } from "/funcs";
-import { FishEvents, ipJoins, joinDemographics } from "/globals";
+import { FishEvents, fishState, ipJoins, joinDemographics } from "/globals";
 import { FishPlayer } from "/players";
 import { definitelyRealMemoryCorruption, neutralGameover } from "/utils";
 
@@ -57,6 +57,11 @@ export function initializeTimers(){
 			getStaffMessages((messages) => {
 				if(messages.length) FishPlayer.messageStaff(messages);
 			});
+			fetchAntibotData().then(m => {
+				if(fishState.antibotData.nameBlacklist?.[0] != m.nameBlacklistRegex){
+					fishState.antibotData.nameBlacklist = m.nameBlacklistRegex == null ? null : [m.nameBlacklistRegex, Pattern.compile(m.nameBlacklistRegex)];
+				}
+			}).catch(() => {});
 		}, 5, 2);
 	//Tip
 	Timer.schedule(() => {

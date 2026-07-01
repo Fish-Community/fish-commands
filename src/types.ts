@@ -118,3 +118,7 @@ export type Label = {
 	y: number | null;
 	task: TimerTask;
 };
+
+export type AntibotData = {
+	nameBlacklistRegex: string | null;
+};

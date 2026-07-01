@@ -1731,10 +1731,13 @@ We apologize for the inconvenience.`
 			let tripped = false;
 			Timer.schedule(() => {
 				if(this.connected() && !tripped){
-					if(this.tstats.blocksBroken > heuristics.blocksBrokenAfterJoin){
+					const limit = this.firstJoin() && FishPlayer.antiBotMode() ?
+						Date.now() < FishPlayer.kickNewPlayersExpires + 30_000 ? 1 : 25
+					: heuristics.blocksBrokenAfterJoin;
+					if(this.tstats.blocksBroken > limit){
 						tripped = true;
-						logHTrip(this, "blocks broken after join", `${this.tstats.blocksBroken}/${heuristics.blocksBrokenAfterJoin}`);
-						void this.stop("automod", globals.maxTime, `Automatic stop due to suspicious activity`);
+						logHTrip(this, "blocks broken after join", `${this.tstats.blocksBroken}/${limit}`);
+						void this.stop("automod", this.tstats.blocksBroken > 40 ? globals.maxTime : Duration.minutes(3), `Automatic stop due to suspicious activity`);
 						FishPlayer.messageAllExcept(this,
 `[yellow]Player ${this.cleanedName} has been stopped automatically due to suspected griefing.
 Please look at ${this.position()} and see if they were actually griefing. If they were not, please inform a staff member.`);

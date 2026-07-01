@@ -18,6 +18,9 @@ exports.fishState = {
     peacefulMode: false,
     joinBell: false,
     startTime: Date.now(),
+    antibotData: {
+        nameBlacklist: null
+    },
 };
 exports.fishPlugin = {
     directory: null,
