@@ -216,7 +216,7 @@ function setFishPlayerData(data, repeats, ignoreActivelySyncedFields) {
 function fetchAntibotData() {
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend) {
-        resolve({ nameBlacklistRegex: null });
+        resolve({ nameBlacklistRegex: null, nameGraylistRegex: null });
         return promise;
     }
     var req = Http.get("http://".concat(config_1.backendIP, "/api/antibotData"))
