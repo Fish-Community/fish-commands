@@ -114,9 +114,12 @@ function initializeTimers() {
                     players_1.FishPlayer.messageStaff(messages);
             });
             (0, api_1.fetchAntibotData)().then(function (m) {
-                var _a;
+                var _a, _b;
                 if (((_a = globals_1.fishState.antibotData.nameBlacklist) === null || _a === void 0 ? void 0 : _a[0]) != m.nameBlacklistRegex) {
                     globals_1.fishState.antibotData.nameBlacklist = m.nameBlacklistRegex == null ? null : [m.nameBlacklistRegex, Pattern.compile(m.nameBlacklistRegex)];
+                }
+                if (((_b = globals_1.fishState.antibotData.nameGraylist) === null || _b === void 0 ? void 0 : _b[0]) != m.nameGraylistRegex) {
+                    globals_1.fishState.antibotData.nameGraylist = m.nameGraylistRegex == null ? null : [m.nameGraylistRegex, Pattern.compile(m.nameGraylistRegex)];
                 }
             }).catch(function () { });
         }, 5, 2);

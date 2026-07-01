@@ -98,7 +98,7 @@ Events.on(EventType.PlayerLeave, function (e) {
     players_1.FishPlayer.onPlayerLeave(e.player);
 });
 Events.on(EventType.ConnectPacketEvent, function (e) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     var limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30000 ? 6 : 35;
     if (!players_1.FishPlayer.connectRate.allow(5000, limit)) {
         players_1.FishPlayer.triggerAntibot(300000, "Rate of player connections exceeded ".concat(limit, " / 5s"), "automatic", true);
@@ -109,15 +109,22 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
     var info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
     var underAttack = players_1.FishPlayer.antiBotMode();
     var newPlayer = !info || info.timesJoined < 10;
-    if (newPlayer && ((_b = (_a = globals_1.fishState.antibotData.nameBlacklist) === null || _a === void 0 ? void 0 : _a[1]) === null || _b === void 0 ? void 0 : _b.matcher(e.packet.name).matches())) {
+    var nameBlacklisted = (_b = (_a = globals_1.fishState.antibotData.nameBlacklist) === null || _a === void 0 ? void 0 : _a[1]) === null || _b === void 0 ? void 0 : _b.matcher(e.packet.name).matches();
+    var nameGraylisted = (_d = (_c = globals_1.fishState.antibotData.nameGraylist) === null || _c === void 0 ? void 0 : _c[1]) === null || _d === void 0 ? void 0 : _d.matcher(e.packet.name).matches();
+    if (newPlayer && (nameBlacklisted && players_1.FishPlayer.antiBotMode() || nameGraylisted && players_1.FishPlayer.shouldKickNewPlayers())) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
         var udpAddress = void 0;
         try {
             Vars.netServer.admins.blacklistDos(udpAddress = e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
         }
-        catch (_c) { }
+        catch (_e) { }
         Log.info("Blacklisting ip @ with name @ because it matched the configured regex.", udpAddress ? e.connection.address + "/" + udpAddress : e.connection.address, e.packet.name);
+        return;
+    }
+    if (newPlayer && (nameBlacklisted || nameGraylisted && players_1.FishPlayer.antiBotMode())) {
+        Log.info("Temporarily kicking ip @ with name @ because it matched the configured regex.", e.connection.address, e.packet.name);
+        e.connection.kick("Please change your name to something else. We are currently under attack by bots and your name looks similar to the bots' names.", 3000);
         return;
     }
     var longModName = e.packet.mods.contains(function (str) { return str.length > 50; });
