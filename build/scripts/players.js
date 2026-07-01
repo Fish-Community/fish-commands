@@ -1637,6 +1637,10 @@ var FishPlayer = /** @class */ (function () {
         this.forEachPlayer(function (p) {
             if (p.ipDetectedVpn && p.suspicionLevel() == 3) {
                 Vars.netServer.admins.blacklistDos(p.ip());
+                try {
+                    Vars.netServer.admins.blacklistDos(p.con.connection.getRemoteAddressUDP().getAddress().getHostAddress());
+                }
+                catch (_a) { }
                 Log.info("&yAntibot killed connection ".concat(p.ip(), " due to flagged while under attack"));
                 p.player.kick(Packets.KickReason.banned, 10000000);
             }

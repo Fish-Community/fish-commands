@@ -76,6 +76,10 @@ Events.on(EventType.ConnectionEvent, function (e) {
     }
     else if (api.isVpnCached(e.connection.address) && players_1.FishPlayer.shouldWhackFlaggedPlayers()) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
+        try {
+            Vars.netServer.admins.blacklistDos(e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
+        }
+        catch (_a) { }
         e.connection.kick("You have been DOSblacklisted. Please join our discord for help: " + config_1.text.discordURL + "\nYou won't see this message again.");
         Log.info("&yAntibot killed connection ".concat(e.connection.address, " due to flagged while under attack"));
     }
