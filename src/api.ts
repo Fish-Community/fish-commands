@@ -224,3 +224,24 @@ export function fetchAntibotData() {
 	return promise;
 }
 
+export function getDosBlacklist() {
+	const { promise, resolve, reject } = Promise.withResolvers<string[], unknown>();
+	if(Mode.noBackend) resolve([]);
+	else {
+		const req = Http.get(`http://${backendIP}/api/dosBlacklist`)
+			.header('Content-Type', 'application/json')
+			.header('Accept', '*/*');
+		req.timeout = 10000;
+		req.error((err) => {
+			Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
+			Log.err(err);
+			if(err?.response) Log.err(err.response.getResultAsString());
+			reject(err);
+		});
+		req.submit((response) => {
+			resolve(JSON.parse(response.getResultAsString()));
+		});
+	}
+	return promise;
+}
+

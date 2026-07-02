@@ -60,6 +60,7 @@ export class FishPlayer {
 		targetSusLevel: 0 | 1 | 2 | 3;
 		reason?: string;
 	}>;
+	static globalSusChat = new Ratekeeper();
 	//#endregion
 	
 	//#region Transient properties
@@ -138,6 +139,8 @@ export class FishPlayer {
 	dataSynced = false;
 	restoreTeam = null as null | [team:Team, timestamp:number, runStartTime:number];
 	autoConfirmSkipWaveUntil: number = -1;
+	chatSpam = new Ratekeeper();
+	kickForSpamAt?:number;
 	//#endregion
 	
 	//#region Stored data
@@ -697,8 +700,23 @@ export class FishPlayer {
 		if(message.trim().toLowerCase().startsWith("/vote y") || message.startsWith("/votekick ")){
 			this.checkVotekickAction(fishP, message);
 		}
-		fishP.lastActive = Date.now();
-		fishP.updateStats(stats => stats.chatMessagesSent ++);
+		if(message != "/ohno"){
+			fishP.lastActive = Date.now();
+			fishP.updateStats(stats => stats.chatMessagesSent ++);
+			const susLevel = fishP.suspicionLevel();
+			if(!fishP.chatSpam.allow(14_300, susLevel == 3 ? 3 : susLevel == 2 ? 5 : 7)){
+				if(susLevel == 3 || Date.now() > fishP.kickForSpamAt!){
+					fishP.kick("You have been kicked for spamming.", 30_000);
+					if(this.antiBotMode()) Vars.netServer.admins.blacklistDos(fishP.ip());
+				} else {
+					fishP.sendMessage("[scarlet]You are sending chat messages too quickly.");
+					fishP.kickForSpamAt = Date.now() + 3_000;
+				}
+			}
+			if(susLevel >= 2 && !this.globalSusChat.allow(30_000, 20)){
+				this.triggerAntibot(Duration.minutes(2), "too many chat messages", "automatic", true);
+			}
+		}
 	}
 	static checkVotekickAction(fishP:FishPlayer, message:string){
 		const sus = fishP.suspicionLevel();
@@ -1717,7 +1735,7 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 				if(this.stats.chatMessagesSent >= 3 && !tripped){
 					tripped = true;
 					if(FishPlayer.antiBotMode()) Vars.netServer.admins.dosBlacklist.add(this.ip());
-					else if(!FishPlayer.chatSpam.allow(10_000, 2)){
+					else if(!FishPlayer.chatSpam.allow(10_000, 1)){
 						Vars.netServer.admins.dosBlacklist.add(this.ip());
 						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat", "automatic", true);
 					} else {
@@ -1729,7 +1747,7 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 			Timer.schedule(() => {
 				if(this.stats.chatMessagesSent >= 4 && !tripped){
 					tripped = true;
-					if(!FishPlayer.chatSpamSlow.allow(30_000, 3)){
+					if(!FishPlayer.chatSpamSlow.allow(30_000, 2)){
 						Vars.netServer.admins.dosBlacklist.add(this.ip());
 						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat slowly", "automatic", true);
 					}

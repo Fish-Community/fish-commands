@@ -188,6 +188,7 @@ var FishPlayer = /** @class */ (function () {
         this.dataSynced = false;
         this.restoreTeam = null;
         this.autoConfirmSkipWaveUntil = -1;
+        this.chatSpam = new Ratekeeper();
         this.name = "Unnamed player [ERROR}";
         this.muted = false;
         this.unmarkTime = -1;
@@ -833,8 +834,25 @@ var FishPlayer = /** @class */ (function () {
         if (message.trim().toLowerCase().startsWith("/vote y") || message.startsWith("/votekick ")) {
             this.checkVotekickAction(fishP, message);
         }
-        fishP.lastActive = Date.now();
-        fishP.updateStats(function (stats) { return stats.chatMessagesSent++; });
+        if (message != "/ohno") {
+            fishP.lastActive = Date.now();
+            fishP.updateStats(function (stats) { return stats.chatMessagesSent++; });
+            var susLevel = fishP.suspicionLevel();
+            if (!fishP.chatSpam.allow(14300, susLevel == 3 ? 3 : susLevel == 2 ? 5 : 7)) {
+                if (susLevel == 3 || Date.now() > fishP.kickForSpamAt) {
+                    fishP.kick("You have been kicked for spamming.", 30000);
+                    if (this.antiBotMode())
+                        Vars.netServer.admins.blacklistDos(fishP.ip());
+                }
+                else {
+                    fishP.sendMessage("[scarlet]You are sending chat messages too quickly.");
+                    fishP.kickForSpamAt = Date.now() + 3000;
+                }
+            }
+            if (susLevel >= 2 && !this.globalSusChat.allow(30000, 20)) {
+                this.triggerAntibot(funcs_1.Duration.minutes(2), "too many chat messages", "automatic", true);
+            }
+        }
     };
     FishPlayer.checkVotekickAction = function (fishP, message) {
         var e_3, _a, e_4, _b, e_5, _c;
@@ -1969,7 +1987,7 @@ var FishPlayer = /** @class */ (function () {
                     tripped_2 = true;
                     if (FishPlayer.antiBotMode())
                         Vars.netServer.admins.dosBlacklist.add(_this.ip());
-                    else if (!FishPlayer.chatSpam.allow(10000, 2)) {
+                    else if (!FishPlayer.chatSpam.allow(10000, 1)) {
                         Vars.netServer.admins.dosBlacklist.add(_this.ip());
                         FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat", "automatic", true);
                     }
@@ -1982,7 +2000,7 @@ var FishPlayer = /** @class */ (function () {
             Timer.schedule(function () {
                 if (_this.stats.chatMessagesSent >= 4 && !tripped_2) {
                     tripped_2 = true;
-                    if (!FishPlayer.chatSpamSlow.allow(30000, 3)) {
+                    if (!FishPlayer.chatSpamSlow.allow(30000, 2)) {
                         Vars.netServer.admins.dosBlacklist.add(_this.ip());
                         FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat slowly", "automatic", true);
                     }
@@ -2024,6 +2042,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.connectRate = new Ratekeeper();
     FishPlayer.votekickActionRate = new Ratekeeper();
     FishPlayer.lastVKActions = [];
+    FishPlayer.globalSusChat = new Ratekeeper();
     FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { return p.player.id.toString() === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
