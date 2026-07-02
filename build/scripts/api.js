@@ -227,9 +227,8 @@ function fetchAntibotData() {
     req.timeout = 10000;
     req.error(function (err) {
         Log.err("[API] Network error when trying to call api.fetchAntibotData()");
-        Log.err(err);
-        if (err === null || err === void 0 ? void 0 : err.response)
-            Log.err(err.response.getResultAsString());
+        // Log.err(err);
+        // if(err?.response) Log.err(err.response.getResultAsString());
         reject(err);
     });
     req.submit(function (response) {
@@ -248,9 +247,8 @@ function syncDosBlacklist(ips) {
         req.timeout = 10000;
         req.error(function (err) {
             Log.err("[API] Network error when trying to call api.syncDosBlacklist()");
-            Log.err(err);
-            if (err === null || err === void 0 ? void 0 : err.response)
-                Log.err(err.response.getResultAsString());
+            // Log.err(err);
+            // if(err?.response) Log.err(err.response.getResultAsString());
             reject(err);
         });
         req.submit(function (response) {
