@@ -214,8 +214,8 @@ export function fetchAntibotData() {
 	req.timeout = 10000;
 	req.error((err) => {
 		Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
-		Log.err(err);
-		if(err?.response) Log.err(err.response.getResultAsString());
+		// Log.err(err);
+		// if(err?.response) Log.err(err.response.getResultAsString());
 		reject(err);
 	});
 	req.submit((response) => {
@@ -224,23 +224,41 @@ export function fetchAntibotData() {
 	return promise;
 }
 
-export function getDosBlacklist() {
+export function syncDosBlacklist(ips:string[]) {
 	const { promise, resolve, reject } = Promise.withResolvers<string[], unknown>();
 	if(Mode.noBackend) resolve([]);
 	else {
-		const req = Http.get(`http://${backendIP}/api/dosBlacklist`)
+		const req = Http.post(`http://${backendIP}/api/dosBlacklist`, JSON.stringify(ips))
 			.header('Content-Type', 'application/json')
 			.header('Accept', '*/*');
 		req.timeout = 10000;
 		req.error((err) => {
-			Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
-			Log.err(err);
-			if(err?.response) Log.err(err.response.getResultAsString());
+			Log.err(`[API] Network error when trying to call api.syncDosBlacklist()`);
+			// Log.err(err);
+			// if(err?.response) Log.err(err.response.getResultAsString());
 			reject(err);
 		});
 		req.submit((response) => {
 			resolve(JSON.parse(response.getResultAsString()));
 		});
+	}
+	return promise;
+}
+export function unBlacklist(ip:string) {
+	const { promise, resolve, reject } = Promise.withResolvers<void, unknown>();
+	if(Mode.noBackend) resolve();
+	else {
+		const req = Http.post(`http://${backendIP}/api/dosBlacklist/delete`, JSON.stringify({ip}))
+			.header('Content-Type', 'application/json')
+			.header('Accept', '*/*');
+		req.timeout = 10000;
+		req.error((err) => {
+			Log.err(`[API] Network error when trying to call api.unBlacklist()`);
+			Log.err(err);
+			if(err?.response) Log.err(err.response.getResultAsString());
+			reject(err);
+		});
+		req.submit(() => resolve());
 	}
 	return promise;
 }

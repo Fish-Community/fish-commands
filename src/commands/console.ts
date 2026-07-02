@@ -12,7 +12,7 @@ import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
-import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestampFull, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
+import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestampFull, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, unblacklist, updateBans } from "/utils";
 
 
 export const commands = consoleCommandList({
@@ -155,8 +155,9 @@ export const commands = consoleCommandList({
 				admins.dosBlacklist.clear();
 				output(`Cleared ${size} IPs from the DOS blacklist.`);
 			} else {
-				if(admins.dosBlacklist.remove(args.ip)) output(`Removed ${args.ip} from the DOS blacklist.`);
-				else fail(`IP address ${args.ip} is not DOS blacklisted.`);
+				if(unblacklist(args.ip)){
+					output(`Removed ${args.ip} from the DOS blacklist.`);
+				} else fail(`IP address ${args.ip} is not DOS blacklisted.`);
 			}
 		}
 	},

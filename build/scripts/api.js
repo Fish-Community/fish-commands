@@ -15,7 +15,8 @@ exports.getBanned = getBanned;
 exports.getFishPlayerData = getFishPlayerData;
 exports.setFishPlayerData = setFishPlayerData;
 exports.fetchAntibotData = fetchAntibotData;
-exports.getDosBlacklist = getDosBlacklist;
+exports.syncDosBlacklist = syncDosBlacklist;
+exports.unBlacklist = unBlacklist;
 var config_1 = require("/config");
 var players_1 = require("/players");
 var promise_1 = require("/promise");
@@ -226,9 +227,8 @@ function fetchAntibotData() {
     req.timeout = 10000;
     req.error(function (err) {
         Log.err("[API] Network error when trying to call api.fetchAntibotData()");
-        Log.err(err);
-        if (err === null || err === void 0 ? void 0 : err.response)
-            Log.err(err.response.getResultAsString());
+        // Log.err(err);
+        // if(err?.response) Log.err(err.response.getResultAsString());
         reject(err);
     });
     req.submit(function (response) {
@@ -236,25 +236,44 @@ function fetchAntibotData() {
     });
     return promise;
 }
-function getDosBlacklist() {
+function syncDosBlacklist(ips) {
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend)
         resolve([]);
     else {
-        var req = Http.get("http://".concat(config_1.backendIP, "/api/dosBlacklist"))
+        var req = Http.post("http://".concat(config_1.backendIP, "/api/dosBlacklist"), JSON.stringify(ips))
             .header('Content-Type', 'application/json')
             .header('Accept', '*/*');
         req.timeout = 10000;
         req.error(function (err) {
-            Log.err("[API] Network error when trying to call api.fetchAntibotData()");
-            Log.err(err);
-            if (err === null || err === void 0 ? void 0 : err.response)
-                Log.err(err.response.getResultAsString());
+            Log.err("[API] Network error when trying to call api.syncDosBlacklist()");
+            // Log.err(err);
+            // if(err?.response) Log.err(err.response.getResultAsString());
             reject(err);
         });
         req.submit(function (response) {
             resolve(JSON.parse(response.getResultAsString()));
         });
+    }
+    return promise;
+}
+function unBlacklist(ip) {
+    var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
+    if (config_1.Mode.noBackend)
+        resolve();
+    else {
+        var req = Http.post("http://".concat(config_1.backendIP, "/api/dosBlacklist/delete"), JSON.stringify({ ip: ip }))
+            .header('Content-Type', 'application/json')
+            .header('Accept', '*/*');
+        req.timeout = 10000;
+        req.error(function (err) {
+            Log.err("[API] Network error when trying to call api.unBlacklist()");
+            Log.err(err);
+            if (err === null || err === void 0 ? void 0 : err.response)
+                Log.err(err.response.getResultAsString());
+            reject(err);
+        });
+        req.submit(function () { return resolve(); });
     }
     return promise;
 }

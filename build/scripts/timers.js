@@ -82,7 +82,7 @@ function initializeTimers() {
             for (var _b = __values(Object.values(players_1.FishPlayer.cachedPlayers)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var fishP = _c.value;
                 if (fishP.ranksAtLeast("trusted")) {
-                    Vars.netServer.admins.dosBlacklist.remove(fishP.info().lastIP);
+                    (0, utils_1.unblacklist)(fishP.info().lastIP);
                 }
             }
         }
@@ -120,6 +120,21 @@ function initializeTimers() {
                 }
                 if (((_b = globals_1.fishState.antibotData.nameGraylist) === null || _b === void 0 ? void 0 : _b[0]) != m.nameGraylistRegex) {
                     globals_1.fishState.antibotData.nameGraylist = m.nameGraylistRegex == null ? null : [m.nameGraylistRegex, Pattern.compile(m.nameGraylistRegex)];
+                }
+            }).catch(function () { });
+            var dosBlacklist = Vars.netServer.admins.dosBlacklist;
+            var newIPs = [];
+            if (globals_1.dosBlacklistCopy.size != dosBlacklist.size) {
+                //Find new IPs
+                dosBlacklist.each(function (ip) { return globals_1.dosBlacklistCopy.add(ip) && newIPs.push(ip); });
+            }
+            (0, api_1.syncDosBlacklist)(newIPs).then(function (ips) {
+                if (ips.length != dosBlacklist.size) {
+                    //this is technically wrong as the returned data could lose x and gain x ips at once
+                    //close enough
+                    dosBlacklist.clear();
+                    dosBlacklist.addAll(ips);
+                    globals_1.dosBlacklistCopy.addAll(ips);
                 }
             }).catch(function () { });
         }, 5, 2);

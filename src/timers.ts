@@ -3,14 +3,14 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains timers that run code at regular intervals.
 */
 
-import { fetchAntibotData, getStaffMessages } from "/api";
+import { fetchAntibotData, getStaffMessages, syncDosBlacklist } from "/api";
 import * as config from "/config";
 import { Gamemode } from "/config";
 import { updateMaps } from "/files";
 import { DurationSecs } from "/funcs";
-import { FishEvents, fishState, ipJoins, joinDemographics } from "/globals";
+import { dosBlacklistCopy, FishEvents, fishState, ipJoins, joinDemographics } from "/globals";
 import { FishPlayer } from "/players";
-import { definitelyRealMemoryCorruption, neutralGameover } from "/utils";
+import { definitelyRealMemoryCorruption, neutralGameover, unblacklist } from "/utils";
 
 
 /** Must be called once, and only once, on server start. */
@@ -35,7 +35,7 @@ export function initializeTimers(){
 		//Unblacklist trusted players
 		for(const fishP of Object.values(FishPlayer.cachedPlayers)){
 			if(fishP.ranksAtLeast("trusted")){
-				Vars.netServer.admins.dosBlacklist.remove(fishP.info().lastIP);
+				unblacklist(fishP.info().lastIP);
 			}
 		}
 		Log.debug("autosave @", Time.elapsed());
@@ -63,6 +63,21 @@ export function initializeTimers(){
 				}
 				if(fishState.antibotData.nameGraylist?.[0] != m.nameGraylistRegex){
 					fishState.antibotData.nameGraylist = m.nameGraylistRegex == null ? null : [m.nameGraylistRegex, Pattern.compile(m.nameGraylistRegex)];
+				}
+			}).catch(() => {});
+			const { dosBlacklist } = Vars.netServer.admins;
+			const newIPs:string[] = [];
+			if(dosBlacklistCopy.size != dosBlacklist.size){
+				//Find new IPs
+				dosBlacklist.each(ip => dosBlacklistCopy.add(ip) && newIPs.push(ip));
+			}
+			syncDosBlacklist(newIPs).then(ips => {
+				if(ips.length != dosBlacklist.size){
+					//this is technically wrong as the returned data could lose x and gain x ips at once
+					//close enough
+					dosBlacklist.clear();
+					dosBlacklist.addAll(ips);
+					dosBlacklistCopy.addAll(ips);
 				}
 			}).catch(() => {});
 		}, 5, 2);
