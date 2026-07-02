@@ -473,10 +473,19 @@ const Time: {
 const GameState: {
 	State: Record<"playing" | "paused" | "menu", any>;
 };
+const Http: {
+	post(url:string, content:string):HttpRequest;
+	get(url:string):HttpRequest;
+	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
+	request(method:HttpMethod, url:string):HttpRequest;
+	HttpMethod: Record<"GET" | "POST" | "PUT" | "PATCH" | "DELETE", HttpMethod>;
+};
+type HttpMethod = {_HttpMethod: true};
 class HttpRequest {
 	submit(func:(response:HttpResponse) => void):void;
 	error(func:(exception:any) => void):void;
 	header(name:string, value:string):HttpRequest;
+	content: string;
 	timeout: number;
 }
 class HttpResponse {
@@ -543,11 +552,7 @@ class ByteArrayInputStream extends InputStream {
 class Writes {
 	constructor(output: DataOutputStream);
 }
-const Http: {
-	post(url:string, content:string):HttpRequest;
-	get(url:string):HttpRequest;
-	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
-};
+
 class Seq<T> {
 	items: Array<T | null>;
 	size: number;
@@ -595,6 +600,7 @@ class ObjectSet<T> {
 	select(predicate:(item:T) => boolean):ObjectSet<T>;
 	each(func:(item:T) => unknown):void;
 	add(item:T):boolean;
+	addAll(item:T[]):boolean;
 	remove(item:T):boolean;
 	isEmpty():boolean;
 	contains(item:T):boolean;

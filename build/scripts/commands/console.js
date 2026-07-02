@@ -372,8 +372,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 output("Cleared ".concat(size, " IPs from the DOS blacklist."));
             }
             else {
-                if (admins.dosBlacklist.remove(args.ip))
+                if ((0, utils_1.unblacklist)(args.ip)) {
                     output("Removed ".concat(args.ip, " from the DOS blacklist."));
+                }
                 else
                     (0, commands_1.fail)("IP address ".concat(args.ip, " is not DOS blacklisted."));
             }

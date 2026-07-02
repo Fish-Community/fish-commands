@@ -9,7 +9,7 @@ import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions
 import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
 import { Cancel } from "/frameworks/menus";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
-import { FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
+import { dosBlacklistCopy, FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { SelectEnumClassKeys } from "/types";
 
@@ -1046,4 +1046,18 @@ export function getStatuses(unit:Unit):Seq<{ effect: StatusEffect }> {
 			return ArcReflect.get(clazz, unit, "statuses") as Seq<{ effect: StatusEffect }>;
 	}
 	return new Seq();
+}
+
+function unblacklist_once(ip:string):boolean {
+	if(Vars.netServer.admins.dosBlacklist.remove(ip)){
+		dosBlacklistCopy.remove(ip);
+		api.unBlacklist(ip).catch(() => {});
+		return true;
+	} else return false;
+}
+export function unblacklist(ip:string):boolean {
+	//best race condition fix (real)
+	//just try it thrice
+	Timer.schedule(() => unblacklist_once(ip), 0.5, 1, 2);
+	return unblacklist_once(ip);
 }

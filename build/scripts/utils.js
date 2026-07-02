@@ -123,6 +123,7 @@ exports.handleError = handleError;
 exports.syncManual = syncManual;
 exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
+exports.unblacklist = unblacklist;
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
@@ -1228,4 +1229,19 @@ function getStatuses(unit) {
         finally { if (e_7) throw e_7.error; }
     }
     return new Seq();
+}
+function unblacklist_once(ip) {
+    if (Vars.netServer.admins.dosBlacklist.remove(ip)) {
+        globals_1.dosBlacklistCopy.remove(ip);
+        api.unBlacklist(ip).catch(function () { });
+        return true;
+    }
+    else
+        return false;
+}
+function unblacklist(ip) {
+    //best race condition fix (real)
+    //just try it thrice
+    Timer.schedule(function () { return unblacklist_once(ip); }, 0.5, 1, 2);
+    return unblacklist_once(ip);
 }
