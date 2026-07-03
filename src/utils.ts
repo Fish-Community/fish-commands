@@ -475,6 +475,28 @@ export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean)
 	}
 }
 
+export const vnwCondition = {
+	waveUnits: [] as number[],
+	addUnit(unitId:number){
+		this.waveUnits.push(unitId)
+	},
+	removeUnit(e:EventType){
+		let index = vnwCondition.waveUnits.indexOf(e.unit.id);
+		vnwCondition.waveUnits.splice(index,1);
+	},
+	onWaveStart(){
+		Groups.unit.each((unit) => {
+			
+			if (unit.team==getEnemyTeam()) vnwCondition.addUnit(unit.id)
+		});
+	
+	},
+	check(){
+		if (this.waveUnits.length==0) return true
+		else return false
+	},
+}
+
 
 export function logHTrip(player:FishPlayer, name:string, message?:string){
 	Log.warn(`&yPlayer &b"${player.cleanedName}"&y (&b${player.uuid}&y/&b${player.ip()}&y) tripped &c${name}&y` + (message ? `: ${message}` : ""));

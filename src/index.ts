@@ -14,7 +14,7 @@ import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
+import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop, vnwCondition } from "/utils";
 
 const { Menu } = menus;
 
@@ -325,6 +325,10 @@ Events.on(EventType.PlayerChatEvent, e => {
 Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
 });
+
+Events.on(EventType.UnitDestroyEvent, vnwCondition.removeUnit);
+Events.on(EventType.UnitDrownEvent, vnwCondition.removeUnit);
+Events.on(EventType.WaveEvent, vnwCondition.onWaveStart);
 
 Events.on(EventType.AdminRequestEvent, e => {
 	if(e.action == Packets.AdminAction.wave){

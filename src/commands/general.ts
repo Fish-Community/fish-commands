@@ -785,7 +785,7 @@ Please stop attacking and [lime]build defenses[] first!`
 				.on("player vote change", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has voted on skipping [accent]${t.session!.data}[white] wave(s). [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 				.on("player vote removed", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has left. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 		}),
-		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
+		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.canVnw(), Req.mode("survival", "testsrv"), Req.gameRunning],
 		async handler({sender, args: {waves}, data:{manager}}){
 
 			//Disable narrowing, this is async
