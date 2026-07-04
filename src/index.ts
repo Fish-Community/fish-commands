@@ -326,9 +326,9 @@ Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
 });
 
-Events.on(EventType.UnitDestroyEvent, vnwCondition.removeUnit);
-Events.on(EventType.UnitDrownEvent, vnwCondition.removeUnit);
-Events.on(EventType.WaveEvent, vnwCondition.onWaveStart);
+Events.on(EventType.UnitDestroyEvent, (e) => vnwCondition.removeUnit(e));
+Events.on(EventType.UnitDrownEvent, (e) => vnwCondition.removeUnit(e));
+Events.on(EventType.WaveEvent, () => vnwCondition.onWaveStart());
 
 Events.on(EventType.AdminRequestEvent, e => {
 	if(e.action == Packets.AdminAction.wave){

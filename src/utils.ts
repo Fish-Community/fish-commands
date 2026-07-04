@@ -478,24 +478,24 @@ export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean)
 export const vnwCondition = {
 	waveUnits: [] as number[],
 	addUnit(unitId:number){
-		this.waveUnits.push(unitId)
+		this.waveUnits.push(unitId);
 	},
 	removeUnit(e:EventType){
-		let index = vnwCondition.waveUnits.indexOf(e.unit.id);
+		const index = vnwCondition.waveUnits.indexOf(e.unit.id);
 		vnwCondition.waveUnits.splice(index,1);
 	},
 	onWaveStart(){
 		Groups.unit.each((unit) => {
 			
-			if (unit.team==getEnemyTeam()) vnwCondition.addUnit(unit.id)
+			if (unit.team==getEnemyTeam()) vnwCondition.addUnit(unit.id);
 		});
 	
 	},
 	check(){
-		if (this.waveUnits.length==0) return true
-		else return false
-	},
-}
+		if (this.waveUnits.length==0) return true;
+		else return false;
+	}
+};
 
 
 export function logHTrip(player:FishPlayer, name:string, message?:string){
