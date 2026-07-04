@@ -133,6 +133,7 @@ function initializeTimers() {
                     //this is technically wrong as the returned data could lose x and gain x ips at once
                     //close enough
                     dosBlacklist.clear();
+                    globals_1.dosBlacklistCopy.clear();
                     dosBlacklist.addAll(ips);
                     globals_1.dosBlacklistCopy.addAll(ips);
                 }
