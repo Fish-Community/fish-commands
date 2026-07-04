@@ -834,11 +834,11 @@ var FishPlayer = /** @class */ (function () {
         if (message.trim().toLowerCase().startsWith("/vote y") || message.startsWith("/votekick ")) {
             this.checkVotekickAction(fishP, message);
         }
-        if (message != "/ohno") {
+        if (!message.startsWith("/") || message.startsWith("/t")) {
             fishP.lastActive = Date.now();
             fishP.updateStats(function (stats) { return stats.chatMessagesSent++; });
             var susLevel = fishP.suspicionLevel();
-            if (!fishP.chatSpam.allow(14300, susLevel == 3 ? 3 : susLevel == 2 ? 5 : 7)) {
+            if (!fishP.chatSpam.allow(14300, susLevel == 3 ? 3 : susLevel == 2 ? 5 : 30)) {
                 if (susLevel == 3 || Date.now() > fishP.kickForSpamAt) {
                     fishP.kick("You have been kicked for spamming.", 30000);
                     if (this.antiBotMode())
