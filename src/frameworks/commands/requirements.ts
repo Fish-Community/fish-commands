@@ -53,8 +53,5 @@ export const Req = {
 			Req.integer(argName)({args}) &&
 			(args[argName] == undefined || args[argName] > 0
 				|| fail(`${argName} must be positive`)),
-	canVnw: 
-		(message = "You can only do that when all units from previous waves are dead.",
-		 message1 = "Stop spamming vnw!",) => ({sender}:{sender:FishPlayer}) => 
-			vnwCondition.check() || fail(Math.random() < 0.9 ? message: message1) 
+
 };

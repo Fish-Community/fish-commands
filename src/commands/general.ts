@@ -14,7 +14,7 @@ import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileH
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
+import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer, vnwCondition } from "/utils";
 import { VoteManager } from "/votes";
 
 export const commands = commandList({
@@ -785,9 +785,9 @@ Please stop attacking and [lime]build defenses[] first!`
 				.on("player vote change", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has voted on skipping [accent]${t.session!.data}[white] wave(s). [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 				.on("player vote removed", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has left. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 		}),
-		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.canVnw(), Req.mode("survival", "testsrv"), Req.gameRunning],
+		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
 		async handler({sender, args: {waves}, data:{manager}}){
-
+			if (!vnwCondition.check()) fail("You can only do that when all units from previous waves are dead.")
 			//Disable narrowing, this is async
 			if(!manager.session as boolean){
 				waves ??= await Menu.menu(
