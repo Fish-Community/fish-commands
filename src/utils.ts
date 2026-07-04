@@ -476,24 +476,15 @@ export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean)
 }
 
 export const vnwCondition = {
-	waveUnits: [] as number[],
-	addUnit(unitId:number){
-		this.waveUnits.push(unitId);
-	},
-	removeUnit(e:EventType){
-		const index = vnwCondition.waveUnits.indexOf(e.unit.id);
-		vnwCondition.waveUnits.splice(index,1);
-	},
+	waveUnits: [] as Unit[],
 	onWaveStart(){
-		Groups.unit.each((unit) => {
-			
-			if (unit.team==getEnemyTeam()) vnwCondition.addUnit(unit.id);
-		});
-	
+		let units = Groups.unit.copy(new Seq());
+		let enemyTeam = getEnemyTeam();
+		this.waveUnits = units.select(u => u.team === enemyTeam).toArray();
 	},
 	check(){
-		if (this.waveUnits.length==0) return true;
-		else return false;
+		if (this.waveUnits.some(u => !u.dead)) return false;
+		return true;
 	}
 };
 

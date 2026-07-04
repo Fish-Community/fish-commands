@@ -326,8 +326,6 @@ Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
 });
 
-Events.on(EventType.UnitDestroyEvent, (e) => vnwCondition.removeUnit(e));
-Events.on(EventType.UnitDrownEvent, (e) => vnwCondition.removeUnit(e));
 Events.on(EventType.WaveEvent, () => vnwCondition.onWaveStart());
 
 Events.on(EventType.AdminRequestEvent, e => {
