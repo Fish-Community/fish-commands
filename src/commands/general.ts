@@ -787,6 +787,7 @@ Please stop attacking and [lime]build defenses[] first!`
 		}),
 		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
 		async handler({sender, args: {waves}, data:{manager}}){
+			
 			if (!vnwCondition.check()) fail("You can only do that when all units from previous waves are dead.");
 			//Disable narrowing, this is async
 			if(!manager.session as boolean){

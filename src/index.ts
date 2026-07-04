@@ -326,7 +326,9 @@ Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
 });
 
-Events.on(EventType.WaveEvent, () => vnwCondition.onWaveStart());
+Events.on(EventType.WaveEvent, () => {
+	if (Vars.state.rules.mode().name() === "survival") vnwCondition.onWaveStart();
+});
 
 Events.on(EventType.AdminRequestEvent, e => {
 	if(e.action == Packets.AdminAction.wave){
