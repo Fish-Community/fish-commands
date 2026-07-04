@@ -76,6 +76,7 @@ export function initializeTimers(){
 					//this is technically wrong as the returned data could lose x and gain x ips at once
 					//close enough
 					dosBlacklist.clear();
+					dosBlacklistCopy.clear();
 					dosBlacklist.addAll(ips);
 					dosBlacklistCopy.addAll(ips);
 				}
