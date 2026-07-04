@@ -63,6 +63,25 @@ class ObjectIntMap<K> {
 		});
 	}
 }
+class ObjectSet<T> {
+	constructor(
+		public set = new Set<T>,
+	){}
+	get size(){ return this.set.size; }
+	select(predicate:(item:T) => boolean){ return new ObjectSet(new Set([...this.set].filter(predicate))); }
+	each(func:(item:T) => unknown){ this.set.forEach(func); }
+	add(item:T){ return this.set.has(item) ? false : (this.set.add(item), true); }
+	addAll(items:T[]){ for(const item of items) this.set.add(item); }
+	remove(item:T){ return this.set.delete(item); }
+	isEmpty(){ return this.set.size == 0; }
+	contains(item:T){ return this.set.has(item); }
+	toSeq(){ return new Seq([...this.set]); }
+	get(key:T){ return this.set.has(key) ? key : null; }
+	first(){ return this.set.values().next().value; }
+	clear(){ this.set.clear(); }
+	// eslint-disable-next-line @typescript-eslint/no-base-to-string
+	toString(){ return this.set.toString(); }
+}
 
 class Seq<T> {
 	constructor(public items:T[] = []){}
@@ -989,4 +1008,4 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper, Runtime, Thread, AtomicInteger, ObjectMap});
+Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper, Runtime, Thread, AtomicInteger, ObjectMap, ObjectSet});
