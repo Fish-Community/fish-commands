@@ -980,6 +980,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
+                            if (!utils_1.vnwCondition.check())
+                                (0, commands_1.fail)("You can only do that when all units from previous waves are dead.");
                             if (!!manager.session) return [3 /*break*/, 4];
                             if (!(waves !== null && waves !== void 0)) return [3 /*break*/, 1];
                             _c = waves;

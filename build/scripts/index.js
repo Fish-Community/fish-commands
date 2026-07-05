@@ -369,6 +369,10 @@ Events.on(EventType.PlayerChatEvent, function (e) {
 Events.on(EventType.PlayEvent, function () {
     globals_1.fishState.startTime = Date.now();
 });
+Events.on(EventType.WaveEvent, function () {
+    if (Vars.state.rules.mode().name() === "survival")
+        utils_1.vnwCondition.onWaveStart();
+});
 Events.on(EventType.AdminRequestEvent, function (e) {
     if (e.action == Packets.AdminAction.wave) {
         var fishP_2 = players_1.FishPlayer.get(e.player);

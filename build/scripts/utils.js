@@ -74,7 +74,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = exports.getTeam = void 0;
+exports.addToTileHistory = exports.foolifyChat = exports.vnwCondition = exports.getMap = exports.getUnitType = exports.getItem = exports.getTeam = void 0;
 exports.memoizeChatFilter = memoizeChatFilter;
 exports.formatTime = formatTime;
 exports.formatTimeShort = formatTimeShort;
@@ -628,6 +628,19 @@ function skipWaves(requestedWaves, runIntermediateWaves) {
         Vars.logic.skipWave();
     }
 }
+exports.vnwCondition = {
+    waveUnits: [],
+    onWaveStart: function () {
+        var units = Groups.unit.copy(new Seq());
+        var enemyTeam = getEnemyTeam();
+        this.waveUnits = units.select(function (u) { return u.team === enemyTeam; }).toArray();
+    },
+    check: function () {
+        if (this.waveUnits.some(function (u) { return !u.dead; }))
+            return false;
+        return true;
+    }
+};
 function logHTrip(player, name, message) {
     Log.warn("&yPlayer &b\"".concat(player.cleanedName, "\"&y (&b").concat(player.uuid, "&y/&b").concat(player.ip(), "&y) tripped &c").concat(name, "&y") + (message ? ": ".concat(message) : ""));
     players_1.FishPlayer.messageStaff("[yellow]Player [blue]\"".concat(player.cleanedName, "\"[] tripped [cyan]").concat(name, "[]") + (message ? ": ".concat(message) : ""));
