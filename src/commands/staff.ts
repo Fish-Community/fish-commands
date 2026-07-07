@@ -428,7 +428,7 @@ export const commands = commandList({
 	},
 
 	label: {
-		args: ["time:time", "message:string", "plain:boolean"],
+		args: ["time:time", "message:string"],
 		description: "Places a label at your position for a specified amount of time.",
 		perm: Perm.mod,
 		handler({args, sender, outputSuccess, f}){
@@ -439,9 +439,8 @@ export const commands = commandList({
 			const labely = unit.y;
 			const id = fishState.labelID++;
 			const task = Timer.schedule(() => {
-				const timeRemaining = (end - args.time) / 1000;
+				const timeRemaining = (end - Date.now()) / 1000;
 				if(timeRemaining > 0) Call.label(
-					args.plain ? args.message :
 `${sender.name}
 
 [white]${args.message}
@@ -449,24 +448,13 @@ export const commands = commandList({
 [acid]${formatTimeShort(timeRemaining)}`,
 					id, timeRemaining, labelx, labely
 				);
-			}, 0, 1, args.time);
+			}, 0, 1, args.time / 1000);
 			fishState.labels.push({ x: labelx, y: labely, id, task});
 			outputSuccess(f`Placed label "${args.message}" for ${formatTime(args.time)}.`);
 		}
 	},
 
-	labelsticky: {
-		args: ["time:time", "message:string"],
-		description: "Places a label at the bottom left corner of everyone's screen.",
-		perm: Perm.admin,
-		handler({args, outputSuccess, f}){
-			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
-			const id = fishState.labelID++;
-			Call.label(args.message, id, args.time / Duration.seconds(1), NaN, NaN);
-			fishState.labels.push({ id, task: null, x: null, y: null });
-			outputSuccess(f`Placed label "${args.message}" for ${formatTime(args.time)}.`);
-		}
-	},
+	//TODO re-add labelSticky with player-specific labels
 
 	clearlabels: {
 		args: [],
