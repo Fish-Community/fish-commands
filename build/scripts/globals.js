@@ -14,6 +14,7 @@ exports.fishState = {
     corruption_t1: null,
     corruption_t2: null,
     lastPranked: Date.now(),
+    labelID: 100,
     labels: [],
     peacefulMode: false,
     joinBell: false,
