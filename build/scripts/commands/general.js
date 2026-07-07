@@ -1165,7 +1165,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             task === null || task === void 0 ? void 0 : task.cancel();
         }
         function getMapData() {
-            return __spreadArray([], __read(votes.values()), false).reduce(function (acc, map) { return (acc.increment(map), acc); }, new ObjectIntMap()).entries().toArray();
+            var map = __spreadArray([], __read(votes.values()), false).reduce(function (acc, map) { return (acc.increment(map), acc); }, new ObjectIntMap());
+            var out = new Seq(map.size);
+            map.forEach(function (_a) {
+                var key = _a.key, value = _a.value;
+                return out.add({ key: key, value: value });
+            });
+            return out;
         }
         function showVotes() {
             Call.sendMessage("[green]Current votes:\n------------------------------\n".concat(getMapData().map(function (_a) {
