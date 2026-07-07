@@ -15,7 +15,8 @@ import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
 import * as translation from "/translation";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, removeFoosChars, restartNow, serverRestartLoop } from "/utils";
+import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, removeFoosChars, restartNow, serverRestartLoop, vnwCondition } from "/utils";
+
 const { Menu } = menus;
 
 Events.on(EventType.ConnectionEvent, (e) => {
@@ -358,6 +359,10 @@ Events.on(EventType.PlayerChatEvent, e => {
 });
 Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
+});
+
+Events.on(EventType.WaveEvent, () => {
+	if (Vars.state.rules.mode().name() === "survival") vnwCondition.onWaveStart();
 });
 
 Events.on(EventType.AdminRequestEvent, e => {

@@ -15,6 +15,7 @@ export const fishState = {
 	corruption_t1: null as null | TimerTask,
 	corruption_t2: null as null | TimerTask,
 	lastPranked: Date.now(),
+	labelID: 100,
 	labels: [] as Label[],
 	peacefulMode: false,
 	joinBell: false,

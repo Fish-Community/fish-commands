@@ -475,6 +475,19 @@ export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean)
 	}
 }
 
+export const vnwCondition = {
+	waveUnits: [] as Unit[],
+	onWaveStart(){
+		let units = Groups.unit.copy(new Seq());
+		let enemyTeam = getEnemyTeam();
+		this.waveUnits = units.select(u => u.team === enemyTeam).toArray();
+	},
+	check(){
+		if (this.waveUnits.some(u => !u.dead)) return false;
+		return true;
+	}
+};
+
 
 export function logHTrip(player:FishPlayer, name:string, message?:string){
 	Log.warn(`&yPlayer &b"${player.cleanedName}"&y (&b${player.uuid}&y/&b${player.ip()}&y) tripped &c${name}&y` + (message ? `: ${message}` : ""));

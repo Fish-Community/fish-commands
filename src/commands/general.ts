@@ -5,17 +5,17 @@ This file contains most in-game chat commands that can be run by untrusted playe
 
 import { Achievement, Achievements } from "/achievements";
 import * as api from "/api";
-import { FColor, FishServer, Gamemode, rules, text } from "/config";
+import { FColor, FishServer, Gamemode, text } from "/config";
 import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
-import { Cancel, Menu } from "/frameworks/menus";
+import { Menu } from "/frameworks/menus";
 import { capitalizeText, delay, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
 import { getLanguageFromCache, isLanguageAvailable, Language, languageCache, setPlayerLanguageEntry } from "/translation";
-import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
+import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer, vnwCondition } from "/utils";
 import { VoteManager } from "/votes";
 
 export const commands = commandList({
@@ -823,7 +823,8 @@ Please stop attacking and [lime]build defenses[] first!`
 		}),
 		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
 		async handler({sender, args: {waves}, data:{manager}}){
-
+			
+			if (!vnwCondition.check()) fail("You can only do that when all units from previous waves are dead.");
 			//Disable narrowing, this is async
 			if(!manager.session as boolean){
 				waves ??= await Menu.menu(

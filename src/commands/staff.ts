@@ -15,7 +15,7 @@ import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { Label } from "/types";
-import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -428,32 +428,30 @@ export const commands = commandList({
 	},
 
 	label: {
-		args: ["time:time", "message:string"],
+		args: ["time:time", "message:string", "plain:boolean"],
 		description: "Places a label at your position for a specified amount of time.",
 		perm: Perm.mod,
 		handler({args, sender, outputSuccess, f}){
 			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
 			const unit = sender.unit() ?? fail(`You must be in a unit to use this command.`);
-			let timeRemaining = args.time / 1000;
+			const end = Date.now() + args.time;
 			const labelx = unit.x;
 			const labely = unit.y;
+			const id = fishState.labelID++;
 			const task = Timer.schedule(() => {
-				if (timeRemaining > 0) {
-					const timeseconds = timeRemaining % 60;
-					const timeminutes = (timeRemaining - timeseconds) / 60;
-					Call.label(
-						`${sender.name}
+				const timeRemaining = (end - args.time) / 1000;
+				if(timeRemaining > 0) Call.label(
+					args.plain ? args.message :
+`${sender.name}
 
 [white]${args.message}
 
-[acid]${timeminutes.toString().padStart(2, "0")}:${timeseconds.toString().padStart(2, "0")}`,
-						1, labelx, labely
-					);
-					timeRemaining--;
-				}
+[acid]${formatTimeShort(timeRemaining)}`,
+					id, timeRemaining, labelx, labely
+				);
 			}, 0, 1, args.time);
-			fishState.labels.push({ x: labelx, y: labely, task});
-			outputSuccess(f`Placed label "${args.message}" for ${timeRemaining} seconds.`);
+			fishState.labels.push({ x: labelx, y: labely, id, task});
+			outputSuccess(f`Placed label "${args.message}" for ${formatTime(args.time)}.`);
 		}
 	},
 
@@ -463,15 +461,10 @@ export const commands = commandList({
 		perm: Perm.admin,
 		handler({args, outputSuccess, f}){
 			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
-			let timeRemaining = args.time / 1000;
-			const task = Timer.schedule(() => {
-				if(timeRemaining > 0){
-					Call.label(args.message, 5, NaN, NaN);
-					timeRemaining -= 5;
-				}
-			}, 0, 5, Math.ceil(args.time / 5));
-			fishState.labels.push({ task, x: null, y: null });
-			outputSuccess(f`Placed label "${args.message}" for ${timeRemaining} seconds.`);
+			const id = fishState.labelID++;
+			Call.label(args.message, id, args.time / Duration.seconds(1), NaN, NaN);
+			fishState.labels.push({ id, task: null, x: null, y: null });
+			outputSuccess(f`Placed label "${args.message}" for ${formatTime(args.time)}.`);
 		}
 	},
 
@@ -481,7 +474,10 @@ export const commands = commandList({
 		perm: Perm.mod,
 		handler({outputSuccess}){
 			if(fishState.labels.length == 0) fail(`No labels found.`);
-			fishState.labels.forEach(l => l.task.cancel());
+			fishState.labels.forEach(l => {
+				l.task?.cancel();
+				Call.label(null, l.id, 0, 0, 0);
+			});
 			outputSuccess(`Removed all labels.`);
 		}
 	},
@@ -506,7 +502,8 @@ export const commands = commandList({
 				const index = [...fishState.labels.entries()].reduce((a, b) => dist(a[1]) < dist(b[1]) ? a : b)[0];
 				label = fishState.labels.splice(index, 1)[0];
 			}
-			label.task.cancel();
+			label.task?.cancel();
+			Call.label(null, label.id, 0, 0, 0);
 			outputSuccess(`Removed one label.`);
 		}
 	},
