@@ -24,8 +24,8 @@ const Call: {
 	 */
 	textInput(target: NetConnection, textInputId: number, title:string, message:string, textLength:number, def:string, numeric:boolean, allowEmpty?:boolean): void;
 	label(message:string | null, id:number, duration:number, worldx:number, worldy:number, flags:number):void;
-	label(message:string | null, id:number, duration:number, worldx:number, worldy:number):void;
-	label(message:string | null, duration:number, worldx:number, worldy:number):void;
+	label(message:string, id:number, duration:number, worldx:number, worldy:number):void;
+	label(message:string, duration:number, worldx:number, worldy:number):void;
 	labelReliable(message:string | null, id:number, duration:number, worldx:number, worldy:number, flags:number):void;
 	labelReliable(message:string | null, id:number, duration:number, worldx:number, worldy:number):void;
 	labelReliable(message:string | null, duration:number, worldx:number, worldy:number):void;
