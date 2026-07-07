@@ -439,14 +439,14 @@ export const commands = commandList({
 			const labely = unit.y;
 			const id = fishState.labelID++;
 			const task = Timer.schedule(() => {
-				const timeRemaining = (end - Date.now()) / 1000;
+				const timeRemaining = end - Date.now();
 				if(timeRemaining > 0) Call.label(
 `${sender.name}
 
 [white]${args.message}
 
 [acid]${formatTimeShort(timeRemaining)}`,
-					id, timeRemaining, labelx, labely
+					id, timeRemaining / 1000, labelx, labely
 				);
 			}, 0, 1, args.time / 1000);
 			fishState.labels.push({ x: labelx, y: labely, id, task});

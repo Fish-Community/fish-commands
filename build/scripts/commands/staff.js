@@ -713,9 +713,9 @@ exports.commands = (0, commands_1.commandList)({
             var labely = unit.y;
             var id = globals_1.fishState.labelID++;
             var task = Timer.schedule(function () {
-                var timeRemaining = (end - Date.now()) / 1000;
+                var timeRemaining = end - Date.now();
                 if (timeRemaining > 0)
-                    Call.label("".concat(sender.name, "\n\n[white]").concat(args.message, "\n\n[acid]").concat((0, utils_1.formatTimeShort)(timeRemaining)), id, timeRemaining, labelx, labely);
+                    Call.label("".concat(sender.name, "\n\n[white]").concat(args.message, "\n\n[acid]").concat((0, utils_1.formatTimeShort)(timeRemaining)), id, timeRemaining / 1000, labelx, labely);
             }, 0, 1, args.time / 1000);
             globals_1.fishState.labels.push({ x: labelx, y: labely, id: id, task: task });
             outputSuccess(f(templateObject_29 || (templateObject_29 = __makeTemplateObject(["Placed label \"", "\" for ", "."], ["Placed label \"", "\" for ", "."])), args.message, (0, utils_1.formatTime)(args.time)));
