@@ -45,17 +45,17 @@ exports.commands = (0, commands_1.commandList)({
                     var unit_1 = sender.unit();
                     var currentPet = data[sender.uuid];
                     if (pet != currentPet) {
-                        Call.label(null, id, 0, 0, 0);
+                        Call.label(null, id, 0, 0, 0, 0);
                         return;
                     }
                     if (currentPet.dead) {
                         delete data[sender.uuid];
-                        Call.label(null, id, 0, 0, 0);
+                        Call.label(null, id, 0, 0, 0, 0);
                         return;
                     }
                     if (!sender.connected()) {
                         currentPet === null || currentPet === void 0 ? void 0 : currentPet.kill();
-                        Call.label(null, id, 0, 0, 0);
+                        Call.label(null, id, 0, 0, 0, 0);
                         return;
                     }
                     if (unit_1 && currentPet) {

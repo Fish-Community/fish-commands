@@ -43,17 +43,17 @@ export const commands = commandList({
 					const unit = sender.unit();
 					const currentPet = data[sender.uuid];
 					if(pet != currentPet){
-						Call.label(null, id, 0, 0, 0);
+						Call.label(null, id, 0, 0, 0, 0);
 						return;
 					}
 					if(currentPet.dead){
 						delete data[sender.uuid];
-						Call.label(null, id, 0, 0, 0);
+						Call.label(null, id, 0, 0, 0, 0);
 						return;
 					}
 					if(!sender.connected()){
 						currentPet?.kill();
-						Call.label(null, id, 0, 0, 0);
+						Call.label(null, id, 0, 0, 0, 0);
 						return;
 					}
 					if(unit && currentPet){
