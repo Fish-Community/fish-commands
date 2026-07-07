@@ -304,21 +304,21 @@ Events.on(EventType.ServerLoadEvent, function () {
             players_1.FishPlayer.uploadAll();
         }
         catch (_a) {
-            Log.err("failed to upload");
+            Packages.java.lang.System.out.println("[E] failed to upload");
         }
         try {
             globals_1.FishEvents.fire("saveData", []);
         }
         catch (_b) {
-            Log.err("failed to save misc data");
+            Packages.java.lang.System.out.println("[E] failed to save misc data");
         }
         try {
             players_1.FishPlayer.saveAll(false);
         }
         catch (_c) {
-            Log.err("failed to save player data");
+            Packages.java.lang.System.out.println("[E] failed to save player data");
         }
-        Log.info("Saved on exit.");
+        Packages.java.lang.System.out.println("Saved on exit.");
     }));
     Vars.netServer.assigner = function (player, players) {
         var _a;
@@ -398,7 +398,7 @@ Events.on(EventType.PlayEvent, function () {
 });
 Events.on(EventType.WaveEvent, function () {
     if (Vars.state.rules.mode().name() === "survival")
-        vnwCondition.onWaveStart();
+        utils_1.vnwCondition.onWaveStart();
 });
 Events.on(EventType.AdminRequestEvent, function (e) {
     if (e.action == Packets.AdminAction.wave) {

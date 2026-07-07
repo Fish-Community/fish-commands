@@ -280,14 +280,14 @@ Events.on(EventType.ServerLoadEvent, () => {
 	Runtime.getRuntime().addShutdownHook(new Thread(() => {
 		try {
 			FishPlayer.uploadAll();
-		} catch { Log.err("failed to upload"); }
+		} catch { Packages.java.lang.System.out.println("[E] failed to upload"); }
 		try {
 			FishEvents.fire("saveData", []);
-		} catch { Log.err("failed to save misc data"); }
+		} catch { Packages.java.lang.System.out.println("[E] failed to save misc data"); }
 		try {
 			FishPlayer.saveAll(false);
-		} catch { Log.err("failed to save player data"); }
-		Log.info("Saved on exit.");
+		} catch { Packages.java.lang.System.out.println("[E] failed to save player data"); }
+		Packages.java.lang.System.out.println("Saved on exit.");
 	}));
 
 	Vars.netServer.assigner = (player, players) => {
