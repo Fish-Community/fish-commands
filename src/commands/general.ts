@@ -967,9 +967,12 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		}
 
 		function getMapData():Seq<ObjectIntMapEntry<MMap | Random>> {
-			return [...votes.values()].reduce(
+			const map = [...votes.values()].reduce(
 				(acc, map) => (acc.increment(map), acc), new ObjectIntMap<MMap | Random>()
-			).entries().toArray();
+			);
+			const out = new Seq<ObjectIntMapEntry<MMap | Random>>(map.size);
+			map.forEach(({key, value}) => out.add({key, value}));
+			return out;
 		}
 
 		function showVotes(){
