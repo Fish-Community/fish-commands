@@ -842,7 +842,7 @@ Please stop attacking and [lime]build defenses[] first!`
 				.on("player vote change", (t, player, oldVote, newVote) => Call.sendMessage(`RTV: ${player.name}[white] ${oldVote == newVote ? "still " : ""}wants to change the map. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 				.on("player vote removed", (t, player) => Call.sendMessage(`RTV: ${player.name}[white] has left the game. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 		}),
-		requirements: [Req.cooldown(3000), Req.gameRunning],
+		requirements: [Req.cooldown(10000), Req.gameRunning],
 		handler({sender, data:{manager}}){
 			manager.vote(sender, 1, 0); //No weighting for RTV except for removing AFK players
 		}

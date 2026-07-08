@@ -1045,7 +1045,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 .on("player vote change", function (t, player, oldVote, newVote) { return Call.sendMessage("RTV: ".concat(player.name, "[white] ").concat(oldVote == newVote ? "still " : "", "wants to change the map. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
                 .on("player vote removed", function (t, player) { return Call.sendMessage("RTV: ".concat(player.name, "[white] has left the game. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
         }); },
-        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.gameRunning],
+        requirements: [commands_1.Req.cooldown(10000), commands_1.Req.gameRunning],
         handler: function (_a) {
             var sender = _a.sender, manager = _a.data.manager;
             manager.vote(sender, 1, 0); //No weighting for RTV except for removing AFK players
