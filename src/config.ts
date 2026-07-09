@@ -65,7 +65,7 @@ export const bannedWords: {
 	]),
 	/** Names: banned only in names. */
 	names: processBannedWordList([
-		"sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐", "diddy", "epstein",
+		"sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐", "diddy", "epstein", "nazi",
 		uuidPattern, ipPattern, ipPortPattern
 	]),
 	/** autoWhack: new players saying one of these words will be automatically stopped and muted. Comes with \b so no need to add it. */
