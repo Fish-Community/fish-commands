@@ -46,6 +46,7 @@ export class FishPlayer {
 	static recentLeaves:FishPlayer[] = [];
 	//Used for the antibot. Some of these values are reset by timers.
 	static antibotExpires = -1;
+	static kickNewPlayersExpires = -1;
 	static lastAntibotReason = "";
 	static autoflagRate = new Ratekeeper();
 	static connectRate = new Ratekeeper();
@@ -59,6 +60,7 @@ export class FishPlayer {
 		targetSusLevel: 0 | 1 | 2 | 3;
 		reason?: string;
 	}>;
+	static globalSusChat = new Ratekeeper();
 	//#endregion
 	
 	//#region Transient properties
@@ -137,6 +139,8 @@ export class FishPlayer {
 	dataSynced = false;
 	restoreTeam = null as null | [team:Team, timestamp:number, runStartTime:number];
 	autoConfirmSkipWaveUntil: number = -1;
+	chatSpam = new Ratekeeper();
+	kickForSpamAt?:number;
 	//#endregion
 	
 	//#region Stored data
@@ -545,12 +549,7 @@ export class FishPlayer {
 			fishPlayer.checkVPNAndJoins();
 			fishPlayer.updateName();
 			//I think this is a better spot for this
-			if(fishPlayer.firstJoin()) void Menu.menu(
-				"Rules for [#0000ff] >|||> FISH [white] servers [white]",
-				rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].",
-				["[green]I understand and agree to these terms"],
-				fishPlayer
-			);
+			if(fishPlayer.firstJoin()) void fishPlayer.showRules();
 
 		}
 	}
@@ -701,8 +700,23 @@ export class FishPlayer {
 		if(message.trim().toLowerCase().startsWith("/vote y") || message.startsWith("/votekick ")){
 			this.checkVotekickAction(fishP, message);
 		}
-		fishP.lastActive = Date.now();
-		fishP.updateStats(stats => stats.chatMessagesSent ++);
+		if(!message.startsWith("/") || message.startsWith("/t")){
+			fishP.lastActive = Date.now();
+			fishP.updateStats(stats => stats.chatMessagesSent ++);
+			const susLevel = fishP.suspicionLevel();
+			if(!fishP.chatSpam.allow(14_300, susLevel == 3 ? 3 : susLevel == 2 ? 5 : 30)){
+				if(susLevel == 3 || Date.now() > fishP.kickForSpamAt!){
+					fishP.kick("You have been kicked for spamming.", 30_000);
+					if(this.antiBotMode()) Vars.netServer.admins.blacklistDos(fishP.ip());
+				} else {
+					fishP.sendMessage("[scarlet]You are sending chat messages too quickly.");
+					fishP.kickForSpamAt = Date.now() + 3_000;
+				}
+			}
+			if(susLevel >= 2 && !this.globalSusChat.allow(30_000, 20)){
+				this.triggerAntibot(Duration.minutes(2), "too many chat messages", "automatic", true);
+			}
+		}
 	}
 	static checkVotekickAction(fishP:FishPlayer, message:string){
 		const sus = fishP.suspicionLevel();
@@ -748,7 +762,7 @@ export class FishPlayer {
 				for(const [p, times] of playersToBan){
 					if(p.suspicionLevel() == 3 || p.suspicionLevel() == 2 && times > 1){
 						admins.banPlayerID(p.uuid);
-						admins.banPlayerIP(p.ip());
+						admins.bannedIPs.add(p.ip());
 						api.ban({ ip: p.ip(), uuid: p.uuid });
 						logHTrip(p, "votekick abuse",
 							(p == fishP ? `Player banned automatically` : `Player banned automatically based on previous activity`) +
@@ -956,7 +970,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 &yPreviously used UUID &b${uuid}&y(&b${Vars.netServer.admins.getInfoOptional(uuid)?.plainLastName()}&y), currently using UUID &b${this.uuid}&y from the same IP address.`
 				);
 				FishPlayer.messageStaff(`[yellow]Automatically banned player [cyan]${this.cleanedName}[] for suspected punishment evasion.`);
-				Vars.netServer.admins.banPlayerIP(ip);
+				Vars.netServer.admins.bannedIPs.add(ip);
 				api.ban({ip, uuid});
 				this.kick(Packets.KickReason.banned);
 				return false;
@@ -979,7 +993,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 				Log.warn(`IP ${ip} was flagged as VPN. Flag rate: ${FishPlayer.stats.numIpsFlagged}/${FishPlayer.stats.numIpsChecked} (${100 * FishPlayer.stats.numIpsFlagged / FishPlayer.stats.numIpsChecked}%)`);
 				this.ipDetectedVpn = true;
 				if(!FishPlayer.autoflagRate.allow(30_000, 5)){
-					FishPlayer.triggerAntibot(Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic");
+					FishPlayer.triggerAntibot(Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic", false);
 					return;
 				}
 				if(
@@ -994,7 +1008,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 						FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
 					} else {
 						logAction("autoflagged", "AntiVPN", this);
-						api.sendStaffMessage(`Autoflagged player ${this.name}[cyan] for suspected vpn!`, "AntiVPN", true);
+						void api.sendStaffMessage(`Autoflagged player ${this.name}[cyan] for suspected vpn!`, "AntiVPN", true);
 						FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.name}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn. They have been automatically stopped and muted. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free.`);
 						Log.warn(`Player ${this.name} (${this.uuid}) was autoflagged.`);
 						void Menu.buttons(
@@ -1361,14 +1375,17 @@ We apologize for the inconvenience.`
 	}
 	static whackFlaggedPlayers(){
 		this.forEachPlayer(p => {
-			if(p.autoflagged){
+			if(p.ipDetectedVpn && p.suspicionLevel() == 3){
 				Vars.netServer.admins.blacklistDos(p.ip());
+				try {
+					Vars.netServer.admins.blacklistDos(p.con.connection.getRemoteAddressUDP().getAddress().getHostAddress());
+				} catch {}
 				Log.info(`&yAntibot killed connection ${p.ip()} due to flagged while under attack`);
 				p.player!.kick(Packets.KickReason.banned, 10000000);
 			}
 		});
 	}
-	static triggerAntibot(duration:number, reason:string, category:"manual" | "automatic", pingConsole = false){
+	static triggerAntibot(duration:number, reason:string, category:"manual" | "automatic", kickNewPlayers:boolean, pingConsole = false){
 		if(category == "automatic"){
 			//Ping reports based on time
 			let message;
@@ -1381,6 +1398,7 @@ We apologize for the inconvenience.`
 		if(Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
 			Log.info(`&yAntibot triggered: ${escapeStringColorsServer(reason)}`);
 		this.antibotExpires = Math.max(this.antibotExpires, Date.now() + duration);
+		if(kickNewPlayers) this.kickNewPlayersExpires = Date.now() + 8_000;
 		this.lastAntibotReason = reason;
 		if(this.shouldWhackFlaggedPlayers()) this.whackFlaggedPlayers();
 	}
@@ -1391,10 +1409,13 @@ We apologize for the inconvenience.`
 	 * Sends a message to staff only.
 	 * @returns if the message was received by anyone.
 	 */
-	static messageStaff(senderName:string, message:string):boolean;
+	static messageStaff(senderName:string, message:string, wasStaff:boolean):boolean;
 	static messageStaff(message:string):boolean;
-	static messageStaff(arg1:string, arg2?:string):boolean {
-		const message = arg2 ? `[gray]<[cyan]staff[gray]>[white]${arg1}[green]: [cyan]${arg2}` : arg1;
+	static messageStaff(arg1:string, arg2?:string, wasStaff?:boolean):boolean {
+		const message = arg2 ?
+			wasStaff ? `[#696969]<[cyan]staff[#696969]>[white]${arg1}[green]: [cyan]${arg2}`
+			: `[#696969]<[tan]player[#696969]>${arg1}[tan]: [tan]${arg2}`
+		: arg1;
 		let messageReceived = false;
 		Groups.player.each(pl => {
 			const fishP = FishPlayer.get(pl);
@@ -1512,6 +1533,15 @@ We apologize for the inconvenience.`
 			this.player?.sendMessage(message);
 			this.lastRatelimitedMessage = Date.now();
 		}
+	}
+	showRules<T extends string>(options: T[] = []){
+		return Menu.menu(
+			"Rules for [#0000ff] >|||> FISH [white] servers [white]",
+			rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].",
+			["[green]I agree to abide by these rules", ...options],
+			this,
+			{ onCancel: "null" },
+		);
 	}
 	hasFlag(flagName:RoleFlagName){
 		const flag = RoleFlag.getByName(flagName);
@@ -1676,6 +1706,8 @@ We apologize for the inconvenience.`
 	//#endregion
 
 	//#region heuristics
+	static chatSpam = new Ratekeeper();
+	static chatSpamSlow = new Ratekeeper();
 	activateHeuristics(){
 		if(Gamemode.hexed() || Gamemode.sandbox()) return;
 		//Blocks broken check
@@ -1683,16 +1715,44 @@ We apologize for the inconvenience.`
 			let tripped = false;
 			Timer.schedule(() => {
 				if(this.connected() && !tripped){
-					if(this.tstats.blocksBroken > heuristics.blocksBrokenAfterJoin){
+					const limit = this.firstJoin() && FishPlayer.antiBotMode() ?
+						Date.now() < FishPlayer.kickNewPlayersExpires + 30_000 ? 1 : 25
+					: heuristics.blocksBrokenAfterJoin;
+					if(this.tstats.blocksBroken > limit){
 						tripped = true;
-						logHTrip(this, "blocks broken after join", `${this.tstats.blocksBroken}/${heuristics.blocksBrokenAfterJoin}`);
-						void this.stop("automod", globals.maxTime, `Automatic stop due to suspicious activity`);
+						logHTrip(this, "blocks broken after join", `${this.tstats.blocksBroken}/${limit}`);
+						void this.stop("automod", this.tstats.blocksBroken > 40 ? globals.maxTime : Duration.minutes(3), `Automatic stop due to suspicious activity`);
 						FishPlayer.messageAllExcept(this,
 `[yellow]Player ${this.cleanedName} has been stopped automatically due to suspected griefing.
 Please look at ${this.position()} and see if they were actually griefing. If they were not, please inform a staff member.`);
 					}
 				}
 			}, 0, 1, this.firstJoin() ? 30 : this.joinsLessThan(3) ? 25 : 15);
+		}
+		if(this.firstJoin()){
+			let tripped = false;
+			Timer.schedule(() => {
+				if(this.stats.chatMessagesSent >= 3 && !tripped){
+					tripped = true;
+					if(FishPlayer.antiBotMode()) Vars.netServer.admins.dosBlacklist.add(this.ip());
+					else if(!FishPlayer.chatSpam.allow(10_000, 1)){
+						Vars.netServer.admins.dosBlacklist.add(this.ip());
+						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat", "automatic", true);
+					} else {
+						this.muted = true;
+						logHTrip(this, "new player spamming chat");
+					}
+				}
+			}, 1, 1, 4);
+			Timer.schedule(() => {
+				if(this.stats.chatMessagesSent >= 4 && !tripped){
+					tripped = true;
+					if(!FishPlayer.chatSpamSlow.allow(30_000, 2)){
+						Vars.netServer.admins.dosBlacklist.add(this.ip());
+						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat slowly", "automatic", true);
+					}
+				}
+			}, 1, 2, 10);
 		}
 	}
 	//#endregion

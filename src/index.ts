@@ -14,7 +14,7 @@ import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
+import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop, vnwCondition } from "/utils";
 
 const { Menu } = menus;
 
@@ -25,12 +25,15 @@ Events.on(EventType.ConnectionEvent, (e) => {
 		}, (banned) => {
 			if(!banned){
 				//If they were previously banned locally, but the API says they aren't banned, then unban them and clear the kick that the outer function already did
-				Vars.netServer.admins.unbanPlayerIP(e.connection.address);
+				Vars.netServer.admins.bannedIPs.remove(e.connection.address);
 				Vars.netServer.admins.kickedIPs.remove(e.connection.address);
 			}
 		});
 	} else if(api.isVpnCached(e.connection.address) && FishPlayer.shouldWhackFlaggedPlayers()){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
+		try {
+			Vars.netServer.admins.blacklistDos(e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
+		} catch {}
 		e.connection.kick("You have been DOSblacklisted. Please join our discord for help: " + text.discordURL + "\nYou won't see this message again.");
 		Log.info(`&yAntibot killed connection ${e.connection.address} due to flagged while under attack`);
 	}
@@ -38,9 +41,8 @@ Events.on(EventType.ConnectionEvent, (e) => {
 Events.on(EventType.PlayerConnect, (e) => {
 	if(FishPlayer.shouldKickNewPlayers() && e.player.info.timesJoined == 1){
 		//do not use the helper function, for maximum performance
-		e.player.kick(Packets.KickReason.kick, 3600_000);
-	}
-	FishPlayer.onPlayerConnect(e.player);
+		e.player.kick("Please rejoin the server in 20 seconds. We apologize for the inconvenience, we are currently under DDoS attack.", 3600_000);
+	} else FishPlayer.onPlayerConnect(e.player);
 });
 Events.on(EventType.PlayerJoin, (e) => {
 	FishPlayer.onPlayerJoin(e.player);
@@ -49,13 +51,32 @@ Events.on(EventType.PlayerLeave, (e) => {
 	FishPlayer.onPlayerLeave(e.player);
 });
 Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection: NetConnection }) => {
-	if(!FishPlayer.connectRate.allow(5_000, 35)){
-		FishPlayer.triggerAntibot(300_000, "Rate of player connections exceeded 35 / 5s", "automatic");
+	const limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30_000 ? 6 : 35;
+	if(!FishPlayer.connectRate.allow(5_000, limit)){
+		FishPlayer.triggerAntibot(300_000, `Rate of player connections exceeded ${limit} / 5s`, "automatic", true);
 	}
 	ipJoins.increment(e.connection.address);
+	if(e.connection.hasBegunConnecting) return; //will get kicked
 	const info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
 	const underAttack = FishPlayer.antiBotMode();
 	const newPlayer = !info || info.timesJoined < 10;
+	const nameBlacklisted = fishState.antibotData.nameBlacklist?.[1]?.matcher(e.packet.name).matches();
+	const nameGraylisted = fishState.antibotData.nameGraylist?.[1]?.matcher(e.packet.name).matches();
+	if(newPlayer && (nameBlacklisted && FishPlayer.antiBotMode() || nameGraylisted && FishPlayer.shouldKickNewPlayers())){
+		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.kicked = true;
+		let udpAddress;
+		try {
+			Vars.netServer.admins.blacklistDos(udpAddress = e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
+		} catch {}
+		Log.info(`Blacklisting ip @ with name @ because it matched the configured regex.`, udpAddress ? e.connection.address + "/" + udpAddress : e.connection.address, e.packet.name);
+		return;
+	}
+	if(newPlayer && (nameBlacklisted || nameGraylisted && FishPlayer.antiBotMode())){
+		Log.info(`Temporarily kicking ip @ with name @ because it matched the configured regex.`, e.connection.address, e.packet.name);
+		e.connection.kick("Please change your name to something else. We are currently under attack by bots and your name looks similar to the bots' names.", 3000);
+		return;
+	}
 	const longModName = e.packet.mods.contains((str:string) => str.length > 50);
 	const veryLongModName = e.packet.mods.contains((str:string) => str.length > 100);
 	if(
@@ -68,7 +89,8 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		FishPlayer.triggerAntibot(
 			60_000,
 			(veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"),
-			"automatic"
+			"automatic",
+			false
 		);
 		return;
 	}
@@ -87,6 +109,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 				480_000,
 				"suspicious UUIDs",
 				"automatic",
+				false,
 				true
 			);
 		}
@@ -98,7 +121,8 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		FishPlayer.triggerAntibot(
 			5_000,
 			"illegal characters in name or mods",
-			"automatic"
+			"automatic",
+			false,
 		);
 		return;
 	}
@@ -108,21 +132,9 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		FishPlayer.triggerAntibot(
 			5_000,
 			"too many connections",
-			"automatic"
+			"automatic",
+			false
 		);
-		return;
-	}
-	/*if(e.packet.name.includes("discord.gg/GnEdS9TdV6")){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
-		e.connection.kicked = true;
-		FishPlayer.onBotWhack();
-		Log.info(`&yAntibot killed connection ${e.connection.address} due to omni discord link`);
-		return;
-	}*/
-	if(e.packet.name.includes("1`1@everyone")){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
-		e.connection.kicked = true;
-		FishPlayer.triggerAntibot(-1, "known bad name", "automatic");
 		return;
 	}
 	if(Vars.netServer.admins.isDosBlacklisted(e.connection.address)){
@@ -137,10 +149,10 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		if(banned){
 			Log.info(`&lrSynced ban of ${e.packet.uuid}/${e.connection.address}.`);
 			e.connection.kick(Packets.KickReason.banned, 1);
-			Vars.netServer.admins.banPlayerIP(e.connection.address);
+			Vars.netServer.admins.bannedIPs.add(e.connection.address);
 			Vars.netServer.admins.banPlayerID(e.packet.uuid);
 		} else {
-			Vars.netServer.admins.unbanPlayerIP(e.connection.address);
+			Vars.netServer.admins.bannedIPs.remove(e.connection.address);
 			Vars.netServer.admins.unbanPlayerID(e.packet.uuid);
 		}
 	});
@@ -177,7 +189,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 		const player = action.player;
 		const fishP = FishPlayer.get(player);
 
-		//prevent stopped players from doing anything other than deposit items.
+		//prevent stopped players from doing anything
 		if(!fishP.hasPerm("play")){
 			action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
 			return false;
@@ -233,14 +245,14 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 	Runtime.getRuntime().addShutdownHook(new Thread(() => {
 		try {
 			FishPlayer.uploadAll();
-		} catch { Log.err("failed to upload"); }
+		} catch { Packages.java.lang.System.out.println("[E] failed to upload"); }
 		try {
 			FishEvents.fire("saveData", []);
-		} catch { Log.err("failed to save misc data"); }
+		} catch { Packages.java.lang.System.out.println("[E] failed to save misc data"); }
 		try {
 			FishPlayer.saveAll(false);
-		} catch { Log.err("failed to save player data"); }
-		Log.info("Saved on exit.");
+		} catch { Packages.java.lang.System.out.println("[E] failed to save player data"); }
+		Packages.java.lang.System.out.println("Saved on exit.");
 	}));
 
 	Vars.netServer.assigner = (player, players) => {
@@ -312,6 +324,10 @@ Events.on(EventType.PlayerChatEvent, e => {
 });
 Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
+});
+
+Events.on(EventType.WaveEvent, () => {
+	if (Vars.state.rules.mode().name() === "survival") vnwCondition.onWaveStart();
 });
 
 Events.on(EventType.AdminRequestEvent, e => {

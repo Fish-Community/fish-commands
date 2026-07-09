@@ -53,4 +53,5 @@ export const Req = {
 			Req.integer(argName)({args}) &&
 			(args[argName] == undefined || args[argName] > 0
 				|| fail(`${argName} must be positive`)),
+
 };

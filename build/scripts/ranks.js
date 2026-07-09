@@ -85,7 +85,7 @@ var RoleFlag = /** @class */ (function () {
     RoleFlag.map_analyst = new RoleFlag("map analyst", "[black]<[#C16BFF]\uE852[]>[]", "Map analysts can add and remove maps.", "[#C16BFF]", false);
     RoleFlag.member = new RoleFlag("member", "[black]<[yellow]\uE809[]>[]", "Awarded to our awesome donors who support the server.", "[pink]", false);
     RoleFlag.illusionist = new RoleFlag("illusionist", "", "Assigned to to individuals who have earned access to enhanced visual effect features.", "[lightgrey]", true);
-    RoleFlag.chief_map_analyst = new RoleFlag("chief map analyst", "[black]<[#5800FF]\uE833[]>[]", "Assigned to the chief map analyst, who oversees map management.", "[#5800FF]", true);
+    RoleFlag.map_expert = new RoleFlag("map expert", "[black]<[#5800FF]\uE833[]>[]", "Assigned to the chief map analysts, who oversee map management.", "[#5800FF]", true);
     RoleFlag.no_effects = new RoleFlag("no_effects", "", "Given to people who have abused the visual effects.", "", true);
     RoleFlag.search = (0, funcs_1.searchFixed)(Object.values(RoleFlag.flags), [
         function (r, str) { return r.name == str.toLowerCase(); },

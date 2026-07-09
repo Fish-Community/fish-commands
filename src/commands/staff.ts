@@ -9,13 +9,13 @@ import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { command, commandList, fail, Perm, Req } from "/frameworks/commands";
 import { listeners, Menu } from "/frameworks/menus";
-import { crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray } from "/funcs";
+import { crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray, to2DArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals";
 import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { Label } from "/types";
-import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -73,6 +73,39 @@ export const commands = commandList({
 			logAction("kicked", sender, args.player, args.reason ?? undefined, duration);
 			if(duration > 60_000) args.player.setPunishedIP(stopAntiEvadeTime);
 			outputSuccess(f`Kicked player ${args.player} for ${formatTime(duration)} with reason "${reason}"`);
+		}
+	},
+	masskick: {
+		args: ["blacklist:boolean?"],
+		description: "Kick new players en masse. They are only kicked for 60 seconds if blacklist=false.",
+		perm: Perm.mod,
+		async handler({args: { blacklist = true }, sender, outputSuccess, f}){
+			while(true){
+				// eslint-disable-next-line @typescript-eslint/array-type
+				const options: {
+					data: Player | "refresh";
+					text: string;
+				}[][] = to2DArray(
+					setToArray(Groups.player).filter(p =>
+						p.getInfo().timesJoined < 5 &&
+						!FishPlayer.get(p).ranksAtLeast("trusted")
+					).map(p => ({data: p, text: escapeStringColorsClient(p.name)})),
+					2
+				);
+				options.push([{text: "[accent]\uE86A Refresh", data: "refresh"}]);
+				const result = await Menu.buttons(
+					sender,
+					"Kick",
+					"Choose a player to kick. The player will be kicked immediately, please be careful.",
+					options,
+					{ includeCancel: true, onCancel: "reject" }
+				);
+				if(result != "refresh"){
+					if(blacklist) Vars.netServer.admins.dosBlacklist.add(result.con.address);
+					result.kick(Packets.KickReason.kick, 60_000);
+					outputSuccess(f`Kicked ${result}.`);
+				}
+			}
 		}
 	},
 
@@ -401,46 +434,27 @@ export const commands = commandList({
 		handler({args, sender, outputSuccess, f}){
 			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
 			const unit = sender.unit() ?? fail(`You must be in a unit to use this command.`);
-			let timeRemaining = args.time / 1000;
+			const end = Date.now() + args.time;
 			const labelx = unit.x;
 			const labely = unit.y;
+			const id = fishState.labelID++;
 			const task = Timer.schedule(() => {
-				if (timeRemaining > 0) {
-					const timeseconds = timeRemaining % 60;
-					const timeminutes = (timeRemaining - timeseconds) / 60;
-					Call.label(
-						`${sender.name}
+				const timeRemaining = end - Date.now();
+				if(timeRemaining > 0) Call.label(
+`${sender.name}
 
 [white]${args.message}
 
-[acid]${timeminutes.toString().padStart(2, "0")}:${timeseconds.toString().padStart(2, "0")}`,
-						1, labelx, labely
-					);
-					timeRemaining--;
-				}
-			}, 0, 1, args.time);
-			fishState.labels.push({ x: labelx, y: labely, task});
-			outputSuccess(f`Placed label "${args.message}" for ${timeRemaining} seconds.`);
+[acid]${formatTimeShort(timeRemaining)}`,
+					id, timeRemaining / 1000, labelx, labely
+				);
+			}, 0, 1, args.time / 1000);
+			fishState.labels.push({ x: labelx, y: labely, id, task});
+			outputSuccess(f`Placed label "${args.message}" for ${formatTime(args.time)}.`);
 		}
 	},
 
-	labelsticky: {
-		args: ["time:time", "message:string"],
-		description: "Places a label at the bottom left corner of everyone's screen.",
-		perm: Perm.admin,
-		handler({args, outputSuccess, f}){
-			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
-			let timeRemaining = args.time / 1000;
-			const task = Timer.schedule(() => {
-				if(timeRemaining > 0){
-					Call.label(args.message, 5, NaN, NaN);
-					timeRemaining -= 5;
-				}
-			}, 0, 5, Math.ceil(args.time / 5));
-			fishState.labels.push({ task, x: null, y: null });
-			outputSuccess(f`Placed label "${args.message}" for ${timeRemaining} seconds.`);
-		}
-	},
+	//TODO re-add labelSticky with player-specific labels
 
 	clearlabels: {
 		args: [],
@@ -448,7 +462,10 @@ export const commands = commandList({
 		perm: Perm.mod,
 		handler({outputSuccess}){
 			if(fishState.labels.length == 0) fail(`No labels found.`);
-			fishState.labels.forEach(l => l.task.cancel());
+			fishState.labels.forEach(l => {
+				l.task?.cancel();
+				Call.label(null, l.id, 0, 0, 0, 0);
+			});
 			outputSuccess(`Removed all labels.`);
 		}
 	},
@@ -473,7 +490,8 @@ export const commands = commandList({
 				const index = [...fishState.labels.entries()].reduce((a, b) => dist(a[1]) < dist(b[1]) ? a : b)[0];
 				label = fishState.labels.splice(index, 1)[0];
 			}
-			label.task.cancel();
+			label.task?.cancel();
+			Call.label(null, label.id, 0, 0, 0, 0);
 			outputSuccess(`Removed one label.`);
 		}
 	},
@@ -558,7 +576,8 @@ export const commands = commandList({
 			});
 			if(option.admin) fail(`Cannot ban an admin.`);
 			await Menu.confirmDangerous(sender, `Are you sure you want to ban ${option.name}?`);
-			admins.banPlayerIP(option.ip()); //this also bans the UUID
+			admins.bannedIPs.add(option.ip());
+			admins.banPlayerID(option.uuid());
 			api.ban({ip: option.ip(), uuid: option.uuid()});
 			Log.info(`${option.ip()}/${option.uuid()} was banned.`);
 			logAction("banned", sender, option.getInfo());
@@ -942,9 +961,13 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 		description: "Checks anti bot stats, or force enables anti bot mode.",
 		perm: Perm.mod,
 		handler({args, sender, outputSuccess, output, f}){
-			if(args.timeout != undefined){
+			if(args.timeout == 0){
+				FishPlayer.antibotExpires = Date.now() - 1;
+				FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+				outputSuccess(`Disabled antibot mode.`);
+			} else if(args.timeout != undefined){
 				args.timeout = Math.min(args.timeout, sender.hasPerm("admin") ? Duration.hours(1) : Duration.minutes(10));
-				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by player ${sender.name}`, "manual");
+				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by player ${sender.name}`, "manual", false);
 				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);
 			} else {
 				output(
@@ -1184,8 +1207,8 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 				[{data: true, text: "Lowest highscores"}],
 				[{data: false, text: "All runs"}],
 			], {
+				onCancel: "reject",
 				includeCancel: true,
-				onCancel: "reject"
 			});
 
 			const initialLength = fmap.runs.length;

@@ -5,7 +5,7 @@ This file contains mutable global variables, and global constants.
 
 import { EventEmitter } from "/funcs";
 import { FishPlayer } from "/players";
-import { Label } from "/types";
+import { AntibotData, Label } from "/types";
 
 export const tileHistory:Record<string, string> = {};
 export const recentWhispers:Record<string, string> = {};
@@ -15,10 +15,15 @@ export const fishState = {
 	corruption_t1: null as null | TimerTask,
 	corruption_t2: null as null | TimerTask,
 	lastPranked: Date.now(),
+	labelID: 100,
 	labels: [] as Label[],
 	peacefulMode: false,
 	joinBell: false,
 	startTime: Date.now(),
+	antibotData: {
+		nameBlacklist: null as null | [string, Pattern],
+		nameGraylist: null as null | [string, Pattern],
+	},
 };
 export const fishPlugin = {
 	directory: null as null | string,
@@ -27,6 +32,7 @@ export const fishPlugin = {
 export const ipJoins = new ObjectIntMap<string>();
 export const joinDemographics = new ObjectMap<number, string>();
 export const joinDemographics2 = new ObjectMap<number, string>();
+export const dosBlacklistCopy = new ObjectSet<string>();
 
 export const uuidPattern = /^[a-zA-Z0-9+/]{22}==$/;
 export const ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;

@@ -74,7 +74,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addToTileHistory = exports.foolifyChat = exports.getMap = exports.getUnitType = exports.getItem = exports.getTeam = void 0;
+exports.addToTileHistory = exports.foolifyChat = exports.vnwCondition = exports.getMap = exports.getUnitType = exports.getItem = exports.getTeam = void 0;
 exports.memoizeChatFilter = memoizeChatFilter;
 exports.formatTime = formatTime;
 exports.formatTimeShort = formatTimeShort;
@@ -123,6 +123,7 @@ exports.handleError = handleError;
 exports.syncManual = syncManual;
 exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
+exports.unblacklist = unblacklist;
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
@@ -627,6 +628,19 @@ function skipWaves(requestedWaves, runIntermediateWaves) {
         Vars.logic.skipWave();
     }
 }
+exports.vnwCondition = {
+    waveUnits: [],
+    onWaveStart: function () {
+        var units = Groups.unit.copy(new Seq());
+        var enemyTeam = getEnemyTeam();
+        this.waveUnits = units.select(function (u) { return u.team === enemyTeam; }).toArray();
+    },
+    check: function () {
+        if (this.waveUnits.some(function (u) { return !u.dead; }))
+            return false;
+        return true;
+    }
+};
 function logHTrip(player, name, message) {
     Log.warn("&yPlayer &b\"".concat(player.cleanedName, "\"&y (&b").concat(player.uuid, "&y/&b").concat(player.ip(), "&y) tripped &c").concat(name, "&y") + (message ? ": ".concat(message) : ""));
     players_1.FishPlayer.messageStaff("[yellow]Player [blue]\"".concat(player.cleanedName, "\"[] tripped [cyan]").concat(name, "[]") + (message ? ": ".concat(message) : ""));
@@ -1016,11 +1030,8 @@ function applyEffectMode(mode, unit, ticks) {
     var e_6, _a;
     var _b;
     var modes = {
-        fast: [StatusEffects.fast],
         fast2: [StatusEffects.fast, StatusEffects.overdrive, StatusEffects.overclock],
-        boss: [StatusEffects.boss],
         health: [StatusEffects.boss, StatusEffects.shielded],
-        slow: [StatusEffects.slow],
         slow2: [
             StatusEffects.slow,
             StatusEffects.freezing,
@@ -1033,7 +1044,6 @@ function applyEffectMode(mode, unit, ticks) {
         ],
         freeze: [StatusEffects.unmoving],
         disarm: [StatusEffects.disarmed],
-        invincible: [StatusEffects.invincible],
         boost: [
             StatusEffects.fast,
             StatusEffects.overdrive,
@@ -1056,6 +1066,7 @@ function applyEffectMode(mode, unit, ticks) {
             StatusEffects.electrified,
             StatusEffects.fast,
         ],
+        all: Vars.content.statusEffects().toArray(),
         clear: function (unit) {
             unit.clearStatuses();
             unit.maxHealth = unit.type.health;
@@ -1075,7 +1086,8 @@ function applyEffectMode(mode, unit, ticks) {
             unit.shield = 1e15;
         }
     };
-    var effects = (_b = match(mode, modes, null)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Invalid mode. Supported modes: ".concat(Object.keys(modes).join(", ")));
+    var effects = (_b = match(mode, modes, null)) !== null && _b !== void 0 ? _b : (mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
+        (0, commands_1.fail)("Invalid mode. Supported modes: ".concat(Object.keys(modes).join(", "))));
     if (typeof effects === "function") {
         effects(unit);
     }
@@ -1230,4 +1242,19 @@ function getStatuses(unit) {
         finally { if (e_7) throw e_7.error; }
     }
     return new Seq();
+}
+function unblacklist_once(ip) {
+    if (Vars.netServer.admins.dosBlacklist.remove(ip)) {
+        globals_1.dosBlacklistCopy.remove(ip);
+        api.unBlacklist(ip).catch(function () { });
+        return true;
+    }
+    else
+        return false;
+}
+function unblacklist(ip) {
+    //best race condition fix (real)
+    //just try it thrice
+    Timer.schedule(function () { return unblacklist_once(ip); }, 0.5, 1, 2);
+    return unblacklist_once(ip);
 }

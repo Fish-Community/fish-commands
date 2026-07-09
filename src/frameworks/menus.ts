@@ -136,7 +136,7 @@ export const Menu = {
 	
 		let i = 0;
 		const stringifiedOptions = arrangedOptions.map(r => r.map(item => {
-			if(i === cancelOptionId) return item as string;
+			if(i === cancelOptionId && !(item && typeof item == "object" && "data" in item && item.data == Cancel)) return item as string;
 			i ++;
 			return optionStringifier(item);
 		}));
@@ -251,11 +251,20 @@ export const Menu = {
 	 */
 	buttons<TButtonData, TCancelBehavior extends MenuCancelOption>(
 		this:void, target:FishPlayer, title:string, description:string,
-		options:{ data: TButtonData; text: string; }[][],
-		cfg: Omit<MenuOptions<TButtonData, TCancelBehavior>, "optionStringifier" | "columns" | "includeCancel"> = {},
+		options:{ data: TButtonData | Cancel; text: string; }[][],
+		cfg: Pick<MenuOptions<TButtonData, TCancelBehavior>, "onCancel" | "includeCancel"> = {},
 	){
+		let cancelOptionId, i;
+		const flatOptions = options.flat();
+		if(cfg.includeCancel){
+			cancelOptionId = flatOptions.length;
+			options = [...options, [{ text: "[red]Cancel", data: Cancel }]];
+		} else if((i = flatOptions.findIndex(o => o.data == Cancel)) != -1){
+			cancelOptionId = i;
+		}
 		return Menu.raw(title, description, options, target, {
 			...cfg,
+			cancelOptionId,
 			optionStringifier: o => o.text,
 		}).then(o => o?.data as TButtonData | (TCancelBehavior extends "null" ? null : never));
 	},

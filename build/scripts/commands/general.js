@@ -480,24 +480,34 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: "Sends a message to staff only.",
         perm: commands_1.Perm.chat,
         handler: function (_a) {
-            var sender = _a.sender, args = _a.args, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail, lastUsedSender = _a.lastUsedSender;
-            if (!sender.hasPerm("mod")) {
-                if (Date.now() - lastUsedSender < 4000)
-                    (0, commands_1.fail)("This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.");
-            }
-            api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"), function (sent) {
-                if (!sender.hasPerm("mod")) {
-                    if (sent) {
-                        outputSuccess("Message sent to [orange]all online staff.");
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var _c;
+                var sender = _b.sender, args = _b.args, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail, lastUsedSender = _b.lastUsedSender;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            if (!sender.hasPerm("mod")) {
+                                if (Date.now() - lastUsedSender < 4000)
+                                    (0, commands_1.fail)("This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.");
+                            }
+                            players_1.FishPlayer.messageStaff(sender.prefixedName, args.message, sender.hasPerm("mod"));
+                            _d.label = 1;
+                        case 1:
+                            _d.trys.push([1, 3, , 4]);
+                            return [4 /*yield*/, api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"))];
+                        case 2:
+                            _d.sent();
+                            if (!sender.hasPerm("mod")) {
+                                outputSuccess("Message sent to [orange]all online staff.");
+                            }
+                            return [3 /*break*/, 4];
+                        case 3:
+                            _c = _d.sent();
+                            outputFail("Failed to send message to other servers.");
+                            return [3 /*break*/, 4];
+                        case 4: return [2 /*return*/];
                     }
-                    else {
-                        var wasReceived = players_1.FishPlayer.messageStaff(sender.prefixedName, args.message);
-                        if (wasReceived)
-                            outputSuccess("Message sent to staff.");
-                        else
-                            outputFail("No staff were online to receive your message.");
-                    }
-                }
+                });
             });
         },
     }, 
@@ -515,36 +525,50 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         data: new Set,
         handler: function (_a) {
-            var _b;
-            var args = _a.args, data = _a.data, sender = _a.sender, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail;
-            if (data.has(sender.uuid)) {
-                outputSuccess("No longer watching a player.");
-                data.delete(sender.uuid);
-            }
-            else if (args.player) {
-                data.add(sender.uuid);
-                var senderUnit_1 = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("You do not have a unit.");
-                var stayX_1 = senderUnit_1.x;
-                var stayY_1 = senderUnit_1.y;
-                var target_1 = args.player.player;
-                (function watch() {
-                    var _a, _b;
-                    var unit = target_1.unit();
-                    if (data.has(sender.uuid) && unit) {
-                        // Self.X+(172.5-Self.X)/10
-                        Call.setCameraPosition(sender.con, unit.x, unit.y);
-                        if (senderUnit_1)
-                            (_b = (_a = sender.unit()) === null || _a === void 0 ? void 0 : _a.set) === null || _b === void 0 ? void 0 : _b.call(_a, stayX_1, stayY_1);
-                        Timer.schedule(function () { return watch(); }, 0.1, 0.1, 0);
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var senderUnit_1, stayX_1, stayY_1, target_1;
+                var _c;
+                var args = _b.args, data = _b.data, sender = _b.sender, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            if (!!sender.con.mobile) return [3 /*break*/, 2];
+                            return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.")];
+                        case 1:
+                            _d.sent();
+                            _d.label = 2;
+                        case 2:
+                            if (data.has(sender.uuid)) {
+                                outputSuccess("No longer watching a player.");
+                                data.delete(sender.uuid);
+                            }
+                            else if (args.player) {
+                                data.add(sender.uuid);
+                                senderUnit_1 = (_c = sender.unit()) !== null && _c !== void 0 ? _c : (0, commands_1.fail)("You do not have a unit.");
+                                stayX_1 = senderUnit_1.x;
+                                stayY_1 = senderUnit_1.y;
+                                target_1 = args.player.player;
+                                (function watch() {
+                                    var unit = target_1.unit();
+                                    if (data.has(sender.uuid) && unit) {
+                                        // Self.X+(172.5-Self.X)/10
+                                        Call.setCameraPosition(sender.con, unit.x, unit.y);
+                                        if (senderUnit_1)
+                                            senderUnit_1.set(stayX_1, stayY_1);
+                                        Timer.schedule(function () { return watch(); }, 0.1, 0.1, 0);
+                                    }
+                                    else {
+                                        Call.setCameraPosition(sender.con, stayX_1, stayY_1);
+                                    }
+                                })();
+                            }
+                            else {
+                                outputFail("No player to unwatch.");
+                            }
+                            return [2 /*return*/];
                     }
-                    else {
-                        Call.setCameraPosition(sender.con, stayX_1, stayY_1);
-                    }
-                })();
-            }
-            else {
-                outputFail("No player to unwatch.");
-            }
+                });
+            });
         },
     }), spectate: (0, commands_1.command)(function () {
         //TODO revise code
@@ -819,7 +843,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 if (target.hasPerm("blockTrolling"))
                     (0, commands_1.fail)(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
             }
-            void menus_1.Menu.menu("Rules for [#0000ff]>|||> FISH [white]servers", config_1.rules.join("\n\n"), ["[green]I agree to abide by these rules[]", "No"], target, { onCancel: "null" }).then(function (option) {
+            void target.showRules(["No"]).then(function (option) {
                 if (option == "No") {
                     target.kick("You must agree to the rules to play on this server. Rejoin to agree to the rules.", 1);
                     if (target !== sender)
@@ -956,6 +980,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
+                            if (!utils_1.vnwCondition.check())
+                                (0, commands_1.fail)("You can only do that when all units from previous waves are dead.");
                             if (!!manager.session) return [3 /*break*/, 4];
                             if (!(waves !== null && waves !== void 0)) return [3 /*break*/, 1];
                             _c = waves;
@@ -1019,7 +1045,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 .on("player vote change", function (t, player, oldVote, newVote) { return Call.sendMessage("RTV: ".concat(player.name, "[white] ").concat(oldVote == newVote ? "still " : "", "wants to change the map. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
                 .on("player vote removed", function (t, player) { return Call.sendMessage("RTV: ".concat(player.name, "[white] has left the game. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
         }); },
-        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.gameRunning],
+        requirements: [commands_1.Req.cooldown(10000), commands_1.Req.gameRunning],
         handler: function (_a) {
             var sender = _a.sender, manager = _a.data.manager;
             manager.vote(sender, 1, 0); //No weighting for RTV except for removing AFK players
@@ -1093,7 +1119,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             task === null || task === void 0 ? void 0 : task.cancel();
         }
         function getMapData() {
-            return __spreadArray([], __read(votes.values()), false).reduce(function (acc, map) { return (acc.increment(map), acc); }, new ObjectIntMap()).entries().toArray();
+            var map = __spreadArray([], __read(votes.values()), false).reduce(function (acc, map) { return (acc.increment(map), acc); }, new ObjectIntMap());
+            var out = new Seq(map.size);
+            map.forEach(function (_a) {
+                var key = _a.key, value = _a.value;
+                return out.add({ key: key, value: value });
+            });
+            return out;
         }
         function showVotes() {
             Call.sendMessage("[green]Current votes:\n------------------------------\n".concat(getMapData().map(function (_a) {

@@ -4,6 +4,7 @@ This file contains member commands, which are fun cosmetics for donators.
 */
 
 import { Perm, Req, command, commandList, fail } from "/frameworks/commands";
+import { fishState } from "/globals";
 import { FishPlayer } from "/players";
 
 
@@ -12,7 +13,7 @@ export const commands = commandList({
 		args: ["name:string?"],
 		description: 'Spawns a cool pet with a displayed name that follows you around.',
 		perm: Perm.member,
-		data: {} as Partial<Record<string, Unit>>,
+		data: {} as Record<string, Unit>,
 		handler({args, sender, data, outputSuccess}){
 			if(!args.name){
 				const pet = data[sender.uuid];
@@ -36,31 +37,36 @@ export const commands = commandList({
 			outputSuccess(`Spawned a pet.`);
 
 			const petName = args.name;
-			const vec = new Vec2(0, 0);
+			const id = fishState.labelID++;
 			(function controlUnit(){
 				try {
 					const unit = sender.unit();
 					const currentPet = data[sender.uuid];
-					if(pet != currentPet) return;
+					if(pet != currentPet){
+						Call.label(null, id, 0, 0, 0, 0);
+						return;
+					}
 					if(currentPet.dead){
 						delete data[sender.uuid];
+						Call.label(null, id, 0, 0, 0, 0);
 						return;
 					}
 					if(!sender.connected()){
 						currentPet?.kill();
+						Call.label(null, id, 0, 0, 0, 0);
 						return;
 					}
 					if(unit && currentPet){
 						const distX = unit.x - currentPet.x;
 						const distY = unit.y - currentPet.y;
-						vec.set(distX, distY);
-						if(vec.len() > 50){
-							currentPet.approach(vec);
+						Tmp.v1.set(distX, distY);
+						if(Tmp.v1.len() > 50){
+							currentPet.approach(Tmp.v1);
 						}
-						if(vec.len() > 20*8){
+						if(Tmp.v1.len() > 20*8){
 							currentPet.apply(StatusEffects.fast, 60);
 						}
-						Call.label(petName, 0.07, currentPet.x, currentPet.y + 5);
+						Call.label(petName, id, -1, currentPet.x, currentPet.y + 5);
 						//Pets share the sender's trail
 						if(sender.trail){
 							Call.effect(Fx[sender.trail.type], currentPet.x, currentPet.y, 0, sender.trail.color);

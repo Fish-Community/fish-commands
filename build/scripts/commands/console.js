@@ -219,7 +219,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                             "all IPs used: ".concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", ")),
                             "joined &c".concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times"),
                             fishP && fishP.lastJoined !== -1 && "Last joined: ".concat((0, utils_1.formatTimeRelative)(fishP.lastJoined)),
-                            fishP && fishP.firstJoined !== -1 && (0, utils_1.formatTimeRelative)(fishP.firstJoined),
+                            fishP && fishP.firstJoined !== -1 && "First joined: ".concat((0, utils_1.formatTimeRelative)(fishP.firstJoined)),
                             fishP && "USID: &c".concat(fishP.usid, "&fr"),
                             fishP && fishP.rank !== ranks_1.Rank.player && "Rank: &c".concat(fishP.rank.name, "&fr"),
                             flagsText,
@@ -372,8 +372,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 output("Cleared ".concat(size, " IPs from the DOS blacklist."));
             }
             else {
-                if (admins.dosBlacklist.remove(args.ip))
+                if ((0, utils_1.unblacklist)(args.ip)) {
                     output("Removed ".concat(args.ip, " from the DOS blacklist."));
+                }
                 else
                     (0, commands_1.fail)("IP address ".concat(args.ip, " is not DOS blacklisted."));
             }
@@ -418,7 +419,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     (0, utils_1.logAction)("whacked", "console", info);
                 else
                     (0, utils_1.logAction)("console ip-whacked ".concat(args.target));
-                if (admins.isIPBanned(args.target)) {
+                if (admins.bannedIPs.contains(args.target)) {
                     output("IP &c\"".concat(args.target, "\"&fr is already banned. Ban was synced to other servers."));
                 }
                 else {
@@ -505,8 +506,8 @@ exports.commands = (0, commands_1.consoleCommandList)({
                     else {
                         output("IP &c\"".concat(args.target, "\"&fr is not globally banned."));
                     }
-                    if (admins.isIPBanned(args.target)) {
-                        admins.unbanPlayerIP(args.target);
+                    if (admins.bannedIPs.contains(args.target)) {
+                        admins.bannedIPs.remove(args.target);
                         output("IP &c\"".concat(args.target, "\"&fr has been locally unbanned."));
                     }
                     else {
@@ -520,7 +521,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 });
             }
             else if ((range = (0, utils_1.getIPRange)(args.target)) != null) {
-                if (admins.subnetBans.remove(function (b) { return b.replace(/\.$/, ".") == range.replace(/\.$/, "."); })) {
+                if (admins.subnetBans.remove(boolf(function (b) { return b.replace(/\.$/, ".") == range.replace(/\.$/, "."); }))) {
                     output("IP range &c\"".concat(range, "\"&fr was unbanned."));
                 }
                 else {
@@ -1125,6 +1126,25 @@ exports.commands = (0, commands_1.consoleCommandList)({
             }, duration / 1000);
             outputSuccess("Set log level to debug for ".concat((0, utils_1.formatTime)(duration)));
         }
-    }
+    },
+    antibot: {
+        args: ["timeout:time?"],
+        description: "Checks anti bot stats, or force enables anti bot mode.",
+        handler: function (_a) {
+            var args = _a.args, outputSuccess = _a.outputSuccess, output = _a.output, f = _a.f;
+            if (args.timeout == 0) {
+                players_1.FishPlayer.antibotExpires = Date.now() - 1;
+                players_1.FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+                outputSuccess("Disabled antibot mode.");
+            }
+            else if (args.timeout != undefined) {
+                players_1.FishPlayer.triggerAntibot(args.timeout, "Manually triggered by console", "manual", false);
+                outputSuccess("Set antibot mode override for ".concat((0, utils_1.formatTime)(args.timeout), "."));
+            }
+            else {
+                output("[acid]Antibot status:\n[acid]Enabled: ".concat(f.boolBad(players_1.FishPlayer.antiBotMode()), "\n").concat((0, utils_1.getAntiBotInfo)("server")));
+            }
+        }
+    },
 });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15;

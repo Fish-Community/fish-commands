@@ -6,6 +6,7 @@ This file contains member commands, which are fun cosmetics for donators.
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 var commands_1 = require("/frameworks/commands");
+var globals_1 = require("/globals");
 exports.commands = (0, commands_1.commandList)({
     pet: (0, commands_1.command)({
         args: ["name:string?"],
@@ -38,32 +39,36 @@ exports.commands = (0, commands_1.commandList)({
             Call.infoPopup('[#7FD7FD7f]\uE81B', 5, Align.topRight, 180, 0, 0, 10);
             outputSuccess("Spawned a pet.");
             var petName = args.name;
-            var vec = new Vec2(0, 0);
+            var id = globals_1.fishState.labelID++;
             (function controlUnit() {
                 try {
                     var unit_1 = sender.unit();
                     var currentPet = data[sender.uuid];
-                    if (pet != currentPet)
+                    if (pet != currentPet) {
+                        Call.label(null, id, 0, 0, 0, 0);
                         return;
+                    }
                     if (currentPet.dead) {
                         delete data[sender.uuid];
+                        Call.label(null, id, 0, 0, 0, 0);
                         return;
                     }
                     if (!sender.connected()) {
                         currentPet === null || currentPet === void 0 ? void 0 : currentPet.kill();
+                        Call.label(null, id, 0, 0, 0, 0);
                         return;
                     }
                     if (unit_1 && currentPet) {
                         var distX = unit_1.x - currentPet.x;
                         var distY = unit_1.y - currentPet.y;
-                        vec.set(distX, distY);
-                        if (vec.len() > 50) {
-                            currentPet.approach(vec);
+                        Tmp.v1.set(distX, distY);
+                        if (Tmp.v1.len() > 50) {
+                            currentPet.approach(Tmp.v1);
                         }
-                        if (vec.len() > 20 * 8) {
+                        if (Tmp.v1.len() > 20 * 8) {
                             currentPet.apply(StatusEffects.fast, 60);
                         }
-                        Call.label(petName, 0.07, currentPet.x, currentPet.y + 5);
+                        Call.label(petName, id, -1, currentPet.x, currentPet.y + 5);
                         //Pets share the sender's trail
                         if (sender.trail) {
                             Call.effect(Fx[sender.trail.type], currentPet.x, currentPet.y, 0, sender.trail.color);

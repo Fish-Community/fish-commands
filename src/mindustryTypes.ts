@@ -23,6 +23,12 @@ const Call: {
 	 * @param allowEmpty {boolean} Default false
 	 */
 	textInput(target: NetConnection, textInputId: number, title:string, message:string, textLength:number, def:string, numeric:boolean, allowEmpty?:boolean): void;
+	label(message:string | null, id:number, duration:number, worldx:number, worldy:number, flags:number):void;
+	label(message:string, id:number, duration:number, worldx:number, worldy:number):void;
+	label(message:string, duration:number, worldx:number, worldy:number):void;
+	labelReliable(message:string | null, id:number, duration:number, worldx:number, worldy:number, flags:number):void;
+	labelReliable(message:string | null, id:number, duration:number, worldx:number, worldy:number):void;
+	labelReliable(message:string | null, duration:number, worldx:number, worldy:number):void;
 	[index: string]: any;
 };
 const Log: {
@@ -140,6 +146,7 @@ type Content = {
 	items(): Seq<Item>;
 	units(): Seq<UnitType>;
 	blocks(): Seq<Block>;
+	statusEffects(): Seq<StatusEffect>;
 };
 class World {
 	build(x:number, y:number):Building | null;
@@ -171,11 +178,14 @@ class Administration {
 	getInfoOptional(uuid:string):PlayerInfo | null;
 	findByIP(ip:string):PlayerInfo | null;
 	findByIPs(ip:string):Seq<PlayerInfo>;
+	/** @deprecated do not use this, it iterates over all playerinfo unnecessarily */
 	isIPBanned(ip:string):boolean;
 	isIDBanned(uuid:string):boolean;
+	/** @deprecated do not use this, it iterates over all playerinfo unnecessarily */
 	banPlayerIP(ip:string):boolean;
 	banPlayerID(uuid:string):boolean;
 	banPlayer(uuid:string):boolean;
+	/** @deprecated do not use this, it iterates over all playerinfo unnecessarily */
 	unbanPlayerIP(ip:string):boolean;
 	unbanPlayerID(uuid:string):boolean;
 	adminPlayer(uuid:string, usid:string):boolean;
@@ -187,6 +197,11 @@ class Administration {
 	addActionFilter(filter:(action:PlayerAction) => boolean):void;
 	static ActionType: ActionType;
 	static PlayerInfo: typeof PlayerInfo;
+	static Config: typeof Config;
+}
+class Config {
+	static strict: Config;
+	bool(): boolean;
 }
 const Events: {
 	on(event:EventType, handler:(e:any) => void):void;
@@ -319,7 +334,11 @@ const Units: {
 	getCap(team:Team):number;
 };
 const StatusEffects: Record<string, StatusEffect>;
-type StatusEffect = any;
+class StatusEffect {
+	show: boolean;
+	color: Color;
+	emoji(): string;
+}
 const Fx: Record<string, Effect>;
 type Effect = any;
 const Align: Record<string, any>;
@@ -460,10 +479,19 @@ const Time: {
 const GameState: {
 	State: Record<"playing" | "paused" | "menu", any>;
 };
+const Http: {
+	post(url:string, content:string):HttpRequest;
+	get(url:string):HttpRequest;
+	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
+	request(method:HttpMethod, url:string):HttpRequest;
+	HttpMethod: Record<"GET" | "POST" | "PUT" | "PATCH" | "DELETE", HttpMethod>;
+};
+type HttpMethod = {_HttpMethod: true};
 class HttpRequest {
 	submit(func:(response:HttpResponse) => void):void;
 	error(func:(exception:any) => void):void;
 	header(name:string, value:string):HttpRequest;
+	content: string;
 	timeout: number;
 }
 class HttpResponse {
@@ -530,11 +558,7 @@ class ByteArrayInputStream extends InputStream {
 class Writes {
 	constructor(output: DataOutputStream);
 }
-const Http: {
-	post(url:string, content:string):HttpRequest;
-	get(url:string):HttpRequest;
-	get(url:string, callback:(res:HttpResponse) => unknown, error:(err:any) => unknown):void;
-};
+
 class Seq<T> {
 	items: Array<T | null>;
 	size: number;
@@ -553,7 +577,8 @@ class Seq<T> {
 	filter(pred:(item:T) => boolean):Seq<T>;
 	retainAll(pred:(item:T) => boolean):Seq<T>;
 	/** @returns whether an item was removed */
-	remove(pred:(item:T) => boolean):boolean;
+	remove(item: T):boolean;
+	remove(pred:Boolf<T>):boolean;
 	removeAll(pred:(item:T) => boolean):Seq<T>;
 	select(pred:(item:T) => boolean):Seq<T>;
 	find(pred:(item:T) => boolean):T | null;
@@ -581,6 +606,7 @@ class ObjectSet<T> {
 	select(predicate:(item:T) => boolean):ObjectSet<T>;
 	each(func:(item:T) => unknown):void;
 	add(item:T):boolean;
+	addAll(item:T[]):boolean;
 	remove(item:T):boolean;
 	isEmpty():boolean;
 	contains(item:T):boolean;

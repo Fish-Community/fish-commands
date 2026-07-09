@@ -9,7 +9,7 @@ import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions
 import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
 import { Cancel } from "/frameworks/menus";
 import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
-import { FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
+import { dosBlacklistCopy, FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { SelectEnumClassKeys } from "/types";
 
@@ -475,6 +475,19 @@ export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean)
 	}
 }
 
+export const vnwCondition = {
+	waveUnits: [] as Unit[],
+	onWaveStart(){
+		let units = Groups.unit.copy(new Seq());
+		let enemyTeam = getEnemyTeam();
+		this.waveUnits = units.select(u => u.team === enemyTeam).toArray();
+	},
+	check(){
+		if (this.waveUnits.some(u => !u.dead)) return false;
+		return true;
+	}
+};
+
 
 export function logHTrip(player:FishPlayer, name:string, message?:string){
 	Log.warn(`&yPlayer &b"${player.cleanedName}"&y (&b${player.uuid}&y/&b${player.ip()}&y) tripped &c${name}&y` + (message ? `: ${message}` : ""));
@@ -849,11 +862,8 @@ export function fishCommandsRootDirPath():Path {
 /** Fails if "mode" is invalid. */
 export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 	const modes = {
-		fast: [StatusEffects.fast],
 		fast2: [StatusEffects.fast, StatusEffects.overdrive, StatusEffects.overclock],
-		boss: [StatusEffects.boss],
 		health: [StatusEffects.boss, StatusEffects.shielded],
-		slow: [StatusEffects.slow],
 		slow2: [
 			StatusEffects.slow,
 			StatusEffects.freezing,
@@ -866,7 +876,6 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 		],
 		freeze: [StatusEffects.unmoving],
 		disarm: [StatusEffects.disarmed],
-		invincible: [StatusEffects.invincible],
 		boost: [
 			StatusEffects.fast,
 			StatusEffects.overdrive,
@@ -889,6 +898,7 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 			StatusEffects.electrified,
 			StatusEffects.fast,
 		],
+		all: Vars.content.statusEffects().toArray(),
 		clear(unit){
 			unit.clearStatuses();
 			unit.maxHealth = unit.type.health;
@@ -908,7 +918,9 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 			unit.shield = 1e15;
 		}
 	} satisfies Record<string, StatusEffect[] | ((u:Unit) => void)>;
-	const effects = match(mode, modes, null) ?? fail(`Invalid mode. Supported modes: ${Object.keys(modes).join(", ")}`);
+	const effects = match(mode, modes, null) ??
+		(mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
+		fail(`Invalid mode. Supported modes: ${Object.keys(modes).join(", ")}`));
 	if(typeof effects === "function"){
 		effects(unit);
 	} else {
@@ -1047,4 +1059,18 @@ export function getStatuses(unit:Unit):Seq<{ effect: StatusEffect }> {
 			return ArcReflect.get(clazz, unit, "statuses") as Seq<{ effect: StatusEffect }>;
 	}
 	return new Seq();
+}
+
+function unblacklist_once(ip:string):boolean {
+	if(Vars.netServer.admins.dosBlacklist.remove(ip)){
+		dosBlacklistCopy.remove(ip);
+		api.unBlacklist(ip).catch(() => {});
+		return true;
+	} else return false;
+}
+export function unblacklist(ip:string):boolean {
+	//best race condition fix (real)
+	//just try it thrice
+	Timer.schedule(() => unblacklist_once(ip), 0.5, 1, 2);
+	return unblacklist_once(ip);
 }

@@ -14,6 +14,9 @@ exports.unban = unban;
 exports.getBanned = getBanned;
 exports.getFishPlayerData = getFishPlayerData;
 exports.setFishPlayerData = setFishPlayerData;
+exports.fetchAntibotData = fetchAntibotData;
+exports.syncDosBlacklist = syncDosBlacklist;
+exports.unBlacklist = unBlacklist;
 var config_1 = require("/config");
 var players_1 = require("/players");
 var promise_1 = require("/promise");
@@ -70,24 +73,23 @@ function getStaffMessages(callback) {
     });
 }
 /** Send staff messages from server. */
-function sendStaffMessage(message, playerName, isStaff, callback) {
+function sendStaffMessage(message, playerName, isStaff) {
+    var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend)
-        return;
-    var req = Http.post("http://".concat(config_1.backendIP, "/api/sendStaffMessage"), 
+        return reject('local debug mode'), promise;
+    var req = Http.post("http://".concat(config_1.backendIP, "/api/sendStaffMessage/v2"), 
     // need to send both name variants so one can be sent to the other servers with color and discord can use the clean one
     JSON.stringify({ message: message, playerName: playerName, cleanedName: Strings.stripColors(playerName), server: config_1.Gamemode.name(), isStaff: isStaff })).header('Content-Type', 'application/json').header('Accept', '*/*');
     req.timeout = 10000;
-    req.error(function () {
+    req.error(function (err) {
         Log.err("[API] Network error when trying to call api.sendStaffMessage()");
-        callback === null || callback === void 0 ? void 0 : callback(false);
+        reject(err);
     });
     req.submit(function (response) {
         var temp = response.getResultAsString();
-        if (!temp.length)
-            Log.err("[API] Network error(empty response) when trying to call api.sendStaffMessage()");
-        else
-            callback === null || callback === void 0 ? void 0 : callback(JSON.parse(temp).data);
+        resolve(JSON.parse(temp).data);
     });
+    return promise;
 }
 /** Bans the provided ip and/or uuid. */
 function ban(data, callback) {
@@ -210,5 +212,68 @@ function setFishPlayerData(data, repeats, ignoreActivelySyncedFields) {
     req.submit(function (response) {
         resolve();
     });
+    return promise;
+}
+/** Pushes fish player data to the backend. */
+function fetchAntibotData() {
+    var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
+    if (config_1.Mode.noBackend) {
+        resolve({ nameBlacklistRegex: null, nameGraylistRegex: null });
+        return promise;
+    }
+    var req = Http.get("http://".concat(config_1.backendIP, "/api/antibotData"))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*');
+    req.timeout = 10000;
+    req.error(function (err) {
+        Log.err("[API] Network error when trying to call api.fetchAntibotData()");
+        // Log.err(err);
+        // if(err?.response) Log.err(err.response.getResultAsString());
+        reject(err);
+    });
+    req.submit(function (response) {
+        resolve(JSON.parse(response.getResultAsString()));
+    });
+    return promise;
+}
+function syncDosBlacklist(ips) {
+    var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
+    if (config_1.Mode.noBackend)
+        resolve([]);
+    else {
+        var req = Http.post("http://".concat(config_1.backendIP, "/api/dosBlacklist"), JSON.stringify(ips))
+            .header('Content-Type', 'application/json')
+            .header('Accept', '*/*');
+        req.timeout = 10000;
+        req.error(function (err) {
+            Log.err("[API] Network error when trying to call api.syncDosBlacklist()");
+            // Log.err(err);
+            // if(err?.response) Log.err(err.response.getResultAsString());
+            reject(err);
+        });
+        req.submit(function (response) {
+            resolve(JSON.parse(response.getResultAsString()));
+        });
+    }
+    return promise;
+}
+function unBlacklist(ip) {
+    var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
+    if (config_1.Mode.noBackend)
+        resolve();
+    else {
+        var req = Http.post("http://".concat(config_1.backendIP, "/api/dosBlacklist/delete"), JSON.stringify({ ip: ip }))
+            .header('Content-Type', 'application/json')
+            .header('Accept', '*/*');
+        req.timeout = 10000;
+        req.error(function (err) {
+            Log.err("[API] Network error when trying to call api.unBlacklist()");
+            Log.err(err);
+            if (err === null || err === void 0 ? void 0 : err.response)
+                Log.err(err.response.getResultAsString());
+            reject(err);
+        });
+        req.submit(function () { return resolve(); });
+    }
     return promise;
 }

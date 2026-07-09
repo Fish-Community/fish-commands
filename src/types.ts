@@ -115,5 +115,11 @@ export type TagFunction<Tin = string, Tout = string> = (stringChunks: readonly s
 export type Label = {
 	x: number | null;
 	y: number | null;
-	task: TimerTask;
+	task: TimerTask | null;
+	id: number;
+};
+
+export type AntibotData = {
+	nameBlacklistRegex: string | null;
+	nameGraylistRegex: string | null;
 };

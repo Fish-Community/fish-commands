@@ -713,7 +713,10 @@ Timer.schedule(() => {
 					break;
 			}
 			return true;
-		})()) delete aroundTheWorld[uuid];
+		})()){
+			Call.effect(Fx.shieldBreak, entry.unit.x, entry.unit.y, 0, Color.red);
+			delete aroundTheWorld[uuid];
+		} else Call.effect(Fx.shieldBreak, entry.unit.x, entry.unit.y, 0, Color.green);
 	}
 }, 1, 0.5);
 Events.on(EventType.GameOverEvent, () => coreHealthTime.clear());

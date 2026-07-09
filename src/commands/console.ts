@@ -12,7 +12,7 @@ import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
 import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
-import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestampFull, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, updateBans } from "/utils";
+import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestampFull, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, unblacklist, updateBans } from "/utils";
 
 
 export const commands = consoleCommandList({
@@ -113,7 +113,7 @@ export const commands = consoleCommandList({
 						`all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}`,
 						`joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times`,
 						fishP && fishP.lastJoined !== -1 && `Last joined: ${formatTimeRelative(fishP.lastJoined)}`,
-						fishP && fishP.firstJoined !== -1 && formatTimeRelative(fishP.firstJoined),
+						fishP && fishP.firstJoined !== -1 && `First joined: ${formatTimeRelative(fishP.firstJoined)}`,
 						fishP && `USID: &c${fishP.usid}&fr`,
 						fishP && fishP.rank !== Rank.player && `Rank: &c${fishP.rank.name}&fr`,
 						flagsText,
@@ -155,8 +155,9 @@ export const commands = consoleCommandList({
 				admins.dosBlacklist.clear();
 				output(`Cleared ${size} IPs from the DOS blacklist.`);
 			} else {
-				if(admins.dosBlacklist.remove(args.ip)) output(`Removed ${args.ip} from the DOS blacklist.`);
-				else fail(`IP address ${args.ip} is not DOS blacklisted.`);
+				if(unblacklist(args.ip)){
+					output(`Removed ${args.ip} from the DOS blacklist.`);
+				} else fail(`IP address ${args.ip} is not DOS blacklisted.`);
 			}
 		}
 	},
@@ -197,7 +198,7 @@ export const commands = consoleCommandList({
 				if(info) logAction("whacked", "console", info);
 				else logAction(`console ip-whacked ${args.target}`);
 
-				if(admins.isIPBanned(args.target)){
+				if(admins.bannedIPs.contains(args.target)){
 					output(`IP &c"${args.target}"&fr is already banned. Ban was synced to other servers.`);
 				} else {
 					admins.banPlayerIP(args.target);
@@ -272,8 +273,8 @@ export const commands = consoleCommandList({
 					} else {
 						output(`IP &c"${args.target}"&fr is not globally banned.`);
 					}
-					if(admins.isIPBanned(args.target)){
-						admins.unbanPlayerIP(args.target);
+					if(admins.bannedIPs.contains(args.target)){
+						admins.bannedIPs.remove(args.target);
 						output(`IP &c"${args.target}"&fr has been locally unbanned.`);
 					} else {
 						output(`IP &c"${args.target}"&fr was not locally banned.`);
@@ -285,7 +286,7 @@ export const commands = consoleCommandList({
 					}
 				});
 			} else if((range = getIPRange(args.target)) != null){
-				if(admins.subnetBans.remove(b => b.replace(/\.$/, ".") == range!.replace(/\.$/, "."))){
+				if(admins.subnetBans.remove(boolf<string>(b => b.replace(/\.$/, ".") == range!.replace(/\.$/, ".")))){
 					output(`IP range &c"${range}"&fr was unbanned.`);
 				} else {
 					output(`IP range &c"${range}"&fr was not banned.`);
@@ -795,5 +796,25 @@ ${FishPlayer.mapPlayers(p =>
 			}, duration / 1000);
 			outputSuccess(`Set log level to debug for ${formatTime(duration)}`);
 		}
-	}
+	},
+	antibot: {
+		args: ["timeout:time?"],
+		description: "Checks anti bot stats, or force enables anti bot mode.",
+		handler({args, outputSuccess, output, f}){
+			if(args.timeout == 0){
+				FishPlayer.antibotExpires = Date.now() - 1;
+				FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+				outputSuccess(`Disabled antibot mode.`);
+			} else if(args.timeout != undefined){
+				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by console`, "manual", false);
+				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);
+			} else {
+				output(
+`[acid]Antibot status:
+[acid]Enabled: ${f.boolBad(FishPlayer.antiBotMode())}
+${getAntiBotInfo("server")}`
+				);
+			}
+		}
+	},
 });

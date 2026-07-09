@@ -6,7 +6,7 @@ This file contains wrappers over the API calls to the backend server.
 import { backendIP, Gamemode, Mode } from "/config";
 import { FishPlayer } from "/players";
 import { Promise } from "/promise";
-import type { FishPlayerData, UploadedFishPlayerData } from "/types";
+import type { AntibotData, FishPlayerData, UploadedFishPlayerData } from "/types";
 
 
 const cachedIps:Record<string, boolean | undefined> = {};
@@ -64,23 +64,24 @@ export function getStaffMessages(callback: (messages: string) => unknown) {
 }
 
 /** Send staff messages from server. */
-export function sendStaffMessage(message:string, playerName:string, isStaff:boolean, callback?: (sent:boolean) => unknown){
-	if(Mode.noBackend) return;
+export function sendStaffMessage(message:string, playerName:string, isStaff:boolean){
+	const { promise, resolve, reject } = Promise.withResolvers<string, unknown>();
+	if(Mode.noBackend) return reject('local debug mode'), promise;
 	const req = Http.post(
-		`http://${backendIP}/api/sendStaffMessage`,
+		`http://${backendIP}/api/sendStaffMessage/v2`,
 		// need to send both name variants so one can be sent to the other servers with color and discord can use the clean one
 		JSON.stringify({ message, playerName, cleanedName: Strings.stripColors(playerName), server: Gamemode.name(), isStaff })
 	).header('Content-Type', 'application/json').header('Accept', '*/*');
 	req.timeout = 10000;
-	req.error(() => {
+	req.error(err => {
 		Log.err(`[API] Network error when trying to call api.sendStaffMessage()`);
-		callback?.(false);
+		reject(err);
 	});
 	req.submit((response) => {
 		const temp = response.getResultAsString();
-		if(!temp.length) Log.err(`[API] Network error(empty response) when trying to call api.sendStaffMessage()`);
-		else callback?.(JSON.parse(temp).data);
+		resolve(JSON.parse(temp).data);
 	});
+	return promise;
 }
 
 /** Bans the provided ip and/or uuid. */
@@ -197,6 +198,68 @@ export function setFishPlayerData(data: UploadedFishPlayerData, repeats:number, 
 	req.submit((response) => {
 		resolve();
 	});
+	return promise;
+}
+
+/** Pushes fish player data to the backend. */
+export function fetchAntibotData() {
+	const { promise, resolve, reject } = Promise.withResolvers<AntibotData, unknown>();
+	if(Mode.noBackend){
+		resolve({ nameBlacklistRegex: null, nameGraylistRegex: null });
+		return promise;
+	}
+	const req = Http.get(`http://${backendIP}/api/antibotData`)
+		.header('Content-Type', 'application/json')
+		.header('Accept', '*/*');
+	req.timeout = 10000;
+	req.error((err) => {
+		Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
+		// Log.err(err);
+		// if(err?.response) Log.err(err.response.getResultAsString());
+		reject(err);
+	});
+	req.submit((response) => {
+		resolve(JSON.parse(response.getResultAsString()));
+	});
+	return promise;
+}
+
+export function syncDosBlacklist(ips:string[]) {
+	const { promise, resolve, reject } = Promise.withResolvers<string[], unknown>();
+	if(Mode.noBackend) resolve([]);
+	else {
+		const req = Http.post(`http://${backendIP}/api/dosBlacklist`, JSON.stringify(ips))
+			.header('Content-Type', 'application/json')
+			.header('Accept', '*/*');
+		req.timeout = 10000;
+		req.error((err) => {
+			Log.err(`[API] Network error when trying to call api.syncDosBlacklist()`);
+			// Log.err(err);
+			// if(err?.response) Log.err(err.response.getResultAsString());
+			reject(err);
+		});
+		req.submit((response) => {
+			resolve(JSON.parse(response.getResultAsString()));
+		});
+	}
+	return promise;
+}
+export function unBlacklist(ip:string) {
+	const { promise, resolve, reject } = Promise.withResolvers<void, unknown>();
+	if(Mode.noBackend) resolve();
+	else {
+		const req = Http.post(`http://${backendIP}/api/dosBlacklist/delete`, JSON.stringify({ip}))
+			.header('Content-Type', 'application/json')
+			.header('Accept', '*/*');
+		req.timeout = 10000;
+		req.error((err) => {
+			Log.err(`[API] Network error when trying to call api.unBlacklist()`);
+			Log.err(err);
+			if(err?.response) Log.err(err.response.getResultAsString());
+			reject(err);
+		});
+		req.submit(() => resolve());
+	}
 	return promise;
 }
 

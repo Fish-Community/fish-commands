@@ -14,7 +14,7 @@ import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileH
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
+import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer, vnwCondition } from "/utils";
 import { VoteManager } from "/votes";
 
 export const commands = commandList({
@@ -336,21 +336,19 @@ export const commands = commandList({
 		args: ['message:string'],
 		description: `Sends a message to staff only.`,
 		perm: Perm.chat,
-		handler({ sender, args, outputSuccess, outputFail, lastUsedSender }){
+		async handler({ sender, args, outputSuccess, outputFail, lastUsedSender }){
 			if(!sender.hasPerm("mod")){
 				if(Date.now() - lastUsedSender < 4000) fail(`This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.`);
 			}
-			api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"), (sent) => {
+			FishPlayer.messageStaff(sender.prefixedName, args.message, sender.hasPerm("mod"));
+			try {
+				await api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"));
 				if(!sender.hasPerm("mod")){
-					if(sent){
-						outputSuccess(`Message sent to [orange]all online staff.`);
-					} else {
-						const wasReceived = FishPlayer.messageStaff(sender.prefixedName, args.message);
-						if(wasReceived) outputSuccess(`Message sent to staff.`);
-						else outputFail(`No staff were online to receive your message.`);
-					}
+					outputSuccess(`Message sent to [orange]all online staff.`);
 				}
-			});
+			} catch {
+				outputFail(`Failed to send message to other servers.`);
+			}
 		},
 	},
 
@@ -367,7 +365,8 @@ export const commands = commandList({
 		description: `Watch/unwatch a player.`,
 		perm: Perm.none,
 		data: new Set<string>,
-		handler({ args, data, sender, outputSuccess, outputFail }) {
+		async handler({ args, data, sender, outputSuccess, outputFail }) {
+			if(!sender.con.mobile) await Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.");
 			if(data.has(sender.uuid)){
 				outputSuccess(`No longer watching a player.`);
 				data.delete(sender.uuid);
@@ -382,7 +381,7 @@ export const commands = commandList({
 					if(data.has(sender.uuid) && unit){
 						// Self.X+(172.5-Self.X)/10
 						Call.setCameraPosition(sender.con, unit.x, unit.y);
-						if(senderUnit) sender.unit()?.set?.(stayX, stayY);
+						if(senderUnit) senderUnit.set(stayX, stayY);
 						Timer.schedule(() => watch(), 0.1, 0.1, 0);
 					} else {
 						Call.setCameraPosition(sender.con, stayX, stayY);
@@ -663,11 +662,7 @@ Available types:[yellow]
 				if(!sender.canModerate(target)) Req.cooldown(Duration.minutes(10));
 				if(target.hasPerm("blockTrolling")) fail(f`Player ${args.player!} is insufficiently trollable.`);
 			}
-			void Menu.menu(
-				"Rules for [#0000ff]>|||> FISH [white]servers", rules.join("\n\n"),
-				["[green]I agree to abide by these rules[]", "No"], target,
-				{ onCancel: "null" }
-			).then((option) => {
+			void target.showRules(["No"]).then((option) => {
 				if(option == "No"){
 					target.kick("You must agree to the rules to play on this server. Rejoin to agree to the rules.", 1);
 					if(target !== sender) outputSuccess('Player rejected the rules and was kicked.');
@@ -792,7 +787,8 @@ Please stop attacking and [lime]build defenses[] first!`
 		}),
 		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
 		async handler({sender, args: {waves}, data:{manager}}){
-
+			
+			if (!vnwCondition.check()) fail("You can only do that when all units from previous waves are dead.");
 			//Disable narrowing, this is async
 			if(!manager.session as boolean){
 				waves ??= await Menu.menu(
@@ -846,7 +842,7 @@ Please stop attacking and [lime]build defenses[] first!`
 				.on("player vote change", (t, player, oldVote, newVote) => Call.sendMessage(`RTV: ${player.name}[white] ${oldVote == newVote ? "still " : ""}wants to change the map. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 				.on("player vote removed", (t, player) => Call.sendMessage(`RTV: ${player.name}[white] has left the game. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
 		}),
-		requirements: [Req.cooldown(3000), Req.gameRunning],
+		requirements: [Req.cooldown(10000), Req.gameRunning],
 		handler({sender, data:{manager}}){
 			manager.vote(sender, 1, 0); //No weighting for RTV except for removing AFK players
 		}
@@ -935,9 +931,12 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		}
 
 		function getMapData():Seq<ObjectIntMapEntry<MMap | Random>> {
-			return [...votes.values()].reduce(
+			const map = [...votes.values()].reduce(
 				(acc, map) => (acc.increment(map), acc), new ObjectIntMap<MMap | Random>()
-			).entries().toArray();
+			);
+			const out = new Seq<ObjectIntMapEntry<MMap | Random>>(map.size);
+			map.forEach(({key, value}) => out.add({key, value}));
+			return out;
 		}
 
 		function showVotes(){
