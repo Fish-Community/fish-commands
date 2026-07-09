@@ -629,16 +629,12 @@ function skipWaves(requestedWaves, runIntermediateWaves) {
     }
 }
 exports.vnwCondition = {
-    waveUnits: [],
+    waveUnits: new Seq(),
     onWaveStart: function () {
-        var units = Groups.unit.copy(new Seq());
-        var enemyTeam = getEnemyTeam();
-        this.waveUnits = units.select(function (u) { return u.team === enemyTeam; }).toArray();
+        this.waveUnits = Groups.unit.copy().retainAll(function (u) { return u.team == Vars.state.rules.defaultTeam; });
     },
     check: function () {
-        if (this.waveUnits.some(function (u) { return !u.dead; }))
-            return false;
-        return true;
+        return !this.waveUnits.contains(boolf(function (u) { return !u.dead; }));
     }
 };
 function logHTrip(player, name, message) {
@@ -818,7 +814,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
         if (e.breaking) {
             action = "broke";
             type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.previous.name : "unknown";
-            if (((_g = (_f = e.unit) === null || _f === void 0 ? void 0 : _f.player) === null || _g === void 0 ? void 0 : _g.uuid()) && ((_h = e.tile.build) === null || _h === void 0 ? void 0 : _h.team) != Team.derelict) {
+            if (((_g = (_f = e.unit) === null || _f === void 0 ? void 0 : _f.player) === null || _g === void 0 ? void 0 : _g.uuid()) && ((_h = e.tile.build.prevBuild.firstOpt()) === null || _h === void 0 ? void 0 : _h.team) != Team.derelict) {
                 var fishP = players_1.FishPlayer.get(e.unit.player);
                 //TODO move this code
                 fishP.tstats.blocksBroken++;

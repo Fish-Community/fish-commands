@@ -476,15 +476,12 @@ export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean)
 }
 
 export const vnwCondition = {
-	waveUnits: [] as Unit[],
+	waveUnits: new Seq<Unit>(),
 	onWaveStart(){
-		let units = Groups.unit.copy(new Seq());
-		let enemyTeam = getEnemyTeam();
-		this.waveUnits = units.select(u => u.team === enemyTeam).toArray();
+		this.waveUnits = Groups.unit.copy().retainAll(u => u.team == Vars.state.rules.defaultTeam);
 	},
 	check(){
-		if (this.waveUnits.some(u => !u.dead)) return false;
-		return true;
+		return !this.waveUnits.contains(boolf<Unit>(u => !u.dead));
 	}
 };
 
@@ -681,7 +678,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		if(e.breaking){
 			action = "broke";
 			type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.previous.name : "unknown";
-			if(e.unit?.player?.uuid() && e.tile.build?.team != Team.derelict){
+			if(e.unit?.player?.uuid() && e.tile.build.prevBuild.firstOpt()?.team != Team.derelict){
 				const fishP = FishPlayer.get(e.unit.player);
 				//TODO move this code
 				fishP.tstats.blocksBroken ++;
