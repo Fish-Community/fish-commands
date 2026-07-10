@@ -17,7 +17,10 @@ function fetchGithubContents() {
         var url = config_1.mapRepoURLs[config_1.Gamemode.name()];
         if (!url)
             return reject("No recognized gamemode detected. please enter \"host <map> <gamemode>\" and try again");
-        Http.get(url, function (res) {
+        var res = Http.get(url);
+        res.timeout = 30000;
+        res.error(function (err) { return reject("Network error while fetching github repository contents: " + err); });
+        res.submit(function (res) {
             try {
                 //Trust github to return valid JSON data
                 resolve(JSON.parse(res.getResultAsString()));
@@ -25,7 +28,7 @@ function fetchGithubContents() {
             catch (e) {
                 reject("Failed to parse GitHub repository contents: ".concat(String(e)));
             }
-        }, function (err) { return reject("Network error while fetching github repository contents: " + err); });
+        });
     });
 }
 function downloadFile(address, filename) {

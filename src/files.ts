@@ -30,14 +30,17 @@ function fetchGithubContents(){
 	return new Promise<GitHubFile[], string>((resolve, reject) => {
 		const url = mapRepoURLs[Gamemode.name()];
 		if(!url) return reject(`No recognized gamemode detected. please enter "host <map> <gamemode>" and try again`);
-		Http.get(url, (res) => {
+		const res = Http.get(url);
+		res.timeout = 30_000;
+		res.error((err) => reject(`Network error while fetching github repository contents: ` + err));
+		res.submit((res) => {
 			try {
 				//Trust github to return valid JSON data
 				resolve(JSON.parse(res.getResultAsString()));
 			} catch(e){
 				reject(`Failed to parse GitHub repository contents: ${String(e)}`);
 			}
-		}, (err) => reject(`Network error while fetching github repository contents: ` + err));
+		});
 	});
 }
 
