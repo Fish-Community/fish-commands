@@ -1205,13 +1205,9 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 					break;
 				default: fail(`Invalid mode, valid modes are: attack, survival, pvp`);
 			}
-			const reloader = new WorldReloader();
-			Reflect.set(reloader, "wasServer", true);
-			Reflect.set(reloader, "players", Groups.player.copy());
-			Call.worldDataBegin();
-			reloader.end();
-			Call.sendMessage(`[orange]Player ${sender.cleanedName} changed the gamemode to ${args.mode}`);
+			Call.sendMessage(`[orange]Player ${sender.cleanedName} changed the gamemode to ${args.mode}.`);
 			outputSuccess(`Changed mode to ${args.mode}`);
+			Call.setRules(Vars.state.rules);
 		}
 	},
 
