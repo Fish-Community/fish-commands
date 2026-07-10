@@ -25,7 +25,7 @@ function fetchGithubContents() {
             catch (e) {
                 reject("Failed to parse GitHub repository contents: ".concat(String(e)));
             }
-        }, function () { return reject("Network error while fetching github repository contents"); });
+        }, function (err) { return reject("Network error while fetching github repository contents: " + err); });
     });
 }
 function downloadFile(address, filename) {

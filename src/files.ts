@@ -18,9 +18,9 @@ type GitHubFile = {
 	path: string;
 	sha: string;
 	size: number;
-	url: string;
-	html_url: string;
-	git_url: string;
+	// url: string;
+	// html_url: string;
+	// git_url: string;
 	download_url: string | null;
 	type: 'file' | 'dir';
 }
@@ -37,7 +37,7 @@ function fetchGithubContents(){
 			} catch(e){
 				reject(`Failed to parse GitHub repository contents: ${String(e)}`);
 			}
-		}, () => reject(`Network error while fetching github repository contents`));
+		}, (err) => reject(`Network error while fetching github repository contents: ` + err));
 	});
 }
 
