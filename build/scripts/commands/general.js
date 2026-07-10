@@ -136,6 +136,7 @@ var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
+var translation_1 = require("/translation");
 var utils_1 = require("/utils");
 var votes_1 = require("/votes");
 exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
@@ -168,7 +169,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             data.unpaused = true;
             Core.app.post(function () { return Vars.state.set(GameState.State.playing); });
             outputSuccess("Unpaused.");
-        },
+        }
     }), tp: {
         args: ['player:player'],
         description: 'Teleport to another player.',
@@ -184,7 +185,52 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if ((_d = (_c = sender.unit()).hasPayload) === null || _d === void 0 ? void 0 : _d.call(_c))
                 (0, commands_1.fail)("Cannot teleport to players while holding a payload.");
             (0, utils_1.teleportPlayer)(sender.player, args.player.player);
-        },
+        }
+    }, language: {
+        args: ['language:string?'],
+        description: 'Change your target translation language.',
+        perm: commands_1.Perm.none,
+        requirements: [],
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var _c, _d, targetLanguage;
+                var _e;
+                var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            if (!((_e = args.language) !== null && _e !== void 0)) return [3 /*break*/, 1];
+                            _c = _e;
+                            return [3 /*break*/, 3];
+                        case 1:
+                            _d = args;
+                            return [4 /*yield*/, menus_1.Menu.menu("Translation Language", "Select a language. Messages will be translated to this language.", translation_1.languageCache.values().toSeq()
+                                    .sort(Packages.java.util.Comparator({ compare: function (a, b) {
+                                        return Packages.java.lang.String(a.code).compareTo(Packages.java.lang.String(b));
+                                    } }))
+                                    .sort(floatf(function (l) { return l.code == "en" ? -2 : l.code == "ru" ? -1 : 0; }))
+                                    .toArray(), sender, {
+                                    optionStringifier: function (l) { return "".concat(l.name, " (").concat(l.code, ")"); },
+                                    includeCancel: true,
+                                    columns: 2,
+                                })];
+                        case 2:
+                            _c = (_d.language = (_f.sent()).code);
+                            _f.label = 3;
+                        case 3:
+                            _c;
+                            if (!((0, translation_1.isLanguageAvailable)(args.language) || ["off", "none"].includes(args.language.toLowerCase()))) {
+                                (0, commands_1.fail)("Invalid language \"".concat(args.language, "\"."));
+                            }
+                            targetLanguage = (0, translation_1.getLanguageFromCache)(args.language);
+                            sender.language = targetLanguage.code;
+                            (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage.code);
+                            outputSuccess("Your translation language is now set to ".concat(targetLanguage.name, "."));
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
     }, clean: (0, commands_1.command)({
         args: [],
         description: 'Removes all boulders from the map.',
@@ -417,7 +463,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if (sender.muted)
                 (0, commands_1.fail)("Muted players may not hide flags.");
             if (sender != target && target.hasPerm("blockTrolling"))
-                (0, commands_1.fail)("Target is insufficentlly trollable.");
+                (0, commands_1.fail)("Target is insufficiently trollable.");
             if (sender != target && !sender.ranksAtLeast("mod"))
                 (0, commands_1.fail)("You do not have permission to vanish other players.");
             target.showRankPrefix = !target.showRankPrefix;
@@ -788,7 +834,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     return this.ohnos.length;
                 },
             };
-            Events.on(EventType.GameOverEvent, function (e) {
+            Events.on(EventType.GameOverEvent, function (_) {
                 Ohnos.killAll();
             });
             Timer.schedule(function () { return Ohnos.checkAchievement(); }, 1, 2);
@@ -948,7 +994,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         handler: function (_a) {
             var allCommands = _a.allCommands, sender = _a.sender, _b = _a.args.force, force = _b === void 0 ? true : _b;
             if (allCommands.vnw.data.manager.session == null) {
-                if (force == false)
+                if (!force)
                     (0, commands_1.fail)("Cannot clear votes for VNW because no vote is currently ongoing.");
                 (0, utils_1.skipWaves)(1, true);
             }
@@ -1021,7 +1067,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         handler: function (_a) {
             var _b = _a.args.force, force = _b === void 0 ? true : _b, sender = _a.sender, allCommands = _a.allCommands;
             if (allCommands.rtv.data.manager.session == null) {
-                if (force == false)
+                if (!force)
                     (0, commands_1.fail)("Cannot clear votes for RTV because no vote is currently ongoing.");
                 allCommands.rtv.data.manager.forceVote(true);
             }

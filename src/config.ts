@@ -144,6 +144,10 @@ export const heuristics = {
 };
 export const stopAntiEvadeTime = Duration.minutes(30);
 export const backendIP = '45.79.202.111:5082';
+export const translationApiUrl = "https://translate.eradication.fun";
+
+export const translationApiToken = new Administration.Config("translationApiToken", "Token to use with the translation API.", "unset");
+
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
 	noBackend: new Fi("config/.debug").exists() && !backendIP.startsWith("127.0.0.1:"),
@@ -218,7 +222,7 @@ export class FishServer {
 		input = input.toLowerCase();
 		return FishServer.all.find(s => s.aliases.concat(s.name).includes(input)) ?? null;
 	}
-};
+}
 
 export type GamemodeName = keyof typeof Gamemode extends infer K extends keyof typeof Gamemode ? K extends unknown ?
 	(typeof Gamemode)[K] extends (() => boolean) ? K : never
@@ -330,6 +334,7 @@ export const tips = {
 		`Did someone kill a T5 with commands? Run [white]/aoelog 0 15 killed[] to check tilelogs for unit deaths in a large area.`,
 		`Aoelog can show the history of tiles in an area. Select the opposite corners of a rectangle to view the history of its tiles.`,
 		`Aoelog is the plural version of tilelog, access it via [white]/aoelog[]`,
+		`You can run [white]/language[] to change your translation language.`,
 		`You can mark yourself as AFK(away from keyboard) with [white]/afk[].`,
 		`Run /survival, /attack, /pvp, /sandbox, /hexed or /minigame to quickly change to another server.`,
 		`Need to get rid of an active griefer? Use [#6FFC7C]/s[] to send a message to all staff members across all servers.`,

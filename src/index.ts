@@ -8,14 +8,14 @@ import { registerAll } from "/commands/aggregate";
 import { text } from "/config";
 import { handleTapEvent } from "/frameworks/commands";
 import * as menus from "/frameworks/menus";
-import { Duration } from "/funcs";
+import { Duration, escapeStringColorsServer } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipJoins, joinDemographics, joinDemographics2, tileHistory } from "/globals";
 import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop, vnwCondition } from "/utils";
-
+import * as translation from "/translation";
+import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, removeFoosChars, restartNow, serverRestartLoop, vnwCondition } from "/utils";
 const { Menu } = menus;
 
 Events.on(EventType.ConnectionEvent, (e) => {
@@ -166,9 +166,42 @@ Events.on(EventType.ContentInitEvent, () => {
 	UnitTypes.latum.hidden = false;
 	UnitTypes.renale.hidden = false;
 });
+
+Vars.net.handleServer(SendChatMessageCallPacket, (connection: NetConnection, packet: SendChatMessageCallPacket)=>{
+	const player: Player = connection.player;
+	let message = packet.message;
+
+	if (!player?.isAdded() || message == null) return;
+
+	if (message.length > Vars.maxTextLength){
+		player.sendMessage(`[scarlet]Message too long. Maximum length is ${Vars.maxTextLength} characters.`);
+		return;
+	}
+
+	message = message.replace("\n", "");
+
+	Events.fire(new EventType.PlayerChatEvent(player, message));
+
+	const response = Vars.netServer.clientCommands.handleMessage(message, player);
+
+	Log.info(`&fi&lc${escapeStringColorsServer(player.plainName())}: &lw${escapeStringColorsServer(removeFoosChars(message))}&fr`);
+
+	if (response.type == CommandHandler.ResponseType.noCommand){
+		const filtered = Vars.netServer.admins.filterMessage(player, message);
+
+		if (filtered == null) return;
+
+		void translation.handleMessage(player, filtered);
+	}else if (response.type != CommandHandler.ResponseType.valid){
+		const text = Vars.netServer.invalidHandler.handle(player, response);
+
+		if (text != null) player.sendMessage(text);
+	}
+});
+
 Events.on(EventType.PlayerChatEvent, (e) => processChat(e.player, e.message, true));
 
-Events.on(EventType.ServerLoadEvent, (e) => {
+Events.on(EventType.ServerLoadEvent, () => {
 	Time.mark();
 	const clientHandler = Vars.netServer.clientCommands;
 	const serverHandler = ServerControl.instance.handler;
@@ -177,6 +210,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 	FishEvents.fire("loadData", []);
 	timers.initializeTimers();
 	menus.registerListeners();
+	translation.initializeTranslation();
 
 	//Cap delta
 	Time.setDeltaProvider(() => Math.min(Core.graphics.getDeltaTime() * 60, 10));
