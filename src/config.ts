@@ -56,7 +56,7 @@ export const bannedWords: {
 		/\bf(a)g\b/, "fa"+"gg"+"ot",
 		/\bc(u)m\b/, ["semen", "sement", "horsemen", "housemen", "defensemen", "those", "menders"],
 		["porn", "maporn"],
-		"futa"+"nari", "futa",
+		"futa"+"nari", /\bfuta\b/,
 		"ur gay", "your gay", "youre gay", "you're gay",
 		"gooning", "gooner", "dildo", "loli", /\banal\b/, "cunny"
 	]),
@@ -66,7 +66,7 @@ export const bannedWords: {
 	]),
 	/** Names: banned only in names. */
 	names: processBannedWordList([
-		"sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐", "diddy", "epstein",
+		"sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐", "diddy", "epstein", "nazi",
 		uuidPattern, ipPattern, ipPortPattern
 	]),
 	/** autoWhack: new players saying one of these words will be automatically stopped and muted. Comes with \b so no need to add it. */
