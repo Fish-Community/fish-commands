@@ -123,7 +123,7 @@ export type FishCommandHandlerUtils = {
 	/** Call this function to set tap handling mode. */
 	handleTaps(this: void, mode: TapHandleMode): void;
 	/** Call this function to add text to /copy. */
-	copy(text:string):string;
+	copy<T extends string | number | undefined | null>(this: void, text:T):T;
 	// copy: {
 	// 	<T extends string>(text:T):T;
 	// 	category: null; 
@@ -187,6 +187,8 @@ export type TapHandler<ArgType extends string, StoredData> = (_: {
 	lastUsed: number;
 	/** Timestamp of the last time this tap handler was run succesfully. (without fail() being called) */
 	lastUsedSuccessfully: number;
+	/** Call this function to add text to /copy. */
+	copy<T extends string | number | undefined | null>(this: void, text:T):T;
 }) => unknown;
 
 export type FishCommandRequirement<ArgType extends string, StoredData> = (data: FishCommandHandlerData<ArgType, StoredData>) => unknown;

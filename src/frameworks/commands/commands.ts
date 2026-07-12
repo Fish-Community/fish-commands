@@ -323,6 +323,7 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 	const command = allCommands[sender.tapInfo.commandName];
 	const usageData = sender.getUsageData(sender.tapInfo.commandName);
 	let handleTapsUpdated = false;
+	let shouldClearCopy = true;
 	try {
 		let failed = false;
 		command.tapped?.({
@@ -350,6 +351,14 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 				sender.tapInfo.mode = mode;
 				handleTapsUpdated = true;
 			},
+			copy(text){
+				if(shouldClearCopy){
+					sender.copyOptions = [];
+					shouldClearCopy = false;
+				}
+				if(text) sender.copyOptions!.push(String(text));
+				return text;
+			}
 		});
 		if(!failed)
 			usageData.tapLastUsedSuccessfully = Date.now();
@@ -449,7 +458,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 								fishSender.copyOptions = [];
 								shouldClearCopy = false;
 							}
-							fishSender.copyOptions!.push(text);
+							if(text) fishSender.copyOptions!.push(String(text));
 							return text;
 						}
 					};

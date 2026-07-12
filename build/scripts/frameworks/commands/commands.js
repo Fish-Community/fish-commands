@@ -477,6 +477,7 @@ function handleTapEvent(event) {
     var command = exports.allCommands[sender.tapInfo.commandName];
     var usageData = sender.getUsageData(sender.tapInfo.commandName);
     var handleTapsUpdated = false;
+    var shouldClearCopy = true;
     try {
         var failed_1 = false;
         (_a = command.tapped) === null || _a === void 0 ? void 0 : _a.call(command, {
@@ -504,6 +505,15 @@ function handleTapEvent(event) {
                 sender.tapInfo.mode = mode;
                 handleTapsUpdated = true;
             },
+            copy: function (text) {
+                if (shouldClearCopy) {
+                    sender.copyOptions = [];
+                    shouldClearCopy = false;
+                }
+                if (text)
+                    sender.copyOptions.push(String(text));
+                return text;
+            }
         });
         if (!failed_1)
             usageData.tapLastUsedSuccessfully = Date.now();
@@ -605,7 +615,8 @@ function register(commands, clientHandler, serverHandler) {
                                             fishSender.copyOptions = [];
                                             shouldClearCopy = false;
                                         }
-                                        fishSender.copyOptions.push(text);
+                                        if (text)
+                                            fishSender.copyOptions.push(String(text));
                                         return text;
                                     }
                                 };
