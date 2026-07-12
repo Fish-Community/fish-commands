@@ -51,11 +51,14 @@ exports.bannedWords = {
     // If a word can be contained in another word that should be allowed (the scunthorpe problem),
     // surround the entire thing in square brackets, then list out the words after
     // like this: ["badw", "goodbadw"]
-    /** Normal: banned always. */
-    normal: processBannedWordList([
+    /** Chat: banned only in chat, but not in names. */
+    chat: processBannedWordList([
         "fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon"], "skibidi", //With love, DarthScion
         //>:( -dart
         // "uwu", //lol
+    ]),
+    /** Normal: banned always. */
+    normal: processBannedWordList([
         "nig" + "ger", "nig" + "ga", "niger", "ni8" + "8er", "nig" + "gre", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер", /\bnegr\b/, //our apologies to citizens of the Republic of Niger
         ["ni" + "ga", "anniga", "inniga", "unniga", "aniga", "iniga", "eniga", "oniga"],
         /\bnig\b/,

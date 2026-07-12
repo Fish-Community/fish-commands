@@ -169,7 +169,8 @@ export const getItem = searchFixed(Vars.content.items().toArray(), [
  */
 export function matchFilter(input:string, wordList = "chat" as "chat" | "strict" | "name", aggressive = false):false | string {
 	const currentBannedWords = [
-		wordList == "name" ? bannedWords.normal.filter(w => w[0] !== "uwu") : bannedWords.normal,
+		wordList != "name" && bannedWords.chat,
+		bannedWords.normal,
 		(wordList == "strict" || wordList == "name") && bannedWords.strict,
 		wordList == "name" && bannedWords.names,
 	].filter(Boolean).flat();

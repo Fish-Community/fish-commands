@@ -279,7 +279,8 @@ function matchFilter(input, wordList, aggressive) {
     if (wordList === void 0) { wordList = "chat"; }
     if (aggressive === void 0) { aggressive = false; }
     var currentBannedWords = [
-        wordList == "name" ? config_1.bannedWords.normal.filter(function (w) { return w[0] !== "uwu"; }) : config_1.bannedWords.normal,
+        wordList != "name" && config_1.bannedWords.chat,
+        config_1.bannedWords.normal,
         (wordList == "strict" || wordList == "name") && config_1.bannedWords.strict,
         wordList == "name" && config_1.bannedWords.names,
     ].filter(Boolean).flat();
