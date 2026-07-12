@@ -341,7 +341,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var outputString = [""];
             var _loop_2 = function (player) {
                 var playerInfo = admins.getInfo(player.uuid);
-                outputString.push("Info for player &c\"".concat(player.cleanedName, "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid ? "\"".concat(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
+                outputString.push("Info for player &c\"".concat(Strings.stripColors(player.name), "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid ? "\"".concat(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
             };
             try {
                 for (var infoList_2 = __values(infoList), infoList_2_1 = infoList_2.next(); !infoList_2_1.done; infoList_2_1 = infoList_2.next()) {
@@ -772,9 +772,16 @@ exports.commands = (0, commands_1.consoleCommandList)({
             if (args.player.hasPerm("blockTrolling"))
                 (0, commands_1.fail)(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Operation aborted: Player ", " is insufficiently trollable."], ["Operation aborted: Player ", " is insufficiently trollable."])), args.player));
             var oldName = args.player.name;
-            args.player.player.name = args.player.prefixedName = args.newname;
-            args.player.shouldUpdateName = false;
-            outputSuccess("Renamed ".concat(oldName, " to ").concat(args.newname, "."));
+            if (args.player.ranksAtLeast("active")) {
+                //Joke
+                args.player.setJokeName(args.newname);
+                outputSuccess("Temporarily renamed ".concat(oldName, " to ").concat(args.newname, "."));
+            }
+            else {
+                //Real
+                args.player.setName(args.newname);
+                outputSuccess("Renamed ".concat(oldName, " to ").concat(args.newname, "."));
+            }
         }
     },
     fjs: {

@@ -1391,7 +1391,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     break;
                 default: (0, commands_1.fail)("Invalid mode, valid modes are: attack, survival, pvp");
             }
-            Call.sendMessage("[orange]Player ".concat(sender.cleanedName, " changed the gamemode to ").concat(args.mode, "."));
+            Call.sendMessage("[orange]Player ".concat(sender.prefixedName, "[prange] changed the gamemode to ").concat(args.mode, "."));
             outputSuccess("Changed mode to ".concat(args.mode));
             Call.setRules(Vars.state.rules);
         }

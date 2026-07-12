@@ -92,8 +92,14 @@ export class FishPlayer {
 		type: string;
 		color: Color;
 	} | null = null;
+	/** The original name that this player used to join the server. Do not modify. */
+	originalName?: string;
+	/** Like unprefixedName but without the colors. */
 	cleanedName:string = "Unnamed player [ERROR}";
+	/** Includes prefixes. Same as .player.name */
 	prefixedName:string = "Unnamed player [ERROR}";
+	/** Set when ClashGone is feeling especially chaotic. Used instead of {@link name} for prefixed name computation. */
+	jokeName:string | null = null;
 	/** Used to freeze players when votekicking. */
 	frozen:boolean = false;
 	/** Used to avoid spamming players with ads by the tip message system */
@@ -115,8 +121,6 @@ export class FishPlayer {
 	lastMousePosition = [0, 0] as [x:number, y:number];
 	lastUnitPosition = [0, 0] as [x:number, y:number];
 	lastActive:number = Date.now();
-	/** Set this to false to disable automatic name updates. Used for the rename console command. */
-	shouldUpdateName = true;
 	/** Used by the sendMessage() ratelimit system. */
 	lastRatelimitedMessage = -1;
 	/** Keeps track of whether a player has changed team this match, for win rate calculation. */
@@ -132,8 +136,6 @@ export class FishPlayer {
 	blockedFromPossessingUnitsUntil = 0;
 	/** Timestamp until which this player will not be allowed to control units. */
 	blockedFromCommandingUnitsUntil = 0;
-	/** The original name that this player used to join the server. */
-	originalName?: string;
 	// Used by the data syncing framework.
 	infoUpdated = false;
 	dataSynced = false;
@@ -147,6 +149,7 @@ export class FishPlayer {
 	
 	//#region Stored data
 	uuid: string;
+	/** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
 	name: string = "Unnamed player [ERROR}";
 	muted: boolean = false;
 	unmarkTime: number = -1;
@@ -306,7 +309,7 @@ export class FishPlayer {
 		if(entry){
 			entry.infoUpdated = false;
 			entry.dataSynced = false;
-			entry.name = name;
+			entry.setName(name);
 		}
 		api.getFishPlayerData(uuid).then(data => {
 			if(!data) return; //nothing to sync
@@ -314,6 +317,7 @@ export class FishPlayer {
 			if(!(uuid in this.cachedPlayers)){
 				fishP = new FishPlayer(uuid, data, null);
 				fishP.originalName = name;
+				fishP.setName(name);
 				fishP.dataSynced = true;
 				this.cachedPlayers[uuid] = fishP;
 			} else {
@@ -363,7 +367,6 @@ export class FishPlayer {
 		this.lastMousePosition = [0, 0];
 		this.lastActive = Date.now();
 		if(this.highlight === "[white]") this.highlight = null;
-		this.shouldUpdateName = true;
 		this.changedTeam = false;
 		this.ipDetectedVpn = false;
 		this.tstats.blocksBroken = 0;
@@ -645,7 +648,7 @@ export class FishPlayer {
 							const msg = (new Error()).stack?.split("\n").slice(0, 4).join("\n");
 							Call.sendMessage(
 	`[scarlet]Server[lightgray] has voted on kicking[orange] ${initiator.prefixedName}[lightgray].[accent] (\u221E/${Vars.netServer.votesRequired()})
-	[scarlet]Error: failed to kick player ${initiator.name}
+	[scarlet]Error: failed to kick player ${initiator.prefixedName}[scarlet]
 	${msg}
 	[scarlet]Error: failed to cancel votekick
 	${msg}`
@@ -915,8 +918,8 @@ export class FishPlayer {
 	}
 	/** Updates the mindustry player's name, using the prefixes of the current rank and role flags. */
 	updateName(){
-		if(!this.connected() || !this.shouldUpdateName) return;//No player, no need to update
-		const name = this.originalName ?? this.name;
+		if(!this.connected()) return;//No player, no need to update
+		const name = this.jokeName ?? this.name;
 		if(this.marked()) this.showRankPrefix = true;
 		let prefix = '';
 		if(!this.hasPerm("bypassNameCheck") && isImpersonator(name, this.ranksAtLeast("admin")))
@@ -973,7 +976,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 `&yAutomatically banned player &b${this.cleanedName}&y (&b${this.uuid}&y/&b${this.ip()}&y) for suspected punishment evasion.
 &yPreviously used UUID &b${uuid}&y(&b${Vars.netServer.admins.getInfoOptional(uuid)?.plainLastName()}&y), currently using UUID &b${this.uuid}&y from the same IP address.`
 				);
-				FishPlayer.messageStaff(`[yellow]Automatically banned player [cyan]${this.cleanedName}[] for suspected punishment evasion.`);
+				FishPlayer.messageStaff(`[yellow]Automatically banned player [cyan]${this.prefixedName}[] for suspected punishment evasion.`);
 				Vars.netServer.admins.bannedIPs.add(ip);
 				api.ban({ip, uuid});
 				this.kick(Packets.KickReason.banned);
@@ -1012,9 +1015,9 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 						FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
 					} else {
 						logAction("autoflagged", "AntiVPN", this);
-						void api.sendStaffMessage(`Autoflagged player ${this.name}[cyan] for suspected vpn!`, "AntiVPN", true);
-						if(!FishPlayer.antiBotMode()) FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.name}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free.`);
-						Log.warn(`Player ${this.name} (${this.uuid}) was autoflagged.`);
+						void api.sendStaffMessage(`Autoflagged player ${this.prefixedName}[cyan] for suspected vpn!`, "AntiVPN", true);
+						if(!FishPlayer.antiBotMode()) FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.prefixedName}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free.`);
+						Log.warn(`Player ${this.prefixedName} (${this.uuid}) was autoflagged.`);
 						void Menu.buttons(
 							this,
 							"[gold]Welcome to Fish Community!",
@@ -1031,11 +1034,11 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 						this.sendMessage(`[gold]Welcome to Fish Community!\n[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ${FColor.discord`Join our Discord`} to request a staff member come online if none are on.`);
 					}
 				} else if(info.timesJoined < 5){
-					FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.name}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn.`);
+					FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.prefixedName}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn.`);
 				}
 			} else {
 				if(info.timesJoined == 1){
-					FishPlayer.messageTrusted(`[yellow]Player "${this.cleanedName}" is on first join.`);
+					FishPlayer.messageTrusted(`[yellow]Player "${this.prefixedName}[yellow]" is on first join.`);
 				}
 			}
 			if(info.timesJoined == 1){
@@ -1706,9 +1709,13 @@ We apologize for the inconvenience.`
 			return true;
 		} else return false;
 	}
-	trollName(name:string){
-		this.shouldUpdateName = false;
-		this.player!.name = name;
+	setJokeName(name:string){
+		this.jokeName = name;
+		this.cleanedName = Strings.stripColors(name);
+	}
+	setName(name:string){
+		this.name = name;
+		this.cleanedName = Strings.stripColors(name);
 	}
 	freeze(){
 		this.frozen = true;

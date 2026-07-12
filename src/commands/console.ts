@@ -133,7 +133,7 @@ export const commands = consoleCommandList({
 			for(const player of infoList){
 				const playerInfo = admins.getInfo(player.uuid);
 				outputString.push(
-`Info for player &c"${player.cleanedName}" &lk(${player.name})&fr
+`Info for player &c"${Strings.stripColors(player.name!)}" &lk(${player.name!})&fr
 	UUID: &c"${playerInfo.id}"&fr
 	USID: &c${player.usid ? `"${player.usid}"` : "unknown"}&fr
 	all names used: ${playerInfo.names.map((n:string) => `&c"${n}"&fr`).items.join(', ')}
@@ -505,9 +505,15 @@ export const commands = consoleCommandList({
 		handler({args, f, outputSuccess}){
 			if(args.player.hasPerm("blockTrolling")) fail(f`Operation aborted: Player ${args.player} is insufficiently trollable.`);
 			const oldName = args.player.name;
-			args.player.player!.name = args.player.prefixedName = args.newname;
-			args.player.shouldUpdateName = false;
-			outputSuccess(`Renamed ${oldName} to ${args.newname}.`);
+			if(args.player.ranksAtLeast("active")){
+				//Joke
+				args.player.setJokeName(args.newname);
+				outputSuccess(`Temporarily renamed ${oldName} to ${args.newname}.`);
+			} else {
+				//Real
+				args.player.setName(args.newname);
+				outputSuccess(`Renamed ${oldName} to ${args.newname}.`);
+			}
 		}
 	},
 	fjs: {

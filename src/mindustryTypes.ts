@@ -787,6 +787,7 @@ class Pattern {
 class Matcher {
 	replaceAll(replacement:string):string;
 	matches():boolean;
+	find():boolean;
 	group(index:number):string;
 }
 class Runtime {

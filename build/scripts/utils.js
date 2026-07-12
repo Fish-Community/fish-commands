@@ -640,7 +640,7 @@ exports.vnwCondition = {
 };
 function logHTrip(player, name, message) {
     Log.warn("&yPlayer &b\"".concat(player.cleanedName, "\"&y (&b").concat(player.uuid, "&y/&b").concat(player.ip(), "&y) tripped &c").concat(name, "&y") + (message ? ": ".concat(message) : ""));
-    players_1.FishPlayer.messageStaff("[yellow]Player [blue]\"".concat(player.cleanedName, "\"[] tripped [cyan]").concat(name, "[]") + (message ? ": ".concat(message) : ""));
+    players_1.FishPlayer.messageStaff("[yellow]Player [blue]\"".concat(player.prefixedName, "\"[] tripped [cyan]").concat(name, "[]") + (message ? ": ".concat(message) : ""));
     api.sendModerationMessage("Player `".concat(player.cleanedName, "` (`").concat(player.uuid, "`/`").concat(player.ip(), "`) tripped **").concat(name, "**").concat(message ? ": ".concat(message) : "", "\n**Server:** ").concat(config_1.Gamemode.name()));
 }
 function setType(input) {
@@ -711,7 +711,7 @@ function processChat(player, message, effects) {
                 }
             }
             Log.info("Censored message from player ".concat(player.name, ": \"").concat((0, funcs_1.escapeStringColorsServer)(message), "\"; contained \"").concat(filterTripText, "\""));
-            players_1.FishPlayer.messageStaff("[yellow]Censored message from player ".concat(fishPlayer.cleanedName, ": \"").concat(message, "\" contained \"").concat(filterTripText, "\""));
+            players_1.FishPlayer.messageStaff("[yellow]Censored message from player ".concat(fishPlayer.prefixedName, "[yellow]: \"").concat(message, "\" contained \"").concat(filterTripText, "\""));
         }
         message = config_1.text.chatFilterReplacement.message();
         highlight !== null && highlight !== void 0 ? highlight : (highlight = config_1.text.chatFilterReplacement.highlight());

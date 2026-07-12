@@ -120,12 +120,14 @@ exports.commands = (0, commands_1.commandList)({
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
             var colors = ['[red]', '[orange]', '[yellow]', '[acid]', '[blue]', '[purple]'];
             function rainbowLoop(index, fishP) {
+                if (!(fishP.rainbow && fishP.player && fishP.connected()))
+                    return;
                 Timer.schedule(function () {
                     if (!(fishP.rainbow && fishP.player && fishP.connected()))
                         return;
                     fishP.player.name = colors[index % colors.length] + Strings.stripColors(fishP.player.name);
                     rainbowLoop(index + 1, fishP);
-                }, args.speed / 5);
+                }, fishP.rainbow.speed / 5);
             }
             if (!args.speed) {
                 sender.rainbow = null;

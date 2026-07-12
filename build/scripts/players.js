@@ -143,8 +143,12 @@ var FishPlayer = /** @class */ (function () {
         this.player = null;
         /** Used for the /trail command. */
         this.trail = null;
+        /** Like unprefixedName but without the colors. */
         this.cleanedName = "Unnamed player [ERROR}";
+        /** Includes prefixes. Same as .player.name */
         this.prefixedName = "Unnamed player [ERROR}";
+        /** Set when ClashGone is feeling especially chaotic. Used instead of {@link name} for prefixed name computation. */
+        this.jokeName = null;
         /** Used to freeze players when votekicking. */
         this.frozen = false;
         /** Used to avoid spamming players with ads by the tip message system */
@@ -166,8 +170,6 @@ var FishPlayer = /** @class */ (function () {
         this.lastMousePosition = [0, 0];
         this.lastUnitPosition = [0, 0];
         this.lastActive = Date.now();
-        /** Set this to false to disable automatic name updates. Used for the rename console command. */
-        this.shouldUpdateName = true;
         /** Used by the sendMessage() ratelimit system. */
         this.lastRatelimitedMessage = -1;
         /** Keeps track of whether a player has changed team this match, for win rate calculation. */
@@ -191,6 +193,7 @@ var FishPlayer = /** @class */ (function () {
         this.chatSpam = new Ratekeeper();
         this.skipConfirm = -1;
         this.copyOptions = null;
+        /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
         this.muted = false;
         this.unmarkTime = -1;
@@ -369,7 +372,7 @@ var FishPlayer = /** @class */ (function () {
         if (entry) {
             entry.infoUpdated = false;
             entry.dataSynced = false;
-            entry.name = name;
+            entry.setName(name);
         }
         api.getFishPlayerData(uuid).then(function (data) {
             if (!data)
@@ -378,6 +381,7 @@ var FishPlayer = /** @class */ (function () {
             if (!(uuid in _this.cachedPlayers)) {
                 fishP = new FishPlayer(uuid, data, null);
                 fishP.originalName = name;
+                fishP.setName(name);
                 fishP.dataSynced = true;
                 _this.cachedPlayers[uuid] = fishP;
             }
@@ -435,7 +439,6 @@ var FishPlayer = /** @class */ (function () {
         this.lastActive = Date.now();
         if (this.highlight === "[white]")
             this.highlight = null;
-        this.shouldUpdateName = true;
         this.changedTeam = false;
         this.ipDetectedVpn = false;
         this.tstats.blocksBroken = 0;
@@ -797,7 +800,7 @@ var FishPlayer = /** @class */ (function () {
                         if (target !== this.easterEggVotekickTarget) {
                             this.easterEggVotekickTarget = target;
                             var msg = (_a = (new Error()).stack) === null || _a === void 0 ? void 0 : _a.split("\n").slice(0, 4).join("\n");
-                            Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(initiator.prefixedName, "[lightgray].[accent] (\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t[scarlet]Error: failed to kick player ").concat(initiator.name, "\n\t").concat(msg, "\n\t[scarlet]Error: failed to cancel votekick\n\t").concat(msg));
+                            Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(initiator.prefixedName, "[lightgray].[accent] (\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t[scarlet]Error: failed to kick player ").concat(initiator.prefixedName, "[scarlet]\n\t").concat(msg, "\n\t[scarlet]Error: failed to cancel votekick\n\t").concat(msg));
                         }
                         return;
                     }
@@ -1093,9 +1096,9 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.updateName = function () {
         var e_6, _a;
         var _b;
-        if (!this.connected() || !this.shouldUpdateName)
+        if (!this.connected())
             return; //No player, no need to update
-        var name = (_b = this.originalName) !== null && _b !== void 0 ? _b : this.name;
+        var name = (_b = this.jokeName) !== null && _b !== void 0 ? _b : this.name;
         if (this.marked())
             this.showRankPrefix = true;
         var prefix = '';
@@ -1172,7 +1175,7 @@ var FishPlayer = /** @class */ (function () {
                 if (ip == this.ip() && uuid != this.uuid && !this.ranksAtLeast("mod")) {
                     api.sendModerationMessage("Automatically banned player `".concat(this.cleanedName, "` (`").concat(this.uuid, "`/`").concat(this.ip(), "`) for suspected punishment evasion.\nPreviously used UUID `").concat(uuid, "`(").concat((_b = Vars.netServer.admins.getInfoOptional(uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName(), "), currently using UUID `").concat(this.uuid, "` from the same IP address."));
                     Log.warn("&yAutomatically banned player &b".concat(this.cleanedName, "&y (&b").concat(this.uuid, "&y/&b").concat(this.ip(), "&y) for suspected punishment evasion.\n&yPreviously used UUID &b").concat(uuid, "&y(&b").concat((_c = Vars.netServer.admins.getInfoOptional(uuid)) === null || _c === void 0 ? void 0 : _c.plainLastName(), "&y), currently using UUID &b").concat(this.uuid, "&y from the same IP address."));
-                    FishPlayer.messageStaff("[yellow]Automatically banned player [cyan]".concat(this.cleanedName, "[] for suspected punishment evasion."));
+                    FishPlayer.messageStaff("[yellow]Automatically banned player [cyan]".concat(this.prefixedName, "[] for suspected punishment evasion."));
                     Vars.netServer.admins.bannedIPs.add(ip);
                     api.ban({ ip: ip, uuid: uuid });
                     this.kick(Packets.KickReason.banned);
@@ -1219,10 +1222,10 @@ var FishPlayer = /** @class */ (function () {
                     }
                     else {
                         (0, utils_1.logAction)("autoflagged", "AntiVPN", _this);
-                        void api.sendStaffMessage("Autoflagged player ".concat(_this.name, "[cyan] for suspected vpn!"), "AntiVPN", true);
+                        void api.sendStaffMessage("Autoflagged player ".concat(_this.prefixedName, "[cyan] for suspected vpn!"), "AntiVPN", true);
                         if (!FishPlayer.antiBotMode())
-                            FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".concat(_this.name, "[cyan]\"[yellow] is new (").concat(info.timesJoined - 1, " joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free."));
-                        Log.warn("Player ".concat(_this.name, " (").concat(_this.uuid, ") was autoflagged."));
+                            FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".concat(_this.prefixedName, "[cyan]\"[yellow] is new (").concat(info.timesJoined - 1, " joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free."));
+                        Log.warn("Player ".concat(_this.prefixedName, " (").concat(_this.uuid, ") was autoflagged."));
                         void menus_1.Menu.buttons(_this, "[gold]Welcome to Fish Community!", "[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".concat(config_1.FColor.discord(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."), [[
                                 { data: "Close", text: "Close" },
                                 { data: "Discord", text: config_1.FColor.discord("Discord") },
@@ -1235,12 +1238,12 @@ var FishPlayer = /** @class */ (function () {
                     }
                 }
                 else if (info.timesJoined < 5) {
-                    FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".concat(_this.name, "[cyan]\"[yellow] is new (").concat(info.timesJoined - 1, " joins) and using a vpn."));
+                    FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".concat(_this.prefixedName, "[cyan]\"[yellow] is new (").concat(info.timesJoined - 1, " joins) and using a vpn."));
                 }
             }
             else {
                 if (info.timesJoined == 1) {
-                    FishPlayer.messageTrusted("[yellow]Player \"".concat(_this.cleanedName, "\" is on first join."));
+                    FishPlayer.messageTrusted("[yellow]Player \"".concat(_this.prefixedName, "[yellow]\" is on first join."));
                 }
             }
             if (info.timesJoined == 1) {
@@ -1967,9 +1970,13 @@ var FishPlayer = /** @class */ (function () {
         else
             return false;
     };
-    FishPlayer.prototype.trollName = function (name) {
-        this.shouldUpdateName = false;
-        this.player.name = name;
+    FishPlayer.prototype.setJokeName = function (name) {
+        this.jokeName = name;
+        this.cleanedName = Strings.stripColors(name);
+    };
+    FishPlayer.prototype.setName = function (name) {
+        this.name = name;
+        this.cleanedName = Strings.stripColors(name);
     };
     FishPlayer.prototype.freeze = function () {
         this.frozen = true;

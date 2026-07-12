@@ -489,7 +489,7 @@ export const vnwCondition = {
 
 export function logHTrip(player:FishPlayer, name:string, message?:string){
 	Log.warn(`&yPlayer &b"${player.cleanedName}"&y (&b${player.uuid}&y/&b${player.ip()}&y) tripped &c${name}&y` + (message ? `: ${message}` : ""));
-	FishPlayer.messageStaff(`[yellow]Player [blue]"${player.cleanedName}"[] tripped [cyan]${name}[]` + (message ? `: ${message}` : ""));
+	FishPlayer.messageStaff(`[yellow]Player [blue]"${player.prefixedName}"[] tripped [cyan]${name}[]` + (message ? `: ${message}` : ""));
 	api.sendModerationMessage(`Player \`${player.cleanedName}\` (\`${player.uuid}\`/\`${player.ip()}\`) tripped **${name}**${message ? `: ${message}` : ""}\n**Server:** ${Gamemode.name()}`);
 }
 
@@ -575,7 +575,7 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 				}
 			}
 			Log.info(`Censored message from player ${player.name}: "${escapeStringColorsServer(message)}"; contained "${filterTripText}"`);
-			FishPlayer.messageStaff(`[yellow]Censored message from player ${fishPlayer.cleanedName}: "${message}" contained "${filterTripText}"`);
+			FishPlayer.messageStaff(`[yellow]Censored message from player ${fishPlayer.prefixedName}[yellow]: "${message}" contained "${filterTripText}"`);
 		}
 		message = text.chatFilterReplacement.message();
 		highlight ??= text.chatFilterReplacement.highlight();

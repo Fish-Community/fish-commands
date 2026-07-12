@@ -112,11 +112,12 @@ export const commands = commandList({
 		handler({args, sender, outputSuccess}){
 			const colors = ['[red]', '[orange]', '[yellow]', '[acid]', '[blue]', '[purple]'];
 			function rainbowLoop(index:number, fishP:FishPlayer){
+				if(!(fishP.rainbow && fishP.player && fishP.connected())) return;
 				Timer.schedule(() => {
 					if(!(fishP.rainbow && fishP.player && fishP.connected())) return;
 					fishP.player.name = colors[index % colors.length] + Strings.stripColors(fishP.player.name);
 					rainbowLoop(index + 1, fishP);
-				}, args.speed! / 5);
+				}, fishP.rainbow.speed / 5);
 			}
 
 			if(!args.speed){
