@@ -24,6 +24,7 @@ export const fishState = {
 		nameBlacklist: null as null | [string, Pattern],
 		nameGraylist: null as null | [string, Pattern],
 	},
+	lastSuccessfulMapUpdate: Date.now(),
 };
 export const fishPlugin = {
 	directory: null as null | string,

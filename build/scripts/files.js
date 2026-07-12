@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateMaps = updateMaps;
 var config_1 = require("/config");
 var funcs_1 = require("/funcs");
+var globals_1 = require("/globals");
 var promise_1 = require("/promise");
 var utils_1 = require("/utils");
 //if we switch to a self-hosted setup, just make it respond with the githubfile object for a drop-in replacement
@@ -92,6 +93,7 @@ function updateMaps() {
             return mapsToDelete.length > 0 ? true : false;
         }
         return downloadMaps(mapsToDownload).then(function () {
+            globals_1.fishState.lastSuccessfulMapUpdate = Date.now();
             Vars.maps.reload();
             return true;
         });

@@ -7,6 +7,7 @@ Maintenance: @author BalaM314
 
 import { Gamemode, mapRepoURLs } from "/config";
 import { crash } from "/funcs";
+import { fishState } from "/globals";
 import { Promise } from "/promise";
 import { getHash } from "/utils";
 
@@ -112,6 +113,7 @@ export function updateMaps():Promise<boolean, string> {
 			return mapsToDelete.length > 0 ? true : false;
 		}
 		return downloadMaps(mapsToDownload).then(() => {
+			fishState.lastSuccessfulMapUpdate = Date.now();
 			Vars.maps.reload();
 			return true;
 		});

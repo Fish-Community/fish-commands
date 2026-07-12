@@ -7,7 +7,7 @@ import { fetchAntibotData, getStaffMessages, syncDosBlacklist } from "/api";
 import * as config from "/config";
 import { Gamemode } from "/config";
 import { updateMaps } from "/files";
-import { DurationSecs } from "/funcs";
+import { Duration, DurationSecs } from "/funcs";
 import { dosBlacklistCopy, FishEvents, fishState, ipJoins, joinDemographics } from "/globals";
 import { FishPlayer } from "/players";
 import { definitelyRealMemoryCorruption, neutralGameover, unblacklist } from "/utils";
@@ -119,6 +119,7 @@ export function initializeTimers(){
 		FishPlayer.validateVotekickSession();
 	}, 0, 0.3);
 }
+
 Timer.schedule(() => {
 	updateMaps()
 		.then((result) => {
@@ -128,7 +129,8 @@ Timer.schedule(() => {
 			}
 		})
 		.catch((message) => {
-			Call.sendMessage(`[scarlet]Automated maps update failed, please report this to a staff member.`);
+			if(Date.now() - fishState.lastSuccessfulMapUpdate >= Duration.hours(1))
+				Call.sendMessage(`[scarlet]Automated maps update failed too many times, please report this to a staff member.`);
 			Log.err(`Automated map update failed: ${String(message)}`);
 		});
 }, DurationSecs.minutes(1), DurationSecs.minutes(10));
