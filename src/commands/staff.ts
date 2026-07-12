@@ -388,12 +388,13 @@ export const commands = commandList({
 		args: ["player:player"],
 		description: "Shows moderation history for a player.",
 		perm: Perm.mod,
-		handler({args, output, f}){
+		handler({args, output, copy, f}){
 			if(args.player.history && args.player.history.length > 0){
+				copy(args.player.prefixedName);
 				output(
 					`[yellow]_______________Player history_______________\n\n` +
 					(args.player).history.sort((a, b) => a.time - b.time).map(e =>
-						`${e.by} [yellow]${e.action} ${args.player.prefixedName} [white]${formatTimeRelative(e.time)}`
+						`${copy(e.by)} [yellow]${e.action} ${args.player.prefixedName} [white]${formatTimeRelative(e.time)}`
 					).join("\n")
 				);
 			} else {
@@ -763,17 +764,17 @@ export const commands = commandList({
 		args: ["target:player", "showColors:boolean?"],
 		description: "Displays information about an online player.",
 		perm: Perm.none,
-		handler({sender, args, output, f}){
+		handler({sender, args, output, copy, f}){
 			const info = args.target.info();
 			const names = args.showColors
 				? info.names.map(escapeStringColorsClient).toString(", ")
 				: [...new Set(info.names.map(n => Strings.stripColors(n)).toArray())].join(", ");
 			output(f`\
-[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(args.target.name)}) (#${args.target.player!.id.toString()})
+[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player!.id.toString()})
 	[accent]Rank: ${args.target.rank}
-	[accent]Role flags: ${Array.from(args.target.flags).map(f => f.coloredName()).join(" ")}
+	[accent]Role flags: ${copy(Array.from(args.target.flags).map(f => f.coloredName()).join(" "))}
 	[accent]Stopped: ${f.boolBad(!args.target.hasPerm("play"))}
-	[accent]marked: ${args.target.marked() ? `until ${formatTimeRelative(args.target.unmarkTime)}` : "[green]false"}
+	[accent]marked: ${args.target.marked() ? `until ${copy(formatTimeRelative(args.target.unmarkTime))}` : "[green]false"}
 	[accent]muted: ${f.boolBad(args.target.muted)}
 	[accent]autoflagged: ${f.boolBad(args.target.autoflagged)}
 	[accent]VPN detected: ${f.boolBad(args.target.ipDetectedVpn)}
@@ -782,9 +783,9 @@ export const commands = commandList({
 	[accent]Names used: [[${names}]`
 			);
 			if(sender.hasPerm("viewUUIDs"))
-				output(f`\t[#FFAAAA]UUID: ${args.target.uuid}`);
+				output(f`\t[#FFAAAA]UUID: ${copy(args.target.uuid)}`);
 			if(sender.hasPerm("viewIPs"))
-				output(f`\t[#FFAAAA]IP: ${args.target.ip()}`);
+				output(f`\t[#FFAAAA]IP: ${copy(args.target.ip())}`);
 		}
 	},
 
@@ -899,7 +900,7 @@ export const commands = commandList({
 		description: "Run arbitrary javascript.",
 		perm: Perm.runJS,
 		customUnauthorizedMessage: "[scarlet]You are not in the jsers file. This incident will be reported.[]",
-		handler({args: {javascript}, output, outputFail, sender}){
+		handler({args: {javascript}, output, outputFail, copy, sender}){
 			
 			//Additional validation couldn't hurt...
 			const playerInfo_AdminUsid = sender.info().adminUsid;
@@ -912,23 +913,23 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 				fail(`Authentication failure`);
 			}
 
-			if(javascript == "Timer.instance().clear()") fail(`Are you really sure you want to do that? If so, prepend "void" to your command.`);
+			if(javascript == "Timer.instance().clear()") fail(`Are you really sure you want to do that? It'll break the plugin. If you're sure, prepend "void" to your command.`);
 
 			try {
 				const scripts = Vars.mods.getScripts();
 				const out = scripts.context.evaluateString(scripts.scope, javascript, "fish-js-console.js", 1);
 				if(out instanceof Array){
-					output("[cyan]Array: [[[]" + out.join(", ") + "[cyan]]");
+					output(copy("[cyan]Array: [[[]" + out.join(", ") + "[cyan]]"));
 				} else if(out === undefined){
-					output("[blue]undefined[]");
+					output(copy("[blue]undefined[]"));
 				} else if(out === null){
-					output("[blue]null[]");
+					output(copy("[blue]null[]"));
 				} else if(out instanceof Error){
-					outputFail(parseError(out));
+					outputFail(copy(parseError(out)));
 				} else if(typeof out == "number"){
-					output(`[blue]${out}[]`);
+					output(copy(`[blue]${out}[]`));
 				} else {
-					output(out);
+					output(copy(out));
 				}
 			} catch(err){
 				outputFail(parseError(err));
@@ -1062,38 +1063,38 @@ ${getAntiBotInfo("client")}`
 		args: ["input:string"],
 		description: "Searches playerinfo by name, IP, or UUID.",
 		perm: Perm.admin,
-		async handler({args:{input}, admins, output, f, sender}){
+		async handler({args:{input}, admins, output, copy, f, sender}){
 			if(uuidPattern.test(input)){
 				const fishP = FishPlayer.getById(input);
 				const info = admins.getInfoOptional(input);
 				if(fishP == null && info == null) fail(f`No stored data matched uuid ${input}.`);
 				else if(fishP == null && info) output(f`[accent]\
 Found player info (but no fish player data) for uuid ${input}
-Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]
-IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
+Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(copy(info.lastName))})[] [[${info.names.map(escapeStringColorsClient).items.map(copy).join(", ")}]
+IPs used: ${info.ips.map(i => `[blue]${copy(i)}[]`).toString(", ")}`
 				);
 				else if(fishP && info) output(f`[accent]\
 Found fish player data for uuid ${input}
-Last name used: "${fishP.name}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]
-IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
+Last name used: "${fishP.name}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.map(copy).join(", ")}]
+IPs used: ${info.ips.map(i => `[blue]${copy(i)}[]`).toString(", ")}`
 				);
 				else fail(f`Super weird edge case: found fish player data but no player info for uuid ${input}.`);
 			} else if(ipPattern.test(input)){
 				const matches = admins.findByIPs(input);
 				if(matches.isEmpty()) fail(f`No stored data matched IP ${input}`);
-				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}".`);
+				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}". To copy names, copy the relevant UUID and repeat the search.`);
 				matches.each(info => output(f`[accent]\
-Player with uuid ${info.id}
+Player with uuid ${copy(info.id)}
 Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]
 IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 				));
 			} else {
 				const matches = Vars.netServer.admins.searchNames(input);
 				if(matches.isEmpty()) fail(f`No stored data matched name ${input}`);
-				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}".`);
+				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}". To copy names, copy the relevant UUID and repeat the search.`);
 				const displayMatches = () => {
 					matches.each(info => output(f`[accent]\
-Player with uuid ${info.id}
+Player with uuid ${copy(info.id)}
 Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]
 IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 					));

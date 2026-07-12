@@ -661,11 +661,12 @@ exports.commands = (0, commands_1.commandList)({
         description: "Shows moderation history for a player.",
         perm: commands_1.Perm.mod,
         handler: function (_a) {
-            var args = _a.args, output = _a.output, f = _a.f;
+            var args = _a.args, output = _a.output, copy = _a.copy, f = _a.f;
             if (args.player.history && args.player.history.length > 0) {
+                copy(args.player.prefixedName);
                 output("[yellow]_______________Player history_______________\n\n" +
                     (args.player).history.sort(function (a, b) { return a.time - b.time; }).map(function (e) {
-                        return "".concat(e.by, " [yellow]").concat(e.action, " ").concat(args.player.prefixedName, " [white]").concat((0, utils_1.formatTimeRelative)(e.time));
+                        return "".concat(copy(e.by), " [yellow]").concat(e.action, " ").concat(args.player.prefixedName, " [white]").concat((0, utils_1.formatTimeRelative)(e.time));
                     }).join("\n"));
             }
             else {
@@ -1092,16 +1093,16 @@ exports.commands = (0, commands_1.commandList)({
         description: "Displays information about an online player.",
         perm: commands_1.Perm.none,
         handler: function (_a) {
-            var sender = _a.sender, args = _a.args, output = _a.output, f = _a.f;
+            var sender = _a.sender, args = _a.args, output = _a.output, copy = _a.copy, f = _a.f;
             var info = args.target.info();
             var names = args.showColors
                 ? info.names.map(funcs_1.escapeStringColorsClient).toString(", ")
                 : __spreadArray([], __read(new Set(info.names.map(function (n) { return Strings.stripColors(n); }).toArray())), false).join(", ");
-            output(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(args.target.name), args.target.player.id.toString(), args.target.rank, Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" "), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat((0, utils_1.formatTimeRelative)(args.target.unmarkTime)) : "[green]false", f.boolBad(args.target.muted), f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
+            output(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(copy(args.target.name)), args.target.player.id.toString(), args.target.rank, copy(Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" ")), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat(copy((0, utils_1.formatTimeRelative)(args.target.unmarkTime))) : "[green]false", f.boolBad(args.target.muted), f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
             if (sender.hasPerm("viewUUIDs"))
-                output(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["\t[#FFAAAA]UUID: ", ""], ["\\t[#FFAAAA]UUID: ", ""])), args.target.uuid));
+                output(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["\t[#FFAAAA]UUID: ", ""], ["\\t[#FFAAAA]UUID: ", ""])), copy(args.target.uuid)));
             if (sender.hasPerm("viewIPs"))
-                output(f(templateObject_56 || (templateObject_56 = __makeTemplateObject(["\t[#FFAAAA]IP: ", ""], ["\\t[#FFAAAA]IP: ", ""])), args.target.ip()));
+                output(f(templateObject_56 || (templateObject_56 = __makeTemplateObject(["\t[#FFAAAA]IP: ", ""], ["\\t[#FFAAAA]IP: ", ""])), copy(args.target.ip())));
         }
     },
     spawn: {
@@ -1233,7 +1234,7 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.runJS,
         customUnauthorizedMessage: "[scarlet]You are not in the jsers file. This incident will be reported.[]",
         handler: function (_a) {
-            var javascript = _a.args.javascript, output = _a.output, outputFail = _a.outputFail, sender = _a.sender;
+            var javascript = _a.args.javascript, output = _a.output, outputFail = _a.outputFail, copy = _a.copy, sender = _a.sender;
             //Additional validation couldn't hurt...
             var playerInfo_AdminUsid = sender.info().adminUsid;
             if (!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player.usid() || sender.usid != sender.player.usid()) {
@@ -1241,27 +1242,27 @@ exports.commands = (0, commands_1.commandList)({
                 (0, commands_1.fail)("Authentication failure");
             }
             if (javascript == "Timer.instance().clear()")
-                (0, commands_1.fail)("Are you really sure you want to do that? If so, prepend \"void\" to your command.");
+                (0, commands_1.fail)("Are you really sure you want to do that? It'll break the plugin. If you're sure, prepend \"void\" to your command.");
             try {
                 var scripts = Vars.mods.getScripts();
                 var out = scripts.context.evaluateString(scripts.scope, javascript, "fish-js-console.js", 1);
                 if (out instanceof Array) {
-                    output("[cyan]Array: [[[]" + out.join(", ") + "[cyan]]");
+                    output(copy("[cyan]Array: [[[]" + out.join(", ") + "[cyan]]"));
                 }
                 else if (out === undefined) {
-                    output("[blue]undefined[]");
+                    output(copy("[blue]undefined[]"));
                 }
                 else if (out === null) {
-                    output("[blue]null[]");
+                    output(copy("[blue]null[]"));
                 }
                 else if (out instanceof Error) {
-                    outputFail((0, funcs_1.parseError)(out));
+                    outputFail(copy((0, funcs_1.parseError)(out)));
                 }
                 else if (typeof out == "number") {
-                    output("[blue]".concat(out, "[]"));
+                    output(copy("[blue]".concat(out, "[]")));
                 }
                 else {
-                    output(out);
+                    output(copy(out));
                 }
             }
             catch (err) {
@@ -1415,7 +1416,7 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 var fishP, info, matches, matches_1, displayMatches;
-                var input = _b.args.input, admins = _b.admins, output = _b.output, f = _b.f, sender = _b.sender;
+                var input = _b.args.input, admins = _b.admins, output = _b.output, copy = _b.copy, f = _b.f, sender = _b.sender;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
@@ -1425,9 +1426,9 @@ exports.commands = (0, commands_1.commandList)({
                             if (fishP == null && info == null)
                                 (0, commands_1.fail)(f(templateObject_65 || (templateObject_65 = __makeTemplateObject(["No stored data matched uuid ", "."], ["No stored data matched uuid ", "."])), input));
                             else if (fishP == null && info)
-                                output(f(templateObject_66 || (templateObject_66 = __makeTemplateObject(["[accent]Found player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
+                                output(f(templateObject_66 || (templateObject_66 = __makeTemplateObject(["[accent]Found player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(copy(info.lastName)), info.names.map(funcs_1.escapeStringColorsClient).items.map(copy).join(", "), info.ips.map(function (i) { return "[blue]".concat(copy(i), "[]"); }).toString(", ")));
                             else if (fishP && info)
-                                output(f(templateObject_67 || (templateObject_67 = __makeTemplateObject(["[accent]Found fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, fishP.name, (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")));
+                                output(f(templateObject_67 || (templateObject_67 = __makeTemplateObject(["[accent]Found fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nFound fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), input, fishP.name, (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.map(copy).join(", "), info.ips.map(function (i) { return "[blue]".concat(copy(i), "[]"); }).toString(", ")));
                             else
                                 (0, commands_1.fail)(f(templateObject_68 || (templateObject_68 = __makeTemplateObject(["Super weird edge case: found fish player data but no player info for uuid ", "."], ["Super weird edge case: found fish player data but no player info for uuid ", "."])), input));
                             return [3 /*break*/, 5];
@@ -1436,16 +1437,16 @@ exports.commands = (0, commands_1.commandList)({
                             matches = admins.findByIPs(input);
                             if (matches.isEmpty())
                                 (0, commands_1.fail)(f(templateObject_69 || (templateObject_69 = __makeTemplateObject(["No stored data matched IP ", ""], ["No stored data matched IP ", ""])), input));
-                            output(f(templateObject_70 || (templateObject_70 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches.size, matches.size == 1 ? "" : "es", input));
-                            matches.each(function (info) { return output(f(templateObject_71 || (templateObject_71 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
+                            output(f(templateObject_70 || (templateObject_70 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."], ["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."])), matches.size, matches.size == 1 ? "" : "es", input));
+                            matches.each(function (info) { return output(f(templateObject_71 || (templateObject_71 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), copy(info.id), info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
                             return [3 /*break*/, 5];
                         case 2:
                             matches_1 = Vars.netServer.admins.searchNames(input);
                             if (matches_1.isEmpty())
                                 (0, commands_1.fail)(f(templateObject_72 || (templateObject_72 = __makeTemplateObject(["No stored data matched name ", ""], ["No stored data matched name ", ""])), input));
-                            output(f(templateObject_73 || (templateObject_73 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\"."], ["[accent]Found ", " match", " for search \"", "\"."])), matches_1.size, matches_1.size == 1 ? "" : "es", input));
+                            output(f(templateObject_73 || (templateObject_73 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."], ["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."])), matches_1.size, matches_1.size == 1 ? "" : "es", input));
                             displayMatches = function () {
-                                matches_1.each(function (info) { return output(f(templateObject_74 || (templateObject_74 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), info.id, info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
+                                matches_1.each(function (info) { return output(f(templateObject_74 || (templateObject_74 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), copy(info.id), info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
                             };
                             if (!(matches_1.size > 20)) return [3 /*break*/, 4];
                             return [4 /*yield*/, menus_1.Menu.confirm(sender, "Are you sure you want to view all ".concat(matches_1.size, " matches?"))];

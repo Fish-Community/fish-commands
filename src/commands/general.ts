@@ -23,12 +23,12 @@ export const commands = commandList({
 		args: [],
 		description: 'Prints information about the plugin.',
 		perm: Perm.none,
-		handler({output}){
+		handler({output, copy}){
 			output(
 `[accent][cyan]fish-commands[] is the monolithic plugin used for the Fish servers' features.
 [accent]==========
 [accent]Source code available at: [cyan]https://github.com/Fish-Community/fish-commands/
-[accent]Current plugin version: [cyan]${fishPlugin.version?.slice(0, 8) ?? "[scarlet]null[]"}[]`
+[accent]Current plugin version: [cyan]${copy(fishPlugin.version?.slice(0, 8) ?? "[scarlet]null[]")}[]`
 			);
 		}
 	},
@@ -61,10 +61,12 @@ export const commands = commandList({
 		description: 'Teleport to another player.',
 		perm: Perm.play,
 		requirements: [Req.modeNot("pvp")],
-		handler({ args, sender }) {
-			if(!sender.unit()?.spawnedByCore) fail(`Can only teleport while in a core unit.`);
-			if(sender.team() !== args.player.team()) fail(`Cannot teleport to players on another team.`);
-			if(sender.unit()!.hasPayload?.()) fail(`Cannot teleport to players while holding a payload.`);
+		handler({ args, sender, f, outputSuccess }) {
+			if(!sender.hasPerm("admin")){
+				if(!sender.unit()?.spawnedByCore) fail(`Can only teleport while in a core unit.`);
+				if(sender.team() !== args.player.team()) fail(`Cannot teleport to players on another team.`);
+				if(sender.unit()!.hasPayload?.()) fail(`Cannot teleport to players while holding a payload.`);
+			}
 			teleportPlayer(sender.player!, args.player.player!);
 			outputSuccess(f`Teleported to ${args.player}`);
 		}
@@ -180,7 +182,7 @@ export const commands = commandList({
 				outputSuccess(`Tilelog disabled.`);
 			}
 		},
-		tapped({tile, x, y, output, sender, admins, data}){
+		tapped({tile, x, y, output, copy, sender, admins, data}){
 			const historyData = tileHistory[`${x},${y}`] ?? fail(`There is no recorded history for the selected tile (${tile.x}, ${tile.y}).`);
 			const history = StringIO.read(historyData, str => str.readArray(d => ({
 				action: d.readString(2),
@@ -189,10 +191,10 @@ export const commands = commandList({
 				type: d.readString(2),
 			}), 1));
 			output(`[yellow]Tile history for tile (${tile.x}, ${tile.y}):\n` + history.map(e =>
-				uuidPattern.test(e.uuid)
-				? (sender.hasPerm("viewUUIDs") && data.showUUID
-				? `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()}[lightgray](${e.uuid})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
-				: `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
+				uuidPattern.test(e.uuid) ?
+					(sender.hasPerm("viewUUIDs") && data.showUUID ?
+						`[yellow]${copy(admins.getInfoOptional(e.uuid)?.plainLastName())}[lightgray](${copy(e.uuid)})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
+					: `[yellow]${copy(admins.getInfoOptional(e.uuid)?.plainLastName())} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
 				: `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
 			).join('\n'));
 		}
@@ -221,7 +223,7 @@ export const commands = commandList({
 					outputSuccess(`Aoelog disabled.`);
 				}
 			},
-			tapped({x, y, output, outputFail, sender, admins, handleTaps, args}) {
+			tapped({x, y, output, outputFail, copy, sender, admins, handleTaps, args}) {
 				function handleArea(p1: [number, number], p2: [number, number]){
 					const minX = Math.min(p1[0], p2[0]);
 					const maxX = Math.max(p1[0], p2[0]);
@@ -245,8 +247,8 @@ export const commands = commandList({
 							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e => {
 								if(uuidPattern.test(e.uuid)){
 									if(sender.hasPerm("viewUUIDs"))
-										return `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()}[lightgray](${e.uuid})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
-									else return `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
+										return `[yellow]${copy(admins.getInfoOptional(e.uuid)?.plainLastName())}[lightgray](${copy(e.uuid)})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
+									else return `[yellow]${copy(admins.getInfoOptional(e.uuid)?.plainLastName())} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
 								} else return `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
 							}).join('\n'));
 							limitTiles ++;
@@ -315,8 +317,8 @@ export const commands = commandList({
 			handleTaps("once");
 			output(`Click a tile to see its id...`);
 		},
-		tapped({output, f, tile}){
-			output(f`ID is ${tile.block().id}`);
+		tapped({output, f, tile, copy}){
+			output(f`ID is ${copy(tile.block().id)}`);
 		}
 	},
 
@@ -674,15 +676,15 @@ Available types:[yellow]
 		args: [],
 		description: 'Displays information about all ranks.',
 		perm: Perm.none,
-		handler({ output }){
+		handler({ output, copy }){
 			output(
 				`List of ranks:\n` +
 					Object.values(Rank.ranks)
-						.map((rank) => `${rank.prefix} ${rank.color}${capitalizeText(rank.name)}[]: ${rank.color}${rank.description}[]\n`)
+						.map((rank) => `${copy(rank.prefix)} ${rank.color}${capitalizeText(rank.name)}[]: ${rank.color}${rank.description}[]\n`)
 						.join("") +
 				`List of flags:\n` +
 				Object.values(RoleFlag.flags)
-					.map((flag) => `${flag.prefix} ${flag.color}${capitalizeText(flag.name)}[]: ${flag.color}${flag.description}[]\n`)
+					.map((flag) => `${copy(flag.prefix)} ${flag.color}${capitalizeText(flag.name)}[]: ${flag.color}${flag.description}[]\n`)
 					.join("")
 			);
 		},
@@ -935,14 +937,14 @@ Please stop attacking and [lime]build defenses[] first!`
 		args: [],
 		description: 'Lists the available maps.',
 		perm: Perm.none,
-		handler({output}){
+		handler({output, copy}){
 			output(`\
 [yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.
 
 [blue]Available maps:
 _________________________
 ${Vars.maps.customMaps().toArray().map(map =>
-`[yellow]${map.name()}`
+`[yellow]${copy(map.name())}`
 ).join("\n")}`
 			);
 		}
@@ -1132,7 +1134,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 		args: ["x:number?", "y:number?", "size:number?"],
 		perm: Perm.none,
 		description: "Views the world as a 2D scrollable menu.",
-		requirements: [Req.cooldown(4000), Req.integerRange("size", 1, 20)],
+		requirements: [Req.cooldown(4000), Req.integerRange("size", 1, 10)],
 		handler({sender, args:{size = 7, x, y}}){
 			if(Vars.state.rules.fog) fail(`This command is disabled when fog is enabled.`);
 			const options = to2DArray((Reflect.get(Vars.world.tiles, "array") as Tile[]).map(tile => ({
@@ -1234,7 +1236,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 		args: ["name:string?", "verbose:boolean?"],
 		description: "Displays information on a specific achievement.",
 		perm: Perm.none,
-		async handler({args: {name = "", verbose = false}, sender, f, output}){
+		async handler({args: {name = "", verbose = false}, sender, f, output, copy}){
 			name = Strings.stripColors(name.toLowerCase());
 			
 			const matching = Achievement.all.filter(a => Strings.stripColors(a.name).toLowerCase().includes(name));
@@ -1249,9 +1251,9 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 			: matching[0];
 			
 			output(FColor.achievement`\
-Achievement ${achievement.icon} ${achievement.name}
+Achievement ${achievement.icon} ${copy(achievement.name)}
 [white]--------------[]
-${achievement.description + (achievement.extendedDescription ? ("\n" + `[gray]${achievement.extendedDescription}`) : "")}
+${copy(achievement.description + (achievement.extendedDescription ? ("\n" + `[gray]${achievement.extendedDescription}`) : ""))}
 Allowed modes: ${achievement.modesText}
 Unlocked: ${f.boolGood(achievement.has(sender))}
 ${verbose ? `[gray]ID: (${achievement.nid})${achievement.sid}\n` : ""}\
