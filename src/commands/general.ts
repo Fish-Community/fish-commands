@@ -9,7 +9,7 @@ import { FColor, FishServer, Gamemode, text } from "/config";
 import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
-import { capitalizeText, delay, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
+import { capitalizeText, delay, Duration, escapeStringColorsClient, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
@@ -1333,6 +1333,20 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			if(Date.now() > sender.skipConfirm) outputSuccess(`Disabled confirm popups for ${formatTime(duration)}.`);
 			else outputSuccess(`Re-enabled confirm popups.`);
 		}
-	}
+	},
+	copy: {
+		args: [],
+		description: "Copies relevant text from the previous command to your clipboard.",
+		perm: Perm.none,
+		async handler({ sender }){
+			if(!sender.copyOptions || sender.copyOptions.length == 0) fail(`There is nothing to copy.`);
+			const response = await Menu.pagedList(
+				sender, "Copy", "Select a text to copy it",
+				sender.copyOptions,
+				{ optionStringifier: escapeStringColorsClient }
+			);
+			Call.copyToClipboard(response);
+		}
+	},
 	
 });

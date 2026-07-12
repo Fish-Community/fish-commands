@@ -122,6 +122,12 @@ export type FishCommandHandlerUtils = {
 	execServer(this: void, message: string): void;
 	/** Call this function to set tap handling mode. */
 	handleTaps(this: void, mode: TapHandleMode): void;
+	/** Call this function to add text to /copy. */
+	copy(text:string):string;
+	// copy: {
+	// 	<T extends string>(text:T):T;
+	// 	category: null; 
+	// };
 };
 export type FishCommandHandler<ArgType extends string, StoredData> = (fish: FishCommandHandlerData<ArgType, StoredData> & FishCommandHandlerUtils) => void | Promise<void>;
 

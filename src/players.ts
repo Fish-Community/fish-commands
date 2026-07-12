@@ -142,6 +142,7 @@ export class FishPlayer {
 	chatSpam = new Ratekeeper();
 	kickForSpamAt?:number;
 	skipConfirm: number = -1;
+	copyOptions: string[] | null = null;
 	//#endregion
 	
 	//#region Stored data

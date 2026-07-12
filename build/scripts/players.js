@@ -190,6 +190,7 @@ var FishPlayer = /** @class */ (function () {
         this.autoConfirmSkipWaveUntil = -1;
         this.chatSpam = new Ratekeeper();
         this.skipConfirm = -1;
+        this.copyOptions = null;
         this.name = "Unnamed player [ERROR}";
         this.muted = false;
         this.unmarkTime = -1;

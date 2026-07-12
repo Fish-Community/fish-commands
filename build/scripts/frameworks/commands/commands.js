@@ -531,7 +531,7 @@ function register(commands, clientHandler, serverHandler) {
         clientHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
         clientHandler.register(name, convertArgs(processedCmdArgs, true), data.description, new CommandHandler.CommandRunner({ accept: function (unjoinedRawArgs, sender) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var fishSender, rawArgs, resolvedArgs, err_1, usageData, failed, args_1, requirements, err_2;
+                    var fishSender, rawArgs, resolvedArgs, err_1, shouldClearCopy, usageData, failed, args_1, requirements, err_2;
                     var _a;
                     return __generator(this, function (_b) {
                         switch (_b.label) {
@@ -566,6 +566,7 @@ function register(commands, clientHandler, serverHandler) {
                                 (0, utils_1.handleError)(err_1, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
                                 return [2 /*return*/];
                             case 4:
+                                shouldClearCopy = true;
                                 usageData = fishSender.getUsageData(name);
                                 failed = false;
                                 _b.label = 5;
@@ -599,6 +600,14 @@ function register(commands, clientHandler, serverHandler) {
                                         }
                                         fishSender.tapInfo.lastArgs = resolvedArgs;
                                     },
+                                    copy: function (text) {
+                                        if (shouldClearCopy) {
+                                            fishSender.copyOptions = [];
+                                            shouldClearCopy = false;
+                                        }
+                                        fishSender.copyOptions.push(text);
+                                        return text;
+                                    }
                                 };
                                 requirements = typeof data.requirements == "function" ? data.requirements(args_1) : data.requirements;
                                 requirements === null || requirements === void 0 ? void 0 : requirements.forEach(function (r) { return r(args_1); });

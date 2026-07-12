@@ -412,6 +412,8 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 					return;
 				}
 
+				let shouldClearCopy = true;
+
 				//Run the command handler
 				const usageData = fishSender.getUsageData(name);
 				let failed = false;
@@ -442,6 +444,14 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 							}
 							fishSender.tapInfo.lastArgs = resolvedArgs;
 						},
+						copy(text){
+							if(shouldClearCopy){
+								fishSender.copyOptions = [];
+								shouldClearCopy = false;
+							}
+							fishSender.copyOptions!.push(text);
+							return text;
+						}
 					};
 					const requirements = typeof data.requirements == "function" ? data.requirements(args) : data.requirements;
 					requirements?.forEach(r => r(args));
