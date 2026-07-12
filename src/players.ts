@@ -1077,6 +1077,11 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 			}
 			if(Strings.stripColors(this.name.replace(/[\u3164]/g, "")).trim().length == 0){
 				this.setName(this.randomName());
+				this.sendMessage(`[orange]Your name was determined to be empty, so it has been replaced with a randomly generated one. To change it, please disconnect and set your name to something that is not empty.`);
+			}
+			if(this.cleanedName.startsWith("@")){
+				this.setName(this.name.replaceAll(/^@/, "(@)"));
+				this.sendMessage(`[orange]Names may not begin with the @ sign, because it is used for commands. Your name has been edited slightly.`);
 			}
 			return true;
 		}
