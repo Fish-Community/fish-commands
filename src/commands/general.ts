@@ -1326,29 +1326,34 @@ ${a.hidden ? "This achievement is secret." : ""}\
 		args: ["duration:time?"],
 		description: "Disables confirm popups for the specified duration.",
 		perm: Perm.none,
-		handler({ args: {duration}, sender, outputSuccess }){
+		handler({ args: {duration}, sender, output, outputSuccess }){
 			if(Date.now() < sender.skipConfirm){
 				duration ??= 0;
 			} else {
 				duration ??= Duration.minutes(2);
 			}
+			if(duration > Duration.hours(8))
+				fail(`Maximum duration is 8 hours.`);
 			sender.skipConfirm = Date.now() + duration;
-			if(Date.now() > sender.skipConfirm) outputSuccess(`Disabled confirm popups for ${formatTime(duration)}.`);
+			if(Date.now() < sender.skipConfirm) outputSuccess(`Disabled confirm popups for ${formatTime(duration)}.`);
 			else outputSuccess(`Re-enabled confirm popups.`);
+			if(duration > Duration.hours(1)) output(`Warning: this does sync between servers, and does not persist after a server restart.`);
 		}
 	},
 	copy: {
 		args: [],
 		description: "Copies relevant text from the previous command to your clipboard.",
 		perm: Perm.none,
-		async handler({ sender }){
+		async handler({ sender, outputSuccess }){
 			if(!sender.copyOptions || sender.copyOptions.length == 0) fail(`There is nothing to copy.`);
-			const response = await Menu.pagedList(
-				sender, "Copy", "Select a text to copy it",
-				sender.copyOptions,
-				{ optionStringifier: escapeStringColorsClient }
-			);
+			const response = sender.copyOptions.length == 1 ? sender.copyOptions[0] :
+				await Menu.pagedList(
+					sender, "Copy", "Select a text to copy it",
+					sender.copyOptions,
+					{ optionStringifier: escapeStringColorsClient, columns: 1 }
+				);
 			Call.copyToClipboard(response);
+			outputSuccess("Copied.");
 		}
 	},
 	

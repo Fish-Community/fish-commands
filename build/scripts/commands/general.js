@@ -1515,18 +1515,22 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: "Disables confirm popups for the specified duration.",
         perm: commands_1.Perm.none,
         handler: function (_a) {
-            var duration = _a.args.duration, sender = _a.sender, outputSuccess = _a.outputSuccess;
+            var duration = _a.args.duration, sender = _a.sender, output = _a.output, outputSuccess = _a.outputSuccess;
             if (Date.now() < sender.skipConfirm) {
                 duration !== null && duration !== void 0 ? duration : (duration = 0);
             }
             else {
                 duration !== null && duration !== void 0 ? duration : (duration = funcs_1.Duration.minutes(2));
             }
+            if (duration > funcs_1.Duration.hours(8))
+                (0, commands_1.fail)("Maximum duration is 8 hours.");
             sender.skipConfirm = Date.now() + duration;
-            if (Date.now() > sender.skipConfirm)
+            if (Date.now() < sender.skipConfirm)
                 outputSuccess("Disabled confirm popups for ".concat((0, utils_1.formatTime)(duration), "."));
             else
                 outputSuccess("Re-enabled confirm popups.");
+            if (duration > funcs_1.Duration.hours(1))
+                output("Warning: this does sync between servers, and does not persist after a server restart.");
         }
     }, copy: {
         args: [],
@@ -1534,17 +1538,24 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var response;
-                var sender = _b.sender;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var response, _c;
+                var sender = _b.sender, outputSuccess = _b.outputSuccess;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
                             if (!sender.copyOptions || sender.copyOptions.length == 0)
                                 (0, commands_1.fail)("There is nothing to copy.");
-                            return [4 /*yield*/, menus_1.Menu.pagedList(sender, "Copy", "Select a text to copy it", sender.copyOptions, { optionStringifier: funcs_1.escapeStringColorsClient })];
-                        case 1:
-                            response = _c.sent();
+                            if (!(sender.copyOptions.length == 1)) return [3 /*break*/, 1];
+                            _c = sender.copyOptions[0];
+                            return [3 /*break*/, 3];
+                        case 1: return [4 /*yield*/, menus_1.Menu.pagedList(sender, "Copy", "Select a text to copy it", sender.copyOptions, { optionStringifier: funcs_1.escapeStringColorsClient, columns: 1 })];
+                        case 2:
+                            _c = _d.sent();
+                            _d.label = 3;
+                        case 3:
+                            response = _c;
                             Call.copyToClipboard(response);
+                            outputSuccess("Copied.");
                             return [2 /*return*/];
                     }
                 });
