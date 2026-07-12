@@ -4,7 +4,7 @@ This file contains the FishPlayer class, and many player-related functions.
 */
 
 import * as api from "/api";
-import { FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
+import { automaticNames, FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
 import { crash, Duration, escapeStringColorsClient, escapeStringColorsServer, escapeTextDiscord, parseError, search, setToArray, StringIO } from "/funcs";
@@ -944,10 +944,15 @@ export class FishPlayer {
 			} else {
 				replacedName = "[brown]script kiddie";
 			}
-		} else if(this.name.endsWith("[") && !this.name.endsWith("[[")){
-			replacedName = name + "[";
 		} else replacedName = name;
 		this.player!.name = this.prefixedName = prefix + replacedName;
+	}
+	randomName():string {
+		return (
+			automaticNames.adjectives[Math.floor(Math.random() * automaticNames.adjectives.length)] +
+			automaticNames.nouns[Math.floor(Math.random() * automaticNames.nouns.length)] +
+			Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321")
+		);
 	}
 	updateAdminStatus(){
 		if(!this.connected()) return;
@@ -1055,6 +1060,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 	validate(){
 		return this.checkName() && this.checkUsid() && this.checkAntiEvasion();
 	}
+	private static readonly oddBrackets = Pattern.compile("(?<!\\[)(\\[\\[)*\\[$");
 	/** Checks if this player's name is allowed. */
 	checkName(){
 		if(matchFilter(this.name, "name")){
@@ -1063,11 +1069,15 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 
 If you are unable to change it, please download Mindustry from Steam or itch.io.`,
 			1);
-		} else if(Strings.stripColors(this.name.replace(/[\u3164]/g, "")).trim().length == 0){
-			this.kick(
-`[scarlet]"${escapeStringColorsClient(this.name)}[scarlet]" is not an allowed name because it is empty. Please change it.`,
-			1);
 		} else {
+			//Non-critical invalid names
+			//If one of these cases trigger, we will rename the player by editing FishPlayer.name
+			if(FishPlayer.oddBrackets.matcher(this.name).find()){
+				this.setName(this.name + "[");
+			}
+			if(Strings.stripColors(this.name.replace(/[\u3164]/g, "")).trim().length == 0){
+				this.setName(this.randomName());
+			}
 			return true;
 		}
 		return false;

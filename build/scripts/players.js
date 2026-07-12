@@ -1141,12 +1141,14 @@ var FishPlayer = /** @class */ (function () {
                 replacedName = "[brown]script kiddie";
             }
         }
-        else if (this.name.endsWith("[") && !this.name.endsWith("[[")) {
-            replacedName = name + "[";
-        }
         else
             replacedName = name;
         this.player.name = this.prefixedName = prefix + replacedName;
+    };
+    FishPlayer.prototype.randomName = function () {
+        return (config_1.automaticNames.adjectives[Math.floor(Math.random() * config_1.automaticNames.adjectives.length)] +
+            config_1.automaticNames.nouns[Math.floor(Math.random() * config_1.automaticNames.nouns.length)] +
+            Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321"));
     };
     FishPlayer.prototype.updateAdminStatus = function () {
         if (!this.connected())
@@ -1266,10 +1268,15 @@ var FishPlayer = /** @class */ (function () {
         if ((0, utils_1.matchFilter)(this.name, "name")) {
             this.kick("[scarlet]\"".concat(this.name, "[scarlet]\" is not an allowed name because it contains a banned word.\n\nIf you are unable to change it, please download Mindustry from Steam or itch.io."), 1);
         }
-        else if (Strings.stripColors(this.name.replace(/[\u3164]/g, "")).trim().length == 0) {
-            this.kick("[scarlet]\"".concat((0, funcs_1.escapeStringColorsClient)(this.name), "[scarlet]\" is not an allowed name because it is empty. Please change it."), 1);
-        }
         else {
+            //Non-critical invalid names
+            //If one of these cases trigger, we will rename the player by editing FishPlayer.name
+            if (FishPlayer.oddBrackets.matcher(this.name).find()) {
+                this.setName(this.name + "[");
+            }
+            if (Strings.stripColors(this.name.replace(/[\u3164]/g, "")).trim().length == 0) {
+                this.setName(this.randomName());
+            }
             return true;
         }
         return false;
@@ -2103,6 +2110,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.dataFetchFailedUuids = new Set();
     FishPlayer.easterEggVotekickTarget = null;
     FishPlayer.ignoreGameOver = false;
+    FishPlayer.oddBrackets = Pattern.compile("(?<!\\[)(\\[\\[)*\\[$");
     //#endregion
     //#region heuristics
     FishPlayer.chatSpam = new Ratekeeper();

@@ -33,7 +33,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.translationApiToken = exports.translationApiUrl = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
+exports.automaticNames = exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.translationApiToken = exports.translationApiUrl = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
 var globals_1 = require("/globals");
 var ranks_1 = require("/ranks");
 var funcs_1 = require("/funcs");
@@ -361,5 +361,9 @@ exports.rules = [
     "# 9: [#FF3FBF]Do not ragebait people. If someone tells you they are uncomfortable, respect it.",
     "Failure to follow these rules may result in a ".concat(exports.prefixes.marked, " tag blocking you from playing, a mute for broken chat rules, and bans for repeated offenses or bypasses.")
 ].map(function (r) { return "[white]".concat(r); });
+exports.automaticNames = {
+    nouns: ["Tuna", "Trout", "Anglerfish", "Pufferfish", "Barracuda", "Snapper", "Carp", "Catfish", "Koi", "Blobfish", "Pollock", "Salmon", "Mullet", "Halibut", "Flounder", "Marlin", "Sailfish", "Swordfish", "Sardine", "Mackerel", "Sunfish", "SeaBass", "Goldfish", "Whale", "MakoShark", "WhiteShark", "BlueShark", "ReefShark", "WhaleShark"],
+    adjectives: ["Happy", "Sad", "Angry", "Zealous", "Cheerful", "Grumpy", "Stoic", "Witty", "Chatty", "Speedy", "Brave", "Pensive", "Lazy", "Fierce", "Honorable", "Jealous", "Skeptical", "Anxious", "Timid", "Jovial", "Unjust", "Lethargic", "Saline", "Brackish", "Prefixed", "Thalassophobic"],
+};
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9;
 //#endregion

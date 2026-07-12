@@ -387,5 +387,9 @@ export const rules = [
 	`# 9: [#FF3FBF]Do not ragebait people. If someone tells you they are uncomfortable, respect it.`,
 	`Failure to follow these rules may result in a ${prefixes.marked} tag blocking you from playing, a mute for broken chat rules, and bans for repeated offenses or bypasses.`
 ].map(r => `[white]${r}`);
+export const automaticNames = {
+	nouns: ["Tuna", "Trout", "Anglerfish", "Pufferfish", "Barracuda", "Snapper", "Carp", "Catfish", "Koi", "Blobfish", "Pollock", "Salmon", "Mullet", "Halibut", "Flounder", "Marlin", "Sailfish", "Swordfish", "Sardine", "Mackerel", "Sunfish", "SeaBass", "Goldfish", "Whale", "MakoShark", "WhiteShark", "BlueShark", "ReefShark", "WhaleShark"],
+	adjectives: ["Happy", "Sad", "Angry", "Zealous", "Cheerful", "Grumpy", "Stoic", "Witty", "Chatty", "Speedy", "Brave", "Pensive", "Lazy", "Fierce", "Honorable", "Jealous", "Skeptical", "Anxious", "Timid", "Jovial", "Unjust", "Lethargic", "Saline", "Brackish", "Prefixed", "Thalassophobic"],
+};
 //#endregion
 
