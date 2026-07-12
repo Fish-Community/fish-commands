@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"lib": ["ES2023", "DOM"], //for fetch()
+		"types": ["node"],
 		"strict": true,
 		"target": "ES2023",
 		"skipLibCheck": true,
