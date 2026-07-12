@@ -21,8 +21,8 @@ export class Perm {
 	static bypassChatFilter = new Perm("bypassChatFilter", "admin");
 	static seeMutedMessages = new Perm("seeMutedMessages", fishP => fishP.muted || fishP.autoflagged || fishP.ranksAtLeast("mod"));
 	static play = new Perm("play", fishP => !fishP.stelled() || fishP.ranksAtLeast("mod"));
-	static seeErrorMessages = new Perm("seeErrorMessages", "admin");
-	static viewUUIDs = new Perm("viewUUIDs", "admin");
+	static seeErrorMessages = new Perm("seeErrorMessages", "mod");
+	static viewUUIDs = new Perm("viewUUIDs", "mod");
 	static viewIPs = new Perm("viewIPs", "admin");
 	static blockTrolling = new Perm("blockTrolling", fishP => fishP.rank === Rank.pi);
 	static visualEffects = new Perm("visualEffects", fishP => (!fishP.stelled() || fishP.ranksAtLeast("mod")) && !fishP.hasFlag("no_effects"));

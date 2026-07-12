@@ -57,8 +57,8 @@ var Perm = /** @class */ (function () {
     Perm.bypassChatFilter = new Perm("bypassChatFilter", "admin");
     Perm.seeMutedMessages = new Perm("seeMutedMessages", function (fishP) { return fishP.muted || fishP.autoflagged || fishP.ranksAtLeast("mod"); });
     Perm.play = new Perm("play", function (fishP) { return !fishP.stelled() || fishP.ranksAtLeast("mod"); });
-    Perm.seeErrorMessages = new Perm("seeErrorMessages", "admin");
-    Perm.viewUUIDs = new Perm("viewUUIDs", "admin");
+    Perm.seeErrorMessages = new Perm("seeErrorMessages", "mod");
+    Perm.viewUUIDs = new Perm("viewUUIDs", "mod");
     Perm.viewIPs = new Perm("viewIPs", "admin");
     Perm.blockTrolling = new Perm("blockTrolling", function (fishP) { return fishP.rank === ranks_1.Rank.pi; });
     Perm.visualEffects = new Perm("visualEffects", function (fishP) { return (!fishP.stelled() || fishP.ranksAtLeast("mod")) && !fishP.hasFlag("no_effects"); });
