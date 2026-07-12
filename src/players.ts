@@ -1083,6 +1083,10 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 				this.setName(this.name.replaceAll(/^@/, "(@)"));
 				this.sendMessage(`[orange]Names may not begin with the @ sign, because it is used for commands. Your name has been edited slightly.`);
 			}
+			if(this.cleanedName.includes(`"`)){
+				this.setName(this.name.replaceAll(`"`, `'`));
+				this.sendMessage(`[orange]Your name may not contain double quotes, because they are used for commands. Your name has been edited slightly.`);
+			}
 			return true;
 		}
 		return false;
