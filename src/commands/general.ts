@@ -66,6 +66,7 @@ export const commands = commandList({
 			if(sender.team() !== args.player.team()) fail(`Cannot teleport to players on another team.`);
 			if(sender.unit()!.hasPayload?.()) fail(`Cannot teleport to players while holding a payload.`);
 			teleportPlayer(sender.player!, args.player.player!);
+			outputSuccess(f`Teleported to ${args.player}`);
 		}
 	},
 
