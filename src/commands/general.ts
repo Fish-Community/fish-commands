@@ -1319,5 +1319,20 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			}
 		}
 	},
+	skipconfirm: {
+		args: ["duration:time?"],
+		description: "Disables confirm popups for the specified duration.",
+		perm: Perm.none,
+		handler({ args: {duration}, sender, outputSuccess }){
+			if(Date.now() < sender.skipConfirm){
+				duration ??= 0;
+			} else {
+				duration ??= Duration.minutes(2);
+			}
+			sender.skipConfirm = Date.now() + duration;
+			if(Date.now() > sender.skipConfirm) outputSuccess(`Disabled confirm popups for ${formatTime(duration)}.`);
+			else outputSuccess(`Re-enabled confirm popups.`);
+		}
+	}
 	
 });

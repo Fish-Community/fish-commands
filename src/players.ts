@@ -141,6 +141,7 @@ export class FishPlayer {
 	autoConfirmSkipWaveUntil: number = -1;
 	chatSpam = new Ratekeeper();
 	kickForSpamAt?:number;
+	skipConfirm: number = -1;
 	//#endregion
 	
 	//#region Stored data

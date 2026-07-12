@@ -1507,5 +1507,23 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 });
             });
         }
+    }, skipconfirm: {
+        args: ["duration:time?"],
+        description: "Disables confirm popups for the specified duration.",
+        perm: commands_1.Perm.none,
+        handler: function (_a) {
+            var duration = _a.args.duration, sender = _a.sender, outputSuccess = _a.outputSuccess;
+            if (Date.now() < sender.skipConfirm) {
+                duration !== null && duration !== void 0 ? duration : (duration = 0);
+            }
+            else {
+                duration !== null && duration !== void 0 ? duration : (duration = funcs_1.Duration.minutes(2));
+            }
+            sender.skipConfirm = Date.now() + duration;
+            if (Date.now() > sender.skipConfirm)
+                outputSuccess("Disabled confirm popups for ".concat((0, utils_1.formatTime)(duration), "."));
+            else
+                outputSuccess("Re-enabled confirm popups.");
+        }
     } }));
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24;

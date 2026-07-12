@@ -229,6 +229,7 @@ export const Menu = {
 		confirmText = "[green]Confirm",
 		cancelText = "[red]Cancel",
 	}:MenuConfirmProps = {}){
+		if(Date.now() < target.skipConfirm) return;
 		return Menu.menu(
 			title, description, [confirmText, cancelText], target,
 			{ onCancel: "reject", cancelOptionId: 1 }
@@ -243,6 +244,7 @@ export const Menu = {
 		cancelText = "[green]Cancel",
 		...rest
 	}:MenuConfirmProps = {}){
+		if(Date.now() < target.skipConfirm) return;
 		return Menu.confirm(target, description, { cancelText, confirmText, ...rest });
 	},
 	/**

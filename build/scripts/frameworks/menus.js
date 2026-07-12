@@ -246,6 +246,8 @@ exports.Menu = {
     /** Rejects with a CommandError if the user chooses to cancel. */
     confirm: function (target, description, _a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.cancelOutput, cancelOutput = _c === void 0 ? "Cancelled." : _c, _d = _b.title, title = _d === void 0 ? "Confirm" : _d, _e = _b.confirmText, confirmText = _e === void 0 ? "[green]Confirm" : _e, _f = _b.cancelText, cancelText = _f === void 0 ? "[red]Cancel" : _f;
+        if (Date.now() < target.skipConfirm)
+            return;
         return exports.Menu.menu(title, description, [confirmText, cancelText], target, { onCancel: "reject", cancelOptionId: 1 }).catch(function (e) {
             if (e === exports.Cancel)
                 (0, commands_1.fail)(cancelOutput);
@@ -256,6 +258,8 @@ exports.Menu = {
     confirmDangerous: function (target, description, _a) {
         if (_a === void 0) { _a = {}; }
         var _b = _a.confirmText, confirmText = _b === void 0 ? "[red]Confirm" : _b, _c = _a.cancelText, cancelText = _c === void 0 ? "[green]Cancel" : _c, rest = __rest(_a, ["confirmText", "cancelText"]);
+        if (Date.now() < target.skipConfirm)
+            return;
         return exports.Menu.confirm(target, description, __assign({ cancelText: cancelText, confirmText: confirmText }, rest));
     },
     /**
