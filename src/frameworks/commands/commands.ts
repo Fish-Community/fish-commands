@@ -208,8 +208,9 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 							const [mouseX, mouseY] = (await sender.waitForTap()).map(t => t * 8);
 							options = Seq.with(FishPlayer.getAllOnline().filter(p => p.unit()))
 								.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, mouseX, mouseY)));
-							if(options && Mathf.dst2(options.unit()!.x, options.unit()!.y, mouseX, mouseY) > 24)
-								fail(`Too far away, you must click within 3 tiles of the target.`);
+							if(options) Log.info("target: @, @", options.unit()?.x, options.unit()?.y);
+							if(options && Mathf.dst(options.unit()!.x, options.unit()!.y, mouseX, mouseY) > 32)
+								fail(`Too far away, you must click within 4 tiles of the target.`);
 							break;
 						}
 						case "@h": case "@p": {
