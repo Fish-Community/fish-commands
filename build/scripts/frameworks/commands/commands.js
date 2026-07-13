@@ -253,7 +253,7 @@ function processArgs(args, processedCmdArgs, sender) {
                 case 0:
                     outputArgs = {};
                     _loop_1 = function (i, cmdArg) {
-                        var commonArgs, _j, options, _k, mouseX_1, mouseY_1, _l, x_1, y_1, query, rank_1, role_1, player, info, fishP, err_1, fishP, err_2, options, num, number, milliseconds, block;
+                        var commonArgs, _j, options, needsConfirm, _k, mouseX_1, mouseY_1, _l, x_1, y_1, query, rank_1, role_1, player, info, fishP, err_1, fishP, err_2, options, num, number, milliseconds, block;
                         return __generator(this, function (_m) {
                             switch (_m.label) {
                                 case 0:
@@ -294,24 +294,30 @@ function processArgs(args, processedCmdArgs, sender) {
                                 case 1:
                                     options = void 0;
                                     if (args[i].startsWith("@")) {
+                                        needsConfirm = false;
                                         switch (args[i]) {
                                             case "@cyrillic":
                                             case "@russian":
                                                 options = players_1.FishPlayer.getAllOnline().filter(function (p) { return /[\u0400-\u04FF]/.test(p.name); });
+                                                needsConfirm = true;
                                                 break;
                                             case "@china":
                                             case "@chinese":
                                                 options = players_1.FishPlayer.getAllOnline().filter(function (p) { return /[\u4E00-\u9FFF]/.test(p.name); });
+                                                needsConfirm = true;
                                                 break;
                                             case "@japanese":
                                                 options = players_1.FishPlayer.getAllOnline().filter(function (p) { return /[\u3040-\u30FF]/.test(p.name); });
+                                                needsConfirm = true;
                                                 break;
                                             case "@korean":
                                                 options = players_1.FishPlayer.getAllOnline().filter(function (p) { return /[\uAC00-\uD7AF\u1100-\u11FF]/.test(p.name); });
+                                                needsConfirm = true;
                                                 break;
                                             case "@nonenglish":
                                                 //Anything beyond extended ASCII
                                                 options = players_1.FishPlayer.getAllOnline().filter(function (p) { return /[\u0100-\uFFFF]/.test(p.name); });
+                                                needsConfirm = true;
                                                 break;
                                             case "@short":
                                                 options = players_1.FishPlayer.getAllOnline().filter(function (p) { return p.cleanedName.length <= 3; });
@@ -362,15 +368,15 @@ function processArgs(args, processedCmdArgs, sender) {
                                                 }
                                                 (0, errors_1.fail)("Unknown selector ".concat(args[i], "."));
                                         }
+                                        if (Array.isArray(options)) {
+                                            if (options.length == 0)
+                                                options = null;
+                                            else if (options.length == 1 && !needsConfirm)
+                                                options = options[0];
+                                        }
                                     }
                                     else
                                         options = players_1.FishPlayer.search(players_1.FishPlayer.getAllOnline(), args[i]);
-                                    if (Array.isArray(options)) {
-                                        if (options.length == 0)
-                                            options = null;
-                                        else if (options.length == 1)
-                                            options = options[0];
-                                    }
                                     return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([options], __read(commonArgs), false), [function (player) { return (player.marked() ? config_1.prefixes.marked : player.autoflagged ? config_1.prefixes.flagged : "") + (Strings.stripColors(player.name).length >= 3 ?
                                                 player.name
                                                 : (0, funcs_1.escapeStringColorsClient)(player.name)); },

@@ -162,22 +162,28 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 			case "player": {
 				let options: SearchResult<FishPlayer>;
 				if(args[i].startsWith("@")){
+					let needsConfirm = false;
 					switch(args[i]){
 						case "@cyrillic": case "@russian":
 							options = FishPlayer.getAllOnline().filter(p => /[\u0400-\u04FF]/.test(p.name));
+							needsConfirm = true;
 							break;
 						case "@china": case "@chinese":
 							options = FishPlayer.getAllOnline().filter(p => /[\u4E00-\u9FFF]/.test(p.name));
+							needsConfirm = true;
 							break;
 						case "@japanese":
 							options = FishPlayer.getAllOnline().filter(p => /[\u3040-\u30FF]/.test(p.name));
+							needsConfirm = true;
 							break;
 						case "@korean":
 							options = FishPlayer.getAllOnline().filter(p => /[\uAC00-\uD7AF\u1100-\u11FF]/.test(p.name));
+							needsConfirm = true;
 							break;
 						case "@nonenglish":
 							//Anything beyond extended ASCII
 							options = FishPlayer.getAllOnline().filter(p => /[\u0100-\uFFFF]/.test(p.name));
+							needsConfirm = true;
 							break;
 						case "@short":
 							options = FishPlayer.getAllOnline().filter(p => p.cleanedName.length <= 3);
@@ -227,11 +233,11 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 							}
 							fail(`Unknown selector ${args[i]}.`);
 					}
+					if(Array.isArray(options)){
+						if(options.length == 0) options = null;
+						else if(options.length == 1 && !needsConfirm) options = options[0];
+					}
 				} else options = FishPlayer.search(FishPlayer.getAllOnline(), args[i]);
-				if(Array.isArray(options)){
-					if(options.length == 0) options = null;
-					else if(options.length == 1) options = options[0];
-				}
 				await disambiguateArgument(
 					options,
 					...commonArgs,
