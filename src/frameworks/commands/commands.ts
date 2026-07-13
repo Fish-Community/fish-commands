@@ -184,6 +184,20 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 						case "@s":
 							options = sender;
 							break;
+						case "@c": {
+							if(!sender?.unit()) fail(`You must have a unit to use the @c selector.`);
+							const { mouseX, mouseY } = sender.player!;
+							if(mouseX == 0 && mouseY == 0) fail(`Unable to read your cursor position. (It says it's exactly at 0,0)`);
+							options = Seq.with(...FishPlayer.getAllOnline().filter(p => p.unit() && p !== sender))
+								.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, mouseX, mouseY)));
+							break;
+						}
+						case "@h": {
+							const { x, y } = sender?.player?.unit() ?? fail(`You must have a unit to use the @h selector.`);
+							options = Seq.with(...FishPlayer.getAllOnline().filter(p => p.unit() && p !== sender))
+								.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, x, y)));
+							break;
+						}
 						default:
 							//Ranks / role flags
 							if(args[i].startsWith("@+") || args[i].startsWith("@=") || args[i].startsWith("@-")){

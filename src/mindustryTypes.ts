@@ -482,6 +482,7 @@ const Mathf: {
 	len(x:number, y:number):number;
 	atan2(x:number, y:number):number;
 	dst(x1:number, y1:number, x2:number, y2:number):number;
+	dst2(x1:number, y1:number, x2:number, y2:number):number;
 };
 const SaveIO: {
 	save(file:Fi):void;
