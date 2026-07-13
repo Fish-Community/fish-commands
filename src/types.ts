@@ -124,3 +124,5 @@ export type AntibotData = {
 	nameBlacklistRegex: string | null;
 	nameGraylistRegex: string | null;
 };
+
+export type SearchResult<T> = T | T[] | null;

@@ -57,6 +57,7 @@ exports.cleanColors = cleanColors;
 exports.computeStatistics = computeStatistics;
 exports.search = search;
 exports.searchFixed = searchFixed;
+exports.resolveSearch = resolveSearch;
 exports.delay = delay;
 var storedValues = {};
 /**
@@ -455,6 +456,12 @@ function searchFixed(options, filters, recomputeOptions) {
         else
             return func(_options, query);
     };
+}
+function resolveSearch(result) {
+    if (Array.isArray(result) && result.length == 1)
+        return result[0];
+    else
+        return null;
 }
 function delay(millis) {
     return new Promise(function (res) { return Timer.schedule(res, millis / 1000); });

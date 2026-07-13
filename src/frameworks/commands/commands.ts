@@ -12,12 +12,12 @@ import { f_client, f_server, outputFormatter_client } from "/frameworks/commands
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
 import { commandArgNames, CommandArgType, commandArgTypes } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
-import { capitalizeText, crash, escapeStringColorsClient, indefiniteArticle, parseError } from "/funcs";
+import { capitalizeText, crash, escapeStringColorsClient, indefiniteArticle, parseError, random, resolveSearch } from "/funcs";
 import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import type { ClientCommandHandler, CommandArg, ServerCommandHandler } from "/types";
-import { getBlock, getItem, getMap, getTeam, getUnitType, handleError, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
+import type { ClientCommandHandler, CommandArg, SearchResult, ServerCommandHandler } from "/types";
+import { getBlock, getItem, getMap, getTeam, getUnitType, handleError, match, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
 
 const hiddenUnauthorizedMessage = "[scarlet]Unknown command. Check [lightgray]/help[scarlet].";
 
@@ -156,8 +156,39 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 		const commonArgs = [args[i], cmdArg, sender, outputArgs] as const;
 		switch(cmdArg.type){
 			case "player": {
+				let options: SearchResult<FishPlayer>;
+				if(args[i].startsWith("@")){
+					switch(args[i]){
+						case "@rand":
+							options = random(FishPlayer.getAllOnline());
+							break;
+						case "@s":
+							options = sender;
+							break;
+						default:
+							//Ranks / role flags
+							if(args[i].startsWith("@+") || args[i].startsWith("@=") || args[i].startsWith("@-")){
+								const query = args[i].slice(2);
+								const rank = resolveSearch(Rank.search(query));
+								if(rank){
+									options = FishPlayer.getAllOnline().filter(p => ({
+										"-": p.rank.level <= rank.level,
+										"=": p.rank == rank,
+										"+": p.rank.level >= rank.level,
+									}[args[i][2] as "-" | "=" | "+"]));
+									break;
+								}
+								const role = resolveSearch(RoleFlag.getByName(query));
+								if(role){
+									options = FishPlayer.getAllOnline().filter(p => p.flags.has(role));
+									break;
+								}
+							}
+							fail(`Unknown keyword ${args[i]}.`);
+					}
+				} else options = FishPlayer.search(FishPlayer.getAllOnline(), args[i]);
 				await disambiguateArgument(
-					FishPlayer.search(FishPlayer.getAllOnline(), args[i]),
+					options,
 					...commonArgs,
 					player => (player.marked() ? prefixes.marked : player.autoflagged ? prefixes.flagged : "") + (Strings.stripColors(player.name).length >= 3 ?
 						player.name

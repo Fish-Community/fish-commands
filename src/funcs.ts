@@ -3,7 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains dozens of simple functions that do not need access to any values from other files.
 For functions that do need values from other files, see utils.ts.
 */
-import type { TagFunction } from "/types";
+import type { SearchResult, TagFunction } from "/types";
 import type { PartialFormatString } from "/frameworks/commands";
 
 const storedValues: Record<string, {
@@ -342,7 +342,7 @@ export function computeStatistics(data:number[]){
 /**
  * Uses an array of progressively less specific search functions to return none, one, or multiple matches.
  */
-export function search<T>(...filters: Array<(x:T, query:string) => boolean>): (options: T[], query:string | undefined) => T | T[] | null {
+export function search<T>(...filters: Array<(x:T, query:string) => boolean>): (options: T[], query:string | undefined) => SearchResult<T> {
 	return function(options, query){
 		if(!query) return options;
 		for(const filter of filters){
@@ -362,6 +362,10 @@ export function searchFixed<T>(options:T[] | (() => T[]), filters: Array<(x:T, q
 			else return func(_options = _options(), query);
 		} else return func(_options, query);
 	};
+}
+export function resolveSearch<T>(result:SearchResult<T>):T | null {
+	if(Array.isArray(result) && result.length == 1) return result[0];
+	else return null;
 }
 export function delay(millis:number):Promise<void> {
 	return new Promise(res => Timer.schedule(res, millis / 1000));
