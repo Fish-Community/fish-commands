@@ -1736,12 +1736,12 @@ We apologize for the inconvenience.`
 		} else return false;
 	}
 	setJokeName(name:string){
-		this.jokeName = name;
-		this.cleanedName = Strings.stripColors(name);
+		this.jokeName = name.trim();
+		this.cleanedName = Strings.stripColors(name).trim();
 	}
 	setName(name:string){
-		this.name = name;
-		this.cleanedName = Strings.stripColors(name);
+		this.name = name.trim();
+		this.cleanedName = Strings.stripColors(name).trim();
 	}
 	freeze(){
 		this.frozen = true;

@@ -2004,12 +2004,12 @@ var FishPlayer = /** @class */ (function () {
             return false;
     };
     FishPlayer.prototype.setJokeName = function (name) {
-        this.jokeName = name;
-        this.cleanedName = Strings.stripColors(name);
+        this.jokeName = name.trim();
+        this.cleanedName = Strings.stripColors(name).trim();
     };
     FishPlayer.prototype.setName = function (name) {
-        this.name = name;
-        this.cleanedName = Strings.stripColors(name);
+        this.name = name.trim();
+        this.cleanedName = Strings.stripColors(name).trim();
     };
     FishPlayer.prototype.freeze = function () {
         this.frozen = true;

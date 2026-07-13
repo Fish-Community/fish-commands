@@ -159,6 +159,25 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				let options: SearchResult<FishPlayer>;
 				if(args[i].startsWith("@")){
 					switch(args[i]){
+						case "@cyrillic": case "@russian":
+							options = FishPlayer.getAllOnline().filter(p => /[\u0400-\u04FF]/.test(p.name));
+							break;
+						case "@china": case "@chinese":
+							options = FishPlayer.getAllOnline().filter(p => /[\u4E00-\u9FFF]/.test(p.name));
+							break;
+						case "@japanese":
+							options = FishPlayer.getAllOnline().filter(p => /[\u3040-\u30FF]/.test(p.name));
+							break;
+						case "@korean":
+							options = FishPlayer.getAllOnline().filter(p => /[\uAC00-\uD7AF\u1100-\u11FF]/.test(p.name));
+							break;
+						case "@nonenglish":
+							//Anything beyond extended ASCII
+							options = FishPlayer.getAllOnline().filter(p => /[\u0100-\uFFFF]/.test(p.name));
+							break;
+						case "@short":
+							options = FishPlayer.getAllOnline().filter(p => p.cleanedName.length <= 3);
+							break;
 						case "@rand":
 							options = random(FishPlayer.getAllOnline());
 							break;
