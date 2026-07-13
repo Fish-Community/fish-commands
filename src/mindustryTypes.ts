@@ -177,6 +177,7 @@ class Administration {
 	kickedIPs: ObjectMap<string, number>;
 	bannedIPs: Seq<string>;
 	subnetBans: Seq<string>;
+	playerInfo: ObjectMap<string, PlayerInfo>;
 	findByName(info:string):ObjectSet<PlayerInfo>;
 	searchNames(name:string):ObjectSet<PlayerInfo>;
 	getInfo(uuid:string):PlayerInfo;

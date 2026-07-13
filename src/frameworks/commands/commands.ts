@@ -192,8 +192,14 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 					}
 					outputArgs[cmdArg.name] = fishP;
 				} else {
+					let options = FishPlayer.search(Object.values(FishPlayer.cachedPlayers), args[i]);
+					if(options == null){
+						options = Vars.netServer.admins.searchNames(args[i]).toSeq().toArray().slice(0, 50)
+							.map(FishPlayer.getFromInfo)
+							.sort((a, b) => b.lastJoined - a.lastJoined);
+					}
 					await disambiguateArgument(
-						FishPlayer.search(Object.values(FishPlayer.cachedPlayers), args[i]),
+						options,
 						...commonArgs,
 						player => Strings.stripColors(player.name).length >= 3 ?
 							player.name
