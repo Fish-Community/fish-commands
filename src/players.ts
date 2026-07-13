@@ -397,6 +397,12 @@ export class FishPlayer {
 		if(data.flags != undefined) this.flags = new Set(data.flags.map(RoleFlag.getByName).filter(Boolean));
 		if(data.achievements != undefined) this.achievements = JsonIO.read(Bits, `{bits:${data.achievements}}`);
 	}
+	/** Use when creating a new FishPlayer. */
+	async downloadData(){
+		const data = await api.getFishPlayerData(this.uuid);
+		if(data) this.updateData(data);
+		return data != null;
+	}
 	getData():UploadedFishPlayerData {
 		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix } = this;
 		return {

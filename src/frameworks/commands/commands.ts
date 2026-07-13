@@ -168,14 +168,29 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 			case "offlinePlayer":
 				if(uuidPattern.test(args[i])){
 					const player = FishPlayer.getById(args[i]);
-					if(player == null) fail(`Player with uuid "${args[i]}" not found. Specify "create:${args[i]}" to create the player.`);
-					outputArgs[cmdArg.name] = player;
-				} else if(args[i].startsWith("create:") && uuidPattern.test(args[i].split("create:")[1])){
-					outputArgs[cmdArg.name] = FishPlayer.getFromInfo(
-						Vars.netServer.admins.getInfo(
-							args[i].split("create:")[1]
-						)
-					);
+					if(player == null){
+						const info = Vars.netServer.admins.getInfoOptional(args[i]);
+						if(info == null)
+							fail(`Player with uuid "${args[i]}" not found on this server. If you're sure the UUID is correct, specify "@create:${args[i]}" to create the player.`);
+						//Fetch the player
+						const fishP = FishPlayer.getFromInfo(info);
+						try {
+							await fishP.downloadData();
+						} catch(err){
+							fail(`Network error while downloading fish player data for ${args[i]}: ${parseError(err)}`);
+						}
+						outputArgs[cmdArg.name] = fishP;
+					} else {
+						outputArgs[cmdArg.name] = player;
+					}
+				} else if(args[i].startsWith("@create:") && uuidPattern.test(args[i].split("@create:")[1])){
+					const fishP = FishPlayer.getFromInfo(Vars.netServer.admins.getInfo(args[i].split("@create:")[1]));
+					try {
+						await fishP.downloadData();
+					} catch(err){
+						fail(`Network error while downloading fish player data for ${args[i]}: ${parseError(err)}`);
+					}
+					outputArgs[cmdArg.name] = fishP;
 				} else {
 					await disambiguateArgument(
 						FishPlayer.search(Object.values(FishPlayer.cachedPlayers), args[i]),

@@ -489,6 +489,22 @@ var FishPlayer = /** @class */ (function () {
         if (data.achievements != undefined)
             this.achievements = JsonIO.read(Bits, "{bits:".concat(data.achievements, "}"));
     };
+    /** Use when creating a new FishPlayer. */
+    FishPlayer.prototype.downloadData = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var data;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, api.getFishPlayerData(this.uuid)];
+                    case 1:
+                        data = _a.sent();
+                        if (data)
+                            this.updateData(data);
+                        return [2 /*return*/, data != null];
+                }
+            });
+        });
+    };
     FishPlayer.prototype.getData = function () {
         var _a = this, uuid = _a.uuid, name = _a.name, muted = _a.muted, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, language = _a.language, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
         return {
