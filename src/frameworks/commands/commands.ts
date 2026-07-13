@@ -152,7 +152,9 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				args[i] = "";
 				//it will be resolved later
 			} else {
-				fail(`No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`);
+				if(sender){
+					args[i] = await Menu.text(`/${commandName}`, `Specify a value for the argument "${cmdArg.name}"`, sender);
+				} else fail(`No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`);
 			}
 		}
 
@@ -419,7 +421,7 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map", "mapOrRandom"];
 
 function isArgOptional(arg:CommandArg, allowMenus:boolean){
-	return arg.isOptional || (argsSupportingBlank.includes(arg.type) && allowMenus);
+	return arg.isOptional || allowMenus;
 }
 
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
