@@ -243,7 +243,7 @@ var argsSupportingBlank = ["player", "offlinePlayer", "unittype", "map", "mapOrR
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 function processArgs(args, processedCmdArgs, sender) {
     return __awaiter(this, void 0, void 0, function () {
-        var outputArgs, _a, _b, _c, i, cmdArg, commonArgs, _d, player, info, fishP, err_1, fishP, err_2, num, number, milliseconds, block, e_2_1;
+        var outputArgs, _a, _b, _c, i, cmdArg, commonArgs, _d, player, info, fishP, err_1, fishP, err_2, options, num, number, milliseconds, block, e_2_1;
         var e_2, _e;
         var _f;
         return __generator(this, function (_g) {
@@ -341,10 +341,17 @@ function processArgs(args, processedCmdArgs, sender) {
                 case 16:
                     outputArgs[cmdArg.name] = fishP;
                     return [3 /*break*/, 19];
-                case 17: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([players_1.FishPlayer.search(Object.values(players_1.FishPlayer.cachedPlayers), args[i])], __read(commonArgs), false), [function (player) { return Strings.stripColors(player.name).length >= 3 ?
-                            player.name
-                            : (0, funcs_1.escapeStringColorsClient)(player.name); },
-                        2], false))];
+                case 17:
+                    options = players_1.FishPlayer.search(Object.values(players_1.FishPlayer.cachedPlayers), args[i]);
+                    if (options == null) {
+                        options = Vars.netServer.admins.searchNames(args[i]).toSeq().toArray().slice(0, 50)
+                            .map(players_1.FishPlayer.getFromInfo)
+                            .sort(function (a, b) { return b.lastJoined - a.lastJoined; });
+                    }
+                    return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([options], __read(commonArgs), false), [function (player) { return Strings.stripColors(player.name).length >= 3 ?
+                                player.name
+                                : (0, funcs_1.escapeStringColorsClient)(player.name); },
+                            2], false))];
                 case 18:
                     _g.sent();
                     _g.label = 19;

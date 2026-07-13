@@ -139,9 +139,9 @@ const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unitt
 export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
-		if(!(i in args) || args[i] === ""){
+		if(!(i in args) || args[i] === "" || args[i] === "@"){
 			//if the arg was not provided or it was empty
-			if(cmdArg.isOptional){
+			if(cmdArg.isOptional && args[i] !== "@"){
 				outputArgs[cmdArg.name] = undefined;
 				continue;
 			} else if(sender && argsSupportingBlank.includes(cmdArg.type)){
