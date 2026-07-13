@@ -632,10 +632,10 @@ function skipWaves(requestedWaves, runIntermediateWaves) {
 exports.vnwCondition = {
     waveUnits: new Seq(),
     onWaveStart: function () {
-        this.waveUnits = Groups.unit.copy().retainAll(function (u) { return u.team == Vars.state.rules.defaultTeam; });
+        this.waveUnits = Groups.unit.copy().retainAll(function (u) { return u.team == Vars.state.rules.waveTeam; });
     },
     check: function () {
-        return !this.waveUnits.contains(boolf(function (u) { return !u.dead; }));
+        return !this.waveUnits.contains(boolf(function (u) { return !u.dead && u.team == Vars.state.rules.waveTeam; }));
     }
 };
 function logHTrip(player, name, message) {

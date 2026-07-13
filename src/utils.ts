@@ -479,10 +479,10 @@ export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean)
 export const vnwCondition = {
 	waveUnits: new Seq<Unit>(),
 	onWaveStart(){
-		this.waveUnits = Groups.unit.copy().retainAll(u => u.team == Vars.state.rules.defaultTeam);
+		this.waveUnits = Groups.unit.copy().retainAll(u => u.team == Vars.state.rules.waveTeam);
 	},
 	check(){
-		return !this.waveUnits.contains(boolf<Unit>(u => !u.dead));
+		return !this.waveUnits.contains(boolf<Unit>(u => !u.dead && u.team == Vars.state.rules.waveTeam));
 	}
 };
 
