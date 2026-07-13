@@ -139,12 +139,13 @@ const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unitt
 export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
-		if(!(i in args) || args[i] === "" || args[i] === "@"){
+		if(!(i in args) || args[i] === "" || args[i] === "@" || args[i] === "@0"){
 			//if the arg was not provided or it was empty
 			if(cmdArg.isOptional && args[i] !== "@"){
 				outputArgs[cmdArg.name] = undefined;
 				continue;
 			} else if(sender && argsSupportingBlank.includes(cmdArg.type)){
+				args[i] = "";
 				//it will be resolved later
 			} else {
 				fail(`No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`);
