@@ -135,6 +135,7 @@ var FishPlayer = /** @class */ (function () {
         /** Mapping from command to usage data. */
         this.usageData = {};
         this.tapInfo = {
+            resolve: null,
             commandName: null,
             lastArgs: {},
             mode: "once",
@@ -784,6 +785,7 @@ var FishPlayer = /** @class */ (function () {
         //Clear temporary states such as menu and taphandler
         fishP.activeMenus = [];
         fishP.tapInfo.commandName = null;
+        fishP.tapInfo.resolve = null;
         fishP.updateStats(function (stats) { return stats.timeInGame += (Date.now() - fishP.lastJoined); }); //Time between joining and leaving
         fishP.lastJoined = Date.now();
         this.recentLeaves.unshift(fishP);
@@ -1043,6 +1045,7 @@ var FishPlayer = /** @class */ (function () {
             //Clear temporary states such as menu and taphandler
             fishPlayer.activeMenus = [];
             fishPlayer.tapInfo.commandName = null;
+            fishPlayer.tapInfo.resolve = null;
             //Update stats
             if (!_this.ignoreGameOver && fishPlayer.team() != Team.derelict && winningTeam != Team.derelict) {
                 fishPlayer.updateStats(function (stats) { return stats.gamesFinished++; });
@@ -1927,6 +1930,12 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.updateStats = function (func) {
         func(this.stats);
         func(this.globalStats);
+    };
+    FishPlayer.prototype.waitForTap = function () {
+        var _this = this;
+        return new Promise(function (resolve) {
+            _this.tapInfo.resolve = function (x, y) { return resolve([x, y]); };
+        });
     };
     /**
      * Returns a score between 0 and 1, as an estimate of the player's skill level.

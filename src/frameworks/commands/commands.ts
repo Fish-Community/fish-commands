@@ -423,6 +423,11 @@ export function convertArgs(processedCmdArgs:CommandArg[], allowMenus:boolean):s
 
 export function handleTapEvent(event:EventType["TapEvent"]){
 	const sender = FishPlayer.get(event.player);
+	if(sender.tapInfo.resolve){
+		const tmp = sender.tapInfo.resolve;
+		sender.tapInfo.resolve = null;
+		tmp(event.tile.x, event.tile.y);
+	}
 	if(sender.tapInfo.commandName == null) return;
 	const command = allCommands[sender.tapInfo.commandName];
 	const usageData = sender.getUsageData(sender.tapInfo.commandName);

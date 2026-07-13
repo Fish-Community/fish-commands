@@ -613,6 +613,11 @@ function convertArgs(processedCmdArgs, allowMenus) {
 function handleTapEvent(event) {
     var _a;
     var sender = players_1.FishPlayer.get(event.player);
+    if (sender.tapInfo.resolve) {
+        var tmp = sender.tapInfo.resolve;
+        sender.tapInfo.resolve = null;
+        tmp(event.tile.x, event.tile.y);
+    }
     if (sender.tapInfo.commandName == null)
         return;
     var command = exports.allCommands[sender.tapInfo.commandName];

@@ -81,6 +81,7 @@ export class FishPlayer {
 		tapLastUsedSuccessfully: number;
 	}> = {};
 	tapInfo = {
+		resolve: null as null | ((x:number, y:number) => void),
 		commandName: null as string | null,
 		lastArgs: {} as Record<string, FishCommandArgType>,
 		mode: "once" as "once" | "on",
@@ -623,6 +624,7 @@ export class FishPlayer {
 		//Clear temporary states such as menu and taphandler
 		fishP.activeMenus = [];
 		fishP.tapInfo.commandName = null;
+		fishP.tapInfo.resolve = null;
 		fishP.updateStats(stats => stats.timeInGame += (Date.now() - fishP.lastJoined)); //Time between joining and leaving
 		fishP.lastJoined = Date.now();
 		this.recentLeaves.unshift(fishP);
@@ -862,6 +864,7 @@ export class FishPlayer {
 			//Clear temporary states such as menu and taphandler
 			fishPlayer.activeMenus = [];
 			fishPlayer.tapInfo.commandName = null;
+			fishPlayer.tapInfo.resolve = null;
 			//Update stats
 			if(!this.ignoreGameOver && fishPlayer.team() != Team.derelict && winningTeam != Team.derelict){
 				fishPlayer.updateStats(stats => stats.gamesFinished ++);
@@ -1673,6 +1676,11 @@ We apologize for the inconvenience.`
 	updateStats(func:(stats:Stats) => void):void {
 		func(this.stats);
 		func(this.globalStats);
+	}
+	waitForTap():Promise<[number, number]> {
+		return new Promise(resolve => {
+			this.tapInfo.resolve = (x, y) => resolve([x, y]);
+		});
 	}
 
 	/**
