@@ -364,8 +364,10 @@ export function searchFixed<T>(options:T[] | (() => T[]), filters: Array<(x:T, q
 	};
 }
 export function resolveSearch<T>(result:SearchResult<T>):T | null {
-	if(Array.isArray(result) && result.length == 1) return result[0];
-	else return null;
+	if(Array.isArray(result)){
+		if(result.length == 1) return result[0];
+		else return null;
+	} else return result;
 }
 export function delay(millis:number):Promise<void> {
 	return new Promise(res => Timer.schedule(res, millis / 1000));

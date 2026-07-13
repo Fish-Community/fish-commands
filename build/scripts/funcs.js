@@ -458,10 +458,14 @@ function searchFixed(options, filters, recomputeOptions) {
     };
 }
 function resolveSearch(result) {
-    if (Array.isArray(result) && result.length == 1)
-        return result[0];
+    if (Array.isArray(result)) {
+        if (result.length == 1)
+            return result[0];
+        else
+            return null;
+    }
     else
-        return null;
+        return result;
 }
 function delay(millis) {
     return new Promise(function (res) { return Timer.schedule(res, millis / 1000); });

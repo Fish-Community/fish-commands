@@ -213,7 +213,9 @@ function disambiguateArgument(options_1, arg_1, _a, sender_1, outputArgs_1, opti
             switch (_e.label) {
                 case 0:
                     if (!(options == null)) return [3 /*break*/, 1];
-                    (0, errors_1.fail)("".concat((0, funcs_1.capitalizeText)(types_1.commandArgNames[type]), " \"").concat(arg, "\" not found."));
+                    (0, errors_1.fail)(arg.startsWith("@") ?
+                        (0, errors_1.fail)("".concat((0, funcs_1.capitalizeText)(types_1.commandArgNames[type]), " selector ").concat(arg, " returned no results."))
+                        : (0, errors_1.fail)("".concat((0, funcs_1.capitalizeText)(types_1.commandArgNames[type]), " \"").concat(arg, "\" not found.")));
                     return [3 /*break*/, 4];
                 case 1:
                     if (!(options instanceof Array)) return [3 /*break*/, 3];
@@ -349,7 +351,7 @@ function processArgs(args, processedCmdArgs, sender) {
                                                             "-": p.rank.level <= rank_1.level,
                                                             "=": p.rank == rank_1,
                                                             "+": p.rank.level >= rank_1.level,
-                                                        }[args[i][2]]); });
+                                                        }[args[i][1]]); });
                                                         break;
                                                     }
                                                     role_1 = (0, funcs_1.resolveSearch)(ranks_1.RoleFlag.getByName(query));
@@ -358,11 +360,17 @@ function processArgs(args, processedCmdArgs, sender) {
                                                         break;
                                                     }
                                                 }
-                                                (0, errors_1.fail)("Unknown keyword ".concat(args[i], "."));
+                                                (0, errors_1.fail)("Unknown selector ".concat(args[i], "."));
                                         }
                                     }
                                     else
                                         options = players_1.FishPlayer.search(players_1.FishPlayer.getAllOnline(), args[i]);
+                                    if (Array.isArray(options)) {
+                                        if (options.length == 0)
+                                            options = null;
+                                        else if (options.length == 1)
+                                            options = options[0];
+                                    }
                                     return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([options], __read(commonArgs), false), [function (player) { return (player.marked() ? config_1.prefixes.marked : player.autoflagged ? config_1.prefixes.flagged : "") + (Strings.stripColors(player.name).length >= 3 ?
                                                 player.name
                                                 : (0, funcs_1.escapeStringColorsClient)(player.name)); },

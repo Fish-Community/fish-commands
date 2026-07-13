@@ -120,7 +120,11 @@ export async function disambiguateArgument<T extends FishCommandArgType>(
 	options:T | T[] | null, arg: string, {name, type}: CommandArg, sender:FishPlayer | null, outputArgs: Record<string, FishCommandArgType>,
 	optionStringifier: (x:T) => string, columns = 3,
 ){
-	if(options == null) fail(`${capitalizeText(commandArgNames[type])} "${arg}" not found.`);
+	if(options == null) fail(
+		arg.startsWith("@") ?
+			fail(`${capitalizeText(commandArgNames[type])} selector ${arg} returned no results.`)
+		: fail(`${capitalizeText(commandArgNames[type])} "${arg}" not found.`)
+	);
 	else if(options instanceof Array){
 		const word = commandArgNames[type];
 		if(!sender) fail(`Name "${arg}" could refer to more than one ${word}.`);
@@ -212,7 +216,7 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 										"-": p.rank.level <= rank.level,
 										"=": p.rank == rank,
 										"+": p.rank.level >= rank.level,
-									}[args[i][2] as "-" | "=" | "+"]));
+									}[args[i][1] as "-" | "=" | "+"]));
 									break;
 								}
 								const role = resolveSearch(RoleFlag.getByName(query));
@@ -221,9 +225,13 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 									break;
 								}
 							}
-							fail(`Unknown keyword ${args[i]}.`);
+							fail(`Unknown selector ${args[i]}.`);
 					}
 				} else options = FishPlayer.search(FishPlayer.getAllOnline(), args[i]);
+				if(Array.isArray(options)){
+					if(options.length == 0) options = null;
+					else if(options.length == 1) options = options[0];
+				}
 				await disambiguateArgument(
 					options,
 					...commonArgs,
