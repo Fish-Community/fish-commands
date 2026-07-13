@@ -1787,7 +1787,7 @@ We apologize for the inconvenience.`
 	static chatSpam = new Ratekeeper();
 	static chatSpamSlow = new Ratekeeper();
 	activateHeuristics(){
-		if(Gamemode.hexed() || Gamemode.sandbox()) return;
+		if(Gamemode.hexed() || Gamemode.sandbox() || Gamemode.testsrv()) return;
 		//Blocks broken check
 		if(this.joinsLessThan(5)){
 			let tripped = false;

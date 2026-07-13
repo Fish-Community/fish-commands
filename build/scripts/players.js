@@ -2053,7 +2053,7 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.activateHeuristics = function () {
         var _this = this;
-        if (config_1.Gamemode.hexed() || config_1.Gamemode.sandbox())
+        if (config_1.Gamemode.hexed() || config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv())
             return;
         //Blocks broken check
         if (this.joinsLessThan(5)) {
