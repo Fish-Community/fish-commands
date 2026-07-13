@@ -166,19 +166,15 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 					switch(args[i]){
 						case "@cyrillic": case "@russian":
 							options = FishPlayer.getAllOnline().filter(p => /[\u0400-\u04FF]/.test(p.name));
-							needsConfirm = true;
 							break;
 						case "@china": case "@chinese":
 							options = FishPlayer.getAllOnline().filter(p => /[\u4E00-\u9FFF]/.test(p.name));
-							needsConfirm = true;
 							break;
 						case "@japanese":
 							options = FishPlayer.getAllOnline().filter(p => /[\u3040-\u30FF]/.test(p.name));
-							needsConfirm = true;
 							break;
 						case "@korean":
 							options = FishPlayer.getAllOnline().filter(p => /[\uAC00-\uD7AF\u1100-\u11FF]/.test(p.name));
-							needsConfirm = true;
 							break;
 						case "@nonenglish":
 							//Anything beyond extended ASCII
@@ -191,10 +187,10 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 						case "@rand":
 							options = random(FishPlayer.getAllOnline());
 							break;
-						case "@s":
+						case "@s": case "@me": case "@self":
 							options = sender;
 							break;
-						case "@c": {
+						case "@c": case "@cursor": {
 							if(!sender?.unit()) fail(`You must have a unit to use the @c selector.`);
 							const { mouseX, mouseY } = sender.player!;
 							if(mouseX == 0 && mouseY == 0) fail(`Unable to read your cursor position. (It says it's exactly at 0,0)`);
@@ -216,7 +212,7 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 								fail(`Too far away, you must click within 3 tiles of the target.`);
 							break;
 						}
-						case "@h": {
+						case "@h": case "@p": {
 							const { x, y } = sender?.player?.unit() ?? fail(`You must have a unit to use the @h selector.`);
 							needsConfirm = true;
 							options = [
@@ -225,7 +221,7 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 							];
 							break;
 						}
-						case "@r":
+						case "@r": case "@recent":
 							options = Array.from(sender ? sender.recentPlayers : consoleState.recentPlayers);
 							if(options.length == 0) fail(`No recent players. To use this selector, run a command that outputs some players.`);
 							break;

@@ -307,27 +307,28 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         case "@short": return [3 /*break*/, 7];
                                         case "@rand": return [3 /*break*/, 8];
                                         case "@s": return [3 /*break*/, 9];
+                                        case "@me": return [3 /*break*/, 9];
+                                        case "@self": return [3 /*break*/, 9];
                                         case "@c": return [3 /*break*/, 10];
+                                        case "@cursor": return [3 /*break*/, 10];
                                         case "@click": return [3 /*break*/, 11];
                                         case "@h": return [3 /*break*/, 13];
+                                        case "@p": return [3 /*break*/, 13];
                                         case "@r": return [3 /*break*/, 14];
+                                        case "@recent": return [3 /*break*/, 14];
                                     }
                                     return [3 /*break*/, 15];
                                 case 2:
                                     options = players_1.FishPlayer.getAllOnline().filter(function (p) { return /[\u0400-\u04FF]/.test(p.name); });
-                                    needsConfirm = true;
                                     return [3 /*break*/, 16];
                                 case 3:
                                     options = players_1.FishPlayer.getAllOnline().filter(function (p) { return /[\u4E00-\u9FFF]/.test(p.name); });
-                                    needsConfirm = true;
                                     return [3 /*break*/, 16];
                                 case 4:
                                     options = players_1.FishPlayer.getAllOnline().filter(function (p) { return /[\u3040-\u30FF]/.test(p.name); });
-                                    needsConfirm = true;
                                     return [3 /*break*/, 16];
                                 case 5:
                                     options = players_1.FishPlayer.getAllOnline().filter(function (p) { return /[\uAC00-\uD7AF\u1100-\u11FF]/.test(p.name); });
-                                    needsConfirm = true;
                                     return [3 /*break*/, 16];
                                 case 6:
                                     //Anything beyond extended ASCII
