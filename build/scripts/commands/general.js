@@ -1554,7 +1554,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             _d.label = 3;
                         case 3:
                             response = _c;
-                            Call.copyToClipboard(response);
+                            Call.copyToClipboard(sender.con, response);
                             outputSuccess("Copied.");
                             return [2 /*return*/];
                     }

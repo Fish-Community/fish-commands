@@ -1352,7 +1352,7 @@ ${a.hidden ? "This achievement is secret." : ""}\
 					sender.copyOptions,
 					{ optionStringifier: escapeStringColorsClient, columns: 1 }
 				);
-			Call.copyToClipboard(response);
+			Call.copyToClipboard(sender.con, response);
 			outputSuccess("Copied.");
 		}
 	},
