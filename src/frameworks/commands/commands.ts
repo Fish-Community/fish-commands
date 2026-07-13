@@ -140,7 +140,7 @@ export async function disambiguateArgument<T extends FishCommandArgType>(
 const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
-export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
+export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null, commandName:string): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
 		if(!(i in args) || args[i] === "" || args[i] === "@" || args[i] === "@0"){
@@ -198,14 +198,31 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 							if(!sender?.unit()) fail(`You must have a unit to use the @c selector.`);
 							const { mouseX, mouseY } = sender.player!;
 							if(mouseX == 0 && mouseY == 0) fail(`Unable to read your cursor position. (It says it's exactly at 0,0)`);
-							options = Seq.with(...FishPlayer.getAllOnline().filter(p => p.unit() && p !== sender))
+							needsConfirm = true;
+							options = [
+								Seq.with(...FishPlayer.getAllOnline().filter(p => p.unit() && p !== sender))
+									.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, mouseX, mouseY)))
+							];
+							needsConfirm = true;
+							break;
+						}
+						case "@click": {
+							if(!sender?.unit()) fail(`You must have a unit to use the @click selector.`);
+							sender.sendMessage(`/${commandName}: Click a player's unit to select them.`);
+							const [mouseX, mouseY] = (await sender.waitForTap()).map(t => t * 8);
+							options = Seq.with(FishPlayer.getAllOnline().filter(p => p.unit()))
 								.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, mouseX, mouseY)));
+							if(options && Mathf.dst2(options.unit()!.x, options.unit()!.y, mouseX, mouseY) > 24)
+								fail(`Too far away, you must click within 3 tiles of the target.`);
 							break;
 						}
 						case "@h": {
 							const { x, y } = sender?.player?.unit() ?? fail(`You must have a unit to use the @h selector.`);
-							options = Seq.with(...FishPlayer.getAllOnline().filter(p => p.unit() && p !== sender))
-								.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, x, y)));
+							needsConfirm = true;
+							options = [
+								Seq.with(...FishPlayer.getAllOnline().filter(p => p.unit() && p !== sender))
+									.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, x, y)))
+							];
 							break;
 						}
 						case "@r":
@@ -535,7 +552,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 				//Resolve missing args (such as players that need to be determined through a menu)
 				let resolvedArgs;
 				try {
-					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, fishSender);
+					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, fishSender, name);
 				} catch(err){
 					handleError(err, fishSender, outputFail, `${fishSender.cleanedName} ran /${name}`);
 					return;
@@ -633,7 +650,7 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 				//Process the args
 				let resolvedArgs;
 				try {
-					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, null);
+					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, null, name);
 				} catch(err){
 					//if args are invalid
 					Log.err(err);
