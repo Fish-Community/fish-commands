@@ -145,6 +145,7 @@ export class FishPlayer {
 	kickForSpamAt?:number;
 	skipConfirm: number = -1;
 	copyOptions: string[] | null = null;
+	recentPlayers = new Set<FishPlayer>();
 	//#endregion
 	
 	//#region Stored data

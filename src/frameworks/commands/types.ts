@@ -124,6 +124,8 @@ export type FishCommandHandlerUtils = {
 	handleTaps(this: void, mode: TapHandleMode): void;
 	/** Call this function to add text to /copy. */
 	copy<T extends string | number | undefined | null>(this: void, text:T):T;
+	/** Call this function to add a player to the recent players list. */
+	player<T extends mindustryPlayer | FishPlayer | PlayerInfo | null>(this: void, player:T):T;
 	// copy: {
 	// 	<T extends string>(text:T):T;
 	// 	category: null; 
@@ -148,6 +150,8 @@ export type FishConsoleCommandRunner<ArgType extends string, StoredData> = (_: {
 	outputFail(this: void, message: string | PartialFormatString): void;
 	/** Outputs text to the console. Tab characters are replaced with 4 spaces. */
 	output(this: void, message: string | PartialFormatString): void;
+	/** Call this function to add a player to the recent players list. */
+	player<T extends mindustryPlayer | FishPlayer | PlayerInfo | null>(this: void, player:T):T;
 	/** Use to tag template literals, formatting players, numbers, ranks, and more */
 	f: FFunction;
 	/** Executes a server console command. Be careful to not commit recursion as that will cause a crash.*/
@@ -189,6 +193,8 @@ export type TapHandler<ArgType extends string, StoredData> = (_: {
 	lastUsedSuccessfully: number;
 	/** Call this function to add text to /copy. */
 	copy<T extends string | number | undefined | null>(this: void, text:T):T;
+	/** Call this function to add a player to the recent players list. */
+	player<T extends mindustryPlayer | FishPlayer | PlayerInfo | null>(this: void, player:T):T;
 }) => unknown;
 
 export type FishCommandRequirement<ArgType extends string, StoredData> = (data: FishCommandHandlerData<ArgType, StoredData>) => unknown;

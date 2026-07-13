@@ -90,7 +90,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.consoleCommandList = exports.commandList = exports.allConsoleCommands = exports.allCommands = void 0;
+exports.consoleState = exports.consoleCommandList = exports.commandList = exports.allConsoleCommands = exports.allCommands = void 0;
 exports.command = command;
 exports.processArgString = processArgString;
 exports.formatArg = formatArg;
@@ -334,6 +334,11 @@ function processArgs(args, processedCmdArgs, sender) {
                                                 options = Seq.with.apply(Seq, __spreadArray([], __read(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.unit() && p !== sender; })), false)).min(floatf(function (p) { return Mathf.dst2(p.unit().x, p.unit().y, x_1, y_1); }));
                                                 break;
                                             }
+                                            case "@r":
+                                                options = Array.from(sender ? sender.recentPlayers : exports.consoleState.recentPlayers);
+                                                if (options.length == 0)
+                                                    (0, errors_1.fail)("No recent players. To use this selector, run a command that outputs some players.");
+                                                break;
                                             default:
                                                 //Ranks / role flags
                                                 if (args[i].startsWith("@+") || args[i].startsWith("@=") || args[i].startsWith("@-")) {
@@ -600,6 +605,7 @@ function handleTapEvent(event) {
     var usageData = sender.getUsageData(sender.tapInfo.commandName);
     var handleTapsUpdated = false;
     var shouldClearCopy = true;
+    var shouldClearPlayers = true;
     try {
         var failed_1 = false;
         (_a = command.tapped) === null || _a === void 0 ? void 0 : _a.call(command, {
@@ -635,7 +641,20 @@ function handleTapEvent(event) {
                 if (text)
                     sender.copyOptions.push(String(text));
                 return text;
-            }
+            },
+            player: function (p) {
+                if (shouldClearPlayers) {
+                    sender.recentPlayers.clear();
+                    shouldClearPlayers = false;
+                }
+                if (p instanceof players_1.FishPlayer)
+                    sender.recentPlayers.add(p);
+                else if (p instanceof Player)
+                    sender.recentPlayers.add(players_1.FishPlayer.get(p));
+                else if (p instanceof Administration.PlayerInfo)
+                    sender.recentPlayers.add(players_1.FishPlayer.getFromInfo(p));
+                return p;
+            },
         });
         if (!failed_1)
             usageData.tapLastUsedSuccessfully = Date.now();
@@ -663,7 +682,7 @@ function register(commands, clientHandler, serverHandler) {
         clientHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
         clientHandler.register(name, convertArgs(processedCmdArgs, true), data.description, new CommandHandler.CommandRunner({ accept: function (unjoinedRawArgs, sender) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var fishSender, rawArgs, resolvedArgs, err_3, shouldClearCopy, usageData, failed, args_1, requirements, err_4;
+                    var fishSender, rawArgs, resolvedArgs, err_3, shouldClearCopy, shouldClearPlayers, usageData, failed, args_1, requirements, err_4;
                     var _a;
                     return __generator(this, function (_b) {
                         switch (_b.label) {
@@ -699,6 +718,7 @@ function register(commands, clientHandler, serverHandler) {
                                 return [2 /*return*/];
                             case 4:
                                 shouldClearCopy = true;
+                                shouldClearPlayers = true;
                                 usageData = fishSender.getUsageData(name);
                                 failed = false;
                                 _b.label = 5;
@@ -740,7 +760,20 @@ function register(commands, clientHandler, serverHandler) {
                                         if (text)
                                             fishSender.copyOptions.push(String(text));
                                         return text;
-                                    }
+                                    },
+                                    player: function (p) {
+                                        if (shouldClearPlayers) {
+                                            fishSender.recentPlayers.clear();
+                                            shouldClearPlayers = false;
+                                        }
+                                        if (p instanceof players_1.FishPlayer)
+                                            fishSender.recentPlayers.add(p);
+                                        else if (p instanceof Player)
+                                            fishSender.recentPlayers.add(players_1.FishPlayer.get(p));
+                                        else if (p instanceof Administration.PlayerInfo)
+                                            fishSender.recentPlayers.add(players_1.FishPlayer.getFromInfo(p));
+                                        return p;
+                                    },
                                 };
                                 requirements = typeof data.requirements == "function" ? data.requirements(args_1) : data.requirements;
                                 requirements === null || requirements === void 0 ? void 0 : requirements.forEach(function (r) { return r(args_1); });
@@ -780,6 +813,9 @@ function register(commands, clientHandler, serverHandler) {
         finally { if (e_3) throw e_3.error; }
     }
 }
+exports.consoleState = {
+    recentPlayers: new Set(),
+};
 function registerConsole(commands, serverHandler) {
     var e_4, _a;
     var _loop_3 = function (name, data) {
@@ -788,7 +824,7 @@ function registerConsole(commands, serverHandler) {
         serverHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
         serverHandler.register(name, convertArgs(processedCmdArgs, false), data.description, new CommandHandler.CommandRunner({ accept: function (rawArgs) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var resolvedArgs, err_5, usageData, failed_2;
+                    var resolvedArgs, err_5, shouldClearPlayers, usageData, failed_2;
                     var _a;
                     var _b;
                     return __generator(this, function (_c) {
@@ -809,10 +845,23 @@ function registerConsole(commands, serverHandler) {
                                 Log.err(err_5);
                                 return [2 /*return*/];
                             case 4:
+                                shouldClearPlayers = false;
                                 usageData = ((_a = globalUsageData[_b = "_console_" + name]) !== null && _a !== void 0 ? _a : (globalUsageData[_b] = { lastUsed: -1, lastUsedSuccessfully: -1 }));
                                 try {
                                     failed_2 = false;
-                                    data.handler(__assign({ rawArgs: rawArgs, args: resolvedArgs, data: data.data, outputFail: function (message) { (0, utils_1.outputConsole)(message, Log.err); failed_2 = true; }, outputSuccess: utils_1.outputConsole, output: utils_1.outputConsole, f: formatting_1.f_server, execServer: function (command) { return serverHandler.handleMessage(command); }, admins: Vars.netServer.admins }, usageData));
+                                    data.handler(__assign({ rawArgs: rawArgs, args: resolvedArgs, data: data.data, outputFail: function (message) { (0, utils_1.outputConsole)(message, Log.err); failed_2 = true; }, outputSuccess: utils_1.outputConsole, output: utils_1.outputConsole, f: formatting_1.f_server, execServer: function (command) { return serverHandler.handleMessage(command); }, player: function (p) {
+                                            if (shouldClearPlayers) {
+                                                exports.consoleState.recentPlayers.clear();
+                                                shouldClearPlayers = false;
+                                            }
+                                            if (p instanceof players_1.FishPlayer)
+                                                exports.consoleState.recentPlayers.add(p);
+                                            else if (p instanceof Player)
+                                                exports.consoleState.recentPlayers.add(players_1.FishPlayer.get(p));
+                                            else if (p instanceof Administration.PlayerInfo)
+                                                exports.consoleState.recentPlayers.add(players_1.FishPlayer.getFromInfo(p));
+                                            return p;
+                                        }, admins: Vars.netServer.admins }, usageData));
                                     usageData.lastUsed = Date.now();
                                     if (!failed_2)
                                         usageData.lastUsedSuccessfully = Date.now();

@@ -198,6 +198,10 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 								.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, x, y)));
 							break;
 						}
+						case "@r":
+							options = Array.from(sender ? sender.recentPlayers : consoleState.recentPlayers);
+							if(options.length == 0) fail(`No recent players. To use this selector, run a command that outputs some players.`);
+							break;
 						default:
 							//Ranks / role flags
 							if(args[i].startsWith("@+") || args[i].startsWith("@=") || args[i].startsWith("@-")){
@@ -410,6 +414,7 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 	const usageData = sender.getUsageData(sender.tapInfo.commandName);
 	let handleTapsUpdated = false;
 	let shouldClearCopy = true;
+	let shouldClearPlayers = true;
 	try {
 		let failed = false;
 		command.tapped?.({
@@ -444,7 +449,17 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 				}
 				if(text) sender.copyOptions!.push(String(text));
 				return text;
-			}
+			},
+			player(p){
+				if(shouldClearPlayers){
+					sender.recentPlayers.clear();
+					shouldClearPlayers = false;
+				}
+				if(p instanceof FishPlayer) sender.recentPlayers!.add(p);
+				else if(p instanceof Player) sender.recentPlayers!.add(FishPlayer.get(p));
+				else if(p instanceof Administration.PlayerInfo) sender.recentPlayers!.add(FishPlayer.getFromInfo(p));
+				return p;
+			},
 		});
 		if(!failed)
 			usageData.tapLastUsedSuccessfully = Date.now();
@@ -508,6 +523,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 				}
 
 				let shouldClearCopy = true;
+				let shouldClearPlayers = true;
 
 				//Run the command handler
 				const usageData = fishSender.getUsageData(name);
@@ -546,7 +562,17 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 							}
 							if(text) fishSender.copyOptions!.push(String(text));
 							return text;
-						}
+						},
+						player(p){
+							if(shouldClearPlayers){
+								fishSender.recentPlayers.clear();
+								shouldClearPlayers = false;
+							}
+							if(p instanceof FishPlayer) fishSender.recentPlayers!.add(p);
+							else if(p instanceof Player) fishSender.recentPlayers!.add(FishPlayer.get(p));
+							else if(p instanceof Administration.PlayerInfo) fishSender.recentPlayers!.add(FishPlayer.getFromInfo(p));
+							return p;
+						},
 					};
 					const requirements = typeof data.requirements == "function" ? data.requirements(args) : data.requirements;
 					requirements?.forEach(r => r(args));
@@ -565,6 +591,10 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 		allCommands[name] = data;
 	}
 }
+
+export const consoleState = {
+	recentPlayers: new Set<FishPlayer>(),
+};
 
 export function registerConsole(commands:Record<string, FishConsoleCommandData<string, any>>, serverHandler:ServerCommandHandler){
 
@@ -591,6 +621,8 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 					return;
 				}
 
+				let shouldClearPlayers = false;
+
 				const usageData = (globalUsageData["_console_" + name] ??= { lastUsed: -1, lastUsedSuccessfully: -1 });
 				try {
 					let failed = false;
@@ -603,6 +635,16 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 						output: outputConsole,
 						f: f_server,
 						execServer: command => serverHandler.handleMessage(command),
+						player(p){
+							if(shouldClearPlayers){
+								consoleState.recentPlayers.clear();
+								shouldClearPlayers = false;
+							}
+							if(p instanceof FishPlayer) consoleState.recentPlayers.add(p);
+							else if(p instanceof Player) consoleState.recentPlayers.add(FishPlayer.get(p));
+							else if(p instanceof Administration.PlayerInfo) consoleState.recentPlayers.add(FishPlayer.getFromInfo(p));
+							return p;
+						},
 						admins: Vars.netServer.admins,
 						...usageData
 					});

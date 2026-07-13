@@ -193,6 +193,7 @@ var FishPlayer = /** @class */ (function () {
         this.chatSpam = new Ratekeeper();
         this.skipConfirm = -1;
         this.copyOptions = null;
+        this.recentPlayers = new Set();
         /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
         this.muted = false;
