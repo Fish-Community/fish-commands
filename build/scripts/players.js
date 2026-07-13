@@ -2109,7 +2109,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.votekickActionRate = new Ratekeeper();
     FishPlayer.lastVKActions = [];
     FishPlayer.globalSusChat = new Ratekeeper();
-    FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { return p.player.id.toString() === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
+    FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { var _a; return ((_a = p.player) === null || _a === void 0 ? void 0 : _a.id.toString()) === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
     // (p, str) => p.cleanedName.includes(str),

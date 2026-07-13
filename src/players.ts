@@ -252,7 +252,7 @@ export class FishPlayer {
 	}
 	static search = search<FishPlayer>(
 		(p, str) => p.uuid === str,
-		(p, str) => p.player!.id.toString() === str,
+		(p, str) => p.player?.id.toString() === str,
 		(p, str) => p.name.toLowerCase() === str.toLowerCase(),
 		// (p, str) => p.cleanedName === str,
 		(p, str) => p.cleanedName.toLowerCase() === str.toLowerCase(),
