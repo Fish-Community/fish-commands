@@ -182,19 +182,22 @@ export const commands = commandList({
 				outputSuccess(`Tilelog disabled.`);
 			}
 		},
-		tapped({tile, x, y, output, copy, sender, admins, data}){
+		tapped({tile, x, y, output, copy, player, sender, admins, data}){
 			const historyData = tileHistory[`${x},${y}`] ?? fail(`There is no recorded history for the selected tile (${tile.x}, ${tile.y}).`);
 			const history = StringIO.read(historyData, str => str.readArray(d => ({
 				action: d.readString(2),
 				uuid: d.readString(3)!,
 				time: d.readNumber(16),
 				type: d.readString(2),
-			}), 1));
+			}), 1)).map(h => ({
+				...h,
+				info: uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null,
+			}));
 			output(`[yellow]Tile history for tile (${tile.x}, ${tile.y}):\n` + history.map(e =>
-				uuidPattern.test(e.uuid) ?
+				e.info ?
 					(sender.hasPerm("viewUUIDs") && data.showUUID ?
-						`[yellow]${copy(admins.getInfoOptional(e.uuid)?.plainLastName())}[lightgray](${copy(e.uuid)})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
-					: `[yellow]${copy(admins.getInfoOptional(e.uuid)?.plainLastName())} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
+						`[yellow]${copy(e.info.plainLastName())}[lightgray](${copy(e.uuid)})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
+					: `[yellow]${copy(e.info.plainLastName())} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
 				: `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
 			).join('\n'));
 		}
@@ -223,7 +226,7 @@ export const commands = commandList({
 					outputSuccess(`Aoelog disabled.`);
 				}
 			},
-			tapped({x, y, output, outputFail, copy, sender, admins, handleTaps, args}) {
+			tapped({x, y, output, outputFail, copy, player, sender, admins, handleTaps, args}) {
 				function handleArea(p1: [number, number], p2: [number, number]){
 					const minX = Math.min(p1[0], p2[0]);
 					const maxX = Math.max(p1[0], p2[0]);
@@ -241,16 +244,19 @@ export const commands = commandList({
 								uuid: d.readString(3) ?? "??",
 								time: d.readNumber(16),
 								type: d.readString(2) ?? "??",
-							}), 1));
+							}), 1)).map(h => ({
+								...h,
+								info: uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null,
+							}));;
 							if(args.action) history = history.filter(e => e.action === args.action);
 							if(history.length == 0) continue;
-							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e => {
-								if(uuidPattern.test(e.uuid)){
-									if(sender.hasPerm("viewUUIDs"))
-										return `[yellow]${copy(admins.getInfoOptional(e.uuid)?.plainLastName())}[lightgray](${copy(e.uuid)})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
-									else return `[yellow]${copy(admins.getInfoOptional(e.uuid)?.plainLastName())} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
-								} else return `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
-							}).join('\n'));
+							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e =>
+								e.info ?
+									(sender.hasPerm("viewUUIDs") ?
+										`[yellow]${copy(e.info.plainLastName())}[lightgray](${copy(e.uuid)})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
+									: `[yellow]${copy(e.info.plainLastName())} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
+								: `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
+							).join('\n'));
 							limitTiles ++;
 							if(limitTiles === amount) break outer;
 						}
@@ -536,6 +542,8 @@ export const commands = commandList({
 		perm: Perm.chat,
 		handler({ args, sender, output, f }) {
 			recentWhispers[args.player.uuid] = sender.uuid;
+			args.player.recentPlayers.clear();
+			args.player.recentPlayers.add(sender);
 			args.player.sendMessage(`${sender.prefixedName}[lightgray] whispered:[#BBBBBB] ${args.message}`);
 			output(f`[lightgray]Whispered to ${args.player}[lightgray]:[#BBBBBB] ${args.message}`);
 		},
@@ -1115,7 +1123,8 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		args: ["target:player", "global:boolean?"],
 		perm: Perm.none,
 		description: "Views a player's stats.",
-		handler({args:{target, global = false}, output, f}){
+		handler({args:{target, global = false}, output, player, f}){
+			player(target);
 			const stats = global ? target.globalStats : target.stats;
 			output(f`[accent]\
 Statistics for player ${target} ${global ? "across all servers" : "on this server"}:

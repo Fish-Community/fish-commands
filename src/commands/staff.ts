@@ -229,12 +229,13 @@ export const commands = commandList({
 		args: ["time:time?", "name:string?"],
 		description: "Stops an offline player.",
 		perm: Perm.mod,
-		async handler({args, sender, outputFail, outputSuccess, f, admins}){
+		async handler({args, sender, outputFail, player, outputSuccess, f, admins}){
 			const maxPlayers = 60;
 			
 			async function stop(option:PlayerInfo, time:number){
 				const fishP = FishPlayer.getFromInfo(option);
 				if(sender.canModerate(fishP, true)){
+					player(fishP);
 					logAction(fishP.marked() ? time == 1000 ? "freed" : "updated stop time of" : "stopped", sender, option, undefined, time);
 					await fishP.stop(sender, time);
 					outputSuccess(f`Player ${option} was marked for ${formatTime(time)}.`);
@@ -298,7 +299,7 @@ export const commands = commandList({
 		args: ["name:string?"],
 		description: "Mutes an offline player.",
 		perm: Perm.mod,
-		async handler({args, sender, outputSuccess, f, admins}){
+		async handler({args, sender, outputSuccess, player, f, admins}){
 			const maxPlayers = 300;
 			
 			async function mute(option:PlayerInfo){
@@ -308,6 +309,7 @@ export const commands = commandList({
 					title: "Mute Offine Confirmation",
 					confirmText: `[green]Yes, ${fishP.muted ? "unmute" : "mute"} them`,
 				});
+				player(fishP);
 				logAction(fishP.muted ? "unmuted" : "muted", sender, fishP);
 				if(fishP.muted) await fishP.unmute(sender);
 				else await fishP.mute(sender);
@@ -388,7 +390,7 @@ export const commands = commandList({
 		args: ["player:player"],
 		description: "Shows moderation history for a player.",
 		perm: Perm.mod,
-		handler({args, output, copy, f}){
+		handler({args, output, outputFail, copy, f}){
 			if(args.player.history && args.player.history.length > 0){
 				copy(args.player.prefixedName);
 				output(
@@ -398,7 +400,7 @@ export const commands = commandList({
 					).join("\n")
 				);
 			} else {
-				output(f`[yellow]No history was found for player ${args.player}.`);
+				outputFail(f`No history was found for player ${args.player}.`);
 			}
 		}
 	},
@@ -756,6 +758,7 @@ export const commands = commandList({
 		description: `Sends a message to muted players only.`,
 		perm: Perm.mod,
 		handler({sender, args}){
+			sender.recentPlayers = new Set(FishPlayer.getAllOnline().filter(p => p.muted));
 			FishPlayer.messageMuted(sender.prefixedName, args.message);
 		}
 	},
@@ -764,7 +767,7 @@ export const commands = commandList({
 		args: ["target:player", "showColors:boolean?"],
 		description: "Displays information about an online player.",
 		perm: Perm.none,
-		handler({sender, args, output, copy, f}){
+		handler({sender, args, output, copy, player, f}){
 			const info = args.target.info();
 			const names = args.showColors
 				? info.names.map(escapeStringColorsClient).toString(", ")
@@ -1063,11 +1066,12 @@ ${getAntiBotInfo("client")}`
 		args: ["input:string"],
 		description: "Searches playerinfo by name, IP, or UUID.",
 		perm: Perm.viewUUIDs,
-		async handler({args:{input}, admins, output, copy, f, sender}){
+		async handler({args:{input}, admins, output, copy, player, f, sender}){
 			const ips = sender.hasPerm("viewIPs");
 			if(uuidPattern.test(input)){
 				const fishP = FishPlayer.getById(input);
 				const info = admins.getInfoOptional(input);
+				player(fishP ?? info);
 				if(fishP == null && info == null) fail(f`No stored data matched uuid ${input}.`);
 				else if(fishP == null && info) output(f`[accent]\
 Found player info (but no fish player data) for uuid ${input}
@@ -1084,6 +1088,7 @@ ${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${copy(i)}[]`).toString(", ")}` 
 				if(!ips) fail(`You do not have permission to view IPs.`);
 				const matches = admins.findByIPs(input);
 				if(matches.isEmpty()) fail(f`No stored data matched IP ${input}`);
+				matches.each(m => player(m));
 				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}". To copy names, copy the relevant UUID and repeat the search.`);
 				matches.each(info => output(f`[accent]\
 Player with uuid ${copy(info.id)}
@@ -1094,7 +1099,8 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 				if(Strings.stripColors(input).trim().length == 0) fail(`Your query is empty. This would cause all players to be returned. Please use a more specific query.`);
 				const matches = Vars.netServer.admins.searchNames(input);
 				if(matches.isEmpty()) fail(f`No stored data matched name ${input}`);
-				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}". To copy names, copy the relevant UUID and repeat the search.`);
+				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}". To copy names, run /info @r and select a player.`);
+				matches.each(m => player(m));
 				const displayMatches = () => {
 					matches.each(info => output(f`[accent]\
 Player with uuid ${copy(info.id)}
@@ -1267,7 +1273,8 @@ Wave: ${r.wave}`
 		description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
 		perm: Perm.admin,
 		requirements: [Req.moderate("target", false, "admin")],
-		async handler({args: {target}, f, output, outputSuccess}){
+		async handler({args: {target}, f, output, outputSuccess, player}){
+			player(target);
 			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
 			output(`Sending menus.`);
 			for(let i = 0; i < 10; i ++){

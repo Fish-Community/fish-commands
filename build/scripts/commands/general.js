@@ -329,20 +329,19 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         },
         tapped: function (_a) {
             var _b;
-            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, copy = _a.copy, sender = _a.sender, admins = _a.admins, data = _a.data;
+            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, copy = _a.copy, player = _a.player, sender = _a.sender, admins = _a.admins, data = _a.data;
             var historyData = (_b = globals_1.tileHistory["".concat(x, ",").concat(y)]) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("There is no recorded history for the selected tile (".concat(tile.x, ", ").concat(tile.y, ")."));
             var history = funcs_1.StringIO.read(historyData, function (str) { return str.readArray(function (d) { return ({
                 action: d.readString(2),
                 uuid: d.readString(3),
                 time: d.readNumber(16),
                 type: d.readString(2),
-            }); }, 1); });
+            }); }, 1); }).map(function (h) { return (__assign(__assign({}, h), { info: globals_1.uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null })); });
             output("[yellow]Tile history for tile (".concat(tile.x, ", ").concat(tile.y, "):\n") + history.map(function (e) {
-                var _a, _b;
-                return globals_1.uuidPattern.test(e.uuid) ?
+                return e.info ?
                     (sender.hasPerm("viewUUIDs") && data.showUUID ?
-                        "[yellow]".concat(copy((_a = admins.getInfoOptional(e.uuid)) === null || _a === void 0 ? void 0 : _a.plainLastName()), "[lightgray](").concat(copy(e.uuid), ")[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time))
-                        : "[yellow]".concat(copy((_b = admins.getInfoOptional(e.uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName()), " ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time)))
+                        "[yellow]".concat(copy(e.info.plainLastName()), "[lightgray](").concat(copy(e.uuid), ")[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time))
+                        : "[yellow]".concat(copy(e.info.plainLastName()), " ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time)))
                     : "[yellow]".concat(e.uuid, "[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
             }).join('\n'));
         }
@@ -372,7 +371,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 }
             },
             tapped: function (_a) {
-                var x = _a.x, y = _a.y, output = _a.output, outputFail = _a.outputFail, copy = _a.copy, sender = _a.sender, admins = _a.admins, handleTaps = _a.handleTaps, args = _a.args;
+                var x = _a.x, y = _a.y, output = _a.output, outputFail = _a.outputFail, copy = _a.copy, player = _a.player, sender = _a.sender, admins = _a.admins, handleTaps = _a.handleTaps, args = _a.args;
                 function handleArea(p1, p2) {
                     var minX = Math.min(p1[0], p2[0]);
                     var maxX = Math.max(p1[0], p2[0]);
@@ -393,21 +392,18 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                     time: d.readNumber(16),
                                     type: (_c = d.readString(2)) !== null && _c !== void 0 ? _c : "??",
                                 });
-                            }, 1); });
+                            }, 1); }).map(function (h) { return (__assign(__assign({}, h), { info: globals_1.uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null })); });
+                            ;
                             if (args.action)
                                 history = history.filter(function (e) { return e.action === args.action; });
                             if (history.length == 0)
                                 continue;
                             output("[yellow]Tile history for tile (".concat(i, ", ").concat(j, "):\n") + history.map(function (e) {
-                                var _a, _b;
-                                if (globals_1.uuidPattern.test(e.uuid)) {
-                                    if (sender.hasPerm("viewUUIDs"))
-                                        return "[yellow]".concat(copy((_a = admins.getInfoOptional(e.uuid)) === null || _a === void 0 ? void 0 : _a.plainLastName()), "[lightgray](").concat(copy(e.uuid), ")[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
-                                    else
-                                        return "[yellow]".concat(copy((_b = admins.getInfoOptional(e.uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName()), " ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
-                                }
-                                else
-                                    return "[yellow]".concat(e.uuid, "[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
+                                return e.info ?
+                                    (sender.hasPerm("viewUUIDs") ?
+                                        "[yellow]".concat(copy(e.info.plainLastName()), "[lightgray](").concat(copy(e.uuid), ")[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time))
+                                        : "[yellow]".concat(copy(e.info.plainLastName()), " ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time)))
+                                    : "[yellow]".concat(e.uuid, "[yellow] ").concat(e.action, " a [cyan]").concat(e.type, "[] ").concat((0, utils_1.formatTimeRelative)(e.time));
                             }).join('\n'));
                             limitTiles++;
                             if (limitTiles === amount)
@@ -728,6 +724,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         handler: function (_a) {
             var args = _a.args, sender = _a.sender, output = _a.output, f = _a.f;
             globals_1.recentWhispers[args.player.uuid] = sender.uuid;
+            args.player.recentPlayers.clear();
+            args.player.recentPlayers.add(sender);
             args.player.sendMessage("".concat(sender.prefixedName, "[lightgray] whispered:[#BBBBBB] ").concat(args.message));
             output(f(templateObject_8 || (templateObject_8 = __makeTemplateObject(["[lightgray]Whispered to ", "[lightgray]:[#BBBBBB] ", ""], ["[lightgray]Whispered to ", "[lightgray]:[#BBBBBB] ", ""])), args.player, args.message));
         },
@@ -1307,7 +1305,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         description: "Views a player's stats.",
         handler: function (_a) {
-            var _b = _a.args, target = _b.target, _c = _b.global, global = _c === void 0 ? false : _c, output = _a.output, f = _a.f;
+            var _b = _a.args, target = _b.target, _c = _b.global, global = _c === void 0 ? false : _c, output = _a.output, player = _a.player, f = _a.f;
+            player(target);
             var stats = global ? target.globalStats : target.stats;
             output(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, global ? "across all servers" : "on this server", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished));
         }

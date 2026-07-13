@@ -437,6 +437,7 @@ exports.commands = (0, commands_1.commandList)({
                                 case 0:
                                     fishP = players_1.FishPlayer.getFromInfo(option);
                                     if (!sender.canModerate(fishP, true)) return [3 /*break*/, 2];
+                                    player(fishP);
                                     (0, utils_1.logAction)(fishP.marked() ? time == 1000 ? "freed" : "updated stop time of" : "stopped", sender, option, undefined, time);
                                     return [4 /*yield*/, fishP.stop(sender, time)];
                                 case 1:
@@ -453,7 +454,7 @@ exports.commands = (0, commands_1.commandList)({
                 }
                 var maxPlayers, info, possiblePlayers, exactPlayers, score_1, optionPlayer, _c, _d, _e;
                 var _f, _g;
-                var args = _b.args, sender = _b.sender, outputFail = _b.outputFail, outputSuccess = _b.outputSuccess, f = _b.f, admins = _b.admins;
+                var args = _b.args, sender = _b.sender, outputFail = _b.outputFail, player = _b.player, outputSuccess = _b.outputSuccess, f = _b.f, admins = _b.admins;
                 return __generator(this, function (_h) {
                     switch (_h.label) {
                         case 0:
@@ -548,6 +549,7 @@ exports.commands = (0, commands_1.commandList)({
                                         })];
                                 case 1:
                                     _a.sent();
+                                    player(fishP);
                                     (0, utils_1.logAction)(fishP.muted ? "unmuted" : "muted", sender, fishP);
                                     if (!fishP.muted) return [3 /*break*/, 3];
                                     return [4 /*yield*/, fishP.unmute(sender)];
@@ -567,7 +569,7 @@ exports.commands = (0, commands_1.commandList)({
                 }
                 var maxPlayers, info, possiblePlayers, exactPlayers, score_2, option;
                 var _c;
-                var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f, admins = _b.admins;
+                var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, player = _b.player, f = _b.f, admins = _b.admins;
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
@@ -661,7 +663,7 @@ exports.commands = (0, commands_1.commandList)({
         description: "Shows moderation history for a player.",
         perm: commands_1.Perm.mod,
         handler: function (_a) {
-            var args = _a.args, output = _a.output, copy = _a.copy, f = _a.f;
+            var args = _a.args, output = _a.output, outputFail = _a.outputFail, copy = _a.copy, f = _a.f;
             if (args.player.history && args.player.history.length > 0) {
                 copy(args.player.prefixedName);
                 output("[yellow]_______________Player history_______________\n\n" +
@@ -670,7 +672,7 @@ exports.commands = (0, commands_1.commandList)({
                     }).join("\n"));
             }
             else {
-                output(f(templateObject_27 || (templateObject_27 = __makeTemplateObject(["[yellow]No history was found for player ", "."], ["[yellow]No history was found for player ", "."])), args.player));
+                outputFail(f(templateObject_27 || (templateObject_27 = __makeTemplateObject(["No history was found for player ", "."], ["No history was found for player ", "."])), args.player));
             }
         }
     },
@@ -1085,6 +1087,7 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.mod,
         handler: function (_a) {
             var sender = _a.sender, args = _a.args;
+            sender.recentPlayers = new Set(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.muted; }));
             players_1.FishPlayer.messageMuted(sender.prefixedName, args.message);
         }
     },
@@ -1093,7 +1096,7 @@ exports.commands = (0, commands_1.commandList)({
         description: "Displays information about an online player.",
         perm: commands_1.Perm.none,
         handler: function (_a) {
-            var sender = _a.sender, args = _a.args, output = _a.output, copy = _a.copy, f = _a.f;
+            var sender = _a.sender, args = _a.args, output = _a.output, copy = _a.copy, player = _a.player, f = _a.f;
             var info = args.target.info();
             var names = args.showColors
                 ? info.names.map(funcs_1.escapeStringColorsClient).toString(", ")
@@ -1416,7 +1419,7 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 var ips, fishP, info, matches, matches_1, displayMatches;
-                var input = _b.args.input, admins = _b.admins, output = _b.output, copy = _b.copy, f = _b.f, sender = _b.sender;
+                var input = _b.args.input, admins = _b.admins, output = _b.output, copy = _b.copy, player = _b.player, f = _b.f, sender = _b.sender;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
@@ -1424,6 +1427,7 @@ exports.commands = (0, commands_1.commandList)({
                             if (!globals_1.uuidPattern.test(input)) return [3 /*break*/, 1];
                             fishP = players_1.FishPlayer.getById(input);
                             info = admins.getInfoOptional(input);
+                            player(fishP !== null && fishP !== void 0 ? fishP : info);
                             if (fishP == null && info == null)
                                 (0, commands_1.fail)(f(templateObject_65 || (templateObject_65 = __makeTemplateObject(["No stored data matched uuid ", "."], ["No stored data matched uuid ", "."])), input));
                             else if (fishP == null && info)
@@ -1440,6 +1444,7 @@ exports.commands = (0, commands_1.commandList)({
                             matches = admins.findByIPs(input);
                             if (matches.isEmpty())
                                 (0, commands_1.fail)(f(templateObject_69 || (templateObject_69 = __makeTemplateObject(["No stored data matched IP ", ""], ["No stored data matched IP ", ""])), input));
+                            matches.each(function (m) { return player(m); });
                             output(f(templateObject_70 || (templateObject_70 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."], ["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."])), matches.size, matches.size == 1 ? "" : "es", input));
                             matches.each(function (info) { return output(f(templateObject_71 || (templateObject_71 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), copy(info.id), info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", "))); });
                             return [3 /*break*/, 5];
@@ -1449,7 +1454,8 @@ exports.commands = (0, commands_1.commandList)({
                             matches_1 = Vars.netServer.admins.searchNames(input);
                             if (matches_1.isEmpty())
                                 (0, commands_1.fail)(f(templateObject_72 || (templateObject_72 = __makeTemplateObject(["No stored data matched name ", ""], ["No stored data matched name ", ""])), input));
-                            output(f(templateObject_73 || (templateObject_73 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."], ["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."])), matches_1.size, matches_1.size == 1 ? "" : "es", input));
+                            output(f(templateObject_73 || (templateObject_73 = __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\". To copy names, run /info @r and select a player."], ["[accent]Found ", " match", " for search \"", "\". To copy names, run /info @r and select a player."])), matches_1.size, matches_1.size == 1 ? "" : "es", input));
+                            matches_1.each(function (m) { return player(m); });
                             displayMatches = function () {
                                 matches_1.each(function (info) { return output(f(templateObject_74 || (templateObject_74 = __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\\\n", ""])), copy(info.id), info.plainLastName(), (0, funcs_1.escapeStringColorsClient)(info.lastName), info.names.map(funcs_1.escapeStringColorsClient).items.join(", "), ips ? "\nIPs used: ".concat(info.ips.map(function (i) { return "[blue]".concat(i, "[]"); }).toString(", ")) : "")); });
                             };
@@ -1676,10 +1682,11 @@ exports.commands = (0, commands_1.commandList)({
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 var i, j;
-                var target = _b.args.target, f = _b.f, output = _b.output, outputSuccess = _b.outputSuccess;
+                var target = _b.args.target, f = _b.f, output = _b.output, outputSuccess = _b.outputSuccess, player = _b.player;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
+                            player(target);
                             if (target.hasPerm("blockTrolling"))
                                 (0, commands_1.fail)(f(templateObject_84 || (templateObject_84 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), target));
                             output("Sending menus.");
