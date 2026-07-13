@@ -1062,24 +1062,26 @@ ${getAntiBotInfo("client")}`
 	search: {
 		args: ["input:string"],
 		description: "Searches playerinfo by name, IP, or UUID.",
-		perm: Perm.admin,
+		perm: Perm.viewUUIDs,
 		async handler({args:{input}, admins, output, copy, f, sender}){
+			const ips = sender.hasPerm("viewIPs");
 			if(uuidPattern.test(input)){
 				const fishP = FishPlayer.getById(input);
 				const info = admins.getInfoOptional(input);
 				if(fishP == null && info == null) fail(f`No stored data matched uuid ${input}.`);
 				else if(fishP == null && info) output(f`[accent]\
 Found player info (but no fish player data) for uuid ${input}
-Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(copy(info.lastName))})[] [[${info.names.map(escapeStringColorsClient).items.map(copy).join(", ")}]
-IPs used: ${info.ips.map(i => `[blue]${copy(i)}[]`).toString(", ")}`
+Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(copy(info.lastName))})[] [[${info.names.map(escapeStringColorsClient).items.map(copy).join(", ")}]\
+${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${copy(i)}[]`).toString(", ")}` : ""}`
 				);
 				else if(fishP && info) output(f`[accent]\
 Found fish player data for uuid ${input}
-Last name used: "${fishP.name}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.map(copy).join(", ")}]
-IPs used: ${info.ips.map(i => `[blue]${copy(i)}[]`).toString(", ")}`
+Last name used: "${fishP.name}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.map(copy).join(", ")}]\
+${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${copy(i)}[]`).toString(", ")}` : ""}`
 				);
 				else fail(f`Super weird edge case: found fish player data but no player info for uuid ${input}.`);
 			} else if(ipPattern.test(input)){
+				if(!ips) fail(`You do not have permission to view IPs.`);
 				const matches = admins.findByIPs(input);
 				if(matches.isEmpty()) fail(f`No stored data matched IP ${input}`);
 				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}". To copy names, copy the relevant UUID and repeat the search.`);
@@ -1089,14 +1091,15 @@ Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info
 IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 				));
 			} else {
+				if(Strings.stripColors(input).trim().length == 0) fail(`Your query is empty. This would cause all players to be returned. Please use a more specific query.`);
 				const matches = Vars.netServer.admins.searchNames(input);
 				if(matches.isEmpty()) fail(f`No stored data matched name ${input}`);
 				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}". To copy names, copy the relevant UUID and repeat the search.`);
 				const displayMatches = () => {
 					matches.each(info => output(f`[accent]\
 Player with uuid ${copy(info.id)}
-Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]
-IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
+Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]\
+${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 					));
 				};
 				if(matches.size > 20)
