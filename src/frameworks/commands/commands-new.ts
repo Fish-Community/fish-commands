@@ -1,7 +1,7 @@
 import { Perm } from "/frameworks/commands/perm";
 import { Req } from "/frameworks/commands/requirements";
 import type { CommandArgType, FishCommandHandlerUtils, Formattable, PartialFormatString, TapHandleMode, TypeOfArgType } from "/frameworks/commands/types";
-import type { FishPlayer } from "/players";
+import { FishPlayer } from "/players";
 import type { CommandArg, TagFunction } from "/types";
 
 type FishCommandTarget = "ingame" | "console" /* | "discord"*/;
@@ -15,8 +15,10 @@ type NewFishCommandStoredData<
 	Targets extends FishCommandTarget = FishCommandTarget,
 	StoredData = void
 > = {
+	name: string;
 	/** Args for this command. */
-	args: Args;
+	args: Map<string, CommandArg>;
+	targets: Targets[];
 	description: string;
 	/**
 	 * Permission level required for players to run this command.
@@ -148,8 +150,7 @@ type CommandBuilderMethods<Args extends FishCommandArgs, Targets extends FishCom
 		"handler" | "tapped">;
 	tapped(handler:NewTapHandler<Args, StoredData>): CommandBuilder<Args, Targets, StoredData,
 		"handler">;
-	handler(handler:NewFishCommandHandler<Args, Targets, StoredData>): CommandBuilder<Args, Targets, StoredData,
-		never>;
+	handler(handler:NewFishCommandHandler<Args, Targets, StoredData>): NewFishCommandStoredData<Args, Targets, StoredData>;
 };
 type KeyofCommandBuilderMethods = keyof CommandBuilderMethods<FishCommandArgs, FishCommandTarget, void>;
 
@@ -182,7 +183,7 @@ export function command(name:string, perm:Perm, callback?:(builder:CommandBuilde
 			return this;
 		},
 		data<T>(data:T){
-			const _this = this as CommandBuilder<FishCommandArgs, "ingame", T, KeyofCommandBuilderMethods>;
+			const _this = this as never as CommandBuilder<FishCommandArgs, "ingame", T, KeyofCommandBuilderMethods>;
 			_this["~data"] = data;
 			return _this;
 		},
@@ -208,10 +209,151 @@ export function command(name:string, perm:Perm, callback?:(builder:CommandBuilde
 		},
 		handler(handler) {
 			this["~handler"] = handler;
-			return this;
+			const data: NewFishCommandStoredData = {
+				name: this["~name"],
+				args: this["~args"] ?? new Map(),
+				targets: this["~targets"] ?? ["ingame"],
+				description: this["~description"]!,
+				handler: this["~handler"],
+				perm: this["~perm"],
+				customUnauthorizedMessage: this["~customUnauthorizedMessage"],
+				isHidden: this["~isHidden"],
+				data: this["~data"],
+				init: this["~init"],
+				requirements: this["~requirements"],
+				tapped: this["~tapped"],
+			};
+			if(data.targets.includes("ingame")) register(data);
+			if(data.targets.includes("console")) registerConsole(data as any);
+			return data as any;
 		},
 	};
 	return builder;
+}
+
+/**
+ * Registers one command to a client command handler.
+ **/
+function register<
+	Args extends FishCommandArgs,
+	Targets extends FishCommandTarget,
+	StoredData = void
+>(command: NewFishCommandStoredData<Args, Targets, StoredData>){
+	const clientHandler = Vars.netServer.clientCommands;
+	const serverHandler = ServerControl.instance.handler;
+	const { name } = command;
+	clientHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
+	clientHandler.register(
+		name,
+		convertArgs(command.args, true),
+		command.description,
+		// eslint-disable-next-line @typescript-eslint/no-misused-promises
+		new CommandHandler.CommandRunner({ async accept(unjoinedRawArgs: string[], sender: mindustryPlayer){
+			if(!initialized) crash(`Commands not initialized!`);
+
+			const fishSender = FishPlayer.get(sender);
+			FishPlayer.onPlayerCommand(fishSender, name, unjoinedRawArgs);
+
+			//Verify authorization
+			//as a bonus, this crashes if data.perm is undefined
+			if(!command.perm.check(fishSender)){
+				if(command.customUnauthorizedMessage){
+					outputFail(command.customUnauthorizedMessage, sender);
+					FishEvents.fire("commandUnauthorized", [fishSender, name]);
+				} else if(command.isHidden)
+					outputMessage(hiddenUnauthorizedMessage, sender);
+				else
+					outputFail(command.perm.unauthorizedMessage, sender);
+				return;
+			}
+
+			//closure over processedCmdArgs, should be fine
+			//Process the args
+			const rawArgs = joinArgs(unjoinedRawArgs); //TODO: remove this when we replace the command handler
+			//Resolve missing args (such as players that need to be determined through a menu)
+			let resolvedArgs;
+			try {
+				resolvedArgs = await processArgs(rawArgs, command, fishSender, name);
+			} catch(err){
+				handleError(err, fishSender, outputFail, `${fishSender.cleanedName} ran /${name}`);
+				return;
+			}
+
+			let shouldClearCopy = true;
+			let shouldClearPlayers = true;
+
+			//Run the command handler
+			const usageData = fishSender.getUsageData(name);
+			let failed = false;
+			try {
+				const args: NewFishCommandHandlerData<Args, Targets, StoredData> & FishCommandHandlerUtils = {
+					rawArgs,
+					args: resolvedArgs,
+					sender: fishSender,
+					data: command.data,
+					outputFail: message => { outputFail(message, sender); failed = true; },
+					outputSuccess: message => outputSuccess(message, sender),
+					output: message => outputMessage(message, sender),
+					f: f_client,
+					execServer: command => serverHandler.handleMessage(command),
+					admins: Vars.netServer.admins,
+					lastUsedSender: usageData.lastUsed,
+					lastUsedSuccessfullySender: usageData.lastUsedSuccessfully,
+					lastUsedSuccessfully: (globalUsageData[name] ??= { lastUsed: -1, lastUsedSuccessfully: -1 }).lastUsedSuccessfully,
+					allCommands,
+					currentTapMode: fishSender.tapInfo.commandName == null ? "off" : fishSender.tapInfo.mode,
+					handleTaps(mode){
+						if(command.tapped == undefined) crash(`No tap handler to activate: command "${name}"`);
+						if(mode == "off"){
+							fishSender.tapInfo.commandName = null;
+						} else {
+							fishSender.tapInfo.commandName = name;
+							fishSender.tapInfo.mode = mode;
+						}
+						fishSender.tapInfo.lastArgs = resolvedArgs;
+					},
+					copy(text){
+						if(shouldClearCopy){
+							fishSender.copyOptions = [];
+							shouldClearCopy = false;
+						}
+						if(text) fishSender.copyOptions!.push(String(text));
+						return text;
+					},
+					player(p){
+						if(shouldClearPlayers){
+							fishSender.recentPlayers.clear();
+							shouldClearPlayers = false;
+						}
+						if(p instanceof FishPlayer) fishSender.recentPlayers!.add(p);
+						else if(p instanceof Player) fishSender.recentPlayers!.add(FishPlayer.get(p));
+						else if(p instanceof Administration.PlayerInfo) fishSender.recentPlayers!.add(FishPlayer.getFromInfo(p));
+						return p;
+					},
+				};
+				const requirements = command.requirements;
+				requirements?.forEach(r => r(args));
+				await command.handler(args);
+				//Update usage data
+				if(!failed){
+					usageData.lastUsedSuccessfully = globalUsageData[name].lastUsedSuccessfully = Date.now();
+				}
+			} catch(err){
+				handleError(err, fishSender, outputFail, `${fishSender.cleanedName} ran /${name}`);
+			} finally {
+				usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();
+			}
+		} })
+	);
+	allCommands[name] = command;
+}
+
+export function registerConsole<
+	Args extends FishCommandArgs,
+	Targets extends FishCommandTarget & "console",
+	StoredData = void
+>(command: NewFishCommandStoredData<Args, Targets, StoredData>){
+	//todo
 }
 
 command("unpause", Perm.trusted)
