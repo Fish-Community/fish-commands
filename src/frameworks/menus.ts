@@ -140,7 +140,7 @@ export const Menu = {
 			i ++;
 			return optionStringifier(item);
 		}));
-		Call.menu(target.con, registeredListeners.generic, title, description, stringifiedOptions);
+		Call.menu(target.con(), registeredListeners.generic, title, description, stringifiedOptions);
 		return promise;
 	},
 	/** Displays a text input menu to a player, returning a Promise. */
@@ -193,7 +193,7 @@ export const Menu = {
 			}
 		}});
 	
-		Call.textInput(target.con, registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
+		Call.textInput(target.con(), registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
 		return promise;
 	},
 	/** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */

@@ -773,7 +773,7 @@ export const commands = commandList({
 				? info.names.map(escapeStringColorsClient).toString(", ")
 				: [...new Set(info.names.map(n => Strings.stripColors(n)).toArray())].join(", ");
 			output(f`\
-[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player!.id.toString()})
+[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player.id.toString()})
 	[accent]Rank: ${args.target.rank}
 	[accent]Role flags: ${copy(Array.from(args.target.flags).map(f => f.coloredName()).join(" "))}
 	[accent]Stopped: ${f.boolBad(!args.target.hasPerm("play"))}
@@ -801,8 +801,8 @@ export const commands = commandList({
 		data: [],
 		requirements: [Req.positiveInteger("count")],
 		handler({sender, args, data, outputSuccess, f}){
-			const x = args.x ? (args.x * 8) : sender.player!.x;
-			const y = args.y ? (args.y * 8) : sender.player!.y;
+			const x = args.x ? (args.x * 8) : sender.player.x;
+			const y = args.y ? (args.y * 8) : sender.player.y;
 			const team = args.team ?? sender.team();
 			const count = Math.min(args.count ?? 1, 1000);
 			for(let i = 0; i < count; i ++){
@@ -907,7 +907,7 @@ export const commands = commandList({
 			
 			//Additional validation couldn't hurt...
 			const playerInfo_AdminUsid = sender.info().adminUsid;
-			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player!.usid() || sender.usid != sender.player!.usid()){
+			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player.usid() || sender.usid != sender.player.usid()){
 				api.sendModerationMessage(
 `# !!!!! /js authentication failed !!!!!
 Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${sender.uuid}\`
@@ -948,7 +948,7 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 			
 			//Additional validation couldn't hurt...
 			const playerInfo_AdminUsid = sender.info().adminUsid;
-			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player!.usid() || sender.usid != sender.player!.usid()){
+			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player.usid() || sender.usid != sender.player.usid()){
 				api.sendModerationMessage(
 `# !!!!! /js authentication failed !!!!!
 Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${sender.uuid}\`
@@ -1012,8 +1012,8 @@ ${getAntiBotInfo("client")}`
 			data: {unitMapping},
 			requirements: [],
 			handler({sender, outputSuccess}){
-				const emanate = UnitTypes.emanate.spawn(sender.team(), sender.player!.x, sender.player!.y);
-				sender.player!.unit(emanate);
+				const emanate = UnitTypes.emanate.spawn(sender.team(), sender.player.x, sender.player.y);
+				sender.unit(emanate);
 				unitMapping[sender.uuid] = emanate;
 				if(!Gamemode.sandbox()) logAction("spawned an emanate", sender);
 				outputSuccess("Spawned an emanate.");
@@ -1279,7 +1279,7 @@ Wave: ${r.wave}`
 			output(`Sending menus.`);
 			for(let i = 0; i < 10; i ++){
 				for(let j = 0; j < 100; j ++){
-					Call.menu(target.con, listeners.generic, "", "", []);
+					Call.menu(target.con(), listeners.generic, "", "", []);
 				}
 				await delay(100);
 			}

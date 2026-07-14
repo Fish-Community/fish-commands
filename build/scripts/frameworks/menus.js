@@ -186,7 +186,7 @@ exports.Menu = {
             i++;
             return optionStringifier(item);
         }); });
-        Call.menu(target.con, registeredListeners.generic, title, description, stringifiedOptions);
+        Call.menu(target.con(), registeredListeners.generic, title, description, stringifiedOptions);
         return promise;
     },
     /** Displays a text input menu to a player, returning a Promise. */
@@ -222,7 +222,7 @@ exports.Menu = {
                     (0, utils_1.handleError)(err, target, utils_1.outputFail, "".concat(target.cleanedName, " submitted menu \"").concat(title, "\" \"").concat(description, "\""));
                 }
             } });
-        Call.textInput(target.con, registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
+        Call.textInput(target.con(), registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
         return promise;
     },
     /** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */

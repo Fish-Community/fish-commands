@@ -183,7 +183,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     (0, commands_1.fail)("Can only teleport while in a core unit.");
                 if (sender.team() !== args.player.team())
                     (0, commands_1.fail)("Cannot teleport to players on another team.");
-                if ((_d = (_c = sender.unit()).hasPayload) === null || _d === void 0 ? void 0 : _d.call(_c))
+                if ((_d = (_c = sender.unit()) === null || _c === void 0 ? void 0 : _c.hasPayload) === null || _d === void 0 ? void 0 : _d.call(_c))
                     (0, commands_1.fail)("Cannot teleport to players while holding a payload.");
             }
             (0, utils_1.teleportPlayer)(sender.player, args.player.player);
@@ -252,7 +252,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             if (data.lastRanMapStartTime == maps_1.PartialMapRun.current.startTime)
                                 (0, commands_1.fail)("This command was already run on this map.");
                             data.lastRanMapStartTime = maps_1.PartialMapRun.current.startTime;
-                            Timer.schedule(function () { return Call.sound(sender.con, Sounds.rockBreak, 1, 1, 0); }, 0, 0.05, 10);
+                            Timer.schedule(function () { return Call.sound(sender.con(), Sounds.rockBreak, 1, 1, 0); }, 0, 0.05, 10);
                             array = ArcReflect.get(Vars.world.tiles, "array");
                             removed = 0;
                             i = 0;
@@ -295,7 +295,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         handler: function (_a) {
             var sender = _a.sender;
-            Call.openURI(sender.con, config_1.text.discordURL);
+            Call.openURI(sender.con(), config_1.text.discordURL);
         },
     }, tilelog: (0, commands_1.command)({
         args: ['persist:boolean?', 'showUUID:boolean?'],
@@ -492,7 +492,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var sender = _a.sender, lastUsedSuccessfullySender = _a.lastUsedSuccessfullySender;
             if (Date.now() - lastUsedSuccessfullySender > funcs_1.Duration.minutes(1))
                 players_1.FishPlayer.messageAllWithPerm(server.requiredPerm, "".concat(sender.name, "[magenta] has gone to the ").concat(server.name, " server. Use [cyan]/").concat(server.name, " [magenta]to join them!"));
-            Call.connect(sender.con, server.ip, server.port);
+            Call.connect(sender.con(), server.ip, server.port);
         },
     },
 ]; }))), { switch: {
@@ -507,7 +507,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var target = (_b = args.target) !== null && _b !== void 0 ? _b : sender;
             if (globals_1.ipPortPattern.test(args.server) && sender.hasPerm("admin")) {
                 //direct connect
-                Call.connect.apply(Call, __spreadArray([target.con], __read(args.server.split(":")), false));
+                Call.connect.apply(Call, __spreadArray([target.con()], __read(args.server.split(":")), false));
             }
             else {
                 var unknownServerMessage = "Unknown server ".concat(args.server, ". Valid options: ").concat(config_1.FishServer.all.filter(function (s) { return !s.requiredPerm || sender.hasPerm(s.requiredPerm); }).map(function (s) { return s.name; }).join(", "));
@@ -517,7 +517,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     (0, commands_1.fail)(unknownServerMessage);
                 if (target == sender && Date.now() - lastUsedSuccessfullySender > funcs_1.Duration.minutes(1))
                     players_1.FishPlayer.messageAllWithPerm(server.requiredPerm, "".concat(sender.name, "[magenta] has gone to the ").concat(server.name, " server. Use [cyan]/").concat(server.name, " [magenta]to join them!"));
-                Call.connect(target.con, server.ip, server.port);
+                Call.connect(target.con(), server.ip, server.port);
             }
         }
     }, s: {
@@ -577,7 +577,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
-                            if (!!sender.con.mobile) return [3 /*break*/, 2];
+                            if (!!sender.con().mobile) return [3 /*break*/, 2];
                             return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.")];
                         case 1:
                             _d.sent();
@@ -597,13 +597,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                     var unit = target_1.unit();
                                     if (data.has(sender.uuid) && unit) {
                                         // Self.X+(172.5-Self.X)/10
-                                        Call.setCameraPosition(sender.con, unit.x, unit.y);
+                                        Call.setCameraPosition(sender.con(), unit.x, unit.y);
                                         if (senderUnit_1)
                                             senderUnit_1.set(stayX_1, stayY_1);
                                         Timer.schedule(function () { return watch(); }, 0.1, 0.1, 0);
                                     }
                                     else {
-                                        Call.setCameraPosition(sender.con, stayX_1, stayY_1);
+                                        Call.setCameraPosition(sender.con(), stayX_1, stayY_1);
                                     }
                                 })();
                             }
@@ -1562,7 +1562,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             _d.label = 3;
                         case 3:
                             response = _c;
-                            Call.copyToClipboard(sender.con, response);
+                            Call.copyToClipboard(sender.con(), response);
                             outputSuccess("Copied.");
                             return [2 /*return*/];
                     }
@@ -1576,7 +1576,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         requirements: [commands_1.Req.cooldown(5000)],
         handler: function (_a) {
             var _b = _a.args, target = _b.target, string = _b.string, sender = _a.sender, f = _a.f, outputSuccess = _a.outputSuccess;
-            Call.copyToClipboard(target.con, string);
+            Call.copyToClipboard(target.con(), string);
             target.sendMessage("[accent]Copy: ".concat(sender.prefixedName, "[accent] sent you some text to copy."));
             outputSuccess(f(templateObject_26 || (templateObject_26 = __makeTemplateObject(["Sent text to ", ""], ["Sent text to ", ""])), target));
         }

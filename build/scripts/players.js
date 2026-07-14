@@ -759,6 +759,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.onPlayerLeave = function (player) {
         var _a;
         var fishP = this.cachedPlayers[player.uuid()];
+        //at PlayerLeaveEvent, the player is still added
         if (!fishP)
             return;
         if (Vars.netServer.currentlyKicking &&
@@ -1237,7 +1238,8 @@ var FishPlayer = /** @class */ (function () {
                     && !_this.ranksAtLeast("active")
                     && FishPlayer.punishedIPs.length > 0) {
                     _this.autoflagged = true;
-                    _this.stopUnit();
+                    if (_this.connected())
+                        _this.stopUnit();
                     _this.updateName();
                     if (FishPlayer.shouldWhackFlaggedPlayers()) {
                         FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
@@ -1248,14 +1250,15 @@ var FishPlayer = /** @class */ (function () {
                         if (!FishPlayer.antiBotMode())
                             FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".concat(_this.prefixedName, "[cyan]\"[yellow] is new (").concat(info.timesJoined - 1, " joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free."));
                         Log.warn("Player ".concat(_this.cleanedName, " (").concat(_this.uuid, ") was autoflagged."));
-                        void menus_1.Menu.buttons(_this, "[gold]Welcome to Fish Community!", "[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".concat(config_1.FColor.discord(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."), [[
-                                { data: "Close", text: "Close" },
-                                { data: "Discord", text: config_1.FColor.discord("Discord") },
-                            ]]).then(function (option) {
-                            if (option == "Discord") {
-                                Call.openURI(_this.con, config_1.text.discordURL);
-                            }
-                        });
+                        if (_this.connected())
+                            void menus_1.Menu.buttons(_this, "[gold]Welcome to Fish Community!", "[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".concat(config_1.FColor.discord(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."), [[
+                                    { data: "Close", text: "Close" },
+                                    { data: "Discord", text: config_1.FColor.discord("Discord") },
+                                ]]).then(function (option) {
+                                if (option == "Discord") {
+                                    Call.openURI(_this.con(), config_1.text.discordURL);
+                                }
+                            });
                         _this.sendMessage("[gold]Welcome to Fish Community!\n[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".concat(config_1.FColor.discord(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."));
                     }
                 }
@@ -1699,7 +1702,7 @@ var FishPlayer = /** @class */ (function () {
             if (p.ipDetectedVpn && p.suspicionLevel() == 3) {
                 Vars.netServer.admins.blacklistDos(p.ip());
                 try {
-                    Vars.netServer.admins.blacklistDos(p.con.connection.getRemoteAddressUDP().getAddress().getHostAddress());
+                    Vars.netServer.admins.blacklistDos(p.con().connection.getRemoteAddressUDP().getAddress().getHostAddress());
                 }
                 catch (_a) { }
                 Log.info("&yAntibot killed connection ".concat(p.ip(), " due to flagged while under attack"));
@@ -1783,7 +1786,7 @@ var FishPlayer = /** @class */ (function () {
         return "(".concat(Math.floor(this.player.x / 8), ", ").concat(Math.floor(this.player.y / 8), ")");
     };
     FishPlayer.prototype.connected = function () {
-        return this.player != null && !this.con.hasDisconnected;
+        return this.player != null && !this.player.con.hasDisconnected;
     };
     FishPlayer.prototype.voteWeight = function () {
         //TODO vote weighting based on rank and joins
@@ -1831,14 +1834,9 @@ var FishPlayer = /** @class */ (function () {
         this.player.team(team);
         globals.FishEvents.fire("playerTeamChange", [this, oldTeam]);
     };
-    Object.defineProperty(FishPlayer.prototype, "con", {
-        get: function () {
-            var _a;
-            return (_a = this.player) === null || _a === void 0 ? void 0 : _a.con;
-        },
-        enumerable: false,
-        configurable: true
-    });
+    FishPlayer.prototype.con = function () {
+        return this.player.con;
+    };
     FishPlayer.prototype.ip = function () {
         if (this.connected())
             return this.player.con.address;

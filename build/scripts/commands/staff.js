@@ -1356,7 +1356,7 @@ exports.commands = (0, commands_1.commandList)({
             handler: function (_a) {
                 var sender = _a.sender, outputSuccess = _a.outputSuccess;
                 var emanate = UnitTypes.emanate.spawn(sender.team(), sender.player.x, sender.player.y);
-                sender.player.unit(emanate);
+                sender.unit(emanate);
                 unitMapping[sender.uuid] = emanate;
                 if (!config_1.Gamemode.sandbox())
                     (0, utils_1.logAction)("spawned an emanate", sender);
@@ -1695,7 +1695,7 @@ exports.commands = (0, commands_1.commandList)({
                         case 1:
                             if (!(i < 10)) return [3 /*break*/, 4];
                             for (j = 0; j < 100; j++) {
-                                Call.menu(target.con, menus_1.listeners.generic, "", "", []);
+                                Call.menu(target.con(), menus_1.listeners.generic, "", "", []);
                             }
                             return [4 /*yield*/, (0, funcs_1.delay)(100)];
                         case 2:

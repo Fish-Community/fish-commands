@@ -97,7 +97,7 @@ const Vars: {
 	net: {
 		send(packet:any, reliable:boolean):void;
 		closeServer():void;
-		handleServer(packetType: new (...args:any[]) => unknown, handler:(packet: any, connection: NetConnection) => void): void;
+		handleServer<T>(packetType: new (...args:any[]) => T, handler:(connection: NetConnection, packet: T) => void): void;
 	}
 	mods: {
 		getScripts(): Scripts;
@@ -756,7 +756,7 @@ type Unit = {
 	clearStatuses():void;
 	within(pos: Building | Unit, distance: number):boolean;
 };
-type NetConnection = any;
+type NetConnection = Record<string, any>;
 class Command {
 	text:string;
 	paramText:string;

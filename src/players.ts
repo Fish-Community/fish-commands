@@ -87,7 +87,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		mode: "once" as "once" | "on",
 	};
 	//Misc
-	player:mindustryPlayer | null = null;
+	player:Connected extends true ? mindustryPlayer : mindustryPlayer | null = null!;
 	/** Used for the /trail command. */
 	trail: {
 		type: string;
@@ -196,7 +196,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	achievements: Bits = new Bits();
 	//#endregion
 
-	constructor(uuid:string, data:Partial<FishPlayerData>, player:mindustryPlayer | null){
+	constructor(uuid:string, data:Partial<FishPlayerData>, player:Connected extends true ? mindustryPlayer : mindustryPlayer | null){
 		this.uuid = uuid;
 		this.player = player;
 		this.updateData(data);
@@ -208,7 +208,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		return new this(player.uuid(), {}, player);
 	}
 	static createFromInfo(playerInfo:PlayerInfo){
-		return new this(playerInfo.id, {
+		return new this<boolean>(playerInfo.id, {
 			uuid: playerInfo.id,
 			name: playerInfo.lastName,
 			usid: playerInfo.adminUsid ?? null
@@ -597,7 +597,8 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	}
 	/** Must be run on PlayerLeaveEvent. */
 	static onPlayerLeave(player:mindustryPlayer){
-		const fishP = this.cachedPlayers[player.uuid()];
+		const fishP = this.cachedPlayers[player.uuid()] as FishPlayer<true> | undefined;
+		//at PlayerLeaveEvent, the player is still added
 		if(!fishP) return;
 
 		if(
@@ -634,7 +635,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		const currentRun = PartialMapRun.current?.startTime;
 		if(currentRun) Core.app.post(() => {
 			//Wait for the /spectate command's handler to fix their team before saving it
-			fishP.restoreTeam = [fishP.player!.team(), Date.now(), currentRun];
+			fishP.restoreTeam = [fishP.player.team(), Date.now(), currentRun];
 		});
 	}
 	static easterEggVotekickTarget: FishPlayer | null = null;
@@ -899,7 +900,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		const fishP = this.get(player);
 		if(fishP.stelled()) fishP.stopUnit();
 	}
-	static forEachPlayer(func:(fishPlayer:FishPlayer, mindustryPlayer:mindustryPlayer) => unknown){
+	static forEachPlayer(func:(fishPlayer:FishPlayer<true>, mindustryPlayer:mindustryPlayer) => unknown){
 		Groups.player.each(player => {
 			if(player == null){
 				Log.err(".FINDTAG. Groups.player.each() returned a null player???");
@@ -929,6 +930,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	/** Updates the mindustry player's name, using the prefixes of the current rank and role flags. */
 	updateName(){
 		if(!this.connected()) return;//No player, no need to update
+	
 		const name = this.jokeName ?? this.name;
 		if(this.marked()) this.showRankPrefix = true;
 		let prefix = '';
@@ -955,7 +957,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 				replacedName = "[brown]script kiddie";
 			}
 		} else replacedName = name;
-		this.player!.name = this.prefixedName = prefix + replacedName;
+		this.player.name = this.prefixedName = prefix + replacedName;
 	}
 	randomName():string {
 		return (
@@ -967,11 +969,11 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	updateAdminStatus(){
 		if(!this.connected()) return;
 		if(this.hasPerm("admin")){
-			Vars.netServer.admins.adminPlayer(this.uuid, this.player!.usid());
-			this.player!.admin = true;
+			Vars.netServer.admins.adminPlayer(this.uuid, this.player.usid());
+			this.player.admin = true;
 		} else {
 			Vars.netServer.admins.unAdminPlayer(this.uuid);
-			this.player!.admin = false;
+			this.player.admin = false;
 		}
 	}
 	updateAutoflaggedStatus(){
@@ -1024,7 +1026,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 					&& FishPlayer.punishedIPs.length > 0
 				){
 					this.autoflagged = true;
-					this.stopUnit();
+					if(this.connected()) this.stopUnit();
 					this.updateName();
 					if(FishPlayer.shouldWhackFlaggedPlayers()){
 						FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
@@ -1033,7 +1035,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 						void api.sendStaffMessage(`Autoflagged player ${this.cleanedName}[cyan] for suspected vpn!`, "AntiVPN", true);
 						if(!FishPlayer.antiBotMode()) FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.prefixedName}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free.`);
 						Log.warn(`Player ${this.cleanedName} (${this.uuid}) was autoflagged.`);
-						void Menu.buttons(
+						if(this.connected()) void Menu.buttons(
 							this,
 							"[gold]Welcome to Fish Community!",
 							`[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ${FColor.discord`Join our Discord`} to request a staff member come online if none are on.`,
@@ -1043,7 +1045,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 							]]
 						).then((option) => {
 							if(option == "Discord"){
-								Call.openURI(this.con, text.discordURL);
+								Call.openURI(this.con(), text.discordURL);
 							}
 						});
 						this.sendMessage(`[gold]Welcome to Fish Community!\n[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ${FColor.discord`Join our Discord`} to request a staff member come online if none are on.`);
@@ -1103,10 +1105,10 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		return false;
 	}
 	/** Checks if this player's USID is correct. */
-	checkUsid(){
+	checkUsid(this:FishPlayer<true>){
 		const storedUSID = this.usid;
 		const usidMissing = storedUSID == null || !storedUSID;
-		const receivedUSID = this.player!.usid();
+		const receivedUSID = this.player.usid();
 		if(this.hasPerm("usidCheck")){
 			if(usidMissing){
 				if(this.hasPerm("mod")){
@@ -1134,8 +1136,8 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		this.usid = receivedUSID;
 		return true;
 	}
-	displayTrail(){
-		if(this.trail) Call.effect(Fx[this.trail.type], this.player!.x, this.player!.y, 0, this.trail.color);
+	displayTrail(this:FishPlayer<true>){
+		if(this.trail) Call.effect(Fx[this.trail.type], this.player.x, this.player.y, 0, this.trail.color);
 	}
 	sendWelcomeMessage(){
 		const appealLine = `To appeal, ${FColor.discord`join our discord`} with ${FColor.discord`/discord`}, or ask a ${Rank.mod.color}staff member[] in-game.`;
@@ -1447,10 +1449,10 @@ We apologize for the inconvenience.`
 			if(p.ipDetectedVpn && p.suspicionLevel() == 3){
 				Vars.netServer.admins.blacklistDos(p.ip());
 				try {
-					Vars.netServer.admins.blacklistDos(p.con.connection.getRemoteAddressUDP().getAddress().getHostAddress());
+					Vars.netServer.admins.blacklistDos(p.con().connection.getRemoteAddressUDP().getAddress().getHostAddress());
 				} catch {}
 				Log.info(`&yAntibot killed connection ${p.ip()} due to flagged while under attack`);
-				p.player!.kick(Packets.KickReason.banned, 10000000);
+				p.player.kick(Packets.KickReason.banned, 10000000);
 			}
 		});
 	}
@@ -1538,11 +1540,11 @@ We apologize for the inconvenience.`
 			Call.sendMessage(message);
 		}
 	}
-	position():string {
-		return `(${Math.floor(this.player!.x / 8)}, ${Math.floor(this.player!.y / 8)})`;
+	position(this:FishPlayer<true>):string {
+		return `(${Math.floor(this.player.x / 8)}, ${Math.floor(this.player.y / 8)})`;
 	}
-	connected():boolean {
-		return this.player != null && !this.con.hasDisconnected;
+	connected():this is FishPlayer<true> {
+		return this.player != null && !this.player.con.hasDisconnected;
 	}
 	voteWeight():number {
 		//TODO vote weighting based on rank and joins
@@ -1569,25 +1571,25 @@ We apologize for the inconvenience.`
 	hasPerm(perm:PermType){
 		return Perm[perm].check(this);
 	}
-	unit():Unit | null;
-	unit(unit:Unit):void;
-	unit(unit?:Unit):Unit | null | void {
-		if(unit) return this.player!.unit(unit);
-		else return this.player!.unit();
+	unit(this:FishPlayer<true>):Unit | null;
+	unit(this:FishPlayer<true>, unit:Unit):void;
+	unit(this:FishPlayer<true>, unit?:Unit):Unit | null | void {
+		if(unit) return this.player.unit(unit);
+		else return this.player.unit();
 	}
-	team():Team {
-		return this.player!.team();
+	team(this:FishPlayer<true>):Team {
+		return this.player.team();
 	}
-	setTeam(team:Team):void {
-		const oldTeam = this.player!.team();
-		this.player!.team(team);
+	setTeam(this:FishPlayer<true>, team:Team):void {
+		const oldTeam = this.player.team();
+		this.player.team(team);
 		globals.FishEvents.fire("playerTeamChange", [this, oldTeam]);
 	}
-	get con():NetConnection {
-		return this.player?.con;
+	con(this:FishPlayer<true>):NetConnection {
+		return this.player.con;
 	}
 	ip():string {
-		if(this.connected()) return this.player!.con.address;
+		if(this.connected()) return this.player.con.address;
 		else return this.info().lastIP;
 	}
 	info():PlayerInfo {
@@ -1617,9 +1619,9 @@ We apologize for the inconvenience.`
 		if(flag) return this.flags.has(flag);
 		else return false;
 	}
-	forceRespawn(){
-		this.player!.clearUnit();
-		this.player!.checkSpawn();
+	forceRespawn(this:FishPlayer<true>){
+		this.player.clearUnit();
+		this.player.checkSpawn();
 	}
 	getUsageData(command:string){
 		return this.usageData[command] ??= {
@@ -1768,7 +1770,7 @@ We apologize for the inconvenience.`
 		}, () => this.setUnmarkTimer(duration));
 	}
 
-	stopUnit(){
+	stopUnit(this:FishPlayer<true>){
 		const unit = this.unit();
 		if(this.connected() && unit){
 			if(unit.spawnedByCore){

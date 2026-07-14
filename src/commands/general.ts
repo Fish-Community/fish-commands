@@ -65,7 +65,7 @@ export const commands = commandList({
 			if(!sender.hasPerm("admin")){
 				if(!sender.unit()?.spawnedByCore) fail(`Can only teleport while in a core unit.`);
 				if(sender.team() !== args.player.team()) fail(`Cannot teleport to players on another team.`);
-				if(sender.unit()!.hasPayload?.()) fail(`Cannot teleport to players while holding a payload.`);
+				if(sender.unit()?.hasPayload?.()) fail(`Cannot teleport to players while holding a payload.`);
 			}
 			teleportPlayer(sender.player!, args.player.player!);
 			outputSuccess(f`Teleported to ${args.player}`);
@@ -119,7 +119,7 @@ export const commands = commandList({
 				fail(`This command was already run on this map.`);
 			data.lastRanMapStartTime = PartialMapRun.current.startTime;
 			Timer.schedule(
-				() => Call.sound(sender.con, Sounds.rockBreak, 1, 1, 0),
+				() => Call.sound(sender.con(), Sounds.rockBreak, 1, 1, 0),
 				0, 0.05, 10
 			);
 			const array: Tile[] = ArcReflect.get(Vars.world.tiles, "array");
@@ -153,7 +153,7 @@ export const commands = commandList({
 		description: 'Takes you to our discord.',
 		perm: Perm.none,
 		handler({ sender }) {
-			Call.openURI(sender.con, text.discordURL);
+			Call.openURI(sender.con(), text.discordURL);
 		},
 	},
 
@@ -341,7 +341,7 @@ export const commands = commandList({
 						FishPlayer.messageAllWithPerm(server.requiredPerm,
 							`${sender.name}[magenta] has gone to the ${server.name} server. Use [cyan]/${server.name} [magenta]to join them!`
 						);
-					Call.connect(sender.con, server.ip, server.port);
+					Call.connect(sender.con(), server.ip, server.port);
 				},
 			} satisfies FishCommandData<string, any>,
 		])
@@ -357,7 +357,7 @@ export const commands = commandList({
 			const target = args.target ?? sender;
 			if(ipPortPattern.test(args.server) && sender.hasPerm("admin")){
 				//direct connect
-				Call.connect(target.con, ...args.server.split(":"));
+				Call.connect(target.con(), ...args.server.split(":"));
 			} else {
 				const unknownServerMessage = `Unknown server ${args.server}. Valid options: ${FishServer.all.filter(s => !s.requiredPerm || sender.hasPerm(s.requiredPerm)).map(s => s.name).join(", ")}`;
 				const server = FishServer.byName(args.server)
@@ -372,7 +372,7 @@ export const commands = commandList({
 						`${sender.name}[magenta] has gone to the ${server.name} server. Use [cyan]/${server.name} [magenta]to join them!`
 					);
 
-				Call.connect(target.con, server.ip, server.port);
+				Call.connect(target.con(), server.ip, server.port);
 			}
 		}
 	},
@@ -411,7 +411,7 @@ export const commands = commandList({
 		perm: Perm.none,
 		data: new Set<string>,
 		async handler({ args, data, sender, outputSuccess, outputFail }) {
-			if(!sender.con.mobile) await Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.");
+			if(!sender.con().mobile) await Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.");
 			if(data.has(sender.uuid)){
 				outputSuccess(`No longer watching a player.`);
 				data.delete(sender.uuid);
@@ -425,11 +425,11 @@ export const commands = commandList({
 					const unit = target.unit();
 					if(data.has(sender.uuid) && unit){
 						// Self.X+(172.5-Self.X)/10
-						Call.setCameraPosition(sender.con, unit.x, unit.y);
+						Call.setCameraPosition(sender.con(), unit.x, unit.y);
 						if(senderUnit) senderUnit.set(stayX, stayY);
 						Timer.schedule(() => watch(), 0.1, 0.1, 0);
 					} else {
-						Call.setCameraPosition(sender.con, stayX, stayY);
+						Call.setCameraPosition(sender.con(), stayX, stayY);
 					}
 				})();
 			} else {
@@ -676,7 +676,7 @@ Available types:[yellow]
 			if(nearbyEnemyTile((sender.unit()!), 6) != null) fail(`Too close to an enemy building!`);
 			if(!UnitTypes.alpha.supportsEnv(Vars.state.rules.env)) fail(`Ohnos cannot survive in this map.`);
 	
-			Ohnos.makeOhno(sender.team(), sender.player!.x, sender.player!.y);
+			Ohnos.makeOhno(sender.team(), sender.player.x, sender.player.y);
 		},
 	}),
 
@@ -767,7 +767,7 @@ Please stop attacking and [lime]build defenses[] first!`
 			if(!(Gamemode.sandbox() || Gamemode.testsrv()) && !sender.hasPerm("mod") && !reason) fail(`Please specify a reason for changing teams.`);
 			if(!sender.hasPerm("changeTeamExternal")){
 				if(team.data().cores.size <= 0) fail(`You do not have permission to change to a team with no cores.`);
-				if(!sender.player!.dead() && !sender.unit()?.spawnedByCore)
+				if(!sender.player.dead() && !sender.unit()?.spawnedByCore)
 					sender.forceRespawn();
 			}
 			if(!sender.hasPerm("mod")) sender.changedTeam = true;
@@ -786,7 +786,7 @@ Please stop attacking and [lime]build defenses[] first!`
 			if(Gamemode.sandbox() && fishState.peacefulMode && !sender.hasPerm("admin")) fail(`You do not have permission to change teams because peaceful mode is on.`);
 			if(!sender.hasPerm("changeTeamExternal")){
 				if(team.data().cores.size <= 0) fail(`You do not have permission to change to a team with no cores.`);
-				if(!target.player!.dead() && !target.unit()?.spawnedByCore)
+				if(!target.player.dead() && !target.unit()?.spawnedByCore)
 					target.forceRespawn();
 			}
 			target.setTeam(team);
@@ -1363,7 +1363,7 @@ ${a.hidden ? "This achievement is secret." : ""}\
 					sender.copyOptions,
 					{ optionStringifier: escapeStringColorsClient, columns: 1 }
 				);
-			Call.copyToClipboard(sender.con, response);
+			Call.copyToClipboard(sender.con(), response);
 			outputSuccess("Copied.");
 		}
 	},
@@ -1373,7 +1373,7 @@ ${a.hidden ? "This achievement is secret." : ""}\
 		perm: Perm.mod,
 		requirements: [Req.cooldown(5_000)],
 		handler({ args: { target, string }, sender, f, outputSuccess }){
-			Call.copyToClipboard(target.con, string);
+			Call.copyToClipboard(target.con(), string);
 			target.sendMessage(`[accent]Copy: ${sender.prefixedName}[accent] sent you some text to copy.`);
 			outputSuccess(f`Sent text to ${target}`);
 		}
