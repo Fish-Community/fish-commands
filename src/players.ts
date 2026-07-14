@@ -1030,9 +1030,9 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 						FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
 					} else {
 						logAction("autoflagged", "AntiVPN", this);
-						void api.sendStaffMessage(`Autoflagged player ${this.prefixedName}[cyan] for suspected vpn!`, "AntiVPN", true);
+						void api.sendStaffMessage(`Autoflagged player ${this.cleanedName}[cyan] for suspected vpn!`, "AntiVPN", true);
 						if(!FishPlayer.antiBotMode()) FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.prefixedName}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free.`);
-						Log.warn(`Player ${this.prefixedName} (${this.uuid}) was autoflagged.`);
+						Log.warn(`Player ${this.cleanedName} (${this.uuid}) was autoflagged.`);
 						void Menu.buttons(
 							this,
 							"[gold]Welcome to Fish Community!",
