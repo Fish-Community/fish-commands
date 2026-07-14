@@ -1293,6 +1293,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                     commands_1.Req.cooldown(5000);
                                 else
                                     commands_1.Req.cooldown(20000);
+                                if (!(manager.getEligibleVoters().length == 1)) return [3 /*break*/, 6];
+                                return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you really sure you want to surrender? All of your buildings will be destroyed and the enemy team will win.")];
+                            case 5:
+                                _d.sent();
+                                _d.label = 6;
+                            case 6:
                                 manager.vote(sender, 1, 0);
                                 return [2 /*return*/];
                         }

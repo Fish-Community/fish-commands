@@ -1115,6 +1115,8 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 				}
 				if(sender.ranksAtLeast("mod")) Req.cooldown(5_000);
 				else Req.cooldown(20_000);
+				if(manager.getEligibleVoters().length == 1)
+					await Menu.confirmDangerous(sender, "Are you really sure you want to surrender? All of your buildings will be destroyed and the enemy team will win.");
 				manager.vote(sender, 1, 0);
 			},
 		};
