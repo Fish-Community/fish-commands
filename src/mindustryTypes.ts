@@ -132,6 +132,7 @@ const Vars: {
 const GlobalVars: any;
 class Teams {
 	active: Seq<TeamData>;
+	present: Seq<TeamData>;
 	getActive(): Seq<TeamData>;
 }
 class BlockIndexer {
@@ -331,6 +332,8 @@ class Team {
 	static baseTeams:Team[];
 	name:string;
 	emoji:string;
+	color: Color;
+	localized():string;
 	active():boolean;
 	isAlive():boolean;
 	data():TeamData;
@@ -427,6 +430,7 @@ class Color {
 	a: number;
 	cpy():Color;
 	rand():Color;
+	toString():string;
 }
 const Version: {
 	type: string;
@@ -635,6 +639,7 @@ class Seq<T> {
 
 class ObjectSet<T> {
 	size:number;
+	static with<T>(items:Seq<T> | T[]):ObjectSet<T>;
 	select(predicate:(item:T) => boolean):ObjectSet<T>;
 	each(func:(item:T) => unknown):void;
 	add(item:T):boolean;

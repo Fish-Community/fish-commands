@@ -12,7 +12,7 @@ import { f_client, f_server, outputFormatter_client } from "/frameworks/commands
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
 import { commandArgNames, CommandArgType, commandArgTypes } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
-import { capitalizeText, crash, escapeStringColorsClient, indefiniteArticle, parseError, random, resolveSearch } from "/funcs";
+import { capitalizeText, crash, escapeStringColorsClient, indefiniteArticle, parseError, random, resolveSearch, to2DArray } from "/funcs";
 import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
@@ -316,6 +316,23 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 					if(num <= 255 && num >= 0 && Number.isInteger(num))
 						outputArgs[cmdArg.name] = Team.all[num];
 					else fail(`Team ${num} is not inside the valid range (integers 0-255).`);
+				} else if(!args[i] && sender){
+					const options = Team.baseTeams.concat(Team.neoplastic);
+					Vars.state.teams.present.each(t => options.includes(t.team) || options.push(t.team));
+					const buttons: Array<Array<Team | "other">> = [
+						...to2DArray(options, 3),
+						["other"]
+					];
+					const selection = await Menu.raw(
+						`Select a team`, `Select a team for the argument "${cmdArg.name}"`, buttons, sender,
+						{ optionStringifier: t => t == "other" ? "Other..." : t.coloredName() }
+					);
+					if(selection == "other"){
+						const num = await Menu.text(`Select a team`, `Enter the team's ID\nYou can also specify [accent]#123[] in the command.`, sender, { positiveIntegersOnly: true });
+						if(num <= 255 && num >= 0)
+							outputArgs[cmdArg.name] = Team.all[num];
+						else fail(`Team ${num} is not inside the valid range (integers 0-255).`);
+					}
 				} else await disambiguateArgument(
 					getTeam(args[i]),
 					...commonArgs,
