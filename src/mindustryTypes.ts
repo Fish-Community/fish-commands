@@ -87,7 +87,7 @@ const Vars: {
 		invalidHandler: any;
 		chatFormatter: any
 		admins: Administration;
-		clientCommands: CommandHandler;
+		clientCommands: CommandHandler<Player>;
 		kickAll(kickReason:any):void;
 		addPacketHandler(name:string, handler:(player:mindustryPlayer, content:string) => unknown):void;
 		currentlyKicking: VoteSession | null;
@@ -146,8 +146,19 @@ class Planet {
 	name: string;
 }
 type Scripts = any;
-type CommandHandler = any;
-const CommandHandler: CommandHandler;
+class CommandHandler<T> {
+	handleMessage(command:string | null, params?: T):CommandResponse;
+	register(name:string, args:string, description:string, runner:CommandRunner<T>):void;
+	removeCommand(name:string):void;
+	static ResponseType: Record<"noCommand" | "unknownCommand" | "fewArguments" | "manyArguments" | "valid", ResponseType>;
+	static CommandRunner: typeof CommandRunner;
+}
+type CommandResponse = {
+	type:ResponseType;
+  command:Command;
+  runCommand:string;
+}
+type ResponseType = {__responseType: void};
 type Content = {
 	items(): Seq<Item>;
 	units(): Seq<UnitType>;
@@ -915,7 +926,7 @@ class Sort {
 }
 class ServerControl {
 	static instance: ServerControl;
-	handler: CommandHandler;
+	handler: CommandHandler<null>;
 }
 
 class VoteSession {

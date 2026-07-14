@@ -766,7 +766,9 @@ function register(commands, clientHandler, serverHandler) {
         //Process the args
         var processedCmdArgs = data.args.map(processArgString);
         clientHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-        clientHandler.register(name, convertArgs(processedCmdArgs, true), data.description, new CommandHandler.CommandRunner({ accept: function (unjoinedRawArgs, sender) {
+        clientHandler.register(name, convertArgs(processedCmdArgs, true), data.description, 
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        new CommandHandler.CommandRunner({ accept: function (unjoinedRawArgs, sender) {
                 return __awaiter(this, void 0, void 0, function () {
                     var fishSender, rawArgs, resolvedArgs, err_3, shouldClearCopy, shouldClearPlayers, usageData, failed, args_1, requirements, err_4;
                     var _a;
@@ -908,7 +910,9 @@ function registerConsole(commands, serverHandler) {
         //Process the args
         var processedCmdArgs = data.args.map(processArgString);
         serverHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-        serverHandler.register(name, convertArgs(processedCmdArgs, false), data.description, new CommandHandler.CommandRunner({ accept: function (rawArgs) {
+        serverHandler.register(name, convertArgs(processedCmdArgs, false), data.description, 
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        new CommandHandler.CommandRunner({ accept: function (rawArgs) {
                 return __awaiter(this, void 0, void 0, function () {
                     var resolvedArgs, err_5, shouldClearPlayers, usageData, failed_2;
                     var _a;

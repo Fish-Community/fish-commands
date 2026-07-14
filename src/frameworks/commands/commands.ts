@@ -542,6 +542,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 			name,
 			convertArgs(processedCmdArgs, true),
 			data.description,
+			// eslint-disable-next-line @typescript-eslint/no-misused-promises
 			new CommandHandler.CommandRunner({ async accept(unjoinedRawArgs: string[], sender: mindustryPlayer){
 				if(!initialized) crash(`Commands not initialized!`);
 
@@ -658,6 +659,7 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 			name,
 			convertArgs(processedCmdArgs, false),
 			data.description,
+			// eslint-disable-next-line @typescript-eslint/no-misused-promises
 			new CommandHandler.CommandRunner({ async accept(rawArgs: string[]){
 				if(!initialized) crash(`Commands not initialized!`);
 

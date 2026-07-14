@@ -76,17 +76,8 @@ export type PlayerHistoryEntry = {
 	time:number;
 }
 
-export type ClientCommandHandler = {
-	register(name:string, args:string, description:string, runner:CommandRunner<mindustryPlayer>):void;
-	removeCommand(name:string):void;
-}
-
-export type ServerCommandHandler = {
-	/** Executes a server console command. */
-	handleMessage(command:string):void;
-	register(name:string, args:string, description:string, runner:CommandRunner<null>):void;
-	removeCommand(name:string):void;
-}
+export type ClientCommandHandler = CommandHandler<Player>;
+export type ServerCommandHandler = CommandHandler<null>;
 
 export type PreprocessedCommandArg = {
 	type: CommandArgType;
