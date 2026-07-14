@@ -16,7 +16,7 @@ import type { FishPlayerData, PlayerHistoryEntry, Stats, UploadedFishPlayerData 
 import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, matchFilter, updateBans } from "/utils";
 
 
-export class FishPlayer {
+export class FishPlayer<Connected extends boolean = boolean> {
 	//#region Static constants
 	/** Save version used for serialized FishPlayers. */
 	static readonly saveVersion = 13;
@@ -286,7 +286,7 @@ export class FishPlayer {
 	}
 	//This method exists only because there is no easy way to turn an entitygroup into an array
 	static getAllOnline(){
-		const players:FishPlayer[] = [];
+		const players:Array<FishPlayer<true>> = [];
 		Groups.player.each((p:mindustryPlayer) => {
 			const fishP = FishPlayer.get(p);
 			if(fishP.connected()) players.push(fishP);
@@ -909,7 +909,7 @@ export class FishPlayer {
 			func(fishP, player);
 		});
 	}
-	static mapPlayers<T>(func:(player:FishPlayer) => T):T[]{
+	static mapPlayers<T>(func:(player:FishPlayer<true>) => T):T[]{
 		const out:T[] = [];
 		Groups.player.each(player => {
 			if(player == null){

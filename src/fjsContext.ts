@@ -5,7 +5,7 @@ which executes code with access to the plugin's internals.
 */
 
 import type { FishPlayer as tFishPlayer } from "/players";
-type FishPlayer = tFishPlayer; //absurd
+type FishPlayer<T extends boolean = boolean> = tFishPlayer<T>; //absurd
 
 const achievements = require("/achievements");
 const api = require("/api");
@@ -83,7 +83,7 @@ export function runJS(
 	input:string,
 	outputFunction:(data:any) => unknown = Log.info,
 	errorFunction:(data:any) => unknown = Log.err,
-	player?:FishPlayer
+	player?:FishPlayer<true>
 ){
 	if(player){
 		$.me = player;

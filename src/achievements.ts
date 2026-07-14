@@ -25,10 +25,10 @@ export class Achievement {
 	description: string;
 	extendedDescription?: string;
 
-	checkPlayerInfrequent?: (player:FishPlayer) => boolean;
-	checkPlayerFrequent?: (player:FishPlayer) => boolean;
-	checkPlayerJoin?: (player:FishPlayer) => boolean;
-	checkPlayerGameover?: (player:FishPlayer, winTeam:Team) => boolean;
+	checkPlayerInfrequent?: (player:FishPlayer<true>) => boolean;
+	checkPlayerFrequent?: (player:FishPlayer<true>) => boolean;
+	checkPlayerJoin?: (player:FishPlayer<true>) => boolean;
+	checkPlayerGameover?: (player:FishPlayer<true>, winTeam:Team) => boolean;
 	checkInfrequent?: (team: Team) => boolean;
 	checkFrequent?: (team: Team) => boolean;
 	checkGameover?: (winTeam:Team) => boolean;

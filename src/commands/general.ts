@@ -441,13 +441,13 @@ export const commands = commandList({
 		//TODO revise code
 		/** Mapping between player and original team */
 		const spectators = new Map<FishPlayer, Team>();
-		function spectate(target:FishPlayer){
+		function spectate(target:FishPlayer<true>){
 			spectators.set(target, target.team());
 			target.forceRespawn();
 			target.setTeam(Team.derelict);
 			target.forceRespawn();
 		}
-		function resume(target:FishPlayer){
+		function resume(target:FishPlayer<true>){
 			if(spectators.get(target) == null) return; // this state is possible for a person who left not in spectate
 			target.setTeam(spectators.get(target)!);
 			spectators.delete(target);

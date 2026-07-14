@@ -42,7 +42,7 @@ export type TypeOfArgType<T> =
 	T extends "number" ? number :
 	T extends "time" ? number :
 	T extends "team" ? Team :
-	T extends "player" ? FishPlayer :
+	T extends "player" ? FishPlayer<true> :
 	T extends "offlinePlayer" ? FishPlayer :
 	T extends "unittype" ? UnitType :
 	T extends "block" ? Block :
@@ -92,7 +92,7 @@ export type FishCommandHandlerData<ArgType extends string, StoredData> = {
 	 */
 	args: Expand<ArgsFromArgStringUnion<ArgType>>;
 	/** The player who ran the command. */
-	sender: FishPlayer;
+	sender: FishPlayer<true>;
 	/** Arbitrary data specific to the command. */
 	data: StoredData;
 	currentTapMode: TapHandleMode;
@@ -167,7 +167,7 @@ export type FishConsoleCommandRunner<ArgType extends string, StoredData> = (_: {
 export type TapHandler<ArgType extends string, StoredData> = (_: {
 	/** Last args used to call the parent command. */
 	args: ArgsFromArgStringUnion<ArgType>;
-	sender: FishPlayer;
+	sender: FishPlayer<true>;
 	x: number;
 	y: number;
 	tile: Tile;
