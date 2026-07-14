@@ -144,7 +144,7 @@ var FishPlayer = /** @class */ (function () {
         this.player = null;
         /** Used for the /trail command. */
         this.trail = null;
-        /** Like unprefixedName but without the colors. */
+        /** Like name but without the colors. */
         this.cleanedName = "Unnamed player [ERROR}";
         /** Includes prefixes. Same as .player.name */
         this.prefixedName = "Unnamed player [ERROR}";
@@ -435,7 +435,7 @@ var FishPlayer = /** @class */ (function () {
             this.firstJoined = Date.now();
         //Do not update USID here
         this.manualAfk = false;
-        this.cleanedName = Strings.stripColors(player.name);
+        this.cleanedName = Strings.stripColors(this.name);
         this.lastJoined = Date.now();
         this.lastMousePosition = [0, 0];
         this.lastActive = Date.now();
@@ -717,9 +717,9 @@ var FishPlayer = /** @class */ (function () {
                     globals_1.FishEvents.fire("scriptKiddie", [fishPlayer]);
                 }
             }
+            fishPlayer.updateName();
             fishPlayer.updateAdminStatus();
             fishPlayer.checkVPNAndJoins();
-            fishPlayer.updateName();
             //I think this is a better spot for this
             if (fishPlayer.firstJoin())
                 void fishPlayer.showRules();

@@ -95,7 +95,7 @@ export class FishPlayer {
 	} | null = null;
 	/** The original name that this player used to join the server. Do not modify. */
 	originalName?: string;
-	/** Like unprefixedName but without the colors. */
+	/** Like name but without the colors. */
 	cleanedName:string = "Unnamed player [ERROR}";
 	/** Includes prefixes. Same as .player.name */
 	prefixedName:string = "Unnamed player [ERROR}";
@@ -364,7 +364,7 @@ export class FishPlayer {
 
 		//Do not update USID here
 		this.manualAfk = false;
-		this.cleanedName = Strings.stripColors(player.name);
+		this.cleanedName = Strings.stripColors(this.name);
 		this.lastJoined = Date.now();
 		this.lastMousePosition = [0, 0];
 		this.lastActive = Date.now();
@@ -560,9 +560,9 @@ export class FishPlayer {
 					FishEvents.fire("scriptKiddie", [fishPlayer]);
 				}
 			}
+			fishPlayer.updateName();
 			fishPlayer.updateAdminStatus();
 			fishPlayer.checkVPNAndJoins();
-			fishPlayer.updateName();
 			//I think this is a better spot for this
 			if(fishPlayer.firstJoin()) void fishPlayer.showRules();
 
