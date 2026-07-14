@@ -702,11 +702,11 @@ Available types:[yellow]
 		args: ['player:player?'],
 		description: 'Displays the server rules.',
 		perm: Perm.none,
-		handler({args, sender, output, outputSuccess, f}){
+		handler({args, sender, output, outputSuccess, f, lastUsedSuccessfullySender}){
 			const target = args.player ?? sender;
 			if(target !== sender){
 				if(!sender.hasPerm("warn")) fail(`You do not have permission to show rules to other players.`);
-				if(!sender.canModerate(target)) Req.cooldown(Duration.minutes(10));
+				if(!sender.canModerate(target)) Req.cooldown(Duration.minutes(10))({lastUsedSuccessfullySender});
 				if(target.hasPerm("blockTrolling")) fail(f`Player ${args.player!} is insufficiently trollable.`);
 			}
 			void target.showRules(["No"]).then((option) => {
@@ -1095,7 +1095,10 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 			args: ["force:boolean?", "team:team?"],
 			description: "Vote to surrender to the enemy team.",
 			perm: Perm.play,
-			requirements: [Req.mode("pvp"), Req.teamAlive],
+			requirements: ({sender}) => [
+				Req.mode("pvp"), Req.teamAlive,
+				Req.cooldown(sender.ranksAtLeast("mod") ? 5_000 : 20_000)
+			],
 			data: { managers },
 			async handler({ sender, args: {force, team} }){
 				const t = sender.hasPerm("admin") && team ? team : sender.team();
@@ -1113,8 +1116,6 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 					manager.forceVote(force);
 					return;
 				}
-				if(sender.ranksAtLeast("mod")) Req.cooldown(5_000);
-				else Req.cooldown(20_000);
 				if(manager.getEligibleVoters().length == 1)
 					await Menu.confirmDangerous(sender, "Are you really sure you want to surrender? All of your buildings will be destroyed and the enemy team will win.");
 				manager.vote(sender, 1, 0);
@@ -1188,9 +1189,8 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 			testsrv: Perm.play,
 		}),
 		description: "Sets the gamemode.",
-		requirements: [Req.cooldownGlobal(10_000)],
-		handler({args, sender, outputSuccess, lastUsedSuccessfully}){
-			if(!sender.hasPerm('trusted')) Req.cooldownGlobal(30_000)({lastUsedSuccessfully});
+		requirements: ({sender}) => [Req.cooldownGlobal(sender.hasPerm('trusted') ? 10_000 : 30_000)],
+		handler({args, sender, outputSuccess}){
 			//Unpause
 			Vars.state.set(GameState.State.playing);
 			switch(args.mode){

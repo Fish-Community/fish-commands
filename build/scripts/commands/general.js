@@ -880,13 +880,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         handler: function (_a) {
             var _b;
-            var args = _a.args, sender = _a.sender, output = _a.output, outputSuccess = _a.outputSuccess, f = _a.f;
+            var args = _a.args, sender = _a.sender, output = _a.output, outputSuccess = _a.outputSuccess, f = _a.f, lastUsedSuccessfullySender = _a.lastUsedSuccessfullySender;
             var target = (_b = args.player) !== null && _b !== void 0 ? _b : sender;
             if (target !== sender) {
                 if (!sender.hasPerm("warn"))
                     (0, commands_1.fail)("You do not have permission to show rules to other players.");
                 if (!sender.canModerate(target))
-                    commands_1.Req.cooldown(funcs_1.Duration.minutes(10));
+                    commands_1.Req.cooldown(funcs_1.Duration.minutes(10))({ lastUsedSuccessfullySender: lastUsedSuccessfullySender });
                 if (target.hasPerm("blockTrolling"))
                     (0, commands_1.fail)(f(templateObject_10 || (templateObject_10 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
             }
@@ -1263,7 +1263,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             args: ["force:boolean?", "team:team?"],
             description: "Vote to surrender to the enemy team.",
             perm: commands_1.Perm.play,
-            requirements: [commands_1.Req.mode("pvp"), commands_1.Req.teamAlive],
+            requirements: function (_a) {
+                var sender = _a.sender;
+                return [
+                    commands_1.Req.mode("pvp"), commands_1.Req.teamAlive,
+                    commands_1.Req.cooldown(sender.ranksAtLeast("mod") ? 5000 : 20000)
+                ];
+            },
             data: { managers: managers },
             handler: function (_a) {
                 return __awaiter(this, arguments, void 0, function (_b) {
@@ -1289,10 +1295,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                 manager.forceVote(force);
                                 return [2 /*return*/];
                             case 4:
-                                if (sender.ranksAtLeast("mod"))
-                                    commands_1.Req.cooldown(5000);
-                                else
-                                    commands_1.Req.cooldown(20000);
                                 if (!(manager.getEligibleVoters().length == 1)) return [3 /*break*/, 6];
                                 return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you really sure you want to surrender? All of your buildings will be destroyed and the enemy team will win.")];
                             case 5:
@@ -1363,11 +1365,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             testsrv: commands_1.Perm.play,
         }),
         description: "Sets the gamemode.",
-        requirements: [commands_1.Req.cooldownGlobal(10000)],
+        requirements: function (_a) {
+            var sender = _a.sender;
+            return [commands_1.Req.cooldownGlobal(sender.hasPerm('trusted') ? 10000 : 30000)];
+        },
         handler: function (_a) {
-            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, lastUsedSuccessfully = _a.lastUsedSuccessfully;
-            if (!sender.hasPerm('trusted'))
-                commands_1.Req.cooldownGlobal(30000)({ lastUsedSuccessfully: lastUsedSuccessfully });
+            var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
             //Unpause
             Vars.state.set(GameState.State.playing);
             switch (args.mode) {
