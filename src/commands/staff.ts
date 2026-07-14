@@ -15,7 +15,7 @@ import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { Label } from "/types";
-import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, unblacklist, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -1285,5 +1285,23 @@ Wave: ${r.wave}`
 			}
 			outputSuccess(f`Spammed ${target} with menus.`);
 		}
-	}
+	},
+	unblacklist: {
+		args: ["ip:string"],
+		perm: Perm.admin,
+		description: "Unblacklists an ip from the DOS blacklist.",
+		handler({args, sender, output, admins}){
+			if(args.ip === '*'){
+				if(!sender.hasPerm("massUnblacklist")) fail(`You do not have permission to clear the DOS blacklist.`);
+				const size = admins.dosBlacklist.size;
+				if(size == 0) fail('DOS blacklist is already empty.');
+				admins.dosBlacklist.clear();
+				output(`Cleared ${size} IPs from the DOS blacklist.`);
+			} else {
+				if(unblacklist(args.ip)){
+					output(`Removed ${args.ip} from the DOS blacklist.`);
+				} else fail(`IP address ${args.ip} is not DOS blacklisted.`);
+			}
+		}
+	},
 });

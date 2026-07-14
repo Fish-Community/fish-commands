@@ -48,6 +48,7 @@ export class Perm {
 	});
 	static usidCheck = new Perm("usidCheck", "trusted");
 	static runJS = new Perm("runJS", "manager");
+	static massUnblacklist = new Perm("massUnblacklist", "manager");
 	static bypassNameCheck = new Perm("bypassNameCheck", "fish");
 	static hardcore = new Perm("hardcore", "trusted");
 	static massKill = new Perm("massKill", "admin").exceptModes({

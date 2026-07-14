@@ -82,6 +82,7 @@ var Perm = /** @class */ (function () {
     });
     Perm.usidCheck = new Perm("usidCheck", "trusted");
     Perm.runJS = new Perm("runJS", "manager");
+    Perm.massUnblacklist = new Perm("massUnblacklist", "manager");
     Perm.bypassNameCheck = new Perm("bypassNameCheck", "fish");
     Perm.hardcore = new Perm("hardcore", "trusted");
     Perm.massKill = new Perm("massKill", "admin").exceptModes({
