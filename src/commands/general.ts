@@ -1367,5 +1367,15 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			outputSuccess("Copied.");
 		}
 	},
-	
+	copyTo: {
+		args: ["target:player", "string:string"],
+		description: "Copies the specified text to someone else's clipboard.",
+		perm: Perm.mod,
+		requirements: [Req.cooldown(5_000)],
+		handler({ args: { target, string }, sender, f, outputSuccess }){
+			Call.copyToClipboard(target.con, string);
+			target.sendMessage(`[accent]Copy: ${sender.prefixedName}[accent] sent you some text to copy.`);
+			outputSuccess(f`Sent text to ${target}`);
+		}
+	},
 });
