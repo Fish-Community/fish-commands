@@ -236,7 +236,7 @@ export const commands = commandList({
 				const fishP = FishPlayer.getFromInfo(option);
 				if(sender.canModerate(fishP, true)){
 					player(fishP);
-					logAction(fishP.marked() ? time == 1000 ? "freed" : "updated stop time of" : "stopped", sender, option, undefined, time);
+					logAction(fishP.marked() ? time <= 1000 ? "freed" : `updated stop time to ${formatTime(time)} for` : "stopped", sender, option, undefined, time);
 					await fishP.stop(sender, time);
 					outputSuccess(f`Player ${option} was marked for ${formatTime(time)}.`);
 				} else {

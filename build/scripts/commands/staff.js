@@ -438,7 +438,7 @@ exports.commands = (0, commands_1.commandList)({
                                     fishP = players_1.FishPlayer.getFromInfo(option);
                                     if (!sender.canModerate(fishP, true)) return [3 /*break*/, 2];
                                     player(fishP);
-                                    (0, utils_1.logAction)(fishP.marked() ? time == 1000 ? "freed" : "updated stop time of" : "stopped", sender, option, undefined, time);
+                                    (0, utils_1.logAction)(fishP.marked() ? time <= 1000 ? "freed" : "updated stop time to ".concat((0, utils_1.formatTime)(time), " for") : "stopped", sender, option, undefined, time);
                                     return [4 /*yield*/, fishP.stop(sender, time)];
                                 case 1:
                                     _a.sent();
