@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commandArgNames = exports.commandArgTypes = void 0;
 /** All valid command arg types. */
 exports.commandArgTypes = [
-    "string", "number", "boolean", "player", /*"menuPlayer",*/ "team", "time", "unittype", "block",
+    "string", "number", "boolean", "player", "team", "time", "unittype", "block",
     "uuid", "offlinePlayer", "map", "mapOrRandom", "rank", "roleflag", "item"
 ];
 exports.commandArgNames = {
