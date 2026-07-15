@@ -626,7 +626,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		fishP.activeMenus = [];
 		fishP.tapInfo.commandName = null;
 		fishP.tapInfo.resolve = null;
-		fishP.updateStats(stats => stats.timeInGame += (Date.now() - fishP.lastJoined)); //Time between joining and leaving
+		if(fishP.lastJoined > 1000) fishP.updateStats(stats => stats.timeInGame += (Date.now() - fishP.lastJoined)); //Time between joining and leaving
 		fishP.lastJoined = Date.now();
 		this.recentLeaves.unshift(fishP);
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
