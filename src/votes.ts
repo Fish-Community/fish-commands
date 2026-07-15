@@ -103,18 +103,18 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 		this.session = null;
 	}
 	
-	requiredVotes():number {
+	requiredVotes(session: typeof this.session & {}):number {
 		if(this.goal[0] == "absolute"){
 			return this.goal[1];
 		} else {
 			const numVoters = FishPlayer.getAllOnline().filter(p =>
-				this.isEligible(p, this.session!.data) && (this.isCounted(p, this.session!.data) || this.session!.votes.has(p.uuid))
+				this.isEligible(p, session.data) && (this.isCounted(p, session.data) || session.votes.has(p.uuid))
 			).length;
 			return Math.max(Math.ceil(this.goal[1] * numVoters), 1);
 		}
 	}
 
-	currentVotes():number {
+	currentVotes(session: typeof this.session & {}):number {
 		if(this.session){
 			for(const key of this.session.votes.keys()){
 				const fishP = FishPlayer.getById(key)!;
@@ -134,8 +134,9 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 		this.getEligibleVoters().forEach(p => p.sendMessage(message));
 	}
 	_checkVote(end:boolean){
-		const votes = this.currentVotes();
-		const required = this.requiredVotes();
+		if(!this.session) return;
+		const votes = this.currentVotes(this.session);
+		const required = this.requiredVotes(this.session);
 		if(votes >= required){
 			this.fire("success", [false]);
 			this.fire("vote passed", [votes, required]);
