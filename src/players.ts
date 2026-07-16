@@ -101,7 +101,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	prefixedName:string = "Unnamed player [ERROR}";
 	/** Set when ClashGone is feeling especially chaotic. Used instead of {@link name} for prefixed name computation. */
 	jokeName:string | null = null;
-	/** Used to freeze players when votekicking. */
+	/** Used to freeze players temporarily. */
 	frozen:boolean = false;
 	/** Used to avoid spamming players with ads by the tip message system */
 	lastShownAd:number = globals.maxTime;
@@ -1690,7 +1690,7 @@ We apologize for the inconvenience.`
 		return Date.now() - this.lastActive > 60_000 || this.manualAfk;
 	}
 	stelled():boolean {
-		return this.marked() || this.autoflagged;
+		return this.marked() || this.autoflagged || this.frozen;
 	}
 	setUnmarkTimer(duration:number){
 		const oldUnmarkTime = this.unmarkTime;

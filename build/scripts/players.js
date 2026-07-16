@@ -150,7 +150,7 @@ var FishPlayer = /** @class */ (function () {
         this.prefixedName = "Unnamed player [ERROR}";
         /** Set when ClashGone is feeling especially chaotic. Used instead of {@link name} for prefixed name computation. */
         this.jokeName = null;
-        /** Used to freeze players when votekicking. */
+        /** Used to freeze players temporarily. */
         this.frozen = false;
         /** Used to avoid spamming players with ads by the tip message system */
         this.lastShownAd = globals.maxTime;
@@ -1939,7 +1939,7 @@ var FishPlayer = /** @class */ (function () {
         return Date.now() - this.lastActive > 60000 || this.manualAfk;
     };
     FishPlayer.prototype.stelled = function () {
-        return this.marked() || this.autoflagged;
+        return this.marked() || this.autoflagged || this.frozen;
     };
     FishPlayer.prototype.setUnmarkTimer = function (duration) {
         var _this = this;

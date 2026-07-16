@@ -124,6 +124,7 @@ exports.syncManual = syncManual;
 exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
 exports.unblacklist = unblacklist;
+exports.getDuration = getDuration;
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
@@ -1254,4 +1255,14 @@ function unblacklist(ip) {
     //just try it thrice
     Timer.schedule(function () { return unblacklist_once(ip); }, 0.5, 1, 2);
     return unblacklist_once(ip);
+}
+function getDuration(player, title, description) {
+    return menus_1.Menu.buttons(player, title, description, [
+        [
+            { text: "2 days", data: funcs_1.Duration.days(2) },
+            { text: "7 days", data: funcs_1.Duration.days(7) },
+            { text: "30 days", data: funcs_1.Duration.days(30) }
+        ],
+        [{ text: "forever", data: globals_1.maxTime - Date.now() - 10000 }],
+    ], { onCancel: "reject" });
 }

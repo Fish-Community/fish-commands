@@ -280,35 +280,55 @@ exports.commands = (0, commands_1.commandList)({
         requirements: [commands_1.Req.moderate("player", true)],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var previousTime, time;
-                var _c, _d, _e, _f;
+                var previousTime, time, _c, message, _d;
+                var _e, _f, _g;
                 var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
                         case 0:
                             if (!args.player.marked()) return [3 /*break*/, 2];
                             //overload: overwrite stoptime
-                            if (!args.time)
+                            if (args.time == undefined)
                                 (0, commands_1.fail)(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player));
                             previousTime = (0, utils_1.formatTimeRelative)(args.player.unmarkTime, true);
                             return [4 /*yield*/, args.player.updateStopTime(args.time)];
                         case 1:
-                            _g.sent();
+                            _h.sent();
                             outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
-                            (0, utils_1.logAction)("updated stop time of", sender, args.player, (_c = args.message) !== null && _c !== void 0 ? _c : undefined, args.time);
-                            return [3 /*break*/, 4];
+                            (0, utils_1.logAction)("updated stop time of", sender, args.player, (_e = args.message) !== null && _e !== void 0 ? _e : undefined, args.time);
+                            return [3 /*break*/, 11];
                         case 2:
-                            time = (_d = args.time) !== null && _d !== void 0 ? _d : (0, utils_1.untilForever)();
-                            if (time + Date.now() > globals_1.maxTime)
-                                (0, commands_1.fail)("Error: time too high.");
-                            return [4 /*yield*/, args.player.stop(sender, time, (_e = args.message) !== null && _e !== void 0 ? _e : undefined)];
-                        case 3:
-                            _g.sent();
-                            (0, utils_1.logAction)('stopped', sender, args.player, (_f = args.message) !== null && _f !== void 0 ? _f : undefined, time);
+                            _h.trys.push([2, , 10, 11]);
+                            args.player.frozen = true;
+                            if (!((_f = args.time) !== null && _f !== void 0)) return [3 /*break*/, 3];
+                            _c = _f;
+                            return [3 /*break*/, 5];
+                        case 3: return [4 /*yield*/, (0, utils_1.getDuration)(sender, "Stop", "Select stop time\n(The player is currently frozen, take your time)")];
+                        case 4:
+                            _c = _h.sent();
+                            _h.label = 5;
+                        case 5:
+                            time = _c;
+                            if (!((_g = args.message) !== null && _g !== void 0)) return [3 /*break*/, 6];
+                            _d = _g;
+                            return [3 /*break*/, 8];
+                        case 6: return [4 /*yield*/, menus_1.Menu.text("Stop", "Enter the stop reason\n(The player is currently frozen, take your time)", sender, { allowEmpty: true, maxTextLength: 99 })];
+                        case 7:
+                            _d = _h.sent();
+                            _h.label = 8;
+                        case 8:
+                            message = _d;
+                            return [4 /*yield*/, args.player.stop(sender, time, message)];
+                        case 9:
+                            _h.sent();
+                            (0, utils_1.logAction)('stopped', sender, args.player, message, time);
                             //TODO outputGlobal()
                             Call.sendMessage("[orange]Player \"".concat(args.player.prefixedName, "[orange]\" has been marked for ").concat((0, utils_1.formatTime)(time)).concat(args.message ? " with reason: [white]".concat(args.message, "[]") : "", "."));
-                            _g.label = 4;
-                        case 4: return [2 /*return*/];
+                            return [3 /*break*/, 11];
+                        case 10:
+                            args.player.frozen = false;
+                            return [7 /*endfinally*/];
+                        case 11: return [2 /*return*/];
                     }
                 });
             });
@@ -454,23 +474,23 @@ exports.commands = (0, commands_1.commandList)({
                         });
                     });
                 }
-                var maxPlayers, info, possiblePlayers, exactPlayers, score_1, optionPlayer, _c, _d, _e;
-                var _f, _g;
+                var maxPlayers, info, possiblePlayers, exactPlayers, score_1, optionPlayer, _c, _d;
+                var _e, _f;
                 var args = _b.args, sender = _b.sender, outputFail = _b.outputFail, player = _b.player, outputSuccess = _b.outputSuccess, f = _b.f, admins = _b.admins;
-                return __generator(this, function (_h) {
-                    switch (_h.label) {
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             maxPlayers = 60;
                             if (!(args.name && globals_1.uuidPattern.test(args.name))) return [3 /*break*/, 4];
                             info = admins.getInfoOptional(args.name);
                             if (!(info != null)) return [3 /*break*/, 2];
-                            return [4 /*yield*/, stop(info, (_f = args.time) !== null && _f !== void 0 ? _f : (0, utils_1.untilForever)())];
+                            return [4 /*yield*/, stop(info, (_e = args.time) !== null && _e !== void 0 ? _e : (0, utils_1.untilForever)())];
                         case 1:
-                            _h.sent();
+                            _g.sent();
                             return [3 /*break*/, 3];
                         case 2:
                             outputFail(f(templateObject_25 || (templateObject_25 = __makeTemplateObject(["Unknown UUID ", ""], ["Unknown UUID ", ""])), args.name));
-                            _h.label = 3;
+                            _g.label = 3;
                         case 3: return [2 /*return*/];
                         case 4:
                             if (args.name) {
@@ -503,27 +523,21 @@ exports.commands = (0, commands_1.commandList)({
                                     optionStringifier: function (p) { return p.lastName; }
                                 })];
                         case 5:
-                            optionPlayer = _h.sent();
-                            if (!((_g = args.time) !== null && _g !== void 0)) return [3 /*break*/, 6];
-                            _c = _g;
+                            optionPlayer = _g.sent();
+                            if (!((_f = args.time) !== null && _f !== void 0)) return [3 /*break*/, 6];
+                            _c = _f;
                             return [3 /*break*/, 8];
                         case 6:
                             _d = args;
-                            _e = utils_1.match;
-                            return [4 /*yield*/, menus_1.Menu.menu("Stop", "Select stop time", ["2 days", "7 days", "30 days", "forever"], sender)];
+                            return [4 /*yield*/, (0, utils_1.getDuration)(sender, "Stop", "Select stop time")];
                         case 7:
-                            _c = (_d.time = _e.apply(void 0, [_h.sent(), {
-                                    "2 days": funcs_1.Duration.days(2),
-                                    "7 days": funcs_1.Duration.days(7),
-                                    "30 days": funcs_1.Duration.days(30),
-                                    "forever": globals_1.maxTime - Date.now() - 10000,
-                                }]));
-                            _h.label = 8;
+                            _c = (_d.time = _g.sent());
+                            _g.label = 8;
                         case 8:
                             _c;
                             return [4 /*yield*/, stop(optionPlayer, args.time)];
                         case 9:
-                            _h.sent();
+                            _g.sent();
                             return [2 /*return*/];
                     }
                 });

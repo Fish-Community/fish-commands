@@ -7,8 +7,8 @@ For functions that don't need values from other files, see funcs.ts.
 import * as api from "/api";
 import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
 import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
-import { Cancel } from "/frameworks/menus";
-import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
+import { Cancel, Menu } from "/frameworks/menus";
+import { crash, Duration, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
 import { dosBlacklistCopy, FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { SelectEnumClassKeys } from "/types";
@@ -1071,4 +1071,15 @@ export function unblacklist(ip:string):boolean {
 	//just try it thrice
 	Timer.schedule(() => unblacklist_once(ip), 0.5, 1, 2);
 	return unblacklist_once(ip);
+}
+
+export function getDuration(player:FishPlayer<true>, title:string, description:string){
+	return Menu.buttons(player, title, description, [
+		[
+			{text: "2 days", data: Duration.days(2)},
+			{text: "7 days", data: Duration.days(7)},
+			{text: "30 days", data: Duration.days(30)}
+		],
+		[{text: "forever", data: maxTime - Date.now() - 10000}],
+	], { onCancel: "reject" });
 }

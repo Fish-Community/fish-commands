@@ -15,7 +15,7 @@ import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { Label } from "/types";
-import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, unblacklist, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, getDuration, logAction, match, serverRestartLoop, syncManual, unblacklist, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -133,18 +133,27 @@ export const commands = commandList({
 		async handler({args, sender, outputSuccess, f}){
 			if(args.player.marked()){
 				//overload: overwrite stoptime
-				if(!args.time) fail(f`Player ${args.player} is already marked.`);
+				if(args.time == undefined) fail(f`Player ${args.player} is already marked.`);
 				const previousTime = formatTimeRelative(args.player.unmarkTime, true);
 				await args.player.updateStopTime(args.time);
 				outputSuccess(f`Player ${args.player}'s stop time has been updated to ${formatTime(args.time)} (was ${previousTime}).`);
 				logAction("updated stop time of", sender, args.player, args.message ?? undefined, args.time);
 			} else {
-				const time = args.time ?? untilForever();
-				if(time + Date.now() > maxTime) fail(`Error: time too high.`);
-				await args.player.stop(sender, time, args.message ?? undefined);
-				logAction('stopped', sender, args.player, args.message ?? undefined, time);
-				//TODO outputGlobal()
-				Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${args.message ? ` with reason: [white]${args.message}[]` : ""}.`);
+				try {
+					args.player.frozen = true;
+					const time = args.time ?? await getDuration(sender, "Stop", "Select stop time\n(The player is currently frozen, take your time)");
+					const message = args.message ?? await Menu.text(
+						"Stop", "Enter the stop reason\n(The player is currently frozen, take your time)",
+						sender,
+						{ allowEmpty: true, maxTextLength: 99 }
+					);
+					await args.player.stop(sender, time, message);
+					logAction('stopped', sender, args.player, message, time);
+					//TODO outputGlobal()
+					Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${args.message ? ` with reason: [white]${args.message}[]` : ""}.`);
+				} finally {
+					args.player.frozen = false;
+				}
 			}
 
 		}
@@ -283,15 +292,7 @@ export const commands = commandList({
 				includeCancel: true,
 				optionStringifier: p => p.lastName
 			});
-			args.time ??= match(
-				await Menu.menu("Stop", "Select stop time", ["2 days", "7 days", "30 days", "forever"], sender),
-				{
-					"2 days": Duration.days(2),
-					"7 days": Duration.days(7),
-					"30 days": Duration.days(30),
-					"forever": maxTime - Date.now() - 10000,
-				}
-			);
+			args.time ??= await getDuration(sender, "Stop", "Select stop time");
 			await stop(optionPlayer, args.time);
 		}
 	},
