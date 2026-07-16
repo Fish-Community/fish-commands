@@ -198,7 +198,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
                             (fishP === null || fishP === void 0 ? void 0 : fishP.marked()) && (globals_1.maxTime - fishP.unmarkTime < 20000 ?
                                 "&lris marked forever&fr"
                                 : "&lris marked&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime))),
-                            (fishP === null || fishP === void 0 ? void 0 : fishP.muted) && "&lris muted&fr",
+                            (fishP === null || fishP === void 0 ? void 0 : fishP.muted()) && (globals_1.maxTime - fishP.unmuteTime < 20000 ?
+                                "&lris muted forever&fr"
+                                : "&lris muted&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmuteTime))),
                             (fishP === null || fishP === void 0 ? void 0 : fishP.hasFlag("member")) && "&lmis member&fr",
                             (fishP === null || fishP === void 0 ? void 0 : fishP.autoflagged) && "&lris autoflagged&fr",
                             playerInfo.banned && "&bris UUID banned&fr",
@@ -341,7 +343,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var outputString = [""];
             var _loop_2 = function (player) {
                 var playerInfo = admins.getInfo(player.uuid);
-                outputString.push("Info for player &c\"".concat(Strings.stripColors(player.name), "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid ? "\"".concat(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
+                outputString.push("Info for player &c\"".concat(Strings.stripColors(player.name), "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid ? "\"".concat(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted() ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
             };
             try {
                 for (var infoList_2 = __values(infoList), infoList_2_1 = infoList_2.next(); !infoList_2_1.done; infoList_2_1 = infoList_2.next()) {
@@ -1024,21 +1026,23 @@ exports.commands = (0, commands_1.consoleCommandList)({
         }
     },
     mute: {
-        args: ['player:player'],
+        args: ['player:player', 'duration:time?'],
         description: 'Stops a player from chatting.',
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
+                var _c;
                 var args = _b.args, outputSuccess = _b.outputSuccess, f = _b.f;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
-                            if (args.player.muted)
+                            (_c = args.duration) !== null && _c !== void 0 ? _c : (args.duration = globals_1.maxTime);
+                            if (args.player.muted())
                                 (0, commands_1.fail)(f(templateObject_8 || (templateObject_8 = __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player));
-                            return [4 /*yield*/, args.player.mute("console")];
+                            return [4 /*yield*/, args.player.mute("console", args.duration)];
                         case 1:
-                            _c.sent();
+                            _d.sent();
                             (0, utils_1.logAction)('muted', "console", args.player);
-                            outputSuccess(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Muted player ", "."], ["Muted player ", "."])), args.player));
+                            outputSuccess(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Muted player ", " for ", "."], ["Muted player ", " for ", "."])), args.player, (0, utils_1.formatTime)(args.duration)));
                             return [2 /*return*/];
                     }
                 });
@@ -1054,9 +1058,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
-                            if (!args.player.muted && args.player.autoflagged)
+                            if (!args.player.muted() && args.player.autoflagged)
                                 (0, commands_1.fail)(f(templateObject_10 || (templateObject_10 = __makeTemplateObject(["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."], ["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."])), args.player));
-                            if (!args.player.muted)
+                            if (!args.player.muted())
                                 (0, commands_1.fail)(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", " is not muted."], ["Player ", " is not muted."])), args.player));
                             return [4 /*yield*/, args.player.unmute("console")];
                         case 1:

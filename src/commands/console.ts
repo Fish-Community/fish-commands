@@ -95,7 +95,9 @@ export const commands = consoleCommandList({
 						fishP?.marked() && (maxTime - fishP.unmarkTime < 20_000 ?
 							`&lris marked forever&fr`
 						: `&lris marked&fr until ${formatTimeRelative(fishP.unmarkTime)}`),
-						fishP?.muted && "&lris muted&fr",
+						fishP?.muted() && (maxTime - fishP.unmuteTime < 20_000 ?
+							`&lris muted forever&fr`
+						: `&lris muted&fr until ${formatTimeRelative(fishP.unmuteTime)}`),
 						fishP?.hasFlag("member") && "&lmis member&fr",
 						fishP?.autoflagged && "&lris autoflagged&fr",
 						playerInfo.banned && "&bris UUID banned&fr",
@@ -139,7 +141,7 @@ export const commands = consoleCommandList({
 	all names used: ${playerInfo.names.map((n:string) => `&c"${n}"&fr`).items.join(', ')}
 	all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}
 	joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times
-	rank: &c${player.rank.name}&fr${(player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")}`
+	rank: &c${player.rank.name}&fr${(player.marked() ? ", &lris marked&fr" : "") + (player.muted() ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")}`
 				);
 			}
 			output(outputString.join("\n"));
@@ -730,13 +732,14 @@ ${FishPlayer.mapPlayers(p =>
 		}
 	},
 	mute: {
-		args: ['player:player'],
+		args: ['player:player', 'duration:time?'],
 		description: 'Stops a player from chatting.',
 		async handler({args, outputSuccess, f}){
-			if(args.player.muted) fail(f`Player ${args.player} is already muted.`);
-			await args.player.mute("console");
+			args.duration ??= maxTime;
+			if(args.player.muted()) fail(f`Player ${args.player} is already muted.`);
+			await args.player.mute("console", args.duration);
 			logAction('muted', "console", args.player);
-			outputSuccess(f`Muted player ${args.player}.`);
+			outputSuccess(f`Muted player ${args.player} for ${formatTime(args.duration)}.`);
 		}
 	},
 
@@ -744,8 +747,8 @@ ${FishPlayer.mapPlayers(p =>
 		args: ['player:player'],
 		description: 'Unmutes a player',
 		async handler({args, outputSuccess, f}){
-			if(!args.player.muted && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
-			if(!args.player.muted) fail(f`Player ${args.player} is not muted.`);
+			if(!args.player.muted() && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
+			if(!args.player.muted()) fail(f`Player ${args.player} is not muted.`);
 			await args.player.unmute("console");
 			logAction('unmuted', "console", args.player);
 			outputSuccess(f`Unmuted player ${args.player}.`);

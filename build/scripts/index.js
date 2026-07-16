@@ -266,7 +266,7 @@ Events.on(EventType.ServerLoadEvent, function () {
             }
             else if (action.type === Administration.ActionType.pingLocation && action.pingText && action.pingText.length < Vars.maxPingTextLength) {
                 var fishP_1 = players_1.FishPlayer.get(action.player);
-                if (fishP_1.muted) {
+                if (fishP_1.muted()) {
                     action.player.sendMessage("[scarlet]\u26A0 [yellow]You are muted, you cannot send text through location pings.");
                     return false;
                 }

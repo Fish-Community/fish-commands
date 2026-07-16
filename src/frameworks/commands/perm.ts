@@ -17,9 +17,9 @@ export class Perm {
 	static mod = Perm.fromRank(Rank.mod);
 	static admin = Perm.fromRank(Rank.admin);
 	static member = new Perm("member", fishP => fishP.hasFlag("member"), "[pink]", `You must have a ${FColor.member`Fish Membership`} to use this command. Get a Fish Membership at[sky] ${text.membershipURL} []`);
-	static chat = new Perm("chat", fishP => (!fishP.muted && !fishP.autoflagged) || fishP.ranksAtLeast("mod"));
+	static chat = new Perm("chat", fishP => (!fishP.muted() && !fishP.autoflagged) || fishP.ranksAtLeast("mod"));
 	static bypassChatFilter = new Perm("bypassChatFilter", "admin");
-	static seeMutedMessages = new Perm("seeMutedMessages", fishP => fishP.muted || fishP.autoflagged || fishP.ranksAtLeast("mod"));
+	static seeMutedMessages = new Perm("seeMutedMessages", fishP => fishP.muted() || fishP.autoflagged || fishP.ranksAtLeast("mod"));
 	static play = new Perm("play", fishP => !fishP.stelled() || fishP.ranksAtLeast("mod"));
 	static seeErrorMessages = new Perm("seeErrorMessages", "mod");
 	static viewUUIDs = new Perm("viewUUIDs", "mod");
@@ -33,7 +33,7 @@ export class Perm {
 	static bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
 	static bypassVotekick = new Perm("bypassVotekick", "mod");
 	static warn = new Perm("warn", "mod");
-	static vanish = new Perm("vanish", "mod");
+	static vanish = new Perm("vanish", "trusted");
 	static changeTeam = new Perm("changeTeam", "admin").exceptModes({
 		sandbox: Perm.trusted,
 		attack: Perm.admin,

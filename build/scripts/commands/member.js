@@ -25,7 +25,7 @@ exports.commands = (0, commands_1.commandList)({
                     return;
                 }
             }
-            if (sender.muted || !args.name)
+            if (sender.muted() || !args.name)
                 args.name = "".concat(sender.name, "[white]'s pet");
             if (args.name.length > 500)
                 (0, commands_1.fail)("Name cannot be more than 500 characters.");

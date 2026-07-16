@@ -704,9 +704,9 @@ function processChat(player, message, effects) {
             if (suspicious && removeFoosChars(message).split(" ")
                 .map(function (w) { return w.replace(/[-_.^*,]/g, ""); })
                 .some(function (w) { return config_1.bannedWords.autoWhack.includes(w); })) {
-                if (!fishPlayer.muted) {
+                if (!fishPlayer.muted()) {
                     logHTrip(fishPlayer, "bad words in chat", "message: `".concat(message, "`"));
-                    fishPlayer.muted = true;
+                    void fishPlayer.mute("automod", globals_1.maxTime, "Automatic mute due to suspicious activity");
                     void fishPlayer.stop("automod", globals_1.maxTime, "Automatic stop due to suspicious activity", false);
                 }
             }

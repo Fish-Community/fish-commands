@@ -53,9 +53,9 @@ var Perm = /** @class */ (function () {
     Perm.mod = Perm.fromRank(ranks_1.Rank.mod);
     Perm.admin = Perm.fromRank(ranks_1.Rank.admin);
     Perm.member = new Perm("member", function (fishP) { return fishP.hasFlag("member"); }, "[pink]", "You must have a ".concat(config_1.FColor.member(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Fish Membership"], ["Fish Membership"]))), " to use this command. Get a Fish Membership at[sky] ").concat(config_1.text.membershipURL, " []"));
-    Perm.chat = new Perm("chat", function (fishP) { return (!fishP.muted && !fishP.autoflagged) || fishP.ranksAtLeast("mod"); });
+    Perm.chat = new Perm("chat", function (fishP) { return (!fishP.muted() && !fishP.autoflagged) || fishP.ranksAtLeast("mod"); });
     Perm.bypassChatFilter = new Perm("bypassChatFilter", "admin");
-    Perm.seeMutedMessages = new Perm("seeMutedMessages", function (fishP) { return fishP.muted || fishP.autoflagged || fishP.ranksAtLeast("mod"); });
+    Perm.seeMutedMessages = new Perm("seeMutedMessages", function (fishP) { return fishP.muted() || fishP.autoflagged || fishP.ranksAtLeast("mod"); });
     Perm.play = new Perm("play", function (fishP) { return !fishP.stelled() || fishP.ranksAtLeast("mod"); });
     Perm.seeErrorMessages = new Perm("seeErrorMessages", "mod");
     Perm.viewUUIDs = new Perm("viewUUIDs", "mod");
@@ -67,7 +67,7 @@ var Perm = /** @class */ (function () {
     Perm.bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
     Perm.bypassVotekick = new Perm("bypassVotekick", "mod");
     Perm.warn = new Perm("warn", "mod");
-    Perm.vanish = new Perm("vanish", "mod");
+    Perm.vanish = new Perm("vanish", "trusted");
     Perm.changeTeam = new Perm("changeTeam", "admin").exceptModes({
         sandbox: Perm.trusted,
         attack: Perm.admin,

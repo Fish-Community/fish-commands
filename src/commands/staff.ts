@@ -35,15 +35,16 @@ export const commands = commandList({
 	},
 
 	mute: {
-		args: ['player:player'],
+		args: ['player:player', 'duration:time?'],
 		description: 'Stops a player from chatting.',
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
 		async handler({args, sender, outputSuccess, f}){
-			if(args.player.muted) fail(f`Player ${args.player} is already muted.`);
-			await args.player.mute(sender);
+			args.duration ??= Duration.days(7);
+			if(args.player.muted()) fail(f`Player ${args.player} is already muted.`);
+			await args.player.mute(sender, args.duration);
 			logAction('muted', sender, args.player);
-			outputSuccess(f`Muted player ${args.player}.`);
+			outputSuccess(f`Muted player ${args.player} for ${formatTime(args.duration)}.`);
 		}
 	},
 
@@ -52,8 +53,8 @@ export const commands = commandList({
 		description: 'Unmutes a player',
 		perm: Perm.mod,
 		async handler({args, sender, outputSuccess, f}){
-			if(!args.player.muted && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
-			if(!args.player.muted) fail(f`Player ${args.player} is not muted.`);
+			if(!args.player.muted() && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
+			if(!args.player.muted()) fail(f`Player ${args.player} is not muted.`);
 			await args.player.unmute(sender);
 			logAction('unmuted', sender, args.player);
 			outputSuccess(f`Unmuted player ${args.player}.`);
@@ -296,37 +297,38 @@ export const commands = commandList({
 	},
 
 	mute_offline: {
-		args: ["name:string?"],
+		args: ["duration:time?", "name:string?"],
 		description: "Mutes an offline player.",
 		perm: Perm.mod,
-		async handler({args, sender, outputSuccess, player, f, admins}){
+		async handler({args: { name, duration = Duration.days(7) }, sender, outputSuccess, player, f, admins}){
 			const maxPlayers = 300;
 			
 			async function mute(option:PlayerInfo){
 				const fishP = FishPlayer.getFromInfo(option);
 				if(!sender.canModerate(fishP, true)) fail(`You do not have permission to mute this player.`);
-				await Menu.confirm(sender, `Are you sure you want to ${fishP.muted ? "unmute" : "mute"} player ${option.lastName}?`, {
+				const muted = fishP.muted();
+				await Menu.confirm(sender, `Are you sure you want to ${muted ? "unmute" : "mute"} player ${option.lastName}?`, {
 					title: "Mute Offine Confirmation",
-					confirmText: `[green]Yes, ${fishP.muted ? "unmute" : "mute"} them`,
+					confirmText: `[green]Yes, ${fishP.muted() ? "unmute" : "mute"} them`,
 				});
 				player(fishP);
-				logAction(fishP.muted ? "unmuted" : "muted", sender, fishP);
-				if(fishP.muted) await fishP.unmute(sender);
-				else await fishP.mute(sender);
-				outputSuccess(`${fishP.muted ? "Muted" : "Unmuted"} ${option.lastName}.`);
+				logAction(muted ? "unmuted" : "muted", sender, fishP);
+				if(muted) await fishP.unmute(sender);
+				else await fishP.mute(sender, duration);
+				outputSuccess(`${muted ? "Muted" : "Unmuted"} ${option.lastName}.`);
 			}
 			
-			if(args.name && uuidPattern.test(args.name)){
-				const info = admins.getInfoOptional(args.name) ?? fail(f`Unknown UUID ${args.name}`);
+			if(name && uuidPattern.test(name)){
+				const info = admins.getInfoOptional(name) ?? fail(f`Unknown UUID ${name}`);
 				await mute(info);
 				return;
 			}
 
 			let possiblePlayers:PlayerInfo[];
-			if(args.name) {
-				possiblePlayers = setToArray(admins.searchNames(args.name));
+			if(name) {
+				possiblePlayers = setToArray(admins.searchNames(name));
 				if(possiblePlayers.length > maxPlayers){
-					const exactPlayers = setToArray(admins.findByName(args.name));
+					const exactPlayers = setToArray(admins.findByName(name));
 					if(exactPlayers.length > 0){
 						possiblePlayers = exactPlayers;
 					} else {
@@ -758,7 +760,7 @@ export const commands = commandList({
 		description: `Sends a message to muted players only.`,
 		perm: Perm.mod,
 		handler({sender, args}){
-			sender.recentPlayers = new Set(FishPlayer.getAllOnline().filter(p => p.muted));
+			sender.recentPlayers = new Set(FishPlayer.getAllOnline().filter(p => p.muted()));
 			FishPlayer.messageMuted(sender.prefixedName, args.message);
 		}
 	},
@@ -778,7 +780,7 @@ export const commands = commandList({
 	[accent]Role flags: ${copy(Array.from(args.target.flags).map(f => f.coloredName()).join(" "))}
 	[accent]Stopped: ${f.boolBad(!args.target.hasPerm("play"))}
 	[accent]marked: ${args.target.marked() ? `until ${copy(formatTimeRelative(args.target.unmarkTime))}` : "[green]false"}
-	[accent]muted: ${f.boolBad(args.target.muted)}
+	[accent]muted: ${args.target.muted() ? `until ${copy(formatTimeRelative(args.target.unmuteTime))}` : "[green]false"}
 	[accent]autoflagged: ${f.boolBad(args.target.autoflagged)}
 	[accent]VPN detected: ${f.boolBad(args.target.ipDetectedVpn)}
 	[accent]times joined / kicked: ${info.timesJoined}/${info.timesKicked}

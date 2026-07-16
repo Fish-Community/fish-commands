@@ -243,7 +243,7 @@ Events.on(EventType.ServerLoadEvent, () => {
 				return false;
 			} else if(action.type === Administration.ActionType.pingLocation && action.pingText && action.pingText.length < Vars.maxPingTextLength){
 				const fishP = FishPlayer.get(action.player);
-				if(fishP.muted){
+				if(fishP.muted()){
 					action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are muted, you cannot send text through location pings.`);
 					return false;
 				} else if(matchFilter(action.pingText, "chat", false)){

@@ -156,23 +156,25 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     mute: {
-        args: ['player:player'],
+        args: ['player:player', 'duration:time?'],
         description: 'Stops a player from chatting.',
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("player")],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
+                var _c;
                 var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
-                            if (args.player.muted)
+                            (_c = args.duration) !== null && _c !== void 0 ? _c : (args.duration = funcs_1.Duration.days(7));
+                            if (args.player.muted())
                                 (0, commands_1.fail)(f(templateObject_3 || (templateObject_3 = __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player));
-                            return [4 /*yield*/, args.player.mute(sender)];
+                            return [4 /*yield*/, args.player.mute(sender, args.duration)];
                         case 1:
-                            _c.sent();
+                            _d.sent();
                             (0, utils_1.logAction)('muted', sender, args.player);
-                            outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Muted player ", "."], ["Muted player ", "."])), args.player));
+                            outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Muted player ", " for ", "."], ["Muted player ", " for ", "."])), args.player, (0, utils_1.formatTime)(args.duration)));
                             return [2 /*return*/];
                     }
                 });
@@ -189,9 +191,9 @@ exports.commands = (0, commands_1.commandList)({
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
-                            if (!args.player.muted && args.player.autoflagged)
+                            if (!args.player.muted() && args.player.autoflagged)
                                 (0, commands_1.fail)(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."], ["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."])), args.player));
-                            if (!args.player.muted)
+                            if (!args.player.muted())
                                 (0, commands_1.fail)(f(templateObject_6 || (templateObject_6 = __makeTemplateObject(["Player ", " is not muted."], ["Player ", " is not muted."])), args.player));
                             return [4 /*yield*/, args.player.unmute(sender)];
                         case 1:
@@ -529,39 +531,40 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     mute_offline: {
-        args: ["name:string?"],
+        args: ["duration:time?", "name:string?"],
         description: "Mutes an offline player.",
         perm: commands_1.Perm.mod,
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 function mute(option) {
                     return __awaiter(this, void 0, void 0, function () {
-                        var fishP;
+                        var fishP, muted;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
                                     fishP = players_1.FishPlayer.getFromInfo(option);
                                     if (!sender.canModerate(fishP, true))
                                         (0, commands_1.fail)("You do not have permission to mute this player.");
-                                    return [4 /*yield*/, menus_1.Menu.confirm(sender, "Are you sure you want to ".concat(fishP.muted ? "unmute" : "mute", " player ").concat(option.lastName, "?"), {
+                                    muted = fishP.muted();
+                                    return [4 /*yield*/, menus_1.Menu.confirm(sender, "Are you sure you want to ".concat(muted ? "unmute" : "mute", " player ").concat(option.lastName, "?"), {
                                             title: "Mute Offine Confirmation",
-                                            confirmText: "[green]Yes, ".concat(fishP.muted ? "unmute" : "mute", " them"),
+                                            confirmText: "[green]Yes, ".concat(fishP.muted() ? "unmute" : "mute", " them"),
                                         })];
                                 case 1:
                                     _a.sent();
                                     player(fishP);
-                                    (0, utils_1.logAction)(fishP.muted ? "unmuted" : "muted", sender, fishP);
-                                    if (!fishP.muted) return [3 /*break*/, 3];
+                                    (0, utils_1.logAction)(muted ? "unmuted" : "muted", sender, fishP);
+                                    if (!muted) return [3 /*break*/, 3];
                                     return [4 /*yield*/, fishP.unmute(sender)];
                                 case 2:
                                     _a.sent();
                                     return [3 /*break*/, 5];
-                                case 3: return [4 /*yield*/, fishP.mute(sender)];
+                                case 3: return [4 /*yield*/, fishP.mute(sender, duration)];
                                 case 4:
                                     _a.sent();
                                     _a.label = 5;
                                 case 5:
-                                    outputSuccess("".concat(fishP.muted ? "Muted" : "Unmuted", " ").concat(option.lastName, "."));
+                                    outputSuccess("".concat(muted ? "Muted" : "Unmuted", " ").concat(option.lastName, "."));
                                     return [2 /*return*/];
                             }
                         });
@@ -569,22 +572,22 @@ exports.commands = (0, commands_1.commandList)({
                 }
                 var maxPlayers, info, possiblePlayers, exactPlayers, score_2, option;
                 var _c;
-                var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, player = _b.player, f = _b.f, admins = _b.admins;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var _d = _b.args, name = _d.name, _e = _d.duration, duration = _e === void 0 ? funcs_1.Duration.days(7) : _e, sender = _b.sender, outputSuccess = _b.outputSuccess, player = _b.player, f = _b.f, admins = _b.admins;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
                         case 0:
                             maxPlayers = 300;
-                            if (!(args.name && globals_1.uuidPattern.test(args.name))) return [3 /*break*/, 2];
-                            info = (_c = admins.getInfoOptional(args.name)) !== null && _c !== void 0 ? _c : (0, commands_1.fail)(f(templateObject_26 || (templateObject_26 = __makeTemplateObject(["Unknown UUID ", ""], ["Unknown UUID ", ""])), args.name));
+                            if (!(name && globals_1.uuidPattern.test(name))) return [3 /*break*/, 2];
+                            info = (_c = admins.getInfoOptional(name)) !== null && _c !== void 0 ? _c : (0, commands_1.fail)(f(templateObject_26 || (templateObject_26 = __makeTemplateObject(["Unknown UUID ", ""], ["Unknown UUID ", ""])), name));
                             return [4 /*yield*/, mute(info)];
                         case 1:
-                            _d.sent();
+                            _f.sent();
                             return [2 /*return*/];
                         case 2:
-                            if (args.name) {
-                                possiblePlayers = (0, funcs_1.setToArray)(admins.searchNames(args.name));
+                            if (name) {
+                                possiblePlayers = (0, funcs_1.setToArray)(admins.searchNames(name));
                                 if (possiblePlayers.length > maxPlayers) {
-                                    exactPlayers = (0, funcs_1.setToArray)(admins.findByName(args.name));
+                                    exactPlayers = (0, funcs_1.setToArray)(admins.findByName(name));
                                     if (exactPlayers.length > 0) {
                                         possiblePlayers = exactPlayers;
                                     }
@@ -610,10 +613,10 @@ exports.commands = (0, commands_1.commandList)({
                                     optionStringifier: function (p) { return p.lastName; }
                                 })];
                         case 3:
-                            option = _d.sent();
+                            option = _f.sent();
                             return [4 /*yield*/, mute(option)];
                         case 4:
-                            _d.sent();
+                            _f.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -1087,7 +1090,7 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.mod,
         handler: function (_a) {
             var sender = _a.sender, args = _a.args;
-            sender.recentPlayers = new Set(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.muted; }));
+            sender.recentPlayers = new Set(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.muted(); }));
             players_1.FishPlayer.messageMuted(sender.prefixedName, args.message);
         }
     },
@@ -1101,7 +1104,7 @@ exports.commands = (0, commands_1.commandList)({
             var names = args.showColors
                 ? info.names.map(funcs_1.escapeStringColorsClient).toString(", ")
                 : __spreadArray([], __read(new Set(info.names.map(function (n) { return Strings.stripColors(n); }).toArray())), false).join(", ");
-            output(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(copy(args.target.name)), args.target.player.id.toString(), args.target.rank, copy(Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" ")), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat(copy((0, utils_1.formatTimeRelative)(args.target.unmarkTime))) : "[green]false", f.boolBad(args.target.muted), f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
+            output(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(copy(args.target.name)), args.target.player.id.toString(), args.target.rank, copy(Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" ")), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat(copy((0, utils_1.formatTimeRelative)(args.target.unmarkTime))) : "[green]false", args.target.muted() ? "until ".concat(copy((0, utils_1.formatTimeRelative)(args.target.unmuteTime))) : "[green]false", f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
             if (sender.hasPerm("viewUUIDs"))
                 output(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["\t[#FFAAAA]UUID: ", ""], ["\\t[#FFAAAA]UUID: ", ""])), copy(args.target.uuid)));
             if (sender.hasPerm("viewIPs"))

@@ -459,7 +459,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var sender = _a.sender, _b = _a.args.target, target = _b === void 0 ? sender : _b, outputSuccess = _a.outputSuccess;
             if (sender.stelled())
                 (0, commands_1.fail)("Marked players may not hide flags.");
-            if (sender.muted)
+            if (sender.muted())
                 (0, commands_1.fail)("Muted players may not hide flags.");
             if (sender != target && target.hasPerm("blockTrolling"))
                 (0, commands_1.fail)("Target is insufficiently trollable.");

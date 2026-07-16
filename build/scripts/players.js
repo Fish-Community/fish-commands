@@ -197,7 +197,7 @@ var FishPlayer = /** @class */ (function () {
         this.recentPlayers = new Set();
         /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
-        this.muted = false;
+        this.unmuteTime = -1;
         this.unmarkTime = -1;
         this.rank = ranks_1.Rank.player;
         this.flags = new Set();
@@ -454,8 +454,8 @@ var FishPlayer = /** @class */ (function () {
         var _a;
         if (data.name != undefined)
             this.name = data.name;
-        if (data.muted != undefined)
-            this.muted = data.muted;
+        if (data.unmuteTime != undefined)
+            this.unmuteTime = data.unmuteTime;
         if (data.unmarkTime != undefined)
             this.unmarkTime = data.unmarkTime;
         if (data.lastJoined != undefined)
@@ -508,11 +508,11 @@ var FishPlayer = /** @class */ (function () {
         });
     };
     FishPlayer.prototype.getData = function () {
-        var _a = this, uuid = _a.uuid, name = _a.name, muted = _a.muted, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, language = _a.language, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
+        var _a = this, uuid = _a.uuid, name = _a.name, unmuteTime = _a.unmuteTime, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, language = _a.language, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
         return {
             uuid: uuid,
             name: name,
-            muted: muted,
+            unmuteTime: unmuteTime,
             unmarkTime: unmarkTime,
             highlight: highlight,
             rainbow: rainbow,
@@ -662,17 +662,30 @@ var FishPlayer = /** @class */ (function () {
             });
         });
     };
-    FishPlayer.prototype.mute = function (by) {
+    FishPlayer.prototype.mute = function (by, duration, message) {
         var _this = this;
-        if (this.muted)
+        if (this.muted())
             return;
+        if (duration > 60000)
+            this.setPunishedIP(config_1.stopAntiEvadeTime);
         this.showRankPrefix = true;
+        var unmuteTime = Date.now() + duration;
+        if (unmuteTime > globals.maxTime)
+            unmuteTime = globals.maxTime;
         return this.updateSynced(function () {
-            _this.muted = true;
+            _this.unmuteTime = unmuteTime;
             _this.updateName();
         }, function () {
-            _this.sendMessage("[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.");
-            _this.setPunishedIP(config_1.stopAntiEvadeTime);
+            _this.setUnmuteTimer(duration);
+            if (_this.connected()) {
+                _this.sendMessage(message
+                    ? "[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members. Reason: [white]".concat(message)
+                    : "[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.");
+                if (duration < funcs_1.Duration.hours(1)) {
+                    //less than one hour
+                    _this.sendMessage("[yellow]Your mute will expire in ".concat((0, utils_1.formatTime)(duration), "."));
+                }
+            }
         }, function () { return _this.addHistoryEntry({
             action: 'muted',
             by: by instanceof FishPlayer ? by.name : by,
@@ -681,17 +694,17 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.unmute = function (by) {
         var _this = this;
-        if (!this.muted)
+        if (!this.muted())
             return;
         FishPlayer.removePunishedIP(this.ip());
         FishPlayer.removePunishedUUID(this.uuid);
         return this.updateSynced(function () {
-            _this.muted = false;
+            _this.unmuteTime = -1;
             _this.updateName();
         }, function () {
             _this.sendMessage("[green]You have been unmuted.");
         }, function () { return _this.addHistoryEntry({
-            action: 'muted',
+            action: 'unmuted',
             by: by instanceof FishPlayer ? by.name : by,
             time: Date.now(),
         }); });
@@ -1130,7 +1143,7 @@ var FishPlayer = /** @class */ (function () {
             prefix += config_1.prefixes.marked;
         else if (this.autoflagged)
             prefix += config_1.prefixes.flagged;
-        if (this.muted)
+        if (this.muted())
             prefix += config_1.prefixes.muted;
         if (this.afk())
             prefix += "[orange]\uE876 AFK \uE876 | [white]";
@@ -1363,8 +1376,8 @@ var FishPlayer = /** @class */ (function () {
         }
         if (this.marked())
             this.sendMessage("[gold]Hello there! You are currently [scarlet]marked as a griefer[]. You cannot do anything in-game while marked.\n".concat(appealLine, "\nYour mark will expire automatically ").concat(this.unmarkTime == globals.maxTime ? "in [red]never[]" : "[green]".concat((0, utils_1.formatTimeRelative)(this.unmarkTime), "[]"), ".\nWe apologize for the inconvenience."));
-        else if (this.muted)
-            this.sendMessage("[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.\n".concat(appealLine, "\nWe apologize for the inconvenience."));
+        else if (this.muted())
+            this.sendMessage("[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.\n".concat(appealLine, "\nYour mute will expire automatically ").concat(this.unmarkTime == globals.maxTime ? "in [red]never[]" : "[green]".concat((0, utils_1.formatTimeRelative)(this.unmarkTime), "[]"), ".\nWe apologize for the inconvenience."));
         else if (this.autoflagged)
             this.sendMessage("[gold]Hello there! You are currently [red]flagged as suspicious[]. You cannot do anything in-game.\n".concat(appealLine, "\nWe apologize for the inconvenience."));
         else if (!this.showRankPrefix)
@@ -1429,7 +1442,7 @@ var FishPlayer = /** @class */ (function () {
     //#endregion
     //#region I/O
     FishPlayer.read = function (version, fishPlayerData, player) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         switch (version) {
             case 0:
             case 1:
@@ -1443,15 +1456,11 @@ var FishPlayer = /** @class */ (function () {
             case 9:
                 (0, funcs_1.crash)("Version ".concat(version, " is not longer supported, this should not be possible"));
                 break;
-            case 10: {
+            case 12: {
                 var uuid = (_a = fishPlayerData.readString(2)) !== null && _a !== void 0 ? _a : (0, funcs_1.crash)("Failed to deserialize FishPlayer: UUID was null.");
-                var fishP = new this(uuid, {
+                return new this(uuid, {
                     name: (_b = fishPlayerData.readString(2)) !== null && _b !== void 0 ? _b : "Unnamed player [ERROR]",
-                    muted: (function () {
-                        var muted = fishPlayerData.readBool();
-                        void fishPlayerData.readBool(); //discard the stored data for autoflagged
-                        return muted;
-                    })(),
+                    unmuteTime: fishPlayerData.readBool() ? Date.now() + 86400000 : -1,
                     unmarkTime: fishPlayerData.readNumber(13),
                     highlight: fishPlayerData.readString(2),
                     history: fishPlayerData.readArray(function (str) {
@@ -1479,18 +1488,12 @@ var FishPlayer = /** @class */ (function () {
                     },
                     showRankPrefix: fishPlayerData.readBool(),
                 }, player);
-                fishPlayerData.readNumber(1); //discard pollResponse
-                return fishP;
             }
-            case 11: {
+            case 13: {
                 var uuid = (_d = fishPlayerData.readString(2)) !== null && _d !== void 0 ? _d : (0, funcs_1.crash)("Failed to deserialize FishPlayer: UUID was null.");
                 return new this(uuid, {
                     name: (_e = fishPlayerData.readString(2)) !== null && _e !== void 0 ? _e : "Unnamed player [ERROR]",
-                    muted: (function () {
-                        var muted = fishPlayerData.readBool();
-                        void fishPlayerData.readBool(); //discard the stored data for autoflagged
-                        return muted;
-                    })(),
+                    unmuteTime: fishPlayerData.readBool() ? Date.now() + 86400000 : -1,
                     unmarkTime: fishPlayerData.readNumber(13),
                     highlight: fishPlayerData.readString(2),
                     history: fishPlayerData.readArray(function (str) {
@@ -1506,6 +1509,7 @@ var FishPlayer = /** @class */ (function () {
                     flags: fishPlayerData.readArray(function (str) { return str.readString(2); }, 2).filter(function (s) { return s != null; }),
                     usid: fishPlayerData.readString(2),
                     chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+                    language: (_g = fishPlayerData.readString(2)) !== null && _g !== void 0 ? _g : "",
                     lastJoined: fishPlayerData.readNumber(15),
                     firstJoined: fishPlayerData.readNumber(15),
                     stats: {
@@ -1519,11 +1523,11 @@ var FishPlayer = /** @class */ (function () {
                     showRankPrefix: fishPlayerData.readBool(),
                 }, player);
             }
-            case 12: {
-                var uuid = (_g = fishPlayerData.readString(2)) !== null && _g !== void 0 ? _g : (0, funcs_1.crash)("Failed to deserialize FishPlayer: UUID was null.");
+            case 14: {
+                var uuid = (_h = fishPlayerData.readString(2)) !== null && _h !== void 0 ? _h : (0, funcs_1.crash)("Failed to deserialize FishPlayer: UUID was null.");
                 return new this(uuid, {
-                    name: (_h = fishPlayerData.readString(2)) !== null && _h !== void 0 ? _h : "Unnamed player [ERROR]",
-                    muted: fishPlayerData.readBool(),
+                    name: (_j = fishPlayerData.readString(2)) !== null && _j !== void 0 ? _j : "Unnamed player [ERROR]",
+                    unmuteTime: fishPlayerData.readNumber(13),
                     unmarkTime: fishPlayerData.readNumber(13),
                     highlight: fishPlayerData.readString(2),
                     history: fishPlayerData.readArray(function (str) {
@@ -1535,44 +1539,11 @@ var FishPlayer = /** @class */ (function () {
                         });
                     }),
                     rainbow: (function (n) { return n == 0 ? null : { speed: n }; })(fishPlayerData.readNumber(2)),
-                    rank: (_j = fishPlayerData.readString(2)) !== null && _j !== void 0 ? _j : "",
+                    rank: (_k = fishPlayerData.readString(2)) !== null && _k !== void 0 ? _k : "",
                     flags: fishPlayerData.readArray(function (str) { return str.readString(2); }, 2).filter(function (s) { return s != null; }),
                     usid: fishPlayerData.readString(2),
                     chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
-                    lastJoined: fishPlayerData.readNumber(15),
-                    firstJoined: fishPlayerData.readNumber(15),
-                    stats: {
-                        blocksBroken: fishPlayerData.readNumber(10),
-                        blocksPlaced: fishPlayerData.readNumber(10),
-                        timeInGame: fishPlayerData.readNumber(15),
-                        chatMessagesSent: fishPlayerData.readNumber(7),
-                        gamesFinished: fishPlayerData.readNumber(5),
-                        gamesWon: fishPlayerData.readNumber(5),
-                    },
-                    showRankPrefix: fishPlayerData.readBool(),
-                }, player);
-            }
-            case 13: {
-                var uuid = (_k = fishPlayerData.readString(2)) !== null && _k !== void 0 ? _k : (0, funcs_1.crash)("Failed to deserialize FishPlayer: UUID was null.");
-                return new this(uuid, {
-                    name: (_l = fishPlayerData.readString(2)) !== null && _l !== void 0 ? _l : "Unnamed player [ERROR]",
-                    muted: fishPlayerData.readBool(),
-                    unmarkTime: fishPlayerData.readNumber(13),
-                    highlight: fishPlayerData.readString(2),
-                    history: fishPlayerData.readArray(function (str) {
-                        var _a, _b;
-                        return ({
-                            action: (_a = str.readString(2)) !== null && _a !== void 0 ? _a : "null",
-                            by: (_b = str.readString(2)) !== null && _b !== void 0 ? _b : "null",
-                            time: str.readNumber(15)
-                        });
-                    }),
-                    rainbow: (function (n) { return n == 0 ? null : { speed: n }; })(fishPlayerData.readNumber(2)),
-                    rank: (_m = fishPlayerData.readString(2)) !== null && _m !== void 0 ? _m : "",
-                    flags: fishPlayerData.readArray(function (str) { return str.readString(2); }, 2).filter(function (s) { return s != null; }),
-                    usid: fishPlayerData.readString(2),
-                    chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
-                    language: (_o = fishPlayerData.readString(2)) !== null && _o !== void 0 ? _o : "",
+                    language: (_l = fishPlayerData.readString(2)) !== null && _l !== void 0 ? _l : "",
                     lastJoined: fishPlayerData.readNumber(15),
                     firstJoined: fishPlayerData.readNumber(15),
                     stats: {
@@ -1595,7 +1566,7 @@ var FishPlayer = /** @class */ (function () {
             this.unmarkTime = 0;
         out.writeString(this.uuid, 2);
         out.writeString(this.name, 2, true);
-        out.writeBool(this.muted);
+        out.writeNumber(this.unmuteTime, 13);
         out.writeNumber(this.unmarkTime, 13); // this will stop working in 2286! https://en.wikipedia.org/wiki/Time_formatting_and_storage_bugs#Year_2286
         out.writeString(this.highlight, 2, true);
         out.writeArray(this.history.slice(-5), function (i, str) {
@@ -1651,7 +1622,7 @@ var FishPlayer = /** @class */ (function () {
     };
     /** Does not include stats */
     FishPlayer.prototype.hasData = function () {
-        return (this.rank != ranks_1.Rank.player) || this.muted || (this.flags.size > 0) || this.chatStrictness != "chat";
+        return (this.rank != ranks_1.Rank.player) || this.muted() || (this.flags.size > 0) || this.chatStrictness != "chat";
     };
     FishPlayer.getFishPlayersString = function () {
         if (Core.settings.has("fish-subkeys")) {
@@ -1961,6 +1932,9 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.marked = function () {
         return this.unmarkTime > Date.now();
     };
+    FishPlayer.prototype.muted = function () {
+        return this.unmuteTime > Date.now();
+    };
     FishPlayer.prototype.afk = function () {
         return Date.now() - this.lastActive > 60000 || this.manualAfk;
     };
@@ -1976,6 +1950,18 @@ var FishPlayer = /** @class */ (function () {
                 _this.forceRespawn();
                 _this.updateName();
                 _this.sendMessage("[yellow]Your mark has automatically expired.");
+            }
+        }, duration / 1000);
+    };
+    FishPlayer.prototype.setUnmuteTimer = function (duration) {
+        var _this = this;
+        var oldUnmuteTime = this.unmuteTime;
+        Timer.schedule(function () {
+            if (_this.unmuteTime === oldUnmuteTime && _this.connected()) {
+                //Only run the code if the unmark time hasn't changed
+                //Otherwise, a different timer will do it
+                _this.updateName();
+                _this.sendMessage("[yellow]Your mute has automatically expired.");
             }
         }, duration / 1000);
     };
@@ -2083,7 +2069,7 @@ var FishPlayer = /** @class */ (function () {
                         FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat", "automatic", true);
                     }
                     else {
-                        _this.muted = true;
+                        void _this.mute("automod", funcs_1.Duration.months(1));
                         (0, utils_1.logHTrip)(_this, "new player spamming chat");
                     }
                 }
@@ -2101,7 +2087,7 @@ var FishPlayer = /** @class */ (function () {
     };
     //#region Static constants
     /** Save version used for serialized FishPlayers. */
-    FishPlayer.saveVersion = 13;
+    FishPlayer.saveVersion = 14;
     /** Maximum chunk size used when writing FishPlayer data to Core.settings. */
     FishPlayer.chunkSize = 50000;
     //#endregion

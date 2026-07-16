@@ -568,9 +568,9 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 					.map(w => w.replace(/[-_.^*,]/g, ""))
 					.some(w => bannedWords.autoWhack.includes(w))
 			){
-				if(!fishPlayer.muted){
+				if(!fishPlayer.muted()){
 					logHTrip(fishPlayer, "bad words in chat", `message: \`${message}\``);
-					fishPlayer.muted = true;
+					void fishPlayer.mute("automod", maxTime, "Automatic mute due to suspicious activity");
 					void fishPlayer.stop("automod", maxTime, `Automatic stop due to suspicious activity`, false);
 				}
 			}

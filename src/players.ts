@@ -19,7 +19,7 @@ import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, l
 export class FishPlayer<Connected extends boolean = boolean> {
 	//#region Static constants
 	/** Save version used for serialized FishPlayers. */
-	static readonly saveVersion = 13;
+	static readonly saveVersion = 14;
 	/** Maximum chunk size used when writing FishPlayer data to Core.settings. */
 	static readonly chunkSize = 50000;
 	//#endregion
@@ -153,7 +153,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	uuid: string;
 	/** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
 	name: string = "Unnamed player [ERROR}";
-	muted: boolean = false;
+	unmuteTime: number = -1;
 	unmarkTime: number = -1;
 	rank: Rank = Rank.player;
 	flags = new Set<RoleFlag>();
@@ -380,7 +380,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	}
 	updateData(data: Partial<FishPlayerData>){
 		if(data.name != undefined) this.name = data.name;
-		if(data.muted != undefined) this.muted = data.muted;
+		if(data.unmuteTime != undefined) this.unmuteTime = data.unmuteTime;
 		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
 		if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
 		if(data.firstJoined != undefined) this.firstJoined = data.firstJoined;
@@ -406,9 +406,9 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		return data != null;
 	}
 	getData():UploadedFishPlayerData {
-		const { uuid, name, muted, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix } = this;
+		const { uuid, name, unmuteTime, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix } = this;
 		return {
-			uuid, name, muted, unmarkTime, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix,
+			uuid, name, unmuteTime, unmarkTime, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix,
 			rank: rank.name,
 			flags: [...flags.values()].map(f => f.name),
 			achievements: JsonIO.write(Reflect.get(this.achievements, "bits"))
@@ -511,15 +511,27 @@ export class FishPlayer<Connected extends boolean = boolean> {
 			this.updateName();
 		});
 	}
-	mute(by:FishPlayer | string){
-		if(this.muted) return;
+	mute(by:FishPlayer | string, duration:number, message?:string){
+		if(this.muted()) return;
+		if(duration > 60_000) this.setPunishedIP(stopAntiEvadeTime);
 		this.showRankPrefix = true;
+		let unmuteTime = Date.now() + duration;
+		if(unmuteTime > globals.maxTime) unmuteTime = globals.maxTime;
 		return this.updateSynced(() => {
-			this.muted = true;
+			this.unmuteTime = unmuteTime;
 			this.updateName();
 		}, () => {
-			this.sendMessage(`[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.`);
-			this.setPunishedIP(stopAntiEvadeTime);
+			this.setUnmuteTimer(duration);
+			if(this.connected()){
+				this.sendMessage(
+					message
+					? `[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members. Reason: [white]${message}`
+					: `[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.`);
+				if(duration < Duration.hours(1)){
+					//less than one hour
+					this.sendMessage(`[yellow]Your mute will expire in ${formatTime(duration)}.`);
+				}
+			}
 		}, () => this.addHistoryEntry({
 			action: 'muted',
 			by: by instanceof FishPlayer ? by.name : by,
@@ -527,16 +539,16 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		}));
 	}
 	unmute(by:FishPlayer | string){
-		if(!this.muted) return;
+		if(!this.muted()) return;
 		FishPlayer.removePunishedIP(this.ip());
 		FishPlayer.removePunishedUUID(this.uuid);
 		return this.updateSynced(() => {
-			this.muted = false;
+			this.unmuteTime = -1;
 			this.updateName();
 		}, () => {
 			this.sendMessage(`[green]You have been unmuted.`);
 		}, () => this.addHistoryEntry({
-			action: 'muted',
+			action: 'unmuted',
 			by: by instanceof FishPlayer ? by.name : by,
 			time: Date.now(),
 		}));
@@ -938,7 +950,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 			prefix += "[scarlet]SUSSY IMPOSTOR[]";
 		if(this.marked()) prefix += prefixes.marked;
 		else if(this.autoflagged) prefix += prefixes.flagged;
-		if(this.muted) prefix += prefixes.muted;
+		if(this.muted()) prefix += prefixes.muted;
 		if(this.afk()) prefix += "[orange]\uE876 AFK \uE876 | [white]";
 		if(this.showRankPrefix){
 			for(const flag of this.flags){
@@ -1150,9 +1162,10 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 ${appealLine}
 Your mark will expire automatically ${this.unmarkTime == globals.maxTime ? "in [red]never[]" : `[green]${formatTimeRelative(this.unmarkTime)}[]`}.
 We apologize for the inconvenience.`
-		); else if(this.muted) this.sendMessage(
+		); else if(this.muted()) this.sendMessage(
 `[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.
 ${appealLine}
+Your mute will expire automatically ${this.unmarkTime == globals.maxTime ? "in [red]never[]" : `[green]${formatTimeRelative(this.unmarkTime)}[]`}.
 We apologize for the inconvenience.`
 		); else if(this.autoflagged) this.sendMessage(
 `[gold]Hello there! You are currently [red]flagged as suspicious[]. You cannot do anything in-game.
@@ -1211,81 +1224,11 @@ We apologize for the inconvenience.`
 			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
 				crash(`Version ${version} is not longer supported, this should not be possible`);
 				break;
-			case 10: {
-				const uuid = fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null.");
-				const fishP = new this(uuid, {
-					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
-					muted: (() => {
-						const muted = fishPlayerData.readBool();
-						void fishPlayerData.readBool(); //discard the stored data for autoflagged
-						return muted;
-					})(),
-					unmarkTime: fishPlayerData.readNumber(13),
-					highlight: fishPlayerData.readString(2),
-					history: fishPlayerData.readArray(str => ({
-						action: str.readString(2) ?? "null",
-						by: str.readString(2) ?? "null",
-						time: str.readNumber(15)
-					})),
-					rainbow: (n => n == 0 ? null : {speed: n})(fishPlayerData.readNumber(2)),
-					rank: fishPlayerData.readString(2) ?? "",
-					flags: fishPlayerData.readArray(str => str.readString(2), 2).filter((s):s is string => s != null),
-					usid: fishPlayerData.readString(2),
-					chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
-					lastJoined: fishPlayerData.readNumber(15),
-					firstJoined: fishPlayerData.readNumber(15),
-					stats: {
-						blocksBroken: fishPlayerData.readNumber(10),
-						blocksPlaced: fishPlayerData.readNumber(10),
-						timeInGame: fishPlayerData.readNumber(15),
-						chatMessagesSent: fishPlayerData.readNumber(7),
-						gamesFinished: fishPlayerData.readNumber(5),
-						gamesWon: fishPlayerData.readNumber(5),
-					},
-					showRankPrefix: fishPlayerData.readBool(),
-				}, player);
-				fishPlayerData.readNumber(1); //discard pollResponse
-				return fishP;
-			}
-			case 11: {
-				const uuid = fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null.");
-				return new this(uuid, {
-					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
-					muted: (() => {
-						const muted = fishPlayerData.readBool();
-						void fishPlayerData.readBool(); //discard the stored data for autoflagged
-						return muted;
-					})(),
-					unmarkTime: fishPlayerData.readNumber(13),
-					highlight: fishPlayerData.readString(2),
-					history: fishPlayerData.readArray(str => ({
-						action: str.readString(2) ?? "null",
-						by: str.readString(2) ?? "null",
-						time: str.readNumber(15)
-					})),
-					rainbow: (n => n == 0 ? null : {speed: n})(fishPlayerData.readNumber(2)),
-					rank: fishPlayerData.readString(2) ?? "",
-					flags: fishPlayerData.readArray(str => str.readString(2), 2).filter((s):s is string => s != null),
-					usid: fishPlayerData.readString(2),
-					chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
-					lastJoined: fishPlayerData.readNumber(15),
-					firstJoined: fishPlayerData.readNumber(15),
-					stats: {
-						blocksBroken: fishPlayerData.readNumber(10),
-						blocksPlaced: fishPlayerData.readNumber(10),
-						timeInGame: fishPlayerData.readNumber(15),
-						chatMessagesSent: fishPlayerData.readNumber(7),
-						gamesFinished: fishPlayerData.readNumber(5),
-						gamesWon: fishPlayerData.readNumber(5),
-					},
-					showRankPrefix: fishPlayerData.readBool(),
-				}, player);
-			}
 			case 12: {
 				const uuid = fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null.");
 				return new this(uuid, {
 					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
-					muted: fishPlayerData.readBool(),
+					unmuteTime: fishPlayerData.readBool() ? Date.now() + 86400_000 : -1,
 					unmarkTime: fishPlayerData.readNumber(13),
 					highlight: fishPlayerData.readString(2),
 					history: fishPlayerData.readArray(str => ({
@@ -1315,7 +1258,38 @@ We apologize for the inconvenience.`
 				const uuid = fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null.");
 				return new this(uuid, {
 					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
-					muted: fishPlayerData.readBool(),
+					unmuteTime: fishPlayerData.readBool() ? Date.now() + 86400_000 : -1,
+					unmarkTime: fishPlayerData.readNumber(13),
+					highlight: fishPlayerData.readString(2),
+					history: fishPlayerData.readArray(str => ({
+						action: str.readString(2) ?? "null",
+						by: str.readString(2) ?? "null",
+						time: str.readNumber(15)
+					})),
+					rainbow: (n => n == 0 ? null : {speed: n})(fishPlayerData.readNumber(2)),
+					rank: fishPlayerData.readString(2) ?? "",
+					flags: fishPlayerData.readArray(str => str.readString(2), 2).filter((s):s is string => s != null),
+					usid: fishPlayerData.readString(2),
+					chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+					language: fishPlayerData.readString(2) ?? "",
+					lastJoined: fishPlayerData.readNumber(15),
+					firstJoined: fishPlayerData.readNumber(15),
+					stats: {
+						blocksBroken: fishPlayerData.readNumber(10),
+						blocksPlaced: fishPlayerData.readNumber(10),
+						timeInGame: fishPlayerData.readNumber(15),
+						chatMessagesSent: fishPlayerData.readNumber(7),
+						gamesFinished: fishPlayerData.readNumber(5),
+						gamesWon: fishPlayerData.readNumber(5),
+					},
+					showRankPrefix: fishPlayerData.readBool(),
+				}, player);
+			}
+			case 14: {
+				const uuid = fishPlayerData.readString(2) ?? crash("Failed to deserialize FishPlayer: UUID was null.");
+				return new this(uuid, {
+					name: fishPlayerData.readString(2) ?? "Unnamed player [ERROR]",
+					unmuteTime: fishPlayerData.readNumber(13),
 					unmarkTime: fishPlayerData.readNumber(13),
 					highlight: fishPlayerData.readString(2),
 					history: fishPlayerData.readArray(str => ({
@@ -1349,7 +1323,7 @@ We apologize for the inconvenience.`
 		if(typeof this.unmarkTime === "string") this.unmarkTime = 0;
 		out.writeString(this.uuid, 2);
 		out.writeString(this.name, 2, true);
-		out.writeBool(this.muted);
+		out.writeNumber(this.unmuteTime, 13);
 		out.writeNumber(this.unmarkTime, 13);// this will stop working in 2286! https://en.wikipedia.org/wiki/Time_formatting_and_storage_bugs#Year_2286
 		out.writeString(this.highlight, 2, true);
 		out.writeArray(this.history.slice(-5), (i, str) => {
@@ -1401,7 +1375,7 @@ We apologize for the inconvenience.`
 	}
 	/** Does not include stats */
 	hasData(){
-		return (this.rank != Rank.player) || this.muted || (this.flags.size > 0) || this.chatStrictness != "chat";
+		return (this.rank != Rank.player) || this.muted() || (this.flags.size > 0) || this.chatStrictness != "chat";
 	}
 	static getFishPlayersString(){
 		if(Core.settings.has("fish-subkeys")){
@@ -1709,6 +1683,9 @@ We apologize for the inconvenience.`
 	marked():boolean {
 		return this.unmarkTime > Date.now();
 	}
+	muted():boolean {
+		return this.unmuteTime > Date.now();
+	}
 	afk():boolean {
 		return Date.now() - this.lastActive > 60_000 || this.manualAfk;
 	}
@@ -1723,6 +1700,17 @@ We apologize for the inconvenience.`
 				this.forceRespawn();
 				this.updateName();
 				this.sendMessage("[yellow]Your mark has automatically expired.");
+			}
+		}, duration / 1000);
+	}
+	setUnmuteTimer(duration:number){
+		const oldUnmuteTime = this.unmuteTime;
+		Timer.schedule(() => {
+			if(this.unmuteTime === oldUnmuteTime && this.connected()){
+				//Only run the code if the unmark time hasn't changed
+				//Otherwise, a different timer will do it
+				this.updateName();
+				this.sendMessage("[yellow]Your mute has automatically expired.");
 			}
 		}, duration / 1000);
 	}
@@ -1819,7 +1807,7 @@ Please look at ${this.position()} and see if they were actually griefing. If the
 						Vars.netServer.admins.dosBlacklist.add(this.ip());
 						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat", "automatic", true);
 					} else {
-						this.muted = true;
+						void this.mute("automod", Duration.months(1));
 						logHTrip(this, "new player spamming chat");
 					}
 				}
