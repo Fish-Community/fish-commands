@@ -186,6 +186,12 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 						case "@short":
 							options = FishPlayer.getAllOnline().filter(p => p.cleanedName.length <= 3);
 							break;
+						case "@stopped": case "@stelled": case "@marked":
+							options = FishPlayer.getAllOnline().filter(p => p.stelled());
+							break;
+						case "@muted":
+							options = FishPlayer.getAllOnline().filter(p => p.muted());
+							break;
 						case "@rand":
 							options = random(FishPlayer.getAllOnline());
 							break;
