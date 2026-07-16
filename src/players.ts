@@ -1781,6 +1781,7 @@ We apologize for the inconvenience.`
 		//Blocks broken check
 		if(this.joinsLessThan(5)){
 			let tripped = false;
+			this.tstats.blocksBroken = 0;
 			Timer.schedule(() => {
 				if(this.connected() && !tripped){
 					const limit = this.firstJoin() && FishPlayer.antiBotMode() ?

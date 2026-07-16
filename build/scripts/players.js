@@ -2043,6 +2043,7 @@ var FishPlayer = /** @class */ (function () {
         //Blocks broken check
         if (this.joinsLessThan(5)) {
             var tripped_1 = false;
+            this.tstats.blocksBroken = 0;
             Timer.schedule(function () {
                 if (_this.connected() && !tripped_1) {
                     var limit = _this.firstJoin() && FishPlayer.antiBotMode() ?
