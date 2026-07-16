@@ -787,7 +787,8 @@ var FishPlayer = /** @class */ (function () {
         fishP.activeMenus = [];
         fishP.tapInfo.commandName = null;
         fishP.tapInfo.resolve = null;
-        fishP.updateStats(function (stats) { return stats.timeInGame += (Date.now() - fishP.lastJoined); }); //Time between joining and leaving
+        if (fishP.lastJoined > 1000)
+            fishP.updateStats(function (stats) { return stats.timeInGame += (Date.now() - fishP.lastJoined); }); //Time between joining and leaving
         fishP.lastJoined = Date.now();
         this.recentLeaves.unshift(fishP);
         if (this.recentLeaves.length > 10)

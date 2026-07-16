@@ -150,19 +150,21 @@ var VoteManager = /** @class */ (function (_super) {
         this.session.timer.cancel();
         this.session = null;
     };
-    VoteManager.prototype.requiredVotes = function (session) {
+    VoteManager.prototype.requiredVotes = function () {
         var _this = this;
         if (this.goal[0] == "absolute") {
             return this.goal[1];
         }
         else {
+            if (!this.session)
+                return 1;
             var numVoters = players_1.FishPlayer.getAllOnline().filter(function (p) {
-                return _this.isEligible(p, session.data) && (_this.isCounted(p, session.data) || session.votes.has(p.uuid));
+                return _this.isEligible(p, _this.session.data) && (_this.isCounted(p, _this.session.data) || _this.session.votes.has(p.uuid));
             }).length;
             return Math.max(Math.ceil(this.goal[1] * numVoters), 1);
         }
     };
-    VoteManager.prototype.currentVotes = function (session) {
+    VoteManager.prototype.currentVotes = function () {
         var e_1, _a;
         if (this.session) {
             try {
@@ -202,8 +204,8 @@ var VoteManager = /** @class */ (function (_super) {
     VoteManager.prototype._checkVote = function (end) {
         if (!this.session)
             return;
-        var votes = this.currentVotes(this.session);
-        var required = this.requiredVotes(this.session);
+        var votes = this.currentVotes();
+        var required = this.requiredVotes();
         if (votes >= required) {
             this.fire("success", [false]);
             this.fire("vote passed", [votes, required]);
