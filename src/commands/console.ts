@@ -505,6 +505,7 @@ export const commands = consoleCommandList({
 		args: ["player:player", "newname:string"],
 		description: "Changes the name of a player.",
 		handler({args, f, outputSuccess}){
+			fail(`No.`);
 			if(args.player.hasPerm("blockTrolling")) fail(f`Operation aborted: Player ${args.player} is insufficiently trollable.`);
 			const oldName = args.player.name;
 			if(args.player.ranksAtLeast("active")){
