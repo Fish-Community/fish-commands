@@ -6,6 +6,7 @@ For maintenance information, see docs/frameworks.md
 */
 //Behold, the power of typescript!
 
+import * as api from "/api";
 import { prefixes } from "/config";
 import { CommandError, fail } from "/frameworks/commands/errors";
 import { f_client, f_server, outputFormatter_client } from "/frameworks/commands/formatting";
@@ -165,7 +166,8 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				let options: SearchResult<FishPlayer>;
 				if(args[i].startsWith("@")){
 					let needsConfirm = false;
-					const [left, right] = args[i].split(":");
+					const [left, right] = Packages.java.lang.String(args[i]).split(":", 2) as [string, string?];
+					const r2 = Packages.java.lang.String(right).split(":", 2)[1] as string | undefined;
 					switch(left){
 						case "@cyrillic": case "@russian":
 							options = FishPlayer.getAllOnline().filter(p => /[\u0400-\u04FF]/.test(p.name));
@@ -209,6 +211,57 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 									.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, mouseX, mouseY)))
 							];
 							needsConfirm = true;
+							break;
+						}
+						case "@offline": case "@off": case "@o": {
+							if(right && uuidPattern.test(right)){
+								let player = FishPlayer.getById(right);
+								if(player == null){
+									let info = Vars.netServer.admins.getInfoOptional(right);
+									const data = await api.getFishPlayerData(right).catch(err =>
+										fail(`Network error while downloading fish player data for ${right}: ${parseError(err)}`)
+									);
+									if(data){
+										player = new FishPlayer(right, data, null);
+									} else if(info){
+										player = FishPlayer.createFromInfo(info);
+										if(data) player.updateData(data);
+									} else {
+										if(!sender) fail(`Player with uuid "${right}" not found in the database. Are you sure this UUID is correct? If so, specify "@offline:create:${right}"`);
+										await Menu.confirm(sender,
+											`Player with uuid "${right}" not found in this server or the database. Are you sure this UUID is correct?`,
+											{ title: "Confirm UUID" }
+										);
+										info = Vars.netServer.admins.getInfo(right);
+										player = FishPlayer.createFromInfo(info);
+									}
+								}
+								options = player;
+							} else if(right?.startsWith("create:") && r2 && uuidPattern.test(r2)){
+								const fishP = FishPlayer.getFromInfo(Vars.netServer.admins.getInfo(r2));
+								try {
+									await fishP.downloadData();
+								} catch(err){
+									fail(`Network error while downloading fish player data for ${right}: ${parseError(err)}`);
+								}
+								options = fishP;
+							} else if(right){
+								options = FishPlayer.search(Object.values(FishPlayer.cachedPlayers), right)
+									?? (!sender || sender.ranksAtLeast("active") ?
+										Vars.netServer.admins.searchNames(right).toSeq().toArray().slice(0, 50)
+											.map(FishPlayer.getFromInfo)
+											.sort((a, b) => b.lastJoined - a.lastJoined)
+										: null);
+								const score = (fishP:FishPlayer) => {
+									if(fishP.lastJoined > 0) return fishP.lastJoined;
+									return - fishP.info().timesJoined;
+								};
+								if(Array.isArray(options)){
+									options.sort((a, b) => score(b) - score(a));
+								}
+							} else {
+								options = FishPlayer.recentLeaves;
+							}
 							break;
 						}
 						case "@click": {
@@ -272,49 +325,6 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				);
 				break;
 			}
-			case "offlinePlayer":
-				if(uuidPattern.test(args[i])){
-					const player = FishPlayer.getById(args[i]);
-					if(player == null){
-						const info = Vars.netServer.admins.getInfoOptional(args[i]);
-						if(info == null)
-							fail(`Player with uuid "${args[i]}" not found on this server. If you're sure the UUID is correct, specify "@create:${args[i]}" to create the player.`);
-						//Fetch the player
-						const fishP = FishPlayer.getFromInfo(info);
-						try {
-							await fishP.downloadData();
-						} catch(err){
-							fail(`Network error while downloading fish player data for ${args[i]}: ${parseError(err)}`);
-						}
-						outputArgs[cmdArg.name] = fishP;
-					} else {
-						outputArgs[cmdArg.name] = player;
-					}
-				} else if(args[i].startsWith("@create:") && uuidPattern.test(args[i].split("@create:")[1])){
-					const fishP = FishPlayer.getFromInfo(Vars.netServer.admins.getInfo(args[i].split("@create:")[1]));
-					try {
-						await fishP.downloadData();
-					} catch(err){
-						fail(`Network error while downloading fish player data for ${args[i]}: ${parseError(err)}`);
-					}
-					outputArgs[cmdArg.name] = fishP;
-				} else {
-					let options = FishPlayer.search(Object.values(FishPlayer.cachedPlayers), args[i]);
-					if(options == null){
-						options = Vars.netServer.admins.searchNames(args[i]).toSeq().toArray().slice(0, 50)
-							.map(FishPlayer.getFromInfo)
-							.sort((a, b) => b.lastJoined - a.lastJoined);
-					}
-					await disambiguateArgument(
-						options,
-						...commonArgs,
-						player => Strings.stripColors(player.name).length >= 3 ?
-							player.name
-						: escapeStringColorsClient(player.name),
-						2
-					);
-				}
-				break;
 			case "team": {
 				let num;
 				if(args[i] && (
