@@ -12,7 +12,7 @@ import type { Expand, TagFunction } from "/types";
 /** All valid command arg types. */
 export const commandArgTypes = [
 	"string", "number", "boolean", "player", "team", "time", "unittype", "block",
-	"uuid", "offlinePlayer", "map", "mapOrRandom", "rank", "roleflag", "item"
+	"uuid", "playerOn", "map", "mapOrRandom", "rank", "roleflag", "item"
 ] as const;
 export const commandArgNames = {
 	string: "text",
@@ -24,7 +24,7 @@ export const commandArgNames = {
 	unittype: "unit type",
 	block: "block",
 	uuid: "UUID",
-	offlinePlayer: "player",
+	playerOn: "player",
 	map: "map",
 	mapOrRandom: "map",
 	rank: "rank",
@@ -42,8 +42,8 @@ export type TypeOfArgType<T> =
 	T extends "number" ? number :
 	T extends "time" ? number :
 	T extends "team" ? Team :
-	T extends "player" ? FishPlayer<true> :
-	T extends "offlinePlayer" ? FishPlayer :
+	T extends "player" ? FishPlayer :
+	T extends "playerOn" ? FishPlayer<true> :
 	T extends "unittype" ? UnitType :
 	T extends "block" ? Block :
 	T extends "uuid" ? string :

@@ -19,7 +19,7 @@ import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCor
 
 export const commands = commandList({
 	warn: {
-		args: ['player:player', 'message:string?'],
+		args: ['player:playerOn', 'message:string?'],
 		description: 'Sends the player a warning (menu popup).',
 		perm: Perm.warn,
 		requirements: [Req.cooldown(3000)],
@@ -111,7 +111,7 @@ export const commands = commandList({
 	},
 
 	pardon: {
-		args: ["player:offlinePlayer"],
+		args: ["player:player"],
 		description: 'Pardons a votekicked player.',
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
@@ -172,7 +172,7 @@ export const commands = commandList({
 				args.player.autoflagged = false;
 				args.player.sendMessage("[yellow]You have been freed! Enjoy!");
 				args.player.updateName();
-				args.player.forceRespawn();
+				if(args.player.connected()) args.player.forceRespawn();
 				outputSuccess(f`Player ${args.player} has been unflagged.`);
 			} else {
 				outputFail(f`Player ${args.player} is not marked or autoflagged.`);
@@ -512,7 +512,7 @@ export const commands = commandList({
 		}
 	},
 	remind: {
-		args: ["rule:number", "target:player?"],
+		args: ["rule:number", "target:playerOn?"],
 		description: "Remind players in chat of a specific rule.",
 		perm: Perm.mod,
 		handler({args, outputSuccess, f}){
@@ -593,7 +593,7 @@ export const commands = commandList({
 	},
 
 	kill: {
-		args: ["player:player"],
+		args: ["player:playerOn"],
 		description: "Kills a player's unit.",
 		perm: Perm.admin,
 		requirements: [Req.moderate("player", true)],
@@ -676,7 +676,7 @@ export const commands = commandList({
 	},
 
 	respawn: {
-		args: ["player:player"],
+		args: ["player:playerOn"],
 		description: "Forces a player to respawn.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("player", true, "mod", true)],
@@ -687,7 +687,7 @@ export const commands = commandList({
 	},
 
 	clearunit: {
-		args: ["target:player", "duration:time?"],
+		args: ["target:playerOn", "duration:time?"],
 		description: "Forces a player out of the unit they are controlling, and blocks them from possessing units for a specified duration.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
@@ -710,7 +710,7 @@ export const commands = commandList({
 		}
 	},
 	clearcommand: {
-		args: ["target:player", "duration:time?"],
+		args: ["target:playerOn", "duration:time?"],
 		description: "Blocks a player from commanding units for a specified duration.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
@@ -733,7 +733,7 @@ export const commands = commandList({
 	},
 
 	stealunit: {
-		args: ["target:player", "newcontroller:player?"],
+		args: ["target:playerOn", "newcontroller:playerOn?"],
 		description: "Steals the unit of a player, putting you in their unit and forcing them to respawn.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", true, "mod", true), Req.moderate("newcontroller", true, "mod", true)],
@@ -768,7 +768,7 @@ export const commands = commandList({
 
 	info: {
 		args: ["target:player", "showColors:boolean?"],
-		description: "Displays information about an online player.",
+		description: "Displays information about a player.",
 		perm: Perm.none,
 		handler({sender, args, output, copy, player, f}){
 			const info = args.target.info();
@@ -776,7 +776,7 @@ export const commands = commandList({
 				? info.names.map(escapeStringColorsClient).toString(", ")
 				: [...new Set(info.names.map(n => Strings.stripColors(n)).toArray())].join(", ");
 			output(f`\
-[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player.id.toString()})
+[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player?.id.toString() ?? 'unknown'})
 	[accent]Rank: ${args.target.rank}
 	[accent]Role flags: ${copy(Array.from(args.target.flags).map(f => f.coloredName()).join(" "))}
 	[accent]Stopped: ${f.boolBad(!args.target.hasPerm("play"))}
@@ -1138,7 +1138,7 @@ ${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 		},
 	},
 	effects: {
-		args: ["mode:string", "player:player?", "duration:time?"],
+		args: ["mode:string", "player:playerOn?", "duration:time?"],
 		description: "Applies effects to a player's unit.",
 		perm: Perm.admin.exceptModes({
 			testsrv: Perm.trusted,
@@ -1260,19 +1260,19 @@ Wave: ${r.wave}`
 		}
 	},
 	yeet: {
-		args: ["target:player", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
+		args: ["target:playerOn", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
 		description: "Sends the target player to a parallel universe.",
 		perm: Perm.admin,
 		requirements: [Req.moderate("target", false, "admin")],
 		async handler({args: {target, ...world}, f, outputSuccess}){
 			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
 			outputSuccess(`Aligning QPUs...`);
-			await syncManual(target.player!, undefined, world);
+			await syncManual(target.player, undefined, world);
 			outputSuccess(f`Sent ${target} to a parallel universe.`);
 		}
 	},
 	menuspam: {
-		args: ["target:player"],
+		args: ["target:playerOn"],
 		description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
 		perm: Perm.admin,
 		requirements: [Req.moderate("target", false, "admin")],

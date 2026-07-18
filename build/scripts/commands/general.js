@@ -171,7 +171,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             outputSuccess("Unpaused.");
         }
     }), tp: {
-        args: ['player:player'],
+        args: ['player:playerOn'],
         description: 'Teleport to another player.',
         perm: commands_1.Perm.play,
         requirements: [commands_1.Req.modeNot("pvp")],
@@ -496,7 +496,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         },
     },
 ]; }))), { switch: {
-        args: ["server:string", "target:player?"],
+        args: ["server:string", "target:playerOn?"],
         description: "Switches to another server.",
         perm: commands_1.Perm.play,
         handler: function (_a) {
@@ -565,7 +565,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
      * player will be up the target player's butt
      */
     watch: (0, commands_1.command)({
-        args: ['player:player?'],
+        args: ['player:playerOn?'],
         description: "Watch/unwatch a player.",
         perm: commands_1.Perm.none,
         data: new Set,
@@ -638,7 +638,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             return resume(players_1.FishPlayer.get(player));
         });
         return {
-            args: ["target:player?"],
+            args: ["target:playerOn?"],
             description: "Toggles spectator mode in PVP games.",
             perm: commands_1.Perm.play,
             requirements: [commands_1.Req.gameRunning],
@@ -718,7 +718,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }
         },
     }, msg: {
-        args: ['player:player', 'message:string'],
+        args: ['player:playerOn', 'message:string'],
         description: 'Send a message to only one player.',
         perm: commands_1.Perm.chat,
         handler: function (_a) {
@@ -875,7 +875,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     .join(""));
         },
     }, rules: {
-        args: ['player:player?'],
+        args: ['player:playerOn?'],
         description: 'Displays the server rules.',
         perm: commands_1.Perm.none,
         handler: function (_a) {
@@ -909,7 +909,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 outputSuccess(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Reminded ", " of the rules."], ["Reminded ", " of the rules."])), target));
         },
     }, void: {
-        args: ["player:player?"],
+        args: ["player:playerOn?"],
         description: 'Warns other players about power voids.',
         perm: commands_1.Perm.play,
         requirements: function (_a) {
@@ -961,7 +961,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 (0, utils_1.logAction)("changed team to ".concat(team.name, " on ").concat((0, funcs_1.escapeTextDiscord)(Vars.state.map.plainName()), " with reason ").concat((0, funcs_1.escapeTextDiscord)(reason)), sender);
         },
     }, teamp: {
-        args: ['team:team', 'target:player'],
+        args: ['team:team', 'target:playerOn'],
         description: 'Changes the team of a player.',
         perm: commands_1.Perm.changeTeam,
         handler: function (_a) {
@@ -1313,10 +1313,26 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         description: "Views a player's stats.",
         handler: function (_a) {
-            var _b = _a.args, target = _b.target, _c = _b.global, global = _c === void 0 ? false : _c, output = _a.output, player = _a.player, f = _a.f;
-            player(target);
-            var stats = global ? target.globalStats : target.stats;
-            output(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, global ? "across all servers" : "on this server", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished));
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var stats;
+                var _c = _b.args, target = _c.target, _d = _c.global, global = _d === void 0 ? false : _d, output = _b.output, player = _b.player, f = _b.f;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
+                        case 0:
+                            player(target);
+                            if (!!target.dataSynced) return [3 /*break*/, 2];
+                            return [4 /*yield*/, target.downloadData().catch(function () { return (0, commands_1.fail)("Error fetching data."); })];
+                        case 1:
+                            _e.sent();
+                            target.dataSynced = true;
+                            _e.label = 2;
+                        case 2:
+                            stats = global ? target.globalStats : target.stats;
+                            output(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, global ? "across all servers" : "on this server", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished));
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     }, showworld: {
         args: ["x:number?", "y:number?", "size:number?"],
@@ -1570,7 +1586,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             });
         }
     }, copyTo: {
-        args: ["target:player", "string:string"],
+        args: ["target:playerOn", "string:string"],
         description: "Copies the specified text to someone else's clipboard.",
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.cooldown(5000)],

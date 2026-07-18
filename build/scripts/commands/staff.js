@@ -139,7 +139,7 @@ var ranks_1 = require("/ranks");
 var utils_1 = require("/utils");
 exports.commands = (0, commands_1.commandList)({
     warn: {
-        args: ['player:player', 'message:string?'],
+        args: ['player:playerOn', 'message:string?'],
         description: 'Sends the player a warning (menu popup).',
         perm: commands_1.Perm.warn,
         requirements: [commands_1.Req.cooldown(3000)],
@@ -259,7 +259,7 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     pardon: {
-        args: ["player:offlinePlayer"],
+        args: ["player:player"],
         description: 'Pardons a votekicked player.',
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("player")],
@@ -356,7 +356,8 @@ exports.commands = (0, commands_1.commandList)({
                                 args.player.autoflagged = false;
                                 args.player.sendMessage("[yellow]You have been freed! Enjoy!");
                                 args.player.updateName();
-                                args.player.forceRespawn();
+                                if (args.player.connected())
+                                    args.player.forceRespawn();
                                 outputSuccess(f(templateObject_14 || (templateObject_14 = __makeTemplateObject(["Player ", " has been unflagged."], ["Player ", " has been unflagged."])), args.player));
                             }
                             else {
@@ -809,7 +810,7 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     remind: {
-        args: ["rule:number", "target:player?"],
+        args: ["rule:number", "target:playerOn?"],
         description: "Remind players in chat of a specific rule.",
         perm: commands_1.Perm.mod,
         handler: function (_a) {
@@ -909,7 +910,7 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     kill: {
-        args: ["player:player"],
+        args: ["player:playerOn"],
         description: "Kills a player's unit.",
         perm: commands_1.Perm.admin,
         requirements: [commands_1.Req.moderate("player", true)],
@@ -1010,7 +1011,7 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     respawn: {
-        args: ["player:player"],
+        args: ["player:playerOn"],
         description: "Forces a player to respawn.",
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("player", true, "mod", true)],
@@ -1021,7 +1022,7 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     clearunit: {
-        args: ["target:player", "duration:time?"],
+        args: ["target:playerOn", "duration:time?"],
         description: "Forces a player out of the unit they are controlling, and blocks them from possessing units for a specified duration.",
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("target", false, "mod", false)],
@@ -1047,7 +1048,7 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     clearcommand: {
-        args: ["target:player", "duration:time?"],
+        args: ["target:playerOn", "duration:time?"],
         description: "Blocks a player from commanding units for a specified duration.",
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("target", false, "mod", false)],
@@ -1072,7 +1073,7 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     stealunit: {
-        args: ["target:player", "newcontroller:player?"],
+        args: ["target:playerOn", "newcontroller:playerOn?"],
         description: "Steals the unit of a player, putting you in their unit and forcing them to respawn.",
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("target", true, "mod", true), commands_1.Req.moderate("newcontroller", true, "mod", true)],
@@ -1110,15 +1111,16 @@ exports.commands = (0, commands_1.commandList)({
     },
     info: {
         args: ["target:player", "showColors:boolean?"],
-        description: "Displays information about an online player.",
+        description: "Displays information about a player.",
         perm: commands_1.Perm.none,
         handler: function (_a) {
+            var _b, _c;
             var sender = _a.sender, args = _a.args, output = _a.output, copy = _a.copy, player = _a.player, f = _a.f;
             var info = args.target.info();
             var names = args.showColors
                 ? info.names.map(funcs_1.escapeStringColorsClient).toString(", ")
                 : __spreadArray([], __read(new Set(info.names.map(function (n) { return Strings.stripColors(n); }).toArray())), false).join(", ");
-            output(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(copy(args.target.name)), args.target.player.id.toString(), args.target.rank, copy(Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" ")), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat(copy((0, utils_1.formatTimeRelative)(args.target.unmarkTime))) : "[green]false", args.target.muted() ? "until ".concat(copy((0, utils_1.formatTimeRelative)(args.target.unmuteTime))) : "[green]false", f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
+            output(f(templateObject_54 || (templateObject_54 = __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), args.target, (0, funcs_1.escapeStringColorsClient)(copy(args.target.name)), (_c = (_b = args.target.player) === null || _b === void 0 ? void 0 : _b.id.toString()) !== null && _c !== void 0 ? _c : 'unknown', args.target.rank, copy(Array.from(args.target.flags).map(function (f) { return f.coloredName(); }).join(" ")), f.boolBad(!args.target.hasPerm("play")), args.target.marked() ? "until ".concat(copy((0, utils_1.formatTimeRelative)(args.target.unmarkTime))) : "[green]false", args.target.muted() ? "until ".concat(copy((0, utils_1.formatTimeRelative)(args.target.unmuteTime))) : "[green]false", f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), info.timesJoined, info.timesKicked, args.target.firstJoined < 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names));
             if (sender.hasPerm("viewUUIDs"))
                 output(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["\t[#FFAAAA]UUID: ", ""], ["\\t[#FFAAAA]UUID: ", ""])), copy(args.target.uuid)));
             if (sender.hasPerm("viewIPs"))
@@ -1513,7 +1515,7 @@ exports.commands = (0, commands_1.commandList)({
         },
     },
     effects: {
-        args: ["mode:string", "player:player?", "duration:time?"],
+        args: ["mode:string", "player:playerOn?", "duration:time?"],
         description: "Applies effects to a player's unit.",
         perm: commands_1.Perm.admin.exceptModes({
             testsrv: commands_1.Perm.trusted,
@@ -1668,7 +1670,7 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     yeet: {
-        args: ["target:player", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
+        args: ["target:playerOn", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
         description: "Sends the target player to a parallel universe.",
         perm: commands_1.Perm.admin,
         requirements: [commands_1.Req.moderate("target", false, "admin")],
@@ -1692,7 +1694,7 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     menuspam: {
-        args: ["target:player"],
+        args: ["target:playerOn"],
         description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
         perm: commands_1.Perm.admin,
         requirements: [commands_1.Req.moderate("target", false, "admin")],

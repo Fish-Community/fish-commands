@@ -57,7 +57,7 @@ export const commands = commandList({
 	}),
 
 	tp: {
-		args: ['player:player'],
+		args: ['player:playerOn'],
 		description: 'Teleport to another player.',
 		perm: Perm.play,
 		requirements: [Req.modeNot("pvp")],
@@ -348,7 +348,7 @@ export const commands = commandList({
 	),
 
 	switch: {
-		args: ["server:string", "target:player?"],
+		args: ["server:string", "target:playerOn?"],
 		description: "Switches to another server.",
 		perm: Perm.play,
 		handler({args, sender, f, lastUsedSuccessfullySender}){
@@ -406,7 +406,7 @@ export const commands = commandList({
 	 * player will be up the target player's butt
 	 */
 	watch: command({
-		args: ['player:player?'],
+		args: ['player:playerOn?'],
 		description: `Watch/unwatch a player.`,
 		perm: Perm.none,
 		data: new Set<string>,
@@ -456,7 +456,7 @@ export const commands = commandList({
 		Events.on(EventType.GameOverEvent, () => spectators.clear());
 		Events.on(EventType.PlayerLeave, ({player}:{player:mindustryPlayer}) => resume(FishPlayer.get(player) as FishPlayer<true>));
 		return {
-			args: ["target:player?"],
+			args: ["target:playerOn?"],
 			description: `Toggles spectator mode in PVP games.`,
 			perm: Perm.play,
 			requirements: [Req.gameRunning],
@@ -537,7 +537,7 @@ export const commands = commandList({
 	},
 
 	msg: {
-		args: ['player:player', 'message:string'],
+		args: ['player:playerOn', 'message:string'],
 		description: 'Send a message to only one player.',
 		perm: Perm.chat,
 		handler({ args, sender, output, f }) {
@@ -699,7 +699,7 @@ Available types:[yellow]
 	},
 
 	rules: {
-		args: ['player:player?'],
+		args: ['player:playerOn?'],
 		description: 'Displays the server rules.',
 		perm: Perm.none,
 		handler({args, sender, output, outputSuccess, f, lastUsedSuccessfullySender}){
@@ -724,7 +724,7 @@ Available types:[yellow]
 	},
 
 	void: {
-		args: ["player:player?"],
+		args: ["player:playerOn?"],
 		description: 'Warns other players about power voids.',
 		perm: Perm.play,
 		requirements: ({args}) => [
@@ -778,7 +778,7 @@ Please stop attacking and [lime]build defenses[] first!`
 	},
 
 	teamp: {
-		args: ['team:team', 'target:player'],
+		args: ['team:team', 'target:playerOn'],
 		description: 'Changes the team of a player.',
 		perm: Perm.changeTeam,
 		handler({sender, args: {team, target}, outputSuccess, f}){
@@ -1126,8 +1126,12 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		args: ["target:player", "global:boolean?"],
 		perm: Perm.none,
 		description: "Views a player's stats.",
-		handler({args:{target, global = false}, output, player, f}){
+		async handler({args:{target, global = false}, output, player, f}){
 			player(target);
+			if(!target.dataSynced){
+				await target.downloadData().catch(() => fail(`Error fetching data.`));
+				target.dataSynced = true;
+			}
 			const stats = global ? target.globalStats : target.stats;
 			output(f`[accent]\
 Statistics for player ${target} ${global ? "across all servers" : "on this server"}:
@@ -1368,7 +1372,7 @@ ${a.hidden ? "This achievement is secret." : ""}\
 		}
 	},
 	copyTo: {
-		args: ["target:player", "string:string"],
+		args: ["target:playerOn", "string:string"],
 		description: "Copies the specified text to someone else's clipboard.",
 		perm: Perm.mod,
 		requirements: [Req.cooldown(5_000)],

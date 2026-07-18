@@ -241,7 +241,7 @@ function disambiguateArgument(options_1, arg_1, _a, sender_1, outputArgs_1, opti
         });
     });
 }
-var argsSupportingBlank = ["player", "offlinePlayer", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
+var argsSupportingBlank = ["player", "playerOn", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 function processArgs(args, processedCmdArgs, sender, commandName) {
     return __awaiter(this, void 0, void 0, function () {
@@ -253,9 +253,9 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                 case 0:
                     outputArgs = {};
                     _loop_1 = function (i, cmdArg) {
-                        var _j, _k, commonArgs, _l, options, needsConfirm, _m, _o, mouseX_1, mouseY_1, _p, mouseX_2, mouseY_2, closestPlayer, _q, x_1, y_1, query, rank_1, role_1, player, info, fishP, err_1, fishP, err_2, options, num, options_1, buttons, selection, num_1, number, milliseconds, block;
-                        return __generator(this, function (_r) {
-                            switch (_r.label) {
+                        var _j, _k, commonArgs, _l, options, needsConfirm, _m, left, right, _o, _p, mouseX_1, mouseY_1, _q, mouseX_2, mouseY_2, closestPlayer, _r, x_1, y_1, query, rank_1, role_1, player, info, fishP, err_1, fishP, err_2, options, num, options_1, buttons, selection, num_1, number, milliseconds, block;
+                        return __generator(this, function (_s) {
+                            switch (_s.label) {
                                 case 0:
                                     if (!(!(i in args) || args[i] === "" || args[i] === "@" || args[i] === "@0")) return [3 /*break*/, 5];
                                     if (!(cmdArg.isOptional && args[i] !== "@")) return [3 /*break*/, 1];
@@ -271,16 +271,17 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     _k = i;
                                     return [4 /*yield*/, menus_1.Menu.text("/".concat(commandName), "Specify a value for the argument \"".concat(cmdArg.name, "\""), sender)];
                                 case 3:
-                                    _j[_k] = _r.sent();
+                                    _j[_k] = _s.sent();
                                     return [3 /*break*/, 5];
                                 case 4:
                                     (0, errors_1.fail)("No value specified for arg ".concat(cmdArg.name, ". Did you type two spaces instead of one?"));
-                                    _r.label = 5;
+                                    _s.label = 5;
                                 case 5:
                                     commonArgs = [args[i], cmdArg, sender, outputArgs];
                                     _l = cmdArg.type;
                                     switch (_l) {
                                         case "player": return [3 /*break*/, 6];
+                                        case "playerOn": return [3 /*break*/, 6];
                                         case "offlinePlayer": return [3 /*break*/, 27];
                                         case "team": return [3 /*break*/, 42];
                                         case "number": return [3 /*break*/, 50];
@@ -301,8 +302,9 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     options = void 0;
                                     if (!args[i].startsWith("@")) return [3 /*break*/, 24];
                                     needsConfirm = false;
-                                    _m = args[i];
-                                    switch (_m) {
+                                    _m = __read(args[i].split(":"), 2), left = _m[0], right = _m[1];
+                                    _o = left;
+                                    switch (_o) {
                                         case "@cyrillic": return [3 /*break*/, 7];
                                         case "@russian": return [3 /*break*/, 7];
                                         case "@china": return [3 /*break*/, 8];
@@ -364,7 +366,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     {
                                         if (!(sender === null || sender === void 0 ? void 0 : sender.unit()))
                                             (0, errors_1.fail)("You must have a unit to use the @c selector.");
-                                        _o = sender.player, mouseX_1 = _o.mouseX, mouseY_1 = _o.mouseY;
+                                        _p = sender.player, mouseX_1 = _p.mouseX, mouseY_1 = _p.mouseY;
                                         if (mouseX_1 == 0 && mouseY_1 == 0)
                                             (0, errors_1.fail)("Unable to read your cursor position. (It says it's exactly at 0,0)");
                                         needsConfirm = true;
@@ -374,14 +376,14 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         needsConfirm = true;
                                         return [3 /*break*/, 23];
                                     }
-                                    _r.label = 18;
+                                    _s.label = 18;
                                 case 18:
                                     if (!(sender === null || sender === void 0 ? void 0 : sender.unit()))
                                         (0, errors_1.fail)("You must have a unit to use the @click selector.");
                                     sender.sendMessage("/".concat(commandName, ": Click a player's unit to select them."));
                                     return [4 /*yield*/, sender.waitForTap()];
                                 case 19:
-                                    _p = __read.apply(void 0, [(_r.sent()).map(function (t) { return t * 8; }), 2]), mouseX_2 = _p[0], mouseY_2 = _p[1];
+                                    _q = __read.apply(void 0, [(_s.sent()).map(function (t) { return t * 8; }), 2]), mouseX_2 = _q[0], mouseY_2 = _q[1];
                                     closestPlayer = Seq.with(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.unit(); }))
                                         .min(floatf(function (p) { return Mathf.dst2(p.unit().x, p.unit().y, mouseX_2, mouseY_2); }));
                                     if (closestPlayer && Mathf.dst(closestPlayer.unit().x, closestPlayer.unit().y, mouseX_2, mouseY_2) > 32)
@@ -390,14 +392,14 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     return [3 /*break*/, 23];
                                 case 20:
                                     {
-                                        _q = (_f = (_e = sender === null || sender === void 0 ? void 0 : sender.player) === null || _e === void 0 ? void 0 : _e.unit()) !== null && _f !== void 0 ? _f : (0, errors_1.fail)("You must have a unit to use the @h selector."), x_1 = _q.x, y_1 = _q.y;
+                                        _r = (_f = (_e = sender === null || sender === void 0 ? void 0 : sender.player) === null || _e === void 0 ? void 0 : _e.unit()) !== null && _f !== void 0 ? _f : (0, errors_1.fail)("You must have a unit to use the @h selector."), x_1 = _r.x, y_1 = _r.y;
                                         needsConfirm = true;
                                         options = [
                                             Seq.with.apply(Seq, __spreadArray([], __read(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.unit() && p !== sender; })), false)).min(floatf(function (p) { return Mathf.dst2(p.unit().x, p.unit().y, x_1, y_1); }))
                                         ];
                                         return [3 /*break*/, 23];
                                     }
-                                    _r.label = 21;
+                                    _s.label = 21;
                                 case 21:
                                     options = Array.from(sender ? sender.recentPlayers : exports.consoleState.recentPlayers);
                                     if (options.length == 0)
@@ -423,7 +425,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         }
                                     }
                                     (0, errors_1.fail)("Unknown selector ".concat(args[i], "."));
-                                    _r.label = 23;
+                                    _s.label = 23;
                                 case 23:
                                     if (Array.isArray(options)) {
                                         if (options.length == 0)
@@ -434,13 +436,13 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     return [3 /*break*/, 25];
                                 case 24:
                                     options = players_1.FishPlayer.search(players_1.FishPlayer.getAllOnline(), args[i]);
-                                    _r.label = 25;
+                                    _s.label = 25;
                                 case 25: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([options], __read(commonArgs), false), [function (player) { return (player.marked() ? config_1.prefixes.marked : player.autoflagged ? config_1.prefixes.flagged : "") + (Strings.stripColors(player.name).length >= 3 ?
                                             player.name
                                             : (0, funcs_1.escapeStringColorsClient)(player.name)); },
                                         2], false))];
                                 case 26:
-                                    _r.sent();
+                                    _s.sent();
                                     return [3 /*break*/, 69];
                                 case 27:
                                     if (!globals_1.uuidPattern.test(args[i])) return [3 /*break*/, 34];
@@ -450,15 +452,15 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     if (info == null)
                                         (0, errors_1.fail)("Player with uuid \"".concat(args[i], "\" not found on this server. If you're sure the UUID is correct, specify \"@create:").concat(args[i], "\" to create the player."));
                                     fishP = players_1.FishPlayer.getFromInfo(info);
-                                    _r.label = 28;
+                                    _s.label = 28;
                                 case 28:
-                                    _r.trys.push([28, 30, , 31]);
+                                    _s.trys.push([28, 30, , 31]);
                                     return [4 /*yield*/, fishP.downloadData()];
                                 case 29:
-                                    _r.sent();
+                                    _s.sent();
                                     return [3 /*break*/, 31];
                                 case 30:
-                                    err_1 = _r.sent();
+                                    err_1 = _s.sent();
                                     (0, errors_1.fail)("Network error while downloading fish player data for ".concat(args[i], ": ").concat((0, funcs_1.parseError)(err_1)));
                                     return [3 /*break*/, 31];
                                 case 31:
@@ -466,20 +468,20 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     return [3 /*break*/, 33];
                                 case 32:
                                     outputArgs[cmdArg.name] = player;
-                                    _r.label = 33;
+                                    _s.label = 33;
                                 case 33: return [3 /*break*/, 41];
                                 case 34:
                                     if (!(args[i].startsWith("@create:") && globals_1.uuidPattern.test(args[i].split("@create:")[1]))) return [3 /*break*/, 39];
                                     fishP = players_1.FishPlayer.getFromInfo(Vars.netServer.admins.getInfo(args[i].split("@create:")[1]));
-                                    _r.label = 35;
+                                    _s.label = 35;
                                 case 35:
-                                    _r.trys.push([35, 37, , 38]);
+                                    _s.trys.push([35, 37, , 38]);
                                     return [4 /*yield*/, fishP.downloadData()];
                                 case 36:
-                                    _r.sent();
+                                    _s.sent();
                                     return [3 /*break*/, 38];
                                 case 37:
-                                    err_2 = _r.sent();
+                                    err_2 = _s.sent();
                                     (0, errors_1.fail)("Network error while downloading fish player data for ".concat(args[i], ": ").concat((0, funcs_1.parseError)(err_2)));
                                     return [3 /*break*/, 38];
                                 case 38:
@@ -497,8 +499,8 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                                 : (0, funcs_1.escapeStringColorsClient)(player.name); },
                                             2], false))];
                                 case 40:
-                                    _r.sent();
-                                    _r.label = 41;
+                                    _s.sent();
+                                    _s.label = 41;
                                 case 41: return [3 /*break*/, 69];
                                 case 42:
                                     num = void 0;
@@ -520,21 +522,21 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     ], false);
                                     return [4 /*yield*/, menus_1.Menu.raw("Select a team", "Select a team for the argument \"".concat(cmdArg.name, "\""), buttons, sender, { optionStringifier: function (t) { return t == "other" ? "Other..." : t.coloredName(); } })];
                                 case 44:
-                                    selection = _r.sent();
+                                    selection = _s.sent();
                                     if (!(selection == "other")) return [3 /*break*/, 46];
                                     return [4 /*yield*/, menus_1.Menu.text("Select a team", "Enter the team's ID\nYou can also specify [accent]#123[] in the command.", sender, { positiveIntegersOnly: true })];
                                 case 45:
-                                    num_1 = _r.sent();
+                                    num_1 = _s.sent();
                                     if (num_1 <= 255 && num_1 >= 0)
                                         outputArgs[cmdArg.name] = Team.all[num_1];
                                     else
                                         (0, errors_1.fail)("Team ".concat(num_1, " is not inside the valid range (integers 0-255)."));
-                                    _r.label = 46;
+                                    _s.label = 46;
                                 case 46: return [3 /*break*/, 49];
                                 case 47: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getTeam)(args[i])], __read(commonArgs), false), [function (t) { return t.coloredName(); }], false))];
                                 case 48:
-                                    _r.sent();
-                                    _r.label = 49;
+                                    _s.sent();
+                                    _s.label = 49;
                                 case 49: return [3 /*break*/, 69];
                                 case 50:
                                     {
@@ -550,7 +552,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         outputArgs[cmdArg.name] = number;
                                         return [3 /*break*/, 69];
                                     }
-                                    _r.label = 51;
+                                    _s.label = 51;
                                 case 51:
                                     {
                                         milliseconds = (0, utils_1.parseTimeString)(args[i]);
@@ -559,7 +561,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         outputArgs[cmdArg.name] = milliseconds;
                                         return [3 /*break*/, 69];
                                     }
-                                    _r.label = 52;
+                                    _s.label = 52;
                                 case 52:
                                     outputArgs[cmdArg.name] = args[i];
                                     return [3 /*break*/, 69];
@@ -596,10 +598,10 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         outputArgs[cmdArg.name] = block;
                                         return [3 /*break*/, 69];
                                     }
-                                    _r.label = 55;
+                                    _s.label = 55;
                                 case 55: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getUnitType)(args[i])], __read(commonArgs), false), [function (u) { return u.emoji() + (0, funcs_1.capitalizeText)(u.name); }], false))];
                                 case 56:
-                                    _r.sent();
+                                    _s.sent();
                                     return [3 /*break*/, 69];
                                 case 57:
                                     if (!globals_1.uuidPattern.test(args[i]))
@@ -609,7 +611,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                 case 58: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(args[i])], __read(commonArgs), false), [function (r) { return r.name(); },
                                         2], false))];
                                 case 59:
-                                    _r.sent();
+                                    _s.sent();
                                     return [3 /*break*/, 69];
                                 case 60:
                                     if (["rand", "random"].includes((_g = args[i]) === null || _g === void 0 ? void 0 : _g.toLowerCase())) {
@@ -619,25 +621,25 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(args[i])], __read(commonArgs), false), [function (r) { return r.name(); },
                                             2], false))];
                                 case 61:
-                                    _r.sent();
+                                    _s.sent();
                                     return [3 /*break*/, 69];
                                 case 62: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([ranks_1.Rank.search(args[i])], __read(commonArgs), false), [function (r) { return r.coloredName(); }], false))];
                                 case 63:
-                                    _r.sent();
+                                    _s.sent();
                                     return [3 /*break*/, 69];
                                 case 64: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([ranks_1.RoleFlag.search(args[i])], __read(commonArgs), false), [function (f) { return f.coloredName(); }], false))];
                                 case 65:
-                                    _r.sent();
+                                    _s.sent();
                                     return [3 /*break*/, 69];
                                 case 66: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getItem)(args[i])], __read(commonArgs), false), [function (i) { return i.emoji() + (0, funcs_1.capitalizeText)(i.name, "-"); },
                                         2], false))];
                                 case 67:
-                                    _r.sent();
+                                    _s.sent();
                                     return [3 /*break*/, 69];
                                 case 68:
                                     cmdArg.type;
                                     (0, funcs_1.crash)("impossible");
-                                    _r.label = 69;
+                                    _s.label = 69;
                                 case 69: return [2 /*return*/];
                             }
                         });

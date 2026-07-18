@@ -8,7 +8,7 @@ exports.commandArgNames = exports.commandArgTypes = void 0;
 /** All valid command arg types. */
 exports.commandArgTypes = [
     "string", "number", "boolean", "player", "team", "time", "unittype", "block",
-    "uuid", "offlinePlayer", "map", "mapOrRandom", "rank", "roleflag", "item"
+    "uuid", "playerOn", "map", "mapOrRandom", "rank", "roleflag", "item"
 ];
 exports.commandArgNames = {
     string: "text",
@@ -20,7 +20,7 @@ exports.commandArgNames = {
     unittype: "unit type",
     block: "block",
     uuid: "UUID",
-    offlinePlayer: "player",
+    playerOn: "player",
     map: "map",
     mapOrRandom: "map",
     rank: "rank",

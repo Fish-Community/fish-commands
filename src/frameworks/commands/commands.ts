@@ -137,7 +137,7 @@ export async function disambiguateArgument<T extends FishCommandArgType>(
 	} else outputArgs[name] = options;
 }
 
-const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
+const argsSupportingBlank: CommandArgType[] = ["player", "playerOn", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer<true> | null, commandName:string): Promise<Record<string, FishCommandArgType>> {
@@ -161,11 +161,12 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 		//Deserialize the arg
 		const commonArgs = [args[i], cmdArg, sender, outputArgs] as const;
 		switch(cmdArg.type){
-			case "player": {
+			case "player": case "playerOn": {
 				let options: SearchResult<FishPlayer>;
 				if(args[i].startsWith("@")){
 					let needsConfirm = false;
-					switch(args[i]){
+					const [left, right] = args[i].split(":");
+					switch(left){
 						case "@cyrillic": case "@russian":
 							options = FishPlayer.getAllOnline().filter(p => /[\u0400-\u04FF]/.test(p.name));
 							break;
