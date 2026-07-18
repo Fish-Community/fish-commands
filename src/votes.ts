@@ -35,8 +35,8 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 	constructor(
 		public voteTime:number,
 		public goal:["fractionOfVoters", number] | ["absolute", number] = ["fractionOfVoters", 0.50001],
-		public isEligible:(fishP:FishPlayer, data: SessionData) => boolean = () => true,
-		public isCounted:(fishP:FishPlayer, data: SessionData) => boolean = (fishP) => !fishP.afk(),
+		public isEligible:(fishP:FishPlayer<true>, data: SessionData) => boolean = () => true,
+		public isCounted:(fishP:FishPlayer<true>, data: SessionData) => boolean = (fishP) => !fishP.afk(),
 	){
 		super();
 		if(goal[0] == "fractionOfVoters"){
@@ -53,7 +53,7 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 	}
 
 	/** @throws CommandError */
-	start(player:FishPlayer, newVote:number, data:SessionData){
+	start(player:FishPlayer<true>, newVote:number, data:SessionData){
 		if(data === null) crash(`Cannot start vote: data not provided`);
 		if(!this.isEligible(player, data)) fail(`You are not eligible for this vote.`);
 		this.session = {
@@ -65,7 +65,7 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 	}
 
 	/** @throws CommandError */
-	vote(player:FishPlayer, newVote:number, data:SessionData | null){
+	vote(player:FishPlayer<true>, newVote:number, data:SessionData | null){
 		if(!this.session) return this.start(player, newVote, data!);
 		if(!this.isEligible(player, this.session.data)) fail(`You are not eligible for this vote.`);
 		const oldVote = this.session.votes.get(player.uuid);
@@ -76,13 +76,12 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 		else this._checkVote(false);
 	}
 
-	unvote(player:FishPlayer){
+	unvote(fishP:FishPlayer<boolean>){
 		if(!this.session) return;
-		const fishP = FishPlayer.resolve(player);
 		const vote = this.session.votes.get(fishP.uuid);
 		if(vote){
 			this.session.votes.delete(fishP.uuid);
-			this.fire("player vote removed", [player, vote]);
+			this.fire("player vote removed", [fishP, vote]);
 			this._checkVote(false);
 		}
 	}
@@ -119,7 +118,7 @@ export class VoteManager<SessionData extends {}> extends EventEmitter<VoteEventM
 		if(this.session){
 			for(const key of this.session.votes.keys()){
 				const fishP = FishPlayer.getById(key)!;
-				if(!this.isEligible(fishP, this.session.data)) this.session.votes.delete(key);
+				if(!fishP.connected() || !this.isEligible(fishP, this.session.data)) this.session.votes.delete(key);
 			}
 			return [...this.session.votes].reduce((acc, [k, v]) => acc + v, 0);
 		} else return 0;

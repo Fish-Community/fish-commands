@@ -134,7 +134,7 @@ Events.on(EventType.PlayerJoin, ({player}: {player: mindustryPlayer}) => {
 	Time.mark();
 	for(const ach of Achievement.checkJoin){
 		if(ach.allowedInMode()){
-			const fishP = FishPlayer.get(player);
+			const fishP = FishPlayer.get(player) as FishPlayer<true>;
 			if(!ach.has(fishP) && ach.checkPlayerJoin?.(fishP)){
 				if(fishP.dataSynced) ach.grantTo(fishP);
 				else Timer.schedule(() => ach.grantTo(fishP), 2); //2 seconds should be enough

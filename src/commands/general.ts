@@ -454,7 +454,7 @@ export const commands = commandList({
 			target.forceRespawn();
 		}
 		Events.on(EventType.GameOverEvent, () => spectators.clear());
-		Events.on(EventType.PlayerLeave, ({player}:{player:mindustryPlayer}) => resume(FishPlayer.get(player)));
+		Events.on(EventType.PlayerLeave, ({player}:{player:mindustryPlayer}) => resume(FishPlayer.get(player) as FishPlayer<true>));
 		return {
 			args: ["target:player?"],
 			description: `Toggles spectator mode in PVP games.`,

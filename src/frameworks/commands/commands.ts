@@ -117,7 +117,7 @@ export function joinArgs(rawArgs:string[]){
 }
 
 export async function disambiguateArgument<T extends FishCommandArgType>(
-	options:T | T[] | null, arg: string, {name, type}: CommandArg, sender:FishPlayer | null, outputArgs: Record<string, FishCommandArgType>,
+	options:T | T[] | null, arg: string, {name, type}: CommandArg, sender:FishPlayer<true> | null, outputArgs: Record<string, FishCommandArgType>,
 	optionStringifier: (x:T) => string, columns = 3,
 ){
 	if(options == null) fail(
@@ -140,7 +140,7 @@ export async function disambiguateArgument<T extends FishCommandArgType>(
 const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
-export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null, commandName:string): Promise<Record<string, FishCommandArgType>> {
+export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer<true> | null, commandName:string): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
 		if(!(i in args) || args[i] === "" || args[i] === "@" || args[i] === "@0"){
@@ -214,10 +214,12 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 							if(!sender?.unit()) fail(`You must have a unit to use the @click selector.`);
 							sender.sendMessage(`/${commandName}: Click a player's unit to select them.`);
 							const [mouseX, mouseY] = (await sender.waitForTap()).map(t => t * 8);
-							options = Seq.with(FishPlayer.getAllOnline().filter(p => p.unit()))
+							const closestPlayer = Seq.with(FishPlayer.getAllOnline().filter(p => p.unit()))
 								.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, mouseX, mouseY)));
-							if(options && Mathf.dst(options.unit()!.x, options.unit()!.y, mouseX, mouseY) > 32)
+
+							if(closestPlayer && Mathf.dst(closestPlayer.unit()!.x, closestPlayer.unit()!.y, mouseX, mouseY) > 32)
 								fail(`Too far away, you must click within 4 tiles of the target.`);
+							options = closestPlayer;
 							break;
 						}
 						case "@h": case "@p": {
@@ -460,7 +462,7 @@ export function convertArgs(processedCmdArgs:CommandArg[], allowMenus:boolean):s
 }
 
 export function handleTapEvent(event:EventType["TapEvent"]){
-	const sender = FishPlayer.get(event.player);
+	const sender = FishPlayer.get(event.player) as FishPlayer<true>;
 	if(sender.tapInfo.resolve){
 		const tmp = sender.tapInfo.resolve;
 		sender.tapInfo.resolve = null;
@@ -551,7 +553,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 			new CommandHandler.CommandRunner({ async accept(unjoinedRawArgs: string[], sender: mindustryPlayer){
 				if(!initialized) crash(`Commands not initialized!`);
 
-				const fishSender = FishPlayer.get(sender);
+				const fishSender = FishPlayer.get(sender) as FishPlayer<true>;
 				FishPlayer.onPlayerCommand(fishSender, name, unjoinedRawArgs);
 
 				//Verify authorization

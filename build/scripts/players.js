@@ -127,7 +127,6 @@ var utils_1 = require("/utils");
 var FishPlayer = /** @class */ (function () {
     //#endregion
     function FishPlayer(uuid, data, player) {
-        //#endregion
         //#region Transient properties
         //Commands framework
         /** Front-to-back queue of menus to show. */
@@ -807,6 +806,7 @@ var FishPlayer = /** @class */ (function () {
         if (this.recentLeaves.length > 10)
             this.recentLeaves.pop();
         void api.setFishPlayerData(fishP.getData(), 1, true);
+        fishP.dataSynced = false;
         var currentRun = (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime;
         if (currentRun)
             Core.app.post(function () {
@@ -1094,7 +1094,7 @@ var FishPlayer = /** @class */ (function () {
             this.onRespawn(player);
     };
     FishPlayer.onRespawn = function (player) {
-        var fishP = this.get(player);
+        var fishP = this.get(player); //must be connected
         if (fishP.stelled())
             fishP.stopUnit();
     };
@@ -2024,7 +2024,7 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.stopUnit = function () {
         var unit = this.unit();
-        if (this.connected() && unit) {
+        if (unit) {
             if (unit.spawnedByCore) {
                 unit.type = UnitTypes.stell;
                 unit.health = UnitTypes.stell.health;

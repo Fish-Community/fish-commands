@@ -63,6 +63,9 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	static globalSusChat = new Ratekeeper();
 	//#endregion
 	
+	/** Does not exist. Is a figment of TypeScript's imagination. */
+	private readonly __connected!: Connected;
+
 	//#region Transient properties
 	//Commands framework
 	/** Front-to-back queue of menus to show. */
@@ -643,6 +646,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		this.recentLeaves.unshift(fishP);
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
 		void api.setFishPlayerData(fishP.getData(), 1, true);
+		fishP.dataSynced = false;
 
 		const currentRun = PartialMapRun.current?.startTime;
 		if(currentRun) Core.app.post(() => {
@@ -909,7 +913,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 			this.onRespawn(player);
 	}
 	private static onRespawn(player:mindustryPlayer){
-		const fishP = this.get(player);
+		const fishP = this.get(player) as FishPlayer<true>; //must be connected
 		if(fishP.stelled()) fishP.stopUnit();
 	}
 	static forEachPlayer(func:(fishPlayer:FishPlayer<true>, mindustryPlayer:mindustryPlayer) => unknown){
@@ -918,7 +922,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 				Log.err(".FINDTAG. Groups.player.each() returned a null player???");
 				return;
 			}
-			const fishP = this.get(player);
+			const fishP = this.get(player) as FishPlayer<true>;
 			func(fishP, player);
 		});
 	}
@@ -929,7 +933,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 				Log.err(".FINDTAG. Groups.player.each() returned a null player???");
 				return;
 			}
-			out.push(func(this.get(player)));
+			out.push(func(this.get(player) as FishPlayer<true>));
 		});
 		return out;
 	}
@@ -1760,7 +1764,7 @@ We apologize for the inconvenience.`
 
 	stopUnit(this:FishPlayer<true>){
 		const unit = this.unit();
-		if(this.connected() && unit){
+		if(unit){
 			if(unit.spawnedByCore){
 				unit.type = UnitTypes.stell;
 				unit.health = UnitTypes.stell.health;

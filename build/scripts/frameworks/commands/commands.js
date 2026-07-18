@@ -253,7 +253,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                 case 0:
                     outputArgs = {};
                     _loop_1 = function (i, cmdArg) {
-                        var _j, _k, commonArgs, _l, options, needsConfirm, _m, _o, mouseX_1, mouseY_1, _p, mouseX_2, mouseY_2, _q, x_1, y_1, query, rank_1, role_1, player, info, fishP, err_1, fishP, err_2, options, num, options_1, buttons, selection, num_1, number, milliseconds, block;
+                        var _j, _k, commonArgs, _l, options, needsConfirm, _m, _o, mouseX_1, mouseY_1, _p, mouseX_2, mouseY_2, closestPlayer, _q, x_1, y_1, query, rank_1, role_1, player, info, fishP, err_1, fishP, err_2, options, num, options_1, buttons, selection, num_1, number, milliseconds, block;
                         return __generator(this, function (_r) {
                             switch (_r.label) {
                                 case 0:
@@ -382,10 +382,11 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     return [4 /*yield*/, sender.waitForTap()];
                                 case 19:
                                     _p = __read.apply(void 0, [(_r.sent()).map(function (t) { return t * 8; }), 2]), mouseX_2 = _p[0], mouseY_2 = _p[1];
-                                    options = Seq.with(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.unit(); }))
+                                    closestPlayer = Seq.with(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.unit(); }))
                                         .min(floatf(function (p) { return Mathf.dst2(p.unit().x, p.unit().y, mouseX_2, mouseY_2); }));
-                                    if (options && Mathf.dst(options.unit().x, options.unit().y, mouseX_2, mouseY_2) > 32)
+                                    if (closestPlayer && Mathf.dst(closestPlayer.unit().x, closestPlayer.unit().y, mouseX_2, mouseY_2) > 32)
                                         (0, errors_1.fail)("Too far away, you must click within 4 tiles of the target.");
+                                    options = closestPlayer;
                                     return [3 /*break*/, 23];
                                 case 20:
                                     {

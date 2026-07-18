@@ -366,7 +366,7 @@ Events.on(EventType.WaveEvent, () => {
 
 Events.on(EventType.AdminRequestEvent, e => {
 	if(e.action == Packets.AdminAction.wave){
-		const fishP = FishPlayer.get(e.player);
+		const fishP = FishPlayer.get(e.player) as FishPlayer<true>;
 		if(Date.now() > fishP.autoConfirmSkipWaveUntil){
 			Menu.buttons(fishP, "Confirm", "Are you sure you want to skip the wave?", [
 				[{data: "yes", text: "[orange]Yes"}],
