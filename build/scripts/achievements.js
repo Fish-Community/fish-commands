@@ -668,6 +668,12 @@ exports.Achievements = {
             return eligibleForClearAllBuildings && !Groups.build.contains(function (b) { return b.team != Vars.state.rules.defaultTeam && b.team != Team.derelict && !b.block.privileged; });
         }
     }),
+    see_sussy_impersonator: new Achievement(["red", Iconc.lock], "There is one impostor among us", "See a ".concat(config_1.prefixes.impersonator, " in-game."), {
+        checkInfrequent: function () { return Groups.player.contains(function (p) { return players_1.FishPlayer.get(p).isImpersonator; }); },
+    }),
+    see_sussy_impersonator_2: new Achievement(["scarlet", Iconc.lock], "There are two impostors among us", "See two ".concat(config_1.prefixes.impersonator, "s in-game at once."), {
+        checkInfrequent: function () { return Groups.player.count(function (p) { return players_1.FishPlayer.get(p).isImpersonator; }) == 2; },
+    }),
 };
 Object.entries(exports.Achievements).forEach(function (_a) {
     var _b = __read(_a, 2), id = _b[0], a = _b[1];

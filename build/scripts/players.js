@@ -194,6 +194,7 @@ var FishPlayer = /** @class */ (function () {
         this.skipConfirm = -1;
         this.copyOptions = null;
         this.recentPlayers = new Set();
+        this.isImpersonator = false;
         /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
         this.unmuteTime = -1;
@@ -442,6 +443,7 @@ var FishPlayer = /** @class */ (function () {
             this.highlight = null;
         this.changedTeam = false;
         this.ipDetectedVpn = false;
+        this.isImpersonator = false;
         this.tstats.blocksBroken = 0;
         if (this.tstats.lastMapPlayedTime != FishPlayer.lastMapStartTime) {
             this.tstats.blockInteractionsThisMap = 0;
@@ -723,6 +725,7 @@ var FishPlayer = /** @class */ (function () {
                 var message = (0, utils_1.isImpersonator)(fishPlayer.name, fishPlayer.ranksAtLeast("admin"));
                 if (message !== false) {
                     fishPlayer.sendMessage("[scarlet]\u26A0[] [gold]Oh no! Our systems think you are a [scarlet]SUSSY IMPERSONATOR[]!\n[gold]Reason: ".concat(message, "\n[gold]Change your name to remove the tag."));
+                    fishPlayer.isImpersonator = true;
                 }
                 else if ((0, utils_1.cleanText)(player.name, true).includes("hacker")) {
                     fishPlayer.sendMessage("[scarlet]\u26A0 Don't be a script kiddie!");
@@ -1138,7 +1141,7 @@ var FishPlayer = /** @class */ (function () {
             this.showRankPrefix = true;
         var prefix = '';
         if (!this.hasPerm("bypassNameCheck") && (0, utils_1.isImpersonator)(name, this.ranksAtLeast("admin")))
-            prefix += "[scarlet]SUSSY IMPOSTOR[]";
+            prefix += config_1.prefixes.impersonator;
         if (this.marked())
             prefix += config_1.prefixes.marked;
         else if (this.autoflagged)

@@ -251,6 +251,7 @@ export const prefixes = {
 	marked: '[yellow]\u26A0[scarlet]Marked Griefer[]\u26A0[]',
 	flagged: '[yellow]\u26A0[orange]Flagged[]\u26A0[]',
 	muted: '[white](muted)',
+	impersonator: "[scarlet]SUSSY IMPOSTOR[]",
 };
 
 export const text = {
@@ -380,7 +381,7 @@ export const tips = {
 		`Don't like the map? Vote to change it with [white]/rtv[].`,
 		`If you want to end the current map, DO NOT BREAK DEFENCES! Vote to change the map with [white]/rtv[].`,
 		//misc
-		`Anyone attempting to impersonate a ranked player, or the server, will have [scarlet]SUSSY IMPOSTOR[] prepended to their name. Beware!`,
+		`Anyone attempting to impersonate a ranked player, or the server, will have ${prefixes.impersonator} prepended to their name. Beware!`,
 		`Griefers will often be found with the text ${prefixes.marked} prepended to their name: they are harmless and cannot grief again.`,
 		`Don't votekick ${prefixes.marked.slice(0, -3)}[][scarlet]s [gold]if they aren't breaking the rules: they are incapable of griefing more.`,
 		`Players marked as ${prefixes.flagged} have been flagged as suspicious by our detection systems, but they may not be griefers.`,

@@ -150,6 +150,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	skipConfirm: number = -1;
 	copyOptions: string[] | null = null;
 	recentPlayers = new Set<FishPlayer>();
+	isImpersonator = false;
 	//#endregion
 	
 	//#region Stored data
@@ -374,6 +375,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		if(this.highlight === "[white]") this.highlight = null;
 		this.changedTeam = false;
 		this.ipDetectedVpn = false;
+		this.isImpersonator = false;
 		this.tstats.blocksBroken = 0;
 		if(this.tstats.lastMapPlayedTime != FishPlayer.lastMapStartTime){
 			this.tstats.blockInteractionsThisMap = 0;
@@ -570,6 +572,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 				const message = isImpersonator(fishPlayer.name, fishPlayer.ranksAtLeast("admin"));
 				if(message !== false){
 					fishPlayer.sendMessage(`[scarlet]\u26A0[] [gold]Oh no! Our systems think you are a [scarlet]SUSSY IMPERSONATOR[]!\n[gold]Reason: ${message}\n[gold]Change your name to remove the tag.`);
+					fishPlayer.isImpersonator = true;
 				} else if(cleanText(player.name, true).includes("hacker")){
 					fishPlayer.sendMessage("[scarlet]\u26A0 Don't be a script kiddie!");
 					FishEvents.fire("scriptKiddie", [fishPlayer]);
@@ -951,7 +954,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		if(this.marked()) this.showRankPrefix = true;
 		let prefix = '';
 		if(!this.hasPerm("bypassNameCheck") && isImpersonator(name, this.ranksAtLeast("admin")))
-			prefix += "[scarlet]SUSSY IMPOSTOR[]";
+			prefix += prefixes.impersonator;
 		if(this.marked()) prefix += prefixes.marked;
 		else if(this.autoflagged) prefix += prefixes.flagged;
 		if(this.muted()) prefix += prefixes.muted;

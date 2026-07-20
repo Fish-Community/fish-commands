@@ -1,4 +1,4 @@
-import { FColor, Gamemode, GamemodeName, GamemodeNames } from "/config";
+import { FColor, Gamemode, GamemodeName, GamemodeNames, prefixes } from "/config";
 import { Duration } from "/funcs";
 import { FishEvents, unitsT5 } from "/globals";
 import { FishPlayer } from "/players";
@@ -555,6 +555,12 @@ export const Achievements = {
 		checkGameover(){
 			return eligibleForClearAllBuildings && !Groups.build.contains(b => b.team != Vars.state.rules.defaultTeam && b.team != Team.derelict && !b.block.privileged);
 		}
+	}),
+	see_sussy_impersonator: new Achievement(["red", Iconc.lock], "There is one impostor among us", `See a ${prefixes.impersonator} in-game.`, {
+		checkInfrequent: () => Groups.player.contains(p => FishPlayer.get(p).isImpersonator),
+	}),
+	see_sussy_impersonator_2: new Achievement(["scarlet", Iconc.lock], "There are two impostors among us", `See two ${prefixes.impersonator}s in-game at once.`, {
+		checkInfrequent: () => Groups.player.count(p => FishPlayer.get(p).isImpersonator) == 2,
 	}),
 } satisfies Record<string, Achievement>;
 Object.entries(Achievements).forEach(([id, a]) => a.sid = id);
