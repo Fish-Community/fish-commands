@@ -53,7 +53,7 @@ body:
       label: Mobile
       description: Are you on a mobile device?
       options:
-        - label: Yes
+        - label: "Yes"
   - type: input
     id: plugin-version
     attributes:
