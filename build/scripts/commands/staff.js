@@ -172,6 +172,8 @@ exports.commands = (0, commands_1.commandList)({
                             //overload: overwrite mutetime
                             if (args.duration == undefined)
                                 (0, commands_1.fail)(f(templateObject_3 || (templateObject_3 = __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player));
+                            if (args.duration <= 1000)
+                                (0, commands_1.fail)("Duration too short. To free a player, use /free.");
                             previousTime = (0, utils_1.formatTimeRelative)(args.player.unmuteTime, true);
                             return [4 /*yield*/, args.player.updateMuteTime(args.duration)];
                         case 1:
@@ -322,6 +324,8 @@ exports.commands = (0, commands_1.commandList)({
                             //overload: overwrite stoptime
                             if (args.time == undefined)
                                 (0, commands_1.fail)(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player));
+                            if (args.time <= 1000)
+                                (0, commands_1.fail)("Duration too short. To free a player, use /free.");
                             previousTime = (0, utils_1.formatTimeRelative)(args.player.unmarkTime, true);
                             return [4 /*yield*/, args.player.updateStopTime(args.time)];
                         case 1:

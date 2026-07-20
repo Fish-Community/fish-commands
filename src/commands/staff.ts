@@ -43,6 +43,7 @@ export const commands = commandList({
 			if(args.player.muted()){
 				//overload: overwrite mutetime
 				if(args.duration == undefined) fail(f`Player ${args.player} is already muted.`);
+				if(args.duration <= 1_000) fail(`Duration too short. To free a player, use /free.`);
 				const previousTime = formatTimeRelative(args.player.unmuteTime, true);
 				await args.player.updateMuteTime(args.duration);
 				outputSuccess(f`Player ${args.player}'s mute time has been updated to ${formatTime(args.duration)} (was ${previousTime}).`);
@@ -150,6 +151,7 @@ export const commands = commandList({
 			if(args.player.marked()){
 				//overload: overwrite stoptime
 				if(args.time == undefined) fail(f`Player ${args.player} is already marked.`);
+				if(args.time <= 1_000) fail(`Duration too short. To free a player, use /free.`);
 				const previousTime = formatTimeRelative(args.player.unmarkTime, true);
 				await args.player.updateStopTime(args.time);
 				outputSuccess(f`Player ${args.player}'s stop time has been updated to ${formatTime(args.time)} (was ${previousTime}).`);
