@@ -164,7 +164,34 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 		switch(cmdArg.type){
 			case "player": case "playerOn": {
 				let options: SearchResult<FishPlayer>;
-				if(args[i].startsWith("@")){
+				if(uuidPattern.test(args[i])){
+					const uuid = args[i];
+					let player = FishPlayer.getById(uuid);
+					if(player == null){
+						if(cmdArg.type == "playerOn") fail(`This command only accepts online players.`);
+						let info = Vars.netServer.admins.getInfoOptional(uuid);
+						const data = await api.getFishPlayerData(uuid).catch(err =>
+							fail(`Network error while downloading fish player data for ${uuid}: ${parseError(err)}`)
+						);
+						if(data){
+							player = new FishPlayer(uuid, data, null);
+						} else if(info){
+							player = FishPlayer.createFromInfo(info);
+							if(data) player.updateData(data);
+						} else {
+							if(!sender) fail(`Player with uuid "${uuid}" not found in the server or the database. Are you sure this UUID is correct? If so, specify "@create:${uuid}"`);
+							await Menu.confirm(sender,
+								`Player with uuid "${uuid}" not found in this server or the database. Are you sure this UUID is correct?`,
+								{ title: "Confirm UUID" }
+							);
+							info = Vars.netServer.admins.getInfo(uuid);
+							player = FishPlayer.createFromInfo(info);
+						}
+					} else {
+						if(cmdArg.type == "playerOn" && !player.connected()) fail(`This command only accepts online players.`);
+					}
+					options = player;
+				} else if(args[i].startsWith("@")){
 					let needsConfirm = false;
 					const [left, right] = Packages.java.lang.String(args[i]).split(":", 2) as [string, string?];
 					const r2 = Packages.java.lang.String(right).split(":", 2)[1] as string | undefined;
@@ -214,38 +241,12 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 							break;
 						}
 						case "@offline": case "@off": case "@o": {
-							if(right && uuidPattern.test(right)){
-								let player = FishPlayer.getById(right);
-								if(player == null){
-									let info = Vars.netServer.admins.getInfoOptional(right);
-									const data = await api.getFishPlayerData(right).catch(err =>
-										fail(`Network error while downloading fish player data for ${right}: ${parseError(err)}`)
-									);
-									if(data){
-										player = new FishPlayer(right, data, null);
-									} else if(info){
-										player = FishPlayer.createFromInfo(info);
-										if(data) player.updateData(data);
-									} else {
-										if(!sender) fail(`Player with uuid "${right}" not found in the database. Are you sure this UUID is correct? If so, specify "@offline:create:${right}"`);
-										await Menu.confirm(sender,
-											`Player with uuid "${right}" not found in this server or the database. Are you sure this UUID is correct?`,
-											{ title: "Confirm UUID" }
-										);
-										info = Vars.netServer.admins.getInfo(right);
-										player = FishPlayer.createFromInfo(info);
-									}
-								}
-								options = player;
-							} else if(right?.startsWith("create:") && r2 && uuidPattern.test(r2)){
-								const fishP = FishPlayer.getFromInfo(Vars.netServer.admins.getInfo(r2));
-								try {
-									await fishP.downloadData();
-								} catch(err){
-									fail(`Network error while downloading fish player data for ${right}: ${parseError(err)}`);
-								}
-								options = fishP;
-							} else if(right){
+							if(cmdArg.type == "playerOn") fail(`This command only accepts online players.`);
+							if(right){
+								if(uuidPattern.test(right))
+									fail(`To select by UUID, please specify "${right}" without the "@offline:" prefix.`);
+								else if(right.startsWith("create:") && r2 && uuidPattern.test(r2))
+									fail(`To select by UUID, please specify "@create:${r2}" without the "@offline:" prefix.`);
 								options = FishPlayer.search(Object.values(FishPlayer.cachedPlayers), right)
 									?? (!sender || sender.ranksAtLeast("active") ?
 										Vars.netServer.admins.searchNames(right).toSeq().toArray().slice(0, 50)
@@ -262,6 +263,20 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 							} else {
 								options = FishPlayer.recentLeaves;
 							}
+							break;
+						}
+						case "@create": {
+							if(!right) fail(`You must specify a UUID to create, like this: @create:hIg/eqXDgzcAAAAADqsSYw==`);
+							const fishP = FishPlayer.getFromInfo(Vars.netServer.admins.getInfo(right));
+							if(!fishP.connected()){
+								if(cmdArg.type == "playerOn") fail(`This command only accepts online players.`);
+								try {
+									await fishP.downloadData();
+								} catch(err){
+									fail(`Network error while downloading fish player data for ${right}: ${parseError(err)}`);
+								}
+							}
+							options = fishP;
 							break;
 						}
 						case "@click": {
@@ -288,6 +303,10 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 						case "@r": case "@recent":
 							options = Array.from(sender ? sender.recentPlayers : consoleState.recentPlayers);
 							if(options.length == 0) fail(`No recent players. To use this selector, run a command that outputs some players.`);
+							if(cmdArg.type == "playerOn"){
+								options = options.filter(p => p.connected());
+								if(!options.length) fail(`All recent players are disconnected, but this command only accepts connected players.`);
+							}
 							break;
 						default:
 							//Ranks / role flags
