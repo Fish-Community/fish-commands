@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: I am banned
+    url: https://discord.gg/VpzcYSQ33Y
+    about: Appealing moderation actions should be done in the Discord, not in the issue tracker. 
+  - name: Question
+    url: https://discord.gg/VpzcYSQ33Y
+    about: Development-related questions should be asked in the Discord, not in the issue tracker. 
