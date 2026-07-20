@@ -63,7 +63,7 @@ export class Perm {
 	static immediatelyVotekickNewPlayers = new Perm("immediatelyVotekickNewPlayers", "trusted");
 
 	check:(fishP:FishPlayer) => boolean;
-	constructor(name:string, check:RankName);
+	constructor(name:string, check:RankName, category?:PermCategory);
 	constructor(
 		name:string, check:(fishP:FishPlayer) => boolean,
 		category:PermCategory,

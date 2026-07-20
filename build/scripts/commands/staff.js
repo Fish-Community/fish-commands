@@ -1231,7 +1231,7 @@ exports.commands = (0, commands_1.commandList)({
     updatemaps: {
         args: [],
         description: 'Attempt to fetch and update all map files',
-        perm: commands_1.Perm.trusted,
+        perm: commands_1.Perm.trusted.exceptModes({ testsrv: new commands_1.Perm("active", "active", "trusted") }),
         requirements: function (_a) {
             var sender = _a.sender;
             return [commands_1.Req.cooldownGlobal(config_1.Gamemode.testsrv() || sender.hasPerm("mod") ? 15000 : funcs_1.Duration.minutes(5))];

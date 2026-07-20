@@ -923,7 +923,7 @@ ${getAntiBotInfo("client")}`
 	updatemaps: {
 		args: [],
 		description: 'Attempt to fetch and update all map files',
-		perm: Perm.trusted,
+		perm: Perm.trusted.exceptModes({ testsrv: new Perm("active", "active", "trusted") }),
 		requirements: ({sender}) => [Req.cooldownGlobal(Gamemode.testsrv() || sender.hasPerm("mod") ? 15_000 : Duration.minutes(5))],
 		handler({output, outputSuccess, outputFail}){
 			output(`Updating maps... (this may take a while)`);
