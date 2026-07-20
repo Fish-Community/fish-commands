@@ -26,9 +26,12 @@ export const commands = commandList({
 			}
 			if(sender.muted() || !args.name) args.name = `${sender.name}[white]'s pet`;
 			if(args.name.length > 500) fail(`Name cannot be more than 500 characters.`);
-			if(Strings.stripColors(args.name).length > 70) fail(`Name cannot be more than 70 characters, not including color tags.`);
+			if(Strings.stripColors(args.name).length > 70)
+				fail(`Name cannot be more than 70 characters, not including color tags.`);
 			data[sender.uuid]?.kill();
 			const unit = sender.unit() ?? fail(`You do not have a unit for the pet to follow.`);
+			if(!Vars.fogControl.isDiscovered(sender.team(), unit.x, unit.y))
+				fail(`Cannot spawn pets in fog.`);
 			const pet = UnitTypes.merui.spawn(sender.team(), unit.x, unit.y);
 			pet.apply(StatusEffects.disarmed, Number.MAX_SAFE_INTEGER);
 			data[sender.uuid] = pet;

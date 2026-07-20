@@ -669,6 +669,8 @@ Available types:[yellow]
 				sender.team().data().countType(UnitTypes.alpha) >= Units.getCap(sender.team())
 			) fail(`Sorry, the max number of ohno units has been reached.`);
 			if(nearbyEnemyTile((sender.unit()!), 6) != null) fail(`Too close to an enemy building!`);
+			if(!Vars.fogControl.isDiscovered(sender.team(), sender.player.x, sender.player.y))
+				fail(`Cannot spawn ohnos in fog.`);
 			if(!UnitTypes.alpha.supportsEnv(Vars.state.rules.env)) fail(`Ohnos cannot survive in this map.`);
 	
 			Ohnos.makeOhno(sender.team(), sender.player.x, sender.player.y);

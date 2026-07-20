@@ -128,6 +128,10 @@ const Vars: {
 	world: World;
 	maxPingTextLength: number;
 	maxTextLength: number;
+	fogControl: {
+		isVisible(team:Team, x:number, y:number):boolean;
+		isDiscovered(team:Team, x:number, y:number):boolean;
+	}
 };
 const GlobalVars: any;
 class Teams {
