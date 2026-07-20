@@ -492,7 +492,9 @@ export const commands = commandList({
 					.chunk(`[lightgray]- ${allCommands[name].description}`).str;
 			const formatList = (commandList: string[], color: string) => commandList.map((c) => formatCommand(c, color)).join('\n');
 
-			if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member', 'manager', 'trusted'].includes(args.name)) {
+			if(args.name && ["selectors", "select", "selector", "@help", "@?"].includes(args.name)){
+				output(text.selectorsHelp);
+			} else if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member', 'manager', 'trusted'].includes(args.name)) {
 				//name is not a number or a category, therefore it is probably a command name
 				if (args.name in allCommands && (!allCommands[args.name].isHidden || allCommands[args.name].perm.check(sender))) {
 					if(args.name == "help") Achievements.help_help.grantTo(sender, false);

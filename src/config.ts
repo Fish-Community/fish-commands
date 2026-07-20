@@ -289,6 +289,35 @@ export const text = {
 		highlight: () => string;
 	},
 	dataFetchFailed: "[scarlet]\u26A0 Data fetch failed!\n[white]Please disconnect and rejoin the server if you encounter further issues, such as missing rank or statistics.",
+	selectorsHelp: `\
+[coral]-- General selectors --
+These selectors can be used for any command.
+[accent]@[]: Placeholder. You will be asked to enter the value later.
+[accent]@0[]: Negative placeholder. This specifies that you want to leave the argument empty.
+
+[coral]-- Player selectors --
+Player selectors can be used instead of a player name when specifying a player in a command.
+
+[accent]@cyrillic, @russian[]: Names containing Cyrillic letters
+[accent]@chinese, @cny[]: Names containing Chinese letters
+[accent]@japanese, @jpy[]: Names containing Japanese letters
+[accent]@korean, @kor[]: Names containing Korean letters
+[accent]@nonenglish, @noneng[]: Names containing any non-English characters
+[accent]@short[]: Short names
+
+[accent]@stopped, @marked[]: Marked griefers
+[accent]@muted[]: Muted players
+[accent]@=rank, @-rank, @+rank[]: Players with exactly, no more than, or at least the specified rank. Example: [accent]@+trusted[] selects all players with trusted rank or higher.
+
+[accent]@rand[]: Selects a random player.
+[accent]@s[]: Yourself.
+[accent]@cursor, @c[]: The closest player to your cursor.
+[accent]@h, @p[]: The closest player to your unit, except yourself.
+
+[accent]@offline, @off, @o[]: An offline player. Search by name with [accent]@offline[]:[gray]<NAME>[]
+[accent]@create[]: Creates a player data entry by UUID.
+[accent]@click[]: Run the command, then click a player's unit to select them.
+[accent]@recent[]: Selects players that were printed by the most recent command you run. For example, you can run /tilelog, click a tile, then use @recent.`
 };
 
 

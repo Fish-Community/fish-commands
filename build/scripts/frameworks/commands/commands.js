@@ -382,9 +382,13 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         case "@russian": return [3 /*break*/, 15];
                                         case "@china": return [3 /*break*/, 16];
                                         case "@chinese": return [3 /*break*/, 16];
+                                        case "cny": return [3 /*break*/, 16];
                                         case "@japanese": return [3 /*break*/, 17];
+                                        case "@jpy": return [3 /*break*/, 17];
                                         case "@korean": return [3 /*break*/, 18];
+                                        case "@kor": return [3 /*break*/, 18];
                                         case "@nonenglish": return [3 /*break*/, 19];
+                                        case "@noneng": return [3 /*break*/, 19];
                                         case "@short": return [3 /*break*/, 20];
                                         case "@stopped": return [3 /*break*/, 21];
                                         case "@stelled": return [3 /*break*/, 21];
