@@ -2016,11 +2016,20 @@ var FishPlayer = /** @class */ (function () {
     /** Sets the unmark time but doesn't stop the player's unit or send them a message. */
     FishPlayer.prototype.updateStopTime = function (duration) {
         var _this = this;
+        var time = Math.min(Date.now() + duration, globals.maxTime);
         return this.updateSynced(function () {
-            var time = Math.min(Date.now() + duration, globals.maxTime);
             _this.unmarkTime = time;
             _this.updateName();
         }, function () { return _this.setUnmarkTimer(duration); });
+    };
+    /** Sets the unmute time but doesn't send a message. */
+    FishPlayer.prototype.updateMuteTime = function (duration) {
+        var _this = this;
+        var time = Math.min(Date.now() + duration, globals.maxTime);
+        return this.updateSynced(function () {
+            _this.unmuteTime = time;
+            _this.updateName();
+        }, function () { return _this.setUnmuteTimer(duration); });
     };
     FishPlayer.prototype.stopUnit = function () {
         var unit = this.unit();

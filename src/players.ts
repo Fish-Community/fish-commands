@@ -1755,11 +1755,19 @@ We apologize for the inconvenience.`
 	}
 	/** Sets the unmark time but doesn't stop the player's unit or send them a message. */
 	updateStopTime(duration:number):Promise<void> {
+		const time = Math.min(Date.now() + duration, globals.maxTime);
 		return this.updateSynced(() => {
-			const time = Math.min(Date.now() + duration, globals.maxTime);
 			this.unmarkTime = time;
 			this.updateName();
 		}, () => this.setUnmarkTimer(duration));
+	}
+	/** Sets the unmute time but doesn't send a message. */
+	updateMuteTime(duration:number):Promise<void> {
+		const time = Math.min(Date.now() + duration, globals.maxTime);
+		return this.updateSynced(() => {
+			this.unmuteTime = time;
+			this.updateName();
+		}, () => this.setUnmuteTimer(duration));
 	}
 
 	stopUnit(this:FishPlayer<true>){

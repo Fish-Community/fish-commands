@@ -35,16 +35,32 @@ export const commands = commandList({
 	},
 
 	mute: {
-		args: ['player:player', 'duration:time?'],
+		args: ['player:player', 'duration:time?', 'reason:string?'],
 		description: 'Stops a player from chatting.',
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
 		async handler({args, sender, outputSuccess, f}){
-			args.duration ??= Duration.days(7);
-			if(args.player.muted()) fail(f`Player ${args.player} is already muted.`);
-			await args.player.mute(sender, args.duration);
-			logAction('muted', sender, args.player);
-			outputSuccess(f`Muted player ${args.player} for ${formatTime(args.duration)}.`);
+			if(args.player.muted()){
+				//overload: overwrite mutetime
+				if(args.duration == undefined) fail(f`Player ${args.player} is already muted.`);
+				const previousTime = formatTimeRelative(args.player.unmuteTime, true);
+				await args.player.updateMuteTime(args.duration);
+				outputSuccess(f`Player ${args.player}'s mute time has been updated to ${formatTime(args.duration)} (was ${previousTime}).`);
+				logAction("updated mute time of", sender, args.player, args.reason ?? undefined, args.duration);
+			} else {
+				try {
+					const time = args.duration ?? await getDuration(sender, "Mute", "Select mute time");
+					const message = args.reason ?? await Menu.text(
+						"Mute", "Enter the mute reason",
+						sender,
+						{ allowEmpty: true, maxTextLength: 99 }
+					);
+					await args.player.mute(sender, time, message);
+					logAction('muted', sender, args.player, message, time);
+				} finally {
+					args.player.frozen = false;
+				}
+			}
 		}
 	},
 
@@ -141,9 +157,10 @@ export const commands = commandList({
 			} else {
 				try {
 					args.player.frozen = true;
-					const time = args.time ?? await getDuration(sender, "Stop", "Select stop time\n(The player is currently frozen, take your time)");
+					const suffix = args.player.connected() ? `\n(The player is currently frozen, take your time)` : "";
+					const time = args.time ?? await getDuration(sender, "Stop", "Select stop time" + suffix);
 					const message = args.message ?? await Menu.text(
-						"Stop", "Enter the stop reason\n(The player is currently frozen, take your time)",
+						"Stop", "Enter the stop reason" + suffix,
 						sender,
 						{ allowEmpty: true, maxTextLength: 99 }
 					);
@@ -155,7 +172,6 @@ export const commands = commandList({
 					args.player.frozen = false;
 				}
 			}
-
 		}
 	},
 

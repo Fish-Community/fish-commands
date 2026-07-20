@@ -156,26 +156,58 @@ exports.commands = (0, commands_1.commandList)({
         }
     },
     mute: {
-        args: ['player:player', 'duration:time?'],
+        args: ['player:player', 'duration:time?', 'reason:string?'],
         description: 'Stops a player from chatting.',
         perm: commands_1.Perm.mod,
         requirements: [commands_1.Req.moderate("player")],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var _c;
+                var previousTime, time, _c, message, _d;
+                var _e, _f, _g;
                 var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
                         case 0:
-                            (_c = args.duration) !== null && _c !== void 0 ? _c : (args.duration = funcs_1.Duration.days(7));
-                            if (args.player.muted())
+                            if (!args.player.muted()) return [3 /*break*/, 2];
+                            //overload: overwrite mutetime
+                            if (args.duration == undefined)
                                 (0, commands_1.fail)(f(templateObject_3 || (templateObject_3 = __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player));
-                            return [4 /*yield*/, args.player.mute(sender, args.duration)];
+                            previousTime = (0, utils_1.formatTimeRelative)(args.player.unmuteTime, true);
+                            return [4 /*yield*/, args.player.updateMuteTime(args.duration)];
                         case 1:
-                            _d.sent();
-                            (0, utils_1.logAction)('muted', sender, args.player);
-                            outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Muted player ", " for ", "."], ["Muted player ", " for ", "."])), args.player, (0, utils_1.formatTime)(args.duration)));
-                            return [2 /*return*/];
+                            _h.sent();
+                            outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Player ", "'s mute time has been updated to ", " (was ", ")."], ["Player ", "'s mute time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.duration), previousTime));
+                            (0, utils_1.logAction)("updated mute time of", sender, args.player, (_e = args.reason) !== null && _e !== void 0 ? _e : undefined, args.duration);
+                            return [3 /*break*/, 11];
+                        case 2:
+                            _h.trys.push([2, , 10, 11]);
+                            if (!((_f = args.duration) !== null && _f !== void 0)) return [3 /*break*/, 3];
+                            _c = _f;
+                            return [3 /*break*/, 5];
+                        case 3: return [4 /*yield*/, (0, utils_1.getDuration)(sender, "Mute", "Select mute time")];
+                        case 4:
+                            _c = _h.sent();
+                            _h.label = 5;
+                        case 5:
+                            time = _c;
+                            if (!((_g = args.reason) !== null && _g !== void 0)) return [3 /*break*/, 6];
+                            _d = _g;
+                            return [3 /*break*/, 8];
+                        case 6: return [4 /*yield*/, menus_1.Menu.text("Mute", "Enter the mute reason", sender, { allowEmpty: true, maxTextLength: 99 })];
+                        case 7:
+                            _d = _h.sent();
+                            _h.label = 8;
+                        case 8:
+                            message = _d;
+                            return [4 /*yield*/, args.player.mute(sender, time, message)];
+                        case 9:
+                            _h.sent();
+                            (0, utils_1.logAction)('muted', sender, args.player, message, time);
+                            return [3 /*break*/, 11];
+                        case 10:
+                            args.player.frozen = false;
+                            return [7 /*endfinally*/];
+                        case 11: return [2 /*return*/];
                     }
                 });
             });
@@ -280,7 +312,7 @@ exports.commands = (0, commands_1.commandList)({
         requirements: [commands_1.Req.moderate("player", true)],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var previousTime, time, _c, message, _d;
+                var previousTime, suffix, time, _c, message, _d;
                 var _e, _f, _g;
                 var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f;
                 return __generator(this, function (_h) {
@@ -300,10 +332,11 @@ exports.commands = (0, commands_1.commandList)({
                         case 2:
                             _h.trys.push([2, , 10, 11]);
                             args.player.frozen = true;
+                            suffix = args.player.connected() ? "\n(The player is currently frozen, take your time)" : "";
                             if (!((_f = args.time) !== null && _f !== void 0)) return [3 /*break*/, 3];
                             _c = _f;
                             return [3 /*break*/, 5];
-                        case 3: return [4 /*yield*/, (0, utils_1.getDuration)(sender, "Stop", "Select stop time\n(The player is currently frozen, take your time)")];
+                        case 3: return [4 /*yield*/, (0, utils_1.getDuration)(sender, "Stop", "Select stop time" + suffix)];
                         case 4:
                             _c = _h.sent();
                             _h.label = 5;
@@ -312,7 +345,7 @@ exports.commands = (0, commands_1.commandList)({
                             if (!((_g = args.message) !== null && _g !== void 0)) return [3 /*break*/, 6];
                             _d = _g;
                             return [3 /*break*/, 8];
-                        case 6: return [4 /*yield*/, menus_1.Menu.text("Stop", "Enter the stop reason\n(The player is currently frozen, take your time)", sender, { allowEmpty: true, maxTextLength: 99 })];
+                        case 6: return [4 /*yield*/, menus_1.Menu.text("Stop", "Enter the stop reason" + suffix, sender, { allowEmpty: true, maxTextLength: 99 })];
                         case 7:
                             _d = _h.sent();
                             _h.label = 8;
