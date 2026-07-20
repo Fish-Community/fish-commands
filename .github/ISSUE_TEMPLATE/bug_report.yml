@@ -1,0 +1,70 @@
+name: Bug report
+description: An issue with the Mindustry servers or plugin, including commands, chat, etc.
+labels: ["bug"]
+
+
+body:
+  - type: textarea
+    id: issue
+    attributes:
+      label: Issue
+      description: Explain your issue in detail.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: What exactly did you do to make the bug happen?
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Incident details
+        If this is a crash, or if you triggered the issue at a specific time, please provide the following details:
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: (optional) Your full in-game name, including color tags.
+    validations:
+      required: false
+  - type: dropdown
+    id: gamemode
+    attributes:
+      label: Gamemode
+      options: [Attack, Survival, PVP, Sandbox, Hexed, Minigame, Testing]
+  - type: input
+    id: time
+    attributes:
+      label: Time
+      description: The time and timezone that this issue most recently occurred.
+      placeholder: "11:03 AM, EDT"
+    
+  - type: markdown
+    attributes:
+      value: "## Troubleshooting information"
+
+  - type: checkboxes
+    id: mobile
+    attributes:
+      label: Mobile
+      description: Are you on a mobile device?
+      options:
+        - label: Yes
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: Should be 8 characters of letters and numbers. Run `/about`, then run `/copy`, and paste the text here.
+
+  - type: checkboxes
+    id: agreement
+    attributes:
+      label: Submission
+      description: Check the boxes to confirm that you have read the lines below.
+      options:
+        - label: I have searched the closed and open issues to make sure that this problem has not already been reported.
+          required: true
