@@ -6,10 +6,10 @@ This file contains most in-game chat commands that can be run by untrusted playe
 import { Achievement, Achievements } from "/achievements";
 import * as api from "/api";
 import { FColor, FishServer, Gamemode, text } from "/config";
-import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
+import { command, commandList, fail, formatArg, Perm, PermCategory, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
-import { capitalizeText, delay, Duration, escapeStringColorsClient, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
+import { capitalizeText, crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
@@ -482,7 +482,7 @@ export const commands = commandList({
 	}),
 	help: {
 		args: ['name:string?'],
-		description: 'Displays a list of all commands.',
+		description: 'Displays a list of all commands under the specified category, or, displays information about one command.',
 		perm: Perm.none,
 		handler({ args, output, sender, allCommands }) {
 			const formatCommand = (name: string, color: string) =>
@@ -492,7 +492,7 @@ export const commands = commandList({
 					.chunk(`[lightgray]- ${allCommands[name].description}`).str;
 			const formatList = (commandList: string[], color: string) => commandList.map((c) => formatCommand(c, color)).join('\n');
 
-			if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member'].includes(args.name)) {
+			if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member', 'manager', 'trusted'].includes(args.name)) {
 				//name is not a number or a category, therefore it is probably a command name
 				if (args.name in allCommands && (!allCommands[args.name].isHidden || allCommands[args.name].perm.check(sender))) {
 					if(args.name == "help") Achievements.help_help.grantTo(sender, false);
@@ -504,31 +504,24 @@ export const commands = commandList({
 					);
 				} else fail(`Command "${args.name}" does not exist.`);
 			} else {
-				const commands: Record<'player' | 'mod' | 'admin' | 'member', string[]> = {
-					player: [],
-					mod: [],
-					admin: [],
-					member: [],
-				};
-				//TODO change this to category, not perm
-				Object.entries(allCommands).forEach(([name, data]) =>
-					(data.perm === Perm.admin ? commands.admin : data.perm === Perm.mod ? commands.mod : data.perm === Perm.member ? commands.member : commands.player).push(name)
-				);
+				const commands = Object.entries(allCommands).reduce((acc, [name, data]) => {
+					(acc[data.perm.category()] ??= []).push(name);
+					return acc;
+				}, {} as Record<PermCategory, string[]>);
+
 				const chunkedPlayerCommands: string[][] = to2DArray(commands.player, 15);
 
 				switch (args.name) {
-					case 'admin':
-						output(`${Perm.admin.color}-- Admin commands --\n` + formatList(commands.admin, Perm.admin.color));
+					case "trusted": case "mod": case "admin": case "manager": case 'member': {
+						const perm = Perm.perms[args.name];
+						if(!perm) crash(`Cannot find a color for ${args.name}`);
+						output(`${perm.color}-- ${capitalizeText(args.name)} commands --\n` + formatList(commands[args.name], perm.color));
 						break;
-					case 'mod':
-						output(`${Perm.mod.color}-- Mod commands --\n` + formatList(commands.mod, Perm.mod.color));
-						break;
-					case 'member':
-						output(`${Perm.member.color}-- Member commands --\n` + formatList(commands.member, Perm.member.color));
-						break;
+					}
 					default: {
 						const pageNumber = args.name != undefined ? parseInt(args.name) : 1;
 						const page = chunkedPlayerCommands[pageNumber - 1] ?? fail(`"${args.name}" is an invalid page number.`);
+						if(args.name == undefined) output(`[sky]For other categories, run [accent]/help [lightgray]<[]trusted[lightgray]|[]mod[lightgray]|[]admin[lightgray]|[]member[lightgray]>[][].`);
 						output(`[sky]-- Commands page [lightgrey]${pageNumber}/${chunkedPlayerCommands.length}[sky] --\n` + formatList(page, '[sky]'));
 					}
 				}
@@ -1189,7 +1182,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 
 	gamemode: {
 		args: ["mode:string"],
-		perm: new Perm("changeGamemode", "manager").exceptModes({
+		perm: Perm.manager.exceptModes({
 			testsrv: Perm.play,
 		}),
 		description: "Sets the gamemode.",

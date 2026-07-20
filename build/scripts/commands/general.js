@@ -664,7 +664,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         };
     }), help: {
         args: ['name:string?'],
-        description: 'Displays a list of all commands.',
+        description: 'Displays a list of all commands under the specified category, or, displays information about one command.',
         perm: commands_1.Perm.none,
         handler: function (_a) {
             var _b;
@@ -676,7 +676,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     .chunk("[lightgray]- ".concat(allCommands[name].description)).str;
             };
             var formatList = function (commandList, color) { return commandList.map(function (c) { return formatCommand(c, color); }).join('\n'); };
-            if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member'].includes(args.name)) {
+            if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member', 'manager', 'trusted'].includes(args.name)) {
                 //name is not a number or a category, therefore it is probably a command name
                 if (args.name in allCommands && (!allCommands[args.name].isHidden || allCommands[args.name].perm.check(sender))) {
                     if (args.name == "help")
@@ -687,31 +687,31 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     (0, commands_1.fail)("Command \"".concat(args.name, "\" does not exist."));
             }
             else {
-                var commands_2 = {
-                    player: [],
-                    mod: [],
-                    admin: [],
-                    member: [],
-                };
-                //TODO change this to category, not perm
-                Object.entries(allCommands).forEach(function (_a) {
-                    var _b = __read(_a, 2), name = _b[0], data = _b[1];
-                    return (data.perm === commands_1.Perm.admin ? commands_2.admin : data.perm === commands_1.Perm.mod ? commands_2.mod : data.perm === commands_1.Perm.member ? commands_2.member : commands_2.player).push(name);
-                });
+                var commands_2 = Object.entries(allCommands).reduce(function (acc, _a) {
+                    var _b;
+                    var _c;
+                    var _d = __read(_a, 2), name = _d[0], data = _d[1];
+                    ((_b = acc[_c = data.perm.category()]) !== null && _b !== void 0 ? _b : (acc[_c] = [])).push(name);
+                    return acc;
+                }, {});
                 var chunkedPlayerCommands = (0, funcs_1.to2DArray)(commands_2.player, 15);
                 switch (args.name) {
-                    case 'admin':
-                        output("".concat(commands_1.Perm.admin.color, "-- Admin commands --\n") + formatList(commands_2.admin, commands_1.Perm.admin.color));
+                    case "trusted":
+                    case "mod":
+                    case "admin":
+                    case "manager":
+                    case 'member': {
+                        var perm = commands_1.Perm.perms[args.name];
+                        if (!perm)
+                            (0, funcs_1.crash)("Cannot find a color for ".concat(args.name));
+                        output("".concat(perm.color, "-- ").concat((0, funcs_1.capitalizeText)(args.name), " commands --\n") + formatList(commands_2[args.name], perm.color));
                         break;
-                    case 'mod':
-                        output("".concat(commands_1.Perm.mod.color, "-- Mod commands --\n") + formatList(commands_2.mod, commands_1.Perm.mod.color));
-                        break;
-                    case 'member':
-                        output("".concat(commands_1.Perm.member.color, "-- Member commands --\n") + formatList(commands_2.member, commands_1.Perm.member.color));
-                        break;
+                    }
                     default: {
                         var pageNumber = args.name != undefined ? parseInt(args.name) : 1;
                         var page = (_b = chunkedPlayerCommands[pageNumber - 1]) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("\"".concat(args.name, "\" is an invalid page number."));
+                        if (args.name == undefined)
+                            output("[sky]For other categories, run [accent]/help [lightgray]<[]trusted[lightgray]|[]mod[lightgray]|[]admin[lightgray]|[]member[lightgray]>[][].");
                         output("[sky]-- Commands page [lightgrey]".concat(pageNumber, "/").concat(chunkedPlayerCommands.length, "[sky] --\n") + formatList(page, '[sky]'));
                     }
                 }
@@ -1377,7 +1377,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         }
     }, gamemode: {
         args: ["mode:string"],
-        perm: new commands_1.Perm("changeGamemode", "manager").exceptModes({
+        perm: commands_1.Perm.manager.exceptModes({
             testsrv: commands_1.Perm.play,
         }),
         description: "Sets the gamemode.",
