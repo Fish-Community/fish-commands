@@ -599,7 +599,7 @@ exports.commands = (0, commands_1.commandList)({
             globals_1.fishState.labels.forEach(function (l) {
                 var _a;
                 (_a = l.task) === null || _a === void 0 ? void 0 : _a.cancel();
-                Call.label(null, l.id, 0, 0, 0, 0);
+                Call.label(null, l.id, 0, 0, 0);
             });
             outputSuccess("Removed all labels.");
         }
@@ -631,7 +631,7 @@ exports.commands = (0, commands_1.commandList)({
                 label = globals_1.fishState.labels.splice(index, 1)[0];
             }
             (_c = label.task) === null || _c === void 0 ? void 0 : _c.cancel();
-            Call.label(null, label.id, 0, 0, 0, 0);
+            Call.label(null, label.id, 0, 0, 0);
             outputSuccess("Removed one label.");
         }
     },
