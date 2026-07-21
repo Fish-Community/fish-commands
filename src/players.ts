@@ -151,6 +151,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	copyOptions: string[] | null = null;
 	recentPlayers = new Set<FishPlayer>();
 	isImpersonator = false;
+	joinedAlready = false;
 	//#endregion
 	
 	//#region Stored data
@@ -1811,9 +1812,10 @@ We apologize for the inconvenience.`
 Please look at ${this.position()} and see if they were actually griefing. If they were not, please inform a staff member.`);
 					}
 				}
-			}, 0, 1, this.firstJoin() ? 30 : this.joinsLessThan(3) ? 25 : 15);
+			}, 0, 1, (this.firstJoin() && !this.joinedAlready) ? 30 : this.joinsLessThan(3) ? 25 : 15);
 		}
-		if(this.firstJoin()){
+		if(this.firstJoin() && !this.joinedAlready){
+			this.joinedAlready = true;
 			let tripped = false;
 			Timer.schedule(() => {
 				if(this.stats.chatMessagesSent >= 3 && !tripped){

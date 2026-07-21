@@ -195,6 +195,7 @@ var FishPlayer = /** @class */ (function () {
         this.copyOptions = null;
         this.recentPlayers = new Set();
         this.isImpersonator = false;
+        this.joinedAlready = false;
         /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
         this.unmuteTime = -1;
@@ -2068,9 +2069,10 @@ var FishPlayer = /** @class */ (function () {
                         FishPlayer.messageAllExcept(_this, "[yellow]Player ".concat(_this.cleanedName, " has been stopped automatically due to suspected griefing.\nPlease look at ").concat(_this.position(), " and see if they were actually griefing. If they were not, please inform a staff member."));
                     }
                 }
-            }, 0, 1, this.firstJoin() ? 30 : this.joinsLessThan(3) ? 25 : 15);
+            }, 0, 1, (this.firstJoin() && !this.joinedAlready) ? 30 : this.joinsLessThan(3) ? 25 : 15);
         }
-        if (this.firstJoin()) {
+        if (this.firstJoin() && !this.joinedAlready) {
+            this.joinedAlready = true;
             var tripped_2 = false;
             Timer.schedule(function () {
                 if (_this.stats.chatMessagesSent >= 3 && !tripped_2) {
