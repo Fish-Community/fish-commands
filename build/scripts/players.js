@@ -1216,7 +1216,7 @@ var FishPlayer = /** @class */ (function () {
                 if (ip == this.ip() && uuid != this.uuid && !this.ranksAtLeast("mod")) {
                     api.sendModerationMessage("Automatically banned player `".concat(this.cleanedName, "` (`").concat(this.uuid, "`/`").concat(this.ip(), "`) for suspected punishment evasion.\nPreviously used UUID `").concat(uuid, "`(").concat((_b = Vars.netServer.admins.getInfoOptional(uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName(), "), currently using UUID `").concat(this.uuid, "` from the same IP address."));
                     Log.warn("&yAutomatically banned player &b".concat(this.cleanedName, "&y (&b").concat(this.uuid, "&y/&b").concat(this.ip(), "&y) for suspected punishment evasion.\n&yPreviously used UUID &b").concat(uuid, "&y(&b").concat((_c = Vars.netServer.admins.getInfoOptional(uuid)) === null || _c === void 0 ? void 0 : _c.plainLastName(), "&y), currently using UUID &b").concat(this.uuid, "&y from the same IP address."));
-                    FishPlayer.messageStaff("[yellow]Automatically banned player [cyan]".concat(this.prefixedName, "[] for suspected punishment evasion."));
+                    FishPlayer.messageStaff("[yellow]Automatically banned player [white]".concat(this.name, "[yellow] for suspected punishment evasion."));
                     Vars.netServer.admins.bannedIPs.add(ip);
                     api.ban({ ip: ip, uuid: uuid });
                     this.kick(Packets.KickReason.banned);

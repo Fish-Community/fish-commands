@@ -1013,7 +1013,7 @@ Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.
 `&yAutomatically banned player &b${this.cleanedName}&y (&b${this.uuid}&y/&b${this.ip()}&y) for suspected punishment evasion.
 &yPreviously used UUID &b${uuid}&y(&b${Vars.netServer.admins.getInfoOptional(uuid)?.plainLastName()}&y), currently using UUID &b${this.uuid}&y from the same IP address.`
 				);
-				FishPlayer.messageStaff(`[yellow]Automatically banned player [cyan]${this.prefixedName}[] for suspected punishment evasion.`);
+				FishPlayer.messageStaff(`[yellow]Automatically banned player [white]${this.name}[yellow] for suspected punishment evasion.`);
 				Vars.netServer.admins.bannedIPs.add(ip);
 				api.ban({ip, uuid});
 				this.kick(Packets.KickReason.banned);
