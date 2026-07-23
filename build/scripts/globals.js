@@ -24,6 +24,7 @@ exports.fishState = {
         nameGraylist: null,
     },
     lastSuccessfulMapUpdate: Date.now(),
+    lastMapStartTime: 0,
 };
 exports.fishPlugin = {
     directory: null,

@@ -48,6 +48,7 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var automod_1 = require("/automod");
 var api = __importStar(require("/api"));
 var aggregate_1 = require("/commands/aggregate");
 var config_1 = require("/config");
@@ -74,7 +75,7 @@ Events.on(EventType.ConnectionEvent, function (e) {
             }
         });
     }
-    else if (api.isVpnCached(e.connection.address) && players_1.FishPlayer.shouldWhackFlaggedPlayers()) {
+    else if (api.isVpnCached(e.connection.address) && automod_1.Antibot.shouldWhackFlaggedPlayers()) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         try {
             Vars.netServer.admins.blacklistDos(e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
@@ -85,7 +86,7 @@ Events.on(EventType.ConnectionEvent, function (e) {
     }
 });
 Events.on(EventType.PlayerConnect, function (e) {
-    if (players_1.FishPlayer.shouldKickNewPlayers() && e.player.info.timesJoined == 1) {
+    if (automod_1.Antibot.shouldKickNewPlayers() && e.player.info.timesJoined == 1) {
         //do not use the helper function, for maximum performance
         e.player.kick("Please rejoin the server in 20 seconds. We apologize for the inconvenience, we are currently under DDoS attack.", 3600000);
     }
@@ -101,18 +102,18 @@ Events.on(EventType.PlayerLeave, function (e) {
 Events.on(EventType.ConnectPacketEvent, function (e) {
     var _a, _b, _c, _d;
     var limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30000 ? 6 : 35;
-    if (!players_1.FishPlayer.connectRate.allow(5000, limit)) {
-        players_1.FishPlayer.triggerAntibot(300000, "Rate of player connections exceeded ".concat(limit, " / 5s"), "automatic", true);
+    if (!automod_1.Antibot.connectRate.allow(5000, limit)) {
+        automod_1.Antibot.triggerAntibot(300000, "Rate of player connections exceeded ".concat(limit, " / 5s"), "automatic", true);
     }
     globals_1.ipJoins.increment(e.connection.address);
     if (e.connection.hasBegunConnecting)
         return; //will get kicked
     var info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
-    var underAttack = players_1.FishPlayer.antiBotMode();
+    var underAttack = automod_1.Antibot.antiBotMode();
     var newPlayer = !info || info.timesJoined < 10;
     var nameBlacklisted = (_b = (_a = globals_1.fishState.antibotData.nameBlacklist) === null || _a === void 0 ? void 0 : _a[1]) === null || _b === void 0 ? void 0 : _b.matcher(e.packet.name).matches();
     var nameGraylisted = (_d = (_c = globals_1.fishState.antibotData.nameGraylist) === null || _c === void 0 ? void 0 : _c[1]) === null || _d === void 0 ? void 0 : _d.matcher(e.packet.name).matches();
-    if (newPlayer && (nameBlacklisted && players_1.FishPlayer.antiBotMode() || nameGraylisted && players_1.FishPlayer.shouldKickNewPlayers())) {
+    if (newPlayer && (nameBlacklisted && automod_1.Antibot.antiBotMode() || nameGraylisted && automod_1.Antibot.shouldKickNewPlayers())) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
         var udpAddress = void 0;
@@ -123,7 +124,7 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         Log.info("Blacklisting ip @ with name @ because it matched the configured regex.", udpAddress ? e.connection.address + "/" + udpAddress : e.connection.address, e.packet.name);
         return;
     }
-    if (newPlayer && (nameBlacklisted || nameGraylisted && players_1.FishPlayer.antiBotMode())) {
+    if (newPlayer && (nameBlacklisted || nameGraylisted && automod_1.Antibot.antiBotMode())) {
         Log.info("Temporarily kicking ip @ with name @ because it matched the configured regex.", e.connection.address, e.packet.name);
         e.connection.kick("Please change your name to something else. We are currently under attack by bots and your name looks similar to the bots' names.", 3000);
         return;
@@ -135,7 +136,7 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         (veryLongModName && (underAttack || newPlayer))) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
-        players_1.FishPlayer.triggerAntibot(60000, (veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"), "automatic", false);
+        automod_1.Antibot.triggerAntibot(60000, (veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"), "automatic", false);
         return;
     }
     var region = Reflect.invoke(e.packet.uuid, "hashCode");
@@ -151,20 +152,20 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         else if (cachedRegion2 != e.packet.uuid) {
             Vars.netServer.admins.blacklistDos(e.connection.address);
             e.connection.kicked = true;
-            players_1.FishPlayer.triggerAntibot(480000, "suspicious UUIDs", "automatic", false, true);
+            automod_1.Antibot.triggerAntibot(480000, "suspicious UUIDs", "automatic", false, true);
         }
     }
     var suspiciousModName = e.packet.mods.contains(function (str) { return str.includes('\x1B'); });
     if (suspiciousModName || e.packet.name.includes('\x1B')) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
-        players_1.FishPlayer.triggerAntibot(5000, "illegal characters in name or mods", "automatic", false);
+        automod_1.Antibot.triggerAntibot(5000, "illegal characters in name or mods", "automatic", false);
         return;
     }
     if (globals_1.ipJoins.get(e.connection.address) >= ((underAttack || veryLongModName) ? (newPlayer ? 4 : 5) : (newPlayer || longModName) ? 7 : 15)) {
         Vars.netServer.admins.blacklistDos(e.connection.address);
         e.connection.kicked = true;
-        players_1.FishPlayer.triggerAntibot(5000, "too many connections", "automatic", false);
+        automod_1.Antibot.triggerAntibot(5000, "too many connections", "automatic", false);
         return;
     }
     if (Vars.netServer.admins.isDosBlacklisted(e.connection.address)) {
@@ -222,7 +223,7 @@ Vars.net.handleServer(SendChatMessageCallPacket, function (connection, packet) {
             player.sendMessage(text_1);
     }
 });
-Events.on(EventType.PlayerChatEvent, function (e) { return (0, utils_1.processChat)(e.player, e.message, true); });
+Events.on(EventType.PlayerChatEvent, function (e) { return (0, utils_1.processChat)(e.player, e.message, true); }); //only run effects once
 Events.on(EventType.ServerLoadEvent, function () {
     Time.mark();
     var clientHandler = Vars.netServer.clientCommands;
@@ -390,9 +391,6 @@ Events.on(EventType.GameOverEvent, function (e) {
     players_1.FishPlayer.onGameOver(e.winner);
 });
 Events.on(EventType.WorldLoadEvent, function () { return players_1.FishPlayer.onGameBegin(); });
-Events.on(EventType.PlayerChatEvent, function (e) {
-    players_1.FishPlayer.onPlayerChat(e.player, e.message);
-});
 Events.on(EventType.PlayEvent, function () {
     globals_1.fishState.startTime = Date.now();
 });

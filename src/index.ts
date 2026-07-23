@@ -3,6 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the main code, which calls other functions and initializes the plugin.
 */
 
+import { Antibot } from "/automod";
 import * as api from "/api";
 import { registerAll } from "/commands/aggregate";
 import { text } from "/config";
@@ -29,7 +30,7 @@ Events.on(EventType.ConnectionEvent, (e) => {
 				Vars.netServer.admins.kickedIPs.remove(e.connection.address);
 			}
 		});
-	} else if(api.isVpnCached(e.connection.address) && FishPlayer.shouldWhackFlaggedPlayers()){
+	} else if(api.isVpnCached(e.connection.address) && Antibot.shouldWhackFlaggedPlayers()){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		try {
 			Vars.netServer.admins.blacklistDos(e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
@@ -39,7 +40,7 @@ Events.on(EventType.ConnectionEvent, (e) => {
 	}
 });
 Events.on(EventType.PlayerConnect, (e) => {
-	if(FishPlayer.shouldKickNewPlayers() && e.player.info.timesJoined == 1){
+	if(Antibot.shouldKickNewPlayers() && e.player.info.timesJoined == 1){
 		//do not use the helper function, for maximum performance
 		e.player.kick("Please rejoin the server in 20 seconds. We apologize for the inconvenience, we are currently under DDoS attack.", 3600_000);
 	} else FishPlayer.onPlayerConnect(e.player);
@@ -52,17 +53,17 @@ Events.on(EventType.PlayerLeave, (e) => {
 });
 Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection: NetConnection }) => {
 	const limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30_000 ? 6 : 35;
-	if(!FishPlayer.connectRate.allow(5_000, limit)){
-		FishPlayer.triggerAntibot(300_000, `Rate of player connections exceeded ${limit} / 5s`, "automatic", true);
+	if(!Antibot.connectRate.allow(5_000, limit)){
+		Antibot.triggerAntibot(300_000, `Rate of player connections exceeded ${limit} / 5s`, "automatic", true);
 	}
 	ipJoins.increment(e.connection.address);
 	if(e.connection.hasBegunConnecting) return; //will get kicked
 	const info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
-	const underAttack = FishPlayer.antiBotMode();
+	const underAttack = Antibot.antiBotMode();
 	const newPlayer = !info || info.timesJoined < 10;
 	const nameBlacklisted = fishState.antibotData.nameBlacklist?.[1]?.matcher(e.packet.name).matches();
 	const nameGraylisted = fishState.antibotData.nameGraylist?.[1]?.matcher(e.packet.name).matches();
-	if(newPlayer && (nameBlacklisted && FishPlayer.antiBotMode() || nameGraylisted && FishPlayer.shouldKickNewPlayers())){
+	if(newPlayer && (nameBlacklisted && Antibot.antiBotMode() || nameGraylisted && Antibot.shouldKickNewPlayers())){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
 		let udpAddress;
@@ -72,7 +73,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		Log.info(`Blacklisting ip @ with name @ because it matched the configured regex.`, udpAddress ? e.connection.address + "/" + udpAddress : e.connection.address, e.packet.name);
 		return;
 	}
-	if(newPlayer && (nameBlacklisted || nameGraylisted && FishPlayer.antiBotMode())){
+	if(newPlayer && (nameBlacklisted || nameGraylisted && Antibot.antiBotMode())){
 		Log.info(`Temporarily kicking ip @ with name @ because it matched the configured regex.`, e.connection.address, e.packet.name);
 		e.connection.kick("Please change your name to something else. We are currently under attack by bots and your name looks similar to the bots' names.", 3000);
 		return;
@@ -86,7 +87,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
-		FishPlayer.triggerAntibot(
+		Antibot.triggerAntibot(
 			60_000,
 			(veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"),
 			"automatic",
@@ -105,7 +106,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		} else if(cachedRegion2 != e.packet.uuid){
 			Vars.netServer.admins.blacklistDos(e.connection.address);
 			e.connection.kicked = true;
-			FishPlayer.triggerAntibot(
+			Antibot.triggerAntibot(
 				480_000,
 				"suspicious UUIDs",
 				"automatic",
@@ -118,7 +119,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	if(suspiciousModName || e.packet.name.includes('\x1B')){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
-		FishPlayer.triggerAntibot(
+		Antibot.triggerAntibot(
 			5_000,
 			"illegal characters in name or mods",
 			"automatic",
@@ -129,7 +130,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	if(ipJoins.get(e.connection.address) >= ( (underAttack || veryLongModName) ? (newPlayer ? 4 : 5) : (newPlayer || longModName) ? 7 : 15 )){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
-		FishPlayer.triggerAntibot(
+		Antibot.triggerAntibot(
 			5_000,
 			"too many connections",
 			"automatic",
@@ -199,7 +200,7 @@ Vars.net.handleServer(SendChatMessageCallPacket, (connection: NetConnection, pac
 	}
 });
 
-Events.on(EventType.PlayerChatEvent, (e) => processChat(e.player, e.message, true));
+Events.on(EventType.PlayerChatEvent, (e) => processChat(e.player, e.message, true)); //only run effects once
 
 Events.on(EventType.ServerLoadEvent, () => {
 	Time.mark();
@@ -353,9 +354,6 @@ Events.on(EventType.GameOverEvent, (e) => {
 	FishPlayer.onGameOver(e.winner as Team);
 });
 Events.on(EventType.WorldLoadEvent, () => FishPlayer.onGameBegin());
-Events.on(EventType.PlayerChatEvent, e => {
-	FishPlayer.onPlayerChat(e.player, e.message);
-});
 Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
 });

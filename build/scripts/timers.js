@@ -49,6 +49,7 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeTimers = initializeTimers;
+var automod_1 = require("/automod");
 var api_1 = require("/api");
 var config = __importStar(require("/config"));
 var config_1 = require("/config");
@@ -168,13 +169,10 @@ function initializeTimers() {
             globals_1.joinDemographics.clear();
     }, 0, funcs_1.DurationSecs.minutes(1));
     Timer.schedule(function () {
-        if (players_1.FishPlayer.antiBotMode()) {
+        if (automod_1.Antibot.antiBotMode()) {
             Call.infoToast("[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ".concat(Vars.netServer.admins.dosBlacklist.size), 2);
         }
     }, 0, 1);
-    Timer.schedule(function () {
-        players_1.FishPlayer.validateVotekickSession();
-    }, 0, 0.3);
 }
 Timer.schedule(function () {
     (0, files_1.updateMaps)()

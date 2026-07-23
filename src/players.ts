@@ -4,16 +4,16 @@ This file contains the FishPlayer class, and many player-related functions.
 */
 
 import * as api from "/api";
-import { automaticNames, FColor, Gamemode, heuristics, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
+import { Automod, checkVPNAndJoins, Heuristics } from "/automod";
+import { automaticNames, FColor, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
-import { crash, Duration, escapeStringColorsClient, escapeStringColorsServer, escapeTextDiscord, parseError, search, setToArray, StringIO } from "/funcs";
-import * as globals from "/globals";
-import { FishEvents, uuidPattern } from "/globals";
+import { crash, Duration, parseError, search, setToArray, StringIO } from "/funcs";
+import { FishEvents, fishState, maxTime } from "/globals";
 import { PartialMapRun } from "/maps";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
 import type { FishPlayerData, PlayerHistoryEntry, Stats, UploadedFishPlayerData } from "/types";
-import { cleanText, formatTime, formatTimeRelative, isImpersonator, logAction, logHTrip, matchFilter, updateBans } from "/utils";
+import { cleanText, formatTime, formatTimeRelative, isImpersonator, matchFilter } from "/utils";
 
 
 export class FishPlayer<Connected extends boolean = boolean> {
@@ -34,33 +34,8 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	};
 	/** The last player that was kicked due to a USID mismatch. */
 	static lastAuthKicked:FishPlayer | null = null;
-	/**
-	 * List of IPs that were recently punished.
-	 * If a new account joins from one of these IPs,
-	 * we assume they are trying to evade the punishment
-	 * and the IP gets banned.
-	 */
-	static punishedIPs = [] as Array<[ip:string, uuid:string, expiryTime:number]>;
-	static lastMapStartTime = 0;
 	/** Stores the 10 most recent players that left. */
 	static recentLeaves:FishPlayer[] = [];
-	//Used for the antibot. Some of these values are reset by timers.
-	static antibotExpires = -1;
-	static kickNewPlayersExpires = -1;
-	static lastAntibotReason = "";
-	static autoflagRate = new Ratekeeper();
-	static connectRate = new Ratekeeper();
-	static votekickActionRate = new Ratekeeper();
-	static lastVKActions = [] as Array<{
-		type: "vote y" | "start";
-		player: FishPlayer;
-		playerSusLevel: 0 | 1 | 2 | 3;
-		time: number;
-		target: mindustryPlayer;
-		targetSusLevel: 0 | 1 | 2 | 3;
-		reason?: string;
-	}>;
-	static globalSusChat = new Ratekeeper();
 	//#endregion
 	
 	/** Does not exist. Is a figment of TypeScript's imagination. */
@@ -107,7 +82,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	/** Used to freeze players temporarily. */
 	frozen:boolean = false;
 	/** Used to avoid spamming players with ads by the tip message system */
-	lastShownAd:number = globals.maxTime;
+	lastShownAd:number = maxTime;
 	/** Used to avoid spamming players with ads by the tip message system */
 	showAdNext:boolean = false;
 	/** Transient statistics, used by the automatic griefer detection. */
@@ -378,9 +353,9 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		this.ipDetectedVpn = false;
 		this.isImpersonator = false;
 		this.tstats.blocksBroken = 0;
-		if(this.tstats.lastMapPlayedTime != FishPlayer.lastMapStartTime){
+		if(this.tstats.lastMapPlayedTime != fishState.lastMapStartTime){
 			this.tstats.blockInteractionsThisMap = 0;
-			this.tstats.lastMapPlayedTime = FishPlayer.lastMapStartTime;
+			this.tstats.lastMapPlayedTime = fishState.lastMapStartTime;
 		}
 		this.infoUpdated = true;
 	}
@@ -444,7 +419,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		if(duration > 60_000) this.setPunishedIP(stopAntiEvadeTime);
 		this.showRankPrefix = true;
 		let unmarkTime = Date.now() + duration;
-		if(unmarkTime > globals.maxTime) unmarkTime = globals.maxTime;
+		if(unmarkTime > maxTime) unmarkTime = maxTime;
 		return this.updateSynced(() => {
 			this.unmarkTime = unmarkTime;
 			this.updateName();
@@ -471,8 +446,8 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		by ??= "console";
 		
 		this.autoflagged = false; //Might as well set autoflagged to false
-		FishPlayer.removePunishedIP(this.ip());
-		FishPlayer.removePunishedUUID(this.uuid);
+		Automod.removePunishedIP(this.ip());
+		Automod.removePunishedUUID(this.uuid);
 		return this.updateSynced(() => {
 			this.unmarkTime = -1;
 		}, () => {
@@ -522,7 +497,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		if(duration > 60_000) this.setPunishedIP(stopAntiEvadeTime);
 		this.showRankPrefix = true;
 		let unmuteTime = Date.now() + duration;
-		if(unmuteTime > globals.maxTime) unmuteTime = globals.maxTime;
+		if(unmuteTime > maxTime) unmuteTime = maxTime;
 		return this.updateSynced(() => {
 			this.unmuteTime = unmuteTime;
 			this.updateName();
@@ -546,8 +521,8 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	}
 	unmute(by:FishPlayer | string){
 		if(!this.muted()) return;
-		FishPlayer.removePunishedIP(this.ip());
-		FishPlayer.removePunishedUUID(this.uuid);
+		Automod.removePunishedIP(this.ip());
+		Automod.removePunishedUUID(this.uuid);
 		return this.updateSynced(() => {
 			this.unmuteTime = -1;
 			this.updateName();
@@ -581,7 +556,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 			}
 			fishPlayer.updateName();
 			fishPlayer.updateAdminStatus();
-			fishPlayer.checkVPNAndJoins();
+			checkVPNAndJoins(fishPlayer);
 			//I think this is a better spot for this
 			if(fishPlayer.firstJoin()) void fishPlayer.showRules();
 
@@ -589,16 +564,13 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	}
 	/** Must be run on PlayerJoinEvent. */
 	static onPlayerJoin(player:mindustryPlayer){
-		const fishPlayer = this.cachedPlayers[player.uuid()] ??= (() => {
-			Log.err(`onPlayerJoin: no fish player was created? ${player.uuid()}`);
-			return this.createFromPlayer(player);
-		})();
+		const fishPlayer = this.get(player);
 		//Don't activate heuristics until they've joined
 		//a lot of time can pass between connect and join
 		//also the player might connect but fail to join for a lot of reasons,
 		//or connect, fail to join, then connect again and join successfully
 		//which would cause heuristics to activate twice
-		fishPlayer.activateHeuristics();
+		Heuristics.activateHeuristics(fishPlayer);
 	}
 	static updateAFKCheck(){
 		//TODO better AFK check
@@ -658,221 +630,6 @@ export class FishPlayer<Connected extends boolean = boolean> {
 			fishP.restoreTeam = [fishP.player.team(), Date.now(), currentRun];
 		});
 	}
-	static easterEggVotekickTarget: FishPlayer | null = null;
-	static validateVotekickSession(){
-		if(!Vars.netServer.currentlyKicking) return;
-		const target = this.get(Reflect.get(Vars.netServer.currentlyKicking, "target"));
-		const voted = Reflect.get(Vars.netServer.currentlyKicking, "voted") as ObjectIntMap<string>;
-		if(voted.size == 2){
-			//Try to find the UUID of the initiator
-			let uuid:string | null = null;
-			voted.entries().toArray().each(e => {
-				if(uuidPattern.test(e.key)) uuid = e.key;
-			});
-			if(uuid){
-				const initiator = this.getById(uuid);
-				if(initiator?.stelled()){
-					if(initiator.hasPerm("bypassVotekick")){
-						if(target !== this.easterEggVotekickTarget){
-							this.easterEggVotekickTarget = target;
-							const msg = (new Error()).stack?.split("\n").slice(0, 4).join("\n");
-							Call.sendMessage(
-	`[scarlet]Server[lightgray] has voted on kicking[orange] ${initiator.prefixedName}[lightgray].[accent] (\u221E/${Vars.netServer.votesRequired()})
-	[scarlet]Error: failed to kick player ${initiator.prefixedName}[scarlet]
-	${msg}
-	[scarlet]Error: failed to cancel votekick
-	${msg}`
-							);
-						}
-						return;
-					}
-					Call.sendMessage(
-`[scarlet]Server[lightgray] has voted on kicking[orange] ${initiator.prefixedName}[lightgray].[accent] (\u221E/${Vars.netServer.votesRequired()})
-[scarlet]Vote passed.`
-					);
-					initiator.kick("You are not allowed to votekick other players while marked.", 2);
-					Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-					Vars.netServer.currentlyKicking = null;
-					return;
-				} else if(initiator?.hasPerm("immediatelyVotekickNewPlayers") && target.isSuspicious("high")){
-					Call.sendMessage(
-`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (${Vars.netServer.votesRequired()}/${Vars.netServer.votesRequired()})
-[scarlet]Vote passed.`
-					);
-					target.kick(Packets.KickReason.vote, Duration.minutes(30));
-					Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-					Vars.netServer.currentlyKicking = null;
-					return;
-				} else if(target.isSuspicious("high") && !target.hasPerm("bypassVotekick")){
-					//Increase votes by 1, from 1 to 2
-					Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(2));
-					voted.put("__server__", 1);
-					Call.sendMessage(
-`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (2/${Vars.netServer.votesRequired()})
-[lightgray]Type[orange] /vote <y/n>[] to agree.`
-					);
-					return;
-				}
-			}
-		}
-		if(target.hasPerm("bypassVotekick")){
-			Call.sendMessage(
-`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (-\u221E/${Vars.netServer.votesRequired()})
-[scarlet]Vote cancelled.`
-			);
-			Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-			Vars.netServer.currentlyKicking = null;
-		} else if(target.ranksAtLeast("trusted") && Groups.player.size() > 4 && voted.get("__server__") == 0){
-			//decrease votes by two, goes from 1 to negative 1
-			Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(-1));
-			voted.put("__server__", -2);
-			Call.sendMessage(
-`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.prefixedName}[lightgray].[accent] (-1/${Vars.netServer.votesRequired()})
-[lightgray]Type[orange] /vote <y/n>[] to agree.`
-			);
-		}
-	}
-	static onPlayerChat(player:mindustryPlayer, message:string){
-		const fishP = this.get(player);
-		if(message.trim().toLowerCase().startsWith("/vote y") || message.startsWith("/votekick ")){
-			this.checkVotekickAction(fishP, message);
-		}
-		if(!message.startsWith("/") || message.startsWith("/t")){
-			fishP.lastActive = Date.now();
-			fishP.updateStats(stats => stats.chatMessagesSent ++);
-			const susLevel = fishP.suspicionLevel();
-			if(!fishP.chatSpam.allow(14_300, susLevel == 3 ? 3 : susLevel == 2 ? 5 : 30)){
-				if(susLevel == 3 || Date.now() > fishP.kickForSpamAt!){
-					fishP.kick("You have been kicked for spamming.", 30_000);
-					if(this.antiBotMode()) Vars.netServer.admins.blacklistDos(fishP.ip());
-				} else {
-					fishP.sendMessage("[scarlet]You are sending chat messages too quickly.");
-					fishP.kickForSpamAt = Date.now() + 3_000;
-				}
-			}
-			if(susLevel >= 2 && !this.globalSusChat.allow(30_000, 20)){
-				this.triggerAntibot(Duration.minutes(2), "too many chat messages", "automatic", true);
-			}
-		}
-	}
-	static checkVotekickAction(fishP:FishPlayer, message:string){
-		const sus = fishP.suspicionLevel();
-		const timeSinceJoin = Date.now() - fishP.lastJoined;
-		let target: mindustryPlayer;
-		if(message.startsWith("/votekick")){
-			const id = Number(message.split(" ")[1]?.split("#")[1]);
-			if(isNaN(id)) return;
-			target = Groups.player.getByID(id);
-			if(!target) return; //invalid votekick command, harmless
-		} else { //TODO these "harmless" actions could be indications of a malfunctioning vkbot and should be logged if they repeat a lot (eg more than 5 times per minute)
-			if(!Vars.netServer.currentlyKicking) return; //nobody to votekick, harmless
-			target = Reflect.get(Vars.netServer.currentlyKicking, "target");
-		}
-		const targetSusLevel = FishPlayer.get(target).suspicionLevel();
-
-		//Evaluate if this action should be blocked
-		if(sus <= 1) return;
-		let reason: string | undefined = undefined;
-		if(!this.votekickActionRate.allow(108_000, 8))
-			reason = "Exceeded 8 votekick actions in the last 2 minutes";
-		else if(sus == 3 && this.lastVKActions.find(a => Date.now() - a.time < 10_000 && a.playerSusLevel == 3) && timeSinceJoin < 6_000)
-			reason = "Performed votekick within 6 seconds of joining and there was a recent suspicious vote";
-		else if(sus == 3 && timeSinceJoin < 80000 && this.lastVKActions.find(a => a.player == fishP) && targetSusLevel <= 1)
-			reason = "Two votekick actions within 80 seconds of joining and the target is not suspicious";
-		else if(sus >= 2 && this.lastVKActions.filter(a => a.playerSusLevel == 3 && Date.now() - a.time < 33_000).length >= 3)
-			reason = "More than 3 recent votekick actions by suspicious players";
-		else if(sus >= 2 && this.lastVKActions.filter(a => a.playerSusLevel >= 2).length >= 6 && this.lastVKActions.filter(a => a.player == fishP).length >= 3)
-			reason = "More than 6 slightly suspicious votekick actions within the past 20 minutes and this player has already performed 3 of them";
-		if(reason != undefined){
-			//Should we ban everyone?
-			const suspiciousActions = this.lastVKActions.filter(action =>
-				(action.playerSusLevel == 3 || (action.targetSusLevel <= 2 && action.playerSusLevel >= 2) || action.player == fishP) && Date.now() - action.time < 78_000
-			);
-			if(suspiciousActions.length >= 3){
-				//Ban everyone
-				const playersToBan = suspiciousActions.map(a => a.player).reduce((map, p) => {
-					map.set(p, (map.get(p) ?? 0) + 1);
-					return map;
-				}, new Map<FishPlayer, number>());
-				//Only ban players that appeared in the list twice or are high suslevel
-				const { admins } = Vars.netServer;
-				for(const [p, times] of playersToBan){
-					if(p.suspicionLevel() == 3 || p.suspicionLevel() == 2 && times > 1){
-						admins.banPlayerID(p.uuid);
-						admins.bannedIPs.add(p.ip());
-						api.ban({ ip: p.ip(), uuid: p.uuid });
-						logHTrip(p, "votekick abuse",
-							(p == fishP ? `Player banned automatically` : `Player banned automatically based on previous activity`) +
-							`. Trigger reason: ${reason}`
-						);
-					}
-				}
-				updateBans(player => `[scarlet]Player [yellow]${player.name}[scarlet] has been whacked automatically for suspected votekick abuse.`);
-				//Pardon most of the votekick targets (the ones that weren't voted on by a non-sus player)
-				const candidatePardons = new Set(FishPlayer.lastVKActions.map(a => a.target));
-				for(const action of FishPlayer.lastVKActions){
-					if(action.playerSusLevel <= 1) candidatePardons.delete(action.target);
-				}
-				const playersToPardon = [...candidatePardons].map(FishPlayer.get);
-				//Don't pardon players with suslevel 3
-				for(const p of playersToPardon){
-					if(!p.isSuspicious("high")){
-						p.info().lastKicked = 0;
-						admins.kickedIPs.remove(p.ip());
-						Log.info("Pardoned player @ (@/@)", p.name, p.uuid, p.ip());
-						logAction("pardoned", "automod", p, "kicked by suspected votekick bot");
-					}
-				}
-			} else {
-				//Just kick the player
-				logHTrip(fishP, "votekick abuse", `sus=${sus}`);
-				fishP.kick(`You have been kicked [accent]automatically[] due to suspicious behavior. Please wait [accent]35[] seconds before rejoining.`, 30_000);
-				Call.sendMessage(`[scarlet]Player [yellow]${fishP.prefixedName}[scarlet] was kicked due to suspected votekick abuse.`);
-				//If this message is going to start a votekick, cancel it
-				if(message.startsWith("/votekick") && Vars.netServer.currentlyKicking == null) Core.app.post(() => {
-					Call.sendMessage(
-		`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.name}[lightgray].[accent] (-\u221E/${Vars.netServer.votesRequired()})
-		[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.`
-					);
-					if(Vars.netServer.currentlyKicking) Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-					Vars.netServer.currentlyKicking = null;
-				});
-				//If there is an ongoing votekick and the initiator is suspicious, cancel that
-				else if(FishPlayer.lastVKActions.slice().reverse().find(a => a.type == "start")?.playerSusLevel == 3){
-					Call.sendMessage(
-		`[scarlet]Server[lightgray] has voted on kicking[orange] ${target.name}[lightgray].[accent] (-\u221E/${Vars.netServer.votesRequired()})
-		[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.`
-					);
-					if(Vars.netServer.currentlyKicking) Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-					Vars.netServer.currentlyKicking = null;
-				}
-				//Otherwise, revoke the vote
-				else Core.app.post(() => {
-					if(Vars.netServer.currentlyKicking){
-						const votes = Reflect.get(Vars.netServer.currentlyKicking, "votes") - 1;
-						Reflect.set(Vars.netServer.currentlyKicking, "votes", votes);
-						const voted = Reflect.get(Vars.netServer.currentlyKicking, "voted");
-						voted.put(fishP.uuid, 0);
-						voted.put(fishP.ip(), 0);
-						Call.sendMessage(`[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.`);
-					}
-				});
-			}
-		}
-
-		//Update state to catch future actions
-		this.lastVKActions.push({
-			player: fishP,
-			playerSusLevel: sus,
-			target,
-			targetSusLevel,
-			time: Date.now(),
-			type: message.startsWith("/votekick") ? "start" : "vote y",
-			reason: message.startsWith("/votekick") ? message.split(" ").slice(2).join(" ") : undefined
-		});
-
-		this.lastVKActions = this.lastVKActions.filter(a => Date.now() - a.time < Duration.minutes(10));
-	}
 	static onPlayerCommand(player:FishPlayer, command:string, unjoinedRawArgs:string[]){
 		if(command == "msg" && unjoinedRawArgs[1] == "Please do not use that logic, as it is attem83 logic and is bad to use. For more information please read www.mindustry.dev/attem")
 			return; //Attemwarfare message, not sent by the player
@@ -907,9 +664,9 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	}
 	static onGameBegin(){
 		const startTime = Date.now();
-		FishPlayer.lastMapStartTime = startTime;
-		//wait 7 seconds for players to join
-		Timer.schedule(() => FishPlayer.forEachPlayer(p => p.tstats.lastMapStartTime = startTime), 7);
+		fishState.lastMapStartTime = startTime;
+		//wait 20 seconds for players to join
+		Timer.schedule(() => FishPlayer.forEachPlayer(p => p.tstats.lastMapStartTime = startTime), 20);
 	}
 	/** Must be run on UnitChangeEvent. */
 	static onUnitChange(player:mindustryPlayer, unit:Unit | null){
@@ -1001,96 +758,8 @@ export class FishPlayer<Connected extends boolean = boolean> {
 			this.autoflagged = false;
 		}
 	}
-	checkAntiEvasion(){
-		FishPlayer.updatePunishedIPs();
-		for(const [ip, uuid] of FishPlayer.punishedIPs){
-			if(ip == this.ip() && uuid != this.uuid && !this.ranksAtLeast("mod")){
-				api.sendModerationMessage(
-`Automatically banned player \`${this.cleanedName}\` (\`${this.uuid}\`/\`${this.ip()}\`) for suspected punishment evasion.
-Previously used UUID \`${uuid}\`(${Vars.netServer.admins.getInfoOptional(uuid)?.plainLastName()}), currently using UUID \`${this.uuid}\` from the same IP address.`
-				);
-				Log.warn(
-`&yAutomatically banned player &b${this.cleanedName}&y (&b${this.uuid}&y/&b${this.ip()}&y) for suspected punishment evasion.
-&yPreviously used UUID &b${uuid}&y(&b${Vars.netServer.admins.getInfoOptional(uuid)?.plainLastName()}&y), currently using UUID &b${this.uuid}&y from the same IP address.`
-				);
-				FishPlayer.messageStaff(`[yellow]Automatically banned player [white]${this.name}[yellow] for suspected punishment evasion.`);
-				Vars.netServer.admins.bannedIPs.add(ip);
-				api.ban({ip, uuid});
-				this.kick(Packets.KickReason.banned);
-				return false;
-			}
-		}
-		return true;
-	}
-	static updatePunishedIPs(){
-		for(let i = 0; i < this.punishedIPs.length; i ++){
-			if(this.punishedIPs[i][2] < Date.now()){
-				this.punishedIPs.splice(i, 1);
-			}
-		}
-	}
-	checkVPNAndJoins(){
-		const ip = this.ip();
-		const info:PlayerInfo = this.info();
-		api.isVpn(ip, isVpn => {
-			if(isVpn){
-				Log.warn(`IP ${ip} was flagged as VPN. Flag rate: ${FishPlayer.stats.numIpsFlagged}/${FishPlayer.stats.numIpsChecked} (${100 * FishPlayer.stats.numIpsFlagged / FishPlayer.stats.numIpsChecked}%)`);
-				this.ipDetectedVpn = true;
-				if(!FishPlayer.autoflagRate.allow(30_000, 5)){
-					FishPlayer.triggerAntibot(Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic", false);
-					return;
-				}
-				if(
-					(info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) //is this smart?
-					&& !this.ranksAtLeast("active")
-					&& FishPlayer.punishedIPs.length > 0
-				){
-					this.autoflagged = true;
-					if(this.connected()) this.stopUnit();
-					this.updateName();
-					if(FishPlayer.shouldWhackFlaggedPlayers()){
-						FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
-					} else {
-						logAction("autoflagged", "AntiVPN", this);
-						void api.sendStaffMessage(`Autoflagged player ${this.cleanedName}[cyan] for suspected vpn!`, "AntiVPN", true);
-						if(!FishPlayer.antiBotMode()) FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.prefixedName}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free.`);
-						Log.warn(`Player ${this.cleanedName} (${this.uuid}) was autoflagged.`);
-						if(this.connected()) void Menu.buttons(
-							this,
-							"[gold]Welcome to Fish Community!",
-							`[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ${FColor.discord`Join our Discord`} to request a staff member come online if none are on.`,
-							[[
-								{ data: "Close", text: "Close" },
-								{ data: "Discord", text: FColor.discord("Discord") },
-							]]
-						).then((option) => {
-							if(option == "Discord"){
-								Call.openURI(this.con(), text.discordURL);
-							}
-						});
-						this.sendMessage(`[gold]Welcome to Fish Community!\n[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ${FColor.discord`Join our Discord`} to request a staff member come online if none are on.`);
-					}
-				} else if(info.timesJoined < 5){
-					FishPlayer.messageStaff(`[yellow]WARNING:[scarlet] player [cyan]"${this.prefixedName}[cyan]"[yellow] is new (${info.timesJoined - 1} joins) and using a vpn.`);
-				}
-			} else {
-				if(info.timesJoined == 1){
-					FishPlayer.messageTrusted(`[yellow]Player "${this.prefixedName}[yellow]" is on first join.`);
-				}
-			}
-			if(info.timesJoined == 1){
-				let message = `&lrNew player joined: &c${this.cleanedName}&lr (&c${this.uuid}&lr/&c${ip}&lr)`;
-				//Add BEL, this causes an audible noise
-				if(globals.fishState.joinBell) message += '\x07';
-				Log.info(message);
-			}
-		}, err => {
-			Log.err(`Error while checking for VPN status of ip ${ip}!`);
-			Log.err(err);
-		});
-	}
 	validate(){
-		return this.checkName() && this.checkUsid() && this.checkAntiEvasion();
+		return this.checkName() && this.checkUsid() && Automod.checkAntiEvasion(this);
 	}
 	private static readonly oddBrackets = Pattern.compile("(?<!\\[)(\\[\\[)*\\[$");
 	/** Checks if this player's name is allowed. */
@@ -1168,12 +837,12 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		if(this.marked()) this.sendMessage(
 `[gold]Hello there! You are currently [scarlet]marked as a griefer[]. You cannot do anything in-game while marked.
 ${appealLine}
-Your mark will expire automatically ${this.unmarkTime == globals.maxTime ? "in [red]never[]" : `[green]${formatTimeRelative(this.unmarkTime)}[]`}.
+Your mark will expire automatically ${maxTime - this.unmarkTime < 60_000 ? "in [red]never[]" : `[green]${formatTimeRelative(this.unmarkTime)}[]`}.
 We apologize for the inconvenience.`
 		); else if(this.muted()) this.sendMessage(
 `[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.
 ${appealLine}
-Your mute will expire automatically ${this.unmarkTime == globals.maxTime ? "in [red]never[]" : `[green]${formatTimeRelative(this.unmarkTime)}[]`}.
+Your mute will expire automatically ${maxTime - this.unmarkTime < 60_000 ? "in [red]never[]" : `[green]${formatTimeRelative(this.unmarkTime)}[]`}.
 We apologize for the inconvenience.`
 		); else if(this.autoflagged) this.sendMessage(
 `[gold]Hello there! You are currently [red]flagged as suspicious[]. You cannot do anything in-game.
@@ -1189,7 +858,7 @@ We apologize for the inconvenience.`
 			if(Date.now() - this.lastShownAd > Duration.days(1)){
 				this.lastShownAd = Date.now();
 				this.showAdNext = true;
-			} else if(this.lastShownAd == globals.maxTime){
+			} else if(this.lastShownAd == maxTime){
 				//this is the first time they joined, show ad the next time they join
 				this.showAdNext = true;
 				this.lastShownAd = Date.now();
@@ -1415,48 +1084,7 @@ We apologize for the inconvenience.`
 		}
 	}
 	//#endregion
-	
-	//#region antibot
-	static antiBotMode(){
-		return Date.now() < this.antibotExpires;
-	}
-	static shouldKickNewPlayers(){
-		return false;
-	}
-	static shouldWhackFlaggedPlayers(){
-		return Date.now() < this.antibotExpires;
-	}
-	static whackFlaggedPlayers(){
-		this.forEachPlayer(p => {
-			if(p.ipDetectedVpn && p.suspicionLevel() == 3){
-				Vars.netServer.admins.blacklistDos(p.ip());
-				try {
-					Vars.netServer.admins.blacklistDos(p.con().connection.getRemoteAddressUDP().getAddress().getHostAddress());
-				} catch {}
-				Log.info(`&yAntibot killed connection ${p.ip()} due to flagged while under attack`);
-				p.player.kick(Packets.KickReason.banned, 10000000);
-			}
-		});
-	}
-	static triggerAntibot(duration:number, reason:string, category:"manual" | "automatic", kickNewPlayers:boolean, pingConsole = false){
-		if(category == "automatic"){
-			//Ping reports based on time
-			let message;
-			if(Date.now() - this.antibotExpires > Duration.hours(1))
-				message = `!!! ${text.reportsPing} Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`;
-			else if(Date.now() - this.antibotExpires > Duration.minutes(10))
-				message = `!!! Possible ongoing bot attack in **${Gamemode.name()}**  Reason: ${escapeTextDiscord(reason)}`;
-			if(message) api.sendModerationMessage(pingConsole ? message + ` <@&1096094397625532558>` : message);
-		}
-		if(Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
-			Log.info(`&yAntibot triggered: ${escapeStringColorsServer(reason)}`);
-		this.antibotExpires = Math.max(this.antibotExpires, Date.now() + duration);
-		if(kickNewPlayers) this.kickNewPlayersExpires = Date.now() + 8_000;
-		this.lastAntibotReason = reason;
-		if(this.shouldWhackFlaggedPlayers()) this.whackFlaggedPlayers();
-	}
-	//#endregion
-	
+
 	//#region util
 	/**
 	 * Sends a message to staff only.
@@ -1565,7 +1193,7 @@ We apologize for the inconvenience.`
 	setTeam(this:FishPlayer<true>, team:Team):void {
 		const oldTeam = this.player.team();
 		this.player.team(team);
-		globals.FishEvents.fire("playerTeamChange", [this, oldTeam]);
+		FishEvents.fire("playerTeamChange", [this, oldTeam]);
 	}
 	con(this:FishPlayer<true>):NetConnection {
 		return this.player.con;
@@ -1726,21 +1354,7 @@ We apologize for the inconvenience.`
 		this.player?.kick(reason, duration);
 	}
 	setPunishedIP(duration:number){
-		FishPlayer.punishedIPs.push([this.ip(), this.uuid, Date.now() + duration]);
-	}
-	static removePunishedIP(target:string){
-		let ipIndex:number;
-		if((ipIndex = FishPlayer.punishedIPs.findIndex(([ip]) => ip == target)) != -1){
-			FishPlayer.punishedIPs.splice(ipIndex, 1);
-			return true;
-		} else return false;
-	}
-	static removePunishedUUID(target:string){
-		let uuidIndex:number;
-		if((uuidIndex = FishPlayer.punishedIPs.findIndex(([, uuid]) => uuid == target)) != -1){
-			FishPlayer.punishedIPs.splice(uuidIndex, 1);
-			return true;
-		} else return false;
+		Automod.punishedIPs.push([this.ip(), this.uuid, Date.now() + duration]);
 	}
 	setJokeName(name:string){
 		this.jokeName = name.trim();
@@ -1759,7 +1373,7 @@ We apologize for the inconvenience.`
 	}
 	/** Sets the unmark time but doesn't stop the player's unit or send them a message. */
 	updateStopTime(duration:number):Promise<void> {
-		const time = Math.min(Date.now() + duration, globals.maxTime);
+		const time = Math.min(Date.now() + duration, maxTime);
 		return this.updateSynced(() => {
 			this.unmarkTime = time;
 			this.updateName();
@@ -1767,7 +1381,7 @@ We apologize for the inconvenience.`
 	}
 	/** Sets the unmute time but doesn't send a message. */
 	updateMuteTime(duration:number):Promise<void> {
-		const time = Math.min(Date.now() + duration, globals.maxTime);
+		const time = Math.min(Date.now() + duration, maxTime);
 		return this.updateSynced(() => {
 			this.unmuteTime = time;
 			this.updateName();
@@ -1788,62 +1402,12 @@ We apologize for the inconvenience.`
 		}
 	}
 	//#endregion
-
-	//#region heuristics
-	static chatSpam = new Ratekeeper();
-	static chatSpamSlow = new Ratekeeper();
-	activateHeuristics(){
-		if(Gamemode.hexed() || Gamemode.sandbox() || Gamemode.testsrv()) return;
-		//Blocks broken check
-		if(this.joinsLessThan(5)){
-			let tripped = false;
-			this.tstats.blocksBroken = 0;
-			Timer.schedule(() => {
-				if(this.connected() && !tripped){
-					const limit = this.firstJoin() && FishPlayer.antiBotMode() ?
-						Date.now() < FishPlayer.kickNewPlayersExpires + 30_000 ? 1 : 25
-					: heuristics.blocksBrokenAfterJoin;
-					if(this.tstats.blocksBroken > limit){
-						tripped = true;
-						logHTrip(this, "blocks broken after join", `${this.tstats.blocksBroken}/${limit}`);
-						void this.stop("automod", this.tstats.blocksBroken > 40 ? globals.maxTime : Duration.minutes(3), `Automatic stop due to suspicious activity`);
-						FishPlayer.messageAllExcept(this,
-`[yellow]Player ${this.cleanedName} has been stopped automatically due to suspected griefing.
-Please look at ${this.position()} and see if they were actually griefing. If they were not, please inform a staff member.`);
-					}
-				}
-			}, 0, 1, (this.firstJoin() && !this.joinedAlready) ? 30 : this.joinsLessThan(3) ? 25 : 15);
-		}
-		if(this.firstJoin() && !this.joinedAlready){
-			this.joinedAlready = true;
-			let tripped = false;
-			Timer.schedule(() => {
-				if(this.stats.chatMessagesSent >= 3 && !tripped){
-					tripped = true;
-					if(FishPlayer.antiBotMode()) Vars.netServer.admins.dosBlacklist.add(this.ip());
-					else if(!FishPlayer.chatSpam.allow(10_000, 1)){
-						Vars.netServer.admins.dosBlacklist.add(this.ip());
-						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat", "automatic", true);
-					} else {
-						void this.mute("automod", Duration.months(1));
-						logHTrip(this, "new player spamming chat");
-					}
-				}
-			}, 1, 1, 4);
-			Timer.schedule(() => {
-				if(this.stats.chatMessagesSent >= 4 && !tripped){
-					tripped = true;
-					if(!FishPlayer.chatSpamSlow.allow(30_000, 2)){
-						Vars.netServer.admins.dosBlacklist.add(this.ip());
-						FishPlayer.triggerAntibot(Duration.minutes(15), "multiple players spamming chat slowly", "automatic", true);
-					}
-				}
-			}, 1, 2, 10);
-		}
-	}
-	//#endregion
-
 }
 
 //TODO convert all the unnecessary event handlers to simple calls to Events.on
 Events.on(EventType.WaveEvent, () => FishPlayer.forEachPlayer(p => p.tstats.wavesSurvived ++));
+Events.on(EventType.PlayerChatEvent, ({player}) => {
+	const fishP = FishPlayer.get(player);
+	fishP.lastActive = Date.now();
+	fishP.updateStats(stats => stats.chatMessagesSent ++);
+});

@@ -330,7 +330,7 @@ exports.Achievements = {
     attack: new Achievement(Iconc.modeAttack, "Attack", ["Defeat an attack map.", "You must be present for the beginning and end of the game."], {
         modes: ["only", "attack"],
         checkPlayerGameover: function (player, winTeam) {
-            return Vars.state.rules.defaultTeam == winTeam && player.tstats.lastMapStartTime == players_1.FishPlayer.lastMapStartTime;
+            return Vars.state.rules.defaultTeam == winTeam && player.tstats.lastMapStartTime == globals_1.fishState.lastMapStartTime;
         },
     }),
     survival: new Achievement(Iconc.modeSurvival, "Survival", ["Survive 50 waves in a survival map.", "Must be during the same game."], {
@@ -342,7 +342,7 @@ exports.Achievements = {
     pvp: new Achievement(Iconc.modePvp, "PVP", ["Win a match of PVP.", "You must be present for the beginning and end of the game."], {
         modes: ["only", "pvp"],
         checkPlayerGameover: function (player, winTeam) {
-            return player.team() == winTeam && player.tstats.lastMapStartTime == players_1.FishPlayer.lastMapStartTime;
+            return player.team() == winTeam && player.tstats.lastMapStartTime == globals_1.fishState.lastMapStartTime;
         },
     }),
     sandbox: new Achievement(Iconc.image, "Sandbox", "Spend 1 hour in Sandbox.", {
@@ -352,13 +352,13 @@ exports.Achievements = {
     hexed: new Achievement(Iconc.layers, "Hexed", ["Play a match of Hexed.", "You must be present for the beginning and end of the game."], {
         modes: ["only", "hexed"],
         checkPlayerGameover: function (player) {
-            return player.tstats.lastMapStartTime == players_1.FishPlayer.lastMapStartTime;
+            return player.tstats.lastMapStartTime == globals_1.fishState.lastMapStartTime;
         },
     }),
     minigame: new Achievement(Iconc.play, "Minigame", ["Win a Minigame.", "You must be present for the beginning and end of the game."], {
         modes: ["only", "minigame"],
         checkPlayerGameover: function (player, winTeam) {
-            return player.team() == winTeam && player.tstats.lastMapStartTime == players_1.FishPlayer.lastMapStartTime;
+            return player.team() == winTeam && player.tstats.lastMapStartTime == globals_1.fishState.lastMapStartTime;
         },
     }),
     //playtime based

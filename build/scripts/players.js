@@ -115,11 +115,11 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FishPlayer = void 0;
 var api = __importStar(require("/api"));
+var automod_1 = require("/automod");
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
 var menus_1 = require("/frameworks/menus");
 var funcs_1 = require("/funcs");
-var globals = __importStar(require("/globals"));
 var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var ranks_1 = require("/ranks");
@@ -152,7 +152,7 @@ var FishPlayer = /** @class */ (function () {
         /** Used to freeze players temporarily. */
         this.frozen = false;
         /** Used to avoid spamming players with ads by the tip message system */
-        this.lastShownAd = globals.maxTime;
+        this.lastShownAd = globals_1.maxTime;
         /** Used to avoid spamming players with ads by the tip message system */
         this.showAdNext = false;
         /** Transient statistics, used by the automatic griefer detection. */
@@ -446,9 +446,9 @@ var FishPlayer = /** @class */ (function () {
         this.ipDetectedVpn = false;
         this.isImpersonator = false;
         this.tstats.blocksBroken = 0;
-        if (this.tstats.lastMapPlayedTime != FishPlayer.lastMapStartTime) {
+        if (this.tstats.lastMapPlayedTime != globals_1.fishState.lastMapStartTime) {
             this.tstats.blockInteractionsThisMap = 0;
-            this.tstats.lastMapPlayedTime = FishPlayer.lastMapStartTime;
+            this.tstats.lastMapPlayedTime = globals_1.fishState.lastMapStartTime;
         }
         this.infoUpdated = true;
     };
@@ -567,8 +567,8 @@ var FishPlayer = /** @class */ (function () {
             this.setPunishedIP(config_1.stopAntiEvadeTime);
         this.showRankPrefix = true;
         var unmarkTime = Date.now() + duration;
-        if (unmarkTime > globals.maxTime)
-            unmarkTime = globals.maxTime;
+        if (unmarkTime > globals_1.maxTime)
+            unmarkTime = globals_1.maxTime;
         return this.updateSynced(function () {
             _this.unmarkTime = unmarkTime;
             _this.updateName();
@@ -594,8 +594,8 @@ var FishPlayer = /** @class */ (function () {
         var _this = this;
         by !== null && by !== void 0 ? by : (by = "console");
         this.autoflagged = false; //Might as well set autoflagged to false
-        FishPlayer.removePunishedIP(this.ip());
-        FishPlayer.removePunishedUUID(this.uuid);
+        automod_1.Automod.removePunishedIP(this.ip());
+        automod_1.Automod.removePunishedUUID(this.uuid);
         return this.updateSynced(function () {
             _this.unmarkTime = -1;
         }, function () {
@@ -672,8 +672,8 @@ var FishPlayer = /** @class */ (function () {
             this.setPunishedIP(config_1.stopAntiEvadeTime);
         this.showRankPrefix = true;
         var unmuteTime = Date.now() + duration;
-        if (unmuteTime > globals.maxTime)
-            unmuteTime = globals.maxTime;
+        if (unmuteTime > globals_1.maxTime)
+            unmuteTime = globals_1.maxTime;
         return this.updateSynced(function () {
             _this.unmuteTime = unmuteTime;
             _this.updateName();
@@ -698,8 +698,8 @@ var FishPlayer = /** @class */ (function () {
         var _this = this;
         if (!this.muted())
             return;
-        FishPlayer.removePunishedIP(this.ip());
-        FishPlayer.removePunishedUUID(this.uuid);
+        automod_1.Automod.removePunishedIP(this.ip());
+        automod_1.Automod.removePunishedUUID(this.uuid);
         return this.updateSynced(function () {
             _this.unmuteTime = -1;
             _this.updateName();
@@ -735,7 +735,7 @@ var FishPlayer = /** @class */ (function () {
             }
             fishPlayer.updateName();
             fishPlayer.updateAdminStatus();
-            fishPlayer.checkVPNAndJoins();
+            (0, automod_1.checkVPNAndJoins)(fishPlayer);
             //I think this is a better spot for this
             if (fishPlayer.firstJoin())
                 void fishPlayer.showRules();
@@ -743,19 +743,13 @@ var FishPlayer = /** @class */ (function () {
     };
     /** Must be run on PlayerJoinEvent. */
     FishPlayer.onPlayerJoin = function (player) {
-        var _this = this;
-        var _a;
-        var _b, _c;
-        var fishPlayer = (_a = (_b = this.cachedPlayers)[_c = player.uuid()]) !== null && _a !== void 0 ? _a : (_b[_c] = (function () {
-            Log.err("onPlayerJoin: no fish player was created? ".concat(player.uuid()));
-            return _this.createFromPlayer(player);
-        })());
+        var fishPlayer = this.get(player);
         //Don't activate heuristics until they've joined
         //a lot of time can pass between connect and join
         //also the player might connect but fail to join for a lot of reasons,
         //or connect, fail to join, then connect again and join successfully
         //which would cause heuristics to activate twice
-        fishPlayer.activateHeuristics();
+        automod_1.Heuristics.activateHeuristics(fishPlayer);
     };
     FishPlayer.updateAFKCheck = function () {
         //TODO better AFK check
@@ -818,240 +812,6 @@ var FishPlayer = /** @class */ (function () {
                 fishP.restoreTeam = [fishP.player.team(), Date.now(), currentRun];
             });
     };
-    FishPlayer.validateVotekickSession = function () {
-        var _a;
-        if (!Vars.netServer.currentlyKicking)
-            return;
-        var target = this.get(Reflect.get(Vars.netServer.currentlyKicking, "target"));
-        var voted = Reflect.get(Vars.netServer.currentlyKicking, "voted");
-        if (voted.size == 2) {
-            //Try to find the UUID of the initiator
-            var uuid_1 = null;
-            voted.entries().toArray().each(function (e) {
-                if (globals_1.uuidPattern.test(e.key))
-                    uuid_1 = e.key;
-            });
-            if (uuid_1) {
-                var initiator = this.getById(uuid_1);
-                if (initiator === null || initiator === void 0 ? void 0 : initiator.stelled()) {
-                    if (initiator.hasPerm("bypassVotekick")) {
-                        if (target !== this.easterEggVotekickTarget) {
-                            this.easterEggVotekickTarget = target;
-                            var msg = (_a = (new Error()).stack) === null || _a === void 0 ? void 0 : _a.split("\n").slice(0, 4).join("\n");
-                            Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(initiator.prefixedName, "[lightgray].[accent] (\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t[scarlet]Error: failed to kick player ").concat(initiator.prefixedName, "[scarlet]\n\t").concat(msg, "\n\t[scarlet]Error: failed to cancel votekick\n\t").concat(msg));
-                        }
-                        return;
-                    }
-                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(initiator.prefixedName, "[lightgray].[accent] (\u221E/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Vote passed."));
-                    initiator.kick("You are not allowed to votekick other players while marked.", 2);
-                    Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-                    Vars.netServer.currentlyKicking = null;
-                    return;
-                }
-                else if ((initiator === null || initiator === void 0 ? void 0 : initiator.hasPerm("immediatelyVotekickNewPlayers")) && target.isSuspicious("high")) {
-                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (").concat(Vars.netServer.votesRequired(), "/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Vote passed."));
-                    target.kick(Packets.KickReason.vote, funcs_1.Duration.minutes(30));
-                    Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-                    Vars.netServer.currentlyKicking = null;
-                    return;
-                }
-                else if (target.isSuspicious("high") && !target.hasPerm("bypassVotekick")) {
-                    //Increase votes by 1, from 1 to 2
-                    Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(2));
-                    voted.put("__server__", 1);
-                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (2/").concat(Vars.netServer.votesRequired(), ")\n[lightgray]Type[orange] /vote <y/n>[] to agree."));
-                    return;
-                }
-            }
-        }
-        if (target.hasPerm("bypassVotekick")) {
-            Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n[scarlet]Vote cancelled."));
-            Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-            Vars.netServer.currentlyKicking = null;
-        }
-        else if (target.ranksAtLeast("trusted") && Groups.player.size() > 4 && voted.get("__server__") == 0) {
-            //decrease votes by two, goes from 1 to negative 1
-            Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(-1));
-            voted.put("__server__", -2);
-            Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (-1/").concat(Vars.netServer.votesRequired(), ")\n[lightgray]Type[orange] /vote <y/n>[] to agree."));
-        }
-    };
-    FishPlayer.onPlayerChat = function (player, message) {
-        var fishP = this.get(player);
-        if (message.trim().toLowerCase().startsWith("/vote y") || message.startsWith("/votekick ")) {
-            this.checkVotekickAction(fishP, message);
-        }
-        if (!message.startsWith("/") || message.startsWith("/t")) {
-            fishP.lastActive = Date.now();
-            fishP.updateStats(function (stats) { return stats.chatMessagesSent++; });
-            var susLevel = fishP.suspicionLevel();
-            if (!fishP.chatSpam.allow(14300, susLevel == 3 ? 3 : susLevel == 2 ? 5 : 30)) {
-                if (susLevel == 3 || Date.now() > fishP.kickForSpamAt) {
-                    fishP.kick("You have been kicked for spamming.", 30000);
-                    if (this.antiBotMode())
-                        Vars.netServer.admins.blacklistDos(fishP.ip());
-                }
-                else {
-                    fishP.sendMessage("[scarlet]You are sending chat messages too quickly.");
-                    fishP.kickForSpamAt = Date.now() + 3000;
-                }
-            }
-            if (susLevel >= 2 && !this.globalSusChat.allow(30000, 20)) {
-                this.triggerAntibot(funcs_1.Duration.minutes(2), "too many chat messages", "automatic", true);
-            }
-        }
-    };
-    FishPlayer.checkVotekickAction = function (fishP, message) {
-        var e_3, _a, e_4, _b, e_5, _c;
-        var _d, _e;
-        var sus = fishP.suspicionLevel();
-        var timeSinceJoin = Date.now() - fishP.lastJoined;
-        var target;
-        if (message.startsWith("/votekick")) {
-            var id = Number((_d = message.split(" ")[1]) === null || _d === void 0 ? void 0 : _d.split("#")[1]);
-            if (isNaN(id))
-                return;
-            target = Groups.player.getByID(id);
-            if (!target)
-                return; //invalid votekick command, harmless
-        }
-        else { //TODO these "harmless" actions could be indications of a malfunctioning vkbot and should be logged if they repeat a lot (eg more than 5 times per minute)
-            if (!Vars.netServer.currentlyKicking)
-                return; //nobody to votekick, harmless
-            target = Reflect.get(Vars.netServer.currentlyKicking, "target");
-        }
-        var targetSusLevel = FishPlayer.get(target).suspicionLevel();
-        //Evaluate if this action should be blocked
-        if (sus <= 1)
-            return;
-        var reason = undefined;
-        if (!this.votekickActionRate.allow(108000, 8))
-            reason = "Exceeded 8 votekick actions in the last 2 minutes";
-        else if (sus == 3 && this.lastVKActions.find(function (a) { return Date.now() - a.time < 10000 && a.playerSusLevel == 3; }) && timeSinceJoin < 6000)
-            reason = "Performed votekick within 6 seconds of joining and there was a recent suspicious vote";
-        else if (sus == 3 && timeSinceJoin < 80000 && this.lastVKActions.find(function (a) { return a.player == fishP; }) && targetSusLevel <= 1)
-            reason = "Two votekick actions within 80 seconds of joining and the target is not suspicious";
-        else if (sus >= 2 && this.lastVKActions.filter(function (a) { return a.playerSusLevel == 3 && Date.now() - a.time < 33000; }).length >= 3)
-            reason = "More than 3 recent votekick actions by suspicious players";
-        else if (sus >= 2 && this.lastVKActions.filter(function (a) { return a.playerSusLevel >= 2; }).length >= 6 && this.lastVKActions.filter(function (a) { return a.player == fishP; }).length >= 3)
-            reason = "More than 6 slightly suspicious votekick actions within the past 20 minutes and this player has already performed 3 of them";
-        if (reason != undefined) {
-            //Should we ban everyone?
-            var suspiciousActions = this.lastVKActions.filter(function (action) {
-                return (action.playerSusLevel == 3 || (action.targetSusLevel <= 2 && action.playerSusLevel >= 2) || action.player == fishP) && Date.now() - action.time < 78000;
-            });
-            if (suspiciousActions.length >= 3) {
-                //Ban everyone
-                var playersToBan = suspiciousActions.map(function (a) { return a.player; }).reduce(function (map, p) {
-                    var _a;
-                    map.set(p, ((_a = map.get(p)) !== null && _a !== void 0 ? _a : 0) + 1);
-                    return map;
-                }, new Map());
-                //Only ban players that appeared in the list twice or are high suslevel
-                var admins = Vars.netServer.admins;
-                try {
-                    for (var playersToBan_1 = __values(playersToBan), playersToBan_1_1 = playersToBan_1.next(); !playersToBan_1_1.done; playersToBan_1_1 = playersToBan_1.next()) {
-                        var _f = __read(playersToBan_1_1.value, 2), p = _f[0], times = _f[1];
-                        if (p.suspicionLevel() == 3 || p.suspicionLevel() == 2 && times > 1) {
-                            admins.banPlayerID(p.uuid);
-                            admins.bannedIPs.add(p.ip());
-                            api.ban({ ip: p.ip(), uuid: p.uuid });
-                            (0, utils_1.logHTrip)(p, "votekick abuse", (p == fishP ? "Player banned automatically" : "Player banned automatically based on previous activity") +
-                                ". Trigger reason: ".concat(reason));
-                        }
-                    }
-                }
-                catch (e_3_1) { e_3 = { error: e_3_1 }; }
-                finally {
-                    try {
-                        if (playersToBan_1_1 && !playersToBan_1_1.done && (_a = playersToBan_1.return)) _a.call(playersToBan_1);
-                    }
-                    finally { if (e_3) throw e_3.error; }
-                }
-                (0, utils_1.updateBans)(function (player) { return "[scarlet]Player [yellow]".concat(player.name, "[scarlet] has been whacked automatically for suspected votekick abuse."); });
-                //Pardon most of the votekick targets (the ones that weren't voted on by a non-sus player)
-                var candidatePardons = new Set(FishPlayer.lastVKActions.map(function (a) { return a.target; }));
-                try {
-                    for (var _g = __values(FishPlayer.lastVKActions), _h = _g.next(); !_h.done; _h = _g.next()) {
-                        var action = _h.value;
-                        if (action.playerSusLevel <= 1)
-                            candidatePardons.delete(action.target);
-                    }
-                }
-                catch (e_4_1) { e_4 = { error: e_4_1 }; }
-                finally {
-                    try {
-                        if (_h && !_h.done && (_b = _g.return)) _b.call(_g);
-                    }
-                    finally { if (e_4) throw e_4.error; }
-                }
-                var playersToPardon = __spreadArray([], __read(candidatePardons), false).map(FishPlayer.get);
-                try {
-                    //Don't pardon players with suslevel 3
-                    for (var playersToPardon_1 = __values(playersToPardon), playersToPardon_1_1 = playersToPardon_1.next(); !playersToPardon_1_1.done; playersToPardon_1_1 = playersToPardon_1.next()) {
-                        var p = playersToPardon_1_1.value;
-                        if (!p.isSuspicious("high")) {
-                            p.info().lastKicked = 0;
-                            admins.kickedIPs.remove(p.ip());
-                            Log.info("Pardoned player @ (@/@)", p.name, p.uuid, p.ip());
-                            (0, utils_1.logAction)("pardoned", "automod", p, "kicked by suspected votekick bot");
-                        }
-                    }
-                }
-                catch (e_5_1) { e_5 = { error: e_5_1 }; }
-                finally {
-                    try {
-                        if (playersToPardon_1_1 && !playersToPardon_1_1.done && (_c = playersToPardon_1.return)) _c.call(playersToPardon_1);
-                    }
-                    finally { if (e_5) throw e_5.error; }
-                }
-            }
-            else {
-                //Just kick the player
-                (0, utils_1.logHTrip)(fishP, "votekick abuse", "sus=".concat(sus));
-                fishP.kick("You have been kicked [accent]automatically[] due to suspicious behavior. Please wait [accent]35[] seconds before rejoining.", 30000);
-                Call.sendMessage("[scarlet]Player [yellow]".concat(fishP.prefixedName, "[scarlet] was kicked due to suspected votekick abuse."));
-                //If this message is going to start a votekick, cancel it
-                if (message.startsWith("/votekick") && Vars.netServer.currentlyKicking == null)
-                    Core.app.post(function () {
-                        Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t\t[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff."));
-                        if (Vars.netServer.currentlyKicking)
-                            Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-                        Vars.netServer.currentlyKicking = null;
-                    });
-                //If there is an ongoing votekick and the initiator is suspicious, cancel that
-                else if (((_e = FishPlayer.lastVKActions.slice().reverse().find(function (a) { return a.type == "start"; })) === null || _e === void 0 ? void 0 : _e.playerSusLevel) == 3) {
-                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t\t[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff."));
-                    if (Vars.netServer.currentlyKicking)
-                        Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
-                    Vars.netServer.currentlyKicking = null;
-                }
-                //Otherwise, revoke the vote
-                else
-                    Core.app.post(function () {
-                        if (Vars.netServer.currentlyKicking) {
-                            var votes = Reflect.get(Vars.netServer.currentlyKicking, "votes") - 1;
-                            Reflect.set(Vars.netServer.currentlyKicking, "votes", votes);
-                            var voted = Reflect.get(Vars.netServer.currentlyKicking, "voted");
-                            voted.put(fishP.uuid, 0);
-                            voted.put(fishP.ip(), 0);
-                            Call.sendMessage("[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.");
-                        }
-                    });
-            }
-        }
-        //Update state to catch future actions
-        this.lastVKActions.push({
-            player: fishP,
-            playerSusLevel: sus,
-            target: target,
-            targetSusLevel: targetSusLevel,
-            time: Date.now(),
-            type: message.startsWith("/votekick") ? "start" : "vote y",
-            reason: message.startsWith("/votekick") ? message.split(" ").slice(2).join(" ") : undefined
-        });
-        this.lastVKActions = this.lastVKActions.filter(function (a) { return Date.now() - a.time < funcs_1.Duration.minutes(10); });
-    };
     FishPlayer.onPlayerCommand = function (player, command, unjoinedRawArgs) {
         if (command == "msg" && unjoinedRawArgs[1] == "Please do not use that logic, as it is attem83 logic and is bad to use. For more information please read www.mindustry.dev/attem")
             return; //Attemwarfare message, not sent by the player
@@ -1088,9 +848,9 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.onGameBegin = function () {
         var startTime = Date.now();
-        FishPlayer.lastMapStartTime = startTime;
-        //wait 7 seconds for players to join
-        Timer.schedule(function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.lastMapStartTime = startTime; }); }, 7);
+        globals_1.fishState.lastMapStartTime = startTime;
+        //wait 20 seconds for players to join
+        Timer.schedule(function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.lastMapStartTime = startTime; }); }, 20);
     };
     /** Must be run on UnitChangeEvent. */
     FishPlayer.onUnitChange = function (player, unit) {
@@ -1133,7 +893,7 @@ var FishPlayer = /** @class */ (function () {
     };
     /** Updates the mindustry player's name, using the prefixes of the current rank and role flags. */
     FishPlayer.prototype.updateName = function () {
-        var e_6, _a;
+        var e_3, _a;
         var _b;
         if (!this.connected())
             return; //No player, no need to update
@@ -1158,12 +918,12 @@ var FishPlayer = /** @class */ (function () {
                     prefix += flag.prefix;
                 }
             }
-            catch (e_6_1) { e_6 = { error: e_6_1 }; }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
                     if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
                 }
-                finally { if (e_6) throw e_6.error; }
+                finally { if (e_3) throw e_3.error; }
             }
             prefix += this.rank.prefix;
         }
@@ -1206,103 +966,8 @@ var FishPlayer = /** @class */ (function () {
             this.autoflagged = false;
         }
     };
-    FishPlayer.prototype.checkAntiEvasion = function () {
-        var e_7, _a;
-        var _b, _c;
-        FishPlayer.updatePunishedIPs();
-        try {
-            for (var _d = __values(FishPlayer.punishedIPs), _e = _d.next(); !_e.done; _e = _d.next()) {
-                var _f = __read(_e.value, 2), ip = _f[0], uuid = _f[1];
-                if (ip == this.ip() && uuid != this.uuid && !this.ranksAtLeast("mod")) {
-                    api.sendModerationMessage("Automatically banned player `".concat(this.cleanedName, "` (`").concat(this.uuid, "`/`").concat(this.ip(), "`) for suspected punishment evasion.\nPreviously used UUID `").concat(uuid, "`(").concat((_b = Vars.netServer.admins.getInfoOptional(uuid)) === null || _b === void 0 ? void 0 : _b.plainLastName(), "), currently using UUID `").concat(this.uuid, "` from the same IP address."));
-                    Log.warn("&yAutomatically banned player &b".concat(this.cleanedName, "&y (&b").concat(this.uuid, "&y/&b").concat(this.ip(), "&y) for suspected punishment evasion.\n&yPreviously used UUID &b").concat(uuid, "&y(&b").concat((_c = Vars.netServer.admins.getInfoOptional(uuid)) === null || _c === void 0 ? void 0 : _c.plainLastName(), "&y), currently using UUID &b").concat(this.uuid, "&y from the same IP address."));
-                    FishPlayer.messageStaff("[yellow]Automatically banned player [white]".concat(this.name, "[yellow] for suspected punishment evasion."));
-                    Vars.netServer.admins.bannedIPs.add(ip);
-                    api.ban({ ip: ip, uuid: uuid });
-                    this.kick(Packets.KickReason.banned);
-                    return false;
-                }
-            }
-        }
-        catch (e_7_1) { e_7 = { error: e_7_1 }; }
-        finally {
-            try {
-                if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
-            }
-            finally { if (e_7) throw e_7.error; }
-        }
-        return true;
-    };
-    FishPlayer.updatePunishedIPs = function () {
-        for (var i = 0; i < this.punishedIPs.length; i++) {
-            if (this.punishedIPs[i][2] < Date.now()) {
-                this.punishedIPs.splice(i, 1);
-            }
-        }
-    };
-    FishPlayer.prototype.checkVPNAndJoins = function () {
-        var _this = this;
-        var ip = this.ip();
-        var info = this.info();
-        api.isVpn(ip, function (isVpn) {
-            if (isVpn) {
-                Log.warn("IP ".concat(ip, " was flagged as VPN. Flag rate: ").concat(FishPlayer.stats.numIpsFlagged, "/").concat(FishPlayer.stats.numIpsChecked, " (").concat(100 * FishPlayer.stats.numIpsFlagged / FishPlayer.stats.numIpsChecked, "%)"));
-                _this.ipDetectedVpn = true;
-                if (!FishPlayer.autoflagRate.allow(30000, 5)) {
-                    FishPlayer.triggerAntibot(funcs_1.Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic", false);
-                    return;
-                }
-                if ((info.timesJoined <= 1 || (FishPlayer.autoflagRate.occurences > 3 && info.timesJoined <= 10)) //is this smart?
-                    && !_this.ranksAtLeast("active")
-                    && FishPlayer.punishedIPs.length > 0) {
-                    _this.autoflagged = true;
-                    if (_this.connected())
-                        _this.stopUnit();
-                    _this.updateName();
-                    if (FishPlayer.shouldWhackFlaggedPlayers()) {
-                        FishPlayer.whackFlaggedPlayers(); //calls whack all flagged players
-                    }
-                    else {
-                        (0, utils_1.logAction)("autoflagged", "AntiVPN", _this);
-                        void api.sendStaffMessage("Autoflagged player ".concat(_this.cleanedName, "[cyan] for suspected vpn!"), "AntiVPN", true);
-                        if (!FishPlayer.antiBotMode())
-                            FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".concat(_this.prefixedName, "[cyan]\"[yellow] is new (").concat(info.timesJoined - 1, " joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free."));
-                        Log.warn("Player ".concat(_this.cleanedName, " (").concat(_this.uuid, ") was autoflagged."));
-                        if (_this.connected())
-                            void menus_1.Menu.buttons(_this, "[gold]Welcome to Fish Community!", "[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".concat(config_1.FColor.discord(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."), [[
-                                    { data: "Close", text: "Close" },
-                                    { data: "Discord", text: config_1.FColor.discord("Discord") },
-                                ]]).then(function (option) {
-                                if (option == "Discord") {
-                                    Call.openURI(_this.con(), config_1.text.discordURL);
-                                }
-                            });
-                        _this.sendMessage("[gold]Welcome to Fish Community!\n[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".concat(config_1.FColor.discord(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."));
-                    }
-                }
-                else if (info.timesJoined < 5) {
-                    FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".concat(_this.prefixedName, "[cyan]\"[yellow] is new (").concat(info.timesJoined - 1, " joins) and using a vpn."));
-                }
-            }
-            else {
-                if (info.timesJoined == 1) {
-                    FishPlayer.messageTrusted("[yellow]Player \"".concat(_this.prefixedName, "[yellow]\" is on first join."));
-                }
-            }
-            if (info.timesJoined == 1) {
-                var message = "&lrNew player joined: &c".concat(_this.cleanedName, "&lr (&c").concat(_this.uuid, "&lr/&c").concat(ip, "&lr)");
-                //Add BEL, this causes an audible noise
-                if (globals.fishState.joinBell)
-                    message += '\x07';
-                Log.info(message);
-            }
-        }, function (err) {
-            Log.err("Error while checking for VPN status of ip ".concat(ip, "!"));
-            Log.err(err);
-        });
-    };
     FishPlayer.prototype.validate = function () {
-        return this.checkName() && this.checkUsid() && this.checkAntiEvasion();
+        return this.checkName() && this.checkUsid() && automod_1.Automod.checkAntiEvasion(this);
     };
     /** Checks if this player's name is allowed. */
     FishPlayer.prototype.checkName = function () {
@@ -1373,15 +1038,15 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.sendWelcomeMessage = function () {
         var _this = this;
-        var appealLine = "To appeal, ".concat(config_1.FColor.discord(templateObject_3 || (templateObject_3 = __makeTemplateObject(["join our discord"], ["join our discord"]))), " with ").concat(config_1.FColor.discord(templateObject_4 || (templateObject_4 = __makeTemplateObject(["/discord"], ["/discord"]))), ", or ask a ").concat(ranks_1.Rank.mod.color, "staff member[] in-game.");
+        var appealLine = "To appeal, ".concat(config_1.FColor.discord(templateObject_1 || (templateObject_1 = __makeTemplateObject(["join our discord"], ["join our discord"]))), " with ").concat(config_1.FColor.discord(templateObject_2 || (templateObject_2 = __makeTemplateObject(["/discord"], ["/discord"]))), ", or ask a ").concat(ranks_1.Rank.mod.color, "staff member[] in-game.");
         if (FishPlayer.dataFetchFailedUuids.has(this.uuid)) {
             this.sendMessage(config_1.text.dataFetchFailed);
             FishPlayer.dataFetchFailedUuids.delete(this.uuid);
         }
         if (this.marked())
-            this.sendMessage("[gold]Hello there! You are currently [scarlet]marked as a griefer[]. You cannot do anything in-game while marked.\n".concat(appealLine, "\nYour mark will expire automatically ").concat(this.unmarkTime == globals.maxTime ? "in [red]never[]" : "[green]".concat((0, utils_1.formatTimeRelative)(this.unmarkTime), "[]"), ".\nWe apologize for the inconvenience."));
+            this.sendMessage("[gold]Hello there! You are currently [scarlet]marked as a griefer[]. You cannot do anything in-game while marked.\n".concat(appealLine, "\nYour mark will expire automatically ").concat(globals_1.maxTime - this.unmarkTime < 60000 ? "in [red]never[]" : "[green]".concat((0, utils_1.formatTimeRelative)(this.unmarkTime), "[]"), ".\nWe apologize for the inconvenience."));
         else if (this.muted())
-            this.sendMessage("[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.\n".concat(appealLine, "\nYour mute will expire automatically ").concat(this.unmarkTime == globals.maxTime ? "in [red]never[]" : "[green]".concat((0, utils_1.formatTimeRelative)(this.unmarkTime), "[]"), ".\nWe apologize for the inconvenience."));
+            this.sendMessage("[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.\n".concat(appealLine, "\nYour mute will expire automatically ").concat(globals_1.maxTime - this.unmarkTime < 60000 ? "in [red]never[]" : "[green]".concat((0, utils_1.formatTimeRelative)(this.unmarkTime), "[]"), ".\nWe apologize for the inconvenience."));
         else if (this.autoflagged)
             this.sendMessage("[gold]Hello there! You are currently [red]flagged as suspicious[]. You cannot do anything in-game.\n".concat(appealLine, "\nWe apologize for the inconvenience."));
         else if (!this.showRankPrefix)
@@ -1394,7 +1059,7 @@ var FishPlayer = /** @class */ (function () {
                 this.lastShownAd = Date.now();
                 this.showAdNext = true;
             }
-            else if (this.lastShownAd == globals.maxTime) {
+            else if (this.lastShownAd == globals_1.maxTime) {
                 //this is the first time they joined, show ad the next time they join
                 this.showAdNext = true;
                 this.lastShownAd = Date.now();
@@ -1411,7 +1076,7 @@ var FishPlayer = /** @class */ (function () {
         }
     };
     FishPlayer.prototype.checkAutoRanks = function () {
-        var e_8, _a;
+        var e_4, _a;
         var _this = this;
         if (this.stelled())
             return;
@@ -1435,12 +1100,12 @@ var FishPlayer = /** @class */ (function () {
                 _loop_1(rankToAssign);
             }
         }
-        catch (e_8_1) { e_8 = { error: e_8_1 }; }
+        catch (e_4_1) { e_4 = { error: e_4_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_8) throw e_8.error; }
+            finally { if (e_4) throw e_4.error; }
         }
     };
     //#endregion
@@ -1662,51 +1327,6 @@ var FishPlayer = /** @class */ (function () {
             Log.err("=============================");
         }
     };
-    //#endregion
-    //#region antibot
-    FishPlayer.antiBotMode = function () {
-        return Date.now() < this.antibotExpires;
-    };
-    FishPlayer.shouldKickNewPlayers = function () {
-        return false;
-    };
-    FishPlayer.shouldWhackFlaggedPlayers = function () {
-        return Date.now() < this.antibotExpires;
-    };
-    FishPlayer.whackFlaggedPlayers = function () {
-        this.forEachPlayer(function (p) {
-            if (p.ipDetectedVpn && p.suspicionLevel() == 3) {
-                Vars.netServer.admins.blacklistDos(p.ip());
-                try {
-                    Vars.netServer.admins.blacklistDos(p.con().connection.getRemoteAddressUDP().getAddress().getHostAddress());
-                }
-                catch (_a) { }
-                Log.info("&yAntibot killed connection ".concat(p.ip(), " due to flagged while under attack"));
-                p.player.kick(Packets.KickReason.banned, 10000000);
-            }
-        });
-    };
-    FishPlayer.triggerAntibot = function (duration, reason, category, kickNewPlayers, pingConsole) {
-        if (pingConsole === void 0) { pingConsole = false; }
-        if (category == "automatic") {
-            //Ping reports based on time
-            var message = void 0;
-            if (Date.now() - this.antibotExpires > funcs_1.Duration.hours(1))
-                message = "!!! ".concat(config_1.text.reportsPing, " Possible ongoing bot attack in **").concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason));
-            else if (Date.now() - this.antibotExpires > funcs_1.Duration.minutes(10))
-                message = "!!! Possible ongoing bot attack in **".concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason));
-            if (message)
-                api.sendModerationMessage(pingConsole ? message + " <@&1096094397625532558>" : message);
-        }
-        if (Date.now() > this.antibotExpires || reason != this.lastAntibotReason)
-            Log.info("&yAntibot triggered: ".concat((0, funcs_1.escapeStringColorsServer)(reason)));
-        this.antibotExpires = Math.max(this.antibotExpires, Date.now() + duration);
-        if (kickNewPlayers)
-            this.kickNewPlayersExpires = Date.now() + 8000;
-        this.lastAntibotReason = reason;
-        if (this.shouldWhackFlaggedPlayers())
-            this.whackFlaggedPlayers();
-    };
     FishPlayer.messageStaff = function (arg1, arg2, wasStaff) {
         var message = arg2 ?
             wasStaff ? "[#696969]<[cyan]staff[#696969]>[white]".concat(arg1, "[green]: [cyan]").concat(arg2)
@@ -1808,7 +1428,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.setTeam = function (team) {
         var oldTeam = this.player.team();
         this.player.team(team);
-        globals.FishEvents.fire("playerTeamChange", [this, oldTeam]);
+        globals_1.FishEvents.fire("playerTeamChange", [this, oldTeam]);
     };
     FishPlayer.prototype.con = function () {
         return this.player.con;
@@ -1976,31 +1596,7 @@ var FishPlayer = /** @class */ (function () {
         (_a = this.player) === null || _a === void 0 ? void 0 : _a.kick(reason, duration);
     };
     FishPlayer.prototype.setPunishedIP = function (duration) {
-        FishPlayer.punishedIPs.push([this.ip(), this.uuid, Date.now() + duration]);
-    };
-    FishPlayer.removePunishedIP = function (target) {
-        var ipIndex;
-        if ((ipIndex = FishPlayer.punishedIPs.findIndex(function (_a) {
-            var _b = __read(_a, 1), ip = _b[0];
-            return ip == target;
-        })) != -1) {
-            FishPlayer.punishedIPs.splice(ipIndex, 1);
-            return true;
-        }
-        else
-            return false;
-    };
-    FishPlayer.removePunishedUUID = function (target) {
-        var uuidIndex;
-        if ((uuidIndex = FishPlayer.punishedIPs.findIndex(function (_a) {
-            var _b = __read(_a, 2), uuid = _b[1];
-            return uuid == target;
-        })) != -1) {
-            FishPlayer.punishedIPs.splice(uuidIndex, 1);
-            return true;
-        }
-        else
-            return false;
+        automod_1.Automod.punishedIPs.push([this.ip(), this.uuid, Date.now() + duration]);
     };
     FishPlayer.prototype.setJokeName = function (name) {
         this.jokeName = name.trim();
@@ -2020,7 +1616,7 @@ var FishPlayer = /** @class */ (function () {
     /** Sets the unmark time but doesn't stop the player's unit or send them a message. */
     FishPlayer.prototype.updateStopTime = function (duration) {
         var _this = this;
-        var time = Math.min(Date.now() + duration, globals.maxTime);
+        var time = Math.min(Date.now() + duration, globals_1.maxTime);
         return this.updateSynced(function () {
             _this.unmarkTime = time;
             _this.updateName();
@@ -2029,7 +1625,7 @@ var FishPlayer = /** @class */ (function () {
     /** Sets the unmute time but doesn't send a message. */
     FishPlayer.prototype.updateMuteTime = function (duration) {
         var _this = this;
-        var time = Math.min(Date.now() + duration, globals.maxTime);
+        var time = Math.min(Date.now() + duration, globals_1.maxTime);
         return this.updateSynced(function () {
             _this.unmuteTime = time;
             _this.updateName();
@@ -2049,57 +1645,6 @@ var FishPlayer = /** @class */ (function () {
             }
         }
     };
-    FishPlayer.prototype.activateHeuristics = function () {
-        var _this = this;
-        if (config_1.Gamemode.hexed() || config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv())
-            return;
-        //Blocks broken check
-        if (this.joinsLessThan(5)) {
-            var tripped_1 = false;
-            this.tstats.blocksBroken = 0;
-            Timer.schedule(function () {
-                if (_this.connected() && !tripped_1) {
-                    var limit = _this.firstJoin() && FishPlayer.antiBotMode() ?
-                        Date.now() < FishPlayer.kickNewPlayersExpires + 30000 ? 1 : 25
-                        : config_1.heuristics.blocksBrokenAfterJoin;
-                    if (_this.tstats.blocksBroken > limit) {
-                        tripped_1 = true;
-                        (0, utils_1.logHTrip)(_this, "blocks broken after join", "".concat(_this.tstats.blocksBroken, "/").concat(limit));
-                        void _this.stop("automod", _this.tstats.blocksBroken > 40 ? globals.maxTime : funcs_1.Duration.minutes(3), "Automatic stop due to suspicious activity");
-                        FishPlayer.messageAllExcept(_this, "[yellow]Player ".concat(_this.cleanedName, " has been stopped automatically due to suspected griefing.\nPlease look at ").concat(_this.position(), " and see if they were actually griefing. If they were not, please inform a staff member."));
-                    }
-                }
-            }, 0, 1, (this.firstJoin() && !this.joinedAlready) ? 30 : this.joinsLessThan(3) ? 25 : 15);
-        }
-        if (this.firstJoin() && !this.joinedAlready) {
-            this.joinedAlready = true;
-            var tripped_2 = false;
-            Timer.schedule(function () {
-                if (_this.stats.chatMessagesSent >= 3 && !tripped_2) {
-                    tripped_2 = true;
-                    if (FishPlayer.antiBotMode())
-                        Vars.netServer.admins.dosBlacklist.add(_this.ip());
-                    else if (!FishPlayer.chatSpam.allow(10000, 1)) {
-                        Vars.netServer.admins.dosBlacklist.add(_this.ip());
-                        FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat", "automatic", true);
-                    }
-                    else {
-                        void _this.mute("automod", funcs_1.Duration.months(1));
-                        (0, utils_1.logHTrip)(_this, "new player spamming chat");
-                    }
-                }
-            }, 1, 1, 4);
-            Timer.schedule(function () {
-                if (_this.stats.chatMessagesSent >= 4 && !tripped_2) {
-                    tripped_2 = true;
-                    if (!FishPlayer.chatSpamSlow.allow(30000, 2)) {
-                        Vars.netServer.admins.dosBlacklist.add(_this.ip());
-                        FishPlayer.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat slowly", "automatic", true);
-                    }
-                }
-            }, 1, 2, 10);
-        }
-    };
     //#region Static constants
     /** Save version used for serialized FishPlayers. */
     FishPlayer.saveVersion = 14;
@@ -2116,25 +1661,8 @@ var FishPlayer = /** @class */ (function () {
     };
     /** The last player that was kicked due to a USID mismatch. */
     FishPlayer.lastAuthKicked = null;
-    /**
-     * List of IPs that were recently punished.
-     * If a new account joins from one of these IPs,
-     * we assume they are trying to evade the punishment
-     * and the IP gets banned.
-     */
-    FishPlayer.punishedIPs = [];
-    FishPlayer.lastMapStartTime = 0;
     /** Stores the 10 most recent players that left. */
     FishPlayer.recentLeaves = [];
-    //Used for the antibot. Some of these values are reset by timers.
-    FishPlayer.antibotExpires = -1;
-    FishPlayer.kickNewPlayersExpires = -1;
-    FishPlayer.lastAntibotReason = "";
-    FishPlayer.autoflagRate = new Ratekeeper();
-    FishPlayer.connectRate = new Ratekeeper();
-    FishPlayer.votekickActionRate = new Ratekeeper();
-    FishPlayer.lastVKActions = [];
-    FishPlayer.globalSusChat = new Ratekeeper();
     FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { var _a; return ((_a = p.player) === null || _a === void 0 ? void 0 : _a.id.toString()) === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
@@ -2144,16 +1672,17 @@ var FishPlayer = /** @class */ (function () {
     //#region datasync
     //Please see docs/data-management.md for a description of the update syncing algorithm.
     FishPlayer.dataFetchFailedUuids = new Set();
-    FishPlayer.easterEggVotekickTarget = null;
     FishPlayer.ignoreGameOver = false;
     FishPlayer.oddBrackets = Pattern.compile("(?<!\\[)(\\[\\[)*\\[$");
-    //#endregion
-    //#region heuristics
-    FishPlayer.chatSpam = new Ratekeeper();
-    FishPlayer.chatSpamSlow = new Ratekeeper();
     return FishPlayer;
 }());
 exports.FishPlayer = FishPlayer;
 //TODO convert all the unnecessary event handlers to simple calls to Events.on
 Events.on(EventType.WaveEvent, function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.wavesSurvived++; }); });
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4;
+Events.on(EventType.PlayerChatEvent, function (_a) {
+    var player = _a.player;
+    var fishP = FishPlayer.get(player);
+    fishP.lastActive = Date.now();
+    fishP.updateStats(function (stats) { return stats.chatMessagesSent++; });
+});
+var templateObject_1, templateObject_2;

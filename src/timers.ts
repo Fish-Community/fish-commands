@@ -3,6 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains timers that run code at regular intervals.
 */
 
+import { Antibot } from "/automod";
 import { fetchAntibotData, getStaffMessages, syncDosBlacklist } from "/api";
 import * as config from "/config";
 import { Gamemode } from "/config";
@@ -111,13 +112,10 @@ export function initializeTimers(){
 		if(joinDemographics.size > 1000) joinDemographics.clear();
 	}, 0, DurationSecs.minutes(1));
 	Timer.schedule(() => {
-		if(FishPlayer.antiBotMode()){
+		if(Antibot.antiBotMode()){
 			Call.infoToast(`[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ${Vars.netServer.admins.dosBlacklist.size}`, 2);
 		}
 	}, 0, 1);
-	Timer.schedule(() => {
-		FishPlayer.validateVotekickSession();
-	}, 0, 0.3);
 }
 
 Timer.schedule(() => {

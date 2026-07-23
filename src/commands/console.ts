@@ -4,6 +4,7 @@ This file contains all the console commands, which can be run through the server
 */
 
 import * as api from "/api";
+import { Antibot, Automod } from "/automod";
 import { FishServer, Gamemode, Mode } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
@@ -260,7 +261,7 @@ export const commands = consoleCommandList({
 			let range:string | null;
 			if(ipPattern.test(args.target)){
 				//target is an ip
-				if(FishPlayer.removePunishedIP(args.target)){
+				if(Automod.removePunishedIP(args.target)){
 					output(`Removed IP &c"${args.target}"&fr from the anti-evasion list.`);
 				}
 				if(admins.kickedIPs.remove(args.target)){
@@ -294,7 +295,7 @@ export const commands = consoleCommandList({
 					output(`IP range &c"${range}"&fr was not banned.`);
 				}
 			} else if(uuidPattern.test(args.target)){
-				if(FishPlayer.removePunishedUUID(args.target)){
+				if(Automod.removePunishedUUID(args.target)){
 					output(`Removed UUID &c"${args.target}"&fr from the anti-evasion list.`);
 				}
 				output("Checking ban status...");
@@ -617,7 +618,7 @@ Server uptime: ${uptimeColor}${formatTime(uptime)}&fr (since ${formatTimestampFu
 ${[
 	fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
 	fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",
-	FishPlayer.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + getAntiBotInfo("server") : "",
+	Antibot.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + getAntiBotInfo("server") : "",
 ].filter(l => l.length > 0).join("\n")}\
 
 ${colorNumber(Groups.player.size(), n => n > 0 ? "&c" : "&lr", "server")} players online, ${colorNumber(numStaff, n => n > 0 ? "&c" : "&lr", "server")} staff members.
@@ -812,16 +813,16 @@ ${FishPlayer.mapPlayers(p =>
 		description: "Checks anti bot stats, or force enables anti bot mode.",
 		handler({args, outputSuccess, output, f}){
 			if(args.timeout == 0){
-				FishPlayer.antibotExpires = Date.now() - 1;
-				FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+				Antibot.antibotExpires = Date.now() - 1;
+				Antibot.kickNewPlayersExpires = Date.now() - 1;
 				outputSuccess(`Disabled antibot mode.`);
 			} else if(args.timeout != undefined){
-				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by console`, "manual", false);
+				Antibot.triggerAntibot(args.timeout, `Manually triggered by console`, "manual", false);
 				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);
 			} else {
 				output(
 `[acid]Antibot status:
-[acid]Enabled: ${f.boolBad(FishPlayer.antiBotMode())}
+[acid]Enabled: ${f.boolBad(Antibot.antiBotMode())}
 ${getAntiBotInfo("server")}`
 				);
 			}

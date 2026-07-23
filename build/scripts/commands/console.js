@@ -115,6 +115,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 var api = __importStar(require("/api"));
+var automod_1 = require("/automod");
 var config_1 = require("/config");
 var files_1 = require("/files");
 var fjsContext = __importStar(require("/fjsContext"));
@@ -492,7 +493,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var range;
             if (globals_1.ipPattern.test(args.target)) {
                 //target is an ip
-                if (players_1.FishPlayer.removePunishedIP(args.target)) {
+                if (automod_1.Automod.removePunishedIP(args.target)) {
                     output("Removed IP &c\"".concat(args.target, "\"&fr from the anti-evasion list."));
                 }
                 if (admins.kickedIPs.remove(args.target)) {
@@ -531,7 +532,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 }
             }
             else if (globals_1.uuidPattern.test(args.target)) {
-                if (players_1.FishPlayer.removePunishedUUID(args.target)) {
+                if (automod_1.Automod.removePunishedUUID(args.target)) {
                     output("Removed UUID &c\"".concat(args.target, "\"&fr from the anti-evasion list."));
                 }
                 output("Checking ban status...");
@@ -904,7 +905,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             output("\nStatus:\nPlaying on map &fi".concat(Vars.state.map.plainName(), "&fr for ").concat((0, utils_1.formatTime)(1000 * Vars.state.tick / 60), "\n").concat(Vars.state.rules.waves ? "Wave &c".concat(Vars.state.wave, "&fr, &c").concat(Math.ceil(Vars.state.wavetime / 60), "&fr seconds until next wave.\n") : "", "&c").concat(Groups.unit.size(), "&fr units, &c").concat(Vars.state.enemies, "&fr enemies, &c").concat(Groups.build.size(), "&fr buildings\nTPS: ").concat((0, utils_1.colorNumber)(Core.graphics.getFramesPerSecond(), function (f) { return f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w"; }, "server"), ", Memory: &c").concat(Math.round(Core.app.getJavaHeap() / 1048576), "&fr MB\nServer uptime: ").concat(uptimeColor).concat((0, utils_1.formatTime)(uptime), "&fr (since ").concat((0, utils_1.formatTimestampFull)(Date.now() - uptime), ")\n").concat([
                 globals_1.fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
                 globals_1.fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",
-                players_1.FishPlayer.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + (0, utils_1.getAntiBotInfo)("server") : "",
+                automod_1.Antibot.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + (0, utils_1.getAntiBotInfo)("server") : "",
             ].filter(function (l) { return l.length > 0; }).join("\n"), "\n").concat((0, utils_1.colorNumber)(Groups.player.size(), function (n) { return n > 0 ? "&c" : "&lr"; }, "server"), " players online, ").concat((0, utils_1.colorNumber)(numStaff, function (n) { return n > 0 ? "&c" : "&lr"; }, "server"), " staff members.\n").concat(players_1.FishPlayer.mapPlayers(function (p) {
                 return "\t".concat(p.rank.shortPrefix, " &c").concat(p.uuid, "&fr &c").concat(p.name, "&fr");
             }).join("\n") || "&lrNo players connected.&fr", "\n"));
@@ -1145,16 +1146,16 @@ exports.commands = (0, commands_1.consoleCommandList)({
         handler: function (_a) {
             var args = _a.args, outputSuccess = _a.outputSuccess, output = _a.output, f = _a.f;
             if (args.timeout == 0) {
-                players_1.FishPlayer.antibotExpires = Date.now() - 1;
-                players_1.FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+                automod_1.Antibot.antibotExpires = Date.now() - 1;
+                automod_1.Antibot.kickNewPlayersExpires = Date.now() - 1;
                 outputSuccess("Disabled antibot mode.");
             }
             else if (args.timeout != undefined) {
-                players_1.FishPlayer.triggerAntibot(args.timeout, "Manually triggered by console", "manual", false);
+                automod_1.Antibot.triggerAntibot(args.timeout, "Manually triggered by console", "manual", false);
                 outputSuccess("Set antibot mode override for ".concat((0, utils_1.formatTime)(args.timeout), "."));
             }
             else {
-                output("[acid]Antibot status:\n[acid]Enabled: ".concat(f.boolBad(players_1.FishPlayer.antiBotMode()), "\n").concat((0, utils_1.getAntiBotInfo)("server")));
+                output("[acid]Antibot status:\n[acid]Enabled: ".concat(f.boolBad(automod_1.Antibot.antiBotMode()), "\n").concat((0, utils_1.getAntiBotInfo)("server")));
             }
         }
     },

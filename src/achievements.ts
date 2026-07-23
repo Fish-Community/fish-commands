@@ -1,6 +1,6 @@
 import { FColor, Gamemode, GamemodeName, GamemodeNames, prefixes } from "/config";
 import { Duration } from "/funcs";
-import { FishEvents, unitsT5 } from "/globals";
+import { FishEvents, fishState, unitsT5 } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { getStatuses } from "/utils";
@@ -227,7 +227,7 @@ export const Achievements = {
 	attack: new Achievement(Iconc.modeAttack, "Attack", ["Defeat an attack map.", "You must be present for the beginning and end of the game."], {
 		modes: ["only", "attack"],
 		checkPlayerGameover: (player, winTeam) => 
-			Vars.state.rules.defaultTeam == winTeam && player.tstats.lastMapStartTime == FishPlayer.lastMapStartTime,
+			Vars.state.rules.defaultTeam == winTeam && player.tstats.lastMapStartTime == fishState.lastMapStartTime,
 	}),
 	survival: new Achievement(Iconc.modeSurvival, "Survival", ["Survive 50 waves in a survival map.", "Must be during the same game."], {
 		modes: ["only", "survival"],
@@ -237,7 +237,7 @@ export const Achievements = {
 	pvp: new Achievement(Iconc.modePvp, "PVP", ["Win a match of PVP.", "You must be present for the beginning and end of the game."], {
 		modes: ["only", "pvp"],
 		checkPlayerGameover: (player, winTeam) => 
-			player.team() == winTeam && player.tstats.lastMapStartTime == FishPlayer.lastMapStartTime,
+			player.team() == winTeam && player.tstats.lastMapStartTime == fishState.lastMapStartTime,
 	}),
 	sandbox: new Achievement(Iconc.image, "Sandbox", "Spend 1 hour in Sandbox.", {
 		modes: ["only", "sandbox"],
@@ -246,12 +246,12 @@ export const Achievements = {
 	hexed: new Achievement(Iconc.layers, "Hexed", ["Play a match of Hexed.", "You must be present for the beginning and end of the game."], {
 		modes: ["only", "hexed"],
 		checkPlayerGameover: (player) => 
-			player.tstats.lastMapStartTime == FishPlayer.lastMapStartTime,
+			player.tstats.lastMapStartTime == fishState.lastMapStartTime,
 	}),
 	minigame: new Achievement(Iconc.play, "Minigame", ["Win a Minigame.", "You must be present for the beginning and end of the game."], {
 		modes: ["only", "minigame"],
 		checkPlayerGameover: (player, winTeam) => 
-			player.team() == winTeam && player.tstats.lastMapStartTime == FishPlayer.lastMapStartTime,
+			player.team() == winTeam && player.tstats.lastMapStartTime == fishState.lastMapStartTime,
 	}),
 
 	//playtime based

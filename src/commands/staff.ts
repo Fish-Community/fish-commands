@@ -4,6 +4,7 @@ This file contains the in-game chat commands that can be run by trusted staff.
 */
 
 import * as api from "/api";
+import { Antibot } from "/automod";
 import { Gamemode, Mode, rules, stopAntiEvadeTime } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
@@ -866,17 +867,17 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 		perm: Perm.mod,
 		handler({args, sender, outputSuccess, output, f}){
 			if(args.timeout == 0){
-				FishPlayer.antibotExpires = Date.now() - 1;
-				FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+				Antibot.antibotExpires = Date.now() - 1;
+				Antibot.kickNewPlayersExpires = Date.now() - 1;
 				outputSuccess(`Disabled antibot mode.`);
 			} else if(args.timeout != undefined){
 				args.timeout = Math.min(args.timeout, sender.hasPerm("admin") ? Duration.hours(1) : Duration.minutes(10));
-				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by player ${sender.name}`, "manual", false);
+				Antibot.triggerAntibot(args.timeout, `Manually triggered by player ${sender.name}`, "manual", false);
 				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);
 			} else {
 				output(
 `[acid]Antibot status:
-[acid]Enabled: ${f.boolBad(FishPlayer.antiBotMode())}
+[acid]Enabled: ${f.boolBad(Antibot.antiBotMode())}
 ${getAntiBotInfo("client")}`
 				);
 			}

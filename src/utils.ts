@@ -4,6 +4,7 @@ This file contains many utility functions that need access to any values from ot
 For functions that don't need values from other files, see funcs.ts.
 */
 
+import { Antibot } from "/automod";
 import * as api from "/api";
 import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
 import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
@@ -515,11 +516,11 @@ export function getAntiBotInfo(side:"client" | "server"){
 	const True = side == "client" ? "[red]true[]" : "&lrtrue";
 	const False = side == "client" ? "[green]false[]" : "&gfalse";
 	return (
-`${color}Flag count: ${formatRatekeeper(FishPlayer.autoflagRate)}
-${color}Autobanning flagged players: ${FishPlayer.shouldWhackFlaggedPlayers() ? True : False}
-${color}Kicking new players: ${FishPlayer.shouldKickNewPlayers() ? True : False}
-${color}Recent connect packets: ${formatRatekeeper(FishPlayer.connectRate)}
-${color}Reason: ${FishPlayer.lastAntibotReason}`
+`${color}Flag count: ${formatRatekeeper(Antibot.autoflagRate)}
+${color}Autobanning flagged players: ${Antibot.shouldWhackFlaggedPlayers() ? True : False}
+${color}Kicking new players: ${Antibot.shouldKickNewPlayers() ? True : False}
+${color}Recent connect packets: ${formatRatekeeper(Antibot.connectRate)}
+${color}Reason: ${Antibot.lastAntibotReason}`
 	);
 }
 

@@ -125,6 +125,7 @@ exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
 exports.unblacklist = unblacklist;
 exports.getDuration = getDuration;
+var automod_1 = require("/automod");
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
@@ -663,7 +664,7 @@ function getAntiBotInfo(side) {
     var color = side == "client" ? "[acid]" : "&ly";
     var True = side == "client" ? "[red]true[]" : "&lrtrue";
     var False = side == "client" ? "[green]false[]" : "&gfalse";
-    return ("".concat(color, "Flag count: ").concat(formatRatekeeper(players_1.FishPlayer.autoflagRate), "\n").concat(color, "Autobanning flagged players: ").concat(players_1.FishPlayer.shouldWhackFlaggedPlayers() ? True : False, "\n").concat(color, "Kicking new players: ").concat(players_1.FishPlayer.shouldKickNewPlayers() ? True : False, "\n").concat(color, "Recent connect packets: ").concat(formatRatekeeper(players_1.FishPlayer.connectRate), "\n").concat(color, "Reason: ").concat(players_1.FishPlayer.lastAntibotReason));
+    return ("".concat(color, "Flag count: ").concat(formatRatekeeper(automod_1.Antibot.autoflagRate), "\n").concat(color, "Autobanning flagged players: ").concat(automod_1.Antibot.shouldWhackFlaggedPlayers() ? True : False, "\n").concat(color, "Kicking new players: ").concat(automod_1.Antibot.shouldKickNewPlayers() ? True : False, "\n").concat(color, "Recent connect packets: ").concat(formatRatekeeper(automod_1.Antibot.connectRate), "\n").concat(color, "Reason: ").concat(automod_1.Antibot.lastAntibotReason));
 }
 var failPrefix = "[scarlet]\u26A0 [yellow]";
 var successPrefix = "[#48e076]\uE800 ";
