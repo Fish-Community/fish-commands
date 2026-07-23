@@ -77,7 +77,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Heuristics = exports.Automod = exports.Antibot = void 0;
+exports.Heuristics = exports.Automod = exports.Antibot = exports.lastVKActions = exports.votekickActionRate = exports.globalSusChat = void 0;
 exports.checkVPNAndJoins = checkVPNAndJoins;
 var api = __importStar(require("/api"));
 var utils_1 = require("/utils");
@@ -86,9 +86,9 @@ var players_1 = require("/players");
 var config_1 = require("/config");
 var globals_1 = require("/globals");
 var menus_1 = require("/frameworks/menus");
-var globalSusChat = new Ratekeeper();
-var votekickActionRate = new Ratekeeper();
-var lastVKActions = [];
+exports.globalSusChat = new Ratekeeper();
+exports.votekickActionRate = new Ratekeeper();
+exports.lastVKActions = [];
 Events.on(EventType.PlayerChatEvent, function (_a) {
     var player = _a.player, message = _a.message;
     var fishP = players_1.FishPlayer.get(player);
@@ -173,19 +173,19 @@ function checkVotekickAction(fishP, message) {
     if (sus <= 1)
         return;
     var reason = undefined;
-    if (!votekickActionRate.allow(108000, 8))
+    if (!exports.votekickActionRate.allow(108000, 8))
         reason = "Exceeded 8 votekick actions in the last 2 minutes";
-    else if (sus == 3 && lastVKActions.find(function (a) { return Date.now() - a.time < 10000 && a.playerSusLevel == 3; }) && timeSinceJoin < 6000)
+    else if (sus == 3 && exports.lastVKActions.find(function (a) { return Date.now() - a.time < 10000 && a.playerSusLevel == 3; }) && timeSinceJoin < 6000)
         reason = "Performed votekick within 6 seconds of joining and there was a recent suspicious vote";
-    else if (sus == 3 && timeSinceJoin < 80000 && lastVKActions.find(function (a) { return a.player == fishP; }) && targetSusLevel <= 1)
+    else if (sus == 3 && timeSinceJoin < 80000 && exports.lastVKActions.find(function (a) { return a.player == fishP; }) && targetSusLevel <= 1)
         reason = "Two votekick actions within 80 seconds of joining and the target is not suspicious";
-    else if (sus >= 2 && lastVKActions.filter(function (a) { return a.playerSusLevel == 3 && Date.now() - a.time < 33000; }).length >= 3)
+    else if (sus >= 2 && exports.lastVKActions.filter(function (a) { return a.playerSusLevel == 3 && Date.now() - a.time < 33000; }).length >= 3)
         reason = "More than 3 recent votekick actions by suspicious players";
-    else if (sus >= 2 && lastVKActions.filter(function (a) { return a.playerSusLevel >= 2; }).length >= 6 && lastVKActions.filter(function (a) { return a.player == fishP; }).length >= 3)
+    else if (sus >= 2 && exports.lastVKActions.filter(function (a) { return a.playerSusLevel >= 2; }).length >= 6 && exports.lastVKActions.filter(function (a) { return a.player == fishP; }).length >= 3)
         reason = "More than 6 slightly suspicious votekick actions within the past 20 minutes and this player has already performed 3 of them";
     if (reason != undefined) {
         //Should we ban everyone?
-        var suspiciousActions = lastVKActions.filter(function (action) {
+        var suspiciousActions = exports.lastVKActions.filter(function (action) {
             return (action.playerSusLevel == 3 || (action.targetSusLevel <= 2 && action.playerSusLevel >= 2) || action.player == fishP) && Date.now() - action.time < 78000;
         });
         if (suspiciousActions.length >= 3) {
@@ -218,9 +218,9 @@ function checkVotekickAction(fishP, message) {
             }
             (0, utils_1.updateBans)(function (player) { return "[scarlet]Player [yellow]".concat(player.name, "[scarlet] has been whacked automatically for suspected votekick abuse."); });
             //Pardon most of the votekick targets (the ones that weren't voted on by a non-sus player)
-            var candidatePardons = new Set(lastVKActions.map(function (a) { return a.target; }));
+            var candidatePardons = new Set(exports.lastVKActions.map(function (a) { return a.target; }));
             try {
-                for (var lastVKActions_1 = __values(lastVKActions), lastVKActions_1_1 = lastVKActions_1.next(); !lastVKActions_1_1.done; lastVKActions_1_1 = lastVKActions_1.next()) {
+                for (var lastVKActions_1 = __values(exports.lastVKActions), lastVKActions_1_1 = lastVKActions_1.next(); !lastVKActions_1_1.done; lastVKActions_1_1 = lastVKActions_1.next()) {
                     var action = lastVKActions_1_1.value;
                     if (action.playerSusLevel <= 1)
                         candidatePardons.delete(action.target);
@@ -268,7 +268,7 @@ function checkVotekickAction(fishP, message) {
                     Vars.netServer.currentlyKicking = null;
                 });
             //If there is an ongoing votekick and the initiator is suspicious, cancel that
-            else if (((_e = lastVKActions.slice().reverse().find(function (a) { return a.type == "start"; })) === null || _e === void 0 ? void 0 : _e.playerSusLevel) == 3) {
+            else if (((_e = exports.lastVKActions.slice().reverse().find(function (a) { return a.type == "start"; })) === null || _e === void 0 ? void 0 : _e.playerSusLevel) == 3) {
                 Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff."));
                 if (Vars.netServer.currentlyKicking)
                     Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
@@ -289,7 +289,7 @@ function checkVotekickAction(fishP, message) {
         }
     }
     //Update state to catch future actions
-    lastVKActions.push({
+    exports.lastVKActions.push({
         player: fishP,
         playerSusLevel: sus,
         target: target,
@@ -298,7 +298,7 @@ function checkVotekickAction(fishP, message) {
         type: message.startsWith("/votekick") ? "start" : "vote y",
         reason: message.startsWith("/votekick") ? message.split(" ").slice(2).join(" ") : undefined
     });
-    lastVKActions = lastVKActions.filter(function (a) { return Date.now() - a.time < funcs_1.Duration.minutes(10); });
+    exports.lastVKActions.splice.apply(exports.lastVKActions, __spreadArray([0, exports.lastVKActions.length], __read(exports.lastVKActions.filter(function (a) { return Date.now() - a.time < funcs_1.Duration.minutes(10); })), false));
 }
 function checkChatMessage(fishP) {
     var susLevel = fishP.suspicionLevel();
@@ -313,7 +313,7 @@ function checkChatMessage(fishP) {
             fishP.kickForSpamAt = Date.now() + 3000;
         }
     }
-    if (susLevel >= 2 && !globalSusChat.allow(30000, 20)) {
+    if (susLevel >= 2 && !exports.globalSusChat.allow(30000, 20)) {
         exports.Antibot.triggerAntibot(funcs_1.Duration.minutes(2), "too many chat messages", "automatic", true);
     }
 }

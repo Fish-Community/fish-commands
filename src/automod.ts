@@ -11,9 +11,9 @@ import { FColor, Gamemode, heuristics, text } from "/config";
 import { fishState, maxTime, uuidPattern } from "/globals";
 import { Menu } from "/frameworks/menus";
 
-const globalSusChat = new Ratekeeper();
-const votekickActionRate = new Ratekeeper();
-let lastVKActions = [] as Array<{
+export const globalSusChat = new Ratekeeper();
+export const votekickActionRate = new Ratekeeper();
+export const lastVKActions = [] as Array<{
 	type: "vote y" | "start";
 	player: FishPlayer;
 	playerSusLevel: 0 | 1 | 2 | 3;
@@ -195,7 +195,9 @@ function checkVotekickAction(fishP:FishPlayer, message:string){
 		reason: message.startsWith("/votekick") ? message.split(" ").slice(2).join(" ") : undefined
 	});
 
-	lastVKActions = lastVKActions.filter(a => Date.now() - a.time < Duration.minutes(10));
+	lastVKActions.splice(0, lastVKActions.length,
+		...lastVKActions.filter(a => Date.now() - a.time < Duration.minutes(10))
+	);
 }
 
 function checkChatMessage(fishP:FishPlayer){
