@@ -760,7 +760,18 @@ type Unit = {
 	clearStatuses():void;
 	within(pos: Building | Unit, distance: number):boolean;
 };
-type NetConnection = Record<string, any>;
+class NetConnection {
+	player: Player;
+	connection: any;
+	address: string;
+	hasDisconnected: boolean;
+	hasBegunConnecting: boolean;
+	mobile: boolean;
+	kicked: boolean;
+	kick(reason:string, duration?:number):void;
+	kick(reason:KickReason, duration?:number):void;
+	sendStream(data:any):void;
+}
 class Command {
 	text:string;
 	paramText:string;

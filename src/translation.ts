@@ -1,9 +1,11 @@
 /*
 Copyright © BalaM314, 2026. All Rights Reserved.
+mostly written by @author TheRadioactiveBanana
 This file contains a translation client implementation for https://github.com/TheRadioactiveBanana/translate-api-wrapper
 */
 
 import { translationApiToken, translationApiUrl } from "/config";
+import { escapeStringColorsServer } from "/funcs";
 import { FishPlayer } from "/players";
 import { removeFoosChars } from "/utils";
 
@@ -18,7 +20,7 @@ export const playerLanguageCache = new ObjectMap<string, Seq<Player>>();
 /** Only modify on main thread */
 export const translationCache = new ObjectMap<string, string>();
 
-export function initializeTranslation(){
+Events.on(EventType.ServerLoadEvent, () => {
 	void fetchLanguageCache().catch(Log.err);
 
 	// eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -44,7 +46,7 @@ export function initializeTranslation(){
 	Events.on(EventType.PlayerLeave, e => {
 		removePlayerLanguageEntry(e.player);
 	});
-}
+});
 
 export async function handleMessage(sender: Player, message: string) {
 	if(languageCache.isEmpty() && Date.now() - lastFailure > 60_000){
@@ -175,4 +177,25 @@ function requestTranslate(message:string, lang:string){
 		});
 	});
 }
+
+Vars.net.handleServer(SendChatMessageCallPacket, ({player}, {message}) => {
+	if (!player?.isAdded() || message == null) return;
+	if (message.length > Vars.maxTextLength){
+		player.sendMessage(`[scarlet]Message too long. Maximum length is ${Vars.maxTextLength} characters.`);
+		return;
+	}
+
+	message = message.replace("\n", "");
+	Events.fire(new EventType.PlayerChatEvent(player, message));
+	Log.info(`&fi&lc${escapeStringColorsServer(player.plainName())}: &lw${escapeStringColorsServer(removeFoosChars(message))}&fr`);
+
+	const response = Vars.netServer.clientCommands.handleMessage(message, player);
+	if(response.type == CommandHandler.ResponseType.noCommand){
+		const filtered = Vars.netServer.admins.filterMessage(player, message);
+		if (filtered != null) void handleMessage(player, filtered);
+	}else if (response.type != CommandHandler.ResponseType.valid){
+		const text = Vars.netServer.invalidHandler.handle(player, response);
+		if (text != null) player.sendMessage(text);
+	}
+});
 

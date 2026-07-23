@@ -1,6 +1,7 @@
 "use strict";
 /*
 Copyright © BalaM314, 2026. All Rights Reserved.
+mostly written by @author TheRadioactiveBanana
 This file contains a translation client implementation for https://github.com/TheRadioactiveBanana/translate-api-wrapper
 */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -52,12 +53,12 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.translationCache = exports.playerLanguageCache = exports.languageCache = void 0;
-exports.initializeTranslation = initializeTranslation;
 exports.handleMessage = handleMessage;
 exports.setPlayerLanguageEntry = setPlayerLanguageEntry;
 exports.getLanguageFromCache = getLanguageFromCache;
 exports.isLanguageAvailable = isLanguageAvailable;
 var config_1 = require("/config");
+var funcs_1 = require("/funcs");
 var players_1 = require("/players");
 var utils_1 = require("/utils");
 exports.languageCache = new ObjectMap();
@@ -65,11 +66,10 @@ var lastFailure = 0;
 exports.playerLanguageCache = new ObjectMap();
 /** Only modify on main thread */
 exports.translationCache = new ObjectMap();
-function initializeTranslation() {
-    var _this = this;
+Events.on(EventType.ServerLoadEvent, function () {
     void fetchLanguageCache().catch(Log.err);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    Events.on(EventType.PlayerJoin, function (e) { return __awaiter(_this, void 0, void 0, function () {
+    Events.on(EventType.PlayerJoin, function (e) { return __awaiter(void 0, void 0, void 0, function () {
         var fishPlayer, language, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -101,7 +101,7 @@ function initializeTranslation() {
     Events.on(EventType.PlayerLeave, function (e) {
         removePlayerLanguageEntry(e.player);
     });
-}
+});
 function handleMessage(sender, message) {
     return __awaiter(this, void 0, void 0, function () {
         var err_2, cleanedMessage;
@@ -287,3 +287,27 @@ function requestTranslate(message, lang) {
         });
     });
 }
+Vars.net.handleServer(SendChatMessageCallPacket, function (_a, _b) {
+    var player = _a.player;
+    var message = _b.message;
+    if (!(player === null || player === void 0 ? void 0 : player.isAdded()) || message == null)
+        return;
+    if (message.length > Vars.maxTextLength) {
+        player.sendMessage("[scarlet]Message too long. Maximum length is ".concat(Vars.maxTextLength, " characters."));
+        return;
+    }
+    message = message.replace("\n", "");
+    Events.fire(new EventType.PlayerChatEvent(player, message));
+    Log.info("&fi&lc".concat((0, funcs_1.escapeStringColorsServer)(player.plainName()), ": &lw").concat((0, funcs_1.escapeStringColorsServer)((0, utils_1.removeFoosChars)(message)), "&fr"));
+    var response = Vars.netServer.clientCommands.handleMessage(message, player);
+    if (response.type == CommandHandler.ResponseType.noCommand) {
+        var filtered = Vars.netServer.admins.filterMessage(player, message);
+        if (filtered != null)
+            void handleMessage(player, filtered);
+    }
+    else if (response.type != CommandHandler.ResponseType.valid) {
+        var text = Vars.netServer.invalidHandler.handle(player, response);
+        if (text != null)
+            player.sendMessage(text);
+    }
+});
