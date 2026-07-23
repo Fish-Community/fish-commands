@@ -438,7 +438,6 @@ export const commands = commandList({
 		},
 	}),
 	spectate: command(() => {
-		//TODO revise code
 		/** Mapping between player and original team */
 		const spectators = new Map<FishPlayer, Team>();
 		function spectate(target:FishPlayer<true>){

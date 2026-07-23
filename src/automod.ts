@@ -352,6 +352,7 @@ ${msg}`
 		);
 	}
 }
+Timer.schedule(validateVotekickSession, 1, 0.3);
 
 export const Automod = {
 	/**
@@ -461,5 +462,12 @@ Please look at ${fishP.position()} and see if they were actually griefing. If th
 		}
 	}
 };
-Timer.schedule(validateVotekickSession, 1, 0.3);
+Events.on(EventType.PlayerJoin, (e) => {
+	//Don't activate heuristics until they've joined
+	//a lot of time can pass between connect and join
+	//also the player might connect but fail to join for a lot of reasons,
+	//or connect, fail to join, then connect again and join successfully
+	//which would cause heuristics to activate twice
+	Heuristics.activateHeuristics(FishPlayer.get(e.player));
+});
 

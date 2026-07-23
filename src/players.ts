@@ -562,16 +562,6 @@ export class FishPlayer<Connected extends boolean = boolean> {
 
 		}
 	}
-	/** Must be run on PlayerJoinEvent. */
-	static onPlayerJoin(player:mindustryPlayer){
-		const fishPlayer = this.get(player);
-		//Don't activate heuristics until they've joined
-		//a lot of time can pass between connect and join
-		//also the player might connect but fail to join for a lot of reasons,
-		//or connect, fail to join, then connect again and join successfully
-		//which would cause heuristics to activate twice
-		Heuristics.activateHeuristics(fishPlayer);
-	}
 	static updateAFKCheck(){
 		//TODO better AFK check
 		this.forEachPlayer((fishP, mp) => {
@@ -661,21 +651,6 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		this.ignoreGameOver = true;
 		callback();
 		this.ignoreGameOver = false;
-	}
-	static onGameBegin(){
-		const startTime = Date.now();
-		fishState.lastMapStartTime = startTime;
-		//wait 20 seconds for players to join
-		Timer.schedule(() => FishPlayer.forEachPlayer(p => p.tstats.lastMapStartTime = startTime), 20);
-	}
-	/** Must be run on UnitChangeEvent. */
-	static onUnitChange(player:mindustryPlayer, unit:Unit | null){
-		if(unit?.spawnedByCore)
-			this.onRespawn(player);
-	}
-	private static onRespawn(player:mindustryPlayer){
-		const fishP = this.get(player) as FishPlayer<true>; //must be connected
-		if(fishP.stelled()) fishP.stopUnit();
 	}
 	static forEachPlayer(func:(fishPlayer:FishPlayer<true>, mindustryPlayer:mindustryPlayer) => unknown){
 		Groups.player.each(player => {
@@ -1404,10 +1379,28 @@ We apologize for the inconvenience.`
 	//#endregion
 }
 
-//TODO convert all the unnecessary event handlers to simple calls to Events.on
+//TODO move these to appropriately located static init blocks
 Events.on(EventType.WaveEvent, () => FishPlayer.forEachPlayer(p => p.tstats.wavesSurvived ++));
 Events.on(EventType.PlayerChatEvent, ({player}) => {
 	const fishP = FishPlayer.get(player);
 	fishP.lastActive = Date.now();
 	fishP.updateStats(stats => stats.chatMessagesSent ++);
+});
+Events.on(EventType.PlayerLeave, (e) => {
+	FishPlayer.onPlayerLeave(e.player);
+});
+Events.on(EventType.UnitChangeEvent, (e) => {
+	if(e.unit?.spawnedByCore){
+		const fishP = FishPlayer.get(e.player) as FishPlayer<true>; //must be connected
+		if(fishP.stelled()) fishP.stopUnit();
+	}
+});
+Events.on(EventType.WorldLoadEvent, () => {
+	const startTime = Date.now();
+	fishState.lastMapStartTime = startTime;
+	//wait 20 seconds for players to join
+	Timer.schedule(() => FishPlayer.forEachPlayer(p => p.tstats.lastMapStartTime = startTime), 20);
+});
+Events.on(EventType.GameOverEvent, (e) => {
+	FishPlayer.onGameOver(e.winner);
 });

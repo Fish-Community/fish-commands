@@ -45,12 +45,6 @@ Events.on(EventType.PlayerConnect, (e) => {
 		e.player.kick("Please rejoin the server in 20 seconds. We apologize for the inconvenience, we are currently under DDoS attack.", 3600_000);
 	} else FishPlayer.onPlayerConnect(e.player);
 });
-Events.on(EventType.PlayerJoin, (e) => {
-	FishPlayer.onPlayerJoin(e.player);
-});
-Events.on(EventType.PlayerLeave, (e) => {
-	FishPlayer.onPlayerLeave(e.player);
-});
 Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection: NetConnection }) => {
 	const limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30_000 ? 6 : 35;
 	if(!Antibot.connectRate.allow(5_000, limit)){
@@ -159,9 +153,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	});
 	FishPlayer.onConnectPacket(e.packet);
 });
-Events.on(EventType.UnitChangeEvent, (e) => {
-	FishPlayer.onUnitChange(e.player, e.unit);
-});
+
 Events.on(EventType.ContentInitEvent, () => {
 	//Unhide latum and renale
 	UnitTypes.latum.hidden = false;
@@ -351,9 +343,8 @@ Events.on(EventType.GameOverEvent, (e) => {
 			restartNow(true);
 		});
 	}
-	FishPlayer.onGameOver(e.winner as Team);
 });
-Events.on(EventType.WorldLoadEvent, () => FishPlayer.onGameBegin());
+
 Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
 });

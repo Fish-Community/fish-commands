@@ -436,6 +436,7 @@ function validateVotekickSession() {
         Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (-1/").concat(Vars.netServer.votesRequired(), ")\n[lightgray]Type[orange] /vote <y/n>[] to agree."));
     }
 }
+Timer.schedule(validateVotekickSession, 1, 0.3);
 exports.Automod = {
     /**
      * List of IPs that were recently punished.
@@ -561,5 +562,12 @@ exports.Heuristics = {
         }
     }
 };
-Timer.schedule(validateVotekickSession, 1, 0.3);
+Events.on(EventType.PlayerJoin, function (e) {
+    //Don't activate heuristics until they've joined
+    //a lot of time can pass between connect and join
+    //also the player might connect but fail to join for a lot of reasons,
+    //or connect, fail to join, then connect again and join successfully
+    //which would cause heuristics to activate twice
+    exports.Heuristics.activateHeuristics(players_1.FishPlayer.get(e.player));
+});
 var templateObject_1, templateObject_2;

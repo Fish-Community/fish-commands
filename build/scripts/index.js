@@ -93,12 +93,6 @@ Events.on(EventType.PlayerConnect, function (e) {
     else
         players_1.FishPlayer.onPlayerConnect(e.player);
 });
-Events.on(EventType.PlayerJoin, function (e) {
-    players_1.FishPlayer.onPlayerJoin(e.player);
-});
-Events.on(EventType.PlayerLeave, function (e) {
-    players_1.FishPlayer.onPlayerLeave(e.player);
-});
 Events.on(EventType.ConnectPacketEvent, function (e) {
     var _a, _b, _c, _d;
     var limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30000 ? 6 : 35;
@@ -189,9 +183,6 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         }
     });
     players_1.FishPlayer.onConnectPacket(e.packet);
-});
-Events.on(EventType.UnitChangeEvent, function (e) {
-    players_1.FishPlayer.onUnitChange(e.player, e.unit);
 });
 Events.on(EventType.ContentInitEvent, function () {
     //Unhide latum and renale
@@ -388,9 +379,7 @@ Events.on(EventType.GameOverEvent, function (e) {
             (0, utils_1.restartNow)(true);
         });
     }
-    players_1.FishPlayer.onGameOver(e.winner);
 });
-Events.on(EventType.WorldLoadEvent, function () { return players_1.FishPlayer.onGameBegin(); });
 Events.on(EventType.PlayEvent, function () {
     globals_1.fishState.startTime = Date.now();
 });

@@ -741,16 +741,6 @@ var FishPlayer = /** @class */ (function () {
                 void fishPlayer.showRules();
         }
     };
-    /** Must be run on PlayerJoinEvent. */
-    FishPlayer.onPlayerJoin = function (player) {
-        var fishPlayer = this.get(player);
-        //Don't activate heuristics until they've joined
-        //a lot of time can pass between connect and join
-        //also the player might connect but fail to join for a lot of reasons,
-        //or connect, fail to join, then connect again and join successfully
-        //which would cause heuristics to activate twice
-        automod_1.Heuristics.activateHeuristics(fishPlayer);
-    };
     FishPlayer.updateAFKCheck = function () {
         //TODO better AFK check
         this.forEachPlayer(function (fishP, mp) {
@@ -845,22 +835,6 @@ var FishPlayer = /** @class */ (function () {
         this.ignoreGameOver = true;
         callback();
         this.ignoreGameOver = false;
-    };
-    FishPlayer.onGameBegin = function () {
-        var startTime = Date.now();
-        globals_1.fishState.lastMapStartTime = startTime;
-        //wait 20 seconds for players to join
-        Timer.schedule(function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.lastMapStartTime = startTime; }); }, 20);
-    };
-    /** Must be run on UnitChangeEvent. */
-    FishPlayer.onUnitChange = function (player, unit) {
-        if (unit === null || unit === void 0 ? void 0 : unit.spawnedByCore)
-            this.onRespawn(player);
-    };
-    FishPlayer.onRespawn = function (player) {
-        var fishP = this.get(player); //must be connected
-        if (fishP.stelled())
-            fishP.stopUnit();
     };
     FishPlayer.forEachPlayer = function (func) {
         var _this = this;
@@ -1677,12 +1651,32 @@ var FishPlayer = /** @class */ (function () {
     return FishPlayer;
 }());
 exports.FishPlayer = FishPlayer;
-//TODO convert all the unnecessary event handlers to simple calls to Events.on
+//TODO move these to appropriately located static init blocks
 Events.on(EventType.WaveEvent, function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.wavesSurvived++; }); });
 Events.on(EventType.PlayerChatEvent, function (_a) {
     var player = _a.player;
     var fishP = FishPlayer.get(player);
     fishP.lastActive = Date.now();
     fishP.updateStats(function (stats) { return stats.chatMessagesSent++; });
+});
+Events.on(EventType.PlayerLeave, function (e) {
+    FishPlayer.onPlayerLeave(e.player);
+});
+Events.on(EventType.UnitChangeEvent, function (e) {
+    var _a;
+    if ((_a = e.unit) === null || _a === void 0 ? void 0 : _a.spawnedByCore) {
+        var fishP = FishPlayer.get(e.player); //must be connected
+        if (fishP.stelled())
+            fishP.stopUnit();
+    }
+});
+Events.on(EventType.WorldLoadEvent, function () {
+    var startTime = Date.now();
+    globals_1.fishState.lastMapStartTime = startTime;
+    //wait 20 seconds for players to join
+    Timer.schedule(function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.lastMapStartTime = startTime; }); }, 20);
+});
+Events.on(EventType.GameOverEvent, function (e) {
+    FishPlayer.onGameOver(e.winner);
 });
 var templateObject_1, templateObject_2;
