@@ -4,7 +4,7 @@ This file contains the FishPlayer class, and many player-related functions.
 */
 
 import * as api from "/api";
-import { Automod, checkVPNAndJoins, Heuristics } from "/automod";
+import { Automod, checkVPNAndJoins } from "/automod";
 import { automaticNames, FColor, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";

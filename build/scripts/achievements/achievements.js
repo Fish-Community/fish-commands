@@ -1,8 +1,8 @@
 "use strict";
-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
+/*
+Copyright © BalaM314, 2026. All Rights Reserved.
+This file contains the code for each achievement.
+*/
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -40,7 +40,8 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Achievements = exports.Achievement = void 0;
+exports.Achievements = void 0;
+var framework_1 = require("/achievements/framework");
 var config_1 = require("/config");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
@@ -58,254 +59,6 @@ var usefulItems10k = {
 var allItems1k = Vars.content.items().select(function (i) { return !i.hidden; }).toArray().map(function (i) { return new ItemStack(i, 1000); });
 var mixtechItems = Items.serpuloItems.copy();
 Items.erekirItems.each(function (i) { return mixtechItems.add(i); });
-var Achievement = /** @class */ (function () {
-    function Achievement(icon, name, description, options) {
-        var _a;
-        if (options === void 0) { options = {}; }
-        this.name = name;
-        this.notify = "player";
-        this.hidden = false;
-        this.disabled = false;
-        if (Array.isArray(icon)) {
-            this.icon = (icon[0].startsWith("[") ? icon[0] : "[".concat(icon[0], "]")) + (typeof icon[1] == "number" ? String.fromCharCode(icon[1]) : icon[1]);
-        }
-        else if (typeof icon == "number") {
-            this.icon = String.fromCharCode(icon);
-        }
-        else {
-            this.icon = icon;
-        }
-        if (Array.isArray(description)) {
-            _a = __read(description, 2), this.description = _a[0], this.extendedDescription = _a[1];
-        }
-        else
-            this.description = description;
-        this.nid = Achievement._id++;
-        Object.assign(this, options);
-        if (options.modes) {
-            var _b = __read(options.modes), type = _b[0], modes_1 = _b.slice(1);
-            if (type == "only") {
-                this.allowedModes = modes_1;
-                this.modesText = modes_1.join(", ");
-            }
-            else {
-                this.allowedModes = config_1.GamemodeNames.filter(function (m) { return !modes_1.includes(m); });
-                this.modesText = "all except ".concat(modes_1.join(", "));
-            }
-        }
-        else {
-            this.allowedModes = config_1.GamemodeNames;
-            this.modesText = "all";
-        }
-        if (!this.disabled) {
-            Achievement.all.push(this);
-            if (this.checkPlayerFrequent || this.checkFrequent)
-                Achievement.checkFrequent.push(this);
-            if (this.checkPlayerInfrequent || this.checkInfrequent)
-                Achievement.checkInfrequent.push(this);
-            if (this.checkPlayerJoin)
-                Achievement.checkJoin.push(this);
-            if (this.checkPlayerGameover || this.checkGameover)
-                Achievement.checkGameover.push(this);
-        }
-    }
-    Achievement.prototype.message = function () {
-        return config_1.FColor.achievement(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Achievement granted!\n[accent]", "[white]: ", ""], ["Achievement granted!\\n[accent]", "[white]: ", ""])), this.name, this.description);
-    };
-    Achievement.prototype.messageToEveryone = function (player) {
-        return config_1.FColor.achievement(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Player ", " has completed the achievement \"", "\"."], ["Player ", " has completed the achievement \"", "\"."])), player.prefixedName, this.name);
-    };
-    Achievement.prototype.allowedInMode = function () {
-        return this.allowedModes.includes(config_1.Gamemode.name());
-    };
-    Achievement.prototype.grantToAllOnline = function (team) {
-        var _this = this;
-        players_1.FishPlayer.forEachPlayer(function (p) {
-            if (!_this.has(p) && (!team || p.team() == team)) {
-                if (_this.notify != "nobody")
-                    p.sendMessage(_this.message());
-                _this.setObtained(p);
-            }
-        });
-    };
-    /** Do not call this in a loop on an achievement set to notify everyone. */
-    Achievement.prototype.grantTo = function (player, allowRepeatMessage) {
-        if (allowRepeatMessage === void 0) { allowRepeatMessage = false; }
-        var has = this.has(player);
-        if (!has || allowRepeatMessage) {
-            if (this.notify == "everyone")
-                Call.sendMessage(this.messageToEveryone(player));
-            else if (this.notify == "player")
-                player.sendMessage(this.message());
-        }
-        if (!has)
-            this.setObtained(player);
-    };
-    Achievement.prototype.setObtained = function (player) {
-        //void player.updateSynced(fishP => fishP.achievements.set(this.nid));
-        player.achievements.set(this.nid);
-    };
-    Achievement.prototype.has = function (player) {
-        return player.achievements.get(this.nid);
-    };
-    Achievement.all = [];
-    /** Checked every second. */
-    Achievement.checkFrequent = [];
-    /** Checked every 10 seconds. Use for states that can be gained but not lost, such as "x wins". */
-    Achievement.checkInfrequent = [];
-    Achievement.checkJoin = [];
-    Achievement.checkGameover = [];
-    Achievement._id = 0;
-    return Achievement;
-}());
-exports.Achievement = Achievement;
-Events.on(EventType.PlayerJoin, function (_a) {
-    var e_1, _b;
-    var _c;
-    var player = _a.player;
-    Time.mark();
-    var _loop_1 = function (ach) {
-        if (ach.allowedInMode()) {
-            var fishP_1 = players_1.FishPlayer.get(player);
-            if (!ach.has(fishP_1) && ((_c = ach.checkPlayerJoin) === null || _c === void 0 ? void 0 : _c.call(ach, fishP_1))) {
-                if (fishP_1.dataSynced)
-                    ach.grantTo(fishP_1);
-                else
-                    Timer.schedule(function () { return ach.grantTo(fishP_1); }, 2); //2 seconds should be enough
-            }
-        }
-    };
-    try {
-        for (var _d = __values(Achievement.checkJoin), _e = _d.next(); !_e.done; _e = _d.next()) {
-            var ach = _e.value;
-            _loop_1(ach);
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
-        }
-        finally { if (e_1) throw e_1.error; }
-    }
-    Log.debug("ach join @", Time.elapsed());
-});
-globals_1.FishEvents.on("gameOver", function (_, winner) {
-    var e_2, _a;
-    var _b;
-    Time.mark();
-    var _loop_2 = function (ach) {
-        if (ach.allowedInMode()) {
-            if ((_b = ach.checkGameover) === null || _b === void 0 ? void 0 : _b.call(ach, winner))
-                ach.grantToAllOnline();
-            else
-                players_1.FishPlayer.forEachPlayer(function (fishP) {
-                    var _a;
-                    if ((_a = ach.checkPlayerGameover) === null || _a === void 0 ? void 0 : _a.call(ach, fishP, winner)) {
-                        ach.grantTo(fishP);
-                    }
-                });
-        }
-    };
-    try {
-        for (var _c = __values(Achievement.checkGameover), _d = _c.next(); !_d.done; _d = _c.next()) {
-            var ach = _d.value;
-            _loop_2(ach);
-        }
-    }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-    finally {
-        try {
-            if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
-        }
-        finally { if (e_2) throw e_2.error; }
-    }
-    Log.debug("ach gameover @", Time.elapsed());
-});
-Timer.schedule(function () {
-    var e_3, _a;
-    Time.mark();
-    var _loop_3 = function (ach) {
-        if (ach.allowedInMode()) {
-            if (ach.checkFrequent) {
-                if (config_1.Gamemode.pvp()) {
-                    Vars.state.teams.active.each(function (_a) {
-                        var team = _a.team;
-                        if (ach.checkFrequent(team))
-                            ach.grantToAllOnline(team);
-                    });
-                }
-                else {
-                    if (ach.checkFrequent(Vars.state.rules.defaultTeam))
-                        ach.grantToAllOnline();
-                }
-            }
-            else {
-                players_1.FishPlayer.forEachPlayer(function (fishP) {
-                    var _a;
-                    if ((_a = ach.checkPlayerFrequent) === null || _a === void 0 ? void 0 : _a.call(ach, fishP))
-                        ach.grantTo(fishP);
-                });
-            }
-        }
-    };
-    try {
-        for (var _b = __values(Achievement.checkFrequent), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var ach = _c.value;
-            _loop_3(ach);
-        }
-    }
-    catch (e_3_1) { e_3 = { error: e_3_1 }; }
-    finally {
-        try {
-            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-        }
-        finally { if (e_3) throw e_3.error; }
-    }
-    Log.debug("ach frequent @", Time.elapsed());
-}, 1, 1);
-Timer.schedule(function () {
-    var e_4, _a;
-    Time.mark();
-    var _loop_4 = function (ach) {
-        if (ach.allowedInMode()) {
-            if (ach.checkInfrequent) {
-                if (config_1.Gamemode.pvp()) {
-                    Vars.state.teams.active.each(function (_a) {
-                        var team = _a.team;
-                        if (ach.checkInfrequent(team))
-                            ach.grantToAllOnline(team);
-                    });
-                }
-                else {
-                    if (ach.checkInfrequent(Vars.state.rules.defaultTeam))
-                        ach.grantToAllOnline();
-                }
-            }
-            else {
-                players_1.FishPlayer.forEachPlayer(function (fishP) {
-                    var _a;
-                    if ((_a = ach.checkPlayerInfrequent) === null || _a === void 0 ? void 0 : _a.call(ach, fishP))
-                        ach.grantTo(fishP);
-                });
-            }
-        }
-    };
-    try {
-        for (var _b = __values(Achievement.checkInfrequent), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var ach = _c.value;
-            _loop_4(ach);
-        }
-    }
-    catch (e_4_1) { e_4 = { error: e_4_1 }; }
-    finally {
-        try {
-            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-        }
-        finally { if (e_4) throw e_4.error; }
-    }
-    Log.debug("ach infrequent @", Time.elapsed());
-}, 10, 10);
 exports.Achievements = {
     // ===========================
     // ╦ ╦ ╔═╗ ╦═╗ ╔╗╔ ╦ ╔╗╔ ╔═╗ ┬
@@ -316,157 +69,157 @@ exports.Achievements = {
     // Do not remove any achievements: instead, set the "disabled" option to true.
     // Reordering achievements will cause ID shifts.
     //Joining based
-    welcome: new Achievement(["gold", Iconc.infoCircle], "Welcome", "Join the server.", {
+    welcome: new framework_1.Achievement(["gold", Iconc.infoCircle], "Welcome", "Join the server.", {
         checkPlayerJoin: function () { return true; },
         notify: "nobody"
     }),
-    migratory_fish: new Achievement(Iconc.exit, "Migratory Fish", "Join all of our servers.", {
+    migratory_fish: new framework_1.Achievement(Iconc.exit, "Migratory Fish", "Join all of our servers.", {
         disabled: true
     }), //TODO
-    frequent_visitor: new Achievement(Iconc.planeOutline, "Frequent Visitor", ["Join the server 100 times.", "Note: Do not reconnect frequently, that will not work. This achievement requires that you have been playing for 1 month."], {
+    frequent_visitor: new framework_1.Achievement(Iconc.planeOutline, "Frequent Visitor", ["Join the server 100 times.", "Note: Do not reconnect frequently, that will not work. This achievement requires that you have been playing for 1 month."], {
         checkPlayerJoin: function (p) { return p.info().timesJoined >= 100 && (Date.now() - p.globalFirstJoined > funcs_1.Duration.months(1)); }
     }),
     //Gamemode based
-    attack: new Achievement(Iconc.modeAttack, "Attack", ["Defeat an attack map.", "You must be present for the beginning and end of the game."], {
+    attack: new framework_1.Achievement(Iconc.modeAttack, "Attack", ["Defeat an attack map.", "You must be present for the beginning and end of the game."], {
         modes: ["only", "attack"],
         checkPlayerGameover: function (player, winTeam) {
             return Vars.state.rules.defaultTeam == winTeam && player.tstats.lastMapStartTime == globals_1.fishState.lastMapStartTime;
         },
     }),
-    survival: new Achievement(Iconc.modeSurvival, "Survival", ["Survive 50 waves in a survival map.", "Must be during the same game."], {
+    survival: new framework_1.Achievement(Iconc.modeSurvival, "Survival", ["Survive 50 waves in a survival map.", "Must be during the same game."], {
         modes: ["only", "survival"],
         checkPlayerInfrequent: function (player) {
             return player.tstats.wavesSurvived >= 50;
         },
     }),
-    pvp: new Achievement(Iconc.modePvp, "PVP", ["Win a match of PVP.", "You must be present for the beginning and end of the game."], {
+    pvp: new framework_1.Achievement(Iconc.modePvp, "PVP", ["Win a match of PVP.", "You must be present for the beginning and end of the game."], {
         modes: ["only", "pvp"],
         checkPlayerGameover: function (player, winTeam) {
             return player.team() == winTeam && player.tstats.lastMapStartTime == globals_1.fishState.lastMapStartTime;
         },
     }),
-    sandbox: new Achievement(Iconc.image, "Sandbox", "Spend 1 hour in Sandbox.", {
+    sandbox: new framework_1.Achievement(Iconc.image, "Sandbox", "Spend 1 hour in Sandbox.", {
         modes: ["only", "sandbox"],
         checkPlayerInfrequent: function (p) { return p.stats.timeInGame > funcs_1.Duration.hours(1); },
     }),
-    hexed: new Achievement(Iconc.layers, "Hexed", ["Play a match of Hexed.", "You must be present for the beginning and end of the game."], {
+    hexed: new framework_1.Achievement(Iconc.layers, "Hexed", ["Play a match of Hexed.", "You must be present for the beginning and end of the game."], {
         modes: ["only", "hexed"],
         checkPlayerGameover: function (player) {
             return player.tstats.lastMapStartTime == globals_1.fishState.lastMapStartTime;
         },
     }),
-    minigame: new Achievement(Iconc.play, "Minigame", ["Win a Minigame.", "You must be present for the beginning and end of the game."], {
+    minigame: new framework_1.Achievement(Iconc.play, "Minigame", ["Win a Minigame.", "You must be present for the beginning and end of the game."], {
         modes: ["only", "minigame"],
         checkPlayerGameover: function (player, winTeam) {
             return player.team() == winTeam && player.tstats.lastMapStartTime == globals_1.fishState.lastMapStartTime;
         },
     }),
     //playtime based
-    playtime_1: new Achievement(["white", Iconc.googleplay], "Playtime 1", "Spend 1 hour in-game.", {
+    playtime_1: new framework_1.Achievement(["white", Iconc.googleplay], "Playtime 1", "Spend 1 hour in-game.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.timeInGame >= funcs_1.Duration.hours(1); }
     }),
-    playtime_2: new Achievement(["red", Iconc.googleplay], "Playtime 2", "Spend 12 hours in-game.", {
+    playtime_2: new framework_1.Achievement(["red", Iconc.googleplay], "Playtime 2", "Spend 12 hours in-game.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.timeInGame >= funcs_1.Duration.hours(12); }
     }),
-    playtime_3: new Achievement(["orange", Iconc.googleplay], "Playtime 3", "Spend 2 days in-game.", {
+    playtime_3: new framework_1.Achievement(["orange", Iconc.googleplay], "Playtime 3", "Spend 2 days in-game.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.timeInGame >= funcs_1.Duration.days(2); }
     }),
-    playtime_4: new Achievement(["yellow", Iconc.googleplay], "Playtime 4", "Spend 10 days in-game.", {
+    playtime_4: new framework_1.Achievement(["yellow", Iconc.googleplay], "Playtime 4", "Spend 10 days in-game.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.timeInGame >= funcs_1.Duration.days(10); }
     }),
     //victories based
-    victory_1: new Achievement(["white", Iconc.star], "First Victory", "Win a map run.", {
+    victory_1: new framework_1.Achievement(["white", Iconc.star], "First Victory", "Win a map run.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesWon >= 1; }
     }),
-    victory_2: new Achievement(["red", Iconc.star], "Victories 2", "Win 5 map runs.", {
+    victory_2: new framework_1.Achievement(["red", Iconc.star], "Victories 2", "Win 5 map runs.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesWon >= 5; }
     }),
-    victory_3: new Achievement(["orange", Iconc.star], "Victories 3", "Win 30 map runs.", {
+    victory_3: new framework_1.Achievement(["orange", Iconc.star], "Victories 3", "Win 30 map runs.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesWon >= 30; }
     }),
-    victory_4: new Achievement(["yellow", Iconc.star], "Victories 4", "Win 100 map runs.", {
+    victory_4: new framework_1.Achievement(["yellow", Iconc.star], "Victories 4", "Win 100 map runs.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesWon >= 100; },
         notify: "everyone"
     }),
     //games based
-    games_1: new Achievement(["white", Iconc.itchio], "Games 1", "Play 10 map runs.", {
+    games_1: new framework_1.Achievement(["white", Iconc.itchio], "Games 1", "Play 10 map runs.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesFinished >= 10; }
     }),
-    games_2: new Achievement(["red", Iconc.itchio], "Games 2", "Play 40 map runs.", {
+    games_2: new framework_1.Achievement(["red", Iconc.itchio], "Games 2", "Play 40 map runs.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesFinished >= 40; }
     }),
-    games_3: new Achievement(["orange", Iconc.itchio], "Games 3", "Play 100 map runs.", {
+    games_3: new framework_1.Achievement(["orange", Iconc.itchio], "Games 3", "Play 100 map runs.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesFinished >= 100; }
     }),
-    games_4: new Achievement(["yellow", Iconc.itchio], "Games 4", "Play 200 map runs.", {
+    games_4: new framework_1.Achievement(["yellow", Iconc.itchio], "Games 4", "Play 200 map runs.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesFinished >= 200; },
         notify: "everyone"
     }),
     //messages based
-    messages_1: new Achievement(["white", Iconc.chat], "Hello", "Send your first chat message.", {
+    messages_1: new framework_1.Achievement(["white", Iconc.chat], "Hello", "Send your first chat message.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 1; },
         notify: "nobody"
     }),
-    messages_2: new Achievement(["red", Iconc.chat], "Chat 2", ["Send 100 chat messages.", "Warning: you will be kicked if you spam the chat."], {
+    messages_2: new framework_1.Achievement(["red", Iconc.chat], "Chat 2", ["Send 100 chat messages.", "Warning: you will be kicked if you spam the chat."], {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 100; }
     }),
-    messages_3: new Achievement(["orange", Iconc.chat], "Chat 3", ["Send 500 chat messages.", "Warning: you will be kicked if you spam the chat."], {
+    messages_3: new framework_1.Achievement(["orange", Iconc.chat], "Chat 3", ["Send 500 chat messages.", "Warning: you will be kicked if you spam the chat."], {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 500; }
     }),
-    messages_4: new Achievement(["yellow", Iconc.chat], "Chat 4", ["Send 2000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
+    messages_4: new framework_1.Achievement(["yellow", Iconc.chat], "Chat 4", ["Send 2000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 2000; }
     }),
-    messages_5: new Achievement(["lime", Iconc.chat], "Chat 4", ["Send 5000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
+    messages_5: new framework_1.Achievement(["lime", Iconc.chat], "Chat 4", ["Send 5000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 5000; },
         notify: "everyone"
     }),
     //blocks built based
-    builds_1: new Achievement(["white", Iconc.fileText], "The Factory Must Prepare", "Construct 1 buildings.", {
+    builds_1: new framework_1.Achievement(["white", Iconc.fileText], "The Factory Must Prepare", "Construct 1 buildings.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.blocksPlaced >= 1; },
         notify: "nobody"
     }),
-    builds_2: new Achievement(["red", Iconc.fileText], "The Factory Must Begin", "Construct 200 buildings.", {
+    builds_2: new framework_1.Achievement(["red", Iconc.fileText], "The Factory Must Begin", "Construct 200 buildings.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.blocksPlaced > 200; }
     }),
-    builds_3: new Achievement(["orange", Iconc.fileText], "The Factory Must Produce", "Construct 1000 buildings.", {
+    builds_3: new framework_1.Achievement(["orange", Iconc.fileText], "The Factory Must Produce", "Construct 1000 buildings.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.blocksPlaced > 1000; }
     }),
-    builds_4: new Achievement(["yellow", Iconc.fileText], "The Factory Must Grow", "Construct 5000 buildings.", {
+    builds_4: new framework_1.Achievement(["yellow", Iconc.fileText], "The Factory Must Grow", "Construct 5000 buildings.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.blocksPlaced > 5000; },
     }),
     //units
-    t5: new Achievement(Blocks.tetrativeReconstructor.emoji(), "T5", "Control a T5 unit.", {
+    t5: new framework_1.Achievement(Blocks.tetrativeReconstructor.emoji(), "T5", "Control a T5 unit.", {
         modes: ["not", "sandbox"],
         checkPlayerFrequent: function (player) {
             var _a;
             return globals_1.unitsT5.includes((_a = player.unit()) === null || _a === void 0 ? void 0 : _a.type);
         },
     }),
-    dibs: new Achievement(["green", Blocks.tetrativeReconstructor.emoji()], "Dibs", "Be the first player to control the first T5 unit made by a reconstructor that you placed.", {
+    dibs: new framework_1.Achievement(["green", Blocks.tetrativeReconstructor.emoji()], "Dibs", "Be the first player to control the first T5 unit made by a reconstructor that you placed.", {
         modes: ["not", "sandbox"],
         disabled: true
     }), //TODO
-    worm: new Achievement(UnitTypes.latum.emoji(), "Worm", "Control a Latum.", {
+    worm: new framework_1.Achievement(UnitTypes.latum.emoji(), "Worm", "Control a Latum.", {
         checkPlayerFrequent: function (player) {
             var _a;
             return ((_a = player.unit()) === null || _a === void 0 ? void 0 : _a.type) == UnitTypes.latum;
         }
     }),
     //pvp
-    above_average: new Achievement(Iconc.chartBar, "Above Average", ["Reach a win rate above 50%.", "Must be over at least 20 games of PVP."], {
+    above_average: new framework_1.Achievement(Iconc.chartBar, "Above Average", ["Reach a win rate above 50%.", "Must be over at least 20 games of PVP."], {
         modes: ["only", "pvp"],
         checkPlayerInfrequent: function (p) { return p.stats.gamesWon / p.stats.gamesFinished > 0.5 && p.stats.gamesFinished >= 20; }
     }),
-    head_start: new Achievement(Iconc.commandAttack, "Head Start", ["Win a match of PVP where your opponents have a 5 minute head start.", "Your team must wait for the first 5 minutes without building or descontructing any buildings."], {
+    head_start: new framework_1.Achievement(Iconc.commandAttack, "Head Start", ["Win a match of PVP where your opponents have a 5 minute head start.", "Your team must wait for the first 5 minutes without building or descontructing any buildings."], {
         modes: ["only", "pvp"],
         disabled: true
     }), //TODO
-    one_v_two: new Achievement(["red", Iconc.modePvp], "1v2", "Defeat two (or more) opponents in PVP without help from other players.", {
+    one_v_two: new framework_1.Achievement(["red", Iconc.modePvp], "1v2", "Defeat two (or more) opponents in PVP without help from other players.", {
         modes: ["only", "pvp"],
         disabled: true
     }), //TODO
     //sandbox
-    underpowered: new Achievement(["red", Blocks.powerSource.emoji()], "Underpowered", "Overload a power source.", {
+    underpowered: new framework_1.Achievement(["red", Blocks.powerSource.emoji()], "Underpowered", "Overload a power source.", {
         modes: ["only", "sandbox"],
         checkFrequent: function () {
             var found = false;
@@ -481,20 +234,20 @@ exports.Achievements = {
         }
     }),
     //easter eggs
-    memory_corruption: new Achievement(["red", Iconc.host], "Is the server OK?", "Witness a memory corruption.", {
+    memory_corruption: new framework_1.Achievement(["red", Iconc.host], "Is the server OK?", "Witness a memory corruption.", {
         notify: "nobody"
     }),
-    run_js_without_perms: new Achievement(["yellow", Iconc.warning], "XKCD 838", ["Receive a warning from the server that an incident will be reported.", "One of the admin commands has a custom error message."], {
+    run_js_without_perms: new framework_1.Achievement(["yellow", Iconc.warning], "XKCD 838", ["Receive a warning from the server that an incident will be reported.", "One of the admin commands has a custom error message."], {
         notify: "everyone"
     }),
-    script_kiddie: new Achievement(["red", Iconc.warning], "Script Kiddie", ["Pretend to be a hacker. The server will disagree.", "Change your name to something including \"hacker\"."], {
+    script_kiddie: new framework_1.Achievement(["red", Iconc.warning], "Script Kiddie", ["Pretend to be a hacker. The server will disagree.", "Change your name to something including \"hacker\"."], {
         notify: "nobody"
     }),
-    hacker: new Achievement(["lightgray", Iconc.host], "Hacker", "Find a bug in the server and report it responsibly.", {
+    hacker: new framework_1.Achievement(["lightgray", Iconc.host], "Hacker", "Find a bug in the server and report it responsibly.", {
         hidden: true
     }),
     //items based
-    items_10k: new Achievement(["green", Iconc.distribution], "Cornucopia", "Obtain 10k of every useful resource.", {
+    items_10k: new framework_1.Achievement(["green", Iconc.distribution], "Cornucopia", "Obtain 10k of every useful resource.", {
         modes: ["not", "sandbox"],
         checkPlayerFrequent: function (player) {
             var _a;
@@ -503,13 +256,13 @@ exports.Achievements = {
             return ((_a = player.team().items()) === null || _a === void 0 ? void 0 : _a.has(usefulItems10k[Vars.state.planet.name])) || false;
         },
     }),
-    fullVault: new Achievement(["green", Blocks.vault.emoji()], "Well Stocked", ["Fill a vault with every obtainable item.", "Requires mixtech."], {
+    fullVault: new framework_1.Achievement(["green", Blocks.vault.emoji()], "Well Stocked", ["Fill a vault with every obtainable item.", "Requires mixtech."], {
         modes: ["not", "sandbox"],
         checkInfrequent: function (team) {
             return Vars.indexer.getFlagged(team, BlockFlag.storage).contains(boolf(function (b) { return b.block == Blocks.vault && b.items.has(allItems1k) && b.linkedCore == null; }));
         },
     }),
-    full_core: new Achievement(["green", Blocks.coreAcropolis.emoji()], "Multiblock Incinerator", "Completely fill the core with all obtainable items on a map with core incineration enabled.", {
+    full_core: new framework_1.Achievement(["green", Blocks.coreAcropolis.emoji()], "Multiblock Incinerator", "Completely fill the core with all obtainable items on a map with core incineration enabled.", {
         modes: ["not", "sandbox"],
         checkFrequent: function (team) {
             var _a;
@@ -534,39 +287,39 @@ exports.Achievements = {
             return items.allMatch(function (i) { return module.has(i, capacity); });
         },
     }),
-    siligone: new Achievement(["red", Items.silicon.emoji()], "Siligone", ["Run out of silicon.", "You must have reached 2000 silicon before running out."], {
+    siligone: new framework_1.Achievement(["red", Items.silicon.emoji()], "Siligone", ["Run out of silicon.", "You must have reached 2000 silicon before running out."], {
         modes: ["not", "sandbox"]
     }),
-    silicon_100k: new Achievement(["green", Items.silicon.emoji()], "Silicon for days", "Obtain 100k silicon.", {
+    silicon_100k: new framework_1.Achievement(["green", Items.silicon.emoji()], "Silicon for days", "Obtain 100k silicon.", {
         modes: ["not", "sandbox"],
         checkFrequent: function (team) { return team.items().has(Items.silicon, 100000); }
     }),
     //other players based
-    alone: new Achievement(["red", Iconc.players], "Alone", "Be the only player online for more than two minutes", {
+    alone: new framework_1.Achievement(["red", Iconc.players], "Alone", "Be the only player online for more than two minutes", {
         notify: "nobody"
     }),
-    join_playercount_20: new Achievement(["lime", Iconc.players], "Is there enough room?", "Join a server with 20 players online", {
+    join_playercount_20: new framework_1.Achievement(["lime", Iconc.players], "Is there enough room?", "Join a server with 20 players online", {
         checkPlayerJoin: function () { return Groups.player.size() > 20; },
     }),
-    meet_staff: new Achievement(["lime", Iconc.hammer], "Griefer Beware", "Meet a staff member in-game", {
+    meet_staff: new framework_1.Achievement(["lime", Iconc.hammer], "Griefer Beware", "Meet a staff member in-game", {
         checkPlayerJoin: function () { return Groups.player.contains(function (p) { return players_1.FishPlayer.get(p).ranksAtLeast("mod"); }); },
     }),
-    meet_fish: new Achievement(["blue", Iconc.admin], "The Big Fish", "Meet >|||>Fish himself in-game", {
+    meet_fish: new framework_1.Achievement(["blue", Iconc.admin], "The Big Fish", "Meet >|||>Fish himself in-game", {
         checkPlayerJoin: function () { return Groups.player.contains(function (p) { return players_1.FishPlayer.get(p).ranksAtLeast("fish"); }); },
         hidden: true,
     }),
-    server_speak: new Achievement(["pink", Iconc.host], "It Speaks!", "Hear the server talk in chat."),
-    see_marked_griefer: new Achievement(["red", Iconc.hammer], "Flying Tonk", "See a marked griefer in-game.", {
+    server_speak: new framework_1.Achievement(["pink", Iconc.host], "It Speaks!", "Hear the server talk in chat."),
+    see_marked_griefer: new framework_1.Achievement(["red", Iconc.hammer], "Flying Tonk", "See a marked griefer in-game.", {
         checkInfrequent: function () { return Groups.player.contains(function (p) { return players_1.FishPlayer.get(p).marked(); }); },
     }),
     //maps based
-    beat_map_not_in_rotation: new Achievement(["pink", Iconc.map], "How?", "Beat a map that isn't in the list of maps.", {
+    beat_map_not_in_rotation: new framework_1.Achievement(["pink", Iconc.map], "How?", "Beat a map that isn't in the list of maps.", {
         notify: "everyone",
         modes: ["not", "pvp"],
         checkGameover: function (team) { return team == Vars.state.rules.defaultTeam && !Vars.state.map.custom; }
     }),
     //misc
-    power_1mil: new Achievement(["green", Blocks.powerSource.emoji()], "Who needs sources?", "Reach a power production of 1 million without using power sources.", {
+    power_1mil: new framework_1.Achievement(["green", Blocks.powerSource.emoji()], "Who needs sources?", "Reach a power production of 1 million without using power sources.", {
         modes: ["not", "sandbox"],
         checkFrequent: function (team) {
             var found = false;
@@ -583,27 +336,27 @@ exports.Achievements = {
             return found;
         }
     }),
-    pacifist_crawler: new Achievement(UnitTypes.crawler.emoji(), "Pacifist Crawler", "Control a crawler for 15 minutes without exploding.", {
+    pacifist_crawler: new framework_1.Achievement(UnitTypes.crawler.emoji(), "Pacifist Crawler", "Control a crawler for 15 minutes without exploding.", {
         modes: ["not", "sandbox"],
         disabled: true
     }), //TODO
-    core_low_hp: new Achievement(["yellow", Blocks.coreNucleus.emoji()], "Close Call", "Have your core reach less than 50 health, but survive.", {
+    core_low_hp: new framework_1.Achievement(["yellow", Blocks.coreNucleus.emoji()], "Close Call", "Have your core reach less than 50 health, but survive.", {
         modes: ["not", "sandbox"],
     }),
-    enemy_core_low_hp: new Achievement(["red", Blocks.coreNucleus.emoji()], "So Close", "Cause the enemy core to reach less than 50 health, but survive.", {
+    enemy_core_low_hp: new framework_1.Achievement(["red", Blocks.coreNucleus.emoji()], "So Close", "Cause the enemy core to reach less than 50 health, but survive.", {
         modes: ["not", "sandbox"],
     }),
-    verified: new Achievement([ranks_1.Rank.active.color, Iconc.ok], "Verified", "Be promoted automatically to ".concat(ranks_1.Rank.active.coloredName(), " rank."), {
+    verified: new framework_1.Achievement([ranks_1.Rank.active.color, Iconc.ok], "Verified", "Be promoted automatically to ".concat(ranks_1.Rank.active.coloredName(), " rank."), {
         checkPlayerJoin: function (p) { return p.ranksAtLeast("active"); }, notify: "nobody"
     }),
-    click_me: new Achievement(Iconc.bookOpen, "Clicked", "Run /achievementgrid and click this achievement."),
-    afk: new Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
+    click_me: new framework_1.Achievement(Iconc.bookOpen, "Clicked", "Run /achievementgrid and click this achievement."),
+    afk: new framework_1.Achievement(["yellow", Iconc.lock], "AFK?", "Win a game without interacting with any blocks.", {
         modes: ["not", "sandbox"],
         checkPlayerGameover: function (player, winTeam) {
             return player.team() == winTeam && player.tstats.blockInteractionsThisMap == 0;
         },
     }),
-    status_effects_5: new Achievement(StatusEffects.electrified.emoji(), "A Furious Cocktail", "Have at least 5 status effects at once.", {
+    status_effects_5: new framework_1.Achievement(StatusEffects.electrified.emoji(), "A Furious Cocktail", "Have at least 5 status effects at once.", {
         checkPlayerFrequent: function (p) {
             var unit = p.unit();
             if (!unit)
@@ -613,15 +366,15 @@ exports.Achievements = {
         },
         modes: ["not", "sandbox"]
     }),
-    drown_big_tank: new Achievement(["blue", UnitTypes.conquer.emoji()], "Not Waterproof", "Drown an enemy Conquer or Vanquish.", {
+    drown_big_tank: new framework_1.Achievement(["blue", UnitTypes.conquer.emoji()], "Not Waterproof", "Drown an enemy Conquer or Vanquish.", {
         notify: "everyone",
         modes: ["not", "sandbox"]
     }),
-    drown_mace_in_cryo: new Achievement(["cyan", UnitTypes.mace.emoji()], "Cooldown", "Drown a Mace in ".concat(Blocks.cryofluid.emoji(), " Cryofluid."), {
+    drown_mace_in_cryo: new framework_1.Achievement(["cyan", UnitTypes.mace.emoji()], "Cooldown", "Drown a Mace in ".concat(Blocks.cryofluid.emoji(), " Cryofluid."), {
         notify: "everyone",
         modes: ["not", "sandbox"]
     }),
-    max_boost_duo: new Achievement(["yellow", Blocks.duo.emoji()], "In Duo We Trust", "Control a Duo with maximum boosts.", {
+    max_boost_duo: new framework_1.Achievement(["yellow", Blocks.duo.emoji()], "In Duo We Trust", "Control a Duo with maximum boosts.", {
         checkPlayerFrequent: function (player) {
             var _a, _b;
             var tile = (_b = (_a = player.unit()) === null || _a === void 0 ? void 0 : _a.tile) === null || _b === void 0 ? void 0 : _b.call(_a);
@@ -632,11 +385,11 @@ exports.Achievements = {
         notify: "everyone",
         modes: ["not", "sandbox"]
     }),
-    foreshadow_overkill: new Achievement(["yellow", Blocks.foreshadow.emoji()], "Overkill", ["Kill a Dagger with a maximally boosted Foreshadow.", "Hint: the maximum overdrive is not +150%..."], {
+    foreshadow_overkill: new framework_1.Achievement(["yellow", Blocks.foreshadow.emoji()], "Overkill", ["Kill a Dagger with a maximally boosted Foreshadow.", "Hint: the maximum overdrive is not +150%..."], {
         notify: "everyone",
         modes: ["not", "sandbox"]
     }),
-    impacts_15: new Achievement(["green", Blocks.impactReactor.emoji()], "Darthscion's Nightmare", "Run 15 impact reactors at full efficiency.", {
+    impacts_15: new framework_1.Achievement(["green", Blocks.impactReactor.emoji()], "Darthscion's Nightmare", "Run 15 impact reactors at full efficiency.", {
         modes: ["not", "sandbox"],
         notify: "everyone",
         checkInfrequent: function (team) {
@@ -650,28 +403,28 @@ exports.Achievements = {
             return found;
         },
     }),
-    help_help: new Achievement(["brown", Iconc.info], "Help with help", "Run /help help", {
+    help_help: new framework_1.Achievement(["brown", Iconc.info], "Help with help", "Run /help help", {
         notify: "everyone"
     }),
-    ohno: new Achievement(["scarlet", UnitTypes.alpha.emoji()], "Oh no", "Control an ohno unit."),
-    sniper_duel: new Achievement(["yellow", UnitTypes.omura.emoji()], "Sniper duel", "Kill a Foreshadow with an Omura from outside its range."),
-    around_the_world: new Achievement(Iconc.planet, "Around the World", "Fly your unit around the entire map without entering it, starting from the lower left.", {
+    ohno: new framework_1.Achievement(["scarlet", UnitTypes.alpha.emoji()], "Oh no", "Control an ohno unit."),
+    sniper_duel: new framework_1.Achievement(["yellow", UnitTypes.omura.emoji()], "Sniper duel", "Kill a Foreshadow with an Omura from outside its range."),
+    around_the_world: new framework_1.Achievement(Iconc.planet, "Around the World", "Fly your unit around the entire map without entering it, starting from the lower left.", {
         notify: "everyone",
     }),
-    human_routerchain: new Achievement(["accent", Blocks.router.emoji()], "Human Routerchain", ["Form a human routerchain with 3 other players.", "Does not work with Distributors. Routers must be in a horizontal or vertical line."], {
+    human_routerchain: new framework_1.Achievement(["accent", Blocks.router.emoji()], "Human Routerchain", ["Form a human routerchain with 3 other players.", "Does not work with Distributors. Routers must be in a horizontal or vertical line."], {
         notify: "everyone"
     }),
-    no_enemy_blocks: new Achievement(["scarlet", Iconc.commandAttack], "Eradication", ["Complete an attack map with no enemy blocks remaining.", "The map must have started with at least 500 enemy blocks"], {
+    no_enemy_blocks: new framework_1.Achievement(["scarlet", Iconc.commandAttack], "Eradication", ["Complete an attack map with no enemy blocks remaining.", "The map must have started with at least 500 enemy blocks"], {
         modes: ["only", "attack"],
         notify: "everyone",
         checkGameover: function () {
             return eligibleForClearAllBuildings && !Groups.build.contains(function (b) { return b.team != Vars.state.rules.defaultTeam && b.team != Team.derelict && !b.block.privileged; });
         }
     }),
-    see_sussy_impersonator: new Achievement(["red", Iconc.lock], "There is one impostor among us", "See a ".concat(config_1.prefixes.impersonator, " in-game."), {
+    see_sussy_impersonator: new framework_1.Achievement(["red", Iconc.lock], "There is one impostor among us", "See a ".concat(config_1.prefixes.impersonator, " in-game."), {
         checkInfrequent: function () { return Groups.player.contains(function (p) { return players_1.FishPlayer.get(p).isImpersonator; }); },
     }),
-    see_sussy_impersonator_2: new Achievement(["scarlet", Iconc.lock], "There are two impostors among us", "See two ".concat(config_1.prefixes.impersonator, "s in-game at once."), {
+    see_sussy_impersonator_2: new framework_1.Achievement(["scarlet", Iconc.lock], "There are two impostors among us", "See two ".concat(config_1.prefixes.impersonator, "s in-game at once."), {
         checkInfrequent: function () { return Groups.player.count(function (p) { return players_1.FishPlayer.get(p).isImpersonator; }) == 2; },
     }),
 };
@@ -819,7 +572,7 @@ if (!config_1.Gamemode.sandbox())
     }, 1, 1);
 var aroundTheWorld = {};
 Timer.schedule(function () {
-    var e_5, _a;
+    var e_1, _a;
     players_1.FishPlayer.forEachPlayer(function (p) {
         var _a;
         var _b;
@@ -828,7 +581,7 @@ Timer.schedule(function () {
             (_a = aroundTheWorld[_b = p.uuid]) !== null && _a !== void 0 ? _a : (aroundTheWorld[_b] = { player: p, unit: unit, side: "left" });
         }
     });
-    var _loop_5 = function (uuid, entry) {
+    var _loop_1 = function (uuid, entry) {
         if (!(function () {
             if (entry.unit.dead)
                 return false;
@@ -875,15 +628,15 @@ Timer.schedule(function () {
     try {
         for (var _b = __values(Object.entries(aroundTheWorld)), _c = _b.next(); !_c.done; _c = _b.next()) {
             var _d = __read(_c.value, 2), uuid = _d[0], entry = _d[1];
-            _loop_5(uuid, entry);
+            _loop_1(uuid, entry);
         }
     }
-    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
     finally {
         try {
             if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
         }
-        finally { if (e_5) throw e_5.error; }
+        finally { if (e_1) throw e_1.error; }
     }
 }, 1, 0.5);
 Events.on(EventType.GameOverEvent, function () { return coreHealthTime.clear(); });
@@ -895,4 +648,3 @@ Events.on(EventType.WorldLoadEvent, function () {
 globals_1.FishEvents.on("scriptKiddie", function (_, p) { return Timer.schedule(function () { return exports.Achievements.script_kiddie.grantTo(p); }, 2); });
 globals_1.FishEvents.on("memoryCorruption", function () { return exports.Achievements.memory_corruption.grantToAllOnline(); });
 globals_1.FishEvents.on("serverSays", function () { return exports.Achievements.server_speak.grantToAllOnline(); });
-var templateObject_1, templateObject_2;
