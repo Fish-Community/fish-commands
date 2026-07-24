@@ -63,7 +63,7 @@ var Perm = /** @class */ (function () {
     Perm.mod = Perm.fromRank(ranks_1.Rank.mod);
     Perm.admin = Perm.fromRank(ranks_1.Rank.admin);
     Perm.manager = Perm.fromRank(ranks_1.Rank.manager);
-    Perm.member = new Perm("member", function (fishP) { return fishP.hasFlag("member"); }, "member", "[pink]", "You must have a ".concat(config_1.FColor.member(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Fish Membership"], ["Fish Membership"]))), " to use this command. Get a Fish Membership at[sky] ").concat(config_1.text.membershipURL, " []"));
+    Perm.member = new Perm("member", function (fishP) { return fishP.hasFlag("member"); }, "member", "[pink]", "You must have a ".concat(config_1.FColor.member(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Fish"], ["Fish"]))), " ").concat(config_1.FColor.member(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Membership"], ["Membership"]))), " to use this command. Get a Fish Membership at[sky] ").concat(config_1.text.membershipURL, " []"));
     Perm.chat = new Perm("chat", function (fishP) { return (!fishP.muted() && !fishP.autoflagged) || fishP.ranksAtLeast("mod"); }, "player");
     Perm.bypassChatFilter = new Perm("bypassChatFilter", "admin");
     Perm.seeMutedMessages = new Perm("seeMutedMessages", function (fishP) { return fishP.muted() || fishP.autoflagged || fishP.ranksAtLeast("mod"); }, "mod");
@@ -116,4 +116,4 @@ function rankToCategory(check) {
         trusted: "trusted"
     });
 }
-var templateObject_1;
+var templateObject_1, templateObject_2;

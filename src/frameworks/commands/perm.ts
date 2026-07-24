@@ -20,7 +20,7 @@ export class Perm {
 	static mod = Perm.fromRank(Rank.mod);
 	static admin = Perm.fromRank(Rank.admin);
 	static manager = Perm.fromRank(Rank.manager);
-	static member = new Perm("member", fishP => fishP.hasFlag("member"), "member", "[pink]", `You must have a ${FColor.member`Fish Membership`} to use this command. Get a Fish Membership at[sky] ${text.membershipURL} []`);
+	static member = new Perm("member", fishP => fishP.hasFlag("member"), "member", "[pink]", `You must have a ${FColor.member`Fish`} ${/* this is necessary to bypass the foos adblock */ FColor.member`Membership`} to use this command. Get a Fish Membership at[sky] ${text.membershipURL} []`);
 	static chat = new Perm("chat", fishP => (!fishP.muted() && !fishP.autoflagged) || fishP.ranksAtLeast("mod"), "player");
 	static bypassChatFilter = new Perm("bypassChatFilter", "admin");
 	static seeMutedMessages = new Perm("seeMutedMessages", fishP => fishP.muted() || fishP.autoflagged || fishP.ranksAtLeast("mod"), "mod");
