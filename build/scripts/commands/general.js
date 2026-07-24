@@ -279,15 +279,19 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             });
         }
     }), die: {
-        args: [],
+        args: ["nodeatheffects:boolean?"],
         description: 'Kills your unit.',
         perm: commands_1.Perm.mod.exceptModes({
             sandbox: commands_1.Perm.play
         }, "You do not have permission to die."),
         handler: function (_a) {
             var _b;
-            var sender = _a.sender;
-            (_b = sender.unit()) === null || _b === void 0 ? void 0 : _b.kill();
+            var sender = _a.sender, nodeatheffects = _a.args.nodeatheffects;
+            var unit = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(Math.random() > 0.9 ? "[cyan]omae wa mou shindeiru" : "You are already dead.");
+            if (nodeatheffects)
+                unit.remove();
+            else
+                unit.kill();
         },
     }, discord: {
         args: [],

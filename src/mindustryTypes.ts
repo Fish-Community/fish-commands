@@ -751,6 +751,7 @@ type Unit = {
 	tileOn():Tile | null;
 	tile?: () => Building;
 	kill():void;
+	remove():void;
 	add():void;
 	isAdded():boolean;
 	set(x: number, y:number):void;

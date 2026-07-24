@@ -138,13 +138,15 @@ export const commands = commandList({
 	}),
 
 	die: {
-		args: [],
+		args: ["nodeatheffects:boolean?"],
 		description: 'Kills your unit.',
 		perm: Perm.mod.exceptModes({
 			sandbox: Perm.play
 		}, `You do not have permission to die.`),
-		handler({ sender }) {
-			sender.unit()?.kill();
+		handler({ sender, args: { nodeatheffects } }) {
+			const unit = sender.unit() ?? fail(Math.random() > 0.9 ? "[cyan]omae wa mou shindeiru" : `You are already dead.`);
+			if(nodeatheffects) unit.remove();
+			else unit.kill();
 		},
 	},
 
