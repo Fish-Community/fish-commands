@@ -817,7 +817,7 @@ We apologize for the inconvenience.`
 		); else if(this.muted()) this.sendMessage(
 `[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.
 ${appealLine}
-Your mute will expire automatically ${maxTime - this.unmarkTime < 60_000 ? "in [red]never[]" : `[green]${formatTimeRelative(this.unmarkTime)}[]`}.
+Your mute will expire automatically ${maxTime - this.unmarkTime < 60_000 ? "in [red]never[]" : `[green]${formatTimeRelative(this.unmuteTime)}[]`}.
 We apologize for the inconvenience.`
 		); else if(this.autoflagged) this.sendMessage(
 `[gold]Hello there! You are currently [red]flagged as suspicious[]. You cannot do anything in-game.

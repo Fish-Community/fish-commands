@@ -1020,7 +1020,7 @@ var FishPlayer = /** @class */ (function () {
         if (this.marked())
             this.sendMessage("[gold]Hello there! You are currently [scarlet]marked as a griefer[]. You cannot do anything in-game while marked.\n".concat(appealLine, "\nYour mark will expire automatically ").concat(globals_1.maxTime - this.unmarkTime < 60000 ? "in [red]never[]" : "[green]".concat((0, utils_1.formatTimeRelative)(this.unmarkTime), "[]"), ".\nWe apologize for the inconvenience."));
         else if (this.muted())
-            this.sendMessage("[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.\n".concat(appealLine, "\nYour mute will expire automatically ").concat(globals_1.maxTime - this.unmarkTime < 60000 ? "in [red]never[]" : "[green]".concat((0, utils_1.formatTimeRelative)(this.unmarkTime), "[]"), ".\nWe apologize for the inconvenience."));
+            this.sendMessage("[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.\n".concat(appealLine, "\nYour mute will expire automatically ").concat(globals_1.maxTime - this.unmarkTime < 60000 ? "in [red]never[]" : "[green]".concat((0, utils_1.formatTimeRelative)(this.unmuteTime), "[]"), ".\nWe apologize for the inconvenience."));
         else if (this.autoflagged)
             this.sendMessage("[gold]Hello there! You are currently [red]flagged as suspicious[]. You cannot do anything in-game.\n".concat(appealLine, "\nWe apologize for the inconvenience."));
         else if (!this.showRankPrefix)
