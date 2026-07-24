@@ -94,7 +94,7 @@ Events.on(EventType.PlayerConnect, function (e) {
 });
 Events.on(EventType.ConnectPacketEvent, function (e) {
     var _a, _b, _c, _d;
-    var limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30000 ? 6 : 35;
+    var limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 60000 ? 6 : 35;
     if (!automod_1.Antibot.connectRate.allow(5000, limit)) {
         automod_1.Antibot.triggerAntibot(300000, "Rate of player connections exceeded ".concat(limit, " / 5s"), "automatic", true);
     }

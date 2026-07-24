@@ -46,7 +46,7 @@ Events.on(EventType.PlayerConnect, (e) => {
 	} else FishPlayer.onPlayerConnect(e.player);
 });
 Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection: NetConnection }) => {
-	const limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30_000 ? 6 : 35;
+	const limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 60_000 ? 6 : 35;
 	if(!Antibot.connectRate.allow(5_000, limit)){
 		Antibot.triggerAntibot(300_000, `Rate of player connections exceeded ${limit} / 5s`, "automatic", true);
 	}
