@@ -30,7 +30,7 @@ export const commands = commandList({
 				fail(`Name cannot be more than 70 characters, not including color tags.`);
 			data[sender.uuid]?.kill();
 			const unit = sender.unit() ?? fail(`You do not have a unit for the pet to follow.`);
-			if(!Vars.fogControl.isDiscovered(sender.team(), unit.x, unit.y))
+			if(!Vars.fogControl.isDiscovered(sender.team(), World.conv(unit.x), World.conv(unit.y)))
 				fail(`Cannot spawn pets in fog.`);
 			const pet = UnitTypes.merui.spawn(sender.team(), unit.x, unit.y);
 			pet.apply(StatusEffects.disarmed, Number.MAX_SAFE_INTEGER);

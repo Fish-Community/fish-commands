@@ -163,6 +163,8 @@ class World {
 	tile(x:number, y:number):Tile | null;
 	width(): number;
 	height(): number;
+	static conv(x:number):number;
+	static unconv(x:number):number;
 	tiles: {
 		eachTile(func:(tile:Tile) => unknown):void;
 	};
