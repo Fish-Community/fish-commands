@@ -1205,4 +1205,19 @@ Wave: ${r.wave}`
 			}
 		}
 	},
+	perfpatch: {
+		args: ["state:boolean?"],
+		perm: Perm.trusted,
+		description: "Toggles the experimental serialization performance patch.",
+		handler({args: {state}, outputSuccess}){
+			if(!("useSyscall" in Packages.arc.net.Server))
+				fail(`This server does not have the performance patch installed.`);
+			if(state == undefined){
+				outputSuccess(`The patch is ${Packages.arc.net.Server.useSyscall ? '[green]on' : '[red]off'}.`);
+			} else {
+				Packages.arc.net.Server.useSyscall = state;
+				outputSuccess(`The patch is now ${state ? '[green]on' : '[red]off'}.`);
+			}
+		}
+	}
 });
