@@ -1221,7 +1221,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 					break;
 				default: fail(`Invalid mode, valid modes are: attack, survival, pvp`);
 			}
-			Call.sendMessage(`[orange]Player ${sender.prefixedName}[prange] changed the gamemode to ${args.mode}.`);
+			Call.sendMessage(`[orange]Player ${sender.prefixedName}[orange] changed the gamemode to ${args.mode}.`);
 			outputSuccess(`Changed mode to ${args.mode}`);
 			Call.setRules(Vars.state.rules);
 		}
