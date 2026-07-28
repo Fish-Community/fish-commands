@@ -73,8 +73,8 @@ var Perm = /** @class */ (function () {
     Perm.viewIPs = new Perm("viewIPs", "admin");
     Perm.blockTrolling = new Perm("blockTrolling", function (fishP) { return fishP.rank === ranks_1.Rank.pi; }, "player");
     Perm.visualEffects = new Perm("visualEffects", function (fishP) { return (!fishP.stelled() || fishP.ranksAtLeast("mod")) && !fishP.hasFlag("no_effects"); }, "player");
-    Perm.bulkVisualEffects = new Perm("bulkVisualEffects", function (fishP) { return ((fishP.hasFlag("developer") || fishP.hasFlag("illusionist") || fishP.hasFlag("member")) && !fishP.stelled())
-        || fishP.ranksAtLeast("mod"); }, "trusted");
+    Perm.bulkVisualEffects = new Perm("bulkVisualEffects", function (fishP) { return (((fishP.hasFlag("developer") || fishP.hasFlag("illusionist") || fishP.hasFlag("member")) && !fishP.stelled())
+        || fishP.ranksAtLeast("mod")) && !fishP.hasFlag("no_effects"); }, "trusted");
     Perm.bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
     Perm.bypassVotekick = new Perm("bypassVotekick", "mod");
     Perm.warn = new Perm("warn", "mod");

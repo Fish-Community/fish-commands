@@ -31,8 +31,8 @@ export class Perm {
 	static blockTrolling = new Perm("blockTrolling", fishP => fishP.rank === Rank.pi, "player");
 	static visualEffects = new Perm("visualEffects", fishP => (!fishP.stelled() || fishP.ranksAtLeast("mod")) && !fishP.hasFlag("no_effects"), "player");
 	static bulkVisualEffects = new Perm("bulkVisualEffects", fishP => (
-		(fishP.hasFlag("developer") || fishP.hasFlag("illusionist") || fishP.hasFlag("member")) && !fishP.stelled())
-		|| fishP.ranksAtLeast("mod"),
+		((fishP.hasFlag("developer") || fishP.hasFlag("illusionist") || fishP.hasFlag("member")) && !fishP.stelled())
+		|| fishP.ranksAtLeast("mod")) && !fishP.hasFlag("no_effects"),
 	"trusted"
 	);
 	static bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
