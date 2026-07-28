@@ -173,6 +173,13 @@ function initializeTimers() {
             Call.infoToast("[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ".concat(Vars.netServer.admins.dosBlacklist.size), 2);
         }
     }, 0, 1);
+    Events.run(Trigger.update, function () {
+        var speed = Vars.state.map.tags.getFloat("backgroundOffsetXSpeed");
+        if (speed != 0) {
+            Vars.state.rules.backgroundOffsetX += speed;
+            Call.setRule(Vars.state.rules, Vars.state.rules.backgroundOffsetX);
+        }
+    });
 }
 Timer.schedule(function () {
     (0, files_1.updateMaps)()

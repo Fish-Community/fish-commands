@@ -77,6 +77,7 @@ class Rules {
 	copy(): Rules;
 	dynamicColor: Color;
 	planetBackground: any;
+	backgroundOffsetX: number;
 }
 
 const Vars: {
@@ -235,6 +236,8 @@ class Config {
 
 const Events: {
 	on(event:EventType, handler:(e:any) => void):void;
+	run(trigger:Trigger, handler:() => void):void;
+	runid(trigger:Trigger, handler:() => void):number;
 	fire(event:MEvent):void;
 };
 type MEvent = any;
@@ -701,7 +704,9 @@ class ObjectIntMapEntry<K> {
 	key:K;
 	value:number;
 }
-class StringMap {}
+class StringMap {
+	getFloat(key:string):number;
+}
 class EntityGroup<T> {
 	add(type:T):void
 	copy():Seq<T>;
