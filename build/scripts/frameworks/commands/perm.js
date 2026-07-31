@@ -90,6 +90,7 @@ var Perm = /** @class */ (function () {
     /** Whether players should be allowed to change the team of a unit or building. If not, they will be kicked out of their current unit or building before switching teams. */
     Perm.changeTeamExternal = new Perm("changeTeamExternal", "admin").exceptModes({
         sandbox: Perm.trusted,
+        testsrv: Perm.trusted,
     });
     Perm.usidCheck = new Perm("usidCheck", "trusted");
     Perm.runJS = new Perm("runJS", "manager");
