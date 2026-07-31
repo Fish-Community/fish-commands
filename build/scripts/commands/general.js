@@ -1416,7 +1416,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     Vars.state.rules.infiniteResources = false;
                     break;
                 case "sandbox":
-                    Vars.state.rules.attackMode = true;
+                    Vars.state.rules.attackMode = false;
                     Vars.state.rules.pvp = false;
                     Vars.state.rules.waves = false;
                     Vars.state.rules.infiniteResources = true;

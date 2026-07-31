@@ -1214,7 +1214,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 					Vars.state.rules.infiniteResources = false;
 					break;
 				case "sandbox":
-					Vars.state.rules.attackMode = true;
+					Vars.state.rules.attackMode = false;
 					Vars.state.rules.pvp = false;
 					Vars.state.rules.waves = false;
 					Vars.state.rules.infiniteResources = true;
