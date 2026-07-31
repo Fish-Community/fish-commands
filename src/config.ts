@@ -36,7 +36,7 @@ export const bannedWords: {
 	// like this: ["badw", "goodbadw"]
 	/** Chat: banned only in chat, but not in names. */
 	chat: processBannedWordList([
-		"fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon"], "skibidi", //With love, DarthScion
+		"fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon", "drizzle"], "skibidi", //With love, DarthScion
 		//>:( -dart
 		// "uwu", //lol
 	]),
