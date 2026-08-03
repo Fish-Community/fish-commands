@@ -370,7 +370,7 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 						if(num <= 255 && num >= 0)
 							outputArgs[cmdArg.name] = Team.all[num];
 						else fail(`Team ${num} is not inside the valid range (integers 0-255).`);
-					}
+					} else outputArgs[cmdArg.name] = selection;
 				} else await disambiguateArgument(
 					getTeam(args[i]),
 					...commonArgs,
