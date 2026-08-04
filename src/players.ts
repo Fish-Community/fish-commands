@@ -13,7 +13,7 @@ import { FishEvents, fishState, maxTime } from "/globals";
 import { PartialMapRun } from "/maps";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
 import type { FishPlayerData, PlayerHistoryEntry, Stats, UploadedFishPlayerData } from "/types";
-import { cleanText, formatTime, formatTimeRelative, isImpersonator, matchFilter } from "/utils";
+import { cleanText, formatTime, formatTimeRelative, isImpersonator, matchFilter, randomName } from "/utils";
 
 
 export class FishPlayer<Connected extends boolean = boolean> {
@@ -317,6 +317,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 			if(fishP.connected()){
 				fishP.checkUsid();
 				fishP.updateMemberExclusiveState();
+				fishP.checkName();
 				fishP.updateName();
 				fishP.updateAdminStatus();
 				fishP.updateAutoflaggedStatus();
@@ -711,13 +712,6 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		} else replacedName = name;
 		this.player.name = this.prefixedName = prefix + replacedName;
 	}
-	randomName():string {
-		return (
-			automaticNames.adjectives[Math.floor(Math.random() * automaticNames.adjectives.length)] +
-			automaticNames.nouns[Math.floor(Math.random() * automaticNames.nouns.length)] +
-			Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321")
-		);
-	}
 	updateAdminStatus(){
 		if(!this.connected()) return;
 		if(this.hasPerm("admin")){
@@ -753,16 +747,16 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 			}
 			const cleanedName = Strings.stripColors(this.name.replace(/[\u3164]/g, "")).trim();
 			if(cleanedName.length == 0 || cleanedName == "."){
-				this.setName(this.randomName());
-				this.sendMessage(`[orange]Your name was determined to be empty, so it has been replaced with a randomly generated one. To change it, please disconnect and set your name to something that is not empty.`);
+				this.setName(randomName());
+				if(this.dataSynced) this.sendMessage(`[orange]Your name was determined to be empty, so it has been replaced with a randomly generated one. To change it, please disconnect and set your name to something that is not empty.`);
 			}
 			if(this.cleanedName.startsWith("@")){
 				this.setName(this.name.replace(/^@/, "(@)"));
-				this.sendMessage(`[orange]Names may not begin with the @ sign, because it is used for commands. Your name has been edited slightly.`);
+				if(this.dataSynced) this.sendMessage(`[orange]Names may not begin with the @ sign, because it is used for commands. Your name has been edited slightly.`);
 			}
 			if(this.cleanedName.includes(`"`)){
 				this.setName(this.name.replace(/"/g, `'`));
-				this.sendMessage(`[orange]Your name may not contain double quotes, because they are used for commands. Your name has been edited slightly.`);
+				if(this.dataSynced) this.sendMessage(`[orange]Your name may not contain double quotes, because they are used for commands. Your name has been edited slightly.`);
 			}
 			return true;
 		}

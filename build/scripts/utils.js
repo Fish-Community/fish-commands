@@ -125,6 +125,7 @@ exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
 exports.unblacklist = unblacklist;
 exports.getDuration = getDuration;
+exports.randomName = randomName;
 var automod_1 = require("/automod");
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
@@ -1266,4 +1267,9 @@ function getDuration(player, title, description) {
         ],
         [{ text: "forever", data: globals_1.maxTime - Date.now() - 10000 }],
     ], { onCancel: "reject" });
+}
+function randomName() {
+    return (config_1.automaticNames.adjectives[Math.floor(Math.random() * config_1.automaticNames.adjectives.length)] +
+        config_1.automaticNames.nouns[Math.floor(Math.random() * config_1.automaticNames.nouns.length)] +
+        Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321"));
 }

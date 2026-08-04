@@ -405,6 +405,7 @@ var FishPlayer = /** @class */ (function () {
             if (fishP.connected()) {
                 fishP.checkUsid();
                 fishP.updateMemberExclusiveState();
+                fishP.checkName();
                 fishP.updateName();
                 fishP.updateAdminStatus();
                 fishP.updateAutoflaggedStatus();
@@ -918,11 +919,6 @@ var FishPlayer = /** @class */ (function () {
             replacedName = name;
         this.player.name = this.prefixedName = prefix + replacedName;
     };
-    FishPlayer.prototype.randomName = function () {
-        return (config_1.automaticNames.adjectives[Math.floor(Math.random() * config_1.automaticNames.adjectives.length)] +
-            config_1.automaticNames.nouns[Math.floor(Math.random() * config_1.automaticNames.nouns.length)] +
-            Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321"));
-    };
     FishPlayer.prototype.updateAdminStatus = function () {
         if (!this.connected())
             return;
@@ -956,16 +952,19 @@ var FishPlayer = /** @class */ (function () {
             }
             var cleanedName = Strings.stripColors(this.name.replace(/[\u3164]/g, "")).trim();
             if (cleanedName.length == 0 || cleanedName == ".") {
-                this.setName(this.randomName());
-                this.sendMessage("[orange]Your name was determined to be empty, so it has been replaced with a randomly generated one. To change it, please disconnect and set your name to something that is not empty.");
+                this.setName((0, utils_1.randomName)());
+                if (this.dataSynced)
+                    this.sendMessage("[orange]Your name was determined to be empty, so it has been replaced with a randomly generated one. To change it, please disconnect and set your name to something that is not empty.");
             }
             if (this.cleanedName.startsWith("@")) {
                 this.setName(this.name.replace(/^@/, "(@)"));
-                this.sendMessage("[orange]Names may not begin with the @ sign, because it is used for commands. Your name has been edited slightly.");
+                if (this.dataSynced)
+                    this.sendMessage("[orange]Names may not begin with the @ sign, because it is used for commands. Your name has been edited slightly.");
             }
             if (this.cleanedName.includes("\"")) {
                 this.setName(this.name.replace(/"/g, "'"));
-                this.sendMessage("[orange]Your name may not contain double quotes, because they are used for commands. Your name has been edited slightly.");
+                if (this.dataSynced)
+                    this.sendMessage("[orange]Your name may not contain double quotes, because they are used for commands. Your name has been edited slightly.");
             }
             return true;
         }

@@ -6,7 +6,7 @@ For functions that don't need values from other files, see funcs.ts.
 
 import { Antibot } from "/automod";
 import * as api from "/api";
-import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
+import { adminNames, automaticNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
 import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
 import { Cancel, Menu } from "/frameworks/menus";
 import { crash, Duration, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
@@ -1083,4 +1083,12 @@ export function getDuration(player:FishPlayer<true>, title:string, description:s
 		],
 		[{text: "forever", data: maxTime - Date.now() - 10000}],
 	], { onCancel: "reject" });
+}
+
+export function randomName():string {
+	return (
+		automaticNames.adjectives[Math.floor(Math.random() * automaticNames.adjectives.length)] +
+		automaticNames.nouns[Math.floor(Math.random() * automaticNames.nouns.length)] +
+		Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321")
+	);
 }
