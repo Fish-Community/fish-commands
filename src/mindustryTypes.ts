@@ -610,8 +610,8 @@ class Seq<T> {
 	constructor(ordered:boolean);
 	constructor(capacity:number);
 	static with<T>(items:T[]):Seq<T>;
-	static with<T>(...items:T[]):Seq<T>;
 	static with<T>(items:MIterable<T>):Seq<T>;
+	static with<T>(...items:T[]):Seq<T>;
 	add(item:T):this;
 	addUnique(item:T):this;
 	contains(item:T):boolean;

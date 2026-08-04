@@ -249,13 +249,14 @@ Events.on(EventType.ServerLoadEvent, () => {
 		Packages.java.lang.System.out.println("Saved on exit.");
 	}));
 
-	Vars.netServer.assigner = (player, players) => {
+	Vars.netServer.assigner = (player, _) => {
 		if(Vars.state.rules.pvp){
 			//find team with minimum amount of players and auto-assign player to that.
 			const fishP = FishPlayer.get(player);
 			let preferredTeam: Team | null = null;
 			if(fishP.restoreTeam && (Date.now() - fishP.restoreTeam[1] < Duration.minutes(5)) && fishP.restoreTeam[2] == PartialMapRun.current?.startTime)
 				preferredTeam = fishP.restoreTeam[0];
+			const otherPlayers = FishPlayer.getAllOnline().filter(p => p.player != player && p.hasPerm("play"));
 			const re = Vars.state.teams.getActive().select(data => !(
 				(Vars.state.rules.waveTeam == data.team && Vars.state.rules.waves) ||
 				!data.hasCore() ||
@@ -264,12 +265,7 @@ Events.on(EventType.ServerLoadEvent, () => {
 			)).min(floatf(data => {
 				//Only if the team is valid
 				if(data.team == preferredTeam) return -1;
-				let count = 0;
-				players.forEach(other => {
-					if(other.team() == data.team && other != player){
-						count ++;
-					}
-				});
+				const count = otherPlayers.filter(p => p.team() == data.team).length;
 				return count + Mathf.random(-0.1, 0.1);
 			}));
 			return re == null ? Vars.state.rules.defaultTeam : re.team;

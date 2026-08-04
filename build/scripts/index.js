@@ -285,7 +285,7 @@ Events.on(EventType.ServerLoadEvent, function () {
         }
         Packages.java.lang.System.out.println("Saved on exit.");
     }));
-    Vars.netServer.assigner = function (player, players) {
+    Vars.netServer.assigner = function (player, _) {
         var _a;
         if (Vars.state.rules.pvp) {
             //find team with minimum amount of players and auto-assign player to that.
@@ -293,6 +293,7 @@ Events.on(EventType.ServerLoadEvent, function () {
             var preferredTeam_1 = null;
             if (fishP.restoreTeam && (Date.now() - fishP.restoreTeam[1] < funcs_1.Duration.minutes(5)) && fishP.restoreTeam[2] == ((_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime))
                 preferredTeam_1 = fishP.restoreTeam[0];
+            var otherPlayers_1 = players_1.FishPlayer.getAllOnline().filter(function (p) { return p.player != player && p.hasPerm("play"); });
             var re = Vars.state.teams.getActive().select(function (data) { return !((Vars.state.rules.waveTeam == data.team && Vars.state.rules.waves) ||
                 !data.hasCore() ||
                 data.team == Team.derelict ||
@@ -300,12 +301,7 @@ Events.on(EventType.ServerLoadEvent, function () {
                 //Only if the team is valid
                 if (data.team == preferredTeam_1)
                     return -1;
-                var count = 0;
-                players.forEach(function (other) {
-                    if (other.team() == data.team && other != player) {
-                        count++;
-                    }
-                });
+                var count = otherPlayers_1.filter(function (p) { return p.team() == data.team; }).length;
                 return count + Mathf.random(-0.1, 0.1);
             }));
             return re == null ? Vars.state.rules.defaultTeam : re.team;
