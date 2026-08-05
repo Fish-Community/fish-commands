@@ -51,6 +51,8 @@ describe("joinArgs", () => {
 		expect(joinArgs(`"hello amogus"`.split(' '))).toEqual([`hello amogus`]);
 		expect(joinArgs(`"hello" "amogus"`.split(' '))).toEqual([`hello`, `amogus`]);
 		expect(joinArgs(`"he"llo "amogus"`.split(' '))).toEqual([`he"llo "amogus`]);
+		expect(joinArgs(`"he"llo "amogus" sus"`.split(' '))).toEqual([`he"llo "amogus`, `sus"`]);
+		expect(joinArgs(`"he"llo "amogus\\" sus"`.split(' '))).toEqual([`he"llo "amogus" sus`]);
 	});
 });
 

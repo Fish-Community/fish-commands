@@ -101,10 +101,17 @@ export function joinArgs(rawArgs:string[]){
 			groupedArg = [];
 		}
 		if(groupedArg){
-			groupedArg.push(arg);
 			if(arg.endsWith(`"`)){
-				outputArgs.push(groupedArg.join(" ").slice(1, -1));
-				groupedArg = null;
+				if(arg.at(-2) == '\\'){
+					//Delete the backslash
+					groupedArg.push(arg.slice(0, -2) + `"`);
+				} else {
+					groupedArg.push(arg);
+					outputArgs.push(groupedArg.join(" ").slice(1, -1));
+					groupedArg = null;
+				}
+			} else {
+				groupedArg.push(arg);
 			}
 		} else {
 			outputArgs.push(arg);
