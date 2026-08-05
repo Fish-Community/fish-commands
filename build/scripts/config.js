@@ -33,7 +33,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.automaticNames = exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.translationApiToken = exports.translationApiUrl = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
+exports.automaticNames = exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.translationApiToken = exports.translationApiUrl = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.sneakybannedNames = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
 var globals_1 = require("/globals");
 var ranks_1 = require("/ranks");
 var funcs_1 = require("/funcs");
@@ -159,6 +159,7 @@ exports.multiCharSubstitutions = [
 //#region misc
 /** Used for anti-impersonation. Make sure to replace numbers with letters, for example, balam314 -> balamei4. */
 exports.adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl", "eradicator"];
+exports.sneakybannedNames = ["☠[#0]Ðï[gray]§¢[white]ðÐ[#f]☠"];
 exports.heuristics = {
     /** Will trip if more than this many blocks are broken within 25 seconds of joining. */
     blocksBrokenAfterJoin: 40,

@@ -10,6 +10,7 @@ Log.info("fish-commands: loading");
 
 importPackage(Packages.arc);
 importClass(Packages.arc.util.CommandHandler);
+importClass(Packages.arc.net.DcReason);
 importPackage(Packages.mindustry.type);
 importClass(Packages.mindustry.server.ServerControl);
 importClass(Packages.java.lang.Thread);

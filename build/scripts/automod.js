@@ -560,6 +560,19 @@ exports.Heuristics = {
                 }
             }, 1, 2, 10);
         }
+        if (config_1.sneakybannedNames.includes(fishP.name)) {
+            //exact match
+            var time = (0, funcs_1.random)(8, 25);
+            Timer.schedule(function () {
+                fishP.frozen = true;
+            }, time - 6);
+            Timer.schedule(function () {
+                fishP.frozen = false;
+                if (fishP.connected())
+                    fishP.con().close(DcReason.error);
+                players_1.FishPlayer.messageTrusted("[orange]Player ".concat(fishP.prefixedName, "[orange] was softbanned because their name matched a list of known griefers."));
+            }, time);
+        }
     }
 };
 Events.on(EventType.PlayerJoin, function (e) {

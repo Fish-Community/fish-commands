@@ -5,9 +5,9 @@ This file contains automatic moderation and antibot code.
 
 import * as api from "/api";
 import { logAction, logHTrip, updateBans } from "/utils";
-import { Duration, escapeStringColorsServer, escapeTextDiscord } from "/funcs";
+import { Duration, escapeStringColorsServer, escapeTextDiscord, random } from "/funcs";
 import { FishPlayer } from "/players";
-import { FColor, Gamemode, heuristics, text } from "/config";
+import { FColor, Gamemode, heuristics, sneakybannedNames, text } from "/config";
 import { fishState, maxTime, uuidPattern } from "/globals";
 import { Menu } from "/frameworks/menus";
 
@@ -459,6 +459,18 @@ Please look at ${fishP.position()} and see if they were actually griefing. If th
 					}
 				}
 			}, 1, 2, 10);
+		}
+		if(sneakybannedNames.includes(fishP.name)){
+			//exact match
+			const time = random(8, 25);
+			Timer.schedule(() => {
+				fishP.frozen = true;
+			}, time - 6);
+			Timer.schedule(() => {
+				fishP.frozen = false;
+				if(fishP.connected()) fishP.con().close(DcReason.error);
+				FishPlayer.messageTrusted(`[orange]Player ${fishP.prefixedName}[orange] was softbanned because their name matched a list of known griefers.`);
+			}, time);
 		}
 	}
 };
