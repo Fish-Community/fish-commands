@@ -181,7 +181,22 @@ function handleMessage(sender, message) {
                                 }
                                 sendTranslatedMessage(cleanedMessage, result, recipients);
                                 Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
-                            }).catch(function () { });
+                            }).catch(function () {
+                                var e_4, _a;
+                                try {
+                                    for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                                        var player = _c.value;
+                                        Call.sendMessage(player.con, formatted, message, sender);
+                                    }
+                                }
+                                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                                finally {
+                                    try {
+                                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                                    }
+                                    finally { if (e_4) throw e_4.error; }
+                                }
+                            });
                         }
                     });
                     return [2 /*return*/];
@@ -202,7 +217,7 @@ function stripNonWordChars(string) {
     return NonAlpha.matcher(string).replaceAll("");
 }
 function sendTranslatedMessage(cleanedMessage, translatedMessage, recipients) {
-    var e_4, _a;
+    var e_5, _a;
     if (stripNonWordChars(translatedMessage.toLowerCase()) != stripNonWordChars(cleanedMessage.toLowerCase())) {
         try {
             for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -210,12 +225,12 @@ function sendTranslatedMessage(cleanedMessage, translatedMessage, recipients) {
                 Call.sendMessage(player.con, "[lightgray]Translated: " + translatedMessage + "[]", translatedMessage, null);
             }
         }
-        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
         finally {
             try {
                 if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
-            finally { if (e_4) throw e_4.error; }
+            finally { if (e_5) throw e_5.error; }
         }
     }
 }
@@ -237,7 +252,7 @@ function fetchLanguageCache() {
         req.submit(function (t) {
             var parsed = JSON.parse(t.getResultAsString());
             Core.app.post(function () {
-                var e_5, _a;
+                var e_6, _a;
                 try {
                     exports.languageCache.clear();
                     try {
@@ -248,12 +263,12 @@ function fetchLanguageCache() {
                             exports.languageCache.put(language.code.toLowerCase(), language);
                         }
                     }
-                    catch (e_5_1) { e_5 = { error: e_5_1 }; }
+                    catch (e_6_1) { e_6 = { error: e_6_1 }; }
                     finally {
                         try {
                             if (parsed_1_1 && !parsed_1_1.done && (_a = parsed_1.return)) _a.call(parsed_1);
                         }
-                        finally { if (e_5) throw e_5.error; }
+                        finally { if (e_6) throw e_6.error; }
                     }
                     resolve();
                 }

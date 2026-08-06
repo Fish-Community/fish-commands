@@ -83,7 +83,9 @@ export async function handleMessage(sender: Player, message: string) {
 				for (const player of recipients.toArray()) Call.sendMessage(player.con, formatted, message, sender);
 				sendTranslatedMessage(cleanedMessage, result, recipients);
 				Core.app.post(() => translationCache.put(cacheKey, result));
-			}).catch(() => {});
+			}).catch(() => {
+				for (const player of recipients.toArray()) Call.sendMessage(player.con, formatted, message, sender);
+			});
 		}
 	});
 }
