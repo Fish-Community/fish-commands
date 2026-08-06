@@ -146,8 +146,7 @@ function memoizeChatFilter(impl) {
         return lastOutput = impl(input);
     };
 }
-function formatTime(time, skipTrivial) {
-    if (skipTrivial === void 0) { skipTrivial = false; }
+function formatTime(time) {
     if (globals_1.maxTime - (time + Date.now()) < 20000)
         return "forever";
     if (isNaN(time))
@@ -207,9 +206,8 @@ function formatTimestampShort(time) {
     var date = new Date(time);
     return "".concat(date.getFullYear(), "-").concat(date.getMonth() + 1, "-").concat(date.getDate(), " ").concat(date.getHours(), ":").concat(date.getMinutes());
 }
-function formatTimeRelative(time, raw, skipTrivial) {
+function formatTimeRelative(time, raw) {
     if (raw === void 0) { raw = false; }
-    if (skipTrivial === void 0) { skipTrivial = false; }
     var difference = Math.abs(time - Date.now());
     if (difference < 1000)
         return "just now";
@@ -355,38 +353,38 @@ function cleanText(text, applyAntiEvasion) {
     }
     return replacedText;
 }
+var filters = (function (input) {
+    return input.map(function (i) {
+        return Array.isArray(i) ? [
+            typeof i[0] == "string" ? function (replacedText) { return replacedText.includes(i[0]); } :
+                i[0] instanceof RegExp ? function (replacedText) { return i[0].test(replacedText); } :
+                    i[0],
+            i[1]
+        ] : [
+            function (replacedText) { return replacedText.includes(i); },
+            "Name contains disallowed ".concat(i.length == 1 ? "icon" : "word", " '").concat(i, "'")
+        ];
+    });
+})([
+    [/\bserver\b/, "Name contains disallowed word 'server'"],
+    "admin", "moderator", "staff", "owner",
+    [">|||>", "Name contains >|||> which is reserved for the server owner"],
+    "\uE817", "\uE82C", "\uE88E", "\uE813",
+    ["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
+    [/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
+    [function (replacedText, isAdmin) { return !isAdmin && config_1.adminNames.includes(replacedText.replace(/ /g, "")); }, "One of our admins uses this name"]
+]);
 function isImpersonator(name, isAdmin) {
     var e_3, _a;
     var replacedText = cleanText(name);
     var antiEvasionText = cleanText(name, true);
-    //very clean code i know
-    var filters = (function (input) {
-        return input.map(function (i) {
-            return Array.isArray(i) ? [
-                typeof i[0] == "string" ? function (replacedText) { return replacedText.includes(i[0]); } :
-                    i[0] instanceof RegExp ? function (replacedText) { return i[0].test(replacedText); } :
-                        i[0],
-                i[1]
-            ] : [
-                function (replacedText) { return replacedText.includes(i); },
-                "Name contains disallowed ".concat(i.length == 1 ? "icon" : "word", " '").concat(i, "'")
-            ];
-        });
-    })([
-        [/\bserver\b/, "Name contains disallowed word 'server'"],
-        "admin", "moderator", "staff", "owner",
-        [">|||>", "Name contains >|||> which is reserved for the server owner"],
-        "\uE817", "\uE82C", "\uE88E", "\uE813",
-        ["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
-        [/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
-        [function (replacedText) { return !isAdmin && config_1.adminNames.includes(replacedText.replace(/ /g, "")); }, "One of our admins uses this name"]
-    ]);
     try {
+        //very clean code i know
         for (var filters_1 = __values(filters), filters_1_1 = filters_1.next(); !filters_1_1.done; filters_1_1 = filters_1.next()) {
             var _b = __read(filters_1_1.value, 2), check = _b[0], message = _b[1];
-            if (check(replacedText))
+            if (check(replacedText, isAdmin))
                 return message;
-            if (check(antiEvasionText))
+            if (check(antiEvasionText, isAdmin))
                 return message;
         }
     }
@@ -542,10 +540,7 @@ exports.getMap = (0, funcs_1.searchFixed)(function () { return Vars.maps.all().s
     function (m, name) { return m.plainName().replace(/ /g, "").toLowerCase().includes(name.toLowerCase()); }, //partial match with spaces removed ignoring case and colors
     function (m, name) { return m.plainName().replace(/[^a-zA-Z]/gi, "").toLowerCase().includes(name.toLowerCase()); },
 ], "recomputeOptions");
-//static cache
-var buildableBlocks = null;
 function getBlock(block, filter) {
-    buildableBlocks !== null && buildableBlocks !== void 0 ? buildableBlocks : (buildableBlocks = Vars.content.blocks().select(isBuildable));
     var check = {
         buildable: function (b) { return isBuildable(b); },
         air: function (b) { return b == Blocks.air || isBuildable(b); },
@@ -1280,5 +1275,5 @@ function randomName() {
 function formatHistoryEntry(player, e, shortWidth, copy) {
     if (shortWidth === void 0) { shortWidth = false; }
     if (copy === void 0) { copy = (function (x) { return x; }); }
-    return "".concat(copy(e.by), " [yellow]").concat(e.action, " ").concat(player.prefixedName).concat(shortWidth ? '\n' : ' ', "[white]").concat(formatTimeRelative(e.time, false, true));
+    return "".concat(copy(e.by), " [yellow]").concat(e.action, " ").concat(player.prefixedName).concat(shortWidth ? '\n' : ' ', "[white]").concat(formatTimeRelative(e.time, false));
 }

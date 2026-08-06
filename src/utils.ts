@@ -216,35 +216,35 @@ export function cleanText(text:string, applyAntiEvasion = false){
 	return replacedText;
 }
 
+const filters:Array<[check: (value:string, isAdmin:boolean) => boolean, message:string]> = (
+	(input: Array<string | [string | RegExp | ((value:string, isAdmin:boolean) => boolean), string]>) =>
+		input.map(i =>
+			Array.isArray(i) ? [
+				typeof i[0] == "string" ? replacedText => replacedText.includes((i[0] as string)) :
+				i[0] instanceof RegExp ? replacedText => (i[0] as RegExp).test(replacedText) :
+				i[0],
+				i[1]
+			] : [
+				replacedText => replacedText.includes(i),
+				`Name contains disallowed ${i.length == 1 ? "icon" : "word"} '${i}'`
+			]
+		)
+)([
+	[/\bserver\b/, "Name contains disallowed word 'server'"],
+	"admin", "moderator", "staff", "owner",
+	[">|||>", "Name contains >|||> which is reserved for the server owner"],
+	"\uE817", "\uE82C", "\uE88E", "\uE813",
+	["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
+	[/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
+	[(replacedText, isAdmin) => !isAdmin && adminNames.includes(replacedText.replace(/ /g, "")), "One of our admins uses this name"]
+]);
 export function isImpersonator(name:string, isAdmin:boolean):false | string {
 	const replacedText = cleanText(name);
 	const antiEvasionText = cleanText(name, true);
 	//very clean code i know
-	const filters:Array<[check: (value:string) => boolean, message:string]> = (
-		(input: Array<string | [string | RegExp | ((value:string) => boolean), string]>) =>
-			input.map(i =>
-				Array.isArray(i) ? [
-					typeof i[0] == "string" ? replacedText => replacedText.includes((i[0] as string)) :
-					i[0] instanceof RegExp ? replacedText => (i[0] as RegExp).test(replacedText) :
-					i[0],
-					i[1]
-				] : [
-					replacedText => replacedText.includes(i),
-					`Name contains disallowed ${i.length == 1 ? "icon" : "word"} '${i}'`
-				]
-			)
-	)([
-		[/\bserver\b/, "Name contains disallowed word 'server'"],
-		"admin", "moderator", "staff", "owner",
-		[">|||>", "Name contains >|||> which is reserved for the server owner"],
-		"\uE817", "\uE82C", "\uE88E", "\uE813",
-		["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
-		[/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
-		[(replacedText) => !isAdmin && adminNames.includes(replacedText.replace(/ /g, "")), "One of our admins uses this name"]
-	]);
 	for(const [check, message] of filters){
-		if(check(replacedText)) return message;
-		if(check(antiEvasionText)) return message;
+		if(check(replacedText, isAdmin)) return message;
+		if(check(antiEvasionText, isAdmin)) return message;
 	}
 	return false;
 }
@@ -389,11 +389,7 @@ export const getMap = searchFixed(() => Vars.maps.all().select(isMapValidForGame
 ], "recomputeOptions");
 
 
-//static cache
-let buildableBlocks:Seq<Block> | null = null;
-
 export function getBlock(block:string, filter:"buildable" | "air" | "all"):Block | string {
-	buildableBlocks ??= Vars.content.blocks().select(isBuildable);
 	const check = ({
 		buildable: b => isBuildable(b),
 		air: b => b == Blocks.air || isBuildable(b),
