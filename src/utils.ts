@@ -26,7 +26,7 @@ export function memoizeChatFilter(impl:(arg:string) => string){
 	};
 }
 
-export function formatTime(time:number, skipTrivial = false){ //TODO default skipTrivial to true
+export function formatTime(time:number){
 
 	if(maxTime - (time + Date.now()) < 20_000) return "forever";
 	if(isNaN(time)) return "N/A";
@@ -94,7 +94,7 @@ export function formatTimestampShort(time:number){
 	return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 }
 
-export function formatTimeRelative(time:number, raw = false, skipTrivial = false){ //TODO default skipTrivial to true
+export function formatTimeRelative(time:number, raw = false){
 	const difference = Math.abs(time - Date.now());
 
 	if(difference < 1000)
@@ -1094,5 +1094,5 @@ export function randomName():string {
 }
 
 export function formatHistoryEntry(player:FishPlayer, e:PlayerHistoryEntry, shortWidth = false, copy: (text:string) => string = (x => x)){
-	return `${copy(e.by)} [yellow]${e.action} ${player.prefixedName}${shortWidth ? '\n' : ' '}[white]${formatTimeRelative(e.time, false, true)}`;
+	return `${copy(e.by)} [yellow]${e.action} ${player.prefixedName}${shortWidth ? '\n' : ' '}[white]${formatTimeRelative(e.time, false)}`;
 }
