@@ -50,7 +50,7 @@ export const commands = commandList({
 				outputSuccess(f`Player ${args.player}'s mute time has been updated to ${formatTime(args.duration)} (was ${previousTime}).`);
 				logAction("updated mute time of", sender, args.player, args.reason ?? undefined, args.duration);
 			} else {
-				const suffix = args.player.shortInfoString();
+				const suffix = "\n" + args.player.shortInfoString();
 				const time = args.duration ?? await getDuration(sender, "Mute", "[accent]Select mute time[]" + suffix);
 				const message = args.reason ?? await Menu.text(
 					"Mute", "[accent]Enter the mute reason[]" + suffix,
@@ -158,7 +158,7 @@ export const commands = commandList({
 				try {
 					args.player.frozen = true;
 					const suffix = (args.player.connected() ? `\n(The player is currently frozen, take your time)` : "") +
-						args.player.shortInfoString();
+						"\n" + args.player.shortInfoString();
 					const time = args.time ?? await getDuration(sender, "Stop", "Select stop time" + suffix);
 					const message = args.message ?? await Menu.text(
 						"Stop", "Enter the stop reason" + suffix,
@@ -294,7 +294,7 @@ export const commands = commandList({
 				copy(args.player.prefixedName);
 				output(
 					`[yellow]_______________Player history_______________\n\n` +
-					(args.player).history.sort((a, b) => a.time - b.time).map(e => formatHistoryEntry(args.player, e, copy)).join("\n")
+					(args.player).history.sort((a, b) => a.time - b.time).map(e => formatHistoryEntry(args.player, e, false, copy)).join("\n")
 				);
 			} else {
 				outputFail(f`No history was found for player ${args.player}.`);

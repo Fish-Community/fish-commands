@@ -146,7 +146,8 @@ function memoizeChatFilter(impl) {
         return lastOutput = impl(input);
     };
 }
-function formatTime(time) {
+function formatTime(time, skipTrivial) {
+    if (skipTrivial === void 0) { skipTrivial = false; }
     if (globals_1.maxTime - (time + Date.now()) < 20000)
         return "forever";
     if (isNaN(time))
@@ -159,9 +160,9 @@ function formatTime(time) {
     return [
         months && "".concat(months, " month").concat(months != 1 ? "s" : ""),
         days && "".concat(days, " day").concat(days != 1 ? "s" : ""),
-        hours && "".concat(hours, " hour").concat(hours != 1 ? "s" : ""),
-        minutes && "".concat(minutes, " minute").concat(minutes != 1 ? "s" : ""),
-        (seconds || time < 1000) && "".concat(seconds, " second").concat(seconds != 1 ? "s" : ""),
+        hours && !days && "".concat(hours, " hour").concat(hours != 1 ? "s" : ""),
+        minutes && !(days || months) && "".concat(minutes, " minute").concat(minutes != 1 ? "s" : ""),
+        (seconds || time < 1000) && !(days || months || hours) && "".concat(seconds, " second").concat(seconds != 1 ? "s" : ""),
     ].filter(Boolean).join(", ");
 }
 function formatTimeShort(time) {
@@ -206,7 +207,9 @@ function formatTimestampShort(time) {
     var date = new Date(time);
     return "".concat(date.getFullYear(), "-").concat(date.getMonth() + 1, "-").concat(date.getDate(), " ").concat(date.getHours(), ":").concat(date.getMinutes());
 }
-function formatTimeRelative(time, raw) {
+function formatTimeRelative(time, raw, skipTrivial) {
+    if (raw === void 0) { raw = false; }
+    if (skipTrivial === void 0) { skipTrivial = false; }
     var difference = Math.abs(time - Date.now());
     if (difference < 1000)
         return "just now";
@@ -1274,7 +1277,8 @@ function randomName() {
         config_1.automaticNames.nouns[Math.floor(Math.random() * config_1.automaticNames.nouns.length)] +
         Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321"));
 }
-function formatHistoryEntry(player, e, copy) {
+function formatHistoryEntry(player, e, shortWidth, copy) {
+    if (shortWidth === void 0) { shortWidth = false; }
     if (copy === void 0) { copy = (function (x) { return x; }); }
-    return "".concat(copy(e.by), " [yellow]").concat(e.action, " ").concat(player.prefixedName, " [white]").concat(formatTimeRelative(e.time));
+    return "".concat(copy(e.by), " [yellow]").concat(e.action, " ").concat(player.prefixedName).concat(shortWidth ? '\n' : ' ', "[white]").concat(formatTimeRelative(e.time, false, true));
 }

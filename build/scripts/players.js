@@ -1620,7 +1620,7 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.shortInfoString = function () {
         var _this = this;
-        return "".concat(this.rank != ranks_1.Rank.player ? "[cyan]Rank: ".concat(this.rank.coloredName(), "\n") : "", "[lightgray]Total time: ").concat((0, utils_1.formatTimeShort)(this.globalStats.timeInGame), "\n[lightgray]Joins: ").concat(this.info().timesJoined, "\n[lightgray]History: ").concat(this.history.slice(-5).map(function (e) { return (0, utils_1.formatHistoryEntry)(_this, e); }).join("\n"), "\n");
+        return "".concat(this.rank != ranks_1.Rank.player ? "[cyan]Rank: ".concat(this.rank.coloredName(), "\n") : "", "[lightgray]Total time: ").concat((0, utils_1.formatTimeShort)(this.globalStats.timeInGame), "\n[lightgray]Joins: ").concat(this.info().timesJoined, "\n[lightgray]History:\n").concat(this.history.slice(-5).map(function (e) { return (0, utils_1.formatHistoryEntry)(_this, e, true); }).join("\n\n") || "<none>", "\n");
     };
     //#region Static constants
     /** Save version used for serialized FishPlayers. */

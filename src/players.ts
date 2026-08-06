@@ -1375,7 +1375,7 @@ We apologize for the inconvenience.`
 ${this.rank != Rank.player ? `[cyan]Rank: ${this.rank.coloredName()}\n` : ""}\
 [lightgray]Total time: ${formatTimeShort(this.globalStats.timeInGame)}
 [lightgray]Joins: ${this.info().timesJoined}
-[lightgray]History: ${this.history.slice(-5).map(e => formatHistoryEntry(this, e)).join("\n")}
+[lightgray]History:\n${this.history.slice(-5).map(e => formatHistoryEntry(this, e, true)).join("\n\n") || "<none>"}
 `;
 	}
 	//#endregion

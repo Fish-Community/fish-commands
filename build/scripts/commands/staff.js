@@ -183,7 +183,7 @@ exports.commands = (0, commands_1.commandList)({
                             (0, utils_1.logAction)("updated mute time of", sender, args.player, (_e = args.reason) !== null && _e !== void 0 ? _e : undefined, args.duration);
                             return [3 /*break*/, 10];
                         case 2:
-                            suffix = args.player.shortInfoString();
+                            suffix = "\n" + args.player.shortInfoString();
                             if (!((_f = args.duration) !== null && _f !== void 0)) return [3 /*break*/, 3];
                             _c = _f;
                             return [3 /*break*/, 5];
@@ -335,7 +335,7 @@ exports.commands = (0, commands_1.commandList)({
                             _h.trys.push([2, , 10, 11]);
                             args.player.frozen = true;
                             suffix = (args.player.connected() ? "\n(The player is currently frozen, take your time)" : "") +
-                                args.player.shortInfoString();
+                                "\n" + args.player.shortInfoString();
                             if (!((_f = args.time) !== null && _f !== void 0)) return [3 /*break*/, 3];
                             _c = _f;
                             return [3 /*break*/, 5];
@@ -529,7 +529,7 @@ exports.commands = (0, commands_1.commandList)({
             if (args.player.history && args.player.history.length > 0) {
                 copy(args.player.prefixedName);
                 output("[yellow]_______________Player history_______________\n\n" +
-                    (args.player).history.sort(function (a, b) { return a.time - b.time; }).map(function (e) { return (0, utils_1.formatHistoryEntry)(args.player, e, copy); }).join("\n"));
+                    (args.player).history.sort(function (a, b) { return a.time - b.time; }).map(function (e) { return (0, utils_1.formatHistoryEntry)(args.player, e, false, copy); }).join("\n"));
             }
             else {
                 outputFail(f(templateObject_24 || (templateObject_24 = __makeTemplateObject(["No history was found for player ", "."], ["No history was found for player ", "."])), args.player));
