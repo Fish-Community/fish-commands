@@ -35,6 +35,7 @@ export class Perm {
 		|| fishP.ranksAtLeast("mod")) && !fishP.hasFlag("no_effects"),
 	"trusted"
 	);
+	static developer = new Perm("developer", fishP => fishP.hasFlag("developer"), "trusted");
 	static bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
 	static bypassVotekick = new Perm("bypassVotekick", "mod");
 	static warn = new Perm("warn", "mod");

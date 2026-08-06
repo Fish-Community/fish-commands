@@ -212,6 +212,7 @@ var FishServer = /** @class */ (function () {
     FishServer.hexed = new FishServer("hexed", "162.248.100.133", "6567", ["h", "hx", "hxd", "hpvp", "hxpvp", "hexpvp"]);
     FishServer.minigame = new FishServer("minigame", "162.248.101.116", "6567", ["m", "mg", "mini", "minig", "mgame", "mng", "minigame", "mpvp"]);
     FishServer.testing = new FishServer("testing", "162.248.101.52", "6567", ["test", "testsrv", "t", "testingserver", "testserver"]);
+    FishServer.local = new FishServer("local", "127.0.0.1", "6567", ["l", "lc"], "developer");
     return FishServer;
 }());
 exports.FishServer = FishServer;
