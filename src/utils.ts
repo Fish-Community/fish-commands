@@ -12,7 +12,7 @@ import { Cancel, Menu } from "/frameworks/menus";
 import { crash, Duration, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
 import { dosBlacklistCopy, FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
-import { SelectEnumClassKeys } from "/types";
+import { PlayerHistoryEntry, SelectEnumClassKeys } from "/types";
 
 
 export function memoizeChatFilter(impl:(arg:string) => string){
@@ -1091,4 +1091,8 @@ export function randomName():string {
 		automaticNames.nouns[Math.floor(Math.random() * automaticNames.nouns.length)] +
 		Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321")
 	);
+}
+
+export function formatHistoryEntry(player:FishPlayer, e:PlayerHistoryEntry, copy: (text:string) => string = (x => x)){
+	return `${copy(e.by)} [yellow]${e.action} ${player.prefixedName} [white]${formatTimeRelative(e.time)}`;
 }

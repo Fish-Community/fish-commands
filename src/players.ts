@@ -13,7 +13,7 @@ import { FishEvents, fishState, maxTime } from "/globals";
 import { PartialMapRun } from "/maps";
 import { Rank, RankName, RoleFlag, RoleFlagName } from "/ranks";
 import type { FishPlayerData, PlayerHistoryEntry, Stats, UploadedFishPlayerData } from "/types";
-import { cleanText, formatTime, formatTimeRelative, isImpersonator, matchFilter, randomName } from "/utils";
+import { cleanText, formatHistoryEntry, formatTime, formatTimeRelative, formatTimeShort, isImpersonator, matchFilter, randomName } from "/utils";
 
 
 export class FishPlayer<Connected extends boolean = boolean> {
@@ -1369,6 +1369,14 @@ We apologize for the inconvenience.`
 				//This will cause FishPlayer.onRespawn to run, calling this function again, but then the player will be in a core unit, which can be safely stell'd
 			}
 		}
+	}
+	shortInfoString():string {
+		return `\
+${this.rank != Rank.player ? `[cyan]Rank: ${this.rank.coloredName()}\n` : ""}\
+[lightgray]Total time: ${formatTimeShort(this.globalStats.timeInGame)}
+[lightgray]Joins: ${this.info().timesJoined}
+[lightgray]History: ${this.history.slice(-5).map(e => formatHistoryEntry(this, e)).join("\n")}
+`;
 	}
 	//#endregion
 }

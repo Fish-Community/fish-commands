@@ -126,6 +126,7 @@ exports.getStatuses = getStatuses;
 exports.unblacklist = unblacklist;
 exports.getDuration = getDuration;
 exports.randomName = randomName;
+exports.formatHistoryEntry = formatHistoryEntry;
 var automod_1 = require("/automod");
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
@@ -1272,4 +1273,8 @@ function randomName() {
     return (config_1.automaticNames.adjectives[Math.floor(Math.random() * config_1.automaticNames.adjectives.length)] +
         config_1.automaticNames.nouns[Math.floor(Math.random() * config_1.automaticNames.nouns.length)] +
         Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321"));
+}
+function formatHistoryEntry(player, e, copy) {
+    if (copy === void 0) { copy = (function (x) { return x; }); }
+    return "".concat(copy(e.by), " [yellow]").concat(e.action, " ").concat(player.prefixedName, " [white]").concat(formatTimeRelative(e.time));
 }

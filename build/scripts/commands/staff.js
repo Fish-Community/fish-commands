@@ -163,7 +163,7 @@ exports.commands = (0, commands_1.commandList)({
         requirements: [commands_1.Req.moderate("player")],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var previousTime, time, _c, message, _d;
+                var previousTime, suffix, time, _c, message, _d;
                 var _e, _f, _g;
                 var args = _b.args, sender = _b.sender, outputSuccess = _b.outputSuccess, f = _b.f;
                 return __generator(this, function (_h) {
@@ -181,13 +181,13 @@ exports.commands = (0, commands_1.commandList)({
                             _h.sent();
                             outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Player ", "'s mute time has been updated to ", " (was ", ")."], ["Player ", "'s mute time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.duration), previousTime));
                             (0, utils_1.logAction)("updated mute time of", sender, args.player, (_e = args.reason) !== null && _e !== void 0 ? _e : undefined, args.duration);
-                            return [3 /*break*/, 11];
+                            return [3 /*break*/, 10];
                         case 2:
-                            _h.trys.push([2, , 10, 11]);
+                            suffix = args.player.shortInfoString();
                             if (!((_f = args.duration) !== null && _f !== void 0)) return [3 /*break*/, 3];
                             _c = _f;
                             return [3 /*break*/, 5];
-                        case 3: return [4 /*yield*/, (0, utils_1.getDuration)(sender, "Mute", "Select mute time")];
+                        case 3: return [4 /*yield*/, (0, utils_1.getDuration)(sender, "Mute", "[accent]Select mute time[]" + suffix)];
                         case 4:
                             _c = _h.sent();
                             _h.label = 5;
@@ -196,7 +196,7 @@ exports.commands = (0, commands_1.commandList)({
                             if (!((_g = args.reason) !== null && _g !== void 0)) return [3 /*break*/, 6];
                             _d = _g;
                             return [3 /*break*/, 8];
-                        case 6: return [4 /*yield*/, menus_1.Menu.text("Mute", "Enter the mute reason", sender, { allowEmpty: true, maxTextLength: 99 })];
+                        case 6: return [4 /*yield*/, menus_1.Menu.text("Mute", "[accent]Enter the mute reason[]" + suffix, sender, { allowEmpty: true, maxTextLength: 99 })];
                         case 7:
                             _d = _h.sent();
                             _h.label = 8;
@@ -206,11 +206,8 @@ exports.commands = (0, commands_1.commandList)({
                         case 9:
                             _h.sent();
                             (0, utils_1.logAction)('muted', sender, args.player, message, time);
-                            return [3 /*break*/, 11];
-                        case 10:
-                            args.player.frozen = false;
-                            return [7 /*endfinally*/];
-                        case 11: return [2 /*return*/];
+                            _h.label = 10;
+                        case 10: return [2 /*return*/];
                     }
                 });
             });
@@ -337,7 +334,8 @@ exports.commands = (0, commands_1.commandList)({
                         case 2:
                             _h.trys.push([2, , 10, 11]);
                             args.player.frozen = true;
-                            suffix = args.player.connected() ? "\n(The player is currently frozen, take your time)" : "";
+                            suffix = (args.player.connected() ? "\n(The player is currently frozen, take your time)" : "") +
+                                args.player.shortInfoString();
                             if (!((_f = args.time) !== null && _f !== void 0)) return [3 /*break*/, 3];
                             _c = _f;
                             return [3 /*break*/, 5];
@@ -531,9 +529,7 @@ exports.commands = (0, commands_1.commandList)({
             if (args.player.history && args.player.history.length > 0) {
                 copy(args.player.prefixedName);
                 output("[yellow]_______________Player history_______________\n\n" +
-                    (args.player).history.sort(function (a, b) { return a.time - b.time; }).map(function (e) {
-                        return "".concat(copy(e.by), " [yellow]").concat(e.action, " ").concat(args.player.prefixedName, " [white]").concat((0, utils_1.formatTimeRelative)(e.time));
-                    }).join("\n"));
+                    (args.player).history.sort(function (a, b) { return a.time - b.time; }).map(function (e) { return (0, utils_1.formatHistoryEntry)(args.player, e, copy); }).join("\n"));
             }
             else {
                 outputFail(f(templateObject_24 || (templateObject_24 = __makeTemplateObject(["No history was found for player ", "."], ["No history was found for player ", "."])), args.player));
