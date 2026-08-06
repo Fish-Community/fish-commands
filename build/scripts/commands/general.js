@@ -1322,19 +1322,28 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: "Views a player's stats.",
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var stats;
-                var _c = _b.args, target = _c.target, _d = _c.global, global = _d === void 0 ? false : _d, output = _b.output, player = _b.player, f = _b.f;
-                return __generator(this, function (_e) {
-                    switch (_e.label) {
+                var _c, stats;
+                var _d = _b.args, target = _d.target, _e = _d.global, global = _e === void 0 ? false : _e, output = _b.output, player = _b.player, f = _b.f;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
                         case 0:
                             player(target);
-                            if (!!target.dataSynced) return [3 /*break*/, 2];
-                            return [4 /*yield*/, target.downloadData().catch(function () { return (0, commands_1.fail)("Error fetching data."); })];
+                            if (!!target.dataSynced) return [3 /*break*/, 5];
+                            _f.label = 1;
                         case 1:
-                            _e.sent();
-                            target.dataSynced = true;
-                            _e.label = 2;
+                            _f.trys.push([1, 3, , 4]);
+                            return [4 /*yield*/, target.downloadData()];
                         case 2:
+                            _f.sent();
+                            return [3 /*break*/, 4];
+                        case 3:
+                            _c = _f.sent();
+                            (0, commands_1.fail)("Error fetching data.");
+                            return [3 /*break*/, 4];
+                        case 4:
+                            target.dataSynced = true;
+                            _f.label = 5;
+                        case 5:
                             stats = global ? target.globalStats : target.stats;
                             output(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, global ? "across all servers" : "on this server", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished));
                             return [2 /*return*/];

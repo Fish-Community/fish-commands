@@ -1127,7 +1127,11 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		async handler({args:{target, global = false}, output, player, f}){
 			player(target);
 			if(!target.dataSynced){
-				await target.downloadData().catch(() => fail(`Error fetching data.`));
+				try {
+					await target.downloadData();
+				} catch {
+					fail(`Error fetching data.`);
+				}
 				target.dataSynced = true;
 			}
 			const stats = global ? target.globalStats : target.stats;
