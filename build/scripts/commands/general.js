@@ -1571,7 +1571,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             else
                 outputSuccess("Re-enabled confirm popups.");
             if (duration > funcs_1.Duration.hours(1))
-                output("Warning: this does sync between servers, and does not persist after a server restart.");
+                output("Warning: this does not sync between servers, and does not persist after a server restart.");
         }
     }, copy: {
         args: [],

@@ -1354,7 +1354,7 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			sender.skipConfirm = Date.now() + duration;
 			if(Date.now() < sender.skipConfirm) outputSuccess(`Disabled confirm popups for ${formatTime(duration)}.`);
 			else outputSuccess(`Re-enabled confirm popups.`);
-			if(duration > Duration.hours(1)) output(`Warning: this does sync between servers, and does not persist after a server restart.`);
+			if(duration > Duration.hours(1)) output(`Warning: this does not sync between servers, and does not persist after a server restart.`);
 		}
 	},
 	copy: {
