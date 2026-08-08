@@ -120,7 +120,7 @@ export function initializeTimers(){
 		const speed = Vars.state.map.tags.getFloat("backgroundOffsetXSpeed");
 		if(speed != 0){
 			Vars.state.rules.backgroundOffsetX += speed;
-			Call.setRule(Vars.state.rules, Vars.state.rules.backgroundOffsetX);
+			Call.setRule("backgroundOffsetX", String(Vars.state.rules.backgroundOffsetX));
 		}
 	});
 }
