@@ -364,7 +364,8 @@ export const commands = commandList({
 			if(fishState.labels.length == 0) fail(`No labels found.`);
 			fishState.labels.forEach(l => {
 				l.task?.cancel();
-				Call.label(null, l.id, 0, 0, 0);
+				//ABSOLUTELY WONDERFUL
+				Call["label(java.lang.String,int,float,float,float)"](null, l.id, 0, 0, 0);
 			});
 			outputSuccess(`Removed all labels.`);
 		}
@@ -391,7 +392,8 @@ export const commands = commandList({
 				label = fishState.labels.splice(index, 1)[0];
 			}
 			label.task?.cancel();
-			Call.label(null, label.id, 0, 0, 0);
+			//ABSOLUTELY WONDERFUL
+			Call["label(java.lang.String,int,float,float,float)"](null, label.id, 0, 0, 0);
 			outputSuccess(`Removed one label.`);
 		}
 	},
