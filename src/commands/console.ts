@@ -173,15 +173,16 @@ export const commands = consoleCommandList({
 			
 			if(args.verbose){
 				const outputString = ["DOS Blacklist:"];
+				let missing = 0;
 				blacklist.each((ip:string) => {
 					const info = admins.findByIP(ip);
 					if(info){
 						outputString.push(`IP: &c${ip}&fr UUID: &c"${info.id}"&fr Last name used: &c"${escapeStringColorsServer(info.plainLastName())}"&fr`);
-					}
+					} else missing ++;
 				});
 	
 				output(outputString.join("\n"));
-				output(`${blacklist.size} blacklisted IPs`);
+				output(`${blacklist.size} blacklisted IPs. ${missing} not shown because no player info was found on this server. (Try other servers)`);
 			} else {
 				output(blacklist.toString());
 				output(`${blacklist.size} blacklisted IPs`);

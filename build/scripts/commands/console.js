@@ -393,14 +393,17 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 (0, commands_1.fail)("The blacklist is empty");
             if (args.verbose) {
                 var outputString_1 = ["DOS Blacklist:"];
+                var missing_1 = 0;
                 blacklist.each(function (ip) {
                     var info = admins.findByIP(ip);
                     if (info) {
                         outputString_1.push("IP: &c".concat(ip, "&fr UUID: &c\"").concat(info.id, "\"&fr Last name used: &c\"").concat((0, funcs_1.escapeStringColorsServer)(info.plainLastName()), "\"&fr"));
                     }
+                    else
+                        missing_1++;
                 });
                 output(outputString_1.join("\n"));
-                output("".concat(blacklist.size, " blacklisted IPs"));
+                output("".concat(blacklist.size, " blacklisted IPs. ").concat(missing_1, " not shown because no player info was found on this server. (Try other servers)"));
             }
             else {
                 output(blacklist.toString());
