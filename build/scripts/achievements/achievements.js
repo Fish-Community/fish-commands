@@ -305,7 +305,7 @@ exports.Achievements = {
         checkPlayerJoin: function () { return Groups.player.contains(function (p) { return players_1.FishPlayer.get(p).ranksAtLeast("mod"); }); },
     }),
     meet_fish: new framework_1.Achievement(["blue", Iconc.admin], "The Big Fish", "Meet >|||>Fish himself in-game", {
-        checkPlayerJoin: function () { return Groups.player.contains(function (p) { return players_1.FishPlayer.get(p).ranksAtLeast("fish"); }); },
+        checkInfrequent: function () { return Groups.player.contains(function (p) { return players_1.FishPlayer.get(p).ranksAtLeast("fish"); }); },
         hidden: true,
     }),
     server_speak: new framework_1.Achievement(["pink", Iconc.host], "It Speaks!", "Hear the server talk in chat."),

@@ -263,7 +263,7 @@ export const Achievements = {
 		checkPlayerJoin: () => Groups.player.contains(p => FishPlayer.get(p).ranksAtLeast("mod")),
 	}),
 	meet_fish: new Achievement(["blue", Iconc.admin], "The Big Fish", "Meet >|||>Fish himself in-game", {
-		checkPlayerJoin: () => Groups.player.contains(p => FishPlayer.get(p).ranksAtLeast("fish")),
+		checkInfrequent: () => Groups.player.contains(p => FishPlayer.get(p).ranksAtLeast("fish")),
 		hidden: true,
 	}),
 	server_speak: new Achievement(["pink", Iconc.host], "It Speaks!", "Hear the server talk in chat."),
