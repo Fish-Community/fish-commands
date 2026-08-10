@@ -396,7 +396,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 blacklist.each(function (ip) {
                     var info = admins.findByIP(ip);
                     if (info) {
-                        outputString_1.push("IP: &c".concat(ip, "&fr UUID: &c\"").concat(info.id, "\"&fr Last name used: &c\"").concat(info.plainLastName(), "\"&fr"));
+                        outputString_1.push("IP: &c".concat(ip, "&fr UUID: &c\"").concat(info.id, "\"&fr Last name used: &c\"").concat((0, funcs_1.escapeStringColorsServer)(info.plainLastName()), "\"&fr"));
                     }
                 });
                 output(outputString_1.join("\n"));

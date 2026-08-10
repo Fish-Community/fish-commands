@@ -176,7 +176,7 @@ export const commands = consoleCommandList({
 				blacklist.each((ip:string) => {
 					const info = admins.findByIP(ip);
 					if(info){
-						outputString.push(`IP: &c${ip}&fr UUID: &c"${info.id}"&fr Last name used: &c"${info.plainLastName()}"&fr`);
+						outputString.push(`IP: &c${ip}&fr UUID: &c"${info.id}"&fr Last name used: &c"${escapeStringColorsServer(info.plainLastName())}"&fr`);
 					}
 				});
 	
