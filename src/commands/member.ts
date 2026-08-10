@@ -24,11 +24,14 @@ export const commands = commandList({
 					return;
 				}
 			}
-			if(sender.muted || !args.name) args.name = `${sender.name}[white]'s pet`;
+			if(sender.muted() || !args.name) args.name = `${sender.name}[white]'s pet`;
 			if(args.name.length > 500) fail(`Name cannot be more than 500 characters.`);
-			if(Strings.stripColors(args.name).length > 70) fail(`Name cannot be more than 70 characters, not including color tags.`);
+			if(Strings.stripColors(args.name).length > 70)
+				fail(`Name cannot be more than 70 characters, not including color tags.`);
 			data[sender.uuid]?.kill();
 			const unit = sender.unit() ?? fail(`You do not have a unit for the pet to follow.`);
+			if(!Vars.fogControl.isDiscovered(sender.team(), World.conv(unit.x), World.conv(unit.y)))
+				fail(`Cannot spawn pets in fog.`);
 			const pet = UnitTypes.merui.spawn(sender.team(), unit.x, unit.y);
 			pet.apply(StatusEffects.disarmed, Number.MAX_SAFE_INTEGER);
 			data[sender.uuid] = pet;
@@ -112,11 +115,12 @@ export const commands = commandList({
 		handler({args, sender, outputSuccess}){
 			const colors = ['[red]', '[orange]', '[yellow]', '[acid]', '[blue]', '[purple]'];
 			function rainbowLoop(index:number, fishP:FishPlayer){
+				if(!(fishP.rainbow && fishP.player && fishP.connected())) return;
 				Timer.schedule(() => {
 					if(!(fishP.rainbow && fishP.player && fishP.connected())) return;
 					fishP.player.name = colors[index % colors.length] + Strings.stripColors(fishP.player.name);
 					rainbowLoop(index + 1, fishP);
-				}, args.speed! / 5);
+				}, fishP.rainbow.speed / 5);
 			}
 
 			if(!args.speed){

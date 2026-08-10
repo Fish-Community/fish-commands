@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateMaps = updateMaps;
 var config_1 = require("/config");
 var funcs_1 = require("/funcs");
+var globals_1 = require("/globals");
 var promise_1 = require("/promise");
 var utils_1 = require("/utils");
 //if we switch to a self-hosted setup, just make it respond with the githubfile object for a drop-in replacement
@@ -17,7 +18,10 @@ function fetchGithubContents() {
         var url = config_1.mapRepoURLs[config_1.Gamemode.name()];
         if (!url)
             return reject("No recognized gamemode detected. please enter \"host <map> <gamemode>\" and try again");
-        Http.get(url, function (res) {
+        var res = Http.get(url);
+        res.timeout = 30000;
+        res.error(function (err) { return reject("Network error while fetching github repository contents: " + err); });
+        res.submit(function (res) {
             try {
                 //Trust github to return valid JSON data
                 resolve(JSON.parse(res.getResultAsString()));
@@ -25,7 +29,7 @@ function fetchGithubContents() {
             catch (e) {
                 reject("Failed to parse GitHub repository contents: ".concat(String(e)));
             }
-        }, function () { return reject("Network error while fetching github repository contents"); });
+        });
     });
 }
 function downloadFile(address, filename) {
@@ -89,6 +93,7 @@ function updateMaps() {
             return mapsToDelete.length > 0 ? true : false;
         }
         return downloadMaps(mapsToDownload).then(function () {
+            globals_1.fishState.lastSuccessfulMapUpdate = Date.now();
             Vars.maps.reload();
             return true;
         });

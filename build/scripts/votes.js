@@ -123,14 +123,13 @@ var VoteManager = /** @class */ (function (_super) {
         else
             this._checkVote(false);
     };
-    VoteManager.prototype.unvote = function (player) {
+    VoteManager.prototype.unvote = function (fishP) {
         if (!this.session)
             return;
-        var fishP = players_1.FishPlayer.resolve(player);
         var vote = this.session.votes.get(fishP.uuid);
         if (vote) {
             this.session.votes.delete(fishP.uuid);
-            this.fire("player vote removed", [player, vote]);
+            this.fire("player vote removed", [fishP, vote]);
             this._checkVote(false);
         }
     };
@@ -156,6 +155,8 @@ var VoteManager = /** @class */ (function (_super) {
             return this.goal[1];
         }
         else {
+            if (!this.session)
+                return 1;
             var numVoters = players_1.FishPlayer.getAllOnline().filter(function (p) {
                 return _this.isEligible(p, _this.session.data) && (_this.isCounted(p, _this.session.data) || _this.session.votes.has(p.uuid));
             }).length;
@@ -169,7 +170,7 @@ var VoteManager = /** @class */ (function (_super) {
                 for (var _b = __values(this.session.votes.keys()), _c = _b.next(); !_c.done; _c = _b.next()) {
                     var key = _c.value;
                     var fishP = players_1.FishPlayer.getById(key);
-                    if (!this.isEligible(fishP, this.session.data))
+                    if (!fishP.connected() || !this.isEligible(fishP, this.session.data))
                         this.session.votes.delete(key);
                 }
             }
@@ -200,6 +201,8 @@ var VoteManager = /** @class */ (function (_super) {
         this.getEligibleVoters().forEach(function (p) { return p.sendMessage(message); });
     };
     VoteManager.prototype._checkVote = function (end) {
+        if (!this.session)
+            return;
         var votes = this.currentVotes();
         var required = this.requiredVotes();
         if (votes >= required) {

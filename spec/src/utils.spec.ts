@@ -1,6 +1,7 @@
 import { capitalizeText, getIPAddress } from "../plugin/funcs.js";
 import { formatTime } from "../plugin/utils.js";
 import { maxTime } from "../plugin/globals.js";
+import { joinArgs } from "../plugin/frameworks/commands/commands.js";
 
 describe("capitalizeText", () => {
 	it("should work", () => {
@@ -36,6 +37,22 @@ describe("formatTime", () => {
 	});
 	it("should work for 0", () => {
 		expect(formatTime(0)).toEqual("0 seconds");
+	});
+});
+
+describe("joinArgs", () => {
+	it("should work", () => {
+		expect(joinArgs(`hello`.split(' '))).toEqual([`hello`]);
+		expect(joinArgs(`hello amogus`.split(' '))).toEqual([`hello`, `amogus`]);
+		expect(joinArgs(`hel"lo`.split(' '))).toEqual([`hel"lo`]);
+		expect(joinArgs(`he"l"lo`.split(' '))).toEqual([`he"l"lo`]);
+		expect(joinArgs(`hel"lo amo"gus`.split(' '))).toEqual([`hel"lo`, `amo"gus`]);
+		expect(joinArgs(`"hello amogus"`.split(' '))).toEqual([`hello amogus`]);
+		expect(joinArgs(`"hello amogus"`.split(' '))).toEqual([`hello amogus`]);
+		expect(joinArgs(`"hello" "amogus"`.split(' '))).toEqual([`hello`, `amogus`]);
+		expect(joinArgs(`"he"llo "amogus"`.split(' '))).toEqual([`he"llo "amogus`]);
+		expect(joinArgs(`"he"llo "amogus" sus"`.split(' '))).toEqual([`he"llo "amogus`, `sus"`]);
+		expect(joinArgs(`"he"llo "amogus\\" sus"`.split(' '))).toEqual([`he"llo "amogus" sus`]);
 	});
 });
 

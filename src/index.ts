@@ -3,6 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the main code, which calls other functions and initializes the plugin.
 */
 
+import { Antibot } from "/automod";
 import * as api from "/api";
 import { registerAll } from "/commands/aggregate";
 import { text } from "/config";
@@ -14,8 +15,8 @@ import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
 import * as timers from "/timers";
+import * as translation from "/translation";
 import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop, vnwCondition } from "/utils";
-
 const { Menu } = menus;
 
 Events.on(EventType.ConnectionEvent, (e) => {
@@ -29,7 +30,7 @@ Events.on(EventType.ConnectionEvent, (e) => {
 				Vars.netServer.admins.kickedIPs.remove(e.connection.address);
 			}
 		});
-	} else if(api.isVpnCached(e.connection.address) && FishPlayer.shouldWhackFlaggedPlayers()){
+	} else if(api.isVpnCached(e.connection.address) && Antibot.shouldWhackFlaggedPlayers()){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		try {
 			Vars.netServer.admins.blacklistDos(e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
@@ -39,30 +40,24 @@ Events.on(EventType.ConnectionEvent, (e) => {
 	}
 });
 Events.on(EventType.PlayerConnect, (e) => {
-	if(FishPlayer.shouldKickNewPlayers() && e.player.info.timesJoined == 1){
+	if(Antibot.shouldKickNewPlayers() && e.player.info.timesJoined == 1){
 		//do not use the helper function, for maximum performance
 		e.player.kick("Please rejoin the server in 20 seconds. We apologize for the inconvenience, we are currently under DDoS attack.", 3600_000);
 	} else FishPlayer.onPlayerConnect(e.player);
 });
-Events.on(EventType.PlayerJoin, (e) => {
-	FishPlayer.onPlayerJoin(e.player);
-});
-Events.on(EventType.PlayerLeave, (e) => {
-	FishPlayer.onPlayerLeave(e.player);
-});
 Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection: NetConnection }) => {
-	const limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 30_000 ? 6 : 35;
-	if(!FishPlayer.connectRate.allow(5_000, limit)){
-		FishPlayer.triggerAntibot(300_000, `Rate of player connections exceeded ${limit} / 5s`, "automatic", true);
+	const limit = Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() > 60_000 ? 6 : 35;
+	if(!Antibot.connectRate.allow(5_000, limit)){
+		Antibot.triggerAntibot(300_000, `Rate of player connections exceeded ${limit} / 5s`, "automatic", true);
 	}
 	ipJoins.increment(e.connection.address);
 	if(e.connection.hasBegunConnecting) return; //will get kicked
 	const info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
-	const underAttack = FishPlayer.antiBotMode();
+	const underAttack = Antibot.antiBotMode();
 	const newPlayer = !info || info.timesJoined < 10;
 	const nameBlacklisted = fishState.antibotData.nameBlacklist?.[1]?.matcher(e.packet.name).matches();
 	const nameGraylisted = fishState.antibotData.nameGraylist?.[1]?.matcher(e.packet.name).matches();
-	if(newPlayer && (nameBlacklisted && FishPlayer.antiBotMode() || nameGraylisted && FishPlayer.shouldKickNewPlayers())){
+	if(newPlayer && (nameBlacklisted && Antibot.antiBotMode() || nameGraylisted && Antibot.shouldKickNewPlayers())){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
 		let udpAddress;
@@ -72,7 +67,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		Log.info(`Blacklisting ip @ with name @ because it matched the configured regex.`, udpAddress ? e.connection.address + "/" + udpAddress : e.connection.address, e.packet.name);
 		return;
 	}
-	if(newPlayer && (nameBlacklisted || nameGraylisted && FishPlayer.antiBotMode())){
+	if(newPlayer && (nameBlacklisted || nameGraylisted && Antibot.antiBotMode())){
 		Log.info(`Temporarily kicking ip @ with name @ because it matched the configured regex.`, e.connection.address, e.packet.name);
 		e.connection.kick("Please change your name to something else. We are currently under attack by bots and your name looks similar to the bots' names.", 3000);
 		return;
@@ -86,7 +81,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
-		FishPlayer.triggerAntibot(
+		Antibot.triggerAntibot(
 			60_000,
 			(veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"),
 			"automatic",
@@ -105,7 +100,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		} else if(cachedRegion2 != e.packet.uuid){
 			Vars.netServer.admins.blacklistDos(e.connection.address);
 			e.connection.kicked = true;
-			FishPlayer.triggerAntibot(
+			Antibot.triggerAntibot(
 				480_000,
 				"suspicious UUIDs",
 				"automatic",
@@ -118,7 +113,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	if(suspiciousModName || e.packet.name.includes('\x1B')){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
-		FishPlayer.triggerAntibot(
+		Antibot.triggerAntibot(
 			5_000,
 			"illegal characters in name or mods",
 			"automatic",
@@ -129,7 +124,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	if(ipJoins.get(e.connection.address) >= ( (underAttack || veryLongModName) ? (newPlayer ? 4 : 5) : (newPlayer || longModName) ? 7 : 15 )){
 		Vars.netServer.admins.blacklistDos(e.connection.address);
 		e.connection.kicked = true;
-		FishPlayer.triggerAntibot(
+		Antibot.triggerAntibot(
 			5_000,
 			"too many connections",
 			"automatic",
@@ -158,17 +153,16 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	});
 	FishPlayer.onConnectPacket(e.packet);
 });
-Events.on(EventType.UnitChangeEvent, (e) => {
-	FishPlayer.onUnitChange(e.player, e.unit);
-});
+
 Events.on(EventType.ContentInitEvent, () => {
 	//Unhide latum and renale
 	UnitTypes.latum.hidden = false;
 	UnitTypes.renale.hidden = false;
 });
-Events.on(EventType.PlayerChatEvent, (e) => processChat(e.player, e.message, true));
 
-Events.on(EventType.ServerLoadEvent, (e) => {
+Events.on(EventType.PlayerChatEvent, (e) => processChat(e.player, e.message, true)); //only run effects once
+
+Events.on(EventType.ServerLoadEvent, () => {
 	Time.mark();
 	const clientHandler = Vars.netServer.clientCommands;
 	const serverHandler = ServerControl.instance.handler;
@@ -209,7 +203,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 				return false;
 			} else if(action.type === Administration.ActionType.pingLocation && action.pingText && action.pingText.length < Vars.maxPingTextLength){
 				const fishP = FishPlayer.get(action.player);
-				if(fishP.muted){
+				if(fishP.muted()){
 					action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are muted, you cannot send text through location pings.`);
 					return false;
 				} else if(matchFilter(action.pingText, "chat", false)){
@@ -255,13 +249,14 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 		Packages.java.lang.System.out.println("Saved on exit.");
 	}));
 
-	Vars.netServer.assigner = (player, players) => {
+	Vars.netServer.assigner = (player, _) => {
 		if(Vars.state.rules.pvp){
 			//find team with minimum amount of players and auto-assign player to that.
 			const fishP = FishPlayer.get(player);
 			let preferredTeam: Team | null = null;
 			if(fishP.restoreTeam && (Date.now() - fishP.restoreTeam[1] < Duration.minutes(5)) && fishP.restoreTeam[2] == PartialMapRun.current?.startTime)
 				preferredTeam = fishP.restoreTeam[0];
+			const otherPlayers = FishPlayer.getAllOnline().filter(p => p.player != player && p.hasPerm("play"));
 			const re = Vars.state.teams.getActive().select(data => !(
 				(Vars.state.rules.waveTeam == data.team && Vars.state.rules.waves) ||
 				!data.hasCore() ||
@@ -270,12 +265,7 @@ Events.on(EventType.ServerLoadEvent, (e) => {
 			)).min(floatf(data => {
 				//Only if the team is valid
 				if(data.team == preferredTeam) return -1;
-				let count = 0;
-				players.forEach(other => {
-					if(other.team() == data.team && other != player){
-						count ++;
-					}
-				});
+				const count = otherPlayers.filter(p => p.team() == data.team).length;
 				return count + Mathf.random(-0.1, 0.1);
 			}));
 			return re == null ? Vars.state.rules.defaultTeam : re.team;
@@ -316,12 +306,8 @@ Events.on(EventType.GameOverEvent, (e) => {
 			restartNow(true);
 		});
 	}
-	FishPlayer.onGameOver(e.winner as Team);
 });
-Events.on(EventType.WorldLoadEvent, () => FishPlayer.onGameBegin());
-Events.on(EventType.PlayerChatEvent, e => {
-	FishPlayer.onPlayerChat(e.player, e.message);
-});
+
 Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
 });
@@ -332,7 +318,7 @@ Events.on(EventType.WaveEvent, () => {
 
 Events.on(EventType.AdminRequestEvent, e => {
 	if(e.action == Packets.AdminAction.wave){
-		const fishP = FishPlayer.get(e.player);
+		const fishP = FishPlayer.get(e.player) as FishPlayer<true>;
 		if(Date.now() > fishP.autoConfirmSkipWaveUntil){
 			Menu.buttons(fishP, "Confirm", "Are you sure you want to skip the wave?", [
 				[{data: "yes", text: "[orange]Yes"}],

@@ -3,11 +3,12 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains timers that run code at regular intervals.
 */
 
+import { Antibot } from "/automod";
 import { fetchAntibotData, getStaffMessages, syncDosBlacklist } from "/api";
 import * as config from "/config";
 import { Gamemode } from "/config";
 import { updateMaps } from "/files";
-import { DurationSecs } from "/funcs";
+import { Duration, DurationSecs } from "/funcs";
 import { dosBlacklistCopy, FishEvents, fishState, ipJoins, joinDemographics } from "/globals";
 import { FishPlayer } from "/players";
 import { definitelyRealMemoryCorruption, neutralGameover, unblacklist } from "/utils";
@@ -111,14 +112,19 @@ export function initializeTimers(){
 		if(joinDemographics.size > 1000) joinDemographics.clear();
 	}, 0, DurationSecs.minutes(1));
 	Timer.schedule(() => {
-		if(FishPlayer.antiBotMode()){
+		if(Antibot.antiBotMode()){
 			Call.infoToast(`[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ${Vars.netServer.admins.dosBlacklist.size}`, 2);
 		}
 	}, 0, 1);
-	Timer.schedule(() => {
-		FishPlayer.validateVotekickSession();
-	}, 0, 0.3);
+	Events.run(Trigger.update, () => {
+		const speed = Vars.state.map.tags.getFloat("backgroundOffsetXSpeed");
+		if(speed != 0){
+			Vars.state.rules.backgroundOffsetX += speed;
+			Call.setRule("backgroundOffsetX", String(Vars.state.rules.backgroundOffsetX));
+		}
+	});
 }
+
 Timer.schedule(() => {
 	updateMaps()
 		.then((result) => {
@@ -128,7 +134,8 @@ Timer.schedule(() => {
 			}
 		})
 		.catch((message) => {
-			Call.sendMessage(`[scarlet]Automated maps update failed, please report this to a staff member.`);
+			if(Date.now() - fishState.lastSuccessfulMapUpdate >= Duration.hours(1))
+				Call.sendMessage(`[scarlet]Automated maps update failed too many times, please report this to a staff member.`);
 			Log.err(`Automated map update failed: ${String(message)}`);
 		});
 }, DurationSecs.minutes(1), DurationSecs.minutes(10));

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import https from "node:https";
-import { execSync, spawnSync } from "node:child_process";
+import { execSync } from "node:child_process";
 import { Octokit } from "@octokit/rest";
 
 
@@ -89,10 +89,9 @@ if(!fs.existsSync(devServerDirectory)){
 
 function runServer(){
 	console.log("Starting fish-commands Mindustry development server...");
-	const { status } = spawnSync(`which`, ["rlwrap"]);
-	const memory = "1G";
+	const memory = "1200M";
 	try {
-		execSync(`${status === 0 ? "rlwrap " : ""}java -Xmx${memory} -Xms${memory} -jar "server-release.jar"`, {
+		execSync(`java -Xmx${memory} -Xms${memory} -jar "server-release.jar"`, {
 			stdio: "inherit",
 			cwd: path.join(fcRootDirectory, "dev-server")
 		});

@@ -5,10 +5,11 @@ which executes code with access to the plugin's internals.
 */
 
 import type { FishPlayer as tFishPlayer } from "/players";
-type FishPlayer = tFishPlayer; //absurd
+type FishPlayer<T extends boolean = boolean> = tFishPlayer<T>; //absurd
 
 const achievements = require("/achievements");
 const api = require("/api");
+const automod = require("/automod");
 const commands = require("/frameworks/commands");
 const config = require("/config");
 const { commands: consoleCommands } = require("/commands/console");
@@ -25,11 +26,13 @@ const players = require("/players");
 const ranks = require("/ranks");
 const { commands: staffCommands } = require("/commands/staff");
 const timers = require("/timers");
+const translation = require("/translation");
 const utils = require("/utils");
 const votes = require("/votes");
 const { Promise } = require("/promise");
 
 const { Achievement, Achievements } = achievements;
+const { Antibot, Heuristics, Automod } = automod;
 const { Perm, allCommands } = commands;
 const { bannedWords, FishServer, Mode, Gamemode, FColor, mapRepoURLs } = config;
 const { FishPlayer } = players;
@@ -82,7 +85,7 @@ export function runJS(
 	input:string,
 	outputFunction:(data:any) => unknown = Log.info,
 	errorFunction:(data:any) => unknown = Log.err,
-	player?:FishPlayer
+	player?:FishPlayer<true>
 ){
 	if(player){
 		$.me = player;

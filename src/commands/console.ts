@@ -4,6 +4,7 @@ This file contains all the console commands, which can be run through the server
 */
 
 import * as api from "/api";
+import { Antibot, Automod } from "/automod";
 import { FishServer, Gamemode, Mode } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
@@ -95,7 +96,9 @@ export const commands = consoleCommandList({
 						fishP?.marked() && (maxTime - fishP.unmarkTime < 20_000 ?
 							`&lris marked forever&fr`
 						: `&lris marked&fr until ${formatTimeRelative(fishP.unmarkTime)}`),
-						fishP?.muted && "&lris muted&fr",
+						fishP?.muted() && (maxTime - fishP.unmuteTime < 20_000 ?
+							`&lris muted forever&fr`
+						: `&lris muted&fr until ${formatTimeRelative(fishP.unmuteTime)}`),
 						fishP?.hasFlag("member") && "&lmis member&fr",
 						fishP?.autoflagged && "&lris autoflagged&fr",
 						playerInfo.banned && "&bris UUID banned&fr",
@@ -133,13 +136,13 @@ export const commands = consoleCommandList({
 			for(const player of infoList){
 				const playerInfo = admins.getInfo(player.uuid);
 				outputString.push(
-`Info for player &c"${player.cleanedName}" &lk(${player.name})&fr
+`Info for player &c"${Strings.stripColors(player.name!)}" &lk(${player.name!})&fr
 	UUID: &c"${playerInfo.id}"&fr
 	USID: &c${player.usid ? `"${player.usid}"` : "unknown"}&fr
 	all names used: ${playerInfo.names.map((n:string) => `&c"${n}"&fr`).items.join(', ')}
 	all IPs used: ${playerInfo.ips.map((n:string) => (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr').items.join(", ")}
 	joined &c${playerInfo.timesJoined}&fr times, kicked &c${playerInfo.timesKicked}&fr times
-	rank: &c${player.rank.name}&fr${(player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")}`
+	rank: &c${player.rank.name}&fr${(player.marked() ? ", &lris marked&fr" : "") + (player.muted() ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")}`
 				);
 			}
 			output(outputString.join("\n"));
@@ -170,15 +173,16 @@ export const commands = consoleCommandList({
 			
 			if(args.verbose){
 				const outputString = ["DOS Blacklist:"];
+				let missing = 0;
 				blacklist.each((ip:string) => {
 					const info = admins.findByIP(ip);
 					if(info){
-						outputString.push(`IP: &c${ip}&fr UUID: &c"${info.id}"&fr Last name used: &c"${info.plainLastName()}"&fr`);
-					}
+						outputString.push(`IP: &c${ip}&fr UUID: &c"${info.id}"&fr Last name used: &c"${escapeStringColorsServer(info.plainLastName())}"&fr`);
+					} else missing ++;
 				});
 	
 				output(outputString.join("\n"));
-				output(`${blacklist.size} blacklisted IPs`);
+				output(`${blacklist.size} blacklisted IPs. ${missing} not shown because no player info was found on this server. (Try other servers)`);
 			} else {
 				output(blacklist.toString());
 				output(`${blacklist.size} blacklisted IPs`);
@@ -258,7 +262,7 @@ export const commands = consoleCommandList({
 			let range:string | null;
 			if(ipPattern.test(args.target)){
 				//target is an ip
-				if(FishPlayer.removePunishedIP(args.target)){
+				if(Automod.removePunishedIP(args.target)){
 					output(`Removed IP &c"${args.target}"&fr from the anti-evasion list.`);
 				}
 				if(admins.kickedIPs.remove(args.target)){
@@ -292,7 +296,7 @@ export const commands = consoleCommandList({
 					output(`IP range &c"${range}"&fr was not banned.`);
 				}
 			} else if(uuidPattern.test(args.target)){
-				if(FishPlayer.removePunishedUUID(args.target)){
+				if(Automod.removePunishedUUID(args.target)){
 					output(`Removed UUID &c"${args.target}"&fr from the anti-evasion list.`);
 				}
 				output("Checking ban status...");
@@ -503,11 +507,18 @@ export const commands = consoleCommandList({
 		args: ["player:player", "newname:string"],
 		description: "Changes the name of a player.",
 		handler({args, f, outputSuccess}){
+			fail(`No.`);
 			if(args.player.hasPerm("blockTrolling")) fail(f`Operation aborted: Player ${args.player} is insufficiently trollable.`);
 			const oldName = args.player.name;
-			args.player.player!.name = args.player.prefixedName = args.newname;
-			args.player.shouldUpdateName = false;
-			outputSuccess(`Renamed ${oldName} to ${args.newname}.`);
+			if(args.player.ranksAtLeast("active")){
+				//Joke
+				args.player.setJokeName(args.newname);
+				outputSuccess(`Temporarily renamed ${oldName} to ${args.newname}.`);
+			} else {
+				//Real
+				args.player.setName(args.newname);
+				outputSuccess(`Renamed ${oldName} to ${args.newname}.`);
+			}
 		}
 	},
 	fjs: {
@@ -608,7 +619,7 @@ Server uptime: ${uptimeColor}${formatTime(uptime)}&fr (since ${formatTimestampFu
 ${[
 	fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
 	fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",
-	FishPlayer.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + getAntiBotInfo("server") : "",
+	Antibot.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + getAntiBotInfo("server") : "",
 ].filter(l => l.length > 0).join("\n")}\
 
 ${colorNumber(Groups.player.size(), n => n > 0 ? "&c" : "&lr", "server")} players online, ${colorNumber(numStaff, n => n > 0 ? "&c" : "&lr", "server")} staff members.
@@ -724,13 +735,14 @@ ${FishPlayer.mapPlayers(p =>
 		}
 	},
 	mute: {
-		args: ['player:player'],
+		args: ['player:player', 'duration:time?'],
 		description: 'Stops a player from chatting.',
 		async handler({args, outputSuccess, f}){
-			if(args.player.muted) fail(f`Player ${args.player} is already muted.`);
-			await args.player.mute("console");
+			args.duration ??= maxTime;
+			if(args.player.muted()) fail(f`Player ${args.player} is already muted.`);
+			await args.player.mute("console", args.duration);
 			logAction('muted', "console", args.player);
-			outputSuccess(f`Muted player ${args.player}.`);
+			outputSuccess(f`Muted player ${args.player} for ${formatTime(args.duration)}.`);
 		}
 	},
 
@@ -738,8 +750,8 @@ ${FishPlayer.mapPlayers(p =>
 		args: ['player:player'],
 		description: 'Unmutes a player',
 		async handler({args, outputSuccess, f}){
-			if(!args.player.muted && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
-			if(!args.player.muted) fail(f`Player ${args.player} is not muted.`);
+			if(!args.player.muted() && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
+			if(!args.player.muted()) fail(f`Player ${args.player} is not muted.`);
 			await args.player.unmute("console");
 			logAction('unmuted', "console", args.player);
 			outputSuccess(f`Unmuted player ${args.player}.`);
@@ -802,16 +814,16 @@ ${FishPlayer.mapPlayers(p =>
 		description: "Checks anti bot stats, or force enables anti bot mode.",
 		handler({args, outputSuccess, output, f}){
 			if(args.timeout == 0){
-				FishPlayer.antibotExpires = Date.now() - 1;
-				FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+				Antibot.antibotExpires = Date.now() - 1;
+				Antibot.kickNewPlayersExpires = Date.now() - 1;
 				outputSuccess(`Disabled antibot mode.`);
 			} else if(args.timeout != undefined){
-				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by console`, "manual", false);
+				Antibot.triggerAntibot(args.timeout, `Manually triggered by console`, "manual", false);
 				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);
 			} else {
 				output(
 `[acid]Antibot status:
-[acid]Enabled: ${f.boolBad(FishPlayer.antiBotMode())}
+[acid]Enabled: ${f.boolBad(Antibot.antiBotMode())}
 ${getAntiBotInfo("server")}`
 				);
 			}

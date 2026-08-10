@@ -4,6 +4,7 @@ This file contains the in-game chat commands that can be run by trusted staff.
 */
 
 import * as api from "/api";
+import { Antibot } from "/automod";
 import { Gamemode, Mode, rules, stopAntiEvadeTime } from "/config";
 import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
@@ -15,11 +16,11 @@ import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
 import { Label } from "/types";
-import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, logAction, match, serverRestartLoop, syncManual, untilForever, updateBans } from "/utils";
+import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatHistoryEntry, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, getDuration, logAction, match, serverRestartLoop, syncManual, unblacklist, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
-		args: ['player:player', 'message:string?'],
+		args: ['player:playerOn', 'message:string?'],
 		description: 'Sends the player a warning (menu popup).',
 		perm: Perm.warn,
 		requirements: [Req.cooldown(3000)],
@@ -35,15 +36,30 @@ export const commands = commandList({
 	},
 
 	mute: {
-		args: ['player:player'],
+		args: ['player:player', 'duration:time?', 'reason:string?'],
 		description: 'Stops a player from chatting.',
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
 		async handler({args, sender, outputSuccess, f}){
-			if(args.player.muted) fail(f`Player ${args.player} is already muted.`);
-			await args.player.mute(sender);
-			logAction('muted', sender, args.player);
-			outputSuccess(f`Muted player ${args.player}.`);
+			if(args.player.muted()){
+				//overload: overwrite mutetime
+				if(args.duration == undefined) fail(f`Player ${args.player} is already muted.`);
+				if(args.duration <= 1_000) fail(`Duration too short. To free a player, use /free.`);
+				const previousTime = formatTimeRelative(args.player.unmuteTime, true);
+				await args.player.updateMuteTime(args.duration);
+				outputSuccess(f`Player ${args.player}'s mute time has been updated to ${formatTime(args.duration)} (was ${previousTime}).`);
+				logAction("updated mute time of", sender, args.player, args.reason ?? undefined, args.duration);
+			} else {
+				const suffix = "\n" + args.player.shortInfoString();
+				const time = args.duration ?? await getDuration(sender, "Mute", "[accent]Select mute time[]" + suffix);
+				const message = args.reason ?? await Menu.text(
+					"Mute", "[accent]Enter the mute reason[]" + suffix,
+					sender,
+					{ allowEmpty: true, maxTextLength: 99 }
+				);
+				await args.player.mute(sender, time, message);
+				logAction('muted', sender, args.player, message, time);
+			}
 		}
 	},
 
@@ -52,8 +68,8 @@ export const commands = commandList({
 		description: 'Unmutes a player',
 		perm: Perm.mod,
 		async handler({args, sender, outputSuccess, f}){
-			if(!args.player.muted && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
-			if(!args.player.muted) fail(f`Player ${args.player} is not muted.`);
+			if(!args.player.muted() && args.player.autoflagged) fail(f`Player ${args.player} is not muted, but they are autoflagged. You probably want to free them with /free.`);
+			if(!args.player.muted()) fail(f`Player ${args.player} is not muted.`);
 			await args.player.unmute(sender);
 			logAction('unmuted', sender, args.player);
 			outputSuccess(f`Unmuted player ${args.player}.`);
@@ -110,7 +126,7 @@ export const commands = commandList({
 	},
 
 	pardon: {
-		args: ["player:offlinePlayer"],
+		args: ["player:player"],
 		description: 'Pardons a votekicked player.',
 		perm: Perm.mod,
 		requirements: [Req.moderate("player")],
@@ -132,20 +148,31 @@ export const commands = commandList({
 		async handler({args, sender, outputSuccess, f}){
 			if(args.player.marked()){
 				//overload: overwrite stoptime
-				if(!args.time) fail(f`Player ${args.player} is already marked.`);
+				if(args.time == undefined) fail(f`Player ${args.player} is already marked.`);
+				if(args.time <= 1_000) fail(`Duration too short. To free a player, use /free.`);
 				const previousTime = formatTimeRelative(args.player.unmarkTime, true);
 				await args.player.updateStopTime(args.time);
 				outputSuccess(f`Player ${args.player}'s stop time has been updated to ${formatTime(args.time)} (was ${previousTime}).`);
 				logAction("updated stop time of", sender, args.player, args.message ?? undefined, args.time);
 			} else {
-				const time = args.time ?? untilForever();
-				if(time + Date.now() > maxTime) fail(`Error: time too high.`);
-				await args.player.stop(sender, time, args.message ?? undefined);
-				logAction('stopped', sender, args.player, args.message ?? undefined, time);
-				//TODO outputGlobal()
-				Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${args.message ? ` with reason: [white]${args.message}[]` : ""}.`);
+				try {
+					args.player.frozen = true;
+					const suffix = (args.player.connected() ? `\n(The player is currently frozen, take your time)` : "") +
+						"\n" + args.player.shortInfoString();
+					const time = args.time ?? await getDuration(sender, "Stop", "Select stop time" + suffix);
+					const message = args.message ?? await Menu.text(
+						"Stop", "Enter the stop reason" + suffix,
+						sender,
+						{ allowEmpty: true, maxTextLength: 99 }
+					);
+					await args.player.stop(sender, time, message);
+					logAction('stopped', sender, args.player, message, time);
+					//TODO outputGlobal()
+					Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${args.message ? ` with reason: [white]${args.message}[]` : ""}.`);
+				} finally {
+					args.player.frozen = false;
+				}
 			}
-
 		}
 	},
 
@@ -162,7 +189,7 @@ export const commands = commandList({
 				args.player.autoflagged = false;
 				args.player.sendMessage("[yellow]You have been freed! Enjoy!");
 				args.player.updateName();
-				args.player.forceRespawn();
+				if(args.player.connected()) args.player.forceRespawn();
 				outputSuccess(f`Player ${args.player} has been unflagged.`);
 			} else {
 				outputFail(f`Player ${args.player} is not marked or autoflagged.`);
@@ -225,132 +252,6 @@ export const commands = commandList({
 		}
 	},
 
-	stop_offline: {
-		args: ["time:time?", "name:string?"],
-		description: "Stops an offline player.",
-		perm: Perm.mod,
-		async handler({args, sender, outputFail, outputSuccess, f, admins}){
-			const maxPlayers = 60;
-			
-			async function stop(option:PlayerInfo, time:number){
-				const fishP = FishPlayer.getFromInfo(option);
-				if(sender.canModerate(fishP, true)){
-					logAction(fishP.marked() ? time == 1000 ? "freed" : "updated stop time of" : "stopped", sender, option, undefined, time);
-					await fishP.stop(sender, time);
-					outputSuccess(f`Player ${option} was marked for ${formatTime(time)}.`);
-				} else {
-					outputFail(`You do not have permission to stop this player.`);
-				}
-			}
-			
-			if(args.name && uuidPattern.test(args.name)){
-				const info:PlayerInfo | null = admins.getInfoOptional(args.name);
-				if(info != null) {
-					await stop(info, args.time ?? untilForever());
-				} else {
-					outputFail(f`Unknown UUID ${args.name}`);
-				}
-				return;
-			}
-
-			let possiblePlayers:PlayerInfo[];
-			if(args.name) {
-				possiblePlayers = setToArray(admins.searchNames(args.name));
-				if(possiblePlayers.length > maxPlayers){
-					const exactPlayers = setToArray(admins.findByName(args.name));
-					if(exactPlayers.length > 0){
-						possiblePlayers = exactPlayers;
-					} else {
-						fail("Too many players with that name.");
-					}
-				} else if(possiblePlayers.length == 0){
-					fail("No players with that name were found.");
-				}
-				const score = (data:PlayerInfo) => {
-					const fishP = FishPlayer.getById(data.id);
-					if(fishP) return fishP.lastJoined;
-					return - data.timesJoined;
-				};
-				possiblePlayers.sort((a, b) => score(b) - score(a));
-			} else {
-				possiblePlayers = FishPlayer.recentLeaves.map(p => p.info());
-			}
-
-
-			const optionPlayer = await Menu.menu("Stop", "Choose a player to mark", possiblePlayers, sender, {
-				includeCancel: true,
-				optionStringifier: p => p.lastName
-			});
-			args.time ??= match(
-				await Menu.menu("Stop", "Select stop time", ["2 days", "7 days", "30 days", "forever"], sender),
-				{
-					"2 days": Duration.days(2),
-					"7 days": Duration.days(7),
-					"30 days": Duration.days(30),
-					"forever": maxTime - Date.now() - 10000,
-				}
-			);
-			await stop(optionPlayer, args.time);
-		}
-	},
-
-	mute_offline: {
-		args: ["name:string?"],
-		description: "Mutes an offline player.",
-		perm: Perm.mod,
-		async handler({args, sender, outputSuccess, f, admins}){
-			const maxPlayers = 300;
-			
-			async function mute(option:PlayerInfo){
-				const fishP = FishPlayer.getFromInfo(option);
-				if(!sender.canModerate(fishP, true)) fail(`You do not have permission to mute this player.`);
-				await Menu.confirm(sender, `Are you sure you want to ${fishP.muted ? "unmute" : "mute"} player ${option.lastName}?`, {
-					title: "Mute Offine Confirmation",
-					confirmText: `[green]Yes, ${fishP.muted ? "unmute" : "mute"} them`,
-				});
-				logAction(fishP.muted ? "unmuted" : "muted", sender, fishP);
-				if(fishP.muted) await fishP.unmute(sender);
-				else await fishP.mute(sender);
-				outputSuccess(`${fishP.muted ? "Muted" : "Unmuted"} ${option.lastName}.`);
-			}
-			
-			if(args.name && uuidPattern.test(args.name)){
-				const info = admins.getInfoOptional(args.name) ?? fail(f`Unknown UUID ${args.name}`);
-				await mute(info);
-				return;
-			}
-
-			let possiblePlayers:PlayerInfo[];
-			if(args.name) {
-				possiblePlayers = setToArray(admins.searchNames(args.name));
-				if(possiblePlayers.length > maxPlayers){
-					const exactPlayers = setToArray(admins.findByName(args.name));
-					if(exactPlayers.length > 0){
-						possiblePlayers = exactPlayers;
-					} else {
-						fail("Too many players with that name.");
-					}
-				} else if(possiblePlayers.length == 0){
-					fail("No players with that name were found.");
-				}
-				const score = (data:PlayerInfo) => {
-					const fishP = FishPlayer.getById(data.id);
-					if(fishP) return fishP.lastJoined;
-					return - data.timesJoined;
-				};
-				possiblePlayers.sort((a, b) => score(b) - score(a));
-			} else {
-				possiblePlayers = FishPlayer.recentLeaves.map(p => p.info());
-			}
-
-
-			const option = await Menu.pagedList(sender, "Mute", "Choose a player to mute", possiblePlayers, {
-				optionStringifier: p => p.lastName
-			});
-			await mute(option);
-		}
-	},
-
 	restart: {
 		args: ["time:number?"],
 		perm: Perm.admin,
@@ -388,16 +289,15 @@ export const commands = commandList({
 		args: ["player:player"],
 		description: "Shows moderation history for a player.",
 		perm: Perm.mod,
-		handler({args, output, f}){
+		handler({args, output, outputFail, copy, f}){
 			if(args.player.history && args.player.history.length > 0){
+				copy(args.player.prefixedName);
 				output(
 					`[yellow]_______________Player history_______________\n\n` +
-					(args.player).history.sort((a, b) => a.time - b.time).map(e =>
-						`${e.by} [yellow]${e.action} ${args.player.prefixedName} [white]${formatTimeRelative(e.time)}`
-					).join("\n")
+					(args.player).history.sort((a, b) => a.time - b.time).map(e => formatHistoryEntry(args.player, e, false, copy)).join("\n")
 				);
 			} else {
-				output(f`[yellow]No history was found for player ${args.player}.`);
+				outputFail(f`No history was found for player ${args.player}.`);
 			}
 		}
 	},
@@ -464,7 +364,8 @@ export const commands = commandList({
 			if(fishState.labels.length == 0) fail(`No labels found.`);
 			fishState.labels.forEach(l => {
 				l.task?.cancel();
-				Call.label(null, l.id, 0, 0, 0, 0);
+				//ABSOLUTELY WONDERFUL
+				Call["label(java.lang.String,int,float,float,float)"](null, l.id, 0, 0, 0);
 			});
 			outputSuccess(`Removed all labels.`);
 		}
@@ -491,7 +392,8 @@ export const commands = commandList({
 				label = fishState.labels.splice(index, 1)[0];
 			}
 			label.task?.cancel();
-			Call.label(null, label.id, 0, 0, 0, 0);
+			//ABSOLUTELY WONDERFUL
+			Call["label(java.lang.String,int,float,float,float)"](null, label.id, 0, 0, 0);
 			outputSuccess(`Removed one label.`);
 		}
 	},
@@ -506,7 +408,7 @@ export const commands = commandList({
 		}
 	},
 	remind: {
-		args: ["rule:number", "target:player?"],
+		args: ["rule:number", "target:playerOn?"],
 		description: "Remind players in chat of a specific rule.",
 		perm: Perm.mod,
 		handler({args, outputSuccess, f}){
@@ -587,7 +489,7 @@ export const commands = commandList({
 	},
 
 	kill: {
-		args: ["player:player"],
+		args: ["player:playerOn"],
 		description: "Kills a player's unit.",
 		perm: Perm.admin,
 		requirements: [Req.moderate("player", true)],
@@ -670,7 +572,7 @@ export const commands = commandList({
 	},
 
 	respawn: {
-		args: ["player:player"],
+		args: ["player:playerOn"],
 		description: "Forces a player to respawn.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("player", true, "mod", true)],
@@ -681,7 +583,7 @@ export const commands = commandList({
 	},
 
 	clearunit: {
-		args: ["target:player", "duration:time?"],
+		args: ["target:playerOn", "duration:time?"],
 		description: "Forces a player out of the unit they are controlling, and blocks them from possessing units for a specified duration.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
@@ -704,7 +606,7 @@ export const commands = commandList({
 		}
 	},
 	clearcommand: {
-		args: ["target:player", "duration:time?"],
+		args: ["target:playerOn", "duration:time?"],
 		description: "Blocks a player from commanding units for a specified duration.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", false, "mod", false)],
@@ -727,7 +629,7 @@ export const commands = commandList({
 	},
 
 	stealunit: {
-		args: ["target:player", "newcontroller:player?"],
+		args: ["target:playerOn", "newcontroller:playerOn?"],
 		description: "Steals the unit of a player, putting you in their unit and forcing them to respawn.",
 		perm: Perm.mod,
 		requirements: [Req.moderate("target", true, "mod", true), Req.moderate("newcontroller", true, "mod", true)],
@@ -755,26 +657,27 @@ export const commands = commandList({
 		description: `Sends a message to muted players only.`,
 		perm: Perm.mod,
 		handler({sender, args}){
+			sender.recentPlayers = new Set(FishPlayer.getAllOnline().filter(p => p.muted()));
 			FishPlayer.messageMuted(sender.prefixedName, args.message);
 		}
 	},
 
 	info: {
 		args: ["target:player", "showColors:boolean?"],
-		description: "Displays information about an online player.",
+		description: "Displays information about a player.",
 		perm: Perm.none,
-		handler({sender, args, output, f}){
+		handler({sender, args, output, copy, player, f}){
 			const info = args.target.info();
 			const names = args.showColors
 				? info.names.map(escapeStringColorsClient).toString(", ")
 				: [...new Set(info.names.map(n => Strings.stripColors(n)).toArray())].join(", ");
 			output(f`\
-[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(args.target.name)}) (#${args.target.player!.id.toString()})
+[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player?.id.toString() ?? 'unknown'})
 	[accent]Rank: ${args.target.rank}
-	[accent]Role flags: ${Array.from(args.target.flags).map(f => f.coloredName()).join(" ")}
+	[accent]Role flags: ${copy(Array.from(args.target.flags).map(f => f.coloredName()).join(" "))}
 	[accent]Stopped: ${f.boolBad(!args.target.hasPerm("play"))}
-	[accent]marked: ${args.target.marked() ? `until ${formatTimeRelative(args.target.unmarkTime)}` : "[green]false"}
-	[accent]muted: ${f.boolBad(args.target.muted)}
+	[accent]marked: ${args.target.marked() ? `until ${copy(formatTimeRelative(args.target.unmarkTime))}` : "[green]false"}
+	[accent]muted: ${args.target.muted() ? `until ${copy(formatTimeRelative(args.target.unmuteTime))}` : "[green]false"}
 	[accent]autoflagged: ${f.boolBad(args.target.autoflagged)}
 	[accent]VPN detected: ${f.boolBad(args.target.ipDetectedVpn)}
 	[accent]times joined / kicked: ${info.timesJoined}/${info.timesKicked}
@@ -782,9 +685,9 @@ export const commands = commandList({
 	[accent]Names used: [[${names}]`
 			);
 			if(sender.hasPerm("viewUUIDs"))
-				output(f`\t[#FFAAAA]UUID: ${args.target.uuid}`);
+				output(f`\t[#FFAAAA]UUID: ${copy(args.target.uuid)}`);
 			if(sender.hasPerm("viewIPs"))
-				output(f`\t[#FFAAAA]IP: ${args.target.ip()}`);
+				output(f`\t[#FFAAAA]IP: ${copy(args.target.ip())}`);
 		}
 	},
 
@@ -797,8 +700,8 @@ export const commands = commandList({
 		data: [],
 		requirements: [Req.positiveInteger("count")],
 		handler({sender, args, data, outputSuccess, f}){
-			const x = args.x ? (args.x * 8) : sender.player!.x;
-			const y = args.y ? (args.y * 8) : sender.player!.y;
+			const x = args.x ? (args.x * 8) : sender.player.x;
+			const y = args.y ? (args.y * 8) : sender.player.y;
 			const team = args.team ?? sender.team();
 			const count = Math.min(args.count ?? 1, 1000);
 			for(let i = 0; i < count; i ++){
@@ -899,11 +802,11 @@ export const commands = commandList({
 		description: "Run arbitrary javascript.",
 		perm: Perm.runJS,
 		customUnauthorizedMessage: "[scarlet]You are not in the jsers file. This incident will be reported.[]",
-		handler({args: {javascript}, output, outputFail, sender}){
+		handler({args: {javascript}, output, outputFail, copy, sender}){
 			
 			//Additional validation couldn't hurt...
 			const playerInfo_AdminUsid = sender.info().adminUsid;
-			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player!.usid() || sender.usid != sender.player!.usid()){
+			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player.usid() || sender.usid != sender.player.usid()){
 				api.sendModerationMessage(
 `# !!!!! /js authentication failed !!!!!
 Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${sender.uuid}\`
@@ -912,23 +815,23 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 				fail(`Authentication failure`);
 			}
 
-			if(javascript == "Timer.instance().clear()") fail(`Are you really sure you want to do that? If so, prepend "void" to your command.`);
+			if(javascript == "Timer.instance().clear()") fail(`Are you really sure you want to do that? It'll break the plugin. If you're sure, prepend "void" to your command.`);
 
 			try {
 				const scripts = Vars.mods.getScripts();
 				const out = scripts.context.evaluateString(scripts.scope, javascript, "fish-js-console.js", 1);
 				if(out instanceof Array){
-					output("[cyan]Array: [[[]" + out.join(", ") + "[cyan]]");
+					output(copy("[cyan]Array: [[[]" + out.join(", ") + "[cyan]]"));
 				} else if(out === undefined){
-					output("[blue]undefined[]");
+					output(copy("[blue]undefined[]"));
 				} else if(out === null){
-					output("[blue]null[]");
+					output(copy("[blue]null[]"));
 				} else if(out instanceof Error){
-					outputFail(parseError(out));
+					outputFail(copy(parseError(out)));
 				} else if(typeof out == "number"){
-					output(`[blue]${out}[]`);
+					output(copy(`[blue]${out}[]`));
 				} else {
-					output(out);
+					output(copy(out));
 				}
 			} catch(err){
 				outputFail(parseError(err));
@@ -944,7 +847,7 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 			
 			//Additional validation couldn't hurt...
 			const playerInfo_AdminUsid = sender.info().adminUsid;
-			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player!.usid() || sender.usid != sender.player!.usid()){
+			if(!playerInfo_AdminUsid || playerInfo_AdminUsid != sender.player.usid() || sender.usid != sender.player.usid()){
 				api.sendModerationMessage(
 `# !!!!! /js authentication failed !!!!!
 Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${sender.uuid}\`
@@ -962,17 +865,17 @@ Server: ${Gamemode.name()} Player: ${escapeTextDiscord(sender.cleanedName)}/\`${
 		perm: Perm.mod,
 		handler({args, sender, outputSuccess, output, f}){
 			if(args.timeout == 0){
-				FishPlayer.antibotExpires = Date.now() - 1;
-				FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+				Antibot.antibotExpires = Date.now() - 1;
+				Antibot.kickNewPlayersExpires = Date.now() - 1;
 				outputSuccess(`Disabled antibot mode.`);
 			} else if(args.timeout != undefined){
 				args.timeout = Math.min(args.timeout, sender.hasPerm("admin") ? Duration.hours(1) : Duration.minutes(10));
-				FishPlayer.triggerAntibot(args.timeout, `Manually triggered by player ${sender.name}`, "manual", false);
+				Antibot.triggerAntibot(args.timeout, `Manually triggered by player ${sender.name}`, "manual", false);
 				outputSuccess(`Set antibot mode override for ${formatTime(args.timeout)}.`);
 			} else {
 				output(
 `[acid]Antibot status:
-[acid]Enabled: ${f.boolBad(FishPlayer.antiBotMode())}
+[acid]Enabled: ${f.boolBad(Antibot.antiBotMode())}
 ${getAntiBotInfo("client")}`
 				);
 			}
@@ -1008,8 +911,8 @@ ${getAntiBotInfo("client")}`
 			data: {unitMapping},
 			requirements: [],
 			handler({sender, outputSuccess}){
-				const emanate = UnitTypes.emanate.spawn(sender.team(), sender.player!.x, sender.player!.y);
-				sender.player!.unit(emanate);
+				const emanate = UnitTypes.emanate.spawn(sender.team(), sender.player.x, sender.player.y);
+				sender.unit(emanate);
 				unitMapping[sender.uuid] = emanate;
 				if(!Gamemode.sandbox()) logAction("spawned an emanate", sender);
 				outputSuccess("Spawned an emanate.");
@@ -1019,7 +922,7 @@ ${getAntiBotInfo("client")}`
 	updatemaps: {
 		args: [],
 		description: 'Attempt to fetch and update all map files',
-		perm: Perm.trusted,
+		perm: Perm.trusted.exceptModes({ testsrv: new Perm("active", "active", "trusted") }),
 		requirements: ({sender}) => [Req.cooldownGlobal(Gamemode.testsrv() || sender.hasPerm("mod") ? 15_000 : Duration.minutes(5))],
 		handler({output, outputSuccess, outputFail}){
 			output(`Updating maps... (this may take a while)`);
@@ -1061,41 +964,47 @@ ${getAntiBotInfo("client")}`
 	search: {
 		args: ["input:string"],
 		description: "Searches playerinfo by name, IP, or UUID.",
-		perm: Perm.admin,
-		async handler({args:{input}, admins, output, f, sender}){
+		perm: Perm.viewUUIDs,
+		async handler({args:{input}, admins, output, copy, player, f, sender}){
+			const ips = sender.hasPerm("viewIPs");
 			if(uuidPattern.test(input)){
 				const fishP = FishPlayer.getById(input);
 				const info = admins.getInfoOptional(input);
+				player(fishP ?? info);
 				if(fishP == null && info == null) fail(f`No stored data matched uuid ${input}.`);
 				else if(fishP == null && info) output(f`[accent]\
 Found player info (but no fish player data) for uuid ${input}
-Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]
-IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
+Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(copy(info.lastName))})[] [[${info.names.map(escapeStringColorsClient).items.map(copy).join(", ")}]\
+${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${copy(i)}[]`).toString(", ")}` : ""}`
 				);
 				else if(fishP && info) output(f`[accent]\
 Found fish player data for uuid ${input}
-Last name used: "${fishP.name}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]
-IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
+Last name used: "${fishP.name}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.map(copy).join(", ")}]\
+${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${copy(i)}[]`).toString(", ")}` : ""}`
 				);
 				else fail(f`Super weird edge case: found fish player data but no player info for uuid ${input}.`);
 			} else if(ipPattern.test(input)){
+				if(!ips) fail(`You do not have permission to view IPs.`);
 				const matches = admins.findByIPs(input);
 				if(matches.isEmpty()) fail(f`No stored data matched IP ${input}`);
-				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}".`);
+				matches.each(m => player(m));
+				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}". To copy names, copy the relevant UUID and repeat the search.`);
 				matches.each(info => output(f`[accent]\
-Player with uuid ${info.id}
+Player with uuid ${copy(info.id)}
 Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]
 IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 				));
 			} else {
+				if(Strings.stripColors(input).trim().length == 0) fail(`Your query is empty. This would cause all players to be returned. Please use a more specific query.`);
 				const matches = Vars.netServer.admins.searchNames(input);
 				if(matches.isEmpty()) fail(f`No stored data matched name ${input}`);
-				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}".`);
+				output(f`[accent]Found ${matches.size} match${matches.size == 1 ? "" : "es"} for search "${input}". To copy names, run /info @r and select a player.`);
+				matches.each(m => player(m));
 				const displayMatches = () => {
 					matches.each(info => output(f`[accent]\
-Player with uuid ${info.id}
-Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]
-IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
+Player with uuid ${copy(info.id)}
+Last name used: "${info.plainLastName()}" [gray](${escapeStringColorsClient(info.lastName)})[] [[${info.names.map(escapeStringColorsClient).items.join(", ")}]\
+${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 					));
 				};
 				if(matches.size > 20)
@@ -1125,7 +1034,7 @@ IPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}`
 		},
 	},
 	effects: {
-		args: ["mode:string", "player:player?", "duration:time?"],
+		args: ["mode:string", "player:playerOn?", "duration:time?"],
 		description: "Applies effects to a player's unit.",
 		perm: Perm.admin.exceptModes({
 			testsrv: Perm.trusted,
@@ -1247,32 +1156,66 @@ Wave: ${r.wave}`
 		}
 	},
 	yeet: {
-		args: ["target:player", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
+		args: ["target:playerOn", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
 		description: "Sends the target player to a parallel universe.",
 		perm: Perm.admin,
 		requirements: [Req.moderate("target", false, "admin")],
 		async handler({args: {target, ...world}, f, outputSuccess}){
 			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
 			outputSuccess(`Aligning QPUs...`);
-			await syncManual(target.player!, undefined, world);
+			await syncManual(target.player, undefined, world);
 			outputSuccess(f`Sent ${target} to a parallel universe.`);
 		}
 	},
 	menuspam: {
-		args: ["target:player"],
+		args: ["target:playerOn"],
 		description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
 		perm: Perm.admin,
 		requirements: [Req.moderate("target", false, "admin")],
-		async handler({args: {target}, f, output, outputSuccess}){
+		async handler({args: {target}, f, output, outputSuccess, player}){
+			player(target);
 			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
 			output(`Sending menus.`);
 			for(let i = 0; i < 10; i ++){
 				for(let j = 0; j < 100; j ++){
-					Call.menu(target.con, listeners.generic, "", "", []);
+					Call.menu(target.con(), listeners.generic, "", "", []);
 				}
 				await delay(100);
 			}
 			outputSuccess(f`Spammed ${target} with menus.`);
+		}
+	},
+	unblacklist: {
+		args: ["ip:string"],
+		perm: Perm.admin,
+		description: "Unblacklists an ip from the DOS blacklist.",
+		handler({args, sender, output, admins}){
+			if(args.ip === '*'){
+				if(!sender.hasPerm("massUnblacklist")) fail(`You do not have permission to clear the DOS blacklist.`);
+				const size = admins.dosBlacklist.size;
+				if(size == 0) fail('DOS blacklist is already empty.');
+				admins.dosBlacklist.clear();
+				output(`Cleared ${size} IPs from the DOS blacklist.`);
+			} else {
+				if(unblacklist(args.ip)){
+					output(`Removed ${args.ip} from the DOS blacklist.`);
+				} else fail(`IP address ${args.ip} is not DOS blacklisted.`);
+			}
+		}
+	},
+	perfpatch: {
+		args: ["state:boolean?"],
+		perm: Perm.trusted,
+		description: "Toggles the experimental serialization performance patch.",
+		handler({args: {state}, outputSuccess}){
+			if(!("useSyscall" in Packages.arc.net.Server))
+				fail(`This server does not have the performance patch installed.`);
+			if(state == undefined){
+				outputSuccess(`The patch is ${Packages.arc.net.Server.useSyscall ? '[green]on' : '[red]off'}.`);
+			} else {
+				Packages.arc.net.Server.useSyscall = state;
+				outputSuccess(`The patch is now ${state ? '[green]on' : '[red]off'}.`);
+			}
 		}
 	}
 });

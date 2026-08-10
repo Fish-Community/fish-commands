@@ -124,6 +124,10 @@ exports.syncManual = syncManual;
 exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
 exports.unblacklist = unblacklist;
+exports.getDuration = getDuration;
+exports.randomName = randomName;
+exports.formatHistoryEntry = formatHistoryEntry;
+var automod_1 = require("/automod");
 var api = __importStar(require("/api"));
 var config_1 = require("/config");
 var commands_1 = require("/frameworks/commands");
@@ -155,9 +159,9 @@ function formatTime(time) {
     return [
         months && "".concat(months, " month").concat(months != 1 ? "s" : ""),
         days && "".concat(days, " day").concat(days != 1 ? "s" : ""),
-        hours && "".concat(hours, " hour").concat(hours != 1 ? "s" : ""),
-        minutes && "".concat(minutes, " minute").concat(minutes != 1 ? "s" : ""),
-        (seconds || time < 1000) && "".concat(seconds, " second").concat(seconds != 1 ? "s" : ""),
+        hours && !days && "".concat(hours, " hour").concat(hours != 1 ? "s" : ""),
+        minutes && !(days || months) && "".concat(minutes, " minute").concat(minutes != 1 ? "s" : ""),
+        (seconds || time < 1000) && !(days || months || hours) && "".concat(seconds, " second").concat(seconds != 1 ? "s" : ""),
     ].filter(Boolean).join(", ");
 }
 function formatTimeShort(time) {
@@ -203,6 +207,7 @@ function formatTimestampShort(time) {
     return "".concat(date.getFullYear(), "-").concat(date.getMonth() + 1, "-").concat(date.getDate(), " ").concat(date.getHours(), ":").concat(date.getMinutes());
 }
 function formatTimeRelative(time, raw) {
+    if (raw === void 0) { raw = false; }
     var difference = Math.abs(time - Date.now());
     if (difference < 1000)
         return "just now";
@@ -279,7 +284,8 @@ function matchFilter(input, wordList, aggressive) {
     if (wordList === void 0) { wordList = "chat"; }
     if (aggressive === void 0) { aggressive = false; }
     var currentBannedWords = [
-        wordList == "name" ? config_1.bannedWords.normal.filter(function (w) { return w[0] !== "uwu"; }) : config_1.bannedWords.normal,
+        wordList != "name" && config_1.bannedWords.chat,
+        config_1.bannedWords.normal,
         (wordList == "strict" || wordList == "name") && config_1.bannedWords.strict,
         wordList == "name" && config_1.bannedWords.names,
     ].filter(Boolean).flat();
@@ -347,38 +353,38 @@ function cleanText(text, applyAntiEvasion) {
     }
     return replacedText;
 }
+var filters = (function (input) {
+    return input.map(function (i) {
+        return Array.isArray(i) ? [
+            typeof i[0] == "string" ? function (replacedText) { return replacedText.includes(i[0]); } :
+                i[0] instanceof RegExp ? function (replacedText) { return i[0].test(replacedText); } :
+                    i[0],
+            i[1]
+        ] : [
+            function (replacedText) { return replacedText.includes(i); },
+            "Name contains disallowed ".concat(i.length == 1 ? "icon" : "word", " '").concat(i, "'")
+        ];
+    });
+})([
+    [/\bserver\b/, "Name contains disallowed word 'server'"],
+    "admin", "moderator", "staff", "owner",
+    [">|||>", "Name contains >|||> which is reserved for the server owner"],
+    "\uE817", "\uE82C", "\uE88E", "\uE813",
+    ["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
+    [/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
+    [function (replacedText, isAdmin) { return !isAdmin && config_1.adminNames.includes(replacedText.replace(/ /g, "")); }, "One of our admins uses this name"]
+]);
 function isImpersonator(name, isAdmin) {
     var e_3, _a;
     var replacedText = cleanText(name);
     var antiEvasionText = cleanText(name, true);
-    //very clean code i know
-    var filters = (function (input) {
-        return input.map(function (i) {
-            return Array.isArray(i) ? [
-                typeof i[0] == "string" ? function (replacedText) { return replacedText.includes(i[0]); } :
-                    i[0] instanceof RegExp ? function (replacedText) { return i[0].test(replacedText); } :
-                        i[0],
-                i[1]
-            ] : [
-                function (replacedText) { return replacedText.includes(i); },
-                "Name contains disallowed ".concat(i.length == 1 ? "icon" : "word", " '").concat(i, "'")
-            ];
-        });
-    })([
-        [/\bserver\b/, "Name contains disallowed word 'server'"],
-        "admin", "moderator", "staff", "owner",
-        [">|||>", "Name contains >|||> which is reserved for the server owner"],
-        "\uE817", "\uE82C", "\uE88E", "\uE813",
-        ["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
-        [/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
-        [function (replacedText) { return !isAdmin && config_1.adminNames.includes(replacedText.replace(/ /g, "")); }, "One of our admins uses this name"]
-    ]);
     try {
+        //very clean code i know
         for (var filters_1 = __values(filters), filters_1_1 = filters_1.next(); !filters_1_1.done; filters_1_1 = filters_1.next()) {
             var _b = __read(filters_1_1.value, 2), check = _b[0], message = _b[1];
-            if (check(replacedText))
+            if (check(replacedText, isAdmin))
                 return message;
-            if (check(antiEvasionText))
+            if (check(antiEvasionText, isAdmin))
                 return message;
         }
     }
@@ -534,10 +540,7 @@ exports.getMap = (0, funcs_1.searchFixed)(function () { return Vars.maps.all().s
     function (m, name) { return m.plainName().replace(/ /g, "").toLowerCase().includes(name.toLowerCase()); }, //partial match with spaces removed ignoring case and colors
     function (m, name) { return m.plainName().replace(/[^a-zA-Z]/gi, "").toLowerCase().includes(name.toLowerCase()); },
 ], "recomputeOptions");
-//static cache
-var buildableBlocks = null;
 function getBlock(block, filter) {
-    buildableBlocks !== null && buildableBlocks !== void 0 ? buildableBlocks : (buildableBlocks = Vars.content.blocks().select(isBuildable));
     var check = {
         buildable: function (b) { return isBuildable(b); },
         air: function (b) { return b == Blocks.air || isBuildable(b); },
@@ -629,21 +632,17 @@ function skipWaves(requestedWaves, runIntermediateWaves) {
     }
 }
 exports.vnwCondition = {
-    waveUnits: [],
+    waveUnits: new Seq(),
     onWaveStart: function () {
-        var units = Groups.unit.copy(new Seq());
-        var enemyTeam = getEnemyTeam();
-        this.waveUnits = units.select(function (u) { return u.team === enemyTeam; }).toArray();
+        this.waveUnits = Groups.unit.copy().retainAll(function (u) { return u.team == Vars.state.rules.waveTeam; });
     },
     check: function () {
-        if (this.waveUnits.some(function (u) { return !u.dead; }))
-            return false;
-        return true;
+        return !this.waveUnits.contains(boolf(function (u) { return !u.dead && u.team == Vars.state.rules.waveTeam; }));
     }
 };
 function logHTrip(player, name, message) {
     Log.warn("&yPlayer &b\"".concat(player.cleanedName, "\"&y (&b").concat(player.uuid, "&y/&b").concat(player.ip(), "&y) tripped &c").concat(name, "&y") + (message ? ": ".concat(message) : ""));
-    players_1.FishPlayer.messageStaff("[yellow]Player [blue]\"".concat(player.cleanedName, "\"[] tripped [cyan]").concat(name, "[]") + (message ? ": ".concat(message) : ""));
+    players_1.FishPlayer.messageStaff("[yellow]Player [blue]\"".concat(player.prefixedName, "\"[] tripped [cyan]").concat(name, "[]") + (message ? ": ".concat(message) : ""));
     api.sendModerationMessage("Player `".concat(player.cleanedName, "` (`").concat(player.uuid, "`/`").concat(player.ip(), "`) tripped **").concat(name, "**").concat(message ? ": ".concat(message) : "", "\n**Server:** ").concat(config_1.Gamemode.name()));
 }
 function setType(input) {
@@ -665,7 +664,7 @@ function getAntiBotInfo(side) {
     var color = side == "client" ? "[acid]" : "&ly";
     var True = side == "client" ? "[red]true[]" : "&lrtrue";
     var False = side == "client" ? "[green]false[]" : "&gfalse";
-    return ("".concat(color, "Flag count: ").concat(formatRatekeeper(players_1.FishPlayer.autoflagRate), "\n").concat(color, "Autobanning flagged players: ").concat(players_1.FishPlayer.shouldWhackFlaggedPlayers() ? True : False, "\n").concat(color, "Kicking new players: ").concat(players_1.FishPlayer.shouldKickNewPlayers() ? True : False, "\n").concat(color, "Recent connect packets: ").concat(formatRatekeeper(players_1.FishPlayer.connectRate), "\n").concat(color, "Reason: ").concat(players_1.FishPlayer.lastAntibotReason));
+    return ("".concat(color, "Flag count: ").concat(formatRatekeeper(automod_1.Antibot.autoflagRate), "\n").concat(color, "Autobanning flagged players: ").concat(automod_1.Antibot.shouldWhackFlaggedPlayers() ? True : False, "\n").concat(color, "Kicking new players: ").concat(automod_1.Antibot.shouldKickNewPlayers() ? True : False, "\n").concat(color, "Recent connect packets: ").concat(formatRatekeeper(automod_1.Antibot.connectRate), "\n").concat(color, "Reason: ").concat(automod_1.Antibot.lastAntibotReason));
 }
 var failPrefix = "[scarlet]\u26A0 [yellow]";
 var successPrefix = "[#48e076]\uE800 ";
@@ -707,14 +706,14 @@ function processChat(player, message, effects) {
             if (suspicious && removeFoosChars(message).split(" ")
                 .map(function (w) { return w.replace(/[-_.^*,]/g, ""); })
                 .some(function (w) { return config_1.bannedWords.autoWhack.includes(w); })) {
-                if (!fishPlayer.muted) {
+                if (!fishPlayer.muted()) {
                     logHTrip(fishPlayer, "bad words in chat", "message: `".concat(message, "`"));
-                    fishPlayer.muted = true;
+                    void fishPlayer.mute("automod", globals_1.maxTime, "Automatic mute due to suspicious activity");
                     void fishPlayer.stop("automod", globals_1.maxTime, "Automatic stop due to suspicious activity", false);
                 }
             }
             Log.info("Censored message from player ".concat(player.name, ": \"").concat((0, funcs_1.escapeStringColorsServer)(message), "\"; contained \"").concat(filterTripText, "\""));
-            players_1.FishPlayer.messageStaff("[yellow]Censored message from player ".concat(fishPlayer.cleanedName, ": \"").concat(message, "\" contained \"").concat(filterTripText, "\""));
+            players_1.FishPlayer.messageStaff("[yellow]Censored message from player ".concat(fishPlayer.prefixedName, "[yellow]: \"").concat(message, "\" contained \"").concat(filterTripText, "\""));
         }
         message = config_1.text.chatFilterReplacement.message();
         highlight !== null && highlight !== void 0 ? highlight : (highlight = config_1.text.chatFilterReplacement.highlight());
@@ -818,7 +817,7 @@ exports.addToTileHistory = logErrors("Error while saving a tilelog entry", funct
         if (e.breaking) {
             action = "broke";
             type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.previous.name : "unknown";
-            if (((_g = (_f = e.unit) === null || _f === void 0 ? void 0 : _f.player) === null || _g === void 0 ? void 0 : _g.uuid()) && ((_h = e.tile.build) === null || _h === void 0 ? void 0 : _h.team) != Team.derelict) {
+            if (((_g = (_f = e.unit) === null || _f === void 0 ? void 0 : _f.player) === null || _g === void 0 ? void 0 : _g.uuid()) && ((_h = e.tile.build.prevBuild.firstOpt()) === null || _h === void 0 ? void 0 : _h.team) != Team.derelict) {
                 var fishP = players_1.FishPlayer.get(e.unit.player);
                 //TODO move this code
                 fishP.tstats.blocksBroken++;
@@ -1257,4 +1256,24 @@ function unblacklist(ip) {
     //just try it thrice
     Timer.schedule(function () { return unblacklist_once(ip); }, 0.5, 1, 2);
     return unblacklist_once(ip);
+}
+function getDuration(player, title, description) {
+    return menus_1.Menu.buttons(player, title, description, [
+        [
+            { text: "2 days", data: funcs_1.Duration.days(2) },
+            { text: "7 days", data: funcs_1.Duration.days(7) },
+            { text: "30 days", data: funcs_1.Duration.days(30) }
+        ],
+        [{ text: "forever", data: globals_1.maxTime - Date.now() - 10000 }],
+    ], { onCancel: "reject" });
+}
+function randomName() {
+    return (config_1.automaticNames.adjectives[Math.floor(Math.random() * config_1.automaticNames.adjectives.length)] +
+        config_1.automaticNames.nouns[Math.floor(Math.random() * config_1.automaticNames.nouns.length)] +
+        Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321"));
+}
+function formatHistoryEntry(player, e, shortWidth, copy) {
+    if (shortWidth === void 0) { shortWidth = false; }
+    if (copy === void 0) { copy = (function (x) { return x; }); }
+    return "".concat(copy(e.by), " [yellow]").concat(e.action, " ").concat(player.prefixedName).concat(shortWidth ? '\n' : ' ', "[white]").concat(formatTimeRelative(e.time, false));
 }

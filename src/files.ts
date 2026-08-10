@@ -7,6 +7,7 @@ Maintenance: @author BalaM314
 
 import { Gamemode, mapRepoURLs } from "/config";
 import { crash } from "/funcs";
+import { fishState } from "/globals";
 import { Promise } from "/promise";
 import { getHash } from "/utils";
 
@@ -18,9 +19,9 @@ type GitHubFile = {
 	path: string;
 	sha: string;
 	size: number;
-	url: string;
-	html_url: string;
-	git_url: string;
+	// url: string;
+	// html_url: string;
+	// git_url: string;
 	download_url: string | null;
 	type: 'file' | 'dir';
 }
@@ -30,14 +31,17 @@ function fetchGithubContents(){
 	return new Promise<GitHubFile[], string>((resolve, reject) => {
 		const url = mapRepoURLs[Gamemode.name()];
 		if(!url) return reject(`No recognized gamemode detected. please enter "host <map> <gamemode>" and try again`);
-		Http.get(url, (res) => {
+		const res = Http.get(url);
+		res.timeout = 30_000;
+		res.error((err) => reject(`Network error while fetching github repository contents: ` + err));
+		res.submit((res) => {
 			try {
 				//Trust github to return valid JSON data
 				resolve(JSON.parse(res.getResultAsString()));
 			} catch(e){
 				reject(`Failed to parse GitHub repository contents: ${String(e)}`);
 			}
-		}, () => reject(`Network error while fetching github repository contents`));
+		});
 	});
 }
 
@@ -109,6 +113,7 @@ export function updateMaps():Promise<boolean, string> {
 			return mapsToDelete.length > 0 ? true : false;
 		}
 		return downloadMaps(mapsToDownload).then(() => {
+			fishState.lastSuccessfulMapUpdate = Date.now();
 			Vars.maps.reload();
 			return true;
 		});

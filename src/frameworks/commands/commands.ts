@@ -6,18 +6,19 @@ For maintenance information, see docs/frameworks.md
 */
 //Behold, the power of typescript!
 
+import * as api from "/api";
 import { prefixes } from "/config";
 import { CommandError, fail } from "/frameworks/commands/errors";
 import { f_client, f_server, outputFormatter_client } from "/frameworks/commands/formatting";
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
 import { commandArgNames, CommandArgType, commandArgTypes } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
-import { capitalizeText, crash, escapeStringColorsClient, indefiniteArticle, parseError } from "/funcs";
+import { capitalizeText, crash, escapeStringColorsClient, indefiniteArticle, parseError, random, resolveSearch, to2DArray } from "/funcs";
 import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import type { ClientCommandHandler, CommandArg, ServerCommandHandler } from "/types";
-import { getBlock, getItem, getMap, getTeam, getUnitType, handleError, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
+import type { ClientCommandHandler, CommandArg, SearchResult, ServerCommandHandler } from "/types";
+import { getBlock, getItem, getMap, getTeam, getUnitType, handleError, match, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
 
 const hiddenUnauthorizedMessage = "[scarlet]Unknown command. Check [lightgray]/help[scarlet].";
 
@@ -100,10 +101,17 @@ export function joinArgs(rawArgs:string[]){
 			groupedArg = [];
 		}
 		if(groupedArg){
-			groupedArg.push(arg);
 			if(arg.endsWith(`"`)){
-				outputArgs.push(groupedArg.join(" ").slice(1, -1));
-				groupedArg = null;
+				if(arg.at(-2) == '\\'){
+					//Delete the backslash
+					groupedArg.push(arg.slice(0, -2) + `"`);
+				} else {
+					groupedArg.push(arg);
+					outputArgs.push(groupedArg.join(" ").slice(1, -1));
+					groupedArg = null;
+				}
+			} else {
+				groupedArg.push(arg);
 			}
 		} else {
 			outputArgs.push(arg);
@@ -117,10 +125,14 @@ export function joinArgs(rawArgs:string[]){
 }
 
 export async function disambiguateArgument<T extends FishCommandArgType>(
-	options:T | T[] | null, arg: string, {name, type}: CommandArg, sender:FishPlayer | null, outputArgs: Record<string, FishCommandArgType>,
+	options:T | T[] | null, arg: string, {name, type}: CommandArg, sender:FishPlayer<true> | null, outputArgs: Record<string, FishCommandArgType>,
 	optionStringifier: (x:T) => string, columns = 3,
 ){
-	if(options == null) fail(`${capitalizeText(commandArgNames[type])} "${arg}" not found.`);
+	if(options == null) fail(
+		arg.startsWith("@") ?
+			fail(`${capitalizeText(commandArgNames[type])} selector ${arg} returned no results.`)
+		: fail(`${capitalizeText(commandArgNames[type])} "${arg}" not found.`)
+	);
 	else if(options instanceof Array){
 		const word = commandArgNames[type];
 		if(!sender) fail(`Name "${arg}" could refer to more than one ${word}.`);
@@ -133,30 +145,204 @@ export async function disambiguateArgument<T extends FishCommandArgType>(
 	} else outputArgs[name] = options;
 }
 
-const argsSupportingBlank: CommandArgType[] = ["player", "offlinePlayer", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
+const argsSupportingBlank: CommandArgType[] = ["player", "playerOn", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"];
 
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
-export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer | null): Promise<Record<string, FishCommandArgType>> {
+export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer<true> | null, commandName:string): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
-		if(!(i in args) || args[i] === ""){
+		if(!(i in args) || args[i] === "" || args[i] === "@" || args[i] === "@0"){
 			//if the arg was not provided or it was empty
-			if(cmdArg.isOptional){
+			if(cmdArg.isOptional && args[i] !== "@"){
 				outputArgs[cmdArg.name] = undefined;
 				continue;
 			} else if(sender && argsSupportingBlank.includes(cmdArg.type)){
+				args[i] = "";
 				//it will be resolved later
 			} else {
-				fail(`No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`);
+				if(sender){
+					args[i] = await Menu.text(`/${commandName}`, `Specify a value for the argument "${cmdArg.name}"`, sender);
+				} else fail(`No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`);
 			}
 		}
 
 		//Deserialize the arg
 		const commonArgs = [args[i], cmdArg, sender, outputArgs] as const;
 		switch(cmdArg.type){
-			case "player": {
+			case "player": case "playerOn": {
+				let options: SearchResult<FishPlayer>;
+				if(uuidPattern.test(args[i])){
+					const uuid = args[i];
+					let player = FishPlayer.getById(uuid);
+					if(player == null){
+						if(cmdArg.type == "playerOn") fail(`This command only accepts online players.`);
+						let info = Vars.netServer.admins.getInfoOptional(uuid);
+						const data = await api.getFishPlayerData(uuid).catch(err =>
+							fail(`Network error while downloading fish player data for ${uuid}: ${parseError(err)}`)
+						);
+						if(data){
+							player = new FishPlayer(uuid, data, null);
+						} else if(info){
+							player = FishPlayer.createFromInfo(info);
+							if(data) player.updateData(data);
+						} else {
+							if(!sender) fail(`Player with uuid "${uuid}" not found in the server or the database. Are you sure this UUID is correct? If so, specify "@create:${uuid}"`);
+							await Menu.confirm(sender,
+								`Player with uuid "${uuid}" not found in this server or the database. Are you sure this UUID is correct?`,
+								{ title: "Confirm UUID" }
+							);
+							info = Vars.netServer.admins.getInfo(uuid);
+							player = FishPlayer.createFromInfo(info);
+						}
+					} else {
+						if(cmdArg.type == "playerOn" && !player.connected()) fail(`This command only accepts online players.`);
+					}
+					options = player;
+				} else if(args[i].startsWith("@")){
+					let needsConfirm = false;
+					const [left, right] = Packages.java.lang.String(args[i]).split(":", 2) as [string, string?];
+					const r2 = Packages.java.lang.String(right).split(":", 2)[1] as string | undefined;
+					switch(left){
+						case "@cyrillic": case "@russian":
+							options = FishPlayer.getAllOnline().filter(p => /[\u0400-\u04FF]/.test(p.name));
+							break;
+						case "@china": case "@chinese": case "cny":
+							options = FishPlayer.getAllOnline().filter(p => /[\u4E00-\u9FFF]/.test(p.name));
+							break;
+						case "@japanese": case "@jpy":
+							options = FishPlayer.getAllOnline().filter(p => /[\u3040-\u30FF]/.test(p.name));
+							break;
+						case "@korean": case "@kor":
+							options = FishPlayer.getAllOnline().filter(p => /[\uAC00-\uD7AF\u1100-\u11FF]/.test(p.name));
+							break;
+						case "@nonenglish": case "@noneng":
+							//Anything beyond extended ASCII
+							options = FishPlayer.getAllOnline().filter(p => /[\u0100-\uFFFF]/.test(p.name));
+							needsConfirm = true;
+							break;
+						case "@short":
+							options = FishPlayer.getAllOnline().filter(p => p.cleanedName.length <= 3);
+							break;
+						case "@stopped": case "@stelled": case "@marked":
+							options = FishPlayer.getAllOnline().filter(p => p.stelled());
+							break;
+						case "@muted":
+							options = FishPlayer.getAllOnline().filter(p => p.muted());
+							break;
+						case "@rand":
+							options = random(FishPlayer.getAllOnline());
+							break;
+						case "@s": case "@me": case "@self":
+							options = sender;
+							break;
+						case "@c": case "@cursor": {
+							if(!sender?.unit()) fail(`You must have a unit to use the @c selector.`);
+							const { mouseX, mouseY } = sender.player!;
+							if(mouseX == 0 && mouseY == 0) fail(`Unable to read your cursor position. (It says it's exactly at 0,0)`);
+							needsConfirm = true;
+							options = [
+								Seq.with(...FishPlayer.getAllOnline().filter(p => p.unit() && p !== sender))
+									.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, mouseX, mouseY)))
+							];
+							needsConfirm = true;
+							break;
+						}
+						case "@offline": case "@off": case "@o": {
+							if(cmdArg.type == "playerOn") fail(`This command only accepts online players.`);
+							if(right){
+								if(uuidPattern.test(right))
+									fail(`To select by UUID, please specify "${right}" without the "@offline:" prefix.`);
+								else if(right.startsWith("create:") && r2 && uuidPattern.test(r2))
+									fail(`To select by UUID, please specify "@create:${r2}" without the "@offline:" prefix.`);
+								options = FishPlayer.search(Object.values(FishPlayer.cachedPlayers), right)
+									?? (!sender || sender.ranksAtLeast("active") ?
+										Vars.netServer.admins.searchNames(right).toSeq().toArray().slice(0, 50)
+											.map(FishPlayer.getFromInfo)
+											.sort((a, b) => b.lastJoined - a.lastJoined)
+										: null);
+								const score = (fishP:FishPlayer) => {
+									if(fishP.lastJoined > 0) return fishP.lastJoined;
+									return - fishP.info().timesJoined;
+								};
+								if(Array.isArray(options)){
+									options.sort((a, b) => score(b) - score(a));
+								}
+							} else {
+								options = FishPlayer.recentLeaves;
+							}
+							break;
+						}
+						case "@create": {
+							if(!right) fail(`You must specify a UUID to create, like this: @create:hIg/eqXDgzcAAAAADqsSYw==`);
+							const fishP = FishPlayer.getFromInfo(Vars.netServer.admins.getInfo(right));
+							if(!fishP.connected()){
+								if(cmdArg.type == "playerOn") fail(`This command only accepts online players.`);
+								try {
+									await fishP.downloadData();
+								} catch(err){
+									fail(`Network error while downloading fish player data for ${right}: ${parseError(err)}`);
+								}
+							}
+							options = fishP;
+							break;
+						}
+						case "@click": {
+							if(!sender?.unit()) fail(`You must have a unit to use the @click selector.`);
+							sender.sendMessage(`/${commandName}: Click a player's unit to select them.`);
+							const [mouseX, mouseY] = (await sender.waitForTap()).map(t => t * 8);
+							const closestPlayer = Seq.with(FishPlayer.getAllOnline().filter(p => p.unit()))
+								.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, mouseX, mouseY)));
+
+							if(closestPlayer && Mathf.dst(closestPlayer.unit()!.x, closestPlayer.unit()!.y, mouseX, mouseY) > 32)
+								fail(`Too far away, you must click within 4 tiles of the target.`);
+							options = closestPlayer;
+							break;
+						}
+						case "@h": case "@p": {
+							const { x, y } = sender?.player?.unit() ?? fail(`You must have a unit to use the @h selector.`);
+							needsConfirm = true;
+							options = [
+								Seq.with(...FishPlayer.getAllOnline().filter(p => p.unit() && p !== sender))
+									.min(floatf(p => Mathf.dst2(p.unit()!.x, p.unit()!.y, x, y)))
+							];
+							break;
+						}
+						case "@r": case "@recent":
+							options = Array.from(sender ? sender.recentPlayers : consoleState.recentPlayers);
+							if(options.length == 0) fail(`No recent players. To use this selector, run a command that outputs some players.`);
+							if(cmdArg.type == "playerOn"){
+								options = options.filter(p => p.connected());
+								if(!options.length) fail(`All recent players are disconnected, but this command only accepts connected players.`);
+							}
+							break;
+						default:
+							//Ranks / role flags
+							if(args[i].startsWith("@+") || args[i].startsWith("@=") || args[i].startsWith("@-")){
+								const query = args[i].slice(2);
+								const rank = resolveSearch(Rank.search(query));
+								if(rank){
+									options = FishPlayer.getAllOnline().filter(p => ({
+										"-": p.rank.level <= rank.level,
+										"=": p.rank == rank,
+										"+": p.rank.level >= rank.level,
+									}[args[i][1] as "-" | "=" | "+"]));
+									break;
+								}
+								const role = resolveSearch(RoleFlag.getByName(query));
+								if(role){
+									options = FishPlayer.getAllOnline().filter(p => p.flags.has(role));
+									break;
+								}
+							}
+							fail(`Unknown selector ${args[i]}.`);
+					}
+					if(Array.isArray(options)){
+						if(options.length == 0) options = null;
+						else if(options.length == 1 && !needsConfirm) options = options[0];
+					}
+				} else options = FishPlayer.search(FishPlayer.getAllOnline(), args[i]);
 				await disambiguateArgument(
-					FishPlayer.search(FishPlayer.getAllOnline(), args[i]),
+					options,
 					...commonArgs,
 					player => (player.marked() ? prefixes.marked : player.autoflagged ? prefixes.flagged : "") + (Strings.stripColors(player.name).length >= 3 ?
 						player.name
@@ -165,28 +351,6 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				);
 				break;
 			}
-			case "offlinePlayer":
-				if(uuidPattern.test(args[i])){
-					const player = FishPlayer.getById(args[i]);
-					if(player == null) fail(`Player with uuid "${args[i]}" not found. Specify "create:${args[i]}" to create the player.`);
-					outputArgs[cmdArg.name] = player;
-				} else if(args[i].startsWith("create:") && uuidPattern.test(args[i].split("create:")[1])){
-					outputArgs[cmdArg.name] = FishPlayer.getFromInfo(
-						Vars.netServer.admins.getInfo(
-							args[i].split("create:")[1]
-						)
-					);
-				} else {
-					await disambiguateArgument(
-						FishPlayer.search(Object.values(FishPlayer.cachedPlayers), args[i]),
-						...commonArgs,
-						player => Strings.stripColors(player.name).length >= 3 ?
-							player.name
-						: escapeStringColorsClient(player.name),
-						2
-					);
-				}
-				break;
 			case "team": {
 				let num;
 				if(args[i] && (
@@ -197,6 +361,23 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 					if(num <= 255 && num >= 0 && Number.isInteger(num))
 						outputArgs[cmdArg.name] = Team.all[num];
 					else fail(`Team ${num} is not inside the valid range (integers 0-255).`);
+				} else if(!args[i] && sender){
+					const options = Team.baseTeams.concat(Team.neoplastic);
+					Vars.state.teams.present.each(t => options.includes(t.team) || options.push(t.team));
+					const buttons: Array<Array<Team | "other">> = [
+						...to2DArray(options, 3),
+						["other"]
+					];
+					const selection = await Menu.raw(
+						`Select a team`, `Select a team for the argument "${cmdArg.name}"`, buttons, sender,
+						{ optionStringifier: t => t == "other" ? "Other..." : t.coloredName() }
+					);
+					if(selection == "other"){
+						const num = await Menu.text(`Select a team`, `Enter the team's ID\nYou can also specify [accent]#123[] in the command.`, sender, { positiveIntegersOnly: true });
+						if(num <= 255 && num >= 0)
+							outputArgs[cmdArg.name] = Team.all[num];
+						else fail(`Team ${num} is not inside the valid range (integers 0-255).`);
+					} else outputArgs[cmdArg.name] = selection;
 				} else await disambiguateArgument(
 					getTeam(args[i]),
 					...commonArgs,
@@ -302,7 +483,7 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map", "mapOrRandom"];
 
 function isArgOptional(arg:CommandArg, allowMenus:boolean){
-	return arg.isOptional || (argsSupportingBlank.includes(arg.type) && allowMenus);
+	return arg.isOptional || allowMenus;
 }
 
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
@@ -318,11 +499,18 @@ export function convertArgs(processedCmdArgs:CommandArg[], allowMenus:boolean):s
 }
 
 export function handleTapEvent(event:EventType["TapEvent"]){
-	const sender = FishPlayer.get(event.player);
+	const sender = FishPlayer.get(event.player) as FishPlayer<true>;
+	if(sender.tapInfo.resolve){
+		const tmp = sender.tapInfo.resolve;
+		sender.tapInfo.resolve = null;
+		tmp(event.tile.x, event.tile.y);
+	}
 	if(sender.tapInfo.commandName == null) return;
 	const command = allCommands[sender.tapInfo.commandName];
 	const usageData = sender.getUsageData(sender.tapInfo.commandName);
 	let handleTapsUpdated = false;
+	let shouldClearCopy = true;
+	let shouldClearPlayers = true;
 	try {
 		let failed = false;
 		command.tapped?.({
@@ -349,6 +537,24 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 				}
 				sender.tapInfo.mode = mode;
 				handleTapsUpdated = true;
+			},
+			copy(text){
+				if(shouldClearCopy){
+					sender.copyOptions = [];
+					shouldClearCopy = false;
+				}
+				if(text) sender.copyOptions!.push(String(text));
+				return text;
+			},
+			player(p){
+				if(shouldClearPlayers){
+					sender.recentPlayers.clear();
+					shouldClearPlayers = false;
+				}
+				if(p instanceof FishPlayer) sender.recentPlayers!.add(p);
+				else if(p instanceof Player) sender.recentPlayers!.add(FishPlayer.get(p));
+				else if(p instanceof Administration.PlayerInfo) sender.recentPlayers!.add(FishPlayer.getFromInfo(p));
+				return p;
 			},
 		});
 		if(!failed)
@@ -384,7 +590,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 			new CommandHandler.CommandRunner({ async accept(unjoinedRawArgs: string[], sender: mindustryPlayer){
 				if(!initialized) crash(`Commands not initialized!`);
 
-				const fishSender = FishPlayer.get(sender);
+				const fishSender = FishPlayer.get(sender) as FishPlayer<true>;
 				FishPlayer.onPlayerCommand(fishSender, name, unjoinedRawArgs);
 
 				//Verify authorization
@@ -406,11 +612,14 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 				//Resolve missing args (such as players that need to be determined through a menu)
 				let resolvedArgs;
 				try {
-					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, fishSender);
+					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, fishSender, name);
 				} catch(err){
 					handleError(err, fishSender, outputFail, `${fishSender.cleanedName} ran /${name}`);
 					return;
 				}
+
+				let shouldClearCopy = true;
+				let shouldClearPlayers = true;
 
 				//Run the command handler
 				const usageData = fishSender.getUsageData(name);
@@ -442,6 +651,24 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 							}
 							fishSender.tapInfo.lastArgs = resolvedArgs;
 						},
+						copy(text){
+							if(shouldClearCopy){
+								fishSender.copyOptions = [];
+								shouldClearCopy = false;
+							}
+							if(text) fishSender.copyOptions!.push(String(text));
+							return text;
+						},
+						player(p){
+							if(shouldClearPlayers){
+								fishSender.recentPlayers.clear();
+								shouldClearPlayers = false;
+							}
+							if(p instanceof FishPlayer) fishSender.recentPlayers!.add(p);
+							else if(p instanceof Player) fishSender.recentPlayers!.add(FishPlayer.get(p));
+							else if(p instanceof Administration.PlayerInfo) fishSender.recentPlayers!.add(FishPlayer.getFromInfo(p));
+							return p;
+						},
 					};
 					const requirements = typeof data.requirements == "function" ? data.requirements(args) : data.requirements;
 					requirements?.forEach(r => r(args));
@@ -461,6 +688,10 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 	}
 }
 
+export const consoleState = {
+	recentPlayers: new Set<FishPlayer>(),
+};
+
 export function registerConsole(commands:Record<string, FishConsoleCommandData<string, any>>, serverHandler:ServerCommandHandler){
 
 	for(const [name, data] of Object.entries(commands)){
@@ -479,12 +710,14 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 				//Process the args
 				let resolvedArgs;
 				try {
-					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, null);
+					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, null, name);
 				} catch(err){
 					//if args are invalid
 					Log.err(err);
 					return;
 				}
+
+				let shouldClearPlayers = false;
 
 				const usageData = (globalUsageData["_console_" + name] ??= { lastUsed: -1, lastUsedSuccessfully: -1 });
 				try {
@@ -498,6 +731,16 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 						output: outputConsole,
 						f: f_server,
 						execServer: command => serverHandler.handleMessage(command),
+						player(p){
+							if(shouldClearPlayers){
+								consoleState.recentPlayers.clear();
+								shouldClearPlayers = false;
+							}
+							if(p instanceof FishPlayer) consoleState.recentPlayers.add(p);
+							else if(p instanceof Player) consoleState.recentPlayers.add(FishPlayer.get(p));
+							else if(p instanceof Administration.PlayerInfo) consoleState.recentPlayers.add(FishPlayer.getFromInfo(p));
+							return p;
+						},
 						admins: Vars.netServer.admins,
 						...usageData
 					});

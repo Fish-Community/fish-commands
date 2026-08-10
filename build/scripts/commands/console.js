@@ -115,6 +115,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 var api = __importStar(require("/api"));
+var automod_1 = require("/automod");
 var config_1 = require("/config");
 var files_1 = require("/files");
 var fjsContext = __importStar(require("/fjsContext"));
@@ -198,7 +199,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
                             (fishP === null || fishP === void 0 ? void 0 : fishP.marked()) && (globals_1.maxTime - fishP.unmarkTime < 20000 ?
                                 "&lris marked forever&fr"
                                 : "&lris marked&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmarkTime))),
-                            (fishP === null || fishP === void 0 ? void 0 : fishP.muted) && "&lris muted&fr",
+                            (fishP === null || fishP === void 0 ? void 0 : fishP.muted()) && (globals_1.maxTime - fishP.unmuteTime < 20000 ?
+                                "&lris muted forever&fr"
+                                : "&lris muted&fr until ".concat((0, utils_1.formatTimeRelative)(fishP.unmuteTime))),
                             (fishP === null || fishP === void 0 ? void 0 : fishP.hasFlag("member")) && "&lmis member&fr",
                             (fishP === null || fishP === void 0 ? void 0 : fishP.autoflagged) && "&lris autoflagged&fr",
                             playerInfo.banned && "&bris UUID banned&fr",
@@ -341,7 +344,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var outputString = [""];
             var _loop_2 = function (player) {
                 var playerInfo = admins.getInfo(player.uuid);
-                outputString.push("Info for player &c\"".concat(player.cleanedName, "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid ? "\"".concat(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
+                outputString.push("Info for player &c\"".concat(Strings.stripColors(player.name), "\" &lk(").concat(player.name, ")&fr\n\tUUID: &c\"").concat(playerInfo.id, "\"&fr\n\tUSID: &c").concat(player.usid ? "\"".concat(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").concat(playerInfo.names.map(function (n) { return "&c\"".concat(n, "\"&fr"); }).items.join(', '), "\n\tall IPs used: ").concat(playerInfo.ips.map(function (n) { return (n == playerInfo.lastIP ? '&c' : '&w') + n + '&fr'; }).items.join(", "), "\n\tjoined &c").concat(playerInfo.timesJoined, "&fr times, kicked &c").concat(playerInfo.timesKicked, "&fr times\n\trank: &c").concat(player.rank.name, "&fr").concat((player.marked() ? ", &lris marked&fr" : "") + (player.muted() ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : "")));
             };
             try {
                 for (var infoList_2 = __values(infoList), infoList_2_1 = infoList_2.next(); !infoList_2_1.done; infoList_2_1 = infoList_2.next()) {
@@ -390,14 +393,17 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 (0, commands_1.fail)("The blacklist is empty");
             if (args.verbose) {
                 var outputString_1 = ["DOS Blacklist:"];
+                var missing_1 = 0;
                 blacklist.each(function (ip) {
                     var info = admins.findByIP(ip);
                     if (info) {
-                        outputString_1.push("IP: &c".concat(ip, "&fr UUID: &c\"").concat(info.id, "\"&fr Last name used: &c\"").concat(info.plainLastName(), "\"&fr"));
+                        outputString_1.push("IP: &c".concat(ip, "&fr UUID: &c\"").concat(info.id, "\"&fr Last name used: &c\"").concat((0, funcs_1.escapeStringColorsServer)(info.plainLastName()), "\"&fr"));
                     }
+                    else
+                        missing_1++;
                 });
                 output(outputString_1.join("\n"));
-                output("".concat(blacklist.size, " blacklisted IPs"));
+                output("".concat(blacklist.size, " blacklisted IPs. ").concat(missing_1, " not shown because no player info was found on this server. (Try other servers)"));
             }
             else {
                 output(blacklist.toString());
@@ -490,7 +496,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var range;
             if (globals_1.ipPattern.test(args.target)) {
                 //target is an ip
-                if (players_1.FishPlayer.removePunishedIP(args.target)) {
+                if (automod_1.Automod.removePunishedIP(args.target)) {
                     output("Removed IP &c\"".concat(args.target, "\"&fr from the anti-evasion list."));
                 }
                 if (admins.kickedIPs.remove(args.target)) {
@@ -529,7 +535,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 }
             }
             else if (globals_1.uuidPattern.test(args.target)) {
-                if (players_1.FishPlayer.removePunishedUUID(args.target)) {
+                if (automod_1.Automod.removePunishedUUID(args.target)) {
                     output("Removed UUID &c\"".concat(args.target, "\"&fr from the anti-evasion list."));
                 }
                 output("Checking ban status...");
@@ -769,12 +775,20 @@ exports.commands = (0, commands_1.consoleCommandList)({
         description: "Changes the name of a player.",
         handler: function (_a) {
             var args = _a.args, f = _a.f, outputSuccess = _a.outputSuccess;
+            (0, commands_1.fail)("No.");
             if (args.player.hasPerm("blockTrolling"))
                 (0, commands_1.fail)(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Operation aborted: Player ", " is insufficiently trollable."], ["Operation aborted: Player ", " is insufficiently trollable."])), args.player));
             var oldName = args.player.name;
-            args.player.player.name = args.player.prefixedName = args.newname;
-            args.player.shouldUpdateName = false;
-            outputSuccess("Renamed ".concat(oldName, " to ").concat(args.newname, "."));
+            if (args.player.ranksAtLeast("active")) {
+                //Joke
+                args.player.setJokeName(args.newname);
+                outputSuccess("Temporarily renamed ".concat(oldName, " to ").concat(args.newname, "."));
+            }
+            else {
+                //Real
+                args.player.setName(args.newname);
+                outputSuccess("Renamed ".concat(oldName, " to ").concat(args.newname, "."));
+            }
         }
     },
     fjs: {
@@ -894,7 +908,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             output("\nStatus:\nPlaying on map &fi".concat(Vars.state.map.plainName(), "&fr for ").concat((0, utils_1.formatTime)(1000 * Vars.state.tick / 60), "\n").concat(Vars.state.rules.waves ? "Wave &c".concat(Vars.state.wave, "&fr, &c").concat(Math.ceil(Vars.state.wavetime / 60), "&fr seconds until next wave.\n") : "", "&c").concat(Groups.unit.size(), "&fr units, &c").concat(Vars.state.enemies, "&fr enemies, &c").concat(Groups.build.size(), "&fr buildings\nTPS: ").concat((0, utils_1.colorNumber)(Core.graphics.getFramesPerSecond(), function (f) { return f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w"; }, "server"), ", Memory: &c").concat(Math.round(Core.app.getJavaHeap() / 1048576), "&fr MB\nServer uptime: ").concat(uptimeColor).concat((0, utils_1.formatTime)(uptime), "&fr (since ").concat((0, utils_1.formatTimestampFull)(Date.now() - uptime), ")\n").concat([
                 globals_1.fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
                 globals_1.fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",
-                players_1.FishPlayer.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + (0, utils_1.getAntiBotInfo)("server") : "",
+                automod_1.Antibot.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + (0, utils_1.getAntiBotInfo)("server") : "",
             ].filter(function (l) { return l.length > 0; }).join("\n"), "\n").concat((0, utils_1.colorNumber)(Groups.player.size(), function (n) { return n > 0 ? "&c" : "&lr"; }, "server"), " players online, ").concat((0, utils_1.colorNumber)(numStaff, function (n) { return n > 0 ? "&c" : "&lr"; }, "server"), " staff members.\n").concat(players_1.FishPlayer.mapPlayers(function (p) {
                 return "\t".concat(p.rank.shortPrefix, " &c").concat(p.uuid, "&fr &c").concat(p.name, "&fr");
             }).join("\n") || "&lrNo players connected.&fr", "\n"));
@@ -1017,21 +1031,23 @@ exports.commands = (0, commands_1.consoleCommandList)({
         }
     },
     mute: {
-        args: ['player:player'],
+        args: ['player:player', 'duration:time?'],
         description: 'Stops a player from chatting.',
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
+                var _c;
                 var args = _b.args, outputSuccess = _b.outputSuccess, f = _b.f;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
-                            if (args.player.muted)
+                            (_c = args.duration) !== null && _c !== void 0 ? _c : (args.duration = globals_1.maxTime);
+                            if (args.player.muted())
                                 (0, commands_1.fail)(f(templateObject_8 || (templateObject_8 = __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player));
-                            return [4 /*yield*/, args.player.mute("console")];
+                            return [4 /*yield*/, args.player.mute("console", args.duration)];
                         case 1:
-                            _c.sent();
+                            _d.sent();
                             (0, utils_1.logAction)('muted', "console", args.player);
-                            outputSuccess(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Muted player ", "."], ["Muted player ", "."])), args.player));
+                            outputSuccess(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Muted player ", " for ", "."], ["Muted player ", " for ", "."])), args.player, (0, utils_1.formatTime)(args.duration)));
                             return [2 /*return*/];
                     }
                 });
@@ -1047,9 +1063,9 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
-                            if (!args.player.muted && args.player.autoflagged)
+                            if (!args.player.muted() && args.player.autoflagged)
                                 (0, commands_1.fail)(f(templateObject_10 || (templateObject_10 = __makeTemplateObject(["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."], ["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."])), args.player));
-                            if (!args.player.muted)
+                            if (!args.player.muted())
                                 (0, commands_1.fail)(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", " is not muted."], ["Player ", " is not muted."])), args.player));
                             return [4 /*yield*/, args.player.unmute("console")];
                         case 1:
@@ -1133,16 +1149,16 @@ exports.commands = (0, commands_1.consoleCommandList)({
         handler: function (_a) {
             var args = _a.args, outputSuccess = _a.outputSuccess, output = _a.output, f = _a.f;
             if (args.timeout == 0) {
-                players_1.FishPlayer.antibotExpires = Date.now() - 1;
-                players_1.FishPlayer.kickNewPlayersExpires = Date.now() - 1;
+                automod_1.Antibot.antibotExpires = Date.now() - 1;
+                automod_1.Antibot.kickNewPlayersExpires = Date.now() - 1;
                 outputSuccess("Disabled antibot mode.");
             }
             else if (args.timeout != undefined) {
-                players_1.FishPlayer.triggerAntibot(args.timeout, "Manually triggered by console", "manual", false);
+                automod_1.Antibot.triggerAntibot(args.timeout, "Manually triggered by console", "manual", false);
                 outputSuccess("Set antibot mode override for ".concat((0, utils_1.formatTime)(args.timeout), "."));
             }
             else {
-                output("[acid]Antibot status:\n[acid]Enabled: ".concat(f.boolBad(players_1.FishPlayer.antiBotMode()), "\n").concat((0, utils_1.getAntiBotInfo)("server")));
+                output("[acid]Antibot status:\n[acid]Enabled: ".concat(f.boolBad(automod_1.Antibot.antiBotMode()), "\n").concat((0, utils_1.getAntiBotInfo)("server")));
             }
         }
     },

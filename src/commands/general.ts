@@ -5,15 +5,16 @@ This file contains most in-game chat commands that can be run by untrusted playe
 
 import { Achievement, Achievements } from "/achievements";
 import * as api from "/api";
-import { FColor, FishServer, Gamemode, rules, text } from "/config";
-import { command, commandList, fail, formatArg, Perm, Req } from "/frameworks/commands";
+import { FColor, FishServer, Gamemode, text } from "/config";
+import { command, commandList, fail, formatArg, Perm, PermCategory, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
-import { Cancel, Menu } from "/frameworks/menus";
-import { capitalizeText, delay, Duration, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
+import { Menu } from "/frameworks/menus";
+import { capitalizeText, crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
+import { getLanguageFromCache, isLanguageAvailable, Language, languageCache, setPlayerLanguageEntry } from "/translation";
 import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer, vnwCondition } from "/utils";
 import { VoteManager } from "/votes";
 
@@ -22,12 +23,12 @@ export const commands = commandList({
 		args: [],
 		description: 'Prints information about the plugin.',
 		perm: Perm.none,
-		handler({output}){
+		handler({output, copy}){
 			output(
 `[accent][cyan]fish-commands[] is the monolithic plugin used for the Fish servers' features.
 [accent]==========
 [accent]Source code available at: [cyan]https://github.com/Fish-Community/fish-commands/
-[accent]Current plugin version: [cyan]${fishPlugin.version?.slice(0, 8) ?? "[scarlet]null[]"}[]`
+[accent]Current plugin version: [cyan]${copy(fishPlugin.version?.slice(0, 8) ?? "[scarlet]null[]")}[]`
 			);
 		}
 	},
@@ -52,20 +53,58 @@ export const commands = commandList({
 			data.unpaused = true;
 			Core.app.post(() => Vars.state.set(GameState.State.playing));
 			outputSuccess(`Unpaused.`);
-		},
+		}
 	}),
 
 	tp: {
-		args: ['player:player'],
+		args: ['player:playerOn'],
 		description: 'Teleport to another player.',
 		perm: Perm.play,
 		requirements: [Req.modeNot("pvp")],
-		handler({ args, sender }) {
-			if(!sender.unit()?.spawnedByCore) fail(`Can only teleport while in a core unit.`);
-			if(sender.team() !== args.player.team()) fail(`Cannot teleport to players on another team.`);
-			if(sender.unit()!.hasPayload?.()) fail(`Cannot teleport to players while holding a payload.`);
+		handler({ args, sender, f, outputSuccess }) {
+			if(!sender.hasPerm("admin")){
+				if(!sender.unit()?.spawnedByCore) fail(`Can only teleport while in a core unit.`);
+				if(sender.team() !== args.player.team()) fail(`Cannot teleport to players on another team.`);
+				if(sender.unit()?.hasPayload?.()) fail(`Cannot teleport to players while holding a payload.`);
+			}
 			teleportPlayer(sender.player!, args.player.player!);
-		},
+			outputSuccess(f`Teleported to ${args.player}`);
+		}
+	},
+
+	language: {
+		args: ['language:string?'],
+		description: 'Change your target translation language.',
+		perm: Perm.none,
+		requirements: [],
+		async handler({args, sender, outputSuccess}){
+			args.language ??= (await Menu.menu(
+				"Translation Language",
+				"Select a language. Messages will be translated to this language.",
+				languageCache.values().toSeq()
+					.sort(Packages.java.util.Comparator({ compare(a:Language, b:Language){
+						return Packages.java.lang.String(a.code).compareTo(Packages.java.lang.String(b));
+					}}))
+					.sort(floatf(l => l.code == "en" ? -2 : l.code == "ru" ? -1 : 0))
+					.toArray(),
+				sender,
+				{
+					optionStringifier: l => `${l.name} (${l.code})`,
+					includeCancel: true,
+					columns: 2,
+				}
+			)).code;
+
+			if(!(isLanguageAvailable(args.language) || ["off", "none"].includes(args.language.toLowerCase()))){
+				fail(`Invalid language "${args.language}".`);
+			}
+
+			const targetLanguage = getLanguageFromCache(args.language);
+			sender.language = targetLanguage.code;
+			setPlayerLanguageEntry(sender.player!, targetLanguage.code);
+
+			outputSuccess(`Your translation language is now set to ${targetLanguage.name}.`);
+		}
 	},
 
 	clean: command({
@@ -80,7 +119,7 @@ export const commands = commandList({
 				fail(`This command was already run on this map.`);
 			data.lastRanMapStartTime = PartialMapRun.current.startTime;
 			Timer.schedule(
-				() => Call.sound(sender.con, Sounds.rockBreak, 1, 1, 0),
+				() => Call.sound(sender.con(), Sounds.rockBreak, 1, 1, 0),
 				0, 0.05, 10
 			);
 			const array: Tile[] = ArcReflect.get(Vars.world.tiles, "array");
@@ -99,13 +138,15 @@ export const commands = commandList({
 	}),
 
 	die: {
-		args: [],
+		args: ["nodeatheffects:boolean?"],
 		description: 'Kills your unit.',
 		perm: Perm.mod.exceptModes({
 			sandbox: Perm.play
 		}, `You do not have permission to die.`),
-		handler({ sender }) {
-			sender.unit()?.kill();
+		handler({ sender, args: { nodeatheffects } }) {
+			const unit = sender.unit() ?? fail(Math.random() > 0.9 ? "[cyan]omae wa mou shindeiru" : `You are already dead.`);
+			if(nodeatheffects) unit.remove();
+			else unit.kill();
 		},
 	},
 
@@ -114,7 +155,7 @@ export const commands = commandList({
 		description: 'Takes you to our discord.',
 		perm: Perm.none,
 		handler({ sender }) {
-			Call.openURI(sender.con, text.discordURL);
+			Call.openURI(sender.con(), text.discordURL);
 		},
 	},
 
@@ -143,19 +184,22 @@ export const commands = commandList({
 				outputSuccess(`Tilelog disabled.`);
 			}
 		},
-		tapped({tile, x, y, output, sender, admins, data}){
+		tapped({tile, x, y, output, copy, player, sender, admins, data}){
 			const historyData = tileHistory[`${x},${y}`] ?? fail(`There is no recorded history for the selected tile (${tile.x}, ${tile.y}).`);
 			const history = StringIO.read(historyData, str => str.readArray(d => ({
 				action: d.readString(2),
 				uuid: d.readString(3)!,
 				time: d.readNumber(16),
 				type: d.readString(2),
-			}), 1));
+			}), 1)).map(h => ({
+				...h,
+				info: uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null,
+			}));
 			output(`[yellow]Tile history for tile (${tile.x}, ${tile.y}):\n` + history.map(e =>
-				uuidPattern.test(e.uuid)
-				? (sender.hasPerm("viewUUIDs") && data.showUUID
-				? `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()}[lightgray](${e.uuid})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
-				: `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
+				e.info ?
+					(sender.hasPerm("viewUUIDs") && data.showUUID ?
+						`[yellow]${copy(e.info.plainLastName())}[lightgray](${copy(e.uuid)})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
+					: `[yellow]${copy(e.info.plainLastName())} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
 				: `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
 			).join('\n'));
 		}
@@ -184,7 +228,7 @@ export const commands = commandList({
 					outputSuccess(`Aoelog disabled.`);
 				}
 			},
-			tapped({x, y, output, outputFail, sender, admins, handleTaps, args}) {
+			tapped({x, y, output, outputFail, copy, player, sender, admins, handleTaps, args}) {
 				function handleArea(p1: [number, number], p2: [number, number]){
 					const minX = Math.min(p1[0], p2[0]);
 					const maxX = Math.max(p1[0], p2[0]);
@@ -202,16 +246,19 @@ export const commands = commandList({
 								uuid: d.readString(3) ?? "??",
 								time: d.readNumber(16),
 								type: d.readString(2) ?? "??",
-							}), 1));
+							}), 1)).map(h => ({
+								...h,
+								info: uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null,
+							}));;
 							if(args.action) history = history.filter(e => e.action === args.action);
 							if(history.length == 0) continue;
-							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e => {
-								if(uuidPattern.test(e.uuid)){
-									if(sender.hasPerm("viewUUIDs"))
-										return `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()}[lightgray](${e.uuid})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
-									else return `[yellow]${admins.getInfoOptional(e.uuid)?.plainLastName()} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
-								} else return `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`;
-							}).join('\n'));
+							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e =>
+								e.info ?
+									(sender.hasPerm("viewUUIDs") ?
+										`[yellow]${copy(e.info.plainLastName())}[lightgray](${copy(e.uuid)})[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
+									: `[yellow]${copy(e.info.plainLastName())} ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`)
+								: `[yellow]${e.uuid}[yellow] ${e.action} a [cyan]${e.type}[] ${formatTimeRelative(e.time)}`
+							).join('\n'));
 							limitTiles ++;
 							if(limitTiles === amount) break outer;
 						}
@@ -257,14 +304,14 @@ export const commands = commandList({
 		args: ['target:player?'],
 		description: `Toggles visibility of your rank and flags.`,
 		perm: Perm.vanish,
-		handler({ sender, args: {target = sender}, outputSuccess }){
+		handler({ sender, args: {target = sender}, outputSuccess, f }){
 			if(sender.stelled()) fail(`Marked players may not hide flags.`);
-			if(sender.muted) fail(`Muted players may not hide flags.`);
-			if(sender != target && target.hasPerm("blockTrolling")) fail(`Target is insufficentlly trollable.`);
+			if(sender.muted()) fail(`Muted players may not hide flags.`);
+			if(sender != target && target.hasPerm("blockTrolling")) fail(`Target is insufficiently trollable.`);
 			if(sender != target && !sender.ranksAtLeast("mod")) fail(`You do not have permission to vanish other players.`);
 			target.showRankPrefix = !target.showRankPrefix;
-			outputSuccess(
-`${target == sender ? `Your` : `${target.name}'s`} rank prefix is now ${target.showRankPrefix ? "visible" : "hidden"}.`
+			outputSuccess(f`\
+${target == sender ? `Your` : `${target.cleanedName}'s`} rank prefix is now ${target.showRankPrefix ? "visible" : "hidden"}.`
 			);
 		},
 	},
@@ -278,8 +325,8 @@ export const commands = commandList({
 			handleTaps("once");
 			output(`Click a tile to see its id...`);
 		},
-		tapped({output, f, tile}){
-			output(f`ID is ${tile.block().id}`);
+		tapped({output, f, tile, copy}){
+			output(f`ID is ${copy(tile.block().id)}`);
 		}
 	},
 
@@ -296,14 +343,14 @@ export const commands = commandList({
 						FishPlayer.messageAllWithPerm(server.requiredPerm,
 							`${sender.name}[magenta] has gone to the ${server.name} server. Use [cyan]/${server.name} [magenta]to join them!`
 						);
-					Call.connect(sender.con, server.ip, server.port);
+					Call.connect(sender.con(), server.ip, server.port);
 				},
 			} satisfies FishCommandData<string, any>,
 		])
 	),
 
 	switch: {
-		args: ["server:string", "target:player?"],
+		args: ["server:string", "target:playerOn?"],
 		description: "Switches to another server.",
 		perm: Perm.play,
 		handler({args, sender, f, lastUsedSuccessfullySender}){
@@ -312,7 +359,7 @@ export const commands = commandList({
 			const target = args.target ?? sender;
 			if(ipPortPattern.test(args.server) && sender.hasPerm("admin")){
 				//direct connect
-				Call.connect(target.con, ...args.server.split(":"));
+				Call.connect(target.con(), ...args.server.split(":"));
 			} else {
 				const unknownServerMessage = `Unknown server ${args.server}. Valid options: ${FishServer.all.filter(s => !s.requiredPerm || sender.hasPerm(s.requiredPerm)).map(s => s.name).join(", ")}`;
 				const server = FishServer.byName(args.server)
@@ -327,7 +374,7 @@ export const commands = commandList({
 						`${sender.name}[magenta] has gone to the ${server.name} server. Use [cyan]/${server.name} [magenta]to join them!`
 					);
 
-				Call.connect(target.con, server.ip, server.port);
+				Call.connect(target.con(), server.ip, server.port);
 			}
 		}
 	},
@@ -361,12 +408,12 @@ export const commands = commandList({
 	 * player will be up the target player's butt
 	 */
 	watch: command({
-		args: ['player:player?'],
+		args: ['player:playerOn?'],
 		description: `Watch/unwatch a player.`,
 		perm: Perm.none,
 		data: new Set<string>,
 		async handler({ args, data, sender, outputSuccess, outputFail }) {
-			if(!sender.con.mobile) await Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.");
+			if(!sender.con().mobile) await Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.");
 			if(data.has(sender.uuid)){
 				outputSuccess(`No longer watching a player.`);
 				data.delete(sender.uuid);
@@ -380,11 +427,11 @@ export const commands = commandList({
 					const unit = target.unit();
 					if(data.has(sender.uuid) && unit){
 						// Self.X+(172.5-Self.X)/10
-						Call.setCameraPosition(sender.con, unit.x, unit.y);
+						Call.setCameraPosition(sender.con(), unit.x, unit.y);
 						if(senderUnit) senderUnit.set(stayX, stayY);
 						Timer.schedule(() => watch(), 0.1, 0.1, 0);
 					} else {
-						Call.setCameraPosition(sender.con, stayX, stayY);
+						Call.setCameraPosition(sender.con(), stayX, stayY);
 					}
 				})();
 			} else {
@@ -393,25 +440,24 @@ export const commands = commandList({
 		},
 	}),
 	spectate: command(() => {
-		//TODO revise code
 		/** Mapping between player and original team */
 		const spectators = new Map<FishPlayer, Team>();
-		function spectate(target:FishPlayer){
+		function spectate(target:FishPlayer<true>){
 			spectators.set(target, target.team());
 			target.forceRespawn();
 			target.setTeam(Team.derelict);
 			target.forceRespawn();
 		}
-		function resume(target:FishPlayer){
+		function resume(target:FishPlayer<true>){
 			if(spectators.get(target) == null) return; // this state is possible for a person who left not in spectate
 			target.setTeam(spectators.get(target)!);
 			spectators.delete(target);
 			target.forceRespawn();
 		}
 		Events.on(EventType.GameOverEvent, () => spectators.clear());
-		Events.on(EventType.PlayerLeave, ({player}:{player:mindustryPlayer}) => resume(FishPlayer.get(player)));
+		Events.on(EventType.PlayerLeave, ({player}:{player:mindustryPlayer}) => resume(FishPlayer.get(player) as FishPlayer<true>));
 		return {
-			args: ["target:player?"],
+			args: ["target:playerOn?"],
 			description: `Toggles spectator mode in PVP games.`,
 			perm: Perm.play,
 			requirements: [Req.gameRunning],
@@ -437,7 +483,7 @@ export const commands = commandList({
 	}),
 	help: {
 		args: ['name:string?'],
-		description: 'Displays a list of all commands.',
+		description: 'Displays a list of all commands under the specified category, or, displays information about one command.',
 		perm: Perm.none,
 		handler({ args, output, sender, allCommands }) {
 			const formatCommand = (name: string, color: string) =>
@@ -447,7 +493,9 @@ export const commands = commandList({
 					.chunk(`[lightgray]- ${allCommands[name].description}`).str;
 			const formatList = (commandList: string[], color: string) => commandList.map((c) => formatCommand(c, color)).join('\n');
 
-			if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member'].includes(args.name)) {
+			if(args.name && ["selectors", "select", "selector", "@help", "@?"].includes(args.name)){
+				output(text.selectorsHelp);
+			} else if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member', 'manager', 'trusted'].includes(args.name)) {
 				//name is not a number or a category, therefore it is probably a command name
 				if (args.name in allCommands && (!allCommands[args.name].isHidden || allCommands[args.name].perm.check(sender))) {
 					if(args.name == "help") Achievements.help_help.grantTo(sender, false);
@@ -459,31 +507,24 @@ export const commands = commandList({
 					);
 				} else fail(`Command "${args.name}" does not exist.`);
 			} else {
-				const commands: Record<'player' | 'mod' | 'admin' | 'member', string[]> = {
-					player: [],
-					mod: [],
-					admin: [],
-					member: [],
-				};
-				//TODO change this to category, not perm
-				Object.entries(allCommands).forEach(([name, data]) =>
-					(data.perm === Perm.admin ? commands.admin : data.perm === Perm.mod ? commands.mod : data.perm === Perm.member ? commands.member : commands.player).push(name)
-				);
+				const commands = Object.entries(allCommands).reduce((acc, [name, data]) => {
+					(acc[data.perm.category()] ??= []).push(name);
+					return acc;
+				}, {} as Record<PermCategory, string[]>);
+
 				const chunkedPlayerCommands: string[][] = to2DArray(commands.player, 15);
 
 				switch (args.name) {
-					case 'admin':
-						output(`${Perm.admin.color}-- Admin commands --\n` + formatList(commands.admin, Perm.admin.color));
+					case "trusted": case "mod": case "admin": case "manager": case 'member': {
+						const perm = Perm.perms[args.name];
+						if(!perm) crash(`Cannot find a color for ${args.name}`);
+						output(`${perm.color}-- ${capitalizeText(args.name)} commands --\n` + formatList(commands[args.name], perm.color));
 						break;
-					case 'mod':
-						output(`${Perm.mod.color}-- Mod commands --\n` + formatList(commands.mod, Perm.mod.color));
-						break;
-					case 'member':
-						output(`${Perm.member.color}-- Member commands --\n` + formatList(commands.member, Perm.member.color));
-						break;
+					}
 					default: {
 						const pageNumber = args.name != undefined ? parseInt(args.name) : 1;
 						const page = chunkedPlayerCommands[pageNumber - 1] ?? fail(`"${args.name}" is an invalid page number.`);
+						if(args.name == undefined) output(`[sky]For other categories, run [accent]/help [lightgray]<[]trusted[lightgray]|[]mod[lightgray]|[]admin[lightgray]|[]member[lightgray]>[][].`);
 						output(`[sky]-- Commands page [lightgrey]${pageNumber}/${chunkedPlayerCommands.length}[sky] --\n` + formatList(page, '[sky]'));
 					}
 				}
@@ -492,11 +533,13 @@ export const commands = commandList({
 	},
 
 	msg: {
-		args: ['player:player', 'message:string'],
+		args: ['player:playerOn', 'message:string'],
 		description: 'Send a message to only one player.',
 		perm: Perm.chat,
 		handler({ args, sender, output, f }) {
 			recentWhispers[args.player.uuid] = sender.uuid;
+			args.player.recentPlayers.clear();
+			args.player.recentPlayers.add(sender);
 			args.player.sendMessage(`${sender.prefixedName}[lightgray] whispered:[#BBBBBB] ${args.message}`);
 			output(f`[lightgray]Whispered to ${args.player}[lightgray]:[#BBBBBB] ${args.message}`);
 		},
@@ -609,7 +652,7 @@ Available types:[yellow]
 					return this.ohnos.length;
 				},
 			};
-			Events.on(EventType.GameOverEvent, (e) => {
+			Events.on(EventType.GameOverEvent, (_) => {
 				Ohnos.killAll();
 			});
 			Timer.schedule(() => Ohnos.checkAchievement(), 1, 2);
@@ -627,9 +670,11 @@ Available types:[yellow]
 				sender.team().data().countType(UnitTypes.alpha) >= Units.getCap(sender.team())
 			) fail(`Sorry, the max number of ohno units has been reached.`);
 			if(nearbyEnemyTile((sender.unit()!), 6) != null) fail(`Too close to an enemy building!`);
+			if(!Vars.fogControl.isDiscovered(sender.team(), World.conv(sender.player.x), World.conv(sender.player.y)))
+				fail(`Cannot spawn ohnos in fog.`);
 			if(!UnitTypes.alpha.supportsEnv(Vars.state.rules.env)) fail(`Ohnos cannot survive in this map.`);
 	
-			Ohnos.makeOhno(sender.team(), sender.player!.x, sender.player!.y);
+			Ohnos.makeOhno(sender.team(), sender.player.x, sender.player.y);
 		},
 	}),
 
@@ -637,29 +682,29 @@ Available types:[yellow]
 		args: [],
 		description: 'Displays information about all ranks.',
 		perm: Perm.none,
-		handler({ output }){
+		handler({ output, copy }){
 			output(
 				`List of ranks:\n` +
 					Object.values(Rank.ranks)
-						.map((rank) => `${rank.prefix} ${rank.color}${capitalizeText(rank.name)}[]: ${rank.color}${rank.description}[]\n`)
+						.map((rank) => `${copy(rank.prefix)} ${rank.color}${capitalizeText(rank.name)}[]: ${rank.color}${rank.description}[]\n`)
 						.join("") +
 				`List of flags:\n` +
 				Object.values(RoleFlag.flags)
-					.map((flag) => `${flag.prefix} ${flag.color}${capitalizeText(flag.name)}[]: ${flag.color}${flag.description}[]\n`)
+					.map((flag) => `${copy(flag.prefix)} ${flag.color}${capitalizeText(flag.name)}[]: ${flag.color}${flag.description}[]\n`)
 					.join("")
 			);
 		},
 	},
 
 	rules: {
-		args: ['player:player?'],
+		args: ['player:playerOn?'],
 		description: 'Displays the server rules.',
 		perm: Perm.none,
-		handler({args, sender, output, outputSuccess, f}){
+		handler({args, sender, output, outputSuccess, f, lastUsedSuccessfullySender}){
 			const target = args.player ?? sender;
 			if(target !== sender){
 				if(!sender.hasPerm("warn")) fail(`You do not have permission to show rules to other players.`);
-				if(!sender.canModerate(target)) Req.cooldown(Duration.minutes(10));
+				if(!sender.canModerate(target)) Req.cooldown(Duration.minutes(10))({lastUsedSuccessfullySender});
 				if(target.hasPerm("blockTrolling")) fail(f`Player ${args.player!} is insufficiently trollable.`);
 			}
 			void target.showRules(["No"]).then((option) => {
@@ -677,7 +722,7 @@ Available types:[yellow]
 	},
 
 	void: {
-		args: ["player:player?"],
+		args: ["player:playerOn?"],
 		description: 'Warns other players about power voids.',
 		perm: Perm.play,
 		requirements: ({args}) => [
@@ -720,7 +765,7 @@ Please stop attacking and [lime]build defenses[] first!`
 			if(!(Gamemode.sandbox() || Gamemode.testsrv()) && !sender.hasPerm("mod") && !reason) fail(`Please specify a reason for changing teams.`);
 			if(!sender.hasPerm("changeTeamExternal")){
 				if(team.data().cores.size <= 0) fail(`You do not have permission to change to a team with no cores.`);
-				if(!sender.player!.dead() && !sender.unit()?.spawnedByCore)
+				if(!sender.player.dead() && !sender.unit()?.spawnedByCore)
 					sender.forceRespawn();
 			}
 			if(!sender.hasPerm("mod")) sender.changedTeam = true;
@@ -731,7 +776,7 @@ Please stop attacking and [lime]build defenses[] first!`
 	},
 
 	teamp: {
-		args: ['team:team', 'target:player'],
+		args: ['team:team', 'target:playerOn'],
 		description: 'Changes the team of a player.',
 		perm: Perm.changeTeam,
 		handler({sender, args: {team, target}, outputSuccess, f}){
@@ -739,7 +784,7 @@ Please stop attacking and [lime]build defenses[] first!`
 			if(Gamemode.sandbox() && fishState.peacefulMode && !sender.hasPerm("admin")) fail(`You do not have permission to change teams because peaceful mode is on.`);
 			if(!sender.hasPerm("changeTeamExternal")){
 				if(team.data().cores.size <= 0) fail(`You do not have permission to change to a team with no cores.`);
-				if(!target.player!.dead() && !target.unit()?.spawnedByCore)
+				if(!target.player.dead() && !target.unit()?.spawnedByCore)
 					target.forceRespawn();
 			}
 			target.setTeam(team);
@@ -763,7 +808,7 @@ Please stop attacking and [lime]build defenses[] first!`
 		perm: Perm.admin,
 		handler({allCommands, sender, args:{force = true}}){
 			if(allCommands.vnw.data.manager.session == null){
-				if(force == false) fail(`Cannot clear votes for VNW because no vote is currently ongoing.`);
+				if(!force) fail(`Cannot clear votes for VNW because no vote is currently ongoing.`);
 				skipWaves(1, true);
 			} else {
 				if(force) Call.sendMessage(`VNW: [green]Vote was forced by admin [yellow]${sender.name}[green], skipping wave.`);
@@ -820,7 +865,7 @@ Please stop attacking and [lime]build defenses[] first!`
 		perm: Perm.admin,
 		handler({args:{force = true}, sender, allCommands}){
 			if(allCommands.rtv.data.manager.session == null){
-				if(force == false) fail(`Cannot clear votes for RTV because no vote is currently ongoing.`);
+				if(!force) fail(`Cannot clear votes for RTV because no vote is currently ongoing.`);
 				allCommands.rtv.data.manager.forceVote(true);
 			} else {
 				if(force) Call.sendMessage(`RTV: [green]Vote was forced by admin [yellow]${sender.name}[green].`);
@@ -898,14 +943,14 @@ Please stop attacking and [lime]build defenses[] first!`
 		args: [],
 		description: 'Lists the available maps.',
 		perm: Perm.none,
-		handler({output}){
+		handler({output, copy}){
 			output(`\
 [yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.
 
 [blue]Available maps:
 _________________________
 ${Vars.maps.customMaps().toArray().map(map =>
-`[yellow]${map.name()}`
+`[yellow]${copy(map.name())}`
 ).join("\n")}`
 			);
 		}
@@ -1048,7 +1093,10 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 			args: ["force:boolean?", "team:team?"],
 			description: "Vote to surrender to the enemy team.",
 			perm: Perm.play,
-			requirements: [Req.mode("pvp"), Req.teamAlive],
+			requirements: ({sender}) => [
+				Req.mode("pvp"), Req.teamAlive,
+				Req.cooldown(sender.ranksAtLeast("mod") ? 5_000 : 20_000)
+			],
 			data: { managers },
 			async handler({ sender, args: {force, team} }){
 				const t = sender.hasPerm("admin") && team ? team : sender.team();
@@ -1066,8 +1114,8 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 					manager.forceVote(force);
 					return;
 				}
-				if(sender.ranksAtLeast("mod")) Req.cooldown(5_000);
-				else Req.cooldown(20_000);
+				if(manager.getEligibleVoters().length == 1)
+					await Menu.confirmDangerous(sender, "Are you really sure you want to surrender? All of your buildings will be destroyed and the enemy team will win.");
 				manager.vote(sender, 1, 0);
 			},
 		};
@@ -1076,7 +1124,16 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 		args: ["target:player", "global:boolean?"],
 		perm: Perm.none,
 		description: "Views a player's stats.",
-		handler({args:{target, global = false}, output, f}){
+		async handler({args:{target, global = false}, output, player, f}){
+			player(target);
+			if(!target.dataSynced){
+				try {
+					await target.downloadData();
+				} catch {
+					fail(`Error fetching data.`);
+				}
+				target.dataSynced = true;
+			}
 			const stats = global ? target.globalStats : target.stats;
 			output(f`[accent]\
 Statistics for player ${target} ${global ? "across all servers" : "on this server"}:
@@ -1095,7 +1152,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 		args: ["x:number?", "y:number?", "size:number?"],
 		perm: Perm.none,
 		description: "Views the world as a 2D scrollable menu.",
-		requirements: [Req.cooldown(4000), Req.integerRange("size", 1, 20)],
+		requirements: [Req.cooldown(4000), Req.integerRange("size", 1, 10)],
 		handler({sender, args:{size = 7, x, y}}){
 			if(Vars.state.rules.fog) fail(`This command is disabled when fog is enabled.`);
 			const options = to2DArray((Reflect.get(Vars.world.tiles, "array") as Tile[]).map(tile => ({
@@ -1134,13 +1191,12 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 
 	gamemode: {
 		args: ["mode:string"],
-		perm: new Perm("changeGamemode", "manager").exceptModes({
+		perm: Perm.manager.exceptModes({
 			testsrv: Perm.play,
 		}),
 		description: "Sets the gamemode.",
-		requirements: [Req.cooldownGlobal(10_000)],
-		handler({args, sender, outputSuccess, lastUsedSuccessfully}){
-			if(!sender.hasPerm('trusted')) Req.cooldownGlobal(30_000)({lastUsedSuccessfully});
+		requirements: ({sender}) => [Req.cooldownGlobal(sender.hasPerm('trusted') ? 10_000 : 30_000)],
+		handler({args, sender, outputSuccess}){
 			//Unpause
 			Vars.state.set(GameState.State.playing);
 			switch(args.mode){
@@ -1162,20 +1218,16 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 					Vars.state.rules.infiniteResources = false;
 					break;
 				case "sandbox":
-					Vars.state.rules.attackMode = true;
+					Vars.state.rules.attackMode = false;
 					Vars.state.rules.pvp = false;
 					Vars.state.rules.waves = false;
 					Vars.state.rules.infiniteResources = true;
 					break;
 				default: fail(`Invalid mode, valid modes are: attack, survival, pvp`);
 			}
-			const reloader = new WorldReloader();
-			Reflect.set(reloader, "wasServer", true);
-			Reflect.set(reloader, "players", Groups.player.copy());
-			Call.worldDataBegin();
-			reloader.end();
-			Call.sendMessage(`[orange]Player ${sender.cleanedName} changed the gamemode to ${args.mode}`);
+			Call.sendMessage(`[orange]Player ${sender.prefixedName}[orange] changed the gamemode to ${args.mode}.`);
 			outputSuccess(`Changed mode to ${args.mode}`);
+			Call.setRules(Vars.state.rules);
 		}
 	},
 
@@ -1201,7 +1253,7 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 		args: ["name:string?", "verbose:boolean?"],
 		description: "Displays information on a specific achievement.",
 		perm: Perm.none,
-		async handler({args: {name = "", verbose = false}, sender, f, output}){
+		async handler({args: {name = "", verbose = false}, sender, f, output, copy}){
 			name = Strings.stripColors(name.toLowerCase());
 			
 			const matching = Achievement.all.filter(a => Strings.stripColors(a.name).toLowerCase().includes(name));
@@ -1216,9 +1268,9 @@ Win rate: ${stats.gamesWon / stats.gamesFinished}`
 			: matching[0];
 			
 			output(FColor.achievement`\
-Achievement ${achievement.icon} ${achievement.name}
+Achievement ${achievement.icon} ${copy(achievement.name)}
 [white]--------------[]
-${achievement.description + (achievement.extendedDescription ? ("\n" + `[gray]${achievement.extendedDescription}`) : "")}
+${copy(achievement.description + (achievement.extendedDescription ? ("\n" + `[gray]${achievement.extendedDescription}`) : ""))}
 Allowed modes: ${achievement.modesText}
 Unlocked: ${f.boolGood(achievement.has(sender))}
 ${verbose ? `[gray]ID: (${achievement.nid})${achievement.sid}\n` : ""}\
@@ -1287,5 +1339,49 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			}
 		}
 	},
-	
+	skipconfirm: {
+		args: ["duration:time?"],
+		description: "Disables confirm popups for the specified duration.",
+		perm: Perm.none,
+		handler({ args: {duration}, sender, output, outputSuccess }){
+			if(Date.now() < sender.skipConfirm){
+				duration ??= 0;
+			} else {
+				duration ??= Duration.minutes(2);
+			}
+			if(duration > Duration.hours(8))
+				fail(`Maximum duration is 8 hours.`);
+			sender.skipConfirm = Date.now() + duration;
+			if(Date.now() < sender.skipConfirm) outputSuccess(`Disabled confirm popups for ${formatTime(duration)}.`);
+			else outputSuccess(`Re-enabled confirm popups.`);
+			if(duration > Duration.hours(1)) output(`Warning: this does not sync between servers, and does not persist after a server restart.`);
+		}
+	},
+	copy: {
+		args: [],
+		description: "Copies relevant text from the previous command to your clipboard.",
+		perm: Perm.none,
+		async handler({ sender, outputSuccess }){
+			if(!sender.copyOptions || sender.copyOptions.length == 0) fail(`There is nothing to copy.`);
+			const response = sender.copyOptions.length == 1 ? sender.copyOptions[0] :
+				await Menu.pagedList(
+					sender, "Copy", "Select a text to copy it",
+					sender.copyOptions,
+					{ optionStringifier: escapeStringColorsClient, columns: 1 }
+				);
+			Call.copyToClipboard(sender.con(), response);
+			outputSuccess("Copied.");
+		}
+	},
+	copyTo: {
+		args: ["target:playerOn", "string:string"],
+		description: "Copies the specified text to someone else's clipboard.",
+		perm: Perm.mod,
+		requirements: [Req.cooldown(5_000)],
+		handler({ args: { target, string }, sender, f, outputSuccess }){
+			Call.copyToClipboard(target.con(), string);
+			target.sendMessage(`[accent]Copy: ${sender.prefixedName}[accent] sent you some text to copy.`);
+			outputSuccess(f`Sent text to ${target}`);
+		}
+	},
 });

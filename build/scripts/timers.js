@@ -49,6 +49,7 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeTimers = initializeTimers;
+var automod_1 = require("/automod");
 var api_1 = require("/api");
 var config = __importStar(require("/config"));
 var config_1 = require("/config");
@@ -168,13 +169,17 @@ function initializeTimers() {
             globals_1.joinDemographics.clear();
     }, 0, funcs_1.DurationSecs.minutes(1));
     Timer.schedule(function () {
-        if (players_1.FishPlayer.antiBotMode()) {
+        if (automod_1.Antibot.antiBotMode()) {
             Call.infoToast("[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ".concat(Vars.netServer.admins.dosBlacklist.size), 2);
         }
     }, 0, 1);
-    Timer.schedule(function () {
-        players_1.FishPlayer.validateVotekickSession();
-    }, 0, 0.3);
+    Events.run(Trigger.update, function () {
+        var speed = Vars.state.map.tags.getFloat("backgroundOffsetXSpeed");
+        if (speed != 0) {
+            Vars.state.rules.backgroundOffsetX += speed;
+            Call.setRule("backgroundOffsetX", String(Vars.state.rules.backgroundOffsetX));
+        }
+    });
 }
 Timer.schedule(function () {
     (0, files_1.updateMaps)()
@@ -185,7 +190,8 @@ Timer.schedule(function () {
         }
     })
         .catch(function (message) {
-        Call.sendMessage("[scarlet]Automated maps update failed, please report this to a staff member.");
+        if (Date.now() - globals_1.fishState.lastSuccessfulMapUpdate >= funcs_1.Duration.hours(1))
+            Call.sendMessage("[scarlet]Automated maps update failed too many times, please report this to a staff member.");
         Log.err("Automated map update failed: ".concat(String(message)));
     });
 }, funcs_1.DurationSecs.minutes(1), funcs_1.DurationSecs.minutes(10));

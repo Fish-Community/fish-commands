@@ -24,7 +24,7 @@ const Call: {
 	 */
 	textInput(target: NetConnection, textInputId: number, title:string, message:string, textLength:number, def:string, numeric:boolean, allowEmpty?:boolean): void;
 	label(message:string | null, id:number, duration:number, worldx:number, worldy:number, flags:number):void;
-	label(message:string, id:number, duration:number, worldx:number, worldy:number):void;
+	label(message:string | null, id:number, duration:number, worldx:number, worldy:number):void;
 	label(message:string, duration:number, worldx:number, worldy:number):void;
 	labelReliable(message:string | null, id:number, duration:number, worldx:number, worldy:number, flags:number):void;
 	labelReliable(message:string | null, id:number, duration:number, worldx:number, worldy:number):void;
@@ -50,6 +50,7 @@ type LogLevel = { readonly _brand: unique symbol };
 type LogLevelName = Exclude<keyof (typeof Log)["LogLevel"], "none">;
 const Strings: {
 	stripColors(string:string):string;
+	stripGlyphs(string: string): string;
 	sanitizeFilename(name:string):string;
 };
 const NetServer: {
@@ -76,6 +77,7 @@ class Rules {
 	copy(): Rules;
 	dynamicColor: Color;
 	planetBackground: any;
+	backgroundOffsetX: number;
 }
 
 const Vars: {
@@ -83,6 +85,8 @@ const Vars: {
 		skipWave():void;
 	}
 	netServer: {
+		invalidHandler: any;
+		chatFormatter: any
 		admins: Administration;
 		clientCommands: CommandHandler;
 		kickAll(kickReason:any):void;
@@ -92,8 +96,9 @@ const Vars: {
 		assigner: (player:Player, players:MIterable<Player>) => Team;
 	}
 	net: {
-		send(object:any, reliable:boolean):void;
+		send(packet:any, reliable:boolean):void;
 		closeServer():void;
+		handleServer<T>(packetType: new (...args:any[]) => T, handler:(connection: NetConnection, packet: T) => void): void;
 	}
 	mods: {
 		getScripts(): Scripts;
@@ -123,10 +128,16 @@ const Vars: {
 	tilesize: 8;
 	world: World;
 	maxPingTextLength: number;
+	maxTextLength: number;
+	fogControl: {
+		isVisible(team:Team, x:number, y:number):boolean;
+		isDiscovered(team:Team, x:number, y:number):boolean;
+	}
 };
 const GlobalVars: any;
 class Teams {
 	active: Seq<TeamData>;
+	present: Seq<TeamData>;
 	getActive(): Seq<TeamData>;
 }
 class BlockIndexer {
@@ -153,6 +164,8 @@ class World {
 	tile(x:number, y:number):Tile | null;
 	width(): number;
 	height(): number;
+	static conv(x:number):number;
+	static unconv(x:number):number;
 	tiles: {
 		eachTile(func:(tile:Tile) => unknown):void;
 	};
@@ -172,6 +185,7 @@ class Administration {
 	kickedIPs: ObjectMap<string, number>;
 	bannedIPs: Seq<string>;
 	subnetBans: Seq<string>;
+	playerInfo: ObjectMap<string, PlayerInfo>;
 	findByName(info:string):ObjectSet<PlayerInfo>;
 	searchNames(name:string):ObjectSet<PlayerInfo>;
 	getInfo(uuid:string):PlayerInfo;
@@ -195,16 +209,35 @@ class Administration {
 	save():void;
 	addChatFilter(filter:(player:mindustryPlayer, message:string) => string | null):void;
 	addActionFilter(filter:(action:PlayerAction) => boolean):void;
+	filterMessage(player: Player, message: string): string;
+
 	static ActionType: ActionType;
 	static PlayerInfo: typeof PlayerInfo;
 	static Config: typeof Config;
 }
+
 class Config {
-	static strict: Config;
+	constructor(name: string, description: string, defaultValue: any);
+	defaultValue: any;
+	name: string;
+	key: string;
+	description: string;
+	changed(): void;
+	isNum(): boolean;
+	isBool(): boolean;
+	isString(): boolean;
+	get(): any;
 	bool(): boolean;
+	num(): number;
+	string(): string;
+	set(value: any): void;
+	isDefault(): boolean;
 }
+
 const Events: {
 	on(event:EventType, handler:(e:any) => void):void;
+	run(trigger:Trigger, handler:() => void):void;
+	runid(trigger:Trigger, handler:() => void):number;
 	fire(event:MEvent):void;
 };
 type MEvent = any;
@@ -308,6 +341,8 @@ class Team {
 	static baseTeams:Team[];
 	name:string;
 	emoji:string;
+	color: Color;
+	localized():string;
 	active():boolean;
 	isAlive():boolean;
 	data():TeamData;
@@ -365,6 +400,7 @@ class Player {
 	con:NetConnection;
 	mouseX:number; mouseY:number;
 	shooting:boolean;
+	locale:string;
 	pingX: number;
 	pingY: number;
 	pingTime: number;
@@ -382,6 +418,8 @@ class Player {
 	clearUnit():void;
 	checkSpawn():void;
 	getInfo():PlayerInfo;
+	isAdded():boolean;
+	plainName():string;
 	write(writes: Writes):void;
 }
 type mindustryPlayer = Player;
@@ -401,6 +439,7 @@ class Color {
 	a: number;
 	cpy():Color;
 	rand():Color;
+	toString():string;
 }
 const Version: {
 	type: string;
@@ -456,6 +495,7 @@ const Mathf: {
 	len(x:number, y:number):number;
 	atan2(x:number, y:number):number;
 	dst(x1:number, y1:number, x2:number, y2:number):number;
+	dst2(x1:number, y1:number, x2:number, y2:number):number;
 };
 const SaveIO: {
 	save(file:Fi):void;
@@ -489,6 +529,8 @@ const Http: {
 type HttpMethod = {_HttpMethod: true};
 class HttpRequest {
 	submit(func:(response:HttpResponse) => void):void;
+	block(func:(response:HttpResponse) => void):void;
+
 	error(func:(exception:any) => void):void;
 	header(name:string, value:string):HttpRequest;
 	content: string;
@@ -498,6 +540,7 @@ class HttpResponse {
 	getResultAsString():string;
 	getResultAsStream():InputStream
 	getResult():number[];
+	getStatus():any;
 }
 class InputStream {
 	close():void;
@@ -555,6 +598,7 @@ class ByteArrayOutputStream extends OutputStream {
 class ByteArrayInputStream extends InputStream {
 	constructor(bytes:number[]);
 }
+
 class Writes {
 	constructor(output: DataOutputStream);
 }
@@ -565,8 +609,9 @@ class Seq<T> {
 	constructor();
 	constructor(ordered:boolean);
 	constructor(capacity:number);
-	static with<T>(...items:T[]):Seq<T>;
+	static with<T>(items:T[]):Seq<T>;
 	static with<T>(items:MIterable<T>):Seq<T>;
+	static with<T>(...items:T[]):Seq<T>;
 	add(item:T):this;
 	addUnique(item:T):this;
 	contains(item:T):boolean;
@@ -603,10 +648,11 @@ class Seq<T> {
 
 class ObjectSet<T> {
 	size:number;
+	static with<T>(items:Seq<T> | T[]):ObjectSet<T>;
 	select(predicate:(item:T) => boolean):ObjectSet<T>;
 	each(func:(item:T) => unknown):void;
 	add(item:T):boolean;
-	addAll(item:T[]):boolean;
+	addAll(items:T[]):boolean;
 	remove(item:T):boolean;
 	isEmpty():boolean;
 	contains(item:T):boolean;
@@ -631,11 +677,16 @@ class IntSet {
 class ObjectMap<K, V> {
 	put(key:K, value:V):void;
 	get(key:K):V;
+	get(key:K, defaultValue:V):V;
+	get(key:K, prov:(key:K)=>V):V;
 	containsKey(key:K):boolean;
 	remove(key:K):V | null;
 	clear():void;
 	size:number;
-	entries(): unknown;
+	entries():any;
+	values():{ toSeq(): Seq<V>; };
+	each(param: (k: K, v: V) => void):void;
+	isEmpty():boolean;
 }
 class ObjectIntMap<K> {
 	put(key:K, value:number):void;
@@ -653,7 +704,9 @@ class ObjectIntMapEntry<K> {
 	key:K;
 	value:number;
 }
-class StringMap {}
+class StringMap {
+	getFloat(key:string):number;
+}
 class EntityGroup<T> {
 	add(type:T):void
 	copy():Seq<T>;
@@ -703,6 +756,7 @@ type Unit = {
 	tileOn():Tile | null;
 	tile?: () => Building;
 	kill():void;
+	remove():void;
 	add():void;
 	isAdded():boolean;
 	set(x: number, y:number):void;
@@ -714,12 +768,27 @@ type Unit = {
 	clearStatuses():void;
 	within(pos: Building | Unit, distance: number):boolean;
 };
-type NetConnection = any;
+class NetConnection {
+	player: Player;
+	connection: any;
+	address: string;
+	hasDisconnected: boolean;
+	hasBegunConnecting: boolean;
+	mobile: boolean;
+	kicked: boolean;
+	kick(reason:string, duration?:number):void;
+	kick(reason:KickReason, duration?:number):void;
+	sendStream(data:any):void;
+	close(reason?:DcReason):void;
+}
 class Command {
 	text:string;
 	paramText:string;
 	description:string;
 	params:any[];
+}
+enum DcReason {
+	timeout, closed, error
 }
 
 /** java.io.File */
@@ -753,6 +822,7 @@ class Pattern {
 class Matcher {
 	replaceAll(replacement:string):string;
 	matches():boolean;
+	find():boolean;
 	group(index:number):string;
 }
 class Runtime {
@@ -786,6 +856,7 @@ const Packets: {
 	WorldStream: any;
 	AdminAction: Record<"kick" | "ban" | "trace" | "wave" | "switchTeam", AdminAction>;
 };
+
 type KickReason = { quiet: boolean };
 type AdminAction = {};
 
@@ -936,6 +1007,11 @@ class LabelReliableCallPacket {
 	worldx:number;
 	worldy:number;
 }
+
+class SendChatMessageCallPacket {
+	message: string;
+}
+
 class ConnectPacket {
 	version: number;
 	versionType: string;

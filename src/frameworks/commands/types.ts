@@ -11,8 +11,8 @@ import type { Expand, TagFunction } from "/types";
 
 /** All valid command arg types. */
 export const commandArgTypes = [
-	"string", "number", "boolean", "player", /*"menuPlayer",*/ "team", "time", "unittype", "block",
-	"uuid", "offlinePlayer", "map", "mapOrRandom", "rank", "roleflag", "item"
+	"string", "number", "boolean", "player", "team", "time", "unittype", "block",
+	"uuid", "playerOn", "map", "mapOrRandom", "rank", "roleflag", "item"
 ] as const;
 export const commandArgNames = {
 	string: "text",
@@ -24,7 +24,7 @@ export const commandArgNames = {
 	unittype: "unit type",
 	block: "block",
 	uuid: "UUID",
-	offlinePlayer: "player",
+	playerOn: "player",
 	map: "map",
 	mapOrRandom: "map",
 	rank: "rank",
@@ -43,8 +43,7 @@ export type TypeOfArgType<T> =
 	T extends "time" ? number :
 	T extends "team" ? Team :
 	T extends "player" ? FishPlayer :
-	T extends "exactPlayer" ? FishPlayer :
-	T extends "offlinePlayer" ? FishPlayer :
+	T extends "playerOn" ? FishPlayer<true> :
 	T extends "unittype" ? UnitType :
 	T extends "block" ? Block :
 	T extends "uuid" ? string :
@@ -93,7 +92,7 @@ export type FishCommandHandlerData<ArgType extends string, StoredData> = {
 	 */
 	args: Expand<ArgsFromArgStringUnion<ArgType>>;
 	/** The player who ran the command. */
-	sender: FishPlayer;
+	sender: FishPlayer<true>;
 	/** Arbitrary data specific to the command. */
 	data: StoredData;
 	currentTapMode: TapHandleMode;
@@ -122,6 +121,14 @@ export type FishCommandHandlerUtils = {
 	execServer(this: void, message: string): void;
 	/** Call this function to set tap handling mode. */
 	handleTaps(this: void, mode: TapHandleMode): void;
+	/** Call this function to add text to /copy. */
+	copy<T extends string | number | undefined | null>(this: void, text:T):T;
+	/** Call this function to add a player to the recent players list. */
+	player<T extends mindustryPlayer | FishPlayer | PlayerInfo | null>(this: void, player:T):T;
+	// copy: {
+	// 	<T extends string>(text:T):T;
+	// 	category: null; 
+	// };
 };
 export type FishCommandHandler<ArgType extends string, StoredData> = (fish: FishCommandHandlerData<ArgType, StoredData> & FishCommandHandlerUtils) => void | Promise<void>;
 
@@ -142,6 +149,8 @@ export type FishConsoleCommandRunner<ArgType extends string, StoredData> = (_: {
 	outputFail(this: void, message: string | PartialFormatString): void;
 	/** Outputs text to the console. Tab characters are replaced with 4 spaces. */
 	output(this: void, message: string | PartialFormatString): void;
+	/** Call this function to add a player to the recent players list. */
+	player<T extends mindustryPlayer | FishPlayer | PlayerInfo | null>(this: void, player:T):T;
 	/** Use to tag template literals, formatting players, numbers, ranks, and more */
 	f: FFunction;
 	/** Executes a server console command. Be careful to not commit recursion as that will cause a crash.*/
@@ -158,7 +167,7 @@ export type FishConsoleCommandRunner<ArgType extends string, StoredData> = (_: {
 export type TapHandler<ArgType extends string, StoredData> = (_: {
 	/** Last args used to call the parent command. */
 	args: ArgsFromArgStringUnion<ArgType>;
-	sender: FishPlayer;
+	sender: FishPlayer<true>;
 	x: number;
 	y: number;
 	tile: Tile;
@@ -181,6 +190,10 @@ export type TapHandler<ArgType extends string, StoredData> = (_: {
 	lastUsed: number;
 	/** Timestamp of the last time this tap handler was run succesfully. (without fail() being called) */
 	lastUsedSuccessfully: number;
+	/** Call this function to add text to /copy. */
+	copy<T extends string | number | undefined | null>(this: void, text:T):T;
+	/** Call this function to add a player to the recent players list. */
+	player<T extends mindustryPlayer | FishPlayer | PlayerInfo | null>(this: void, player:T):T;
 }) => unknown;
 
 export type FishCommandRequirement<ArgType extends string, StoredData> = (data: FishCommandHandlerData<ArgType, StoredData>) => unknown;

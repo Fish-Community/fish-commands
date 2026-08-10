@@ -21,6 +21,7 @@ function processBannedWordList(words: Pre_BannedWordList):BannedWordList {
 	);
 }
 export const bannedWords: {
+	chat: BannedWordList;
 	normal: BannedWordList;
 	strict: BannedWordList;
 	names: BannedWordList;
@@ -33,11 +34,14 @@ export const bannedWords: {
 	// If a word can be contained in another word that should be allowed (the scunthorpe problem),
 	// surround the entire thing in square brackets, then list out the words after
 	// like this: ["badw", "goodbadw"]
-	/** Normal: banned always. */
-	normal: processBannedWordList([
-		"fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon"], "skibidi", //With love, DarthScion
+	/** Chat: banned only in chat, but not in names. */
+	chat: processBannedWordList([
+		"fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon", "drizzle"], "skibidi", //With love, DarthScion
 		//>:( -dart
 		// "uwu", //lol
+	]),
+	/** Normal: banned always. */
+	normal: processBannedWordList([
 
 		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", /\bnegr\b/, //our apologies to citizens of the Republic of Niger
 		["ni"+"ga", "anniga", "inniga", "unniga", "aniga", "iniga", "eniga", "oniga"],
@@ -45,7 +49,7 @@ export const bannedWords: {
 		"re"+"tard",
 		'kill yourself', 'kill urself', /\bkys\b/,
 		"kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", /\b1488\b/, //nazi-related words
-		["co"+"ck", "cockroach", "poppycock", "cocktail"], "suck dick", "sucking dick",
+		["co"+"ck", "cockroach", "poppycock", "cocktail", "cocky"], "suck dick", "sucking dick",
 		"iamasussyimposter",
 		["cu"+"nt", "scunthorpe"],
 		["penis", "peniston"],
@@ -138,12 +142,17 @@ export const multiCharSubstitutions:Array<[RegExp, string]> = [
 //#region misc
 /** Used for anti-impersonation. Make sure to replace numbers with letters, for example, balam314 -> balamei4. */
 export const adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl", "eradicator"];
+export const sneakybannedNames = ["☠[#0]Ðï[gray]§¢[white]ðÐ[#f]☠"];
 export const heuristics = {
 	/** Will trip if more than this many blocks are broken within 25 seconds of joining. */
 	blocksBrokenAfterJoin: 40,
 };
 export const stopAntiEvadeTime = Duration.minutes(30);
 export const backendIP = '45.79.202.111:5082';
+export const translationApiUrl = "https://translate.eradication.fun";
+
+export const translationApiToken = new Administration.Config("translationApiToken", "Token to use with the translation API.", "unset");
+
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
 	noBackend: new Fi("config/.debug").exists() && !backendIP.startsWith("127.0.0.1:"),
@@ -214,11 +223,17 @@ export class FishServer {
 		"162.248.101.52", "6567",
 		["test", "testsrv", "t", "testingserver", "testserver"]
 	);
+	static local = new FishServer(
+		"local",
+		"127.0.0.1", "6567",
+		["l", "lc"],
+		"developer"
+	);
 	static byName(input:string):FishServer | null {
 		input = input.toLowerCase();
 		return FishServer.all.find(s => s.aliases.concat(s.name).includes(input)) ?? null;
 	}
-};
+}
 
 export type GamemodeName = keyof typeof Gamemode extends infer K extends keyof typeof Gamemode ? K extends unknown ?
 	(typeof Gamemode)[K] extends (() => boolean) ? K : never
@@ -243,6 +258,7 @@ export const prefixes = {
 	marked: '[yellow]\u26A0[scarlet]Marked Griefer[]\u26A0[]',
 	flagged: '[yellow]\u26A0[orange]Flagged[]\u26A0[]',
 	muted: '[white](muted)',
+	impersonator: "[scarlet]SUSSY IMPOSTOR[]",
 };
 
 export const text = {
@@ -281,6 +297,35 @@ export const text = {
 		highlight: () => string;
 	},
 	dataFetchFailed: "[scarlet]\u26A0 Data fetch failed!\n[white]Please disconnect and rejoin the server if you encounter further issues, such as missing rank or statistics.",
+	selectorsHelp: `\
+[coral]-- General selectors --
+These selectors can be used for any command.
+[accent]@[]: Placeholder. You will be asked to enter the value later.
+[accent]@0[]: Negative placeholder. This specifies that you want to leave the argument empty.
+
+[coral]-- Player selectors --
+Player selectors can be used instead of a player name when specifying a player in a command.
+
+[accent]@cyrillic, @russian[]: Names containing Cyrillic letters
+[accent]@chinese, @cny[]: Names containing Chinese letters
+[accent]@japanese, @jpy[]: Names containing Japanese letters
+[accent]@korean, @kor[]: Names containing Korean letters
+[accent]@nonenglish, @noneng[]: Names containing any non-English characters
+[accent]@short[]: Short names
+
+[accent]@stopped, @marked[]: Marked griefers
+[accent]@muted[]: Muted players
+[accent]@=rank, @-rank, @+rank[]: Players with exactly, no more than, or at least the specified rank. Example: [accent]@+trusted[] selects all players with trusted rank or higher.
+
+[accent]@rand[]: Selects a random player.
+[accent]@s[]: Yourself.
+[accent]@cursor, @c[]: The closest player to your cursor.
+[accent]@h, @p[]: The closest player to your unit, except yourself.
+
+[accent]@offline, @off, @o[]: An offline player. Search by name with [accent]@offline[]:[gray]<NAME>[]
+[accent]@create[]: Creates a player data entry by UUID.
+[accent]@click[]: Run the command, then click a player's unit to select them.
+[accent]@recent[]: Selects players that were printed by the most recent command you run. For example, you can run /tilelog, click a tile, then use @recent.`
 };
 
 
@@ -330,6 +375,7 @@ export const tips = {
 		`Did someone kill a T5 with commands? Run [white]/aoelog 0 15 killed[] to check tilelogs for unit deaths in a large area.`,
 		`Aoelog can show the history of tiles in an area. Select the opposite corners of a rectangle to view the history of its tiles.`,
 		`Aoelog is the plural version of tilelog, access it via [white]/aoelog[]`,
+		`You can run [white]/language[] to change your translation language.`,
 		`You can mark yourself as AFK(away from keyboard) with [white]/afk[].`,
 		`Run /survival, /attack, /pvp, /sandbox, /hexed or /minigame to quickly change to another server.`,
 		`Need to get rid of an active griefer? Use [#6FFC7C]/s[] to send a message to all staff members across all servers.`,
@@ -342,7 +388,7 @@ export const tips = {
 		`Don't like the map? Vote to change it with [white]/rtv[].`,
 		`If you want to end the current map, DO NOT BREAK DEFENCES! Vote to change the map with [white]/rtv[].`,
 		//misc
-		`Anyone attempting to impersonate a ranked player, or the server, will have [scarlet]SUSSY IMPOSTOR[] prepended to their name. Beware!`,
+		`Anyone attempting to impersonate a ranked player, or the server, will have ${prefixes.impersonator} prepended to their name. Beware!`,
 		`Griefers will often be found with the text ${prefixes.marked} prepended to their name: they are harmless and cannot grief again.`,
 		`Don't votekick ${prefixes.marked.slice(0, -3)}[][scarlet]s [gold]if they aren't breaking the rules: they are incapable of griefing more.`,
 		`Players marked as ${prefixes.flagged} have been flagged as suspicious by our detection systems, but they may not be griefers.`,
@@ -378,5 +424,9 @@ export const rules = [
 	`# 9: [#FF3FBF]Do not ragebait people. If someone tells you they are uncomfortable, respect it.`,
 	`Failure to follow these rules may result in a ${prefixes.marked} tag blocking you from playing, a mute for broken chat rules, and bans for repeated offenses or bypasses.`
 ].map(r => `[white]${r}`);
+export const automaticNames = {
+	nouns: ["Tuna", "Trout", "Anglerfish", "Pufferfish", "Barracuda", "Snapper", "Carp", "Catfish", "Koi", "Blobfish", "Pollock", "Salmon", "Mullet", "Halibut", "Flounder", "Marlin", "Sailfish", "Swordfish", "Sardine", "Mackerel", "Sunfish", "SeaBass", "Goldfish", "Whale", "MakoShark", "WhiteShark", "BlueShark", "ReefShark", "WhaleShark"],
+	adjectives: ["Happy", "Sad", "Angry", "Zealous", "Cheerful", "Grumpy", "Stoic", "Witty", "Chatty", "Speedy", "Brave", "Pensive", "Lazy", "Fierce", "Honorable", "Jealous", "Skeptical", "Anxious", "Timid", "Jovial", "Unjust", "Lethargic", "Saline", "Brackish", "Prefixed", "Thalassophobic"],
+};
 //#endregion
 

@@ -4,14 +4,15 @@ This file contains many utility functions that need access to any values from ot
 For functions that don't need values from other files, see funcs.ts.
 */
 
+import { Antibot } from "/automod";
 import * as api from "/api";
-import { adminNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
+import { adminNames, automaticNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
 import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
-import { Cancel } from "/frameworks/menus";
-import { crash, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
+import { Cancel, Menu } from "/frameworks/menus";
+import { crash, Duration, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
 import { dosBlacklistCopy, FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
-import { SelectEnumClassKeys } from "/types";
+import { PlayerHistoryEntry, SelectEnumClassKeys } from "/types";
 
 
 export function memoizeChatFilter(impl:(arg:string) => string){
@@ -39,9 +40,9 @@ export function formatTime(time:number){
 	return [
 		months && `${months} month${months != 1 ? "s" : ""}`,
 		days && `${days} day${days != 1 ? "s" : ""}`,
-		hours && `${hours} hour${hours != 1 ? "s" : ""}`,
-		minutes && `${minutes} minute${minutes != 1 ? "s" : ""}`,
-		(seconds || time < 1000) && `${seconds} second${seconds != 1 ? "s" : ""}`,
+		hours && !days && `${hours} hour${hours != 1 ? "s" : ""}`,
+		minutes && !(days || months) && `${minutes} minute${minutes != 1 ? "s" : ""}`,
+		(seconds || time < 1000) && !(days || months || hours) && `${seconds} second${seconds != 1 ? "s" : ""}`,
 	].filter(Boolean).join(", ");
 }
 
@@ -93,7 +94,7 @@ export function formatTimestampShort(time:number){
 	return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 }
 
-export function formatTimeRelative(time:number, raw?:boolean){
+export function formatTimeRelative(time:number, raw = false){
 	const difference = Math.abs(time - Date.now());
 
 	if(difference < 1000)
@@ -169,7 +170,8 @@ export const getItem = searchFixed(Vars.content.items().toArray(), [
  */
 export function matchFilter(input:string, wordList = "chat" as "chat" | "strict" | "name", aggressive = false):false | string {
 	const currentBannedWords = [
-		wordList == "name" ? bannedWords.normal.filter(w => w[0] !== "uwu") : bannedWords.normal,
+		wordList != "name" && bannedWords.chat,
+		bannedWords.normal,
 		(wordList == "strict" || wordList == "name") && bannedWords.strict,
 		wordList == "name" && bannedWords.names,
 	].filter(Boolean).flat();
@@ -214,35 +216,35 @@ export function cleanText(text:string, applyAntiEvasion = false){
 	return replacedText;
 }
 
+const filters:Array<[check: (value:string, isAdmin:boolean) => boolean, message:string]> = (
+	(input: Array<string | [string | RegExp | ((value:string, isAdmin:boolean) => boolean), string]>) =>
+		input.map(i =>
+			Array.isArray(i) ? [
+				typeof i[0] == "string" ? replacedText => replacedText.includes((i[0] as string)) :
+				i[0] instanceof RegExp ? replacedText => (i[0] as RegExp).test(replacedText) :
+				i[0],
+				i[1]
+			] : [
+				replacedText => replacedText.includes(i),
+				`Name contains disallowed ${i.length == 1 ? "icon" : "word"} '${i}'`
+			]
+		)
+)([
+	[/\bserver\b/, "Name contains disallowed word 'server'"],
+	"admin", "moderator", "staff", "owner",
+	[">|||>", "Name contains >|||> which is reserved for the server owner"],
+	"\uE817", "\uE82C", "\uE88E", "\uE813",
+	["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
+	[/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
+	[(replacedText, isAdmin) => !isAdmin && adminNames.includes(replacedText.replace(/ /g, "")), "One of our admins uses this name"]
+]);
 export function isImpersonator(name:string, isAdmin:boolean):false | string {
 	const replacedText = cleanText(name);
 	const antiEvasionText = cleanText(name, true);
 	//very clean code i know
-	const filters:Array<[check: (value:string) => boolean, message:string]> = (
-		(input: Array<string | [string | RegExp | ((value:string) => boolean), string]>) =>
-			input.map(i =>
-				Array.isArray(i) ? [
-					typeof i[0] == "string" ? replacedText => replacedText.includes((i[0] as string)) :
-					i[0] instanceof RegExp ? replacedText => (i[0] as RegExp).test(replacedText) :
-					i[0],
-					i[1]
-				] : [
-					replacedText => replacedText.includes(i),
-					`Name contains disallowed ${i.length == 1 ? "icon" : "word"} '${i}'`
-				]
-			)
-	)([
-		[/\bserver\b/, "Name contains disallowed word 'server'"],
-		"admin", "moderator", "staff", "owner",
-		[">|||>", "Name contains >|||> which is reserved for the server owner"],
-		"\uE817", "\uE82C", "\uE88E", "\uE813",
-		["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
-		[/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
-		[(replacedText) => !isAdmin && adminNames.includes(replacedText.replace(/ /g, "")), "One of our admins uses this name"]
-	]);
 	for(const [check, message] of filters){
-		if(check(replacedText)) return message;
-		if(check(antiEvasionText)) return message;
+		if(check(replacedText, isAdmin)) return message;
+		if(check(antiEvasionText, isAdmin)) return message;
 	}
 	return false;
 }
@@ -387,11 +389,7 @@ export const getMap = searchFixed(() => Vars.maps.all().select(isMapValidForGame
 ], "recomputeOptions");
 
 
-//static cache
-let buildableBlocks:Seq<Block> | null = null;
-
 export function getBlock(block:string, filter:"buildable" | "air" | "all"):Block | string {
-	buildableBlocks ??= Vars.content.blocks().select(isBuildable);
 	const check = ({
 		buildable: b => isBuildable(b),
 		air: b => b == Blocks.air || isBuildable(b),
@@ -476,22 +474,19 @@ export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean)
 }
 
 export const vnwCondition = {
-	waveUnits: [] as Unit[],
+	waveUnits: new Seq<Unit>(),
 	onWaveStart(){
-		let units = Groups.unit.copy(new Seq());
-		let enemyTeam = getEnemyTeam();
-		this.waveUnits = units.select(u => u.team === enemyTeam).toArray();
+		this.waveUnits = Groups.unit.copy().retainAll(u => u.team == Vars.state.rules.waveTeam);
 	},
 	check(){
-		if (this.waveUnits.some(u => !u.dead)) return false;
-		return true;
+		return !this.waveUnits.contains(boolf<Unit>(u => !u.dead && u.team == Vars.state.rules.waveTeam));
 	}
 };
 
 
 export function logHTrip(player:FishPlayer, name:string, message?:string){
 	Log.warn(`&yPlayer &b"${player.cleanedName}"&y (&b${player.uuid}&y/&b${player.ip()}&y) tripped &c${name}&y` + (message ? `: ${message}` : ""));
-	FishPlayer.messageStaff(`[yellow]Player [blue]"${player.cleanedName}"[] tripped [cyan]${name}[]` + (message ? `: ${message}` : ""));
+	FishPlayer.messageStaff(`[yellow]Player [blue]"${player.prefixedName}"[] tripped [cyan]${name}[]` + (message ? `: ${message}` : ""));
 	api.sendModerationMessage(`Player \`${player.cleanedName}\` (\`${player.uuid}\`/\`${player.ip()}\`) tripped **${name}**${message ? `: ${message}` : ""}\n**Server:** ${Gamemode.name()}`);
 }
 
@@ -517,11 +512,11 @@ export function getAntiBotInfo(side:"client" | "server"){
 	const True = side == "client" ? "[red]true[]" : "&lrtrue";
 	const False = side == "client" ? "[green]false[]" : "&gfalse";
 	return (
-`${color}Flag count: ${formatRatekeeper(FishPlayer.autoflagRate)}
-${color}Autobanning flagged players: ${FishPlayer.shouldWhackFlaggedPlayers() ? True : False}
-${color}Kicking new players: ${FishPlayer.shouldKickNewPlayers() ? True : False}
-${color}Recent connect packets: ${formatRatekeeper(FishPlayer.connectRate)}
-${color}Reason: ${FishPlayer.lastAntibotReason}`
+`${color}Flag count: ${formatRatekeeper(Antibot.autoflagRate)}
+${color}Autobanning flagged players: ${Antibot.shouldWhackFlaggedPlayers() ? True : False}
+${color}Kicking new players: ${Antibot.shouldKickNewPlayers() ? True : False}
+${color}Recent connect packets: ${formatRatekeeper(Antibot.connectRate)}
+${color}Reason: ${Antibot.lastAntibotReason}`
 	);
 }
 
@@ -570,14 +565,14 @@ export function processChat(player:mindustryPlayer, message:string, effects = fa
 					.map(w => w.replace(/[-_.^*,]/g, ""))
 					.some(w => bannedWords.autoWhack.includes(w))
 			){
-				if(!fishPlayer.muted){
+				if(!fishPlayer.muted()){
 					logHTrip(fishPlayer, "bad words in chat", `message: \`${message}\``);
-					fishPlayer.muted = true;
+					void fishPlayer.mute("automod", maxTime, "Automatic mute due to suspicious activity");
 					void fishPlayer.stop("automod", maxTime, `Automatic stop due to suspicious activity`, false);
 				}
 			}
 			Log.info(`Censored message from player ${player.name}: "${escapeStringColorsServer(message)}"; contained "${filterTripText}"`);
-			FishPlayer.messageStaff(`[yellow]Censored message from player ${fishPlayer.cleanedName}: "${message}" contained "${filterTripText}"`);
+			FishPlayer.messageStaff(`[yellow]Censored message from player ${fishPlayer.prefixedName}[yellow]: "${message}" contained "${filterTripText}"`);
 		}
 		message = text.chatFilterReplacement.message();
 		highlight ??= text.chatFilterReplacement.highlight();
@@ -681,7 +676,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		if(e.breaking){
 			action = "broke";
 			type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.previous.name : "unknown";
-			if(e.unit?.player?.uuid() && e.tile.build?.team != Team.derelict){
+			if(e.unit?.player?.uuid() && e.tile.build.prevBuild.firstOpt()?.team != Team.derelict){
 				const fishP = FishPlayer.get(e.unit.player);
 				//TODO move this code
 				fishP.tstats.blocksBroken ++;
@@ -1073,4 +1068,27 @@ export function unblacklist(ip:string):boolean {
 	//just try it thrice
 	Timer.schedule(() => unblacklist_once(ip), 0.5, 1, 2);
 	return unblacklist_once(ip);
+}
+
+export function getDuration(player:FishPlayer<true>, title:string, description:string){
+	return Menu.buttons(player, title, description, [
+		[
+			{text: "2 days", data: Duration.days(2)},
+			{text: "7 days", data: Duration.days(7)},
+			{text: "30 days", data: Duration.days(30)}
+		],
+		[{text: "forever", data: maxTime - Date.now() - 10000}],
+	], { onCancel: "reject" });
+}
+
+export function randomName():string {
+	return (
+		automaticNames.adjectives[Math.floor(Math.random() * automaticNames.adjectives.length)] +
+		automaticNames.nouns[Math.floor(Math.random() * automaticNames.nouns.length)] +
+		Math.floor(Math.random() * 200).toString().replace("69", "123").replace("67", "321")
+	);
+}
+
+export function formatHistoryEntry(player:FishPlayer, e:PlayerHistoryEntry, shortWidth = false, copy: (text:string) => string = (x => x)){
+	return `${copy(e.by)} [yellow]${e.action} ${player.prefixedName}${shortWidth ? '\n' : ' '}[white]${formatTimeRelative(e.time, false)}`;
 }

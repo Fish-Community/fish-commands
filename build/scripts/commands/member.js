@@ -25,7 +25,7 @@ exports.commands = (0, commands_1.commandList)({
                     return;
                 }
             }
-            if (sender.muted || !args.name)
+            if (sender.muted() || !args.name)
                 args.name = "".concat(sender.name, "[white]'s pet");
             if (args.name.length > 500)
                 (0, commands_1.fail)("Name cannot be more than 500 characters.");
@@ -33,6 +33,8 @@ exports.commands = (0, commands_1.commandList)({
                 (0, commands_1.fail)("Name cannot be more than 70 characters, not including color tags.");
             (_b = data[sender.uuid]) === null || _b === void 0 ? void 0 : _b.kill();
             var unit = (_c = sender.unit()) !== null && _c !== void 0 ? _c : (0, commands_1.fail)("You do not have a unit for the pet to follow.");
+            if (!Vars.fogControl.isDiscovered(sender.team(), World.conv(unit.x), World.conv(unit.y)))
+                (0, commands_1.fail)("Cannot spawn pets in fog.");
             var pet = UnitTypes.merui.spawn(sender.team(), unit.x, unit.y);
             pet.apply(StatusEffects.disarmed, Number.MAX_SAFE_INTEGER);
             data[sender.uuid] = pet;
@@ -120,12 +122,14 @@ exports.commands = (0, commands_1.commandList)({
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
             var colors = ['[red]', '[orange]', '[yellow]', '[acid]', '[blue]', '[purple]'];
             function rainbowLoop(index, fishP) {
+                if (!(fishP.rainbow && fishP.player && fishP.connected()))
+                    return;
                 Timer.schedule(function () {
                     if (!(fishP.rainbow && fishP.player && fishP.connected()))
                         return;
                     fishP.player.name = colors[index % colors.length] + Strings.stripColors(fishP.player.name);
                     rainbowLoop(index + 1, fishP);
-                }, args.speed / 5);
+                }, fishP.rainbow.speed / 5);
             }
             if (!args.speed) {
                 sender.rainbow = null;

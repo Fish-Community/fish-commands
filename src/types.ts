@@ -48,9 +48,10 @@ export type Stats = {
 export type FishPlayerData = {
 	uuid: string;
 	name: string;
-	muted: boolean;
+	unmuteTime: number;
 	unmarkTime: number;
 	rank: string;
+	language: string;
 	flags: string[];
 	highlight: string | null;
 	rainbow: { speed:number; } | null;
@@ -123,3 +124,5 @@ export type AntibotData = {
 	nameBlacklistRegex: string | null;
 	nameGraylistRegex: string | null;
 };
+
+export type SearchResult<T> = T | T[] | null;

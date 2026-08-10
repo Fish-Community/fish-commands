@@ -47,7 +47,7 @@ describe("commands framework", () => {
 			test_command: {
 				args: [],
 				description: "test command description",
-				perm: new Perm("test perm", () => false),
+				perm: new Perm("test perm", () => false, "player"),
 				handler: test_command_handler,
 			}
 		}, clientHandler, serverHandler);

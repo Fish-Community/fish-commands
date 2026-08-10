@@ -23,6 +23,8 @@ exports.fishState = {
         nameBlacklist: null,
         nameGraylist: null,
     },
+    lastSuccessfulMapUpdate: Date.now(),
+    lastMapStartTime: 0,
 };
 exports.fishPlugin = {
     directory: null,

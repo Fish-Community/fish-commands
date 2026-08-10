@@ -89,7 +89,7 @@ type MenuOptions<TOption, TCancelBehavior extends MenuCancelOption> = {
 export const Menu = {
 	/** Displays a menu to a player, returning a Promise. */
 	raw<const TOption, TCancelBehavior extends MenuCancelOption = "reject">(
-		this:void, title:string, description:string, arrangedOptions:TOption[][], target:FishPlayer,
+		this:void, title:string, description:string, arrangedOptions:TOption[][], target:FishPlayer<true>,
 		{
 			optionStringifier = String,
 			onCancel = "reject" as never,
@@ -140,12 +140,12 @@ export const Menu = {
 			i ++;
 			return optionStringifier(item);
 		}));
-		Call.menu(target.con, registeredListeners.generic, title, description, stringifiedOptions);
+		Call.menu(target.con(), registeredListeners.generic, title, description, stringifiedOptions);
 		return promise;
 	},
 	/** Displays a text input menu to a player, returning a Promise. */
 	text<TPositiveIntegers extends boolean = false, TCancelBehavior extends MenuCancelOption = "reject">(
-		this:void, title:string, description:string, target:FishPlayer,
+		this:void, title:string, description:string, target:FishPlayer<true>,
 		{
 			onCancel = "reject" as never,
 			defaultValue = "",
@@ -193,12 +193,12 @@ export const Menu = {
 			}
 		}});
 	
-		Call.textInput(target.con, registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
+		Call.textInput(target.con(), registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
 		return promise;
 	},
 	/** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */
 	menu<const TOption, TCancelBehavior extends MenuCancelOption = "reject">(
-		this:void, title:string, description:string, options:TOption[], target:FishPlayer,
+		this:void, title:string, description:string, options:TOption[], target:FishPlayer<true>,
 		{
 			includeCancel = false,
 			optionStringifier = String,
@@ -223,12 +223,13 @@ export const Menu = {
 		});
 	},
 	/** Rejects with a CommandError if the user chooses to cancel. */
-	confirm(target:FishPlayer, description:string, {
+	confirm(target:FishPlayer<true>, description:string, {
 		cancelOutput = "Cancelled.",
 		title = "Confirm",
 		confirmText = "[green]Confirm",
 		cancelText = "[red]Cancel",
 	}:MenuConfirmProps = {}){
+		if(Date.now() < target.skipConfirm) return;
 		return Menu.menu(
 			title, description, [confirmText, cancelText], target,
 			{ onCancel: "reject", cancelOptionId: 1 }
@@ -238,11 +239,12 @@ export const Menu = {
 		});
 	},
 	/** Same as confirm(), but with inverted colors, for potentially dangerous actions. */
-	confirmDangerous(target:FishPlayer, description:string, {
+	confirmDangerous(target:FishPlayer<true>, description:string, {
 		confirmText = "[red]Confirm",
 		cancelText = "[green]Cancel",
 		...rest
 	}:MenuConfirmProps = {}){
+		if(Date.now() < target.skipConfirm) return;
 		return Menu.confirm(target, description, { cancelText, confirmText, ...rest });
 	},
 	/**
@@ -250,7 +252,7 @@ export const Menu = {
 	 * Accepts pre-generated data and text. Alternative to optionStringifier if the text is already generated.
 	 */
 	buttons<TButtonData, TCancelBehavior extends MenuCancelOption>(
-		this:void, target:FishPlayer, title:string, description:string,
+		this:void, target:FishPlayer<true>, title:string, description:string,
 		options:{ data: TButtonData | Cancel; text: string; }[][],
 		cfg: Pick<MenuOptions<TButtonData, TCancelBehavior>, "onCancel" | "includeCancel"> = {},
 	){
@@ -274,7 +276,7 @@ export const Menu = {
 	 * Shows different options based on the page.
 	 */
 	pages<TOption, TCancelBehavior extends MenuCancelOption>(
-		this:void, target:FishPlayer, title:string, description:string,
+		this:void, target:FishPlayer<true>, title:string, description:string,
 		options:{ data: TOption; text: string; }[][][],
 		cfg: Pick<MenuOptions<TOption, TCancelBehavior>, "onCancel">,
 	){
@@ -312,7 +314,7 @@ export const Menu = {
 	 * Shows different text based on the current page.
 	 */
 	textPages<TCancelBehavior extends MenuCancelOption, TOpt extends string>(
-		this:void, target:FishPlayer, pages:Array<readonly [title:string, description:() => string]>,
+		this:void, target:FishPlayer<true>, pages:Array<readonly [title:string, description:() => string]>,
 		options: TOpt[] = [],
 		cfg: Pick<MenuOptions<never, TCancelBehavior>, "onCancel"> & {
 			/** Index or title of the initial page. */
@@ -372,7 +374,7 @@ export const Menu = {
 	 * Resolves to the selected option.
 	 */
 	scroll2D<TOption, TCancelBehavior extends MenuCancelOption>(
-		this:void, target:FishPlayer, title:string, description:string,
+		this:void, target:FishPlayer<true>, title:string, description:string,
 		options:{ data: TOption; text: string; }[][],
 		cfg: Pick<MenuOptions<TOption, TCancelBehavior>, "onCancel" | "columns"> & {
 			rows?: number;
@@ -433,7 +435,7 @@ export const Menu = {
 	 * Accepts pre-generated data and text. Alternative to optionStringifier if the text is already generated.
 	 */
 	pagedListButtons<TButtonData, MenuCancelBehavior extends MenuCancelOption = "reject">(
-		this:void, target:FishPlayer, title:string, description:string,
+		this:void, target:FishPlayer<true>, title:string, description:string,
 		options:Array<{ data: TButtonData; text: string; }>,
 		{ rowsPerPage = 10, columns = 3, ...cfg }: Pick<MenuOptions<TButtonData, MenuCancelBehavior>, "columns" | "onCancel"> & {
 			/** @default 10 */
@@ -450,7 +452,7 @@ export const Menu = {
 	 * Adds left and right arrows to switch pages. Automatically paginates provided options.
 	 */
 	pagedList<TButtonData, MenuCancelBehavior extends MenuCancelOption = "reject">(
-		this:void, target:FishPlayer, title:string, description:string,
+		this:void, target:FishPlayer<true>, title:string, description:string,
 		options:TButtonData[],
 		{ rowsPerPage = 10, columns = 3, optionStringifier = String, ...cfg }: Pick<MenuOptions<TButtonData, MenuCancelBehavior>, "columns" | "onCancel" | "optionStringifier"> & {
 			/** @default 10 */
