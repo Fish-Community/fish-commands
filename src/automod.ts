@@ -412,7 +412,7 @@ export const Automod = {
 export const Heuristics = {
 	chatSpam: new Ratekeeper(),
 	chatSpamSlow: new Ratekeeper(),
-	activateHeuristics(fishP:FishPlayer){
+	activateHeuristics(fishP:FishPlayer<true>){
 		if(Gamemode.hexed() || Gamemode.sandbox() || Gamemode.testsrv()) return;
 		//Blocks broken check
 		if(fishP.joinsLessThan(5)){
@@ -460,7 +460,8 @@ Please look at ${fishP.position()} and see if they were actually griefing. If th
 				}
 			}, 1, 2, 10);
 		}
-		if(sneakybannedNames.includes(fishP.name)){
+		Log.debug(fishP.originalName ?? fishP.player.name);
+		if(sneakybannedNames.includes(fishP.originalName ?? fishP.player.name)){
 			//exact match
 			const time = random(8, 25);
 			Timer.schedule(() => {
@@ -480,6 +481,6 @@ Events.on(EventType.PlayerJoin, (e) => {
 	//also the player might connect but fail to join for a lot of reasons,
 	//or connect, fail to join, then connect again and join successfully
 	//which would cause heuristics to activate twice
-	Heuristics.activateHeuristics(FishPlayer.get(e.player));
+	Heuristics.activateHeuristics(FishPlayer.get(e.player) as FishPlayer<true>);
 });
 

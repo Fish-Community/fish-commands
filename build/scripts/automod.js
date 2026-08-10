@@ -512,6 +512,7 @@ exports.Heuristics = {
     chatSpamSlow: new Ratekeeper(),
     activateHeuristics: function (fishP) {
         var _this = this;
+        var _a, _b;
         if (config_1.Gamemode.hexed() || config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv())
             return;
         //Blocks broken check
@@ -560,7 +561,8 @@ exports.Heuristics = {
                 }
             }, 1, 2, 10);
         }
-        if (config_1.sneakybannedNames.includes(fishP.name)) {
+        Log.debug((_a = fishP.originalName) !== null && _a !== void 0 ? _a : fishP.player.name);
+        if (config_1.sneakybannedNames.includes((_b = fishP.originalName) !== null && _b !== void 0 ? _b : fishP.player.name)) {
             //exact match
             var time = (0, funcs_1.random)(8, 25);
             Timer.schedule(function () {
