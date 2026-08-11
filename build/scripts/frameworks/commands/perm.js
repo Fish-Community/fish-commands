@@ -65,7 +65,7 @@ var Perm = /** @class */ (function () {
     Perm.manager = Perm.fromRank(ranks_1.Rank.manager);
     Perm.member = new Perm("member", function (fishP) { return fishP.hasFlag("member"); }, "member", "[pink]", "You must have a ".concat(config_1.FColor.member(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Fish"], ["Fish"]))), " ").concat(config_1.FColor.member(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Membership"], ["Membership"]))), " to use this command. Get a Fish Membership at[sky] ").concat(config_1.text.membershipURL, " []"));
     Perm.chat = new Perm("chat", function (fishP) { return (!fishP.muted() && !fishP.autoflagged) || fishP.ranksAtLeast("mod"); }, "player");
-    Perm.bypassChatFilter = new Perm("bypassChatFilter", "admin");
+    Perm.bypassChatFilter = new Perm("bypassChatFilter", "mod");
     Perm.seeMutedMessages = new Perm("seeMutedMessages", function (fishP) { return fishP.muted() || fishP.autoflagged || fishP.ranksAtLeast("mod"); }, "mod");
     Perm.play = new Perm("play", function (fishP) { return !fishP.stelled() || fishP.ranksAtLeast("mod"); }, "player");
     Perm.seeErrorMessages = new Perm("seeErrorMessages", "mod");
