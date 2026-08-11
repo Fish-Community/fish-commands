@@ -1613,5 +1613,28 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             target.sendMessage("[accent]Copy: ".concat(sender.prefixedName, "[accent] sent you some text to copy."));
             outputSuccess(f(templateObject_27 || (templateObject_27 = __makeTemplateObject(["Sent text to ", ""], ["Sent text to ", ""])), target));
         }
+    }, noteam: {
+        args: [],
+        description: 'Sets the team assigner mode to play 1 vs all matches.',
+        perm: commands_1.Perm.trusted,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var sender = _b.sender, f = _b.f, outputSuccess = _b.outputSuccess;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (globals_1.fishState.teamAssignerMode instanceof Team) {
+                                (0, commands_1.fail)(f(templateObject_28 || (templateObject_28 = __makeTemplateObject(["Team ", " is already playing 1 v all."], ["Team ", " is already playing 1 v all."])), globals_1.fishState.teamAssignerMode));
+                            }
+                            return [4 /*yield*/, menus_1.Menu.confirm(sender, "Are you sure you want to play 1 vs all? All other players will be assigned to the other teams.")];
+                        case 1:
+                            _c.sent();
+                            globals_1.fishState.teamAssignerMode = sender.team();
+                            outputSuccess('Enabled 1 vs all mode.');
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        }
     } }));
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25, templateObject_26, templateObject_27;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25, templateObject_26, templateObject_27, templateObject_28;

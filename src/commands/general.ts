@@ -1384,4 +1384,17 @@ ${a.hidden ? "This achievement is secret." : ""}\
 			outputSuccess(f`Sent text to ${target}`);
 		}
 	},
+	noteam: {
+		args: [],
+		description: 'Sets the team assigner mode to play 1 vs all matches.',
+		perm: Perm.trusted,
+		async handler({sender, f, outputSuccess}){
+			if(fishState.teamAssignerMode instanceof Team){
+				fail(f`Team ${fishState.teamAssignerMode} is already playing 1 v all.`);
+			}
+			await Menu.confirm(sender, "Are you sure you want to play 1 vs all? All other players will be assigned to the other teams.");
+			fishState.teamAssignerMode = sender.team();
+			outputSuccess('Enabled 1 vs all mode.');
+		}
+	}
 });

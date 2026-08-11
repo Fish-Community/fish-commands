@@ -643,6 +643,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 					if(fishPlayer.team() == winningTeam) fishPlayer.updateStats(stats => stats.gamesWon ++);
 				}
 			}
+			fishState.teamAssignerMode = "normal";
 			fishPlayer.changedTeam = false;
 			fishPlayer.tstats.wavesSurvived = 0;
 			fishPlayer.tstats.blockInteractionsThisMap = 0;

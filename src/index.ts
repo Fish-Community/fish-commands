@@ -265,6 +265,7 @@ Events.on(EventType.ServerLoadEvent, () => {
 			)).min(floatf(data => {
 				//Only if the team is valid
 				if(data.team == preferredTeam) return -1;
+				if(data.team == fishState.teamAssignerMode) return 999;
 				const count = otherPlayers.filter(p => p.team() == data.team).length;
 				return count + Mathf.random(-0.1, 0.1);
 			}));

@@ -827,6 +827,7 @@ var FishPlayer = /** @class */ (function () {
                         fishPlayer.updateStats(function (stats) { return stats.gamesWon++; });
                 }
             }
+            globals_1.fishState.teamAssignerMode = "normal";
             fishPlayer.changedTeam = false;
             fishPlayer.tstats.wavesSurvived = 0;
             fishPlayer.tstats.blockInteractionsThisMap = 0;

@@ -301,6 +301,8 @@ Events.on(EventType.ServerLoadEvent, function () {
                 //Only if the team is valid
                 if (data.team == preferredTeam_1)
                     return -1;
+                if (data.team == globals_1.fishState.teamAssignerMode)
+                    return 999;
                 var count = otherPlayers_1.filter(function (p) { return p.team() == data.team; }).length;
                 return count + Mathf.random(-0.1, 0.1);
             }));
