@@ -181,8 +181,8 @@ function initializeTimers() {
         }
     });
     Timer.schedule(function () {
-        Vars.dataDirectory.child("geolocation-data.json").writeString(JSON.stringify(globals_1.fishState.geolocationData));
-    }, 10, 600);
+        Vars.dataDirectory.child('geolocation-data').child("".concat(Date.now(), ".json")).writeString(JSON.stringify(globals_1.fishState.geolocationData));
+    }, 10, 1200);
 }
 Timer.schedule(function () {
     (0, files_1.updateMaps)()

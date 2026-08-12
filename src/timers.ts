@@ -124,8 +124,8 @@ export function initializeTimers(){
 		}
 	});
 	Timer.schedule(() => {
-		Vars.dataDirectory.child("geolocation-data.json").writeString(JSON.stringify(fishState.geolocationData));
-	}, 10, 600);
+		Vars.dataDirectory.child('geolocation-data').child(`${Date.now()}.json`).writeString(JSON.stringify(fishState.geolocationData));
+	}, 10, 1200);
 }
 
 Timer.schedule(() => {
