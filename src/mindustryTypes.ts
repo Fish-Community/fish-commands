@@ -121,6 +121,7 @@ const Vars: {
 	};
 	indexer: BlockIndexer;
 	saveExtension: string;
+	dataDirectory: Fi;
 	saveDirectory: Fi;
 	modDirectory: Fi;
 	customMapDirectory: Fi;
@@ -810,6 +811,7 @@ class Fi {
 	list():Fi[];
 	name():string;
 	readBytes():number[];
+	writeString(string:string):void;
 }
 class Bullet {
 	owner: Unit | Building | null;

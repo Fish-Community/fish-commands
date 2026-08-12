@@ -4,6 +4,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains wrappers over the API calls to the backend server.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.cachedIps = void 0;
 exports.isVpn = isVpn;
 exports.isVpnCached = isVpnCached;
 exports.sendModerationMessage = sendModerationMessage;
@@ -18,18 +19,21 @@ exports.fetchAntibotData = fetchAntibotData;
 exports.syncDosBlacklist = syncDosBlacklist;
 exports.unBlacklist = unBlacklist;
 var config_1 = require("/config");
+var globals_1 = require("/globals");
 var players_1 = require("/players");
 var promise_1 = require("/promise");
-var cachedIps = {};
+exports.cachedIps = {};
 /** Make an API request to see if an IP is likely VPN. */
 function isVpn(ip, callback, callbackError) {
-    if (ip in cachedIps)
-        return callback(cachedIps[ip]);
-    Http.get("http://ip-api.com/json/".concat(ip, "?fields=proxy,hosting"), function (res) {
+    if (ip in exports.cachedIps)
+        return callback(exports.cachedIps[ip]);
+    Http.get("http://ip-api.com/json/".concat(ip, "?fields=proxy,hosting,lat,lon"), function (res) {
         var data = res.getResultAsString();
         var json = JSON.parse(data);
+        //TEMPORARY: remove this before it causes a giant memleak
+        globals_1.fishState.geolocationData.push([json.lat, json.lon]);
         var isVpn = json.proxy || json.hosting;
-        cachedIps[ip] = isVpn;
+        exports.cachedIps[ip] = isVpn;
         players_1.FishPlayer.stats.numIpsChecked++;
         if (isVpn)
             players_1.FishPlayer.stats.numIpsFlagged++;
@@ -41,7 +45,7 @@ function isVpn(ip, callback, callbackError) {
     }));
 }
 function isVpnCached(ip) {
-    return cachedIps[ip];
+    return exports.cachedIps[ip];
 }
 /** Send text to the moderation logs channel in Discord. */
 function sendModerationMessage(message) {

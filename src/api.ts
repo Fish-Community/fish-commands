@@ -4,21 +4,26 @@ This file contains wrappers over the API calls to the backend server.
 */
 
 import { backendIP, Gamemode, Mode } from "/config";
+import { fishState } from "/globals";
 import { FishPlayer } from "/players";
 import { Promise } from "/promise";
 import type { AntibotData, FishPlayerData, UploadedFishPlayerData } from "/types";
 
 
-const cachedIps:Record<string, boolean | undefined> = {};
+export const cachedIps:Record<string, boolean | undefined> = {};
 /** Make an API request to see if an IP is likely VPN. */
 export function isVpn(ip:string, callback: (isVpn:boolean) => unknown, callbackError?: (errorMessage:Throwable) => unknown){
 	if(ip in cachedIps) return callback(cachedIps[ip]!);
-	Http.get(`http://ip-api.com/json/${ip}?fields=proxy,hosting`, (res) => {
+	Http.get(`http://ip-api.com/json/${ip}?fields=proxy,hosting,lat,lon`, (res) => {
 		const data = res.getResultAsString();
 		const json = JSON.parse(data) as {
 			proxy: boolean;
 			hosting: boolean;
+			lat: number;
+			lon: number;
 		};
+		//TEMPORARY: remove this before it causes a giant memleak
+		fishState.geolocationData.push([json.lat, json.lon]);
 		const isVpn = json.proxy || json.hosting;
 		cachedIps[ip] = isVpn;
 		FishPlayer.stats.numIpsChecked ++;

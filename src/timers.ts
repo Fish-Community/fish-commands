@@ -123,6 +123,9 @@ export function initializeTimers(){
 			Call.setRule("backgroundOffsetX", String(Vars.state.rules.backgroundOffsetX));
 		}
 	});
+	Timer.schedule(() => {
+		Vars.dataDirectory.child("geolocation-data.json").writeString(JSON.stringify(fishState.geolocationData));
+	}, 10, 600);
 }
 
 Timer.schedule(() => {

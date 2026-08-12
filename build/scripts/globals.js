@@ -27,6 +27,7 @@ exports.fishState = {
     lastMapStartTime: 0,
     /** If a team is set here, no players will be sent to that team automatically. */
     teamAssignerMode: "normal",
+    geolocationData: [],
 };
 exports.fishPlugin = {
     directory: null,

@@ -28,6 +28,7 @@ export const fishState = {
 	lastMapStartTime: 0,
 	/** If a team is set here, no players will be sent to that team automatically. */
 	teamAssignerMode: "normal" as "normal" | Team,
+	geolocationData: [] as Array<[number, number]>,
 };
 export const fishPlugin = {
 	directory: null as null | string,

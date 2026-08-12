@@ -180,6 +180,9 @@ function initializeTimers() {
             Call.setRule("backgroundOffsetX", String(Vars.state.rules.backgroundOffsetX));
         }
     });
+    Timer.schedule(function () {
+        Vars.dataDirectory.child("geolocation-data.json").writeString(JSON.stringify(globals_1.fishState.geolocationData));
+    }, 10, 600);
 }
 Timer.schedule(function () {
     (0, files_1.updateMaps)()
