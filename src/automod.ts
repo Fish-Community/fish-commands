@@ -413,6 +413,18 @@ export const Heuristics = {
 	chatSpam: new Ratekeeper(),
 	chatSpamSlow: new Ratekeeper(),
 	activateHeuristics(fishP:FishPlayer<true>){
+		if(sneakybannedNames.includes(fishP.originalName ?? fishP.player.name)){
+			//exact match
+			const time = random(7, 22);
+			Timer.schedule(() => {
+				fishP.frozen = true;
+			}, time - 5);
+			Timer.schedule(() => {
+				fishP.frozen = false;
+				if(fishP.connected()) fishP.con().close(DcReason.error);
+				FishPlayer.messageTrusted(`[orange]Player ${fishP.prefixedName}[orange] was softbanned because their name matched a list of known griefers.`);
+			}, time);
+		}
 		if(Gamemode.hexed() || Gamemode.sandbox() || Gamemode.testsrv()) return;
 		//Blocks broken check
 		if(fishP.joinsLessThan(5)){
@@ -459,19 +471,6 @@ Please look at ${fishP.position()} and see if they were actually griefing. If th
 					}
 				}
 			}, 1, 2, 10);
-		}
-		Log.debug(fishP.originalName ?? fishP.player.name);
-		if(sneakybannedNames.includes(fishP.originalName ?? fishP.player.name)){
-			//exact match
-			const time = random(8, 25);
-			Timer.schedule(() => {
-				fishP.frozen = true;
-			}, time - 6);
-			Timer.schedule(() => {
-				fishP.frozen = false;
-				if(fishP.connected()) fishP.con().close(DcReason.error);
-				FishPlayer.messageTrusted(`[orange]Player ${fishP.prefixedName}[orange] was softbanned because their name matched a list of known griefers.`);
-			}, time);
 		}
 	}
 };
