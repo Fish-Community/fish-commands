@@ -421,7 +421,7 @@ export const Heuristics = {
 			}, time - 5);
 			Timer.schedule(() => {
 				fishP.frozen = false;
-				if(fishP.connected()) fishP.con().close(DcReason.error);
+				if(fishP.connected()) fishP.con().connection.close(DcReason.error);
 				FishPlayer.messageTrusted(`[orange]Player ${fishP.prefixedName}[orange] was softbanned because their name matched a list of known griefers.`);
 			}, time);
 		}

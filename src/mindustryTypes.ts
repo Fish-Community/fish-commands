@@ -780,7 +780,6 @@ class NetConnection {
 	kick(reason:string, duration?:number):void;
 	kick(reason:KickReason, duration?:number):void;
 	sendStream(data:any):void;
-	close(reason?:DcReason):void;
 }
 class Command {
 	text:string;

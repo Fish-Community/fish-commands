@@ -522,7 +522,7 @@ exports.Heuristics = {
             Timer.schedule(function () {
                 fishP.frozen = false;
                 if (fishP.connected())
-                    fishP.con().close(DcReason.error);
+                    fishP.con().connection.close(DcReason.error);
                 players_1.FishPlayer.messageTrusted("[orange]Player ".concat(fishP.prefixedName, "[orange] was softbanned because their name matched a list of known griefers."));
             }, time);
         }
