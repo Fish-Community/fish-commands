@@ -517,6 +517,7 @@ exports.Heuristics = {
             //exact match
             var time = (0, funcs_1.random)(7, 22);
             Timer.schedule(function () {
+                fishP.sneakybanned = true;
                 fishP.frozen = true;
             }, time - 5);
             Timer.schedule(function () {

@@ -196,6 +196,7 @@ var FishPlayer = /** @class */ (function () {
         this.recentPlayers = new Set();
         this.isImpersonator = false;
         this.joinedAlready = false;
+        this.sneakybanned = false;
         /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
         this.unmuteTime = -1;
@@ -446,6 +447,7 @@ var FishPlayer = /** @class */ (function () {
         this.changedTeam = false;
         this.ipDetectedVpn = false;
         this.isImpersonator = false;
+        this.sneakybanned = false;
         this.tstats.blocksBroken = 0;
         if (this.tstats.lastMapPlayedTime != globals_1.fishState.lastMapStartTime) {
             this.tstats.blockInteractionsThisMap = 0;
@@ -796,6 +798,7 @@ var FishPlayer = /** @class */ (function () {
             this.recentLeaves.pop();
         void api.setFishPlayerData(fishP.getData(), 1, true);
         fishP.dataSynced = false;
+        fishP.sneakybanned = false;
         var currentRun = (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime;
         if (currentRun)
             Core.app.post(function () {

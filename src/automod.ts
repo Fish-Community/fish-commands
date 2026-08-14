@@ -417,6 +417,7 @@ export const Heuristics = {
 			//exact match
 			const time = random(7, 22);
 			Timer.schedule(() => {
+				fishP.sneakybanned = true;
 				fishP.frozen = true;
 			}, time - 5);
 			Timer.schedule(() => {

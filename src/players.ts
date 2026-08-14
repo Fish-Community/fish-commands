@@ -127,6 +127,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	recentPlayers = new Set<FishPlayer>();
 	isImpersonator = false;
 	joinedAlready = false;
+	sneakybanned = false;
 	//#endregion
 	
 	//#region Stored data
@@ -353,6 +354,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		this.changedTeam = false;
 		this.ipDetectedVpn = false;
 		this.isImpersonator = false;
+		this.sneakybanned = false;
 		this.tstats.blocksBroken = 0;
 		if(this.tstats.lastMapPlayedTime != fishState.lastMapStartTime){
 			this.tstats.blockInteractionsThisMap = 0;
@@ -614,6 +616,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
 		void api.setFishPlayerData(fishP.getData(), 1, true);
 		fishP.dataSynced = false;
+		fishP.sneakybanned = false;
 
 		const currentRun = PartialMapRun.current?.startTime;
 		if(currentRun) Core.app.post(() => {

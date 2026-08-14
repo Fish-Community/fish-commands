@@ -185,7 +185,7 @@ Events.on(EventType.ServerLoadEvent, () => {
 
 		//prevent stopped players from doing anything
 		if(!fishP.hasPerm("play")){
-			action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
+			if(!fishP.sneakybanned) action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
 			return false;
 		} else {
 			if(action.type === Administration.ActionType.pickupBlock){

@@ -209,7 +209,8 @@ Events.on(EventType.ServerLoadEvent, function () {
         var fishP = players_1.FishPlayer.get(player);
         //prevent stopped players from doing anything
         if (!fishP.hasPerm("play")) {
-            action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
+            if (!fishP.sneakybanned)
+                action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
             return false;
         }
         else {
