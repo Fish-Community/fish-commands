@@ -1137,7 +1137,10 @@ Wave: ${r.wave}`
 			});
 			await Menu.confirmDangerous(sender, `Are you sure you want to delete this map run? This action is irreversible.`);
 			if(initialLength != fmap.runs.length) fail(`Someone else deleted a run, please try again.`);
-			const deleted = fmap.runs.splice(index, 1)[0];
+			const target = runs[index];
+			const newIndex = fmap.runs.indexOf(target);
+			if(newIndex == -1) crash(`could not find the run`);
+			const deleted = fmap.runs.splice(newIndex, 1)[0];
 			outputSuccess(`Deleted run (${formatTimestamp(deleted.startTime)}) with duration ${formatTime(deleted.duration())}.`);
 		}
 	},

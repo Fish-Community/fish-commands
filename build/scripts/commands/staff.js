@@ -1446,7 +1446,7 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.admin,
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
-                var fmap, _c, initialLength, runs, _d, index, _, deleted;
+                var fmap, _c, initialLength, runs, _d, index, _, target, newIndex, deleted;
                 var _e;
                 var _f = _b.args, map = _f.map, lowestHighscores = _f.lowestHighscores, sender = _b.sender, outputSuccess = _b.outputSuccess;
                 return __generator(this, function (_g) {
@@ -1488,7 +1488,11 @@ exports.commands = (0, commands_1.commandList)({
                             _g.sent();
                             if (initialLength != fmap.runs.length)
                                 (0, commands_1.fail)("Someone else deleted a run, please try again.");
-                            deleted = fmap.runs.splice(index, 1)[0];
+                            target = runs[index];
+                            newIndex = fmap.runs.indexOf(target);
+                            if (newIndex == -1)
+                                (0, funcs_1.crash)("could not find the run");
+                            deleted = fmap.runs.splice(newIndex, 1)[0];
                             outputSuccess("Deleted run (".concat((0, utils_1.formatTimestamp)(deleted.startTime), ") with duration ").concat((0, utils_1.formatTime)(deleted.duration()), "."));
                             return [2 /*return*/];
                     }
