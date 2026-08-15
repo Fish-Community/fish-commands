@@ -59,6 +59,7 @@ var Perm = /** @class */ (function () {
     };
     Perm.perms = {};
     Perm.none = new Perm("none", function (fishP) { return true; }, "player", "[sky]");
+    Perm.active = Perm.fromRank(ranks_1.Rank.active);
     Perm.trusted = Perm.fromRank(ranks_1.Rank.trusted);
     Perm.mod = Perm.fromRank(ranks_1.Rank.mod);
     Perm.admin = Perm.fromRank(ranks_1.Rank.admin);

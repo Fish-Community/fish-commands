@@ -520,7 +520,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 if (server.requiredPerm && !sender.hasPerm(server.requiredPerm))
                     (0, commands_1.fail)(unknownServerMessage);
                 if (target == sender && Date.now() - lastUsedSuccessfullySender > funcs_1.Duration.minutes(1))
-                    players_1.FishPlayer.messageAllWithPerm(server.requiredPerm, "".concat(sender.name, "[magenta] has gone to the ").concat(server.name, " server. Use [cyan]/").concat(server.name, " [magenta]to join them!"));
+                    players_1.FishPlayer.messageAllWithPerm(server.messagePerm, "".concat(sender.name, "[magenta] has gone to the ").concat(server.name, " server. Use [cyan]/").concat(server.name, " [magenta]to join them!"));
                 Call.connect(target.con(), server.ip, server.port);
             }
         }

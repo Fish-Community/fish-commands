@@ -16,6 +16,7 @@ export class Perm {
 	static perms:Partial<Record<string, Perm>> = {};
 
 	static none = new Perm("none", fishP => true, "player", "[sky]");
+	static active = Perm.fromRank(Rank.active);
 	static trusted = Perm.fromRank(Rank.trusted);
 	static mod = Perm.fromRank(Rank.mod);
 	static admin = Perm.fromRank(Rank.admin);

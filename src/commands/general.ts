@@ -370,7 +370,7 @@ ${target == sender ? `Your` : `${target.cleanedName}'s`} rank prefix is now ${ta
 					fail(unknownServerMessage);
 
 				if(target == sender && Date.now() - lastUsedSuccessfullySender > Duration.minutes(1))
-					FishPlayer.messageAllWithPerm(server.requiredPerm,
+					FishPlayer.messageAllWithPerm(server.messagePerm,
 						`${sender.name}[magenta] has gone to the ${server.name} server. Use [cyan]/${server.name} [magenta]to join them!`
 					);
 
