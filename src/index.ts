@@ -31,10 +31,7 @@ Events.on(EventType.ConnectionEvent, (e) => {
 			}
 		});
 	} else if(api.isVpnCached(e.connection.address) && Antibot.shouldWhackFlaggedPlayers()){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
-		try {
-			Vars.netServer.admins.blacklistDos(e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
-		} catch {}
+		e.connection.blacklist();
 		e.connection.kick("You have been DOSblacklisted. Please join our discord for help: " + text.discordURL + "\nYou won't see this message again.");
 		Log.info(`&yAntibot killed connection ${e.connection.address} due to flagged while under attack`);
 	}
@@ -58,13 +55,9 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	const nameBlacklisted = fishState.antibotData.nameBlacklist?.[1]?.matcher(e.packet.name).matches();
 	const nameGraylisted = fishState.antibotData.nameGraylist?.[1]?.matcher(e.packet.name).matches();
 	if(newPlayer && (nameBlacklisted && Antibot.antiBotMode() || nameGraylisted && Antibot.shouldKickNewPlayers())){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.blacklist();
 		e.connection.kicked = true;
-		let udpAddress;
-		try {
-			Vars.netServer.admins.blacklistDos(udpAddress = e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
-		} catch {}
-		Log.info(`Blacklisting ip @ with name @ because it matched the configured regex.`, udpAddress ? e.connection.address + "/" + udpAddress : e.connection.address, e.packet.name);
+		Log.info(`Blacklisting ip @ with name @ because it matched the configured regex.`, e.connection.address, e.packet.name);
 		return;
 	}
 	if(newPlayer && (nameBlacklisted || nameGraylisted && Antibot.antiBotMode())){
@@ -79,7 +72,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		(underAttack && longModName) ||
 		(veryLongModName && (underAttack || newPlayer))
 	){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.blacklist();
 		e.connection.kicked = true;
 		Antibot.triggerAntibot(
 			60_000,
@@ -98,7 +91,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		if(!cachedRegion2){
 			joinDemographics2.put(region, e.packet.uuid);
 		} else if(cachedRegion2 != e.packet.uuid){
-			Vars.netServer.admins.blacklistDos(e.connection.address);
+			e.connection.blacklist();
 			e.connection.kicked = true;
 			Antibot.triggerAntibot(
 				480_000,
@@ -111,7 +104,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	}
 	const suspiciousModName = e.packet.mods.contains((str:string) => str.includes('\x1B'));
 	if(suspiciousModName || e.packet.name.includes('\x1B')){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.blacklist();
 		e.connection.kicked = true;
 		Antibot.triggerAntibot(
 			5_000,
@@ -122,7 +115,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		return;
 	}
 	if(ipJoins.get(e.connection.address) >= ( (underAttack || veryLongModName) ? (newPlayer ? 4 : 5) : (newPlayer || longModName) ? 7 : 15 )){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.blacklist();
 		e.connection.kicked = true;
 		Antibot.triggerAntibot(
 			5_000,

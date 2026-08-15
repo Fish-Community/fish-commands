@@ -24,7 +24,7 @@ export const lastVKActions = [] as Array<{
 }>;
 
 Events.on(EventType.PlayerChatEvent, ({player, message}) => {
-	const fishP = FishPlayer.get(player);
+	const fishP = FishPlayer.get(player) as FishPlayer<true>;
 	if(message.trim().toLowerCase().startsWith("/vote y") || message.startsWith("/votekick ")){
 		checkVotekickAction(fishP, message);
 	}
@@ -51,10 +51,7 @@ export const Antibot = {
 	whackFlaggedPlayers(){
 		FishPlayer.forEachPlayer(p => {
 			if(p.ipDetectedVpn && p.suspicionLevel() == 3){
-				Vars.netServer.admins.blacklistDos(p.ip());
-				try {
-					Vars.netServer.admins.blacklistDos(p.con().connection.getRemoteAddressUDP().getAddress().getHostAddress());
-				} catch {}
+				p.con().blacklist();
 				Log.info(`&yAntibot killed connection ${p.ip()} due to flagged while under attack`);
 				p.player.kick(Packets.KickReason.banned, 10000000);
 			}
@@ -200,12 +197,12 @@ function checkVotekickAction(fishP:FishPlayer, message:string){
 	);
 }
 
-function checkChatMessage(fishP:FishPlayer){
+function checkChatMessage(fishP:FishPlayer<true>){
 	const susLevel = fishP.suspicionLevel();
 	if(!fishP.chatSpam.allow(14_300, susLevel == 3 ? 3 : susLevel == 2 ? 5 : 30)){
 		if(susLevel == 3 || Date.now() > fishP.kickForSpamAt!){
 			fishP.kick("You have been kicked for spamming.", 30_000);
-			if(Antibot.antiBotMode()) Vars.netServer.admins.blacklistDos(fishP.ip());
+			if(Antibot.antiBotMode()) fishP.con().blacklist();
 		} else {
 			fishP.sendMessage("[scarlet]You are sending chat messages too quickly.");
 			fishP.kickForSpamAt = Date.now() + 3_000;

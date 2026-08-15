@@ -117,11 +117,7 @@ exports.Antibot = {
     whackFlaggedPlayers: function () {
         players_1.FishPlayer.forEachPlayer(function (p) {
             if (p.ipDetectedVpn && p.suspicionLevel() == 3) {
-                Vars.netServer.admins.blacklistDos(p.ip());
-                try {
-                    Vars.netServer.admins.blacklistDos(p.con().connection.getRemoteAddressUDP().getAddress().getHostAddress());
-                }
-                catch (_a) { }
+                p.con().blacklist();
                 Log.info("&yAntibot killed connection ".concat(p.ip(), " due to flagged while under attack"));
                 p.player.kick(Packets.KickReason.banned, 10000000);
             }
@@ -306,7 +302,7 @@ function checkChatMessage(fishP) {
         if (susLevel == 3 || Date.now() > fishP.kickForSpamAt) {
             fishP.kick("You have been kicked for spamming.", 30000);
             if (exports.Antibot.antiBotMode())
-                Vars.netServer.admins.blacklistDos(fishP.ip());
+                fishP.con().blacklist();
         }
         else {
             fishP.sendMessage("[scarlet]You are sending chat messages too quickly.");
