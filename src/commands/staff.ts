@@ -168,7 +168,7 @@ export const commands = commandList({
 					await args.player.stop(sender, time, message);
 					logAction('stopped', sender, args.player, message, time);
 					//TODO outputGlobal()
-					Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${args.message ? ` with reason: [white]${args.message}[]` : ""}.`);
+					Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${message ? ` with reason: [white]${message}[]` : ""}.`);
 				} finally {
 					args.player.frozen = false;
 				}
