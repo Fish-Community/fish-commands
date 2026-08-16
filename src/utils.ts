@@ -854,8 +854,8 @@ export function fishCommandsRootDirPath():Path {
 	return fishCommandsRootDirPath;
 }
 
-/** Fails if "mode" is invalid. */
-export function applyEffectMode(mode:string, unit:Unit, ticks:number){
+/** Fails if "modeString" is invalid. */
+export function applyEffectMode(modeString:string, unit:Unit, ticks:number){
 	const modes = {
 		fast2: [StatusEffects.fast, StatusEffects.overdrive, StatusEffects.overclock],
 		health: [StatusEffects.boss, StatusEffects.shielded],
@@ -913,14 +913,16 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 			unit.shield = 1e15;
 		}
 	} satisfies Record<string, StatusEffect[] | ((u:Unit) => void)>;
-	const effects = match(mode, modes, null) ??
-		(mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
-		fail(`Invalid mode. Supported modes: ${Object.keys(modes).join(", ")}`));
-	if(typeof effects === "function"){
-		effects(unit);
-	} else {
-		for(const effect of effects){
-			unit.apply(effect, ticks);
+	for(const mode of modeString.split(/[ ,.|&]/)){
+		const effects = match(mode, modes, null) ??
+			(mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
+			fail(`Invalid mode. Supported modes: ${Object.keys(modes).join(", ")}`));
+		if(typeof effects === "function"){
+			effects(unit);
+		} else {
+			for(const effect of effects){
+				unit.apply(effect, ticks);
+			}
 		}
 	}
 }

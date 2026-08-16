@@ -1024,10 +1024,10 @@ function fishCommandsRootDirPath() {
     }
     return fishCommandsRootDirPath;
 }
-/** Fails if "mode" is invalid. */
-function applyEffectMode(mode, unit, ticks) {
-    var e_6, _a;
-    var _b;
+/** Fails if "modeString" is invalid. */
+function applyEffectMode(modeString, unit, ticks) {
+    var e_6, _a, e_7, _b;
+    var _c;
     var modes = {
         fast2: [StatusEffects.fast, StatusEffects.overdrive, StatusEffects.overclock],
         health: [StatusEffects.boss, StatusEffects.shielded],
@@ -1085,25 +1085,37 @@ function applyEffectMode(mode, unit, ticks) {
             unit.shield = 1e15;
         }
     };
-    var effects = (_b = match(mode, modes, null)) !== null && _b !== void 0 ? _b : (mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
-        (0, commands_1.fail)("Invalid mode. Supported modes: ".concat(Object.keys(modes).join(", "))));
-    if (typeof effects === "function") {
-        effects(unit);
+    try {
+        for (var _d = __values(modeString.split(/[ ,.|&]/)), _e = _d.next(); !_e.done; _e = _d.next()) {
+            var mode = _e.value;
+            var effects = (_c = match(mode, modes, null)) !== null && _c !== void 0 ? _c : (mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
+                (0, commands_1.fail)("Invalid mode. Supported modes: ".concat(Object.keys(modes).join(", "))));
+            if (typeof effects === "function") {
+                effects(unit);
+            }
+            else {
+                try {
+                    for (var effects_1 = (e_7 = void 0, __values(effects)), effects_1_1 = effects_1.next(); !effects_1_1.done; effects_1_1 = effects_1.next()) {
+                        var effect = effects_1_1.value;
+                        unit.apply(effect, ticks);
+                    }
+                }
+                catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                finally {
+                    try {
+                        if (effects_1_1 && !effects_1_1.done && (_b = effects_1.return)) _b.call(effects_1);
+                    }
+                    finally { if (e_7) throw e_7.error; }
+                }
+            }
+        }
     }
-    else {
+    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+    finally {
         try {
-            for (var effects_1 = __values(effects), effects_1_1 = effects_1.next(); !effects_1_1.done; effects_1_1 = effects_1.next()) {
-                var effect = effects_1_1.value;
-                unit.apply(effect, ticks);
-            }
+            if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
         }
-        catch (e_6_1) { e_6 = { error: e_6_1 }; }
-        finally {
-            try {
-                if (effects_1_1 && !effects_1_1.done && (_a = effects_1.return)) _a.call(effects_1);
-            }
-            finally { if (e_6) throw e_6.error; }
-        }
+        finally { if (e_6) throw e_6.error; }
     }
 }
 function handleError(err, sender, outputFail, context) {
@@ -1225,7 +1237,7 @@ var sources = [
     Packages.mindustry.gen.TankUnit,
 ];
 function getStatuses(unit) {
-    var e_7, _a;
+    var e_8, _a;
     try {
         for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
             var clazz = sources_1_1.value;
@@ -1233,12 +1245,12 @@ function getStatuses(unit) {
                 return ArcReflect.get(clazz, unit, "statuses");
         }
     }
-    catch (e_7_1) { e_7 = { error: e_7_1 }; }
+    catch (e_8_1) { e_8 = { error: e_8_1 }; }
     finally {
         try {
             if (sources_1_1 && !sources_1_1.done && (_a = sources_1.return)) _a.call(sources_1);
         }
-        finally { if (e_7) throw e_7.error; }
+        finally { if (e_8) throw e_8.error; }
     }
     return new Seq();
 }
