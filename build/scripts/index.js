@@ -296,6 +296,7 @@ Events.on(EventType.ServerLoadEvent, function () {
                 if (data.team == globals_1.fishState.teamAssignerMode)
                     return 999;
                 var count = otherPlayers_1.filter(function (p) { return p.team() == data.team; }).length;
+                Log.debug("team @ has @ players", data.team, count);
                 return count + Mathf.random(-0.1, 0.1);
             }));
             return re == null ? Vars.state.rules.defaultTeam : re.team;

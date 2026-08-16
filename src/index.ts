@@ -260,6 +260,7 @@ Events.on(EventType.ServerLoadEvent, () => {
 				if(data.team == preferredTeam) return -1;
 				if(data.team == fishState.teamAssignerMode) return 999;
 				const count = otherPlayers.filter(p => p.team() == data.team).length;
+				Log.debug("team @ has @ players", data.team, count);
 				return count + Mathf.random(-0.1, 0.1);
 			}));
 			return re == null ? Vars.state.rules.defaultTeam : re.team;
