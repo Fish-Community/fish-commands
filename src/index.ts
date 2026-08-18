@@ -324,7 +324,7 @@ Events.on(EventType.AdminRequestEvent, e => {
 			}).then(d => {
 				if(!d) return;
 				Vars.logic.skipWave();
-				Log.info("&lc@ &fi&lk[&lb@&fi&lk]&fb has skipped a wave.", e.player.plainName(), fishP.uuid);
+				Log.info("&lc@ &fi&lk[&lb@&fi&lk]&fb has skipped a wave.", fishP.overrideName ?? fishP.cleanedName, fishP.uuid);
 				if(d == "suppress"){
 					fishP.sendMessage("Wave skipped. You won't be asked again for the next 1 minute.");
 					fishP.autoConfirmSkipWaveUntil = Date.now() + Duration.minutes(1);

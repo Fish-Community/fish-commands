@@ -134,6 +134,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	uuid: string;
 	/** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
 	name: string = "Unnamed player [ERROR}";
+	overrideName: string | null = null;
 	unmuteTime: number = -1;
 	unmarkTime: number = -1;
 	rank: Rank = Rank.player;
@@ -364,6 +365,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	}
 	updateData(data: Partial<FishPlayerData>){
 		if(data.name != undefined) this.name = data.name;
+		if(data.overrideName !== undefined) this.overrideName = data.overrideName;
 		if(data.unmuteTime != undefined) this.unmuteTime = data.unmuteTime;
 		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
 		if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
@@ -390,9 +392,9 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		return data != null;
 	}
 	getData():UploadedFishPlayerData {
-		const { uuid, name, unmuteTime, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix } = this;
+		const { uuid, name, overrideName, unmuteTime, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix } = this;
 		return {
-			uuid, name, unmuteTime, unmarkTime, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix,
+			uuid, name, overrideName, unmuteTime, unmarkTime, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix,
 			rank: rank.name,
 			flags: [...flags.values()].map(f => f.name),
 			achievements: JsonIO.write(Reflect.get(this.achievements, "bits"))

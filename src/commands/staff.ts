@@ -671,8 +671,9 @@ export const commands = commandList({
 			const names = args.showColors
 				? info.names.map(escapeStringColorsClient).toString(", ")
 				: [...new Set(info.names.map(n => Strings.stripColors(n)).toArray())].join(", ");
+			const name = args.target.overrideName && (args.target.showRankPrefix || sender.hasPerm("bypassVanish")) ? args.target.overrideName : args.target;
 			output(f`\
-[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player?.id.toString() ?? 'unknown'})
+[accent]Info for player ${name} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player?.id.toString() ?? 'unknown'})
 	[accent]Rank: ${args.target.rank}
 	[accent]Role flags: ${copy(Array.from(args.target.flags).map(f => f.coloredName()).join(" "))}
 	[accent]Stopped: ${f.boolBad(!args.target.hasPerm("play"))}

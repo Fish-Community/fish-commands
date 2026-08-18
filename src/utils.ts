@@ -269,9 +269,9 @@ export function logAction(action:string, by?:FishPlayer | string, to?:FishPlayer
 	}
 	if(to){ //overload 3
 		let name:string, uuid:string, ip:string;
-		const actor:string = typeof by === "string" ? by : escapeTextDiscord(Strings.stripColors(by.name));
+		const actor:string = typeof by === "string" ? by : escapeTextDiscord(Strings.stripColors(by.overrideName ?? by.name));
 		if(to instanceof FishPlayer){
-			name = escapeTextDiscord(to.name);
+			name = escapeTextDiscord(to.overrideName ?? to.name);
 			uuid = to.uuid;
 			ip = to.ip();
 		} else if(typeof to == "string"){

@@ -398,6 +398,7 @@ function isImpersonator(name, isAdmin) {
     return false;
 }
 function logAction(action, by, to, reason, duration) {
+    var _a, _b;
     if (by === undefined) { //overload 1
         api.sendModerationMessage("".concat(action, "\n**Server:** ").concat(config_1.Gamemode.name()));
         return;
@@ -408,9 +409,9 @@ function logAction(action, by, to, reason, duration) {
     }
     if (to) { //overload 3
         var name = void 0, uuid = void 0, ip = void 0;
-        var actor = typeof by === "string" ? by : (0, funcs_1.escapeTextDiscord)(Strings.stripColors(by.name));
+        var actor = typeof by === "string" ? by : (0, funcs_1.escapeTextDiscord)(Strings.stripColors((_a = by.overrideName) !== null && _a !== void 0 ? _a : by.name));
         if (to instanceof players_1.FishPlayer) {
-            name = (0, funcs_1.escapeTextDiscord)(to.name);
+            name = (0, funcs_1.escapeTextDiscord)((_b = to.overrideName) !== null && _b !== void 0 ? _b : to.name);
             uuid = to.uuid;
             ip = to.ip();
         }

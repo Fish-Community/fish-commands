@@ -48,6 +48,7 @@ export type Stats = {
 export type FishPlayerData = {
 	uuid: string;
 	name: string;
+	overrideName: string | null;
 	unmuteTime: number;
 	unmarkTime: number;
 	rank: string;

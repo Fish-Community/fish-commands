@@ -199,6 +199,7 @@ var FishPlayer = /** @class */ (function () {
         this.sneakybanned = false;
         /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
+        this.overrideName = null;
         this.unmuteTime = -1;
         this.unmarkTime = -1;
         this.rank = ranks_1.Rank.player;
@@ -459,6 +460,8 @@ var FishPlayer = /** @class */ (function () {
         var _a;
         if (data.name != undefined)
             this.name = data.name;
+        if (data.overrideName !== undefined)
+            this.overrideName = data.overrideName;
         if (data.unmuteTime != undefined)
             this.unmuteTime = data.unmuteTime;
         if (data.unmarkTime != undefined)
@@ -513,10 +516,11 @@ var FishPlayer = /** @class */ (function () {
         });
     };
     FishPlayer.prototype.getData = function () {
-        var _a = this, uuid = _a.uuid, name = _a.name, unmuteTime = _a.unmuteTime, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, language = _a.language, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
+        var _a = this, uuid = _a.uuid, name = _a.name, overrideName = _a.overrideName, unmuteTime = _a.unmuteTime, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, language = _a.language, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
         return {
             uuid: uuid,
             name: name,
+            overrideName: overrideName,
             unmuteTime: unmuteTime,
             unmarkTime: unmarkTime,
             highlight: highlight,

@@ -39,6 +39,7 @@ export class Perm {
 	static developer = new Perm("developer", fishP => fishP.hasFlag("developer"), "trusted");
 	static bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
 	static bypassVotekick = new Perm("bypassVotekick", "mod");
+	static bypassVanish = new Perm("bypassVanish", "trusted");
 	static warn = new Perm("warn", "mod");
 	static vanish = new Perm("vanish", "trusted");
 	static changeTeam = new Perm("changeTeam", "admin").exceptModes({

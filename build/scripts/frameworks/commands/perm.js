@@ -79,6 +79,7 @@ var Perm = /** @class */ (function () {
     Perm.developer = new Perm("developer", function (fishP) { return fishP.hasFlag("developer"); }, "trusted");
     Perm.bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
     Perm.bypassVotekick = new Perm("bypassVotekick", "mod");
+    Perm.bypassVanish = new Perm("bypassVanish", "trusted");
     Perm.warn = new Perm("warn", "mod");
     Perm.vanish = new Perm("vanish", "trusted");
     Perm.changeTeam = new Perm("changeTeam", "admin").exceptModes({
