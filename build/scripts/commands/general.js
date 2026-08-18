@@ -531,27 +531,28 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 var _c;
+                var _d, _e;
                 var sender = _b.sender, args = _b.args, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail, lastUsedSender = _b.lastUsedSender;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
                         case 0:
                             if (!sender.hasPerm("mod")) {
                                 if (Date.now() - lastUsedSender < 4000)
                                     (0, commands_1.fail)("This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.");
                             }
-                            players_1.FishPlayer.messageStaff(sender.prefixedName, args.message, sender.hasPerm("mod"));
-                            _d.label = 1;
+                            players_1.FishPlayer.messageStaff((_d = sender.overrideName) !== null && _d !== void 0 ? _d : sender.prefixedName, args.message, sender.hasPerm("mod"));
+                            _f.label = 1;
                         case 1:
-                            _d.trys.push([1, 3, , 4]);
-                            return [4 /*yield*/, api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"))];
+                            _f.trys.push([1, 3, , 4]);
+                            return [4 /*yield*/, api.sendStaffMessage(args.message, (_e = sender.overrideName) !== null && _e !== void 0 ? _e : sender.name, sender.hasPerm("mod"))];
                         case 2:
-                            _d.sent();
+                            _f.sent();
                             if (!sender.hasPerm("mod")) {
                                 outputSuccess("Message sent to [orange]all online staff.");
                             }
                             return [3 /*break*/, 4];
                         case 3:
-                            _c = _d.sent();
+                            _c = _f.sent();
                             outputFail("Failed to send message to other servers.");
                             return [3 /*break*/, 4];
                         case 4: return [2 /*return*/];

@@ -387,9 +387,9 @@ ${target == sender ? `Your` : `${target.cleanedName}'s`} rank prefix is now ${ta
 			if(!sender.hasPerm("mod")){
 				if(Date.now() - lastUsedSender < 4000) fail(`This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.`);
 			}
-			FishPlayer.messageStaff(sender.prefixedName, args.message, sender.hasPerm("mod"));
+			FishPlayer.messageStaff(sender.overrideName ?? sender.prefixedName, args.message, sender.hasPerm("mod"));
 			try {
-				await api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"));
+				await api.sendStaffMessage(args.message, sender.overrideName ?? sender.name, sender.hasPerm("mod"));
 				if(!sender.hasPerm("mod")){
 					outputSuccess(`Message sent to [orange]all online staff.`);
 				}
