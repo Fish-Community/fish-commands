@@ -113,6 +113,8 @@ const Vars: {
 		wave:number;
 		map: MMap;
 		isMenu():boolean;
+		isPlaying():boolean;
+		isPaused():boolean;
 		wavetime:number;
 		enemies:number;
 		/** Time in ticks, 60/s */
@@ -140,6 +142,7 @@ class Teams {
 	active: Seq<TeamData>;
 	present: Seq<TeamData>;
 	getActive(): Seq<TeamData>;
+	updateTeamStats(): void;
 }
 class BlockIndexer {
 	getFlagged(team: Team, flag: BlockFlag): Seq<Building>;
@@ -358,6 +361,7 @@ class Team {
 type TeamData = {
 	team: Team;
 	units: Seq<Unit>;
+	players: Seq<Player>;
 	buildings: Seq<Building>;
 	cores: Seq<Building>;
 	countType(type:UnitType):number;
@@ -631,6 +635,7 @@ class Seq<T> {
 	each(func:(item:T) => unknown):void;
 	each(pred:(item:T) => boolean, func:(item:T) => unknown):void;
 	isEmpty():boolean;
+	any():boolean;
 	map<R>(mapFunc:(item:T) => R):Seq<R>;
 	flatMap<R>(mapFunc:(item:T) => Seq<R>):Seq<R>;
 	toString(separator?:string, stringifier?:(item:T) => string):string;

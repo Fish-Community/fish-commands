@@ -126,6 +126,25 @@ export function initializeTimers(){
 	Timer.schedule(() => {
 		Vars.dataDirectory.child('geolocation-data').child(`${Date.now()}.json`).writeString(JSON.stringify(fishState.geolocationData));
 	}, 10, 1200);
+	
+	if(Gamemode.name() == "pvp") Timer.schedule(() => {
+		if(Vars.state.isPaused() && Vars.state.tick > 60 * 60 * 6){
+			if(!Groups.player.isEmpty()){
+				Vars.state.teams.updateTeamStats();
+				//More than 6 minutes, paused with players online
+				Vars.state.teams.getActive().each(t => t.players.isEmpty(), t => {
+					const timer = --fishState.autoloseCountdown[t.team.id];
+					if(timer <= 0){
+						t.cores.copy().each(c => c.kill());
+					} else {
+						Call.sendMessage(`Team ${t.team.coloredName()} will lose automatically in ${timer * 2} seconds`);
+					}
+				});
+			}
+		} else {
+			fishState.autoloseCountdown.fill(10);
+		}
+	}, 20, 2);
 }
 
 Timer.schedule(() => {
