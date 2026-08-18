@@ -624,7 +624,7 @@ ${[
 
 ${colorNumber(Groups.player.size(), n => n > 0 ? "&c" : "&lr", "server")} players online, ${colorNumber(numStaff, n => n > 0 ? "&c" : "&lr", "server")} staff members.
 ${FishPlayer.mapPlayers(p =>
-	`\t${p.rank.shortPrefix} &c${p.uuid}&fr &c${p.name}&fr`
+	`\t${p.rank.shortPrefix} &c${p.uuid}&fr &c${escapeStringColorsServer(p.overrideName ?? p.cleanedName)}&fr`
 ).join("\n") || "&lrNo players connected.&fr"}
 `
 			);

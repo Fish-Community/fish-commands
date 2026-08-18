@@ -238,9 +238,12 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		(p, str) => p.uuid === str,
 		(p, str) => p.player?.id.toString() === str,
 		(p, str) => p.name.toLowerCase() === str.toLowerCase(),
+		(p, str) => p.overrideName?.toLowerCase() === str.toLowerCase(),
 		// (p, str) => p.cleanedName === str,
 		(p, str) => p.cleanedName.toLowerCase() === str.toLowerCase(),
 		(p, str) => p.name.toLowerCase().includes(str.toLowerCase()),
+		// eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+		(p, str) => p.overrideName != null && p.overrideName.toLowerCase().includes(str.toLowerCase()),
 		// (p, str) => p.cleanedName.includes(str),
 		(p, str) => p.cleanedName.toLowerCase().includes(str.toLowerCase()),
 	);

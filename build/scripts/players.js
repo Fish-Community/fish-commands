@@ -1648,9 +1648,11 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.lastAuthKicked = null;
     /** Stores the 10 most recent players that left. */
     FishPlayer.recentLeaves = [];
-    FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { var _a; return ((_a = p.player) === null || _a === void 0 ? void 0 : _a.id.toString()) === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
+    FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { var _a; return ((_a = p.player) === null || _a === void 0 ? void 0 : _a.id.toString()) === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, function (p, str) { var _a; return ((_a = p.overrideName) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+    function (p, str) { return p.overrideName != null && p.overrideName.toLowerCase().includes(str.toLowerCase()); }, 
     // (p, str) => p.cleanedName.includes(str),
     function (p, str) { return p.cleanedName.toLowerCase().includes(str.toLowerCase()); });
     //#endregion
