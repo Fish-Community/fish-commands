@@ -159,7 +159,7 @@ function formatTime(time) {
     return [
         months && "".concat(months, " month").concat(months != 1 ? "s" : ""),
         days && "".concat(days, " day").concat(days != 1 ? "s" : ""),
-        hours && !days && "".concat(hours, " hour").concat(hours != 1 ? "s" : ""),
+        hours && !months && "".concat(hours, " hour").concat(hours != 1 ? "s" : ""),
         minutes && !(days || months) && "".concat(minutes, " minute").concat(minutes != 1 ? "s" : ""),
         (seconds || time < 1000) && !(days || months || hours) && "".concat(seconds, " second").concat(seconds != 1 ? "s" : ""),
     ].filter(Boolean).join(", ");
@@ -178,8 +178,8 @@ function formatTimeShort(time) {
         months && "".concat(months, "mo"),
         days && "".concat(days, "d"),
         hours && "".concat(hours, "h"),
-        minutes && "".concat(minutes, "m"),
-        (seconds || time < 1000) && "".concat(seconds, "s"),
+        minutes && !(months) && "".concat(minutes, "m"),
+        (seconds || time < 1000) && !(months || days) && "".concat(seconds, "s"),
     ].filter(Boolean).join(" ");
 }
 //TODO move this data to be right next to Mode

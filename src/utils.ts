@@ -40,7 +40,7 @@ export function formatTime(time:number){
 	return [
 		months && `${months} month${months != 1 ? "s" : ""}`,
 		days && `${days} day${days != 1 ? "s" : ""}`,
-		hours && !days && `${hours} hour${hours != 1 ? "s" : ""}`,
+		hours && !months && `${hours} hour${hours != 1 ? "s" : ""}`,
 		minutes && !(days || months) && `${minutes} minute${minutes != 1 ? "s" : ""}`,
 		(seconds || time < 1000) && !(days || months || hours) && `${seconds} second${seconds != 1 ? "s" : ""}`,
 	].filter(Boolean).join(", ");
@@ -61,8 +61,8 @@ export function formatTimeShort(time:number){
 		months && `${months}mo`,
 		days && `${days}d`,
 		hours && `${hours}h`,
-		minutes && `${minutes}m`,
-		(seconds || time < 1000) && `${seconds}s`,
+		minutes && !(months) && `${minutes}m`,
+		(seconds || time < 1000) && !(months || days) && `${seconds}s`,
 	].filter(Boolean).join(" ");
 }
 
