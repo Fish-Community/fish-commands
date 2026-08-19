@@ -62,7 +62,7 @@ export const bannedWords: {
 		["porn", "maporn"],
 		"futa"+"nari", /\bfuta\b/,
 		"ur gay", "your gay", "youre gay", "you're gay",
-		"gooning", "gooner", "dildo", "loli", /\banal\b/, "cunny"
+		"gooning", "gooner", "dildo", /\bloli/, /\banal\b/, "cunny"
 	]),
 	/** Strict: banned in names and for players with a chat strictness level of 'strict'. */
 	strict: processBannedWordList([
