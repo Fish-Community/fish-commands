@@ -159,6 +159,7 @@ export function getFishPlayerData(uuid:string){
 	const req = Http.post(`http://${backendIP}/api/fish-player`, JSON.stringify({
 		id: uuid,
 		gamemode: Gamemode.name(),
+		port: Administration.Config.port.num(),
 	}))
 		.header('Content-Type', 'application/json')
 		.header('Accept', '*/*');
@@ -188,6 +189,7 @@ export function setFishPlayerData(data: UploadedFishPlayerData, repeats:number, 
 		player: data,
 		gamemode: Gamemode.name(),
 		ignoreActivelySyncedFields,
+		port: Administration.Config.port.num(),
 	}))
 		.header('Content-Type', 'application/json')
 		.header('Accept', '*/*');

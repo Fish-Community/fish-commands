@@ -236,6 +236,8 @@ class Config {
 	string(): string;
 	set(value: any): void;
 	isDefault(): boolean;
+
+	static port: Config;
 }
 
 const Events: {

@@ -168,6 +168,7 @@ function getFishPlayerData(uuid) {
     var req = Http.post("http://".concat(config_1.backendIP, "/api/fish-player"), JSON.stringify({
         id: uuid,
         gamemode: config_1.Gamemode.name(),
+        port: Administration.Config.port.num(),
     }))
         .header('Content-Type', 'application/json')
         .header('Accept', '*/*');
@@ -198,6 +199,7 @@ function setFishPlayerData(data, repeats, ignoreActivelySyncedFields) {
         player: data,
         gamemode: config_1.Gamemode.name(),
         ignoreActivelySyncedFields: ignoreActivelySyncedFields,
+        port: Administration.Config.port.num(),
     }))
         .header('Content-Type', 'application/json')
         .header('Accept', '*/*');
