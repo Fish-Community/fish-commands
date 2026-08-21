@@ -413,6 +413,25 @@ export const commands = consoleCommandList({
 			});
 		}
 	},
+	clearallstoredusids: {
+		args: ["areyousure:boolean?", "areyoureallysure:boolean?", "areyoureallyreallysure:boolean?"],
+		description: "Removes every stored USID from the fish player data cache. Only use for server setup.",
+		handler({args, output}){
+			if(args.areyousure && args.areyoureallysure && args.areyoureallyreallysure){
+				let total = 0;
+				for(const [uuid, fishP] of Object.entries(FishPlayer.cachedPlayers)){
+					if(fishP.usid != null){
+						total ++;
+						fishP.usid = null;
+					}
+				}
+				FishPlayer.saveAll();
+				output(`Removed ${total} stored USIDs.`);
+			} else {
+				output(`Are you sure?!?!?!?!?!!`);
+			}
+		}
+	},
 	update: {
 		args: ["branch:string?"],
 		description: "Updates the plugin.",
