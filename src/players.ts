@@ -777,12 +777,14 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		const usidMissing = storedUSID == null || !storedUSID;
 		const receivedUSID = this.player.usid();
 		if(this.hasPerm("usidCheck")){
+			const code = this.info().timesJoined;
 			if(usidMissing){
 				if(this.hasPerm("mod")){
 					//Staff missing USID, don't let them in
 					Log.err(`&rUSID missing for privileged player &c"${this.cleanedName}"&r: no stored usid, cannot authenticate.\nRun &lgsetusid ${this.uuid} ${receivedUSID}&fr if you have verified this connection attempt.`);
-					this.kick(`Authorization failure! Please ask a staff member with Console Access to approve this connection.`, 1);
+					this.kick(`Authorization failure! Please ask a staff member with Console Access to approve this connection. Give them this code: [cyan]${code}[]`, 1);
 					FishPlayer.lastAuthKicked = this;
+					void api.reportUsidRejection(this.uuid, receivedUSID, code);
 					return false;
 				} else {
 					Log.info(`Acquired USID for player &c"${this.cleanedName}"&fr: &c"${receivedUSID}"&fr`);
@@ -790,8 +792,9 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 			} else {
 				if(receivedUSID != storedUSID){
 					Log.err(`&rUSID mismatch for player &c"${this.cleanedName}"&r: stored usid is &c${storedUSID}&r, but they tried to connect with usid &c${receivedUSID}&r\nRun &lgsetusid ${this.uuid} ${receivedUSID}&fr if you have verified this connection attempt.`);
-					this.kick(`Authorization failure!`, 1);
+					this.kick(`Authorization failure!\nCode: [cyan]${code}[]`, 1);
 					FishPlayer.lastAuthKicked = this;
+					void api.reportUsidRejection(this.uuid, receivedUSID, code);
 					return false;
 				}
 			}
