@@ -771,13 +771,14 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		}
 		return false;
 	}
+	private static codeCounter = 1;
 	/** Checks if this player's USID is correct. */
 	checkUsid(this:FishPlayer<true>){
 		const storedUSID = this.usid;
 		const usidMissing = storedUSID == null || !storedUSID;
 		const receivedUSID = this.player.usid();
 		if(this.hasPerm("usidCheck")){
-			const code = this.info().timesJoined;
+			const code = (Math.floor(Date.now() / 5000) % 10000) + "-" + (++FishPlayer.codeCounter);
 			if(usidMissing){
 				if(this.hasPerm("mod")){
 					//Staff missing USID, don't let them in

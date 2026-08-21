@@ -984,7 +984,7 @@ var FishPlayer = /** @class */ (function () {
         var usidMissing = storedUSID == null || !storedUSID;
         var receivedUSID = this.player.usid();
         if (this.hasPerm("usidCheck")) {
-            var code = this.info().timesJoined;
+            var code = (Math.floor(Date.now() / 5000) % 10000) + "-" + (++FishPlayer.codeCounter);
             if (usidMissing) {
                 if (this.hasPerm("mod")) {
                     //Staff missing USID, don't let them in
@@ -1664,6 +1664,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.dataFetchFailedUuids = new Set();
     FishPlayer.ignoreGameOver = false;
     FishPlayer.oddBrackets = Pattern.compile("(?<!\\[)(\\[\\[)*\\[$");
+    FishPlayer.codeCounter = 1;
     return FishPlayer;
 }());
 exports.FishPlayer = FishPlayer;
