@@ -778,7 +778,7 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		const usidMissing = storedUSID == null || !storedUSID;
 		const receivedUSID = this.player.usid();
 		if(this.hasPerm("usidCheck")){
-			const code = (Math.floor(Date.now() / 5000) % 10000) + "-" + (++FishPlayer.codeCounter);
+			const code = (Math.floor(Date.now() / 5000) % 100000).toString().padStart(5, '0') + "-" + (++FishPlayer.codeCounter);
 			if(usidMissing){
 				if(this.hasPerm("mod")){
 					//Staff missing USID, don't let them in
