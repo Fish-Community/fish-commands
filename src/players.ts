@@ -1195,7 +1195,7 @@ We apologize for the inconvenience.`
 	}
 	showRules<T extends string>(options: T[] = []){
 		return Menu.menu(
-			"Rules for [#0000ff] >|||> FISH [white] servers [white]",
+			"Rules for [blue] >|||> FISH [white] servers [white]",
 			rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].",
 			["[green]I agree to abide by these rules", ...options],
 			this,

@@ -295,6 +295,7 @@ exports.FColor = (function (data) {
     tip: "[gold]",
     member: "[pink]",
     achievement: "[lime]",
+    mapStats: "[#CCFFCC]",
 });
 /** Tips that are shown to players randomly. */
 exports.tips = {

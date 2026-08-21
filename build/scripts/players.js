@@ -1437,7 +1437,7 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.showRules = function (options) {
         if (options === void 0) { options = []; }
-        return menus_1.Menu.menu("Rules for [#0000ff] >|||> FISH [white] servers [white]", config_1.rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].", __spreadArray(["[green]I agree to abide by these rules"], __read(options), false), this, { onCancel: "null" });
+        return menus_1.Menu.menu("Rules for [blue] >|||> FISH [white] servers [white]", config_1.rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].", __spreadArray(["[green]I agree to abide by these rules"], __read(options), false), this, { onCancel: "null" });
     };
     FishPlayer.prototype.hasFlag = function (flagName) {
         var flag = ranks_1.RoleFlag.getByName(flagName);

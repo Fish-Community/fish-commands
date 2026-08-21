@@ -353,6 +353,7 @@ export const FColor = (
 	tip: "[gold]",
 	member: "[pink]",
 	achievement: "[lime]",
+	mapStats: "[#CCFFCC]",
 });
 /** Tips that are shown to players randomly. */
 export const tips = {
