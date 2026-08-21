@@ -990,7 +990,7 @@ var FishPlayer = /** @class */ (function () {
                 if (this.hasPerm("mod")) {
                     //Staff missing USID, don't let them in
                     Log.err("&rUSID missing for privileged player &c\"".concat(this.cleanedName, "\"&r: no stored usid, cannot authenticate.\nRun &lgsetusid ").concat(this.uuid, " ").concat(receivedUSID, "&fr if you have verified this connection attempt."));
-                    this.kick("Authorization failure! Please ask a staff member with Console Access to approve this connection. Give them this code: [cyan]".concat(code, "[]"), 1);
+                    this.kick("Authorization failure!\nPlease run \";approveauth ".concat(config_1.Gamemode.name(), " ").concat(code, "\" in a private channel."), 1);
                     FishPlayer.lastAuthKicked = this;
                     void api.reportUsidRejection(this.uuid, receivedUSID, code);
                     return false;
