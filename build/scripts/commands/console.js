@@ -662,6 +662,38 @@ exports.commands = (0, commands_1.consoleCommandList)({
             });
         }
     },
+    clearallstoredusids: {
+        args: ["areyousure:boolean?", "areyoureallysure:boolean?", "areyoureallyreallysure:boolean?"],
+        description: "Removes every stored USID from the fish player data cache. Only use for server setup.",
+        handler: function (_a) {
+            var e_4, _b;
+            var args = _a.args, output = _a.output;
+            if (args.areyousure && args.areyoureallysure && args.areyoureallyreallysure) {
+                var total = 0;
+                try {
+                    for (var _c = __values(Object.entries(players_1.FishPlayer.cachedPlayers)), _d = _c.next(); !_d.done; _d = _c.next()) {
+                        var _e = __read(_d.value, 2), uuid = _e[0], fishP = _e[1];
+                        if (fishP.usid != null) {
+                            total++;
+                            fishP.usid = null;
+                        }
+                    }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                    }
+                    finally { if (e_4) throw e_4.error; }
+                }
+                players_1.FishPlayer.saveAll();
+                output("Removed ".concat(total, " stored USIDs."));
+            }
+            else {
+                output("Are you sure?!?!?!?!?!!");
+            }
+        }
+    },
     update: {
         args: ["branch:string?"],
         description: "Updates the plugin.",
