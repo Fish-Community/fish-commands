@@ -192,37 +192,37 @@ export class FishServer {
 	static all: FishServer[] = [];
 	static attack = new FishServer(
 		"attack",
-		"162.248.100.98", "6567",
+		"51.81.48.124", "6567",
 		["attac", "atack", "atak", "atck", "atk", "a"]
 	);
 	static survival = new FishServer(
 		"survival",
-		"162.248.101.95", "6567",
+		"51.81.48.124", "6570",
 		["surviv", "surv", "sur", "su", "s", "sl"]
 	);
 	static pvp = new FishServer(
 		"pvp",
-		"162.248.102.101", "6567",
+		"51.81.48.124", "6569",
 		["pv", "p", "v", "playerversusplayer"]
 	);
 	static sandbox = new FishServer(
 		"sandbox",
-		"162.248.101.53", "6567",
+		"51.81.48.124", "6568",
 		["sand", "box", "sa", "sb"]
 	);
 	static hexed = new FishServer(
 		"hexed",
-		"162.248.100.133", "6567",
+		"51.81.48.124", "6572",
 		["h", "hx", "hxd", "hpvp", "hxpvp", "hexpvp"]
 	);
 	static minigame = new FishServer(
 		"minigame",
-		"162.248.101.116", "6567",
+		"51.81.48.124", "6571",
 		["m", "mg", "mini", "minig", "mgame", "mng", "minigame", "mpvp"]
 	);
 	static testing = new FishServer(
 		"testing",
-		"162.248.101.52", "6567",
+		"51.81.48.124", "6573",
 		["test", "testsrv", "t", "testingserver", "testserver"],
 		undefined,
 		"active",
