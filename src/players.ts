@@ -5,7 +5,7 @@ This file contains the FishPlayer class, and many player-related functions.
 
 import * as api from "/api";
 import { Automod, checkVPNAndJoins } from "/automod";
-import { automaticNames, FColor, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
+import { FColor, Gamemode, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
 import { crash, Duration, parseError, search, setToArray, StringIO } from "/funcs";
@@ -783,7 +783,7 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 				if(this.hasPerm("mod")){
 					//Staff missing USID, don't let them in
 					Log.err(`&rUSID missing for privileged player &c"${this.cleanedName}"&r: no stored usid, cannot authenticate.\nRun &lgsetusid ${this.uuid} ${receivedUSID}&fr if you have verified this connection attempt.`);
-					this.kick(`Authorization failure! Please ask a staff member with Console Access to approve this connection. Give them this code: [cyan]${code}[]`, 1);
+					this.kick(`Authorization failure!\nPlease run ";approveauth ${Gamemode.name()} ${code}" in a private channel.`, 1);
 					FishPlayer.lastAuthKicked = this;
 					void api.reportUsidRejection(this.uuid, receivedUSID, code);
 					return false;
