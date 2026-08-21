@@ -18,6 +18,7 @@ exports.setFishPlayerData = setFishPlayerData;
 exports.fetchAntibotData = fetchAntibotData;
 exports.syncDosBlacklist = syncDosBlacklist;
 exports.unBlacklist = unBlacklist;
+exports.reportUsidRejection = reportUsidRejection;
 var config_1 = require("/config");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
@@ -281,5 +282,33 @@ function unBlacklist(ip) {
         });
         req.submit(function () { return resolve(); });
     }
+    return promise;
+}
+/** Reports a USID rejection to the backend to allow it to reset the USID with a code. */
+function reportUsidRejection(uuid, rejectedUsid, code) {
+    var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
+    if (config_1.Mode.noBackend) {
+        resolve();
+        return promise;
+    }
+    var req = Http.post("http://".concat(config_1.backendIP, "/api/usid-reject"), JSON.stringify({
+        uuid: uuid,
+        rejectedUsid: rejectedUsid,
+        code: code,
+        port: Administration.Config.port.num(),
+    }))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*');
+    req.timeout = 10000;
+    req.error(function (err) {
+        Log.err("[API] Network error when trying to call api.reportUsidRejection()");
+        Log.err(err);
+        if (err === null || err === void 0 ? void 0 : err.response)
+            Log.err(err.response.getResultAsString());
+        reject(err);
+    });
+    req.submit(function (response) {
+        resolve();
+    });
     return promise;
 }

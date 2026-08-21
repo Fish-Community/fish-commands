@@ -270,3 +270,31 @@ export function unBlacklist(ip:string) {
 	return promise;
 }
 
+
+/** Reports a USID rejection to the backend to allow it to reset the USID with a code. */
+export function reportUsidRejection(uuid: string, rejectedUsid: string, code: number) {
+	const { promise, resolve, reject } = Promise.withResolvers<void, unknown>();
+	if(Mode.noBackend){
+		resolve();
+		return promise;
+	}
+	const req = Http.post(`http://${backendIP}/api/usid-reject`, JSON.stringify({
+		uuid,
+		rejectedUsid,
+		code,
+		port: Administration.Config.port.num(),
+	}))
+		.header('Content-Type', 'application/json')
+		.header('Accept', '*/*');
+	req.timeout = 10000;
+	req.error((err) => {
+		Log.err(`[API] Network error when trying to call api.reportUsidRejection()`);
+		Log.err(err);
+		if(err?.response) Log.err(err.response.getResultAsString());
+		reject(err);
+	});
+	req.submit((response) => {
+		resolve();
+	});
+	return promise;
+}
