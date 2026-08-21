@@ -985,7 +985,7 @@ var FishPlayer = /** @class */ (function () {
         var usidMissing = storedUSID == null || !storedUSID;
         var receivedUSID = this.player.usid();
         if (this.hasPerm("usidCheck")) {
-            var code = (Math.floor(Date.now() / 5000) % 10000) + "-" + (++FishPlayer.codeCounter);
+            var code = (Math.floor(Date.now() / 5000) % 100000).toString().padStart(5, '0') + "-" + (++FishPlayer.codeCounter);
             if (usidMissing) {
                 if (this.hasPerm("mod")) {
                     //Staff missing USID, don't let them in
