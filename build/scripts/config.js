@@ -165,7 +165,7 @@ exports.heuristics = {
     blocksBrokenAfterJoin: 40,
 };
 exports.stopAntiEvadeTime = funcs_1.Duration.minutes(30);
-exports.backendIP = '45.79.202.111:5082';
+exports.backendIP = '127.0.0.1:5082';
 exports.translationApiUrl = "https://translate.eradication.fun";
 exports.translationApiToken = new Administration.Config("translationApiToken", "Token to use with the translation API.", "unset");
 exports.Mode = {
