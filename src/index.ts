@@ -283,6 +283,13 @@ Events.on(EventType.UnitDestroyEvent, addToTileHistory);
 Events.on(EventType.BlockDestroyEvent, addToTileHistory);
 Events.on(EventType.UnitControlEvent, addToTileHistory);
 
+Events.on(EventType.UnitControlEvent, e => {
+	if(e.unit){
+		for(const mount of e.unit.mounts){
+			mount.target = null;
+		}
+	}
+});
 
 Events.on(EventType.TapEvent, handleTapEvent);
 
