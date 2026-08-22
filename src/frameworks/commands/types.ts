@@ -196,7 +196,7 @@ export type TapHandler<ArgType extends string, StoredData> = (_: {
 	player<T extends mindustryPlayer | FishPlayer | PlayerInfo | null>(this: void, player:T):T;
 }) => unknown;
 
-export type FishCommandRequirement<ArgType extends string, StoredData> = (data: FishCommandHandlerData<ArgType, StoredData>) => unknown;
+export type FishCommandRequirement<ArgType extends string, StoredData> = (data: FishCommandHandlerData<ArgType, StoredData> & FishCommandHandlerUtils) => unknown;
 
 export type FishCommandData<ArgType extends string, StoredData> = {
 	/** Args for this command, like ["player:player", "reason:string?"] */

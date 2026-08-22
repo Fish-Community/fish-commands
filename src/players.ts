@@ -434,7 +434,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		}, () => {
 			this.setUnmarkTimer(duration);
 			if(this.connected() && notify){
-				this.stopUnit();
+				if(!this.hasPerm("play")) this.stopUnit();
 				this.sendMessage(
 					message
 					? `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]${message}[]`

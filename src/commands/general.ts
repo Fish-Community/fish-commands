@@ -304,10 +304,10 @@ export const commands = commandList({
 		args: ['target:player?'],
 		description: `Toggles visibility of your rank and flags.`,
 		perm: Perm.vanish,
+		requirements: [Req.troll("target")],
 		handler({ sender, args: {target = sender}, outputSuccess, f }){
 			if(sender.stelled()) fail(`Marked players may not hide flags.`);
 			if(sender.muted()) fail(`Muted players may not hide flags.`);
-			if(sender != target && target.hasPerm("blockTrolling")) fail(`Target is insufficiently trollable.`);
 			if(sender != target && !sender.ranksAtLeast("mod")) fail(`You do not have permission to vanish other players.`);
 			target.showRankPrefix = !target.showRankPrefix;
 			outputSuccess(f`\
@@ -460,10 +460,9 @@ ${target == sender ? `Your` : `${target.cleanedName}'s`} rank prefix is now ${ta
 			args: ["target:playerOn?"],
 			description: `Toggles spectator mode in PVP games.`,
 			perm: Perm.play,
-			requirements: [Req.gameRunning],
+			requirements: [Req.gameRunning, Req.troll("target")],
 			handler({sender, args: {target = sender}, outputSuccess, f}){
 				if(!Gamemode.pvp() && !sender.hasPerm("mod")) fail(`You do not have permission to spectate on a non-pvp server.`);
-				if(target !== sender && target.hasPerm("blockTrolling")) fail(`Target player is insufficiently trollable.`);
 				if(target !== sender && !sender.ranksAtLeast("admin")) fail(`You do not have permission to force other players to spectate.`);
 				if(spectators.has(target)){
 					resume(target);
@@ -700,12 +699,12 @@ Available types:[yellow]
 		args: ['player:playerOn?'],
 		description: 'Displays the server rules.',
 		perm: Perm.none,
+		requirements: [Req.troll("player")],
 		handler({args, sender, output, outputSuccess, f, lastUsedSuccessfullySender}){
 			const target = args.player ?? sender;
 			if(target !== sender){
 				if(!sender.hasPerm("warn")) fail(`You do not have permission to show rules to other players.`);
 				if(!sender.canModerate(target)) Req.cooldown(Duration.minutes(10))({lastUsedSuccessfullySender});
-				if(target.hasPerm("blockTrolling")) fail(f`Player ${args.player!} is insufficiently trollable.`);
 			}
 			void target.showRules(["No"]).then((option) => {
 				if(option == "No"){
@@ -727,12 +726,12 @@ Available types:[yellow]
 		perm: Perm.play,
 		requirements: ({args}) => [
 			Req.mode("attack"),
-			args.player ? Req.cooldown(20_000) : Req.cooldownGlobal(10_000)
+			args.player ? Req.cooldown(20_000) : Req.cooldownGlobal(10_000),
+			Req.troll("player"),
 		],
 		handler({args, sender, outputSuccess, f}){
 			if(args.player){
 				if(!sender.hasPerm("trusted")) fail(`You do not have permission to show popups to other players, please run /void with no arguments to send a chat message to everyone.`);
-				if(args.player !== sender && args.player.hasPerm("blockTrolling")) fail(`Target player is insufficiently trollable.`);
 				void Menu.menu("\uf83f [scarlet]WARNING[] \uf83f",
 `[white]Don't break the Power Void (\uf83f), it's a trap!
 Power voids disable anything they are connected to.

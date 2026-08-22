@@ -3,6 +3,10 @@
 Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the requirements system, which is part of the commands framework.
 */
+var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
+    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+    return cooked;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Req = void 0;
 var config_1 = require("/config");
@@ -52,6 +56,13 @@ exports.Req = {
         return sender.team().isAlive()
             || (0, errors_1.fail)(Math.random() > 0.9 ? "You are already dead." : "Your team is dead.");
     },
+    troll: function (argName) {
+        return function (_a) {
+            var args = _a.args, sender = _a.sender, f = _a.f;
+            return args[argName] == undefined || args[argName] == sender || !args[argName].hasPerm("blockTrolling")
+                || (0, errors_1.fail)(f(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args[argName]));
+        };
+    },
     unitExists: function (message) {
         if (message === void 0) { message = "You must be in a unit to use this command."; }
         return function (_a) {
@@ -90,3 +101,4 @@ exports.Req = {
         };
     },
 };
+var templateObject_1;

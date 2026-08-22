@@ -582,7 +582,8 @@ var FishPlayer = /** @class */ (function () {
         }, function () {
             _this.setUnmarkTimer(duration);
             if (_this.connected() && notify) {
-                _this.stopUnit();
+                if (!_this.hasPerm("play"))
+                    _this.stopUnit();
                 _this.sendMessage(message
                     ? "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]".concat(message, "[]")
                     : "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.");
