@@ -316,9 +316,27 @@ Events.on(EventType.PayloadDropEvent, utils_1.addToTileHistory);
 Events.on(EventType.UnitDestroyEvent, utils_1.addToTileHistory);
 Events.on(EventType.BlockDestroyEvent, utils_1.addToTileHistory);
 Events.on(EventType.UnitControlEvent, utils_1.addToTileHistory);
+Events.on(EventType.UnitControlEvent, function (e) {
+    var e_1, _a;
+    if (e.unit) {
+        try {
+            for (var _b = __values(e.unit.mounts), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var mount = _c.value;
+                mount.target = null;
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    }
+});
 Events.on(EventType.TapEvent, commands_1.handleTapEvent);
 Events.on(EventType.GameOverEvent, function (e) {
-    var e_1, _a;
+    var e_2, _a;
     try {
         for (var _b = __values(Object.keys(globals_1.tileHistory)), _c = _b.next(); !_c.done; _c = _b.next()) {
             var key = _c.value;
@@ -327,12 +345,12 @@ Events.on(EventType.GameOverEvent, function (e) {
             delete globals_1.tileHistory[key];
         }
     }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
     finally {
         try {
             if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
         }
-        finally { if (e_1) throw e_1.error; }
+        finally { if (e_2) throw e_2.error; }
     }
     if (globals_1.fishState.restartQueued) {
         //restart
