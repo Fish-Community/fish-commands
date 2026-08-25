@@ -788,6 +788,7 @@ class NetConnection {
 	kick(reason:KickReason, duration?:number):void;
 	sendStream(data:any):void;
 	blacklist():void;
+	isConnected(): boolean;
 }
 class Command {
 	text:string;

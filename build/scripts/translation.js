@@ -126,7 +126,7 @@ function handleMessage(sender, message) {
                     exports.playerLanguageCache.each(function (lang, players) {
                         var e_1, _a, e_2, _b;
                         var formatted = Vars.netServer.chatFormatter.format(sender, message);
-                        var recipients = players.select(function (p) { return p != sender; });
+                        var recipients = players.select(function (p) { return p != sender && p.con.isConnected(); });
                         if (recipients.isEmpty())
                             return;
                         if (lang === "off" || lang === "auto" || lang === "none" || config_1.translationApiToken.string() == "unset") {

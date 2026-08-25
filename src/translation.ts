@@ -63,7 +63,7 @@ export async function handleMessage(sender: Player, message: string) {
 
 	playerLanguageCache.each((lang, players) => {
 		const formatted = Vars.netServer.chatFormatter.format(sender, message);
-		const recipients = players.select(p => p != sender);
+		const recipients = players.select(p => p != sender && p.con.isConnected());
 
 		if(recipients.isEmpty()) return;
 
