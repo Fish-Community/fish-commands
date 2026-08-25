@@ -651,7 +651,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var args = _a.args, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail, f = _a.f;
             if (args.usid.length !== 12)
                 (0, commands_1.fail)("Invalid USID: should be 12 characters ending with an equal sign");
-            var player = (_b = players_1.FishPlayer.lastAuthKicked) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("No authorization failures have occurred since the last restart.");
+            var player = (_b = players_1.FishPlayer.getById(args.uuid)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Unknown UUID ".concat(args.uuid));
             var oldusid = player.usid;
             player.usid = args.usid;
             api.setFishPlayerData(player.getData(), 1, true).then(function () {
