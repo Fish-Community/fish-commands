@@ -36,41 +36,41 @@ export const bannedWords: {
 	// like this: ["badw", "goodbadw"]
 	/** Chat: banned only in chat, but not in names. */
 	chat: processBannedWordList([
-		"fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon", "drizzle"], "skibidi", //With love, DarthScion
+		"fanum tax", "фанум такс", "фанум налог", "gyatt", ["rizz", "grizzly", "frizz", "horizzon", "drizzle"], "skibidi", "скибиди",  //With love, DarthScion
 		//>:( -dart
 		// "uwu", //lol
 	]),
 	/** Normal: banned always. */
 	normal: processBannedWordList([
 
-		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нигер", "нігер", "ніг"+"гер", /\bnegr\b/, //our apologies to citizens of the Republic of Niger
+		"nig"+"ger", "nig"+"ga", "niger", "ni8"+"8er", "nig"+"gre", "негр", "ниг"+"гер", "нига", "нигга", "нигер", "нігер", "ніг"+"гер", /\bnegr\b/, //our apologies to citizens of the Republic of Niger
 		["ni"+"ga", "anniga", "inniga", "unniga", "aniga", "iniga", "eniga", "oniga"],
 		/\bnig\b/,
-		"re"+"tard",
-		'kill yourself', 'kill urself', /\bkys\b/,
+		"re"+"tard", "долбоёб", "tarado", "tarada", "mogolico", "mogolica", "pelotudo", "pelotuda", "retrasado", "retrasada",
+		'kill yourself', 'kill urself', /\bkys\b/, "убейся", "убей себя",
 		"kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", /\b1488\b/, //nazi-related words
-		["co"+"ck", "cockroach", "poppycock", "cocktail", "cocky"], "suck dick", "sucking dick",
+		["co"+"ck", "cockroach", "poppycock", "cocktail", "cocky"], "suck dick", "sucking dick", "соси хуй", "pito", "pene", "nepe", "pilin", "verga", "polla", "pichula",
 		"iamasussyimposter",
 		["cu"+"nt", "scunthorpe"],
-		["penis", "peniston"],
+		["penis", "peniston"], "пенис",
 		"hawk tuah",
 
 		["rape", "grape", "therap", "drape", "scrape", "trapez", "earrape", "atrape", "traped"],
 		["raping", "draping", "graping", "scraping", "craping"],
-		/\bf(a)g\b/, "fa"+"gg"+"ot",
-		/\bc(u)m\b/, ["semen", "sement", "horsemen", "housemen", "defensemen", "those", "menders"],
-		["porn", "maporn"],
-		"futa"+"nari", /\bfuta\b/,
+		/\bf(a)g\b/, "fa"+"gg"+"ot", "педик", "пидор", "педераст", "marica", "maricon", "joto", //joto has some meanings in japanese, but was mostly used as f-word on fish last time checked
+		/\bc(u)m\b/, ["semen", "sement", "horsemen", "housemen", "defensemen", "those", "menders"], "сперма",
+		["porn", "maporn"], "порно",
+		"futa"+"nari", /\bfuta\b/, "фута"+"нари", /\bфута\b/,
 		"ur gay", "your gay", "youre gay", "you're gay",
-		"gooning", "gooner", "dildo", /\bloli/, /\banal\b/, "cunny"
+		"gooning", "gooner", "dildo", "дилдо", /\bloli/, /\bлоли\b/, /\banal\b/, /\bанал\b/, "cunny"
 	]),
 	/** Strict: banned in names and for players with a chat strictness level of 'strict'. */
 	strict: processBannedWordList([
-		"fu"+"ck", "bi"+"tch", ["sh"+"it", "harshit"], /\ba(s)s\b/, "as"+"shole", ["dick", "medick", "dickens"],
+		"fu"+"ck", "bi"+"tch", "сука", ["sh"+"it", "harshit"], /\ba(s)s\b/, "as"+"shole", ["dick", "medick", "dickens"], "хуй",
 	]),
 	/** Names: banned only in names. */
 	names: processBannedWordList([
-		"sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐", "diddy", "epstein", "nazi",
+		"sex", "секс", /\bgoldberg\b/, "hitler", "гитлер", "stalin", "сталин", "putin", "путин", "lenin", "ленин", /^something$/, "[something]", "[[something]", "卐", "diddy", "дидди", "epstein", "эпштейн", "nazi",
 		uuidPattern, ipPattern, ipPortPattern
 	]),
 	/** autoWhack: new players saying one of these words will be automatically stopped and muted. Comes with \b so no need to add it. */
