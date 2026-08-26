@@ -196,8 +196,10 @@ var FishPlayer = /** @class */ (function () {
         this.recentPlayers = new Set();
         this.isImpersonator = false;
         this.joinedAlready = false;
+        this.sneakybanned = false;
         /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
+        this.overrideName = null;
         this.unmuteTime = -1;
         this.unmarkTime = -1;
         this.rank = ranks_1.Rank.player;
@@ -446,6 +448,7 @@ var FishPlayer = /** @class */ (function () {
         this.changedTeam = false;
         this.ipDetectedVpn = false;
         this.isImpersonator = false;
+        this.sneakybanned = false;
         this.tstats.blocksBroken = 0;
         if (this.tstats.lastMapPlayedTime != globals_1.fishState.lastMapStartTime) {
             this.tstats.blockInteractionsThisMap = 0;
@@ -457,6 +460,8 @@ var FishPlayer = /** @class */ (function () {
         var _a;
         if (data.name != undefined)
             this.name = data.name;
+        if (data.overrideName !== undefined)
+            this.overrideName = data.overrideName;
         if (data.unmuteTime != undefined)
             this.unmuteTime = data.unmuteTime;
         if (data.unmarkTime != undefined)
@@ -511,10 +516,11 @@ var FishPlayer = /** @class */ (function () {
         });
     };
     FishPlayer.prototype.getData = function () {
-        var _a = this, uuid = _a.uuid, name = _a.name, unmuteTime = _a.unmuteTime, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, language = _a.language, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
+        var _a = this, uuid = _a.uuid, name = _a.name, overrideName = _a.overrideName, unmuteTime = _a.unmuteTime, unmarkTime = _a.unmarkTime, rank = _a.rank, flags = _a.flags, highlight = _a.highlight, rainbow = _a.rainbow, history = _a.history, usid = _a.usid, chatStrictness = _a.chatStrictness, language = _a.language, lastJoined = _a.lastJoined, firstJoined = _a.firstJoined, stats = _a.stats, showRankPrefix = _a.showRankPrefix;
         return {
             uuid: uuid,
             name: name,
+            overrideName: overrideName,
             unmuteTime: unmuteTime,
             unmarkTime: unmarkTime,
             highlight: highlight,
@@ -576,7 +582,8 @@ var FishPlayer = /** @class */ (function () {
         }, function () {
             _this.setUnmarkTimer(duration);
             if (_this.connected() && notify) {
-                _this.stopUnit();
+                if (!_this.hasPerm("play"))
+                    _this.stopUnit();
                 _this.sendMessage(message
                     ? "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]".concat(message, "[]")
                     : "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.");
@@ -796,6 +803,7 @@ var FishPlayer = /** @class */ (function () {
             this.recentLeaves.pop();
         void api.setFishPlayerData(fishP.getData(), 1, true);
         fishP.dataSynced = false;
+        fishP.sneakybanned = false;
         var currentRun = (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime;
         if (currentRun)
             Core.app.post(function () {
@@ -827,6 +835,7 @@ var FishPlayer = /** @class */ (function () {
                         fishPlayer.updateStats(function (stats) { return stats.gamesWon++; });
                 }
             }
+            globals_1.fishState.teamAssignerMode = "normal";
             fishPlayer.changedTeam = false;
             fishPlayer.tstats.wavesSurvived = 0;
             fishPlayer.tstats.blockInteractionsThisMap = 0;
@@ -1429,7 +1438,7 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.showRules = function (options) {
         if (options === void 0) { options = []; }
-        return menus_1.Menu.menu("Rules for [#0000ff] >|||> FISH [white] servers [white]", config_1.rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].", __spreadArray(["[green]I agree to abide by these rules"], __read(options), false), this, { onCancel: "null" });
+        return menus_1.Menu.menu("Rules for [blue] >|||> FISH [white] servers [white]", config_1.rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].", __spreadArray(["[green]I agree to abide by these rules"], __read(options), false), this, { onCancel: "null" });
     };
     FishPlayer.prototype.hasFlag = function (flagName) {
         var flag = ranks_1.RoleFlag.getByName(flagName);
@@ -1640,9 +1649,11 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.lastAuthKicked = null;
     /** Stores the 10 most recent players that left. */
     FishPlayer.recentLeaves = [];
-    FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { var _a; return ((_a = p.player) === null || _a === void 0 ? void 0 : _a.id.toString()) === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, 
+    FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { var _a; return ((_a = p.player) === null || _a === void 0 ? void 0 : _a.id.toString()) === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, function (p, str) { var _a; return ((_a = p.overrideName) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === str.toLowerCase(); }, 
     // (p, str) => p.cleanedName === str,
     function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+    function (p, str) { return p.overrideName != null && p.overrideName.toLowerCase().includes(str.toLowerCase()); }, 
     // (p, str) => p.cleanedName.includes(str),
     function (p, str) { return p.cleanedName.toLowerCase().includes(str.toLowerCase()); });
     //#endregion

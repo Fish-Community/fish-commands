@@ -77,7 +77,7 @@ exports.bannedWords = {
         ["porn", "maporn"],
         "futa" + "nari", /\bfuta\b/,
         "ur gay", "your gay", "youre gay", "you're gay",
-        "gooning", "gooner", "dildo", "loli", /\banal\b/, "cunny"
+        "gooning", "gooner", "dildo", /\bloli/, /\banal\b/, "cunny"
     ]),
     /** Strict: banned in names and for players with a chat strictness level of 'strict'. */
     strict: processBannedWordList([
@@ -191,12 +191,15 @@ exports.mapRepoURLs = {
 var FishServer = /** @class */ (function () {
     function FishServer(name, ip, port, aliases, 
     /** If set, this permission is required to switch to or get information about this server. */
-    requiredPerm) {
+    requiredPerm, 
+    /** If set, this permission is required to see switch messages about this server. */
+    messagePerm) {
         this.name = name;
         this.ip = ip;
         this.port = port;
         this.aliases = aliases;
         this.requiredPerm = requiredPerm;
+        this.messagePerm = messagePerm;
         FishServer.all.push(this);
     }
     FishServer.byName = function (input) {
@@ -211,7 +214,7 @@ var FishServer = /** @class */ (function () {
     FishServer.sandbox = new FishServer("sandbox", "162.248.101.53", "6567", ["sand", "box", "sa", "sb"]);
     FishServer.hexed = new FishServer("hexed", "162.248.100.133", "6567", ["h", "hx", "hxd", "hpvp", "hxpvp", "hexpvp"]);
     FishServer.minigame = new FishServer("minigame", "162.248.101.116", "6567", ["m", "mg", "mini", "minig", "mgame", "mng", "minigame", "mpvp"]);
-    FishServer.testing = new FishServer("testing", "162.248.101.52", "6567", ["test", "testsrv", "t", "testingserver", "testserver"]);
+    FishServer.testing = new FishServer("testing", "162.248.101.52", "6567", ["test", "testsrv", "t", "testingserver", "testserver"], undefined, "active");
     FishServer.local = new FishServer("local", "127.0.0.1", "6567", ["l", "lc"], "developer");
     return FishServer;
 }());
@@ -292,6 +295,7 @@ exports.FColor = (function (data) {
     tip: "[gold]",
     member: "[pink]",
     achievement: "[lime]",
+    mapStats: "[#CCFFCC]",
 });
 /** Tips that are shown to players randomly. */
 exports.tips = {

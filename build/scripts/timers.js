@@ -180,6 +180,30 @@ function initializeTimers() {
             Call.setRule("backgroundOffsetX", String(Vars.state.rules.backgroundOffsetX));
         }
     });
+    Timer.schedule(function () {
+        Vars.dataDirectory.child('geolocation-data').child("".concat(Date.now(), ".json")).writeString(JSON.stringify(globals_1.fishState.geolocationData));
+    }, 10, 1200);
+    if (config_1.Gamemode.name() == "pvp")
+        Timer.schedule(function () {
+            if (Vars.state.isPaused() && Vars.state.tick > 60 * 60 * 6) {
+                if (!Groups.player.isEmpty()) {
+                    Vars.state.teams.updateTeamStats();
+                    //More than 6 minutes, paused with players online
+                    Vars.state.teams.getActive().each(function (t) { return t.players.isEmpty(); }, function (t) {
+                        var timer = --globals_1.fishState.autoloseCountdown[t.team.id];
+                        if (timer <= 0) {
+                            t.cores.copy().each(function (c) { return c.kill(); });
+                        }
+                        else {
+                            Call.sendMessage("Team ".concat(t.team.coloredName(), " will lose automatically in ").concat(timer * 2, " seconds"));
+                        }
+                    });
+                }
+            }
+            else {
+                globals_1.fishState.autoloseCountdown.fill(10);
+            }
+        }, 20, 2);
 }
 Timer.schedule(function () {
     (0, files_1.updateMaps)()

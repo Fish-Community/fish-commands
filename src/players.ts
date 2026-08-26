@@ -127,12 +127,14 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	recentPlayers = new Set<FishPlayer>();
 	isImpersonator = false;
 	joinedAlready = false;
+	sneakybanned = false;
 	//#endregion
 	
 	//#region Stored data
 	uuid: string;
 	/** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
 	name: string = "Unnamed player [ERROR}";
+	overrideName: string | null = null;
 	unmuteTime: number = -1;
 	unmarkTime: number = -1;
 	rank: Rank = Rank.player;
@@ -236,9 +238,12 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		(p, str) => p.uuid === str,
 		(p, str) => p.player?.id.toString() === str,
 		(p, str) => p.name.toLowerCase() === str.toLowerCase(),
+		(p, str) => p.overrideName?.toLowerCase() === str.toLowerCase(),
 		// (p, str) => p.cleanedName === str,
 		(p, str) => p.cleanedName.toLowerCase() === str.toLowerCase(),
 		(p, str) => p.name.toLowerCase().includes(str.toLowerCase()),
+		// eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+		(p, str) => p.overrideName != null && p.overrideName.toLowerCase().includes(str.toLowerCase()),
 		// (p, str) => p.cleanedName.includes(str),
 		(p, str) => p.cleanedName.toLowerCase().includes(str.toLowerCase()),
 	);
@@ -353,6 +358,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		this.changedTeam = false;
 		this.ipDetectedVpn = false;
 		this.isImpersonator = false;
+		this.sneakybanned = false;
 		this.tstats.blocksBroken = 0;
 		if(this.tstats.lastMapPlayedTime != fishState.lastMapStartTime){
 			this.tstats.blockInteractionsThisMap = 0;
@@ -362,6 +368,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	}
 	updateData(data: Partial<FishPlayerData>){
 		if(data.name != undefined) this.name = data.name;
+		if(data.overrideName !== undefined) this.overrideName = data.overrideName;
 		if(data.unmuteTime != undefined) this.unmuteTime = data.unmuteTime;
 		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
 		if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
@@ -388,9 +395,9 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		return data != null;
 	}
 	getData():UploadedFishPlayerData {
-		const { uuid, name, unmuteTime, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix } = this;
+		const { uuid, name, overrideName, unmuteTime, unmarkTime, rank, flags, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix } = this;
 		return {
-			uuid, name, unmuteTime, unmarkTime, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix,
+			uuid, name, overrideName, unmuteTime, unmarkTime, highlight, rainbow, history, usid, chatStrictness, language, lastJoined, firstJoined, stats, showRankPrefix,
 			rank: rank.name,
 			flags: [...flags.values()].map(f => f.name),
 			achievements: JsonIO.write(Reflect.get(this.achievements, "bits"))
@@ -427,7 +434,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		}, () => {
 			this.setUnmarkTimer(duration);
 			if(this.connected() && notify){
-				this.stopUnit();
+				if(!this.hasPerm("play")) this.stopUnit();
 				this.sendMessage(
 					message
 					? `[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]${message}[]`
@@ -614,6 +621,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		if(this.recentLeaves.length > 10) this.recentLeaves.pop();
 		void api.setFishPlayerData(fishP.getData(), 1, true);
 		fishP.dataSynced = false;
+		fishP.sneakybanned = false;
 
 		const currentRun = PartialMapRun.current?.startTime;
 		if(currentRun) Core.app.post(() => {
@@ -643,6 +651,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 					if(fishPlayer.team() == winningTeam) fishPlayer.updateStats(stats => stats.gamesWon ++);
 				}
 			}
+			fishState.teamAssignerMode = "normal";
 			fishPlayer.changedTeam = false;
 			fishPlayer.tstats.wavesSurvived = 0;
 			fishPlayer.tstats.blockInteractionsThisMap = 0;
@@ -1186,7 +1195,7 @@ We apologize for the inconvenience.`
 	}
 	showRules<T extends string>(options: T[] = []){
 		return Menu.menu(
-			"Rules for [#0000ff] >|||> FISH [white] servers [white]",
+			"Rules for [blue] >|||> FISH [white] servers [white]",
 			rules.join("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].",
 			["[green]I agree to abide by these rules", ...options],
 			this,

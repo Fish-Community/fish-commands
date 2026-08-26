@@ -62,7 +62,7 @@ export const bannedWords: {
 		["porn", "maporn"],
 		"futa"+"nari", /\bfuta\b/,
 		"ur gay", "your gay", "youre gay", "you're gay",
-		"gooning", "gooner", "dildo", "loli", /\banal\b/, "cunny"
+		"gooning", "gooner", "dildo", /\bloli/, /\banal\b/, "cunny"
 	]),
 	/** Strict: banned in names and for players with a chat strictness level of 'strict'. */
 	strict: processBannedWordList([
@@ -183,6 +183,8 @@ export class FishServer {
 		public aliases:string[],
 		/** If set, this permission is required to switch to or get information about this server. */
 		public requiredPerm?:PermType,
+		/** If set, this permission is required to see switch messages about this server. */
+		public messagePerm?:PermType,
 	){
 		FishServer.all.push(this);
 	}
@@ -221,7 +223,9 @@ export class FishServer {
 	static testing = new FishServer(
 		"testing",
 		"162.248.101.52", "6567",
-		["test", "testsrv", "t", "testingserver", "testserver"]
+		["test", "testsrv", "t", "testingserver", "testserver"],
+		undefined,
+		"active",
 	);
 	static local = new FishServer(
 		"local",
@@ -349,6 +353,7 @@ export const FColor = (
 	tip: "[gold]",
 	member: "[pink]",
 	achievement: "[lime]",
+	mapStats: "[#CCFFCC]",
 });
 /** Tips that are shown to players randomly. */
 export const tips = {

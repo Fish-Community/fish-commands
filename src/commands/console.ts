@@ -402,7 +402,7 @@ export const commands = consoleCommandList({
 		description: `Sets the USID of a player.`,
 		handler({args, outputSuccess, outputFail, f}){
 			if(args.usid.length !== 12) fail(`Invalid USID: should be 12 characters ending with an equal sign`);
-			const player = FishPlayer.lastAuthKicked ?? fail(`No authorization failures have occurred since the last restart.`);
+			const player = FishPlayer.getById(args.uuid) ?? fail(`Unknown UUID ${args.uuid}`);
 			const oldusid = player.usid;
 			player.usid = args.usid;
 			api.setFishPlayerData(player.getData(), 1, true).then(() => {
@@ -624,7 +624,7 @@ ${[
 
 ${colorNumber(Groups.player.size(), n => n > 0 ? "&c" : "&lr", "server")} players online, ${colorNumber(numStaff, n => n > 0 ? "&c" : "&lr", "server")} staff members.
 ${FishPlayer.mapPlayers(p =>
-	`\t${p.rank.shortPrefix} &c${p.uuid}&fr &c${p.name}&fr`
+	`\t${p.rank.shortPrefix} &c${p.uuid}&fr &c${escapeStringColorsServer(p.overrideName ?? p.cleanedName)}&fr`
 ).join("\n") || "&lrNo players connected.&fr"}
 `
 			);

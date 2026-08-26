@@ -117,11 +117,7 @@ exports.Antibot = {
     whackFlaggedPlayers: function () {
         players_1.FishPlayer.forEachPlayer(function (p) {
             if (p.ipDetectedVpn && p.suspicionLevel() == 3) {
-                Vars.netServer.admins.blacklistDos(p.ip());
-                try {
-                    Vars.netServer.admins.blacklistDos(p.con().connection.getRemoteAddressUDP().getAddress().getHostAddress());
-                }
-                catch (_a) { }
+                p.con().blacklist();
                 Log.info("&yAntibot killed connection ".concat(p.ip(), " due to flagged while under attack"));
                 p.player.kick(Packets.KickReason.banned, 10000000);
             }
@@ -306,7 +302,7 @@ function checkChatMessage(fishP) {
         if (susLevel == 3 || Date.now() > fishP.kickForSpamAt) {
             fishP.kick("You have been kicked for spamming.", 30000);
             if (exports.Antibot.antiBotMode())
-                Vars.netServer.admins.blacklistDos(fishP.ip());
+                fishP.con().blacklist();
         }
         else {
             fishP.sendMessage("[scarlet]You are sending chat messages too quickly.");
@@ -512,7 +508,21 @@ exports.Heuristics = {
     chatSpamSlow: new Ratekeeper(),
     activateHeuristics: function (fishP) {
         var _this = this;
-        var _a, _b;
+        var _a;
+        if (config_1.sneakybannedNames.includes((_a = fishP.originalName) !== null && _a !== void 0 ? _a : fishP.player.name)) {
+            //exact match
+            var time = (0, funcs_1.random)(7, 22);
+            Timer.schedule(function () {
+                fishP.sneakybanned = true;
+                fishP.frozen = true;
+            }, time - 5);
+            Timer.schedule(function () {
+                fishP.frozen = false;
+                if (fishP.connected())
+                    fishP.con().connection.close(DcReason.error);
+                players_1.FishPlayer.messageTrusted("[orange]Player ".concat(fishP.prefixedName, "[orange] was softbanned because their name matched a list of known griefers."));
+            }, time);
+        }
         if (config_1.Gamemode.hexed() || config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv())
             return;
         //Blocks broken check
@@ -560,20 +570,6 @@ exports.Heuristics = {
                     }
                 }
             }, 1, 2, 10);
-        }
-        Log.debug((_a = fishP.originalName) !== null && _a !== void 0 ? _a : fishP.player.name);
-        if (config_1.sneakybannedNames.includes((_b = fishP.originalName) !== null && _b !== void 0 ? _b : fishP.player.name)) {
-            //exact match
-            var time = (0, funcs_1.random)(8, 25);
-            Timer.schedule(function () {
-                fishP.frozen = true;
-            }, time - 6);
-            Timer.schedule(function () {
-                fishP.frozen = false;
-                if (fishP.connected())
-                    fishP.con().close(DcReason.error);
-                players_1.FishPlayer.messageTrusted("[orange]Player ".concat(fishP.prefixedName, "[orange] was softbanned because their name matched a list of known griefers."));
-            }, time);
         }
     }
 };

@@ -23,10 +23,8 @@ export const commands = commandList({
 		args: ['player:playerOn', 'message:string?'],
 		description: 'Sends the player a warning (menu popup).',
 		perm: Perm.warn,
-		requirements: [Req.cooldown(3000)],
+		requirements: [Req.cooldown(3000), Req.troll("player")],
 		handler({args, sender, outputSuccess, f}){
-			if(args.player.hasPerm("blockTrolling")) fail(f`Player ${args.player} is insufficiently trollable.`);
-
 			const message = args.message ?? "You have been warned. I suggest you stop what you're doing";
 			void Menu.menu('Warning', message, ["[green]Accept"], args.player, { onCancel: 'null' })
 				.then(() => outputSuccess('Player acknowledged the warning.'));
@@ -168,7 +166,7 @@ export const commands = commandList({
 					await args.player.stop(sender, time, message);
 					logAction('stopped', sender, args.player, message, time);
 					//TODO outputGlobal()
-					Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${args.message ? ` with reason: [white]${args.message}[]` : ""}.`);
+					Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${message ? ` with reason: [white]${message}[]` : ""}.`);
 				} finally {
 					args.player.frozen = false;
 				}
@@ -492,7 +490,7 @@ export const commands = commandList({
 		args: ["player:playerOn"],
 		description: "Kills a player's unit.",
 		perm: Perm.admin,
-		requirements: [Req.moderate("player", true)],
+		requirements: [Req.moderate("player", true), Req.troll("player")],
 		handler({args, outputFail, outputSuccess, f}){
 
 			const unit = args.player.unit();
@@ -575,7 +573,7 @@ export const commands = commandList({
 		args: ["player:playerOn"],
 		description: "Forces a player to respawn.",
 		perm: Perm.mod,
-		requirements: [Req.moderate("player", true, "mod", true)],
+		requirements: [Req.moderate("player", true, "mod", true), Req.troll("player")],
 		handler({args, outputSuccess, f}){
 			args.player.forceRespawn();
 			outputSuccess(f`Respawned player ${args.player}.`);
@@ -586,7 +584,7 @@ export const commands = commandList({
 		args: ["target:playerOn", "duration:time?"],
 		description: "Forces a player out of the unit they are controlling, and blocks them from possessing units for a specified duration.",
 		perm: Perm.mod,
-		requirements: [Req.moderate("target", false, "mod", false)],
+		requirements: [Req.moderate("target", false, "mod", false), Req.troll("target")],
 		handler({args: { target, duration }, sender, outputSuccess, f}){
 			if(Date.now() > 1000 + target.blockedFromPossessingUnitsUntil) duration ??= Duration.minutes(1);
 			else duration ??= 0;
@@ -609,7 +607,7 @@ export const commands = commandList({
 		args: ["target:playerOn", "duration:time?"],
 		description: "Blocks a player from commanding units for a specified duration.",
 		perm: Perm.mod,
-		requirements: [Req.moderate("target", false, "mod", false)],
+		requirements: [Req.moderate("target", false, "mod", false), Req.troll("target")],
 		handler({args: { target, duration }, sender, outputSuccess, f}){
 			if(Date.now() > 1000 + target.blockedFromCommandingUnitsUntil) duration ??= Duration.minutes(1);
 			else duration ??= 0;
@@ -632,7 +630,7 @@ export const commands = commandList({
 		args: ["target:playerOn", "newcontroller:playerOn?"],
 		description: "Steals the unit of a player, putting you in their unit and forcing them to respawn.",
 		perm: Perm.mod,
-		requirements: [Req.moderate("target", true, "mod", true), Req.moderate("newcontroller", true, "mod", true)],
+		requirements: [Req.moderate("target", true, "mod", true), Req.moderate("newcontroller", true, "mod", true), Req.troll("target"), Req.troll("newcontroller")],
 		handler({sender, args:{target, newcontroller = sender}, outputSuccess, f}){
 			const unit = target.unit() ?? fail(f`Targeted player ${target} is not in a unit.`);
 			if(target.team() !== newcontroller.team()){
@@ -671,8 +669,9 @@ export const commands = commandList({
 			const names = args.showColors
 				? info.names.map(escapeStringColorsClient).toString(", ")
 				: [...new Set(info.names.map(n => Strings.stripColors(n)).toArray())].join(", ");
+			const name = args.target.overrideName && (args.target.showRankPrefix || sender.hasPerm("bypassVanish")) ? args.target.overrideName : args.target;
 			output(f`\
-[accent]Info for player ${args.target} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player?.id.toString() ?? 'unknown'})
+[accent]Info for player ${name} [gray](${escapeStringColorsClient(copy(args.target.name))}) (#${args.target.player?.id.toString() ?? 'unknown'})
 	[accent]Rank: ${args.target.rank}
 	[accent]Role flags: ${copy(Array.from(args.target.flags).map(f => f.coloredName()).join(" "))}
 	[accent]Stopped: ${f.boolBad(!args.target.hasPerm("play"))}
@@ -681,6 +680,7 @@ export const commands = commandList({
 	[accent]autoflagged: ${f.boolBad(args.target.autoflagged)}
 	[accent]VPN detected: ${f.boolBad(args.target.ipDetectedVpn)}
 	[accent]times joined / kicked: ${info.timesJoined}/${info.timesKicked}
+	[accent]Last joined: ${args.target.lastJoined < 1 ? "unknown" : formatTimeRelative(args.target.lastJoined)}
 	[accent]First joined: ${args.target.firstJoined < 1 ? "unknown" : formatTimeRelative(args.target.firstJoined)}
 	[accent]Names used: [[${names}]`
 			);
@@ -885,8 +885,8 @@ ${getAntiBotInfo("client")}`
 		args: ["player:player", "value:string"],
 		description: "Sets chat strictness for a player.",
 		perm: Perm.mod,
+		requirements: [Req.moderate("player", false, "mod", true)],
 		handler({args:{player, value}, sender, outputSuccess, f}){
-			if(!sender.canModerate(player, true)) fail(`You do not have permission to set the chat strictness level of this player.`);
 			if(!(value == "chat" || value == "strict")) fail(`Invalid chat strictness level: valid levels are "chat", "strict"`);
 			player.chatStrictness = value;
 			logAction(`set chat strictness to ${value} for`, sender, player);
@@ -1039,9 +1039,8 @@ ${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 		perm: Perm.admin.exceptModes({
 			testsrv: Perm.trusted,
 		}),
+		requirements: [Req.troll("player")],
 		handler({args, sender, f, outputSuccess}){
-			if(args.player?.hasPerm("blockTrolling"))
-				fail(f`Player ${args.player} is insufficiently trollable.`);
 			if(args.player && !sender.canModerate(args.player, false))
 				fail(`You do not have permission to perform moderation actions on this player.`);
 			const target = args.player ?? sender;
@@ -1137,7 +1136,10 @@ Wave: ${r.wave}`
 			});
 			await Menu.confirmDangerous(sender, `Are you sure you want to delete this map run? This action is irreversible.`);
 			if(initialLength != fmap.runs.length) fail(`Someone else deleted a run, please try again.`);
-			const deleted = fmap.runs.splice(index, 1)[0];
+			const target = runs[index];
+			const newIndex = fmap.runs.indexOf(target);
+			if(newIndex == -1) crash(`could not find the run`);
+			const deleted = fmap.runs.splice(newIndex, 1)[0];
 			outputSuccess(`Deleted run (${formatTimestamp(deleted.startTime)}) with duration ${formatTime(deleted.duration())}.`);
 		}
 	},
@@ -1145,9 +1147,8 @@ Wave: ${r.wave}`
 		args: ["target:player"],
 		description: "Crashes the target player's Mindustry client.",
 		perm: Perm.admin,
-		requirements: [Req.moderate("target", false, "admin")],
+		requirements: [Req.moderate("target", false, "admin"), Req.troll("target")],
 		handler({args: {target}, f, output, outputSuccess}){
-			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
 			if(crashClient(target.player!)){
 				outputSuccess(f`Crashed client of ${target}.`);
 			} else {
@@ -1159,9 +1160,8 @@ Wave: ${r.wave}`
 		args: ["target:playerOn", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
 		description: "Sends the target player to a parallel universe.",
 		perm: Perm.admin,
-		requirements: [Req.moderate("target", false, "admin")],
+		requirements: [Req.moderate("target", false, "admin"), Req.troll("target")],
 		async handler({args: {target, ...world}, f, outputSuccess}){
-			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
 			outputSuccess(`Aligning QPUs...`);
 			await syncManual(target.player, undefined, world);
 			outputSuccess(f`Sent ${target} to a parallel universe.`);
@@ -1171,10 +1171,9 @@ Wave: ${r.wave}`
 		args: ["target:playerOn"],
 		description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
 		perm: Perm.admin,
-		requirements: [Req.moderate("target", false, "admin")],
+		requirements: [Req.moderate("target", false, "admin"), Req.troll("target")],
 		async handler({args: {target}, f, output, outputSuccess, player}){
 			player(target);
-			if(target.hasPerm("blockTrolling")) fail(f`Player ${target} is insufficiently trollable.`);
 			output(`Sending menus.`);
 			for(let i = 0; i < 10; i ++){
 				for(let j = 0; j < 100; j ++){

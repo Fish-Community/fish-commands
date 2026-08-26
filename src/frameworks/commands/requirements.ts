@@ -4,6 +4,7 @@ This file contains the requirements system, which is part of the commands framew
 */
 
 import { Gamemode, GamemodeName } from "/config";
+import { FFunction } from "/frameworks/commands/formatting";
 import { fail } from "/frameworks/commands/errors";
 import { PermType } from "/frameworks/commands/perm";
 import type { FishCommandHandlerData } from "/frameworks/commands/types";
@@ -33,6 +34,10 @@ export const Req = {
 	teamAlive: ({sender}:{sender:FishPlayer<true>}) =>
 		sender.team().isAlive()
 			|| fail(Math.random() > 0.9 ? "You are already dead." : `Your team is dead.`),
+	troll: <T extends string>(argName: T) =>
+		({args, sender, f}:{args:Partial<Record<T, FishPlayer>>, sender:FishPlayer, f:FFunction}) =>
+			args[argName] == undefined || args[argName] == sender || !args[argName].hasPerm("blockTrolling")
+				|| fail(f`Player ${args[argName]} is insufficiently trollable.`),
 	unitExists: (message = "You must be in a unit to use this command.") =>
 		({sender}:{sender:FishPlayer}) =>
 			(sender.connected() && sender.unit()?.added && !sender.unit()!.dead)

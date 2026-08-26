@@ -651,7 +651,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var args = _a.args, outputSuccess = _a.outputSuccess, outputFail = _a.outputFail, f = _a.f;
             if (args.usid.length !== 12)
                 (0, commands_1.fail)("Invalid USID: should be 12 characters ending with an equal sign");
-            var player = (_b = players_1.FishPlayer.lastAuthKicked) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("No authorization failures have occurred since the last restart.");
+            var player = (_b = players_1.FishPlayer.getById(args.uuid)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Unknown UUID ".concat(args.uuid));
             var oldusid = player.usid;
             player.usid = args.usid;
             api.setFishPlayerData(player.getData(), 1, true).then(function () {
@@ -909,9 +909,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 globals_1.fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
                 globals_1.fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",
                 automod_1.Antibot.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + (0, utils_1.getAntiBotInfo)("server") : "",
-            ].filter(function (l) { return l.length > 0; }).join("\n"), "\n").concat((0, utils_1.colorNumber)(Groups.player.size(), function (n) { return n > 0 ? "&c" : "&lr"; }, "server"), " players online, ").concat((0, utils_1.colorNumber)(numStaff, function (n) { return n > 0 ? "&c" : "&lr"; }, "server"), " staff members.\n").concat(players_1.FishPlayer.mapPlayers(function (p) {
-                return "\t".concat(p.rank.shortPrefix, " &c").concat(p.uuid, "&fr &c").concat(p.name, "&fr");
-            }).join("\n") || "&lrNo players connected.&fr", "\n"));
+            ].filter(function (l) { return l.length > 0; }).join("\n"), "\n").concat((0, utils_1.colorNumber)(Groups.player.size(), function (n) { return n > 0 ? "&c" : "&lr"; }, "server"), " players online, ").concat((0, utils_1.colorNumber)(numStaff, function (n) { return n > 0 ? "&c" : "&lr"; }, "server"), " staff members.\n").concat(players_1.FishPlayer.mapPlayers(function (p) { var _a; return "\t".concat(p.rank.shortPrefix, " &c").concat(p.uuid, "&fr &c").concat((0, funcs_1.escapeStringColorsServer)((_a = p.overrideName) !== null && _a !== void 0 ? _a : p.cleanedName), "&fr"); }).join("\n") || "&lrNo players connected.&fr", "\n"));
         }
     },
     tmux: {

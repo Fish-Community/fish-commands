@@ -75,11 +75,7 @@ Events.on(EventType.ConnectionEvent, function (e) {
         });
     }
     else if (api.isVpnCached(e.connection.address) && automod_1.Antibot.shouldWhackFlaggedPlayers()) {
-        Vars.netServer.admins.blacklistDos(e.connection.address);
-        try {
-            Vars.netServer.admins.blacklistDos(e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
-        }
-        catch (_a) { }
+        e.connection.blacklist();
         e.connection.kick("You have been DOSblacklisted. Please join our discord for help: " + config_1.text.discordURL + "\nYou won't see this message again.");
         Log.info("&yAntibot killed connection ".concat(e.connection.address, " due to flagged while under attack"));
     }
@@ -107,14 +103,9 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
     var nameBlacklisted = (_b = (_a = globals_1.fishState.antibotData.nameBlacklist) === null || _a === void 0 ? void 0 : _a[1]) === null || _b === void 0 ? void 0 : _b.matcher(e.packet.name).matches();
     var nameGraylisted = (_d = (_c = globals_1.fishState.antibotData.nameGraylist) === null || _c === void 0 ? void 0 : _c[1]) === null || _d === void 0 ? void 0 : _d.matcher(e.packet.name).matches();
     if (newPlayer && (nameBlacklisted && automod_1.Antibot.antiBotMode() || nameGraylisted && automod_1.Antibot.shouldKickNewPlayers())) {
-        Vars.netServer.admins.blacklistDos(e.connection.address);
+        e.connection.blacklist();
         e.connection.kicked = true;
-        var udpAddress = void 0;
-        try {
-            Vars.netServer.admins.blacklistDos(udpAddress = e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
-        }
-        catch (_e) { }
-        Log.info("Blacklisting ip @ with name @ because it matched the configured regex.", udpAddress ? e.connection.address + "/" + udpAddress : e.connection.address, e.packet.name);
+        Log.info("Blacklisting ip @ with name @ because it matched the configured regex.", e.connection.address, e.packet.name);
         return;
     }
     if (newPlayer && (nameBlacklisted || nameGraylisted && automod_1.Antibot.antiBotMode())) {
@@ -127,7 +118,7 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
     if ((underAttack && e.packet.mods.size > 2) ||
         (underAttack && longModName) ||
         (veryLongModName && (underAttack || newPlayer))) {
-        Vars.netServer.admins.blacklistDos(e.connection.address);
+        e.connection.blacklist();
         e.connection.kicked = true;
         automod_1.Antibot.triggerAntibot(60000, (veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"), "automatic", false);
         return;
@@ -143,20 +134,20 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
             globals_1.joinDemographics2.put(region, e.packet.uuid);
         }
         else if (cachedRegion2 != e.packet.uuid) {
-            Vars.netServer.admins.blacklistDos(e.connection.address);
+            e.connection.blacklist();
             e.connection.kicked = true;
             automod_1.Antibot.triggerAntibot(480000, "suspicious UUIDs", "automatic", false, true);
         }
     }
     var suspiciousModName = e.packet.mods.contains(function (str) { return str.includes('\x1B'); });
     if (suspiciousModName || e.packet.name.includes('\x1B')) {
-        Vars.netServer.admins.blacklistDos(e.connection.address);
+        e.connection.blacklist();
         e.connection.kicked = true;
         automod_1.Antibot.triggerAntibot(5000, "illegal characters in name or mods", "automatic", false);
         return;
     }
     if (globals_1.ipJoins.get(e.connection.address) >= ((underAttack || veryLongModName) ? (newPlayer ? 4 : 5) : (newPlayer || longModName) ? 7 : 15)) {
-        Vars.netServer.admins.blacklistDos(e.connection.address);
+        e.connection.blacklist();
         e.connection.kicked = true;
         automod_1.Antibot.triggerAntibot(5000, "too many connections", "automatic", false);
         return;
@@ -209,7 +200,8 @@ Events.on(EventType.ServerLoadEvent, function () {
         var fishP = players_1.FishPlayer.get(player);
         //prevent stopped players from doing anything
         if (!fishP.hasPerm("play")) {
-            action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
+            if (!fishP.sneakybanned)
+                action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
             return false;
         }
         else {
@@ -301,7 +293,10 @@ Events.on(EventType.ServerLoadEvent, function () {
                 //Only if the team is valid
                 if (data.team == preferredTeam_1)
                     return -1;
+                if (data.team == globals_1.fishState.teamAssignerMode)
+                    return 999;
                 var count = otherPlayers_1.filter(function (p) { return p.team() == data.team; }).length;
+                Log.debug("team @ has @ players", data.team, count);
                 return count + Mathf.random(-0.1, 0.1);
             }));
             return re == null ? Vars.state.rules.defaultTeam : re.team;
@@ -321,9 +316,27 @@ Events.on(EventType.PayloadDropEvent, utils_1.addToTileHistory);
 Events.on(EventType.UnitDestroyEvent, utils_1.addToTileHistory);
 Events.on(EventType.BlockDestroyEvent, utils_1.addToTileHistory);
 Events.on(EventType.UnitControlEvent, utils_1.addToTileHistory);
+Events.on(EventType.UnitControlEvent, function (e) {
+    var e_1, _a;
+    if (e.unit) {
+        try {
+            for (var _b = __values(e.unit.mounts), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var mount = _c.value;
+                mount.target = null;
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    }
+});
 Events.on(EventType.TapEvent, commands_1.handleTapEvent);
 Events.on(EventType.GameOverEvent, function (e) {
-    var e_1, _a;
+    var e_2, _a;
     try {
         for (var _b = __values(Object.keys(globals_1.tileHistory)), _c = _b.next(); !_c.done; _c = _b.next()) {
             var key = _c.value;
@@ -332,12 +345,12 @@ Events.on(EventType.GameOverEvent, function (e) {
             delete globals_1.tileHistory[key];
         }
     }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
     finally {
         try {
             if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
         }
-        finally { if (e_1) throw e_1.error; }
+        finally { if (e_2) throw e_2.error; }
     }
     if (globals_1.fishState.restartQueued) {
         //restart
@@ -367,10 +380,11 @@ Events.on(EventType.AdminRequestEvent, function (e) {
             ], {
                 onCancel: "null",
             }).then(function (d) {
+                var _a;
                 if (!d)
                     return;
                 Vars.logic.skipWave();
-                Log.info("&lc@ &fi&lk[&lb@&fi&lk]&fb has skipped a wave.", e.player.plainName(), fishP_2.uuid);
+                Log.info("&lc@ &fi&lk[&lb@&fi&lk]&fb has skipped a wave.", (_a = fishP_2.overrideName) !== null && _a !== void 0 ? _a : fishP_2.cleanedName, fishP_2.uuid);
                 if (d == "suppress") {
                     fishP_2.sendMessage("Wave skipped. You won't be asked again for the next 1 minute.");
                     fishP_2.autoConfirmSkipWaveUntil = Date.now() + funcs_1.Duration.minutes(1);

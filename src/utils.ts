@@ -40,7 +40,7 @@ export function formatTime(time:number){
 	return [
 		months && `${months} month${months != 1 ? "s" : ""}`,
 		days && `${days} day${days != 1 ? "s" : ""}`,
-		hours && !days && `${hours} hour${hours != 1 ? "s" : ""}`,
+		hours && !months && `${hours} hour${hours != 1 ? "s" : ""}`,
 		minutes && !(days || months) && `${minutes} minute${minutes != 1 ? "s" : ""}`,
 		(seconds || time < 1000) && !(days || months || hours) && `${seconds} second${seconds != 1 ? "s" : ""}`,
 	].filter(Boolean).join(", ");
@@ -61,8 +61,8 @@ export function formatTimeShort(time:number){
 		months && `${months}mo`,
 		days && `${days}d`,
 		hours && `${hours}h`,
-		minutes && `${minutes}m`,
-		(seconds || time < 1000) && `${seconds}s`,
+		minutes && !(months) && `${minutes}m`,
+		(seconds || time < 1000) && !(months || days) && `${seconds}s`,
 	].filter(Boolean).join(" ");
 }
 
@@ -269,9 +269,9 @@ export function logAction(action:string, by?:FishPlayer | string, to?:FishPlayer
 	}
 	if(to){ //overload 3
 		let name:string, uuid:string, ip:string;
-		const actor:string = typeof by === "string" ? by : escapeTextDiscord(Strings.stripColors(by.name));
+		const actor:string = typeof by === "string" ? by : escapeTextDiscord(Strings.stripColors(by.overrideName ?? by.name));
 		if(to instanceof FishPlayer){
-			name = escapeTextDiscord(to.name);
+			name = escapeTextDiscord(to.overrideName ?? to.name);
 			uuid = to.uuid;
 			ip = to.ip();
 		} else if(typeof to == "string"){
@@ -854,8 +854,8 @@ export function fishCommandsRootDirPath():Path {
 	return fishCommandsRootDirPath;
 }
 
-/** Fails if "mode" is invalid. */
-export function applyEffectMode(mode:string, unit:Unit, ticks:number){
+/** Fails if "modeString" is invalid. */
+export function applyEffectMode(modeString:string, unit:Unit, ticks:number){
 	const modes = {
 		fast2: [StatusEffects.fast, StatusEffects.overdrive, StatusEffects.overclock],
 		health: [StatusEffects.boss, StatusEffects.shielded],
@@ -913,14 +913,16 @@ export function applyEffectMode(mode:string, unit:Unit, ticks:number){
 			unit.shield = 1e15;
 		}
 	} satisfies Record<string, StatusEffect[] | ((u:Unit) => void)>;
-	const effects = match(mode, modes, null) ??
-		(mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
-		fail(`Invalid mode. Supported modes: ${Object.keys(modes).join(", ")}`));
-	if(typeof effects === "function"){
-		effects(unit);
-	} else {
-		for(const effect of effects){
-			unit.apply(effect, ticks);
+	for(const mode of modeString.split(/[ ,.|&]/)){
+		const effects = match(mode, modes, null) ??
+			(mode in StatusEffects && StatusEffects[mode] instanceof StatusEffect ? [StatusEffects[mode]] :
+			fail(`Invalid mode. Supported modes: ${Object.keys(modes).join(", ")}`));
+		if(typeof effects === "function"){
+			effects(unit);
+		} else {
+			for(const effect of effects){
+				unit.apply(effect, ticks);
+			}
 		}
 	}
 }

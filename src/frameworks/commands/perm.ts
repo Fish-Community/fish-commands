@@ -16,13 +16,14 @@ export class Perm {
 	static perms:Partial<Record<string, Perm>> = {};
 
 	static none = new Perm("none", fishP => true, "player", "[sky]");
+	static active = Perm.fromRank(Rank.active);
 	static trusted = Perm.fromRank(Rank.trusted);
 	static mod = Perm.fromRank(Rank.mod);
 	static admin = Perm.fromRank(Rank.admin);
 	static manager = Perm.fromRank(Rank.manager);
 	static member = new Perm("member", fishP => fishP.hasFlag("member"), "member", "[pink]", `You must have a ${FColor.member`Fish`} ${/* this is necessary to bypass the foos adblock */ FColor.member`Membership`} to use this command. Get a Fish Membership at[sky] ${text.membershipURL} []`);
 	static chat = new Perm("chat", fishP => (!fishP.muted() && !fishP.autoflagged) || fishP.ranksAtLeast("mod"), "player");
-	static bypassChatFilter = new Perm("bypassChatFilter", "admin");
+	static bypassChatFilter = new Perm("bypassChatFilter", "mod");
 	static seeMutedMessages = new Perm("seeMutedMessages", fishP => fishP.muted() || fishP.autoflagged || fishP.ranksAtLeast("mod"), "mod");
 	static play = new Perm("play", fishP => !fishP.stelled() || fishP.ranksAtLeast("mod"), "player");
 	static seeErrorMessages = new Perm("seeErrorMessages", "mod");
@@ -38,6 +39,7 @@ export class Perm {
 	static developer = new Perm("developer", fishP => fishP.hasFlag("developer"), "trusted");
 	static bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
 	static bypassVotekick = new Perm("bypassVotekick", "mod");
+	static bypassVanish = new Perm("bypassVanish", "trusted");
 	static warn = new Perm("warn", "mod");
 	static vanish = new Perm("vanish", "trusted");
 	static changeTeam = new Perm("changeTeam", "admin").exceptModes({

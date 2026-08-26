@@ -25,6 +25,10 @@ exports.fishState = {
     },
     lastSuccessfulMapUpdate: Date.now(),
     lastMapStartTime: 0,
+    /** If a team is set here, no players will be sent to that team automatically. */
+    teamAssignerMode: "normal",
+    geolocationData: [],
+    autoloseCountdown: Array(Team.all.length).fill(10), //20 seconds
 };
 exports.fishPlugin = {
     directory: null,

@@ -31,10 +31,7 @@ Events.on(EventType.ConnectionEvent, (e) => {
 			}
 		});
 	} else if(api.isVpnCached(e.connection.address) && Antibot.shouldWhackFlaggedPlayers()){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
-		try {
-			Vars.netServer.admins.blacklistDos(e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
-		} catch {}
+		e.connection.blacklist();
 		e.connection.kick("You have been DOSblacklisted. Please join our discord for help: " + text.discordURL + "\nYou won't see this message again.");
 		Log.info(`&yAntibot killed connection ${e.connection.address} due to flagged while under attack`);
 	}
@@ -58,13 +55,9 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	const nameBlacklisted = fishState.antibotData.nameBlacklist?.[1]?.matcher(e.packet.name).matches();
 	const nameGraylisted = fishState.antibotData.nameGraylist?.[1]?.matcher(e.packet.name).matches();
 	if(newPlayer && (nameBlacklisted && Antibot.antiBotMode() || nameGraylisted && Antibot.shouldKickNewPlayers())){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.blacklist();
 		e.connection.kicked = true;
-		let udpAddress;
-		try {
-			Vars.netServer.admins.blacklistDos(udpAddress = e.connection.connection.getRemoteAddressUDP().getAddress().getHostAddress());
-		} catch {}
-		Log.info(`Blacklisting ip @ with name @ because it matched the configured regex.`, udpAddress ? e.connection.address + "/" + udpAddress : e.connection.address, e.packet.name);
+		Log.info(`Blacklisting ip @ with name @ because it matched the configured regex.`, e.connection.address, e.packet.name);
 		return;
 	}
 	if(newPlayer && (nameBlacklisted || nameGraylisted && Antibot.antiBotMode())){
@@ -79,7 +72,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		(underAttack && longModName) ||
 		(veryLongModName && (underAttack || newPlayer))
 	){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.blacklist();
 		e.connection.kicked = true;
 		Antibot.triggerAntibot(
 			60_000,
@@ -98,7 +91,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		if(!cachedRegion2){
 			joinDemographics2.put(region, e.packet.uuid);
 		} else if(cachedRegion2 != e.packet.uuid){
-			Vars.netServer.admins.blacklistDos(e.connection.address);
+			e.connection.blacklist();
 			e.connection.kicked = true;
 			Antibot.triggerAntibot(
 				480_000,
@@ -111,7 +104,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	}
 	const suspiciousModName = e.packet.mods.contains((str:string) => str.includes('\x1B'));
 	if(suspiciousModName || e.packet.name.includes('\x1B')){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.blacklist();
 		e.connection.kicked = true;
 		Antibot.triggerAntibot(
 			5_000,
@@ -122,7 +115,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		return;
 	}
 	if(ipJoins.get(e.connection.address) >= ( (underAttack || veryLongModName) ? (newPlayer ? 4 : 5) : (newPlayer || longModName) ? 7 : 15 )){
-		Vars.netServer.admins.blacklistDos(e.connection.address);
+		e.connection.blacklist();
 		e.connection.kicked = true;
 		Antibot.triggerAntibot(
 			5_000,
@@ -185,7 +178,7 @@ Events.on(EventType.ServerLoadEvent, () => {
 
 		//prevent stopped players from doing anything
 		if(!fishP.hasPerm("play")){
-			action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
+			if(!fishP.sneakybanned) action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
 			return false;
 		} else {
 			if(action.type === Administration.ActionType.pickupBlock){
@@ -265,7 +258,9 @@ Events.on(EventType.ServerLoadEvent, () => {
 			)).min(floatf(data => {
 				//Only if the team is valid
 				if(data.team == preferredTeam) return -1;
+				if(data.team == fishState.teamAssignerMode) return 999;
 				const count = otherPlayers.filter(p => p.team() == data.team).length;
+				Log.debug("team @ has @ players", data.team, count);
 				return count + Mathf.random(-0.1, 0.1);
 			}));
 			return re == null ? Vars.state.rules.defaultTeam : re.team;
@@ -288,6 +283,13 @@ Events.on(EventType.UnitDestroyEvent, addToTileHistory);
 Events.on(EventType.BlockDestroyEvent, addToTileHistory);
 Events.on(EventType.UnitControlEvent, addToTileHistory);
 
+Events.on(EventType.UnitControlEvent, e => {
+	if(e.unit){
+		for(const mount of e.unit.mounts){
+			mount.target = null;
+		}
+	}
+});
 
 Events.on(EventType.TapEvent, handleTapEvent);
 
@@ -329,7 +331,7 @@ Events.on(EventType.AdminRequestEvent, e => {
 			}).then(d => {
 				if(!d) return;
 				Vars.logic.skipWave();
-				Log.info("&lc@ &fi&lk[&lb@&fi&lk]&fb has skipped a wave.", e.player.plainName(), fishP.uuid);
+				Log.info("&lc@ &fi&lk[&lb@&fi&lk]&fb has skipped a wave.", fishP.overrideName ?? fishP.cleanedName, fishP.uuid);
 				if(d == "suppress"){
 					fishP.sendMessage("Wave skipped. You won't be asked again for the next 1 minute.");
 					fishP.autoConfirmSkipWaveUntil = Date.now() + Duration.minutes(1);

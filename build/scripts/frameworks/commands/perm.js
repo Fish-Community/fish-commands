@@ -59,13 +59,14 @@ var Perm = /** @class */ (function () {
     };
     Perm.perms = {};
     Perm.none = new Perm("none", function (fishP) { return true; }, "player", "[sky]");
+    Perm.active = Perm.fromRank(ranks_1.Rank.active);
     Perm.trusted = Perm.fromRank(ranks_1.Rank.trusted);
     Perm.mod = Perm.fromRank(ranks_1.Rank.mod);
     Perm.admin = Perm.fromRank(ranks_1.Rank.admin);
     Perm.manager = Perm.fromRank(ranks_1.Rank.manager);
     Perm.member = new Perm("member", function (fishP) { return fishP.hasFlag("member"); }, "member", "[pink]", "You must have a ".concat(config_1.FColor.member(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Fish"], ["Fish"]))), " ").concat(config_1.FColor.member(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Membership"], ["Membership"]))), " to use this command. Get a Fish Membership at[sky] ").concat(config_1.text.membershipURL, " []"));
     Perm.chat = new Perm("chat", function (fishP) { return (!fishP.muted() && !fishP.autoflagged) || fishP.ranksAtLeast("mod"); }, "player");
-    Perm.bypassChatFilter = new Perm("bypassChatFilter", "admin");
+    Perm.bypassChatFilter = new Perm("bypassChatFilter", "mod");
     Perm.seeMutedMessages = new Perm("seeMutedMessages", function (fishP) { return fishP.muted() || fishP.autoflagged || fishP.ranksAtLeast("mod"); }, "mod");
     Perm.play = new Perm("play", function (fishP) { return !fishP.stelled() || fishP.ranksAtLeast("mod"); }, "player");
     Perm.seeErrorMessages = new Perm("seeErrorMessages", "mod");
@@ -78,6 +79,7 @@ var Perm = /** @class */ (function () {
     Perm.developer = new Perm("developer", function (fishP) { return fishP.hasFlag("developer"); }, "trusted");
     Perm.bypassVoteFreeze = new Perm("bypassVoteFreeze", "trusted");
     Perm.bypassVotekick = new Perm("bypassVotekick", "mod");
+    Perm.bypassVanish = new Perm("bypassVanish", "trusted");
     Perm.warn = new Perm("warn", "mod");
     Perm.vanish = new Perm("vanish", "trusted");
     Perm.changeTeam = new Perm("changeTeam", "admin").exceptModes({

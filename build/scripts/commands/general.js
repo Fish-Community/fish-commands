@@ -459,14 +459,13 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         args: ['target:player?'],
         description: "Toggles visibility of your rank and flags.",
         perm: commands_1.Perm.vanish,
+        requirements: [commands_1.Req.troll("target")],
         handler: function (_a) {
             var sender = _a.sender, _b = _a.args.target, target = _b === void 0 ? sender : _b, outputSuccess = _a.outputSuccess, f = _a.f;
             if (sender.stelled())
                 (0, commands_1.fail)("Marked players may not hide flags.");
             if (sender.muted())
                 (0, commands_1.fail)("Muted players may not hide flags.");
-            if (sender != target && target.hasPerm("blockTrolling"))
-                (0, commands_1.fail)("Target is insufficiently trollable.");
             if (sender != target && !sender.ranksAtLeast("mod"))
                 (0, commands_1.fail)("You do not have permission to vanish other players.");
             target.showRankPrefix = !target.showRankPrefix;
@@ -520,7 +519,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 if (server.requiredPerm && !sender.hasPerm(server.requiredPerm))
                     (0, commands_1.fail)(unknownServerMessage);
                 if (target == sender && Date.now() - lastUsedSuccessfullySender > funcs_1.Duration.minutes(1))
-                    players_1.FishPlayer.messageAllWithPerm(server.requiredPerm, "".concat(sender.name, "[magenta] has gone to the ").concat(server.name, " server. Use [cyan]/").concat(server.name, " [magenta]to join them!"));
+                    players_1.FishPlayer.messageAllWithPerm(server.messagePerm, "".concat(sender.name, "[magenta] has gone to the ").concat(server.name, " server. Use [cyan]/").concat(server.name, " [magenta]to join them!"));
                 Call.connect(target.con(), server.ip, server.port);
             }
         }
@@ -531,27 +530,28 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 var _c;
+                var _d, _e;
                 var sender = _b.sender, args = _b.args, outputSuccess = _b.outputSuccess, outputFail = _b.outputFail, lastUsedSender = _b.lastUsedSender;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
                         case 0:
                             if (!sender.hasPerm("mod")) {
                                 if (Date.now() - lastUsedSender < 4000)
                                     (0, commands_1.fail)("This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.");
                             }
-                            players_1.FishPlayer.messageStaff(sender.prefixedName, args.message, sender.hasPerm("mod"));
-                            _d.label = 1;
+                            players_1.FishPlayer.messageStaff((_d = sender.overrideName) !== null && _d !== void 0 ? _d : sender.prefixedName, args.message, sender.hasPerm("mod"));
+                            _f.label = 1;
                         case 1:
-                            _d.trys.push([1, 3, , 4]);
-                            return [4 /*yield*/, api.sendStaffMessage(args.message, sender.name, sender.hasPerm("mod"))];
+                            _f.trys.push([1, 3, , 4]);
+                            return [4 /*yield*/, api.sendStaffMessage(args.message, (_e = sender.overrideName) !== null && _e !== void 0 ? _e : sender.name, sender.hasPerm("mod"))];
                         case 2:
-                            _d.sent();
+                            _f.sent();
                             if (!sender.hasPerm("mod")) {
                                 outputSuccess("Message sent to [orange]all online staff.");
                             }
                             return [3 /*break*/, 4];
                         case 3:
-                            _c = _d.sent();
+                            _c = _f.sent();
                             outputFail("Failed to send message to other servers.");
                             return [3 /*break*/, 4];
                         case 4: return [2 /*return*/];
@@ -644,13 +644,11 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             args: ["target:playerOn?"],
             description: "Toggles spectator mode in PVP games.",
             perm: commands_1.Perm.play,
-            requirements: [commands_1.Req.gameRunning],
+            requirements: [commands_1.Req.gameRunning, commands_1.Req.troll("target")],
             handler: function (_a) {
                 var sender = _a.sender, _b = _a.args.target, target = _b === void 0 ? sender : _b, outputSuccess = _a.outputSuccess, f = _a.f;
                 if (!config_1.Gamemode.pvp() && !sender.hasPerm("mod"))
                     (0, commands_1.fail)("You do not have permission to spectate on a non-pvp server.");
-                if (target !== sender && target.hasPerm("blockTrolling"))
-                    (0, commands_1.fail)("Target player is insufficiently trollable.");
                 if (target !== sender && !sender.ranksAtLeast("admin"))
                     (0, commands_1.fail)("You do not have permission to force other players to spectate.");
                 if (spectators.has(target)) {
@@ -886,6 +884,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         args: ['player:playerOn?'],
         description: 'Displays the server rules.',
         perm: commands_1.Perm.none,
+        requirements: [commands_1.Req.troll("player")],
         handler: function (_a) {
             var _b;
             var args = _a.args, sender = _a.sender, output = _a.output, outputSuccess = _a.outputSuccess, f = _a.f, lastUsedSuccessfullySender = _a.lastUsedSuccessfullySender;
@@ -895,8 +894,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     (0, commands_1.fail)("You do not have permission to show rules to other players.");
                 if (!sender.canModerate(target))
                     commands_1.Req.cooldown(funcs_1.Duration.minutes(10))({ lastUsedSuccessfullySender: lastUsedSuccessfullySender });
-                if (target.hasPerm("blockTrolling"))
-                    (0, commands_1.fail)(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args.player));
             }
             void target.showRules(["No"]).then(function (option) {
                 if (option == "No") {
@@ -914,7 +911,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 }
             });
             if (target !== sender)
-                outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Reminded ", " of the rules."], ["Reminded ", " of the rules."])), target));
+                outputSuccess(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Reminded ", " of the rules."], ["Reminded ", " of the rules."])), target));
         },
     }, void: {
         args: ["player:playerOn?"],
@@ -924,7 +921,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var args = _a.args;
             return [
                 commands_1.Req.mode("attack"),
-                args.player ? commands_1.Req.cooldown(20000) : commands_1.Req.cooldownGlobal(10000)
+                args.player ? commands_1.Req.cooldown(20000) : commands_1.Req.cooldownGlobal(10000),
+                commands_1.Req.troll("player"),
             ];
         },
         handler: function (_a) {
@@ -932,11 +930,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if (args.player) {
                 if (!sender.hasPerm("trusted"))
                     (0, commands_1.fail)("You do not have permission to show popups to other players, please run /void with no arguments to send a chat message to everyone.");
-                if (args.player !== sender && args.player.hasPerm("blockTrolling"))
-                    (0, commands_1.fail)("Target player is insufficiently trollable.");
-                void menus_1.Menu.menu("\uf83f [scarlet]WARNING[] \uf83f", "[white]Don't break the Power Void (\uF83F), it's a trap!\nPower voids disable anything they are connected to.\nIf you break it, [scarlet]you will get attacked[] by enemy units.\nPlease stop attacking and [lime]build defenses[] first!", ["I understand"], args.player, { onCancel: 'null' }).then(function () { return outputSuccess(f(templateObject_13 || (templateObject_13 = __makeTemplateObject(["Player ", " acknowledged the warning."], ["Player ", " acknowledged the warning."])), args.player)); });
+                void menus_1.Menu.menu("\uf83f [scarlet]WARNING[] \uf83f", "[white]Don't break the Power Void (\uF83F), it's a trap!\nPower voids disable anything they are connected to.\nIf you break it, [scarlet]you will get attacked[] by enemy units.\nPlease stop attacking and [lime]build defenses[] first!", ["I understand"], args.player, { onCancel: 'null' }).then(function () { return outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Player ", " acknowledged the warning."], ["Player ", " acknowledged the warning."])), args.player)); });
                 (0, utils_1.logAction)("showed void warning", sender, args.player);
-                outputSuccess(f(templateObject_14 || (templateObject_14 = __makeTemplateObject(["Warned ", " about power voids with a popup message."], ["Warned ", " about power voids with a popup message."])), args.player));
+                outputSuccess(f(templateObject_13 || (templateObject_13 = __makeTemplateObject(["Warned ", " about power voids with a popup message."], ["Warned ", " about power voids with a popup message."])), args.player));
             }
             else {
                 Call.sendMessage("[white]Don't break the Power Void (\uF83F), it's a trap!\nPower voids disable anything they are connected to. If you break it, [scarlet]you will get attacked[] by enemy units.\nPlease stop attacking and [lime]build defenses[] first!");
@@ -964,7 +960,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             if (!sender.hasPerm("mod"))
                 sender.changedTeam = true;
             sender.setTeam(team);
-            outputSuccess(f(templateObject_15 || (templateObject_15 = __makeTemplateObject(["Changed your team to ", "."], ["Changed your team to ", "."])), team));
+            outputSuccess(f(templateObject_14 || (templateObject_14 = __makeTemplateObject(["Changed your team to ", "."], ["Changed your team to ", "."])), team));
             if (reason && !config_1.Gamemode.sandbox())
                 (0, utils_1.logAction)("changed team to ".concat(team.name, " on ").concat((0, funcs_1.escapeTextDiscord)(Vars.state.map.plainName()), " with reason ").concat((0, funcs_1.escapeTextDiscord)(reason)), sender);
         },
@@ -976,7 +972,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var _b;
             var sender = _a.sender, _c = _a.args, team = _c.team, target = _c.target, outputSuccess = _a.outputSuccess, f = _a.f;
             if (!sender.canModerate(target, true, "mod", true))
-                (0, commands_1.fail)(f(templateObject_16 || (templateObject_16 = __makeTemplateObject(["You do not have permission to change the team of ", ""], ["You do not have permission to change the team of ", ""])), target));
+                (0, commands_1.fail)(f(templateObject_15 || (templateObject_15 = __makeTemplateObject(["You do not have permission to change the team of ", ""], ["You do not have permission to change the team of ", ""])), target));
             if (config_1.Gamemode.sandbox() && globals_1.fishState.peacefulMode && !sender.hasPerm("admin"))
                 (0, commands_1.fail)("You do not have permission to change teams because peaceful mode is on.");
             if (!sender.hasPerm("changeTeamExternal")) {
@@ -986,7 +982,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     target.forceRespawn();
             }
             target.setTeam(team);
-            outputSuccess(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Changed team of player ", " to ", "."], ["Changed team of player ", " to ", "."])), target, team));
+            outputSuccess(f(templateObject_16 || (templateObject_16 = __makeTemplateObject(["Changed team of player ", " to ", "."], ["Changed team of player ", " to ", "."])), target, team));
         },
     }, rank: {
         args: ['player:player'],
@@ -994,7 +990,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         perm: commands_1.Perm.none,
         handler: function (_a) {
             var args = _a.args, output = _a.output, f = _a.f;
-            output(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["Player ", "'s rank is ", "."], ["Player ", "'s rank is ", "."])), args.player, args.player.rank));
+            output(f(templateObject_17 || (templateObject_17 = __makeTemplateObject(["Player ", "'s rank is ", "."], ["Player ", "'s rank is ", "."])), args.player, args.player.rank));
         },
     }, forcevnw: {
         args: ["force:boolean?"],
@@ -1144,7 +1140,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 Call.sendMessage("[red]Admin ".concat(sender.name, "[red] has cancelled the vote. The next map will be ").concat(args.map == "random" ? "random" : "[yellow]".concat(args.map.name()), "."));
             }
             else {
-                outputSuccess(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["Forced the next map to be ", "."], ["Forced the next map to be ", "."])), args.map == "random" ? "random" : "\"".concat(args.map.name(), "\" by ").concat(args.map.author())));
+                outputSuccess(f(templateObject_18 || (templateObject_18 = __makeTemplateObject(["Forced the next map to be ", "."], ["Forced the next map to be ", "."])), args.map == "random" ? "random" : "\"".concat(args.map.name(), "\" by ").concat(args.map.author())));
             }
         },
     }, maps: {
@@ -1345,7 +1341,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             _f.label = 5;
                         case 5:
                             stats = global ? target.globalStats : target.stats;
-                            output(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, global ? "across all servers" : "on this server", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished));
+                            output(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, global ? "across all servers" : "on this server", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished));
                             return [2 /*return*/];
                     }
                 });
@@ -1454,7 +1450,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             unit.maxHealth = args.type.health; //because half-dead units aren't fun
             unit.set(x, y);
             unit.add();
-            outputSuccess(f(templateObject_21 || (templateObject_21 = __makeTemplateObject(["Spawned a ", " that is partly a ", "."], ["Spawned a ", " that is partly a ", "."])), args.type, args.base));
+            outputSuccess(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["Spawned a ", " that is partly a ", "."], ["Spawned a ", " that is partly a ", "."])), args.type, args.base));
         }
     }, achievement: {
         args: ["name:string?", "verbose:boolean?"],
@@ -1470,7 +1466,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             name = Strings.stripColors(name.toLowerCase());
                             matching = achievements_1.Achievement.all.filter(function (a) { return Strings.stripColors(a.name).toLowerCase().includes(name); });
                             if (matching.length == 0)
-                                (0, commands_1.fail)(f(templateObject_22 || (templateObject_22 = __makeTemplateObject(["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."], ["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."])), name));
+                                (0, commands_1.fail)(f(templateObject_21 || (templateObject_21 = __makeTemplateObject(["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."], ["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."])), name));
                             if (!(matching.length > 2)) return [3 /*break*/, 2];
                             return [4 /*yield*/, menus_1.Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, {
                                     onCancel: "reject",
@@ -1485,7 +1481,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             _g.label = 3;
                         case 3:
                             achievement = _c;
-                            output(config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["Achievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "", "", ""], ["\\\nAchievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n", "\\\n", "\\\n"])), achievement.icon, copy(achievement.name), copy(achievement.description + (achievement.extendedDescription ? ("\n" + "[gray]".concat(achievement.extendedDescription)) : "")), achievement.modesText, f.boolGood(achievement.has(sender)), verbose ? "[gray]ID: (".concat(achievement.nid, ")").concat(achievement.sid, "\n") : "", verbose ? "[gray]Notifies: ".concat(achievement.notify, "\n") : "", achievement.hidden ? "This achievement is secret." : ""));
+                            output(config_1.FColor.achievement(templateObject_22 || (templateObject_22 = __makeTemplateObject(["Achievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "", "", ""], ["\\\nAchievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n", "\\\n", "\\\n"])), achievement.icon, copy(achievement.name), copy(achievement.description + (achievement.extendedDescription ? ("\n" + "[gray]".concat(achievement.extendedDescription)) : "")), achievement.modesText, f.boolGood(achievement.has(sender)), verbose ? "[gray]ID: (".concat(achievement.nid, ")").concat(achievement.sid, "\n") : "", verbose ? "[gray]Notifies: ".concat(achievement.notify, "\n") : "", achievement.hidden ? "This achievement is secret." : ""));
                             return [2 /*return*/];
                     }
                 });
@@ -1503,7 +1499,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                         case 0: return [4 /*yield*/, menus_1.Menu.textPages(sender, achievements_1.Achievement.all.filter(function (a) { return !a.hidden || a.has(target); })
                                 .map(function (a) { return [
                                 "".concat(a.icon, "[] ").concat(a.name),
-                                function () { return config_1.FColor.achievement(templateObject_24 || (templateObject_24 = __makeTemplateObject(["", "\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : ""); }
+                                function () { return config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["", "\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : ""); }
                             ]; }))];
                         case 1:
                             _d.sent();
@@ -1536,9 +1532,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             _e.label = 1;
                         case 1:
                             if (!true) return [3 /*break*/, 3];
-                            return [4 /*yield*/, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_25 || (templateObject_25 = __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") :
+                            return [4 /*yield*/, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_24 || (templateObject_24 = __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") :
                                     (target == sender ? "You have ".concat(numberAchievements, "/").concat(totalAchievements, " achievements.")
-                                        : config_1.FColor.achievement(templateObject_26 || (templateObject_26 = __makeTemplateObject(["Player ", " has ", "/", " achievements."], ["Player ", " has ", "/", " achievements."])), target.prefixedName, numberAchievements, totalAchievements))
+                                        : config_1.FColor.achievement(templateObject_25 || (templateObject_25 = __makeTemplateObject(["Player ", " has ", "/", " achievements."], ["Player ", " has ", "/", " achievements."])), target.prefixedName, numberAchievements, totalAchievements))
                                         + "\nClick an achievement icon to show more information.", options, { onCancel: "reject", columns: 5, rows: 4, getCenterText: function () { return String.fromCharCode(Iconc.settings); }, x: x, y: y })];
                         case 2:
                             //the loop will be aborted if the menu is cancelled (promise will reject)
@@ -1611,7 +1607,30 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var _b = _a.args, target = _b.target, string = _b.string, sender = _a.sender, f = _a.f, outputSuccess = _a.outputSuccess;
             Call.copyToClipboard(target.con(), string);
             target.sendMessage("[accent]Copy: ".concat(sender.prefixedName, "[accent] sent you some text to copy."));
-            outputSuccess(f(templateObject_27 || (templateObject_27 = __makeTemplateObject(["Sent text to ", ""], ["Sent text to ", ""])), target));
+            outputSuccess(f(templateObject_26 || (templateObject_26 = __makeTemplateObject(["Sent text to ", ""], ["Sent text to ", ""])), target));
+        }
+    }, noteam: {
+        args: [],
+        description: 'Sets the team assigner mode to play 1 vs all matches.',
+        perm: commands_1.Perm.trusted,
+        handler: function (_a) {
+            return __awaiter(this, arguments, void 0, function (_b) {
+                var sender = _b.sender, f = _b.f, outputSuccess = _b.outputSuccess;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (globals_1.fishState.teamAssignerMode instanceof Team) {
+                                (0, commands_1.fail)(f(templateObject_27 || (templateObject_27 = __makeTemplateObject(["Team ", " is already playing 1 v all."], ["Team ", " is already playing 1 v all."])), globals_1.fishState.teamAssignerMode));
+                            }
+                            return [4 /*yield*/, menus_1.Menu.confirm(sender, "Are you sure you want to play 1 vs all? All other players will be assigned to the other teams.")];
+                        case 1:
+                            _c.sent();
+                            globals_1.fishState.teamAssignerMode = sender.team();
+                            outputSuccess('Enabled 1 vs all mode.');
+                            return [2 /*return*/];
+                    }
+                });
+            });
         }
     } }));
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25, templateObject_26, templateObject_27;
