@@ -1046,7 +1046,7 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 			handler({args, sender}){
 				const map = args.map === "random" ? random : args.map;
 				if(Gamemode.testsrv()) fail(`Please use /forcenextmap instead.`);
-				if(votes.get(sender)) fail(`You have already voted.`);
+				if(votes.get(sender) == map) fail(`You have already voted for this map.`);
 				
 				if(voteEndTime == -1){
 					if((Date.now() - lastVoteTime) < Duration.minutes(1)) fail(`Please wait 1 minute before starting a new map vote.`);

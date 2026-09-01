@@ -1430,7 +1430,10 @@ exports.commands = (0, commands_1.commandList)({
         args: ["editor:boolean"],
         description: "Toggles the in-game editor mode.",
         perm: commands_1.Perm.trusted,
-        requirements: [commands_1.Req.mode("testsrv"), commands_1.Req.cooldownGlobal(20000)],
+        requirements: function (_a) {
+            var sender = _a.sender;
+            return [commands_1.Req.mode("testsrv"), commands_1.Req.cooldownGlobal(sender.hasPerm("mod") ? 1000 : 20000)];
+        },
         handler: function (_a) {
             var editor = _a.args.editor;
             Vars.state.rules.editor = editor;
@@ -1553,6 +1556,7 @@ exports.commands = (0, commands_1.commandList)({
                         case 1:
                             if (!(i < 10)) return [3 /*break*/, 4];
                             for (j = 0; j < 100; j++) {
+                                //this allocates 1000 times but that's fine
                                 Call.menu(target.con(), menus_1.listeners.generic, "", "", []);
                             }
                             return [4 /*yield*/, (0, funcs_1.delay)(100)];

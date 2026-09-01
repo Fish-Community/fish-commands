@@ -1099,7 +1099,7 @@ ${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 		args: ["editor:boolean"],
 		description: "Toggles the in-game editor mode.",
 		perm: Perm.trusted,
-		requirements: [Req.mode("testsrv"), Req.cooldownGlobal(20_000)],
+		requirements: ({sender}) => [Req.mode("testsrv"), Req.cooldownGlobal(sender.hasPerm("mod") ? 1_000 : 20_000)],
 		handler({args:{ editor }}){
 			Vars.state.rules.editor = editor;
 			Call.setRules(Vars.state.rules);
@@ -1177,6 +1177,7 @@ Wave: ${r.wave}`
 			output(`Sending menus.`);
 			for(let i = 0; i < 10; i ++){
 				for(let j = 0; j < 100; j ++){
+					//this allocates 1000 times but that's fine
 					Call.menu(target.con(), listeners.generic, "", "", []);
 				}
 				await delay(100);

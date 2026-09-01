@@ -1234,8 +1234,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 var map = args.map === "random" ? random : args.map;
                 if (config_1.Gamemode.testsrv())
                     (0, commands_1.fail)("Please use /forcenextmap instead.");
-                if (votes.get(sender))
-                    (0, commands_1.fail)("You have already voted.");
+                if (votes.get(sender) == map)
+                    (0, commands_1.fail)("You have already voted for this map.");
                 if (voteEndTime == -1) {
                     if ((Date.now() - lastVoteTime) < funcs_1.Duration.minutes(1))
                         (0, commands_1.fail)("Please wait 1 minute before starting a new map vote.");
