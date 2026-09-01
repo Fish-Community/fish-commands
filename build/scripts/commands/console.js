@@ -502,6 +502,10 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 if (admins.kickedIPs.remove(args.target)) {
                     output("Removed temporary kick for IP &c\"".concat(args.target, "\"&fr."));
                 }
+                if (admins.isDosBlacklisted(args.target)) {
+                    output("Removed IP &c\"".concat(args.target, "\"&fr from the DOS blacklist."));
+                    (0, utils_1.unblacklist)(args.target);
+                }
                 output("Checking ban status...");
                 api.getBanned({ ip: args.target }, function (banned) {
                     if (banned) {

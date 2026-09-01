@@ -268,6 +268,10 @@ export const commands = consoleCommandList({
 				if(admins.kickedIPs.remove(args.target)){
 					output(`Removed temporary kick for IP &c"${args.target}"&fr.`);
 				}
+				if(admins.isDosBlacklisted(args.target)){
+					output(`Removed IP &c"${args.target}"&fr from the DOS blacklist.`);
+					unblacklist(args.target);
+				}
 				output("Checking ban status...");
 				api.getBanned({ip: args.target}, (banned) => {
 					if(banned){
