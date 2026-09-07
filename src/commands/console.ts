@@ -268,6 +268,10 @@ export const commands = consoleCommandList({
 				if(admins.kickedIPs.remove(args.target)){
 					output(`Removed temporary kick for IP &c"${args.target}"&fr.`);
 				}
+				if(admins.isDosBlacklisted(args.target)){
+					output(`Removed IP &c"${args.target}"&fr from the DOS blacklist.`);
+					unblacklist(args.target);
+				}
 				output("Checking ban status...");
 				api.getBanned({ip: args.target}, (banned) => {
 					if(banned){
@@ -411,6 +415,25 @@ export const commands = consoleCommandList({
 				Log.err(err);
 				outputFail(`Failed to remove the usid, please try running the command again.`);
 			});
+		}
+	},
+	clearallstoredusids: {
+		args: ["areyousure:boolean?", "areyoureallysure:boolean?", "areyoureallyreallysure:boolean?"],
+		description: "Removes every stored USID from the fish player data cache. Only use for server setup.",
+		handler({args, output}){
+			if(args.areyousure && args.areyoureallysure && args.areyoureallyreallysure){
+				let total = 0;
+				for(const [uuid, fishP] of Object.entries(FishPlayer.cachedPlayers)){
+					if(fishP.usid != null){
+						total ++;
+						fishP.usid = null;
+					}
+				}
+				FishPlayer.saveAll();
+				output(`Removed ${total} stored USIDs.`);
+			} else {
+				output(`Are you sure?!?!?!?!?!!`);
+			}
 		}
 	},
 	update: {

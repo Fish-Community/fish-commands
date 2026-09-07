@@ -949,7 +949,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 (0, commands_1.fail)("You do not have permission to change teams because peaceful mode is on.");
             if (config_1.Gamemode.sandbox() && team === Vars.state.rules.waveTeam && !sender.hasPerm("admin"))
                 (0, commands_1.fail)("You do not have permission to change to the wave team on sandbox.");
-            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()) && !sender.hasPerm("mod") && !reason)
+            if (!config_1.Gamemode.cheatsOk() && !sender.hasPerm("mod") && !reason)
                 (0, commands_1.fail)("Please specify a reason for changing teams.");
             if (!sender.hasPerm("changeTeamExternal")) {
                 if (team.data().cores.size <= 0)
@@ -961,7 +961,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 sender.changedTeam = true;
             sender.setTeam(team);
             outputSuccess(f(templateObject_14 || (templateObject_14 = __makeTemplateObject(["Changed your team to ", "."], ["Changed your team to ", "."])), team));
-            if (reason && !config_1.Gamemode.sandbox())
+            if (reason && !config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("changed team to ".concat(team.name, " on ").concat((0, funcs_1.escapeTextDiscord)(Vars.state.map.plainName()), " with reason ").concat((0, funcs_1.escapeTextDiscord)(reason)), sender);
         },
     }, teamp: {
@@ -1234,8 +1234,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 var map = args.map === "random" ? random : args.map;
                 if (config_1.Gamemode.testsrv())
                     (0, commands_1.fail)("Please use /forcenextmap instead.");
-                if (votes.get(sender))
-                    (0, commands_1.fail)("You have already voted.");
+                if (votes.get(sender) == map)
+                    (0, commands_1.fail)("You have already voted for this map.");
                 if (voteEndTime == -1) {
                     if ((Date.now() - lastVoteTime) < funcs_1.Duration.minutes(1))
                         (0, commands_1.fail)("Please wait 1 minute before starting a new map vote.");

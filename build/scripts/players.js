@@ -985,12 +985,14 @@ var FishPlayer = /** @class */ (function () {
         var usidMissing = storedUSID == null || !storedUSID;
         var receivedUSID = this.player.usid();
         if (this.hasPerm("usidCheck")) {
+            var code = (Math.floor(Date.now() / 5000) % 100000).toString().padStart(5, '0') + "-" + (++FishPlayer.codeCounter);
             if (usidMissing) {
                 if (this.hasPerm("mod")) {
                     //Staff missing USID, don't let them in
                     Log.err("&rUSID missing for privileged player &c\"".concat(this.cleanedName, "\"&r: no stored usid, cannot authenticate.\nRun &lgsetusid ").concat(this.uuid, " ").concat(receivedUSID, "&fr if you have verified this connection attempt."));
-                    this.kick("Authorization failure! Please ask a staff member with Console Access to approve this connection.", 1);
+                    this.kick("Authorization failure!\nPlease run [cyan];approveauth ".concat(config_1.Gamemode.name(), " ").concat(code, "[] in a private channel."), 1);
                     FishPlayer.lastAuthKicked = this;
+                    void api.reportUsidRejection(this.uuid, receivedUSID, code);
                     return false;
                 }
                 else {
@@ -1000,8 +1002,9 @@ var FishPlayer = /** @class */ (function () {
             else {
                 if (receivedUSID != storedUSID) {
                     Log.err("&rUSID mismatch for player &c\"".concat(this.cleanedName, "\"&r: stored usid is &c").concat(storedUSID, "&r, but they tried to connect with usid &c").concat(receivedUSID, "&r\nRun &lgsetusid ").concat(this.uuid, " ").concat(receivedUSID, "&fr if you have verified this connection attempt."));
-                    this.kick("Authorization failure!", 1);
+                    this.kick("Authorization failure!\nCode: [cyan]".concat(code, "[]"), 1);
                     FishPlayer.lastAuthKicked = this;
+                    void api.reportUsidRejection(this.uuid, receivedUSID, code);
                     return false;
                 }
             }
@@ -1662,6 +1665,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.dataFetchFailedUuids = new Set();
     FishPlayer.ignoreGameOver = false;
     FishPlayer.oddBrackets = Pattern.compile("(?<!\\[)(\\[\\[)*\\[$");
+    FishPlayer.codeCounter = 1;
     return FishPlayer;
 }());
 exports.FishPlayer = FishPlayer;

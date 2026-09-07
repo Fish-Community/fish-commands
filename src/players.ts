@@ -5,7 +5,7 @@ This file contains the FishPlayer class, and many player-related functions.
 
 import * as api from "/api";
 import { Automod, checkVPNAndJoins } from "/automod";
-import { automaticNames, FColor, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
+import { FColor, Gamemode, Mode, prefixes, rules, stopAntiEvadeTime, text, tips } from "/config";
 import { FishCommandArgType, Perm, PermType } from "/frameworks/commands";
 import { Menu } from "/frameworks/menus";
 import { crash, Duration, parseError, search, setToArray, StringIO } from "/funcs";
@@ -771,18 +771,21 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 		}
 		return false;
 	}
+	private static codeCounter = 1;
 	/** Checks if this player's USID is correct. */
 	checkUsid(this:FishPlayer<true>){
 		const storedUSID = this.usid;
 		const usidMissing = storedUSID == null || !storedUSID;
 		const receivedUSID = this.player.usid();
 		if(this.hasPerm("usidCheck")){
+			const code = (Math.floor(Date.now() / 5000) % 100000).toString().padStart(5, '0') + "-" + (++FishPlayer.codeCounter);
 			if(usidMissing){
 				if(this.hasPerm("mod")){
 					//Staff missing USID, don't let them in
 					Log.err(`&rUSID missing for privileged player &c"${this.cleanedName}"&r: no stored usid, cannot authenticate.\nRun &lgsetusid ${this.uuid} ${receivedUSID}&fr if you have verified this connection attempt.`);
-					this.kick(`Authorization failure! Please ask a staff member with Console Access to approve this connection.`, 1);
+					this.kick(`Authorization failure!\nPlease run [cyan];approveauth ${Gamemode.name()} ${code}[] in a private channel.`, 1);
 					FishPlayer.lastAuthKicked = this;
+					void api.reportUsidRejection(this.uuid, receivedUSID, code);
 					return false;
 				} else {
 					Log.info(`Acquired USID for player &c"${this.cleanedName}"&fr: &c"${receivedUSID}"&fr`);
@@ -790,8 +793,9 @@ If you are unable to change it, please download Mindustry from Steam or itch.io.
 			} else {
 				if(receivedUSID != storedUSID){
 					Log.err(`&rUSID mismatch for player &c"${this.cleanedName}"&r: stored usid is &c${storedUSID}&r, but they tried to connect with usid &c${receivedUSID}&r\nRun &lgsetusid ${this.uuid} ${receivedUSID}&fr if you have verified this connection attempt.`);
-					this.kick(`Authorization failure!`, 1);
+					this.kick(`Authorization failure!\nCode: [cyan]${code}[]`, 1);
 					FishPlayer.lastAuthKicked = this;
+					void api.reportUsidRejection(this.uuid, receivedUSID, code);
 					return false;
 				}
 			}

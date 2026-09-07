@@ -166,7 +166,8 @@ export const commands = commandList({
 					await args.player.stop(sender, time, message);
 					logAction('stopped', sender, args.player, message, time);
 					//TODO outputGlobal()
-					Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${message ? ` with reason: [white]${message}[]` : ""}.`);
+					if(args.player.connected() || Date.now() - args.player.lastJoined < Duration.minutes(5))
+						Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${message ? ` with reason: [white]${message}[]` : ""}.`);
 				} finally {
 					args.player.frozen = false;
 				}
@@ -329,6 +330,16 @@ export const commands = commandList({
 		args: ["time:time", "message:string"],
 		description: "Places a label at your position for a specified amount of time.",
 		perm: Perm.mod,
+		init(){
+			Events.on(EventType.GameOverEvent, () => {
+				fishState.labels.forEach(l => {
+					l.task?.cancel();
+					//ABSOLUTELY WONDERFUL
+					Call["label(java.lang.String,int,float,float,float)"](null, l.id, 0, 0, 0);
+				});
+				fishState.labels.splice(0);
+			});
+		},
 		handler({args, sender, outputSuccess, f}){
 			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
 			const unit = sender.unit() ?? fail(`You must be in a unit to use this command.`);
@@ -365,6 +376,7 @@ export const commands = commandList({
 				//ABSOLUTELY WONDERFUL
 				Call["label(java.lang.String,int,float,float,float)"](null, l.id, 0, 0, 0);
 			});
+			fishState.labels.splice(0);
 			outputSuccess(`Removed all labels.`);
 		}
 	},
@@ -563,7 +575,7 @@ export const commands = commandList({
 					{ confirmText: "[orange]Kill buildings[]" },
 				);
 				const count = Groups.build.size();
-				Groups.build.each(b => !(b.block instanceof CoreBlock), b => b.tile.remove());
+				Groups.build.copy().each(b => !(b.block instanceof CoreBlock), b => b.tile.remove());
 				outputSuccess(f`Killed ${count} buildings.`);
 			}
 		}
@@ -713,7 +725,7 @@ export const commands = commandList({
 				unit.add();
 				data.push(unit);
 			}
-			if(!(Gamemode.sandbox() || Gamemode.testsrv()) && args.effects !== 'paper') logAction(`spawned unit ${args.type.name}${count == 1 ? '' : ` x${count}`} at ${Math.round(x / 8)}, ${Math.round(y / 8)}` + (args.effects ? `with ${args.effects} effects` : ''), sender);
+			if(!Gamemode.cheatsOk() && args.effects !== 'paper') logAction(`spawned unit ${args.type.name}${count == 1 ? '' : ` x${count}`} at ${Math.round(x / 8)}, ${Math.round(y / 8)}` + (args.effects ? `with ${args.effects} effects` : ''), sender);
 			outputSuccess(f`Spawned unit ${args.type} at (${Math.round(x / 8)}, ${Math.round(y / 8)})`);
 		}
 	},
@@ -736,7 +748,7 @@ export const commands = commandList({
 				action: `setblocked`,
 				type: args.block.localizedName
 			});
-			if(!(Gamemode.sandbox() || Gamemode.testsrv())) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
+			if(!Gamemode.cheatsOk()) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
 			outputSuccess(f`Set block at ${args.x}, ${args.y} to ${args.block}`);
 		}
 	},
@@ -758,7 +770,7 @@ export const commands = commandList({
 				action: `setblocked`,
 				type: args.block.localizedName
 			});
-			if(!(Gamemode.sandbox() || Gamemode.testsrv())) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
+			if(!Gamemode.cheatsOk()) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
 			outputSuccess(f`Set block at ${x}, ${y} to ${args.block}`);
 		},
 		handler({args, outputSuccess, handleTaps, currentTapMode, f}){
@@ -793,7 +805,7 @@ export const commands = commandList({
 					numKilled ++;
 				}
 			});
-			if(!Gamemode.sandbox()) logAction(`exterminated ${numKilled} units`, sender);
+			if(!Gamemode.cheatsOk()) logAction(`exterminated ${numKilled} units`, sender);
 			outputSuccess(f`Exterminated ${numKilled} units.`);
 		}
 	},
@@ -914,7 +926,7 @@ ${getAntiBotInfo("client")}`
 				const emanate = UnitTypes.emanate.spawn(sender.team(), sender.player.x, sender.player.y);
 				sender.unit(emanate);
 				unitMapping[sender.uuid] = emanate;
-				if(!Gamemode.sandbox()) logAction("spawned an emanate", sender);
+				if(!Gamemode.cheatsOk()) logAction("spawned an emanate", sender);
 				outputSuccess("Spawned an emanate.");
 			}
 		};
@@ -1049,7 +1061,7 @@ ${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 			const ticks = (args.duration ?? 1e12) / 1000 * 60;
 			applyEffectMode(args.mode, unit, ticks);
 			outputSuccess(`${args.mode === "clear" ? "Cleared" : "Applied"} effects.`);
-			if(!Gamemode.sandbox()) logAction(`applied **${args.mode}** effects to`, sender, target);
+			if(!Gamemode.cheatsOk()) logAction(`applied **${args.mode}** effects to`, sender, target);
 		}
 	},
 	items: {
@@ -1061,7 +1073,7 @@ ${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 			const core = team.data().cores.firstOpt() ?? fail(f`Team ${team} has no cores.`);
 			core.items.add(item, amount);
 			outputSuccess(f`Gave ${amount} ${item} to ${team}.`);
-			if(!Gamemode.sandbox()) logAction(`gave ${amount} ${item.localizedName.toLowerCase()} to ${team.name}`, sender);
+			if(!Gamemode.cheatsOk()) logAction(`gave ${amount} ${item.localizedName.toLowerCase()} to ${team.name}`, sender);
 		}
 	},
 	explosion: {
@@ -1099,7 +1111,7 @@ ${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 		args: ["editor:boolean"],
 		description: "Toggles the in-game editor mode.",
 		perm: Perm.trusted,
-		requirements: [Req.mode("testsrv"), Req.cooldownGlobal(20_000)],
+		requirements: ({sender}) => [Req.mode("testsrv"), Req.cooldownGlobal(sender.hasPerm("mod") ? 1_000 : 20_000)],
 		handler({args:{ editor }}){
 			Vars.state.rules.editor = editor;
 			Call.setRules(Vars.state.rules);
@@ -1177,6 +1189,7 @@ Wave: ${r.wave}`
 			output(`Sending menus.`);
 			for(let i = 0; i < 10; i ++){
 				for(let j = 0; j < 100; j ++){
+					//this allocates 1000 times but that's fine
 					Call.menu(target.con(), listeners.generic, "", "", []);
 				}
 				await delay(100);
