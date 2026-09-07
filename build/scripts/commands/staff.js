@@ -856,7 +856,7 @@ exports.commands = (0, commands_1.commandList)({
                         case 3:
                             _c.sent();
                             count = Groups.build.size();
-                            Groups.build.each(function (b) { return !(b.block instanceof CoreBlock); }, function (b) { return b.tile.remove(); });
+                            Groups.build.copy().each(function (b) { return !(b.block instanceof CoreBlock); }, function (b) { return b.tile.remove(); });
                             outputSuccess(f(templateObject_40 || (templateObject_40 = __makeTemplateObject(["Killed ", " buildings."], ["Killed ", " buildings."])), count));
                             _c.label = 4;
                         case 4: return [2 /*return*/];

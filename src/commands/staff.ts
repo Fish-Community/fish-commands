@@ -575,7 +575,7 @@ export const commands = commandList({
 					{ confirmText: "[orange]Kill buildings[]" },
 				);
 				const count = Groups.build.size();
-				Groups.build.each(b => !(b.block instanceof CoreBlock), b => b.tile.remove());
+				Groups.build.copy().each(b => !(b.block instanceof CoreBlock), b => b.tile.remove());
 				outputSuccess(f`Killed ${count} buildings.`);
 			}
 		}
