@@ -357,7 +357,8 @@ exports.commands = (0, commands_1.commandList)({
                             _h.sent();
                             (0, utils_1.logAction)('stopped', sender, args.player, message, time);
                             //TODO outputGlobal()
-                            Call.sendMessage("[orange]Player \"".concat(args.player.prefixedName, "[orange]\" has been marked for ").concat((0, utils_1.formatTime)(time)).concat(message ? " with reason: [white]".concat(message, "[]") : "", "."));
+                            if (args.player.connected() || Date.now() - args.player.lastJoined < funcs_1.Duration.minutes(5))
+                                Call.sendMessage("[orange]Player \"".concat(args.player.prefixedName, "[orange]\" has been marked for ").concat((0, utils_1.formatTime)(time)).concat(message ? " with reason: [white]".concat(message, "[]") : "", "."));
                             return [3 /*break*/, 11];
                         case 10:
                             args.player.frozen = false;
