@@ -367,7 +367,11 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		this.infoUpdated = true;
 	}
 	updateData(data: Partial<FishPlayerData>){
-		if(data.name != undefined) this.name = data.name;
+		if(data.name != undefined){
+			this.name = data.name;
+			this.cleanedName = Strings.stripColors(data.name).trim();
+			if(this.prefixedName == "Unnamed player [ERROR}") this.prefixedName = data.name;
+		}
 		if(data.overrideName !== undefined) this.overrideName = data.overrideName;
 		if(data.unmuteTime != undefined) this.unmuteTime = data.unmuteTime;
 		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
@@ -1384,10 +1388,11 @@ We apologize for the inconvenience.`
 		}
 	}
 	shortInfoString():string {
+		const joins = this.info().timesJoined;
 		return `\
 ${this.rank != Rank.player ? `[cyan]Rank: ${this.rank.coloredName()}\n` : ""}\
-[lightgray]Total time: ${formatTimeShort(this.globalStats.timeInGame)}
-[lightgray]Joins: ${this.info().timesJoined}
+[lightgray]Playtime: ${formatTimeShort(this.globalStats.timeInGame)}
+${joins == 1 ? "[scarlet]first join[]" : `[lightgray]Joins: ${joins}`}
 [lightgray]History:\n${this.history.slice(-5).map(e => formatHistoryEntry(this, e, true)).join("\n\n") || "<none>"}
 `;
 	}

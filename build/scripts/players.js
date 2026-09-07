@@ -458,8 +458,12 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.updateData = function (data) {
         var _a;
-        if (data.name != undefined)
+        if (data.name != undefined) {
             this.name = data.name;
+            this.cleanedName = Strings.stripColors(data.name).trim();
+            if (this.prefixedName == "Unnamed player [ERROR}")
+                this.prefixedName = data.name;
+        }
         if (data.overrideName !== undefined)
             this.overrideName = data.overrideName;
         if (data.unmuteTime != undefined)
@@ -1632,7 +1636,8 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.shortInfoString = function () {
         var _this = this;
-        return "".concat(this.rank != ranks_1.Rank.player ? "[cyan]Rank: ".concat(this.rank.coloredName(), "\n") : "", "[lightgray]Total time: ").concat((0, utils_1.formatTimeShort)(this.globalStats.timeInGame), "\n[lightgray]Joins: ").concat(this.info().timesJoined, "\n[lightgray]History:\n").concat(this.history.slice(-5).map(function (e) { return (0, utils_1.formatHistoryEntry)(_this, e, true); }).join("\n\n") || "<none>", "\n");
+        var joins = this.info().timesJoined;
+        return "".concat(this.rank != ranks_1.Rank.player ? "[cyan]Rank: ".concat(this.rank.coloredName(), "\n") : "", "[lightgray]Playtime: ").concat((0, utils_1.formatTimeShort)(this.globalStats.timeInGame), "\n").concat(joins == 1 ? "[scarlet]first join[]" : "[lightgray]Joins: ".concat(joins), "\n[lightgray]History:\n").concat(this.history.slice(-5).map(function (e) { return (0, utils_1.formatHistoryEntry)(_this, e, true); }).join("\n\n") || "<none>", "\n");
     };
     //#region Static constants
     /** Save version used for serialized FishPlayers. */
