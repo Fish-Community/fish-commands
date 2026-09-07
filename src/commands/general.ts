@@ -761,7 +761,7 @@ Please stop attacking and [lime]build defenses[] first!`
 				fail(`You do not have permission to change teams because peaceful mode is on.`);
 			if(Gamemode.sandbox() && team === Vars.state.rules.waveTeam && !sender.hasPerm("admin"))
 				fail(`You do not have permission to change to the wave team on sandbox.`);
-			if(!(Gamemode.sandbox() || Gamemode.testsrv()) && !sender.hasPerm("mod") && !reason) fail(`Please specify a reason for changing teams.`);
+			if(!Gamemode.cheatsOk() && !sender.hasPerm("mod") && !reason) fail(`Please specify a reason for changing teams.`);
 			if(!sender.hasPerm("changeTeamExternal")){
 				if(team.data().cores.size <= 0) fail(`You do not have permission to change to a team with no cores.`);
 				if(!sender.player.dead() && !sender.unit()?.spawnedByCore)
@@ -770,7 +770,7 @@ Please stop attacking and [lime]build defenses[] first!`
 			if(!sender.hasPerm("mod")) sender.changedTeam = true;
 			sender.setTeam(team);
 			outputSuccess(f`Changed your team to ${team}.`);
-			if(reason && !Gamemode.sandbox()) logAction(`changed team to ${team.name} on ${escapeTextDiscord(Vars.state.map.plainName())} with reason ${escapeTextDiscord(reason)}`, sender);
+			if(reason && !Gamemode.cheatsOk()) logAction(`changed team to ${team.name} on ${escapeTextDiscord(Vars.state.map.plainName())} with reason ${escapeTextDiscord(reason)}`, sender);
 		},
 	},
 

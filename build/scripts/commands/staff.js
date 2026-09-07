@@ -995,7 +995,7 @@ exports.commands = (0, commands_1.commandList)({
                 unit.add();
                 data.push(unit);
             }
-            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()) && args.effects !== 'paper')
+            if (!config_1.Gamemode.cheatsOk() && args.effects !== 'paper')
                 (0, utils_1.logAction)("spawned unit ".concat(args.type.name).concat(count == 1 ? '' : " x".concat(count), " at ").concat(Math.round(x / 8), ", ").concat(Math.round(y / 8)) + (args.effects ? "with ".concat(args.effects, " effects") : ''), sender);
             outputSuccess(f(templateObject_53 || (templateObject_53 = __makeTemplateObject(["Spawned unit ", " at (", ", ", ")"], ["Spawned unit ", " at (", ", ", ")"])), args.type, Math.round(x / 8), Math.round(y / 8)));
         }
@@ -1021,7 +1021,7 @@ exports.commands = (0, commands_1.commandList)({
                 action: "setblocked",
                 type: args.block.localizedName
             });
-            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()))
+            if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(args.x, ",").concat(args.y), sender);
             outputSuccess(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), args.x, args.y, args.block));
         }
@@ -1047,7 +1047,7 @@ exports.commands = (0, commands_1.commandList)({
                 action: "setblocked",
                 type: args.block.localizedName
             });
-            if (!(config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv()))
+            if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(x, ",").concat(y), sender);
             outputSuccess(f(templateObject_57 || (templateObject_57 = __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), x, y, args.block));
         },
@@ -1088,7 +1088,7 @@ exports.commands = (0, commands_1.commandList)({
                     numKilled++;
                 }
             });
-            if (!config_1.Gamemode.sandbox())
+            if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("exterminated ".concat(numKilled, " units"), sender);
             outputSuccess(f(templateObject_59 || (templateObject_59 = __makeTemplateObject(["Exterminated ", " units."], ["Exterminated ", " units."])), numKilled));
         }
@@ -1219,7 +1219,7 @@ exports.commands = (0, commands_1.commandList)({
                 var emanate = UnitTypes.emanate.spawn(sender.team(), sender.player.x, sender.player.y);
                 sender.unit(emanate);
                 unitMapping[sender.uuid] = emanate;
-                if (!config_1.Gamemode.sandbox())
+                if (!config_1.Gamemode.cheatsOk())
                     (0, utils_1.logAction)("spawned an emanate", sender);
                 outputSuccess("Spawned an emanate.");
             }
@@ -1375,7 +1375,7 @@ exports.commands = (0, commands_1.commandList)({
             var ticks = ((_c = args.duration) !== null && _c !== void 0 ? _c : 1e12) / 1000 * 60;
             (0, utils_1.applyEffectMode)(args.mode, unit, ticks);
             outputSuccess("".concat(args.mode === "clear" ? "Cleared" : "Applied", " effects."));
-            if (!config_1.Gamemode.sandbox())
+            if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("applied **".concat(args.mode, "** effects to"), sender, target);
         }
     },
@@ -1390,7 +1390,7 @@ exports.commands = (0, commands_1.commandList)({
             var core = (_b = team.data().cores.firstOpt()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(f(templateObject_72 || (templateObject_72 = __makeTemplateObject(["Team ", " has no cores."], ["Team ", " has no cores."])), team));
             core.items.add(item, amount);
             outputSuccess(f(templateObject_73 || (templateObject_73 = __makeTemplateObject(["Gave ", " ", " to ", "."], ["Gave ", " ", " to ", "."])), amount, item, team));
-            if (!config_1.Gamemode.sandbox())
+            if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("gave ".concat(amount, " ").concat(item.localizedName.toLowerCase(), " to ").concat(team.name), sender);
         }
     },

@@ -33,7 +33,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.automaticNames = exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.GamemodeNames = exports.Gamemode = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.translationApiToken = exports.translationApiUrl = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.sneakybannedNames = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
+exports.automaticNames = exports.rules = exports.tips = exports.FColor = exports.text = exports.prefixes = exports.Gamemode = exports.GamemodeNames = exports.FishServer = exports.mapRepoURLs = exports.Mode = exports.translationApiToken = exports.translationApiUrl = exports.backendIP = exports.stopAntiEvadeTime = exports.heuristics = exports.sneakybannedNames = exports.adminNames = exports.multiCharSubstitutions = exports.substitutions = exports.bannedWords = void 0;
 var globals_1 = require("/globals");
 var ranks_1 = require("/ranks");
 var funcs_1 = require("/funcs");
@@ -219,19 +219,20 @@ var FishServer = /** @class */ (function () {
     return FishServer;
 }());
 exports.FishServer = FishServer;
+exports.GamemodeNames = ["attack", "survival", "pvp", "sandbox", "hexed", "minigame", "testsrv", "hardcore"];
 /** Stores functions that return whether the specified gamemode is the current gamemode. */
 exports.Gamemode = {
     attack: function () { return exports.Gamemode.name() == "attack"; },
     survival: function () { return exports.Gamemode.name() == "survival"; },
     pvp: function () { return exports.Gamemode.name() == "pvp" || exports.Gamemode.name() == "hexed" || exports.Gamemode.name() == "minigame"; },
     sandbox: function () { return exports.Gamemode.name() == "sandbox"; },
+    cheatsOk: function () { return exports.Gamemode.name() == "sandbox" || exports.Gamemode.name() == "testsrv"; },
     hexed: function () { return exports.Gamemode.name() == "hexed"; },
     hardcore: function () { return exports.Gamemode.name() == "hardcore"; },
     testsrv: function () { return exports.Gamemode.name() == "testsrv"; },
     minigame: function () { return exports.Gamemode.name() == "minigame"; },
     name: function () { return Core.settings.get("mode", Vars.state.rules.mode().name()); },
 };
-exports.GamemodeNames = Object.keys(exports.Gamemode).filter(function (x) { return x !== "name"; });
 //#endregion
 //#region text content
 exports.prefixes = {

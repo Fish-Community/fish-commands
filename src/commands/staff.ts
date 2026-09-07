@@ -713,7 +713,7 @@ export const commands = commandList({
 				unit.add();
 				data.push(unit);
 			}
-			if(!(Gamemode.sandbox() || Gamemode.testsrv()) && args.effects !== 'paper') logAction(`spawned unit ${args.type.name}${count == 1 ? '' : ` x${count}`} at ${Math.round(x / 8)}, ${Math.round(y / 8)}` + (args.effects ? `with ${args.effects} effects` : ''), sender);
+			if(!Gamemode.cheatsOk() && args.effects !== 'paper') logAction(`spawned unit ${args.type.name}${count == 1 ? '' : ` x${count}`} at ${Math.round(x / 8)}, ${Math.round(y / 8)}` + (args.effects ? `with ${args.effects} effects` : ''), sender);
 			outputSuccess(f`Spawned unit ${args.type} at (${Math.round(x / 8)}, ${Math.round(y / 8)})`);
 		}
 	},
@@ -736,7 +736,7 @@ export const commands = commandList({
 				action: `setblocked`,
 				type: args.block.localizedName
 			});
-			if(!(Gamemode.sandbox() || Gamemode.testsrv())) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
+			if(!Gamemode.cheatsOk()) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
 			outputSuccess(f`Set block at ${args.x}, ${args.y} to ${args.block}`);
 		}
 	},
@@ -758,7 +758,7 @@ export const commands = commandList({
 				action: `setblocked`,
 				type: args.block.localizedName
 			});
-			if(!(Gamemode.sandbox() || Gamemode.testsrv())) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
+			if(!Gamemode.cheatsOk()) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
 			outputSuccess(f`Set block at ${x}, ${y} to ${args.block}`);
 		},
 		handler({args, outputSuccess, handleTaps, currentTapMode, f}){
@@ -793,7 +793,7 @@ export const commands = commandList({
 					numKilled ++;
 				}
 			});
-			if(!Gamemode.sandbox()) logAction(`exterminated ${numKilled} units`, sender);
+			if(!Gamemode.cheatsOk()) logAction(`exterminated ${numKilled} units`, sender);
 			outputSuccess(f`Exterminated ${numKilled} units.`);
 		}
 	},
@@ -914,7 +914,7 @@ ${getAntiBotInfo("client")}`
 				const emanate = UnitTypes.emanate.spawn(sender.team(), sender.player.x, sender.player.y);
 				sender.unit(emanate);
 				unitMapping[sender.uuid] = emanate;
-				if(!Gamemode.sandbox()) logAction("spawned an emanate", sender);
+				if(!Gamemode.cheatsOk()) logAction("spawned an emanate", sender);
 				outputSuccess("Spawned an emanate.");
 			}
 		};
@@ -1049,7 +1049,7 @@ ${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 			const ticks = (args.duration ?? 1e12) / 1000 * 60;
 			applyEffectMode(args.mode, unit, ticks);
 			outputSuccess(`${args.mode === "clear" ? "Cleared" : "Applied"} effects.`);
-			if(!Gamemode.sandbox()) logAction(`applied **${args.mode}** effects to`, sender, target);
+			if(!Gamemode.cheatsOk()) logAction(`applied **${args.mode}** effects to`, sender, target);
 		}
 	},
 	items: {
@@ -1061,7 +1061,7 @@ ${ips ? `\nIPs used: ${info.ips.map(i => `[blue]${i}[]`).toString(", ")}` : ""}`
 			const core = team.data().cores.firstOpt() ?? fail(f`Team ${team} has no cores.`);
 			core.items.add(item, amount);
 			outputSuccess(f`Gave ${amount} ${item} to ${team}.`);
-			if(!Gamemode.sandbox()) logAction(`gave ${amount} ${item.localizedName.toLowerCase()} to ${team.name}`, sender);
+			if(!Gamemode.cheatsOk()) logAction(`gave ${amount} ${item.localizedName.toLowerCase()} to ${team.name}`, sender);
 		}
 	},
 	explosion: {

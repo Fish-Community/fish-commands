@@ -239,22 +239,21 @@ export class FishServer {
 	}
 }
 
-export type GamemodeName = keyof typeof Gamemode extends infer K extends keyof typeof Gamemode ? K extends unknown ?
-	(typeof Gamemode)[K] extends (() => boolean) ? K : never
-: never : never;
+export const GamemodeNames = ["attack", "survival", "pvp", "sandbox", "hexed", "minigame", "testsrv", "hardcore"] as const;
+export type GamemodeName = (typeof GamemodeNames)[number];
 /** Stores functions that return whether the specified gamemode is the current gamemode. */
 export const Gamemode = {
 	attack: () => Gamemode.name() == "attack",
 	survival: () => Gamemode.name() == "survival",
 	pvp: () => Gamemode.name() == "pvp" || Gamemode.name() == "hexed" || Gamemode.name() == "minigame",
 	sandbox: () => Gamemode.name() == "sandbox",
+	cheatsOk: () => Gamemode.name() == "sandbox" || Gamemode.name() == "testsrv",
 	hexed: () => Gamemode.name() == "hexed",
 	hardcore: () => Gamemode.name() == "hardcore",
 	testsrv: () => Gamemode.name() == "testsrv",
 	minigame: () => Gamemode.name() == "minigame",
 	name: () => Core.settings.get("mode", Vars.state.rules.mode().name()) as "attack" | "survival" | "pvp" | "sandbox" | "hexed" | "hardcore" | "testsrv" | "minigame",
 };
-export const GamemodeNames: GamemodeName[] = Object.keys(Gamemode).filter((x): x is GamemodeName => x !== "name");
 //#endregion
 //#region text content
 
