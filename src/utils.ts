@@ -1073,15 +1073,16 @@ export function unblacklist(ip:string):boolean {
 }
 
 /** May fail(), or throw the Cancel symbol. */
-export async function getDuration(player:FishPlayer<true>, title:string, description:string):Promise<number> {
+export async function getDuration(player:FishPlayer<true>, title:string, description:string, suggestForever = false):Promise<number> {
 	const result = await Menu.buttons<number | "custom", "reject">(player, title, description, [
 		[
-			{text: "2 days", data: Duration.days(2)},
-			{text: "7 days", data: Duration.days(7)},
-			{text: "30 days", data: Duration.days(30)},
+			{ text: "2 days", data: Duration.days(2) },
+			{ text: "7 days", data: Duration.days(7) },
+			{ text: "30 days", data: Duration.days(30) },
 		],
-		[{text: "[red]Forever", data: maxTime - Date.now() - 10000}],
-		[{text: "Custom", data: "custom"}],
+		[{ text: suggestForever ? "[green]Forever" : "[red]Forever", data: maxTime - Date.now() - 10000 }],
+		[{ text: "Custom", data: "custom" }],
+		[{ text: "Cancel", data: Cancel }],
 	], { onCancel: "reject" });
 	if(result == "custom"){
 		const result = await Menu.text(title, description, player, {

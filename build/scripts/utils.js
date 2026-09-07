@@ -1307,10 +1307,11 @@ function unblacklist(ip) {
     return unblacklist_once(ip);
 }
 /** May fail(), or throw the Cancel symbol. */
-function getDuration(player, title, description) {
-    return __awaiter(this, void 0, void 0, function () {
+function getDuration(player_1, title_1, description_1) {
+    return __awaiter(this, arguments, void 0, function (player, title, description, suggestForever) {
         var result, result_1;
         var _a;
+        if (suggestForever === void 0) { suggestForever = false; }
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, menus_1.Menu.buttons(player, title, description, [
@@ -1319,8 +1320,9 @@ function getDuration(player, title, description) {
                             { text: "7 days", data: funcs_1.Duration.days(7) },
                             { text: "30 days", data: funcs_1.Duration.days(30) },
                         ],
-                        [{ text: "[red]Forever", data: globals_1.maxTime - Date.now() - 10000 }],
+                        [{ text: suggestForever ? "[green]Forever" : "[red]Forever", data: globals_1.maxTime - Date.now() - 10000 }],
                         [{ text: "Custom", data: "custom" }],
+                        [{ text: "Cancel", data: menus_1.Cancel }],
                     ], { onCancel: "reject" })];
                 case 1:
                     result = _b.sent();
