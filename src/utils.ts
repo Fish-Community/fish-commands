@@ -1072,15 +1072,25 @@ export function unblacklist(ip:string):boolean {
 	return unblacklist_once(ip);
 }
 
-export function getDuration(player:FishPlayer<true>, title:string, description:string){
-	return Menu.buttons(player, title, description, [
+/** May fail(), or throw the Cancel symbol. */
+export async function getDuration(player:FishPlayer<true>, title:string, description:string):Promise<number> {
+	const result = await Menu.buttons<number | "custom", "reject">(player, title, description, [
 		[
 			{text: "2 days", data: Duration.days(2)},
 			{text: "7 days", data: Duration.days(7)},
-			{text: "30 days", data: Duration.days(30)}
+			{text: "30 days", data: Duration.days(30)},
 		],
-		[{text: "forever", data: maxTime - Date.now() - 10000}],
+		[{text: "[red]Forever", data: maxTime - Date.now() - 10000}],
+		[{text: "Custom", data: "custom"}],
 	], { onCancel: "reject" });
+	if(result == "custom"){
+		const result = await Menu.text(title, description, player, {
+			allowEmpty: false,
+			maxTextLength: 12,
+			onCancel: "reject",
+		});
+		return parseTimeString(result) ?? fail(`Invalid time string "${result}"`);
+	} else return result;
 }
 
 export function randomName():string {
