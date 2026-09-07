@@ -367,7 +367,11 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		this.infoUpdated = true;
 	}
 	updateData(data: Partial<FishPlayerData>){
-		if(data.name != undefined) this.name = data.name;
+		if(data.name != undefined){
+			this.name = data.name;
+			this.cleanedName = Strings.stripColors(data.name).trim();
+			if(this.prefixedName == "Unnamed player [ERROR}") this.prefixedName = data.name;
+		}
 		if(data.overrideName !== undefined) this.overrideName = data.overrideName;
 		if(data.unmuteTime != undefined) this.unmuteTime = data.unmuteTime;
 		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;

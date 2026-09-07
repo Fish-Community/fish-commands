@@ -458,8 +458,12 @@ var FishPlayer = /** @class */ (function () {
     };
     FishPlayer.prototype.updateData = function (data) {
         var _a;
-        if (data.name != undefined)
+        if (data.name != undefined) {
             this.name = data.name;
+            this.cleanedName = Strings.stripColors(data.name).trim();
+            if (this.prefixedName == "Unnamed player [ERROR}")
+                this.prefixedName = data.name;
+        }
         if (data.overrideName !== undefined)
             this.overrideName = data.overrideName;
         if (data.unmuteTime != undefined)

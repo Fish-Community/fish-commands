@@ -26,7 +26,7 @@ export class Achievement {
 	notify: "nobody" | "player" | "everyone" = "player";
 	hidden = false;
 	disabled = false;
-	allowedModes: GamemodeName[];
+	allowedModes: readonly GamemodeName[];
 	modesText: string;
 	
 	static all: Achievement[] = [];
