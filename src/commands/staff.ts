@@ -330,6 +330,16 @@ export const commands = commandList({
 		args: ["time:time", "message:string"],
 		description: "Places a label at your position for a specified amount of time.",
 		perm: Perm.mod,
+		init(){
+			Events.on(EventType.GameOverEvent, () => {
+				fishState.labels.forEach(l => {
+					l.task?.cancel();
+					//ABSOLUTELY WONDERFUL
+					Call["label(java.lang.String,int,float,float,float)"](null, l.id, 0, 0, 0);
+				});
+				fishState.labels.splice(0);
+			});
+		},
 		handler({args, sender, outputSuccess, f}){
 			if(args.time > Duration.hours(10)) fail(`Time must be less than 10 hours.`);
 			const unit = sender.unit() ?? fail(`You must be in a unit to use this command.`);
@@ -366,6 +376,7 @@ export const commands = commandList({
 				//ABSOLUTELY WONDERFUL
 				Call["label(java.lang.String,int,float,float,float)"](null, l.id, 0, 0, 0);
 			});
+			fishState.labels.splice(0);
 			outputSuccess(`Removed all labels.`);
 		}
 	},

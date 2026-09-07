@@ -564,6 +564,17 @@ exports.commands = (0, commands_1.commandList)({
         args: ["time:time", "message:string"],
         description: "Places a label at your position for a specified amount of time.",
         perm: commands_1.Perm.mod,
+        init: function () {
+            Events.on(EventType.GameOverEvent, function () {
+                globals_1.fishState.labels.forEach(function (l) {
+                    var _a;
+                    (_a = l.task) === null || _a === void 0 ? void 0 : _a.cancel();
+                    //ABSOLUTELY WONDERFUL
+                    Call["label(java.lang.String,int,float,float,float)"](null, l.id, 0, 0, 0);
+                });
+                globals_1.fishState.labels.splice(0);
+            });
+        },
         handler: function (_a) {
             var _b;
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
@@ -598,6 +609,7 @@ exports.commands = (0, commands_1.commandList)({
                 //ABSOLUTELY WONDERFUL
                 Call["label(java.lang.String,int,float,float,float)"](null, l.id, 0, 0, 0);
             });
+            globals_1.fishState.labels.splice(0);
             outputSuccess("Removed all labels.");
         }
     },
