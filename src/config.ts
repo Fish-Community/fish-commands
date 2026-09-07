@@ -49,7 +49,7 @@ export const bannedWords: {
 		"re"+"tard", "долбоёб", "tarado", "tarada", "mogolico", "mogolica", "pelotudo", "pelotuda", "retrasado", "retrasada",
 		'kill yourself', 'kill urself', /\bkys\b/, "убейся", "убей себя",
 		"kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", /\b1488\b/, //nazi-related words
-		["co"+"ck", "cockroach", "poppycock", "cocktail", "cocky"], "suck dick", "sucking dick", "соси хуй", "pito", "pene", "nepe", "pilin", "verga", "polla", "pichula",
+		["co"+"ck", "cockroach", "poppycock", "cocktail", "cocky"], "suck dick", "sucking dick", "соси хуй", /\bpito\b/, /\bpene\b/, ["nepe", "nepenthes"], "pilin", "verga", "polla", "pichula",
 		"iamasussyimposter",
 		["cu"+"nt", "scunthorpe"],
 		["penis", "peniston"], "пенис",
