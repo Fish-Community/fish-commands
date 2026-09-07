@@ -210,6 +210,7 @@ export function setFishPlayerData(data: UploadedFishPlayerData, repeats:number, 
 
 /** Pushes fish player data to the backend. */
 export function fetchAntibotData() {
+	if(Mode.noBackend) return;
 	const { promise, resolve, reject } = Promise.withResolvers<AntibotData, unknown>();
 	if(Mode.noBackend){
 		resolve({ nameBlacklistRegex: null, nameGraylistRegex: null });
@@ -220,7 +221,7 @@ export function fetchAntibotData() {
 		.header('Accept', '*/*');
 	req.timeout = 10000;
 	req.error((err) => {
-		Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
+		// Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
 		// Log.err(err);
 		// if(err?.response) Log.err(err.response.getResultAsString());
 		reject(err);
@@ -232,6 +233,7 @@ export function fetchAntibotData() {
 }
 
 export function syncDosBlacklist(ips:string[]) {
+	if(Mode.noBackend) return;
 	const { promise, resolve, reject } = Promise.withResolvers<string[], unknown>();
 	if(Mode.noBackend) resolve([]);
 	else {
@@ -240,7 +242,7 @@ export function syncDosBlacklist(ips:string[]) {
 			.header('Accept', '*/*');
 		req.timeout = 10000;
 		req.error((err) => {
-			Log.err(`[API] Network error when trying to call api.syncDosBlacklist()`);
+			// Log.err(`[API] Network error when trying to call api.syncDosBlacklist()`);
 			// Log.err(err);
 			// if(err?.response) Log.err(err.response.getResultAsString());
 			reject(err);

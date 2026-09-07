@@ -155,7 +155,7 @@ export const translationApiToken = new Administration.Config("translationApiToke
 
 export const Mode = {
 	localDebug: new Fi("config/.debug").exists(),
-	noBackend: new Fi("config/.debug").exists() && !backendIP.startsWith("127.0.0.1:"),
+	noBackend: new Fi("config/.debug").exists() && !backendIP.endsWith(":5083"),
 	isChristmas: new Date().getMonth() == 11,
 	isAprilFools: new Date().getMonth() == 3 && new Date().getDate() == 1,
 };
