@@ -153,8 +153,14 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 	
 	/** reversed */
 	const argsQueue = args.slice().reverse();
-	for(const cmdArg of processedCmdArgs){
-		let arg = argsQueue.pop(); //reversed
+	for(const [i, cmdArg] of processedCmdArgs.entries()){
+		let arg;
+		if(i == processedCmdArgs.length - 1 && variadicArgumentTypes.includes(cmdArg.type)){
+			arg = argsQueue.reverse().join(" ");
+			argsQueue.splice(0);
+		} else {
+			arg = argsQueue.pop(); //reversed
+		}
 
 		if(arg == undefined || arg === "" || arg === "@" || arg === "@0"){
 			//if the arg was not provided or it was empty
@@ -499,20 +505,10 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 
 const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map", "mapOrRandom"];
 
-function isArgOptional(arg:CommandArg, allowMenus:boolean){
-	return arg.isOptional || allowMenus;
-}
 
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
-export function convertArgs(processedCmdArgs:CommandArg[], allowMenus:boolean):string {
-	return processedCmdArgs.map((arg, index, array) => {
-		const isOptional = isArgOptional(arg, allowMenus) &&
-			!array.slice(index + 1).some(c => !isArgOptional(c, allowMenus)); //this is enforced by the arc command handler
-		//TODO internalize command handler
-		const brackets = isOptional ? ["[", "]"] : ["<", ">"];
-		//if the arg is a string and last argument, make it variadic (so if `/warn player a b c d` is run, the last arg is "a b c d" not "a")
-		return brackets[0] + arg.name + (variadicArgumentTypes.includes(arg.type) && index + 1 == array.length ? "..." : "") + brackets[1];
-	}).join(" ");
+export function convertArgs(processedCmdArgs:CommandArg[]):string {
+	return processedCmdArgs.map(arg => arg.isOptional ? `[${arg.name}]` : `<${arg.name}>`).join(" ");
 }
 
 export function handleTapEvent(event:EventType["TapEvent"]){
@@ -600,13 +596,14 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 		//Process the args
 		const processedCmdArgs = data.args.map(processArgString);
 		clientHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-		clientHandler.register(
+		const cmd = clientHandler.register(
 			name,
-			convertArgs(processedCmdArgs, true),
+			processedCmdArgs.length == 0 ? "" : "[...]",
 			data.description,
-			new CommandHandler.CommandRunner({ async accept(unjoinedRawArgs: string[], sender: mindustryPlayer){
+			new CommandHandler.CommandRunner({ async accept(weirdArgs: string[], sender: mindustryPlayer){
 				if(!initialized) crash(`Commands not initialized!`);
-
+				
+				const unjoinedRawArgs = weirdArgs.length == 0 ? weirdArgs : weirdArgs[0].split(" ");
 				const fishSender = FishPlayer.get(sender) as FishPlayer<true>;
 				FishPlayer.onPlayerCommand(fishSender, name, unjoinedRawArgs);
 
@@ -625,7 +622,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 
 				//closure over processedCmdArgs, should be fine
 				//Process the args
-				const rawArgs = joinArgs(unjoinedRawArgs); //TODO: remove this when we replace the command handler
+				const rawArgs = joinArgs(unjoinedRawArgs);
 				//Resolve missing args (such as players that need to be determined through a menu)
 				let resolvedArgs;
 				try {
@@ -701,6 +698,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 				}
 			} })
 		);
+		ArcReflect.set(cmd, "paramText", convertArgs(processedCmdArgs));
 		allCommands[name] = data;
 	}
 }
@@ -716,9 +714,9 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 		//Process the args
 		const processedCmdArgs = data.args.map(processArgString);
 		serverHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-		serverHandler.register(
+		const cmd = serverHandler.register(
 			name,
-			convertArgs(processedCmdArgs, false),
+			processedCmdArgs.length == 0 ? "" : "[...]",
 			data.description,
 			new CommandHandler.CommandRunner({ async accept(rawArgs: string[]){
 				if(!initialized) crash(`Commands not initialized!`);
@@ -774,6 +772,7 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 				}
 			} })
 		);
+		ArcReflect.set(cmd, "paramText", convertArgs(processedCmdArgs));
 		allConsoleCommands[name] = data;
 	}
 }

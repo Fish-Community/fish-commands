@@ -288,20 +288,26 @@ var argsSupportingBlank = ["player", "playerOn", "unittype", "map", "mapOrRandom
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 function processArgs(args, processedCmdArgs, sender, commandName) {
     return __awaiter(this, void 0, void 0, function () {
-        var outputArgs, argsQueue, _loop_1, processedCmdArgs_1, processedCmdArgs_1_1, cmdArg, e_2_1;
-        var e_2, _a;
-        var _b, _c, _d, _e, _f, _g;
-        return __generator(this, function (_h) {
-            switch (_h.label) {
+        var outputArgs, argsQueue, _loop_1, _a, _b, _c, i, cmdArg, e_2_1;
+        var e_2, _d;
+        var _e, _f, _g, _h, _j, _k;
+        return __generator(this, function (_l) {
+            switch (_l.label) {
                 case 0:
                     outputArgs = {};
                     argsQueue = args.slice().reverse();
-                    _loop_1 = function (cmdArg) {
-                        var arg, commonArgs, _j, options, uuid_1, player, info, data, needsConfirm, _k, left, right, r2, _l, _m, mouseX_1, mouseY_1, score_1, fishP, err_1, _o, mouseX_2, mouseY_2, closestPlayer, _p, x_1, y_1, query, rank_1, role_1, num, options_1, buttons, selection, num_1, number, _q, mouseX, mouseY, _r, x, y, _s, x, y, milliseconds, block;
-                        return __generator(this, function (_t) {
-                            switch (_t.label) {
+                    _loop_1 = function (i, cmdArg) {
+                        var arg, commonArgs, _m, options, uuid_1, player, info, data, needsConfirm, _o, left, right, r2, _p, _q, mouseX_1, mouseY_1, score_1, fishP, err_1, _r, mouseX_2, mouseY_2, closestPlayer, _s, x_1, y_1, query, rank_1, role_1, num, options_1, buttons, selection, num_1, number, _t, mouseX, mouseY, _u, x, y, _v, x, y, milliseconds, block;
+                        return __generator(this, function (_w) {
+                            switch (_w.label) {
                                 case 0:
-                                    arg = argsQueue.pop();
+                                    if (i == processedCmdArgs.length - 1 && variadicArgumentTypes.includes(cmdArg.type)) {
+                                        arg = argsQueue.reverse().join(" ");
+                                        argsQueue.splice(0);
+                                    }
+                                    else {
+                                        arg = argsQueue.pop(); //reversed
+                                    }
                                     if (!(arg == undefined || arg === "" || arg === "@" || arg === "@0")) return [3 /*break*/, 5];
                                     if (!(cmdArg.isOptional && arg !== "@")) return [3 /*break*/, 1];
                                     outputArgs[cmdArg.name] = undefined;
@@ -314,15 +320,15 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     if (!sender) return [3 /*break*/, 4];
                                     return [4 /*yield*/, menus_1.Menu.text("/".concat(commandName), "Specify a value for the argument \"".concat(cmdArg.name, "\""), sender)];
                                 case 3:
-                                    arg = _t.sent();
+                                    arg = _w.sent();
                                     return [3 /*break*/, 5];
                                 case 4:
                                     (0, errors_1.fail)("No value specified for arg ".concat(cmdArg.name, ". Did you type two spaces instead of one?"));
-                                    _t.label = 5;
+                                    _w.label = 5;
                                 case 5:
                                     commonArgs = [arg, cmdArg, sender, outputArgs];
-                                    _j = cmdArg.type;
-                                    switch (_j) {
+                                    _m = cmdArg.type;
+                                    switch (_m) {
                                         case "player": return [3 /*break*/, 6];
                                         case "playerOn": return [3 /*break*/, 6];
                                         case "team": return [3 /*break*/, 41];
@@ -353,7 +359,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                             return (0, errors_1.fail)("Network error while downloading fish player data for ".concat(uuid_1, ": ").concat((0, funcs_1.parseError)(err)));
                                         })];
                                 case 7:
-                                    data = _t.sent();
+                                    data = _w.sent();
                                     if (!data) return [3 /*break*/, 8];
                                     player = new players_1.FishPlayer(uuid_1, data, null);
                                     return [3 /*break*/, 11];
@@ -368,25 +374,25 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         (0, errors_1.fail)("Player with uuid \"".concat(uuid_1, "\" not found in the server or the database. Are you sure this UUID is correct? If so, specify \"@create:").concat(uuid_1, "\""));
                                     return [4 /*yield*/, menus_1.Menu.confirm(sender, "Player with uuid \"".concat(uuid_1, "\" not found in this server or the database. Are you sure this UUID is correct?"), { title: "Confirm UUID" })];
                                 case 10:
-                                    _t.sent();
+                                    _w.sent();
                                     info = Vars.netServer.admins.getInfo(uuid_1);
                                     player = players_1.FishPlayer.createFromInfo(info);
-                                    _t.label = 11;
+                                    _w.label = 11;
                                 case 11: return [3 /*break*/, 13];
                                 case 12:
                                     if (cmdArg.type == "playerOn" && !player.connected())
                                         (0, errors_1.fail)("This command only accepts online players.");
-                                    _t.label = 13;
+                                    _w.label = 13;
                                 case 13:
                                     options = player;
                                     return [3 /*break*/, 39];
                                 case 14:
                                     if (!arg.startsWith("@")) return [3 /*break*/, 38];
                                     needsConfirm = false;
-                                    _k = __read(Packages.java.lang.String(arg).split(":", 2), 2), left = _k[0], right = _k[1];
+                                    _o = __read(Packages.java.lang.String(arg).split(":", 2), 2), left = _o[0], right = _o[1];
                                     r2 = Packages.java.lang.String(right).split(":", 2)[1];
-                                    _l = left;
-                                    switch (_l) {
+                                    _p = left;
+                                    switch (_p) {
                                         case "@cyrillic": return [3 /*break*/, 15];
                                         case "@russian": return [3 /*break*/, 15];
                                         case "@china": return [3 /*break*/, 16];
@@ -456,7 +462,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     {
                                         if (!(sender === null || sender === void 0 ? void 0 : sender.unit()))
                                             (0, errors_1.fail)("You must have a unit to use the @c selector.");
-                                        _m = sender.player, mouseX_1 = _m.mouseX, mouseY_1 = _m.mouseY;
+                                        _q = sender.player, mouseX_1 = _q.mouseX, mouseY_1 = _q.mouseY;
                                         if (mouseX_1 == 0 && mouseY_1 == 0)
                                             (0, errors_1.fail)("Unable to read your cursor position. (It says it's exactly at 0,0)");
                                         needsConfirm = true;
@@ -466,7 +472,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         needsConfirm = true;
                                         return [3 /*break*/, 37];
                                     }
-                                    _t.label = 26;
+                                    _w.label = 26;
                                 case 26:
                                     {
                                         if (cmdArg.type == "playerOn")
@@ -476,7 +482,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                                 (0, errors_1.fail)("To select by UUID, please specify \"".concat(right, "\" without the \"@offline:\" prefix."));
                                             else if (right.startsWith("create:") && r2 && globals_1.uuidPattern.test(r2))
                                                 (0, errors_1.fail)("To select by UUID, please specify \"@create:".concat(r2, "\" without the \"@offline:\" prefix."));
-                                            options = (_b = players_1.FishPlayer.search(Object.values(players_1.FishPlayer.cachedPlayers), right)) !== null && _b !== void 0 ? _b : (!sender || sender.ranksAtLeast("active") ?
+                                            options = (_e = players_1.FishPlayer.search(Object.values(players_1.FishPlayer.cachedPlayers), right)) !== null && _e !== void 0 ? _e : (!sender || sender.ranksAtLeast("active") ?
                                                 Vars.netServer.admins.searchNames(right).toSeq().toArray().slice(0, 50)
                                                     .map(players_1.FishPlayer.getFromInfo)
                                                     .sort(function (a, b) { return b.lastJoined - a.lastJoined; })
@@ -495,7 +501,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         }
                                         return [3 /*break*/, 37];
                                     }
-                                    _t.label = 27;
+                                    _w.label = 27;
                                 case 27:
                                     if (!right)
                                         (0, errors_1.fail)("You must specify a UUID to create, like this: @create:hIg/eqXDgzcAAAAADqsSYw==");
@@ -503,15 +509,15 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     if (!!fishP.connected()) return [3 /*break*/, 31];
                                     if (cmdArg.type == "playerOn")
                                         (0, errors_1.fail)("This command only accepts online players.");
-                                    _t.label = 28;
+                                    _w.label = 28;
                                 case 28:
-                                    _t.trys.push([28, 30, , 31]);
+                                    _w.trys.push([28, 30, , 31]);
                                     return [4 /*yield*/, fishP.downloadData()];
                                 case 29:
-                                    _t.sent();
+                                    _w.sent();
                                     return [3 /*break*/, 31];
                                 case 30:
-                                    err_1 = _t.sent();
+                                    err_1 = _w.sent();
                                     (0, errors_1.fail)("Network error while downloading fish player data for ".concat(right, ": ").concat((0, funcs_1.parseError)(err_1)));
                                     return [3 /*break*/, 31];
                                 case 31:
@@ -523,7 +529,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     sender.sendMessage("/".concat(commandName, ": Click a player's unit to select them."));
                                     return [4 /*yield*/, sender.waitForTap()];
                                 case 33:
-                                    _o = __read.apply(void 0, [(_t.sent()).map(function (t) { return t * 8; }), 2]), mouseX_2 = _o[0], mouseY_2 = _o[1];
+                                    _r = __read.apply(void 0, [(_w.sent()).map(function (t) { return t * 8; }), 2]), mouseX_2 = _r[0], mouseY_2 = _r[1];
                                     closestPlayer = Seq.with(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.unit(); }))
                                         .min(floatf(function (p) { return Mathf.dst2(p.unit().x, p.unit().y, mouseX_2, mouseY_2); }));
                                     if (closestPlayer && Mathf.dst(closestPlayer.unit().x, closestPlayer.unit().y, mouseX_2, mouseY_2) > 32)
@@ -532,14 +538,14 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     return [3 /*break*/, 37];
                                 case 34:
                                     {
-                                        _p = (_d = (_c = sender === null || sender === void 0 ? void 0 : sender.player) === null || _c === void 0 ? void 0 : _c.unit()) !== null && _d !== void 0 ? _d : (0, errors_1.fail)("You must have a unit to use the @h selector."), x_1 = _p.x, y_1 = _p.y;
+                                        _s = (_g = (_f = sender === null || sender === void 0 ? void 0 : sender.player) === null || _f === void 0 ? void 0 : _f.unit()) !== null && _g !== void 0 ? _g : (0, errors_1.fail)("You must have a unit to use the @h selector."), x_1 = _s.x, y_1 = _s.y;
                                         needsConfirm = true;
                                         options = [
                                             Seq.with.apply(Seq, __spreadArray([], __read(players_1.FishPlayer.getAllOnline().filter(function (p) { return p.unit() && p !== sender; })), false)).min(floatf(function (p) { return Mathf.dst2(p.unit().x, p.unit().y, x_1, y_1); }))
                                         ];
                                         return [3 /*break*/, 37];
                                     }
-                                    _t.label = 35;
+                                    _w.label = 35;
                                 case 35:
                                     options = Array.from(sender ? sender.recentPlayers : exports.consoleState.recentPlayers);
                                     if (options.length == 0)
@@ -570,7 +576,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         }
                                     }
                                     (0, errors_1.fail)("Unknown selector ".concat(arg, "."));
-                                    _t.label = 37;
+                                    _w.label = 37;
                                 case 37:
                                     if (Array.isArray(options)) {
                                         if (options.length == 0)
@@ -581,13 +587,13 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     return [3 /*break*/, 39];
                                 case 38:
                                     options = players_1.FishPlayer.search(players_1.FishPlayer.getAllOnline(), arg);
-                                    _t.label = 39;
+                                    _w.label = 39;
                                 case 39: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([options], __read(commonArgs), false), [function (player) { return (player.marked() ? config_1.prefixes.marked : player.autoflagged ? config_1.prefixes.flagged : "") + (Strings.stripColors(player.name).length >= 3 ?
                                             player.name
                                             : (0, funcs_1.escapeStringColorsClient)(player.name)); },
                                         2], false))];
                                 case 40:
-                                    _t.sent();
+                                    _w.sent();
                                     return [3 /*break*/, 69];
                                 case 41:
                                     num = void 0;
@@ -609,11 +615,11 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     ], false);
                                     return [4 /*yield*/, menus_1.Menu.raw("Select a team", "Select a team for the argument \"".concat(cmdArg.name, "\""), buttons, sender, { optionStringifier: function (t) { return t == "other" ? "Other..." : t.coloredName(); } })];
                                 case 43:
-                                    selection = _t.sent();
+                                    selection = _w.sent();
                                     if (!(selection == "other")) return [3 /*break*/, 45];
                                     return [4 /*yield*/, menus_1.Menu.text("Select a team", "Enter the team's ID\nYou can also specify [accent]#123[] in the command.", sender, { positiveIntegersOnly: true })];
                                 case 44:
-                                    num_1 = _t.sent();
+                                    num_1 = _w.sent();
                                     if (num_1 <= 255 && num_1 >= 0)
                                         outputArgs[cmdArg.name] = Team.all[num_1];
                                     else
@@ -621,27 +627,27 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     return [3 /*break*/, 46];
                                 case 45:
                                     outputArgs[cmdArg.name] = selection;
-                                    _t.label = 46;
+                                    _w.label = 46;
                                 case 46: return [3 /*break*/, 49];
                                 case 47: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getTeam)(arg)], __read(commonArgs), false), [function (t) { return t.coloredName(); }], false))];
                                 case 48:
-                                    _t.sent();
-                                    _t.label = 49;
+                                    _w.sent();
+                                    _w.label = 49;
                                 case 49: return [3 /*break*/, 69];
                                 case 50:
                                     {
                                         number = Number(arg);
                                         if (isNaN(number)) {
                                             if (arg == "@c") {
-                                                _q = (_e = sender === null || sender === void 0 ? void 0 : sender.player) !== null && _e !== void 0 ? _e : (0, errors_1.fail)("You must have a player to use the @c selector."), mouseX = _q.mouseX, mouseY = _q.mouseY;
+                                                _t = (_h = sender === null || sender === void 0 ? void 0 : sender.player) !== null && _h !== void 0 ? _h : (0, errors_1.fail)("You must have a player to use the @c selector."), mouseX = _t.mouseX, mouseY = _t.mouseY;
                                                 if (mouseX == 0 && mouseY == 0)
                                                     (0, errors_1.fail)("Unable to read your cursor position. (Mindustry says it's exactly at 0,0)");
-                                                _r = __read([mouseX, mouseY].map(function (c) { return Math.round(c / 8); }), 2), x = _r[0], y = _r[1];
+                                                _u = __read([mouseX, mouseY].map(function (c) { return Math.round(c / 8); }), 2), x = _u[0], y = _u[1];
                                                 number = x;
                                                 argsQueue.push(String(y));
                                             }
                                             else if (arg == "@h") {
-                                                _s = (_g = (_f = sender === null || sender === void 0 ? void 0 : sender.player) === null || _f === void 0 ? void 0 : _f.unit()) !== null && _g !== void 0 ? _g : (0, errors_1.fail)("You must have a unit to use the @h selector."), x = _s.x, y = _s.y;
+                                                _v = (_k = (_j = sender === null || sender === void 0 ? void 0 : sender.player) === null || _j === void 0 ? void 0 : _j.unit()) !== null && _k !== void 0 ? _k : (0, errors_1.fail)("You must have a unit to use the @h selector."), x = _v.x, y = _v.y;
                                                 number = Math.round(x / 8);
                                                 argsQueue.push(String(Math.round(y / 8)));
                                             }
@@ -657,7 +663,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         outputArgs[cmdArg.name] = number;
                                         return [3 /*break*/, 69];
                                     }
-                                    _t.label = 51;
+                                    _w.label = 51;
                                 case 51:
                                     {
                                         milliseconds = (0, utils_1.parseTimeString)(arg);
@@ -666,7 +672,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         outputArgs[cmdArg.name] = milliseconds;
                                         return [3 /*break*/, 69];
                                     }
-                                    _t.label = 52;
+                                    _w.label = 52;
                                 case 52:
                                     outputArgs[cmdArg.name] = arg;
                                     return [3 /*break*/, 69];
@@ -703,10 +709,10 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                         outputArgs[cmdArg.name] = block;
                                         return [3 /*break*/, 69];
                                     }
-                                    _t.label = 55;
+                                    _w.label = 55;
                                 case 55: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getUnitType)(arg)], __read(commonArgs), false), [function (u) { return u.emoji() + (0, funcs_1.capitalizeText)(u.name); }], false))];
                                 case 56:
-                                    _t.sent();
+                                    _w.sent();
                                     return [3 /*break*/, 69];
                                 case 57:
                                     if (!globals_1.uuidPattern.test(arg))
@@ -716,7 +722,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                 case 58: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(arg)], __read(commonArgs), false), [function (r) { return r.name(); },
                                         2], false))];
                                 case 59:
-                                    _t.sent();
+                                    _w.sent();
                                     return [3 /*break*/, 69];
                                 case 60:
                                     if (["rand", "random"].includes(arg === null || arg === void 0 ? void 0 : arg.toLowerCase())) {
@@ -726,52 +732,52 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
                                     return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(arg)], __read(commonArgs), false), [function (r) { return r.name(); },
                                             2], false))];
                                 case 61:
-                                    _t.sent();
+                                    _w.sent();
                                     return [3 /*break*/, 69];
                                 case 62: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([ranks_1.Rank.search(arg)], __read(commonArgs), false), [function (r) { return r.coloredName(); }], false))];
                                 case 63:
-                                    _t.sent();
+                                    _w.sent();
                                     return [3 /*break*/, 69];
                                 case 64: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([ranks_1.RoleFlag.search(arg)], __read(commonArgs), false), [function (f) { return f.coloredName(); }], false))];
                                 case 65:
-                                    _t.sent();
+                                    _w.sent();
                                     return [3 /*break*/, 69];
                                 case 66: return [4 /*yield*/, disambiguateArgument.apply(void 0, __spreadArray(__spreadArray([(0, utils_1.getItem)(arg)], __read(commonArgs), false), [function (i) { return i.emoji() + (0, funcs_1.capitalizeText)(i.name, "-"); },
                                         2], false))];
                                 case 67:
-                                    _t.sent();
+                                    _w.sent();
                                     return [3 /*break*/, 69];
                                 case 68:
                                     cmdArg.type;
                                     (0, funcs_1.crash)("impossible");
-                                    _t.label = 69;
+                                    _w.label = 69;
                                 case 69: return [2 /*return*/];
                             }
                         });
                     };
-                    _h.label = 1;
+                    _l.label = 1;
                 case 1:
-                    _h.trys.push([1, 6, 7, 8]);
-                    processedCmdArgs_1 = __values(processedCmdArgs), processedCmdArgs_1_1 = processedCmdArgs_1.next();
-                    _h.label = 2;
+                    _l.trys.push([1, 6, 7, 8]);
+                    _a = __values(processedCmdArgs.entries()), _b = _a.next();
+                    _l.label = 2;
                 case 2:
-                    if (!!processedCmdArgs_1_1.done) return [3 /*break*/, 5];
-                    cmdArg = processedCmdArgs_1_1.value;
-                    return [5 /*yield**/, _loop_1(cmdArg)];
+                    if (!!_b.done) return [3 /*break*/, 5];
+                    _c = __read(_b.value, 2), i = _c[0], cmdArg = _c[1];
+                    return [5 /*yield**/, _loop_1(i, cmdArg)];
                 case 3:
-                    _h.sent();
-                    _h.label = 4;
+                    _l.sent();
+                    _l.label = 4;
                 case 4:
-                    processedCmdArgs_1_1 = processedCmdArgs_1.next();
+                    _b = _a.next();
                     return [3 /*break*/, 2];
                 case 5: return [3 /*break*/, 8];
                 case 6:
-                    e_2_1 = _h.sent();
+                    e_2_1 = _l.sent();
                     e_2 = { error: e_2_1 };
                     return [3 /*break*/, 8];
                 case 7:
                     try {
-                        if (processedCmdArgs_1_1 && !processedCmdArgs_1_1.done && (_a = processedCmdArgs_1.return)) _a.call(processedCmdArgs_1);
+                        if (_b && !_b.done && (_d = _a.return)) _d.call(_a);
                     }
                     finally { if (e_2) throw e_2.error; }
                     return [7 /*endfinally*/];
@@ -784,19 +790,9 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
     });
 }
 var variadicArgumentTypes = ["player", "string", "map", "mapOrRandom"];
-function isArgOptional(arg, allowMenus) {
-    return arg.isOptional || allowMenus;
-}
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
-function convertArgs(processedCmdArgs, allowMenus) {
-    return processedCmdArgs.map(function (arg, index, array) {
-        var isOptional = isArgOptional(arg, allowMenus) &&
-            !array.slice(index + 1).some(function (c) { return !isArgOptional(c, allowMenus); }); //this is enforced by the arc command handler
-        //TODO internalize command handler
-        var brackets = isOptional ? ["[", "]"] : ["<", ">"];
-        //if the arg is a string and last argument, make it variadic (so if `/warn player a b c d` is run, the last arg is "a b c d" not "a")
-        return brackets[0] + arg.name + (variadicArgumentTypes.includes(arg.type) && index + 1 == array.length ? "..." : "") + brackets[1];
-    }).join(" ");
+function convertArgs(processedCmdArgs) {
+    return processedCmdArgs.map(function (arg) { return arg.isOptional ? "[".concat(arg.name, "]") : "<".concat(arg.name, ">"); }).join(" ");
 }
 function handleTapEvent(event) {
     var _a;
@@ -887,15 +883,16 @@ function register(commands, clientHandler, serverHandler) {
         //Process the args
         var processedCmdArgs = data.args.map(processArgString);
         clientHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-        clientHandler.register(name, convertArgs(processedCmdArgs, true), data.description, new CommandHandler.CommandRunner({ accept: function (unjoinedRawArgs, sender) {
+        var cmd = clientHandler.register(name, processedCmdArgs.length == 0 ? "" : "[...]", data.description, new CommandHandler.CommandRunner({ accept: function (weirdArgs, sender) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var fishSender, rawArgs, resolvedArgs, err_2, shouldClearCopy, shouldClearPlayers, usageData, failed, args_1, requirements, err_3;
+                    var unjoinedRawArgs, fishSender, rawArgs, resolvedArgs, err_2, shouldClearCopy, shouldClearPlayers, usageData, failed, args_1, requirements, err_3;
                     var _a;
                     return __generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
                                 if (!initialized)
                                     (0, funcs_1.crash)("Commands not initialized!");
+                                unjoinedRawArgs = weirdArgs.length == 0 ? weirdArgs : weirdArgs[0].split(" ");
                                 fishSender = players_1.FishPlayer.get(sender);
                                 players_1.FishPlayer.onPlayerCommand(fishSender, name, unjoinedRawArgs);
                                 //Verify authorization
@@ -1004,6 +1001,7 @@ function register(commands, clientHandler, serverHandler) {
                     });
                 });
             } }));
+        ArcReflect.set(cmd, "paramText", convertArgs(processedCmdArgs));
         exports.allCommands[name] = data;
     };
     try {
@@ -1029,7 +1027,7 @@ function registerConsole(commands, serverHandler) {
         //Process the args
         var processedCmdArgs = data.args.map(processArgString);
         serverHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-        serverHandler.register(name, convertArgs(processedCmdArgs, false), data.description, new CommandHandler.CommandRunner({ accept: function (rawArgs) {
+        var cmd = serverHandler.register(name, processedCmdArgs.length == 0 ? "" : "[...]", data.description, new CommandHandler.CommandRunner({ accept: function (rawArgs) {
                 return __awaiter(this, void 0, void 0, function () {
                     var resolvedArgs, err_4, shouldClearPlayers, usageData, failed_2;
                     var _a;
@@ -1088,6 +1086,7 @@ function registerConsole(commands, serverHandler) {
                     });
                 });
             } }));
+        ArcReflect.set(cmd, "paramText", convertArgs(processedCmdArgs));
         exports.allConsoleCommands[name] = data;
     };
     try {
