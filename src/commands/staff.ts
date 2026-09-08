@@ -56,6 +56,7 @@ export const commands = commandList({
 					{ allowEmpty: true, maxTextLength: 99 }
 				);
 				await args.player.mute(sender, time, message);
+				outputSuccess(f`${args.player} has been muted for ${formatTime(time)}${message ? ` with reason: [white]${message}[]` : ""}.`);
 				logAction('muted', sender, args.player, message, time);
 			}
 		}
