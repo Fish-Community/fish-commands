@@ -15,7 +15,7 @@ import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
 import { getLanguageFromCache, isLanguageAvailable, Language, languageCache, setPlayerLanguageEntry } from "/translation";
-import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer, vnwCondition } from "/utils";
+import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
 
 export const commands = commandList({
@@ -821,18 +821,28 @@ Please stop attacking and [lime]build defenses[] first!`
 		args: ["waves:number?"],
 		description: "Vote to start the next wave.",
 		perm: Perm.play,
-		init: () => ({
-			manager: new VoteManager<number>(Duration.minutes(1.5))
-				.on("success", (t) => skipWaves(t.session!.data, true))
-				.on("vote passed", () => Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'))
-				.on("vote failed", () => Call.sendMessage('VNW: [red]Vote failed.'))
-				.on("player vote change", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has voted on skipping [accent]${t.session!.data}[white] wave(s). [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
-				.on("player vote removed", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has left. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
-		}),
+		init(){
+			let waveUnits = new Seq<Unit>();
+			Events.on(EventType.WaveEvent, () => {
+				if (Vars.state.rules.mode().name() === "survival"){
+					waveUnits = Groups.unit.copy().retainAll(u => u.team == Vars.state.rules.waveTeam);
+				}
+			});
+			return {
+				waveUnitsAlive(this:void){
+					return waveUnits.contains(boolf<Unit>(u => !u.dead && u.team == Vars.state.rules.waveTeam));
+				},
+				manager: new VoteManager<number>(Duration.minutes(1.5))
+					.on("success", (t) => skipWaves(t.session!.data, true))
+					.on("vote passed", () => Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'))
+					.on("vote failed", () => Call.sendMessage('VNW: [red]Vote failed.'))
+					.on("player vote change", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has voted on skipping [accent]${t.session!.data}[white] wave(s). [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
+					.on("player vote removed", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has left. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`)),
+			};
+		},
 		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
-		async handler({sender, args: {waves}, data:{manager}}){
-			
-			if (!vnwCondition.check()) fail("You can only do that when all units from previous waves are dead.");
+		async handler({sender, args: {waves}, data:{manager, waveUnitsAlive}}){
+			if(waveUnitsAlive()) fail("You can only run /vnw when all units from previous waves are dead.");
 			//Disable narrowing, this is async
 			if(!manager.session as boolean){
 				waves ??= await Menu.menu(

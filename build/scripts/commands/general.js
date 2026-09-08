@@ -1015,24 +1015,35 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         args: ["waves:number?"],
         description: "Vote to start the next wave.",
         perm: commands_1.Perm.play,
-        init: function () { return ({
-            manager: new votes_1.VoteManager(funcs_1.Duration.minutes(1.5))
-                .on("success", function (t) { return (0, utils_1.skipWaves)(t.session.data, true); })
-                .on("vote passed", function () { return Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'); })
-                .on("vote failed", function () { return Call.sendMessage('VNW: [red]Vote failed.'); })
-                .on("player vote change", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has voted on skipping [accent]").concat(t.session.data, "[white] wave(s). [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
-                .on("player vote removed", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has left. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
-        }); },
+        init: function () {
+            var waveUnits = new Seq();
+            Events.on(EventType.WaveEvent, function () {
+                if (Vars.state.rules.mode().name() === "survival") {
+                    waveUnits = Groups.unit.copy().retainAll(function (u) { return u.team == Vars.state.rules.waveTeam; });
+                }
+            });
+            return {
+                waveUnitsAlive: function () {
+                    return waveUnits.contains(boolf(function (u) { return !u.dead && u.team == Vars.state.rules.waveTeam; }));
+                },
+                manager: new votes_1.VoteManager(funcs_1.Duration.minutes(1.5))
+                    .on("success", function (t) { return (0, utils_1.skipWaves)(t.session.data, true); })
+                    .on("vote passed", function () { return Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'); })
+                    .on("vote failed", function () { return Call.sendMessage('VNW: [red]Vote failed.'); })
+                    .on("player vote change", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has voted on skipping [accent]").concat(t.session.data, "[white] wave(s). [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
+                    .on("player vote removed", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has left. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); }),
+            };
+        },
         requirements: [commands_1.Req.cooldown(3000), commands_1.Req.integerRange("waves", 1, 15), commands_1.Req.mode("survival", "testsrv"), commands_1.Req.gameRunning],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 var _c;
-                var sender = _b.sender, waves = _b.args.waves, manager = _b.data.manager;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var sender = _b.sender, waves = _b.args.waves, _d = _b.data, manager = _d.manager, waveUnitsAlive = _d.waveUnitsAlive;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
-                            if (!utils_1.vnwCondition.check())
-                                (0, commands_1.fail)("You can only do that when all units from previous waves are dead.");
+                            if (waveUnitsAlive())
+                                (0, commands_1.fail)("You can only run /vnw when all units from previous waves are dead.");
                             if (!!manager.session) return [3 /*break*/, 4];
                             if (!(waves !== null && waves !== void 0)) return [3 /*break*/, 1];
                             _c = waves;
@@ -1042,8 +1053,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                 optionStringifier: function (n) { return "".concat(n, " waves"); }
                             })];
                         case 2:
-                            _c = (waves = _d.sent());
-                            _d.label = 3;
+                            _c = (waves = _e.sent());
+                            _e.label = 3;
                         case 3:
                             _c;
                             if (manager.session) {
@@ -1059,7 +1070,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             return [3 /*break*/, 5];
                         case 4:
                             manager.vote(sender, sender.voteWeight(), null);
-                            _d.label = 5;
+                            _e.label = 5;
                         case 5: return [2 /*return*/];
                     }
                 });
