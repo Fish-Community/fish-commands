@@ -147,8 +147,6 @@ exports.Antibot = {
 };
 Timer.schedule(function () {
     globals_1.ipJoins.clear();
-    if (globals_1.joinDemographics.size > 1000)
-        globals_1.joinDemographics.clear();
 }, 0, funcs_1.DurationSecs.minutes(1));
 Timer.schedule(function () {
     if (exports.Antibot.antiBotMode()) {

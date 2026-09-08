@@ -6,8 +6,7 @@ This file contains timers that run code at regular intervals.
 import { fetchAntibotData, getStaffMessages, syncDosBlacklist } from "/api";
 import * as config from "/config";
 import { Gamemode } from "/config";
-import { updateMaps } from "/files";
-import { Duration, DurationSecs } from "/funcs";
+import { DurationSecs } from "/funcs";
 import { dosBlacklistCopy, FishEvents, fishState } from "/globals";
 import { FishPlayer } from "/players";
 import { definitelyRealMemoryCorruption, neutralGameover, unblacklist } from "/utils";

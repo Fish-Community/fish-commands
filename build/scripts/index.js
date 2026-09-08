@@ -124,22 +124,6 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         automod_1.Antibot.triggerAntibot(60000, (veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"), "automatic", false);
         return;
     }
-    var region = Reflect.invoke(e.packet.uuid, "hashCode");
-    var cachedRegion = globals_1.joinDemographics.get(region);
-    if (!cachedRegion) {
-        globals_1.joinDemographics.put(region, e.packet.uuid);
-    }
-    else if (cachedRegion != e.packet.uuid) {
-        var cachedRegion2 = globals_1.joinDemographics2.get(region);
-        if (!cachedRegion2) {
-            globals_1.joinDemographics2.put(region, e.packet.uuid);
-        }
-        else if (cachedRegion2 != e.packet.uuid) {
-            e.connection.blacklist();
-            e.connection.kicked = true;
-            automod_1.Antibot.triggerAntibot(480000, "suspicious UUIDs", "automatic", false, true);
-        }
-    }
     var suspiciousModName = e.packet.mods.contains(function (str) { return str.includes('\x1B'); });
     if (suspiciousModName || e.packet.name.includes('\x1B')) {
         e.connection.blacklist();

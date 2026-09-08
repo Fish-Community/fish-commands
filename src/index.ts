@@ -9,7 +9,7 @@ import { registerAll } from "/commands/aggregate";
 import { text } from "/config";
 import * as menus from "/frameworks/menus";
 import { Duration } from "/funcs";
-import { FishEvents, fishPlugin, fishState, ipJoins, joinDemographics, joinDemographics2 } from "/globals";
+import { FishEvents, fishPlugin, fishState, ipJoins } from "/globals";
 import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
@@ -83,26 +83,7 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 		);
 		return;
 	}
-	const region = (Reflect as any).invoke(e.packet.uuid, "hashCode");
-	const cachedRegion = joinDemographics.get(region);
-	if(!cachedRegion){
-		joinDemographics.put(region, e.packet.uuid);
-	} else if(cachedRegion != e.packet.uuid){
-		const cachedRegion2 = joinDemographics2.get(region);
-		if(!cachedRegion2){
-			joinDemographics2.put(region, e.packet.uuid);
-		} else if(cachedRegion2 != e.packet.uuid){
-			e.connection.blacklist();
-			e.connection.kicked = true;
-			Antibot.triggerAntibot(
-				480_000,
-				"suspicious UUIDs",
-				"automatic",
-				false,
-				true
-			);
-		}
-	}
+
 	const suspiciousModName = e.packet.mods.contains((str:string) => str.includes('\x1B'));
 	if(suspiciousModName || e.packet.name.includes('\x1B')){
 		e.connection.blacklist();

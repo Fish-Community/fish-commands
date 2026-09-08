@@ -8,7 +8,7 @@ import { logAction, logHTrip, updateBans } from "/utils";
 import { Duration, DurationSecs, escapeStringColorsServer, escapeTextDiscord, random } from "/funcs";
 import { FishPlayer } from "/players";
 import { FColor, Gamemode, heuristics, sneakybannedNames, text } from "/config";
-import { fishState, ipJoins, joinDemographics, maxTime, uuidPattern } from "/globals";
+import { fishState, ipJoins, maxTime, uuidPattern } from "/globals";
 import { Menu } from "/frameworks/menus";
 
 export const globalSusChat = new Ratekeeper();
@@ -77,7 +77,6 @@ export const Antibot = {
 };
 Timer.schedule(() => {
 	ipJoins.clear();
-	if(joinDemographics.size > 1000) joinDemographics.clear();
 }, 0, DurationSecs.minutes(1));
 Timer.schedule(() => {
 	if(Antibot.antiBotMode()){
