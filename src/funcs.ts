@@ -3,8 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains dozens of simple functions that do not need access to any values from other files.
 For functions that do need values from other files, see utils.ts.
 */
-import type { SearchResult, TagFunction } from "/types";
-import type { PartialFormatString } from "/frameworks/commands";
+import type { PartialFormatString, SearchResult, TagFunction } from "/types";
 
 const storedValues: Record<string, {
 	value: unknown;

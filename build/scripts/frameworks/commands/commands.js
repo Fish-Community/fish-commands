@@ -863,7 +863,7 @@ Events.on(EventType.TapEvent, function (event) {
             usageData.tapLastUsedSuccessfully = Date.now();
     }
     catch (err) {
-        (0, utils_1.handleError)(err, sender, utils_1.outputFail, "".concat(sender.cleanedName, " ran /").concat(sender.tapInfo.commandName, " and tapped"));
+        (0, errors_1.handleError)(err, sender, utils_1.outputFail, "".concat(sender.cleanedName, " ran /").concat(sender.tapInfo.commandName, " and tapped"));
     }
     finally {
         if (sender.tapInfo.mode == "once" && !handleTapsUpdated) {
@@ -918,7 +918,7 @@ function register(commands, clientHandler, serverHandler) {
                                 return [3 /*break*/, 4];
                             case 3:
                                 err_2 = _b.sent();
-                                (0, utils_1.handleError)(err_2, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
+                                (0, errors_1.handleError)(err_2, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
                                 return [2 /*return*/];
                             case 4:
                                 shouldClearCopy = true;
@@ -991,7 +991,7 @@ function register(commands, clientHandler, serverHandler) {
                                 return [3 /*break*/, 9];
                             case 7:
                                 err_3 = _b.sent();
-                                (0, utils_1.handleError)(err_3, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
+                                (0, errors_1.handleError)(err_3, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
                                 return [3 /*break*/, 9];
                             case 8:
                                 usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();

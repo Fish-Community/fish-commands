@@ -7,12 +7,12 @@ For functions that don't need values from other files, see funcs.ts.
 import { Antibot } from "/automod";
 import * as api from "/api";
 import { adminNames, automaticNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
-import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
+import { fail } from "/frameworks/commands";
 import { Cancel, Menu } from "/frameworks/menus";
 import { crash, Duration, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed } from "/funcs";
 import { dosBlacklistCopy, FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
-import { PlayerHistoryEntry, SelectEnumClassKeys } from "/types";
+import { PlayerHistoryEntry, SelectEnumClassKeys, PartialFormatString } from "/types";
 
 
 export function memoizeChatFilter(impl:(arg:string) => string){
@@ -788,24 +788,6 @@ export function applyEffectMode(modeString:string, unit:Unit, ticks:number){
 				unit.apply(effect, ticks);
 			}
 		}
-	}
-}
-
-export function handleError(err:unknown, sender:FishPlayer, outputFail: (message: string | PartialFormatString, sender: FishPlayer) => void, context?: string){
-	if(err instanceof CommandError){
-		//If the error is a command error, then just outputFail
-		outputFail(err.data, sender);
-	} else if(err === Cancel){
-		//Menu cancelled, do nothing
-		return;
-	} else {
-		sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
-		if(sender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
-		Log.err(context ?
-			`Unhandled error in command execution: ${context}`
-		: `Unhandled error in command execution.`);
-		Log.err(err);
-		if(typeof err == "object" && err != null && "stack" in err) Log.err(err.stack);
 	}
 }
 

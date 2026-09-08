@@ -96,8 +96,7 @@ export function initializeTimers(){
 			neutralGameover();
 		}
 	}, 0, 1);
-	//deliberately updating state on clock tick:
-	//avoids memory leak and other complications from Record<ip, IndexedRatekeeper>
+	//Background offset scrolling (custom feature for maps)
 	Events.run(Trigger.update, () => {
 		const speed = Vars.state.map.tags.getFloat("backgroundOffsetXSpeed");
 		if(speed != 0){
@@ -109,6 +108,7 @@ export function initializeTimers(){
 		Vars.dataDirectory.child('geolocation-data').child(`${Date.now()}.json`).writeString(JSON.stringify(fishState.geolocationData));
 	}, 10, 1200);
 	
+	//PVP autosurrender
 	if(Gamemode.name() == "pvp") Timer.schedule(() => {
 		if(Vars.state.isPaused() && Vars.state.tick > 60 * 60 * 6){
 			if(!Groups.player.isEmpty()){

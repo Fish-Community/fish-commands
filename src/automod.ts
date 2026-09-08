@@ -76,6 +76,8 @@ export const Antibot = {
 	}
 };
 Timer.schedule(() => {
+	//deliberately updating state on clock tick:
+	//avoids memory leak and other complications from Record<ip, IndexedRatekeeper>
 	ipJoins.clear();
 }, 0, DurationSecs.minutes(1));
 Timer.schedule(() => {

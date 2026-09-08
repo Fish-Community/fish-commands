@@ -2,12 +2,12 @@
 Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the formatting framework.
 */
-import type { Formattable, PartialFormatString } from "/frameworks/commands/types";
+import type { Formattable } from "/frameworks/commands/types";
 import { capitalizeText, escapeStringColorsServer, tagProcessorPartial } from "/funcs";
 import { ipPattern, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import type { TagFunction } from "/types";
+import type { PartialFormatString, TagFunction } from "/types";
 
 export const outputFormatter_server = tagProcessorPartial<Formattable, string | null>((chunk) => {
 	if(chunk instanceof FishPlayer){

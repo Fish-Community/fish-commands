@@ -6,7 +6,10 @@ For maintenance information, see docs/frameworks.md
 */
 //Behold, the power of typescript!
 
-import type { PartialFormatString } from "/frameworks/commands/types";
+import { Cancel } from "/frameworks/menus";
+import { parseError } from "/funcs";
+import { FishPlayer } from "/players";
+import type { PartialFormatString } from "/types";
 
 //Shenanigans were once necessary due to odd behavior of Typescript's compiled error subclass
 //however it morphed into something bizarre
@@ -22,3 +25,22 @@ export function fail(message:string | PartialFormatString):never {
 	Object.setPrototypeOf(err, CommandError.prototype);
 	throw err;
 }
+
+export function handleError(err:unknown, sender:FishPlayer, outputFail: (message: string | PartialFormatString, sender: FishPlayer) => void, context?: string){
+	if(err instanceof CommandError){
+		//If the error is a command error, then just outputFail
+		outputFail(err.data, sender);
+	} else if(err === Cancel){
+		//Menu cancelled, do nothing
+		return;
+	} else {
+		sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
+		if(sender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
+		Log.err(context ?
+			`Unhandled error in command execution: ${context}`
+		: `Unhandled error in command execution.`);
+		Log.err(err);
+		if(typeof err == "object" && err != null && "stack" in err) Log.err(err.stack);
+	}
+}
+

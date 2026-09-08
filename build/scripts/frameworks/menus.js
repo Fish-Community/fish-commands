@@ -176,7 +176,7 @@ exports.Menu = {
                     }
                 }
                 catch (err) {
-                    (0, utils_1.handleError)(err, target, utils_1.outputFail, "".concat(target.cleanedName, " submitted menu \"").concat(title, "\" \"").concat(description, "\""));
+                    (0, commands_1.handleError)(err, target, utils_1.outputFail, "".concat(target.cleanedName, " submitted menu \"").concat(title, "\" \"").concat(description, "\""));
                 }
             } });
         var i = 0;
@@ -219,7 +219,7 @@ exports.Menu = {
                         resolve(text);
                 }
                 catch (err) {
-                    (0, utils_1.handleError)(err, target, utils_1.outputFail, "".concat(target.cleanedName, " submitted menu \"").concat(title, "\" \"").concat(description, "\""));
+                    (0, commands_1.handleError)(err, target, utils_1.outputFail, "".concat(target.cleanedName, " submitted menu \"").concat(title, "\" \"").concat(description, "\""));
                 }
             } });
         Call.textInput(target.con(), registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);

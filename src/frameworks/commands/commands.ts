@@ -8,7 +8,7 @@ For maintenance information, see docs/frameworks.md
 
 import * as api from "/api";
 import { prefixes } from "/config";
-import { CommandError, fail } from "/frameworks/commands/errors";
+import { CommandError, fail, handleError } from "/frameworks/commands/errors";
 import { f_client, f_server, outputFormatter_client } from "/frameworks/commands/formatting";
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
 import { commandArgNames, CommandArgType, commandArgTypes } from "/frameworks/commands/types";
@@ -18,7 +18,7 @@ import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
 import type { ClientCommandHandler, CommandArg, SearchResult, ServerCommandHandler } from "/types";
-import { getBlock, getItem, getMap, getTeam, getUnitType, handleError, match, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
+import { getBlock, getItem, getMap, getTeam, getUnitType, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
 
 const hiddenUnauthorizedMessage = "[scarlet]Unknown command. Check [lightgray]/help[scarlet].";
 

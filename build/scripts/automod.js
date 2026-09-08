@@ -146,6 +146,8 @@ exports.Antibot = {
     }
 };
 Timer.schedule(function () {
+    //deliberately updating state on clock tick:
+    //avoids memory leak and other complications from Record<ip, IndexedRatekeeper>
     globals_1.ipJoins.clear();
 }, 0, funcs_1.DurationSecs.minutes(1));
 Timer.schedule(function () {

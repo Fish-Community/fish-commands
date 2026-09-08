@@ -155,7 +155,6 @@ exports.getHash = getHash;
 exports.match = match;
 exports.fishCommandsRootDirPath = fishCommandsRootDirPath;
 exports.applyEffectMode = applyEffectMode;
-exports.handleError = handleError;
 exports.syncManual = syncManual;
 exports.crashClient = crashClient;
 exports.getStatuses = getStatuses;
@@ -989,27 +988,6 @@ function applyEffectMode(modeString, unit, ticks) {
             if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
         }
         finally { if (e_6) throw e_6.error; }
-    }
-}
-function handleError(err, sender, outputFail, context) {
-    if (err instanceof commands_1.CommandError) {
-        //If the error is a command error, then just outputFail
-        outputFail(err.data, sender);
-    }
-    else if (err === menus_1.Cancel) {
-        //Menu cancelled, do nothing
-        return;
-    }
-    else {
-        sender.sendMessage("[scarlet]\u274C An error occurred while executing the command!");
-        if (sender.hasPerm("seeErrorMessages"))
-            sender.sendMessage((0, funcs_1.parseError)(err));
-        Log.err(context ?
-            "Unhandled error in command execution: ".concat(context)
-            : "Unhandled error in command execution.");
-        Log.err(err);
-        if (typeof err == "object" && err != null && "stack" in err)
-            Log.err(err.stack);
     }
 }
 function syncManual(player, rules, emptyMap) {
