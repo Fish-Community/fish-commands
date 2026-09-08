@@ -3,13 +3,12 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains timers that run code at regular intervals.
 */
 
-import { Antibot } from "/automod";
 import { fetchAntibotData, getStaffMessages, syncDosBlacklist } from "/api";
 import * as config from "/config";
 import { Gamemode } from "/config";
 import { updateMaps } from "/files";
 import { Duration, DurationSecs } from "/funcs";
-import { dosBlacklistCopy, FishEvents, fishState, ipJoins, joinDemographics } from "/globals";
+import { dosBlacklistCopy, FishEvents, fishState } from "/globals";
 import { FishPlayer } from "/players";
 import { definitelyRealMemoryCorruption, neutralGameover, unblacklist } from "/utils";
 
@@ -48,10 +47,6 @@ export function initializeTimers(){
 			definitelyRealMemoryCorruption();
 		}
 	}, DurationSecs.hours(1), DurationSecs.hours(17));
-	//Trails
-	Timer.schedule(() =>
-		FishPlayer.forEachPlayer(p => p.displayTrail()),
-	5, 0.15);
 	//Staff chat
 	if(!config.Mode.noBackend)
 		Timer.schedule(() => {
@@ -102,20 +97,8 @@ export function initializeTimers(){
 			neutralGameover();
 		}
 	}, 0, 1);
-	Timer.schedule(() => {
-		FishPlayer.updateAFKCheck();
-	}, 0, 1);
 	//deliberately updating state on clock tick:
 	//avoids memory leak and other complications from Record<ip, IndexedRatekeeper>
-	Timer.schedule(() => {
-		ipJoins.clear();
-		if(joinDemographics.size > 1000) joinDemographics.clear();
-	}, 0, DurationSecs.minutes(1));
-	Timer.schedule(() => {
-		if(Antibot.antiBotMode()){
-			Call.infoToast(`[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ${Vars.netServer.admins.dosBlacklist.size}`, 2);
-		}
-	}, 0, 1);
 	Events.run(Trigger.update, () => {
 		const speed = Vars.state.map.tags.getFloat("backgroundOffsetXSpeed");
 		if(speed != 0){
@@ -147,17 +130,3 @@ export function initializeTimers(){
 	}, 20, 2);
 }
 
-Timer.schedule(() => {
-	updateMaps()
-		.then((result) => {
-			if(result){
-				Call.sendMessage(`[orange]Maps have been updated. Run [white]/maps[] to view available maps.`);
-				Log.info(`Updated maps.`);
-			}
-		})
-		.catch((message) => {
-			if(Date.now() - fishState.lastSuccessfulMapUpdate >= Duration.hours(1))
-				Call.sendMessage(`[scarlet]Automated maps update failed too many times, please report this to a staff member.`);
-			Log.err(`Automated map update failed: ${String(message)}`);
-		});
-}, DurationSecs.minutes(1), DurationSecs.minutes(10));

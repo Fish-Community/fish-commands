@@ -7,7 +7,6 @@ import { EventEmitter } from "/funcs";
 import { FishPlayer } from "/players";
 import { Label } from "/types";
 
-export const tileHistory:Record<string, string> = {};
 export const recentWhispers:Record<string, string> = {};
 export const fishState = {
 	restartQueued: false,

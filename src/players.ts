@@ -1062,7 +1062,7 @@ We apologize for the inconvenience.`
 			out.expectEOF();
 			players.forEach(p => this.cachedPlayers[p.uuid] = p);
 		} catch(err){
-			Log.err(`[CRITICAL] FAILED TO LOAD CACHED FISH PLAYER DATA`);
+			Log.err(`Failed to load cached fish player data:`);
 			Log.err(parseError(err));
 			Log.err("=============================");
 			Log.err(string);
@@ -1424,3 +1424,9 @@ Events.on(EventType.WorldLoadEvent, () => {
 Events.on(EventType.GameOverEvent, (e) => {
 	FishPlayer.onGameOver(e.winner);
 });
+Events.on(EventType.ServerLoadEvent, e => {
+	FishPlayer.loadAll();
+});
+Timer.schedule(() => {
+	FishPlayer.updateAFKCheck();
+}, 0, 1);

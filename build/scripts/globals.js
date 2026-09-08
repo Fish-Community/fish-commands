@@ -4,9 +4,8 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains mutable global variables, and global constants.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FishEvents = exports.unitsT5 = exports.maxTime = exports.ipRangeWildcardPattern = exports.ipRangeCIDRPattern = exports.ipPortPattern = exports.ipPattern = exports.uuidPattern = exports.dosBlacklistCopy = exports.joinDemographics2 = exports.joinDemographics = exports.ipJoins = exports.fishPlugin = exports.fishState = exports.recentWhispers = exports.tileHistory = void 0;
+exports.FishEvents = exports.unitsT5 = exports.maxTime = exports.ipRangeWildcardPattern = exports.ipRangeCIDRPattern = exports.ipPortPattern = exports.ipPattern = exports.uuidPattern = exports.dosBlacklistCopy = exports.joinDemographics2 = exports.joinDemographics = exports.ipJoins = exports.fishPlugin = exports.fishState = exports.recentWhispers = void 0;
 var funcs_1 = require("/funcs");
-exports.tileHistory = {};
 exports.recentWhispers = {};
 exports.fishState = {
     restartQueued: false,

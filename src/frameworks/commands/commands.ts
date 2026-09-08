@@ -512,7 +512,7 @@ export function convertArgs(processedCmdArgs:CommandArg[]):string {
 	return processedCmdArgs.map(arg => arg.isOptional ? `[${arg.name}]` : `<${arg.name}>`).join(" ");
 }
 
-export function handleTapEvent(event:EventType["TapEvent"]){
+Events.on(EventType.TapEvent, (event:EventType["TapEvent"]) => {
 	const sender = FishPlayer.get(event.player) as FishPlayer<true>;
 	if(sender.tapInfo.resolve){
 		const tmp = sender.tapInfo.resolve;
@@ -582,7 +582,7 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 		}
 		usageData.tapLastUsed = Date.now();
 	}
-}
+});
 
 /**
  * Registers all commands in a list to a client command handler.

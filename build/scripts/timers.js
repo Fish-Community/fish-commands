@@ -49,11 +49,9 @@ var __values = (this && this.__values) || function(o) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeTimers = initializeTimers;
-var automod_1 = require("/automod");
 var api_1 = require("/api");
 var config = __importStar(require("/config"));
 var config_1 = require("/config");
-var files_1 = require("/files");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
@@ -103,10 +101,6 @@ function initializeTimers() {
             (0, utils_1.definitelyRealMemoryCorruption)();
         }
     }, funcs_1.DurationSecs.hours(1), funcs_1.DurationSecs.hours(17));
-    //Trails
-    Timer.schedule(function () {
-        return players_1.FishPlayer.forEachPlayer(function (p) { return p.displayTrail(); });
-    }, 5, 0.15);
     //Staff chat
     if (!config.Mode.noBackend)
         Timer.schedule(function () {
@@ -158,21 +152,8 @@ function initializeTimers() {
             (0, utils_1.neutralGameover)();
         }
     }, 0, 1);
-    Timer.schedule(function () {
-        players_1.FishPlayer.updateAFKCheck();
-    }, 0, 1);
     //deliberately updating state on clock tick:
     //avoids memory leak and other complications from Record<ip, IndexedRatekeeper>
-    Timer.schedule(function () {
-        globals_1.ipJoins.clear();
-        if (globals_1.joinDemographics.size > 1000)
-            globals_1.joinDemographics.clear();
-    }, 0, funcs_1.DurationSecs.minutes(1));
-    Timer.schedule(function () {
-        if (automod_1.Antibot.antiBotMode()) {
-            Call.infoToast("[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ".concat(Vars.netServer.admins.dosBlacklist.size), 2);
-        }
-    }, 0, 1);
     Events.run(Trigger.update, function () {
         var speed = Vars.state.map.tags.getFloat("backgroundOffsetXSpeed");
         if (speed != 0) {
@@ -205,17 +186,3 @@ function initializeTimers() {
             }
         }, 20, 2);
 }
-Timer.schedule(function () {
-    (0, files_1.updateMaps)()
-        .then(function (result) {
-        if (result) {
-            Call.sendMessage("[orange]Maps have been updated. Run [white]/maps[] to view available maps.");
-            Log.info("Updated maps.");
-        }
-    })
-        .catch(function (message) {
-        if (Date.now() - globals_1.fishState.lastSuccessfulMapUpdate >= funcs_1.Duration.hours(1))
-            Call.sendMessage("[scarlet]Automated maps update failed too many times, please report this to a staff member.");
-        Log.err("Automated map update failed: ".concat(String(message)));
-    });
-}, funcs_1.DurationSecs.minutes(1), funcs_1.DurationSecs.minutes(10));

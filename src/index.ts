@@ -3,22 +3,23 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains the main code, which calls other functions and initializes the plugin.
 */
 
-import { Antibot } from "/automod";
 import * as api from "/api";
+import { Antibot } from "/automod";
 import { registerAll } from "/commands/aggregate";
 import { text } from "/config";
-import { handleTapEvent } from "/frameworks/commands";
 import * as menus from "/frameworks/menus";
 import { Duration } from "/funcs";
-import { FishEvents, fishPlugin, fishState, ipJoins, joinDemographics, joinDemographics2, tileHistory } from "/globals";
+import { FishEvents, fishPlugin, fishState, ipJoins, joinDemographics, joinDemographics2 } from "/globals";
 import { PartialMapRun } from "/maps";
 import { loadPacketHandlers } from "/packetHandlers";
 import { FishPlayer } from "/players";
+import { addToTileHistory } from "/tilelog";
 import * as timers from "/timers";
 import * as translation from "/translation";
-import { addToTileHistory, fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
+import { fishCommandsRootDirPath, formatTimeRelative, matchFilter, processChat, restartNow, serverRestartLoop } from "/utils";
 const { Menu } = menus;
 
+//#region connections
 Events.on(EventType.ConnectionEvent, (e) => {
 	if(Vars.netServer.admins.bannedIPs.contains(e.connection.address)){
 		api.getBanned({
@@ -146,13 +147,10 @@ Events.on(EventType.ConnectPacketEvent, (e: { packet: ConnectPacket; connection:
 	});
 	FishPlayer.onConnectPacket(e.packet);
 });
+//#endregion
 
-Events.on(EventType.ContentInitEvent, () => {
-	//Unhide latum and renale
-	UnitTypes.latum.hidden = false;
-	UnitTypes.renale.hidden = false;
-});
-
+//#region event handling
+//Trigger chat effects
 Events.on(EventType.PlayerChatEvent, (e) => processChat(e.player, e.message, true)); //only run effects once
 
 Events.on(EventType.ServerLoadEvent, () => {
@@ -160,7 +158,6 @@ Events.on(EventType.ServerLoadEvent, () => {
 	const clientHandler = Vars.netServer.clientCommands;
 	const serverHandler = ServerControl.instance.handler;
 
-	FishPlayer.loadAll();
 	FishEvents.fire("loadData", []);
 	timers.initializeTimers();
 	menus.registerListeners();
@@ -271,34 +268,7 @@ Events.on(EventType.ServerLoadEvent, () => {
 
 	Log.info("fish-commands: initialized in @ms (incl previous)", Time.elapsed());
 });
-
-// Keeps track of any action performed on a tile for use in tilelog.
-
-Events.on(EventType.BlockBuildBeginEvent, addToTileHistory);
-Events.on(EventType.BuildRotateEvent, addToTileHistory);
-Events.on(EventType.ConfigEvent, addToTileHistory);
-Events.on(EventType.PickupEvent, addToTileHistory);
-Events.on(EventType.PayloadDropEvent, addToTileHistory);
-Events.on(EventType.UnitDestroyEvent, addToTileHistory);
-Events.on(EventType.BlockDestroyEvent, addToTileHistory);
-Events.on(EventType.UnitControlEvent, addToTileHistory);
-
-Events.on(EventType.UnitControlEvent, e => {
-	if(e.unit){
-		for(const mount of e.unit.mounts){
-			mount.target = null;
-		}
-	}
-});
-
-Events.on(EventType.TapEvent, handleTapEvent);
-
-Events.on(EventType.GameOverEvent, (e) => {
-	for(const key of Object.keys(tileHistory)){
-		//clear tilelog
-		tileHistory[key] = null!;
-		delete tileHistory[key];
-	}
+Events.on(EventType.GameOverEvent, () => {
 	if(fishState.restartQueued){
 		//restart
 		Call.sendMessage(`[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---`);
@@ -310,10 +280,25 @@ Events.on(EventType.GameOverEvent, (e) => {
 	}
 });
 
+//Patch for Anuken/Mindustry#12521
+Events.on(EventType.UnitControlEvent, e => {
+	if(e.unit){
+		for(const mount of e.unit.mounts){
+			mount.target = null;
+		}
+	}
+});
+Events.on(EventType.ContentInitEvent, () => {
+	//Unhide latum and renale
+	UnitTypes.latum.hidden = false;
+	UnitTypes.renale.hidden = false;
+});
+
 Events.on(EventType.PlayEvent, () => {
 	fishState.startTime = Date.now();
 });
 
+//Add a confirm menu for admin requests
 Events.on(EventType.AdminRequestEvent, e => {
 	if(e.action == Packets.AdminAction.wave){
 		const fishP = FishPlayer.get(e.player) as FishPlayer<true>;

@@ -10,10 +10,11 @@ import { command, commandList, fail, formatArg, Perm, PermCategory, Req } from "
 import type { FishCommandData } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
 import { capitalizeText, crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
-import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
+import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, uuidPattern } from "/globals";
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
+import { getTileHistory, tileHistory } from "/tilelog";
 import { getLanguageFromCache, isLanguageAvailable, Language, languageCache, setPlayerLanguageEntry } from "/translation";
 import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
@@ -184,17 +185,9 @@ export const commands = commandList({
 				outputSuccess(`Tilelog disabled.`);
 			}
 		},
-		tapped({tile, x, y, output, copy, player, sender, admins, data}){
-			const historyData = tileHistory[`${x},${y}`] ?? fail(`There is no recorded history for the selected tile (${tile.x}, ${tile.y}).`);
-			const history = StringIO.read(historyData, str => str.readArray(d => ({
-				action: d.readString(2),
-				uuid: d.readString(3)!,
-				time: d.readNumber(16),
-				type: d.readString(2),
-			}), 1)).map(h => ({
-				...h,
-				info: uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null,
-			}));
+		tapped({tile, x, y, output, copy, player, sender, data}){
+			const history = getTileHistory(x, y, player)
+				?? fail(`There is no recorded history for the selected tile (${x}, ${y}).`);
 			output(`[yellow]Tile history for tile (${tile.x}, ${tile.y}):\n` + history.map(e =>
 				e.info ?
 					(sender.hasPerm("viewUUIDs") && data.showUUID ?
@@ -239,17 +232,8 @@ export const commands = commandList({
 					outer:
 					for(let i = minX; i <= maxX; i ++){
 						for(let j = minY; j <= maxY; j ++){
-							const tileData = tileHistory[`${i},${j}`];
-							if(!tileData) continue;
-							let history = StringIO.read(tileHistory[`${i},${j}`], str => str.readArray(d => ({
-								action: d.readString(2) ?? "??",
-								uuid: d.readString(3) ?? "??",
-								time: d.readNumber(16),
-								type: d.readString(2) ?? "??",
-							}), 1)).map(h => ({
-								...h,
-								info: uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null,
-							}));;
+							let history = getTileHistory(x, y, player);
+							if(!history) continue;
 							if(args.action) history = history.filter(e => e.action === args.action);
 							if(history.length == 0) continue;
 							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e =>
@@ -561,6 +545,11 @@ ${target == sender ? `Your` : `${target.cleanedName}'s`} rank prefix is now ${ta
 		args: ['type:string?', 'color:string?'],
 		description: 'Use command to see options and toggle trail on/off.',
 		perm: Perm.none,
+		init(){
+			Timer.schedule(() =>
+				FishPlayer.forEachPlayer(p => p.displayTrail()),
+			5, 0.15);
+		},
 		handler({ args, sender, output, outputFail, outputSuccess }) {
 			//overload 1: type not specified
 			if(!args.type){

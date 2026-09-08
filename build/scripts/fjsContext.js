@@ -24,6 +24,7 @@ var playerCommands = require("/commands/general").commands;
 var players = require("/players");
 var ranks = require("/ranks");
 var staffCommands = require("/commands/staff").commands;
+var tilelog = require("/tilelog");
 var timers = require("/timers");
 var translation = require("/translation");
 var utils = require("/utils");

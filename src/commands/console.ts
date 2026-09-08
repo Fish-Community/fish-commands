@@ -10,9 +10,10 @@ import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { consoleCommandList, fail } from "/frameworks/commands";
 import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
-import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
+import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
+import { tileHistory } from "/tilelog";
 import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestampFull, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, unblacklist, updateBans } from "/utils";
 
 

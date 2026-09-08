@@ -131,7 +131,6 @@ exports.joinArgs = joinArgs;
 exports.disambiguateArgument = disambiguateArgument;
 exports.processArgs = processArgs;
 exports.convertArgs = convertArgs;
-exports.handleTapEvent = handleTapEvent;
 exports.register = register;
 exports.registerConsole = registerConsole;
 exports.initialize = initialize;
@@ -795,7 +794,7 @@ var variadicArgumentTypes = ["player", "string", "map", "mapOrRandom"];
 function convertArgs(processedCmdArgs) {
     return processedCmdArgs.map(function (arg) { return arg.isOptional ? "[".concat(arg.name, "]") : "<".concat(arg.name, ">"); }).join(" ");
 }
-function handleTapEvent(event) {
+Events.on(EventType.TapEvent, function (event) {
     var _a;
     var sender = players_1.FishPlayer.get(event.player);
     if (sender.tapInfo.resolve) {
@@ -872,7 +871,7 @@ function handleTapEvent(event) {
         }
         usageData.tapLastUsed = Date.now();
     }
-}
+});
 /**
  * Registers all commands in a list to a client command handler.
  **/

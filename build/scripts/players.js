@@ -1309,7 +1309,7 @@ var FishPlayer = /** @class */ (function () {
             players.forEach(function (p) { return _this.cachedPlayers[p.uuid] = p; });
         }
         catch (err) {
-            Log.err("[CRITICAL] FAILED TO LOAD CACHED FISH PLAYER DATA");
+            Log.err("Failed to load cached fish player data:");
             Log.err((0, funcs_1.parseError)(err));
             Log.err("=============================");
             Log.err(string);
@@ -1702,4 +1702,10 @@ Events.on(EventType.WorldLoadEvent, function () {
 Events.on(EventType.GameOverEvent, function (e) {
     FishPlayer.onGameOver(e.winner);
 });
+Events.on(EventType.ServerLoadEvent, function (e) {
+    FishPlayer.loadAll();
+});
+Timer.schedule(function () {
+    FishPlayer.updateAFKCheck();
+}, 0, 1);
 var templateObject_1, templateObject_2;

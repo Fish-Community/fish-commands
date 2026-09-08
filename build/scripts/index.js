@@ -48,20 +48,21 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var automod_1 = require("/automod");
 var api = __importStar(require("/api"));
+var automod_1 = require("/automod");
 var aggregate_1 = require("/commands/aggregate");
 var config_1 = require("/config");
-var commands_1 = require("/frameworks/commands");
 var menus = __importStar(require("/frameworks/menus"));
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var packetHandlers_1 = require("/packetHandlers");
 var players_1 = require("/players");
+var tilelog_1 = require("/tilelog");
 var timers = __importStar(require("/timers"));
 var utils_1 = require("/utils");
 var Menu = menus.Menu;
+//#region connections
 Events.on(EventType.ConnectionEvent, function (e) {
     if (Vars.netServer.admins.bannedIPs.contains(e.connection.address)) {
         api.getBanned({
@@ -174,17 +175,14 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
     });
     players_1.FishPlayer.onConnectPacket(e.packet);
 });
-Events.on(EventType.ContentInitEvent, function () {
-    //Unhide latum and renale
-    UnitTypes.latum.hidden = false;
-    UnitTypes.renale.hidden = false;
-});
+//#endregion
+//#region event handling
+//Trigger chat effects
 Events.on(EventType.PlayerChatEvent, function (e) { return (0, utils_1.processChat)(e.player, e.message, true); }); //only run effects once
 Events.on(EventType.ServerLoadEvent, function () {
     Time.mark();
     var clientHandler = Vars.netServer.clientCommands;
     var serverHandler = ServerControl.instance.handler;
-    players_1.FishPlayer.loadAll();
     globals_1.FishEvents.fire("loadData", []);
     timers.initializeTimers();
     menus.registerListeners();
@@ -206,7 +204,7 @@ Events.on(EventType.ServerLoadEvent, function () {
         }
         else {
             if (action.type === Administration.ActionType.pickupBlock) {
-                (0, utils_1.addToTileHistory)({
+                (0, tilelog_1.addToTileHistory)({
                     pos: "".concat(action.tile.x, ",").concat(action.tile.y),
                     uuid: action.player.uuid(),
                     action: "picked up",
@@ -307,15 +305,18 @@ Events.on(EventType.ServerLoadEvent, function () {
     };
     Log.info("fish-commands: initialized in @ms (incl previous)", Time.elapsed());
 });
-// Keeps track of any action performed on a tile for use in tilelog.
-Events.on(EventType.BlockBuildBeginEvent, utils_1.addToTileHistory);
-Events.on(EventType.BuildRotateEvent, utils_1.addToTileHistory);
-Events.on(EventType.ConfigEvent, utils_1.addToTileHistory);
-Events.on(EventType.PickupEvent, utils_1.addToTileHistory);
-Events.on(EventType.PayloadDropEvent, utils_1.addToTileHistory);
-Events.on(EventType.UnitDestroyEvent, utils_1.addToTileHistory);
-Events.on(EventType.BlockDestroyEvent, utils_1.addToTileHistory);
-Events.on(EventType.UnitControlEvent, utils_1.addToTileHistory);
+Events.on(EventType.GameOverEvent, function () {
+    if (globals_1.fishState.restartQueued) {
+        //restart
+        Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
+        (0, utils_1.serverRestartLoop)(12, true);
+        Events.on(EventType.WorldLoadBeginEvent, function () {
+            //Remove save
+            (0, utils_1.restartNow)(true);
+        });
+    }
+});
+//Patch for Anuken/Mindustry#12521
 Events.on(EventType.UnitControlEvent, function (e) {
     var e_1, _a;
     if (e.unit) {
@@ -334,37 +335,15 @@ Events.on(EventType.UnitControlEvent, function (e) {
         }
     }
 });
-Events.on(EventType.TapEvent, commands_1.handleTapEvent);
-Events.on(EventType.GameOverEvent, function (e) {
-    var e_2, _a;
-    try {
-        for (var _b = __values(Object.keys(globals_1.tileHistory)), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var key = _c.value;
-            //clear tilelog
-            globals_1.tileHistory[key] = null;
-            delete globals_1.tileHistory[key];
-        }
-    }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-    finally {
-        try {
-            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-        }
-        finally { if (e_2) throw e_2.error; }
-    }
-    if (globals_1.fishState.restartQueued) {
-        //restart
-        Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
-        (0, utils_1.serverRestartLoop)(12, true);
-        Events.on(EventType.WorldLoadBeginEvent, function () {
-            //Remove save
-            (0, utils_1.restartNow)(true);
-        });
-    }
+Events.on(EventType.ContentInitEvent, function () {
+    //Unhide latum and renale
+    UnitTypes.latum.hidden = false;
+    UnitTypes.renale.hidden = false;
 });
 Events.on(EventType.PlayEvent, function () {
     globals_1.fishState.startTime = Date.now();
 });
+//Add a confirm menu for admin requests
 Events.on(EventType.AdminRequestEvent, function (e) {
     if (e.action == Packets.AdminAction.wave) {
         var fishP_2 = players_1.FishPlayer.get(e.player);

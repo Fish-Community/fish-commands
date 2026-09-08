@@ -137,6 +137,7 @@ var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
+var tilelog_1 = require("/tilelog");
 var utils_1 = require("/utils");
 exports.commands = (0, commands_1.commandList)({
     warn: {
@@ -1029,7 +1030,7 @@ exports.commands = (0, commands_1.commandList)({
             if (tile == null)
                 (0, commands_1.fail)(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), args.x, args.y));
             tile.setNet(args.block, team, (_c = args.rotation) !== null && _c !== void 0 ? _c : 0);
-            (0, utils_1.addToTileHistory)({
+            (0, tilelog_1.addToTileHistory)({
                 pos: "".concat(args.x, ",").concat(args.y),
                 uuid: sender.uuid,
                 action: "setblocked",
@@ -1055,7 +1056,7 @@ exports.commands = (0, commands_1.commandList)({
             if (tile == null)
                 (0, commands_1.fail)(f(templateObject_57 || (templateObject_57 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), x, y));
             tile.setNet(args.block, team, (_c = args.rotation) !== null && _c !== void 0 ? _c : 0);
-            (0, utils_1.addToTileHistory)({
+            (0, tilelog_1.addToTileHistory)({
                 pos: "".concat(x, ",").concat(y),
                 uuid: sender.uuid,
                 action: "setblocked",

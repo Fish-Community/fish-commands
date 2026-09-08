@@ -136,6 +136,7 @@ var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
+var tilelog_1 = require("/tilelog");
 var translation_1 = require("/translation");
 var utils_1 = require("/utils");
 var votes_1 = require("/votes");
@@ -333,14 +334,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         },
         tapped: function (_a) {
             var _b;
-            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, copy = _a.copy, player = _a.player, sender = _a.sender, admins = _a.admins, data = _a.data;
-            var historyData = (_b = globals_1.tileHistory["".concat(x, ",").concat(y)]) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("There is no recorded history for the selected tile (".concat(tile.x, ", ").concat(tile.y, ")."));
-            var history = funcs_1.StringIO.read(historyData, function (str) { return str.readArray(function (d) { return ({
-                action: d.readString(2),
-                uuid: d.readString(3),
-                time: d.readNumber(16),
-                type: d.readString(2),
-            }); }, 1); }).map(function (h) { return (__assign(__assign({}, h), { info: globals_1.uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null })); });
+            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, copy = _a.copy, player = _a.player, sender = _a.sender, data = _a.data;
+            var history = (_b = (0, tilelog_1.getTileHistory)(x, y, player)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("There is no recorded history for the selected tile (".concat(x, ", ").concat(y, ")."));
             output("[yellow]Tile history for tile (".concat(tile.x, ", ").concat(tile.y, "):\n") + history.map(function (e) {
                 return e.info ?
                     (sender.hasPerm("viewUUIDs") && data.showUUID ?
@@ -385,19 +380,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     var amount = args.amount != null ? Math.floor(Math.abs(args.amount)) : 10;
                     outer: for (var i = minX; i <= maxX; i++) {
                         for (var j = minY; j <= maxY; j++) {
-                            var tileData = globals_1.tileHistory["".concat(i, ",").concat(j)];
-                            if (!tileData)
+                            var history = (0, tilelog_1.getTileHistory)(x, y, player);
+                            if (!history)
                                 continue;
-                            var history = funcs_1.StringIO.read(globals_1.tileHistory["".concat(i, ",").concat(j)], function (str) { return str.readArray(function (d) {
-                                var _a, _b, _c;
-                                return ({
-                                    action: (_a = d.readString(2)) !== null && _a !== void 0 ? _a : "??",
-                                    uuid: (_b = d.readString(3)) !== null && _b !== void 0 ? _b : "??",
-                                    time: d.readNumber(16),
-                                    type: (_c = d.readString(2)) !== null && _c !== void 0 ? _c : "??",
-                                });
-                            }, 1); }).map(function (h) { return (__assign(__assign({}, h), { info: globals_1.uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null })); });
-                            ;
                             if (args.action)
                                 history = history.filter(function (e) { return e.action === args.action; });
                             if (history.length == 0)
@@ -751,6 +736,11 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         args: ['type:string?', 'color:string?'],
         description: 'Use command to see options and toggle trail on/off.',
         perm: commands_1.Perm.none,
+        init: function () {
+            Timer.schedule(function () {
+                return players_1.FishPlayer.forEachPlayer(function (p) { return p.displayTrail(); });
+            }, 5, 0.15);
+        },
         handler: function (_a) {
             var args = _a.args, sender = _a.sender, output = _a.output, outputFail = _a.outputFail, outputSuccess = _a.outputSuccess;
             //overload 1: type not specified
