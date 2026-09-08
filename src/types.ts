@@ -78,7 +78,7 @@ export type PlayerHistoryEntry = {
 }
 
 export type ClientCommandHandler = {
-	register(name:string, args:string, description:string, runner:CommandRunner<mindustryPlayer>):void;
+	register(name:string, args:string, description:string, runner:CommandRunner<mindustryPlayer>):Command;
 	removeCommand(name:string):void;
 }
 

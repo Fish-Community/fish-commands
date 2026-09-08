@@ -150,29 +150,40 @@ const argsSupportingBlank: CommandArgType[] = ["player", "playerOn", "unittype",
 /** Takes a list of joined args passed to the command, and processes it, turning it into a kwargs style object. */
 export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer<true> | null, commandName:string): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
+	
+	/** reversed */
+	const argsQueue = args.slice().reverse();
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
-		if(!(i in args) || args[i] === "" || args[i] === "@" || args[i] === "@0"){
+		let arg;
+		if(i == processedCmdArgs.length - 1 && variadicArgumentTypes.includes(cmdArg.type)){
+			arg = argsQueue.reverse().join(" ");
+			argsQueue.splice(0);
+		} else {
+			arg = argsQueue.pop(); //reversed
+		}
+
+		if(arg == undefined || arg === "" || arg === "@" || arg === "@0"){
 			//if the arg was not provided or it was empty
-			if(cmdArg.isOptional && args[i] !== "@"){
+			if(cmdArg.isOptional && arg !== "@"){
 				outputArgs[cmdArg.name] = undefined;
 				continue;
 			} else if(sender && argsSupportingBlank.includes(cmdArg.type)){
-				args[i] = "";
+				arg = "";
 				//it will be resolved later
 			} else {
 				if(sender){
-					args[i] = await Menu.text(`/${commandName}`, `Specify a value for the argument "${cmdArg.name}"`, sender);
+					arg = await Menu.text(`/${commandName}`, `Specify a value for the argument "${cmdArg.name}"`, sender);
 				} else fail(`No value specified for arg ${cmdArg.name}. Did you type two spaces instead of one?`);
 			}
 		}
 
 		//Deserialize the arg
-		const commonArgs = [args[i], cmdArg, sender, outputArgs] as const;
+		const commonArgs = [arg, cmdArg, sender, outputArgs] as const;
 		switch(cmdArg.type){
 			case "player": case "playerOn": {
 				let options: SearchResult<FishPlayer>;
-				if(uuidPattern.test(args[i])){
-					const uuid = args[i];
+				if(uuidPattern.test(arg)){
+					const uuid = arg;
 					let player = FishPlayer.getById(uuid);
 					if(player == null){
 						if(cmdArg.type == "playerOn") fail(`This command only accepts online players.`);
@@ -198,9 +209,9 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 						if(cmdArg.type == "playerOn" && !player.connected()) fail(`This command only accepts online players.`);
 					}
 					options = player;
-				} else if(args[i].startsWith("@")){
+				} else if(arg.startsWith("@")){
 					let needsConfirm = false;
-					const [left, right] = Packages.java.lang.String(args[i]).split(":", 2) as [string, string?];
+					const [left, right] = Packages.java.lang.String(arg).split(":", 2) as [string, string?];
 					const r2 = Packages.java.lang.String(right).split(":", 2)[1] as string | undefined;
 					switch(left){
 						case "@cyrillic": case "@russian":
@@ -317,15 +328,15 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 							break;
 						default:
 							//Ranks / role flags
-							if(args[i].startsWith("@+") || args[i].startsWith("@=") || args[i].startsWith("@-")){
-								const query = args[i].slice(2);
+							if(arg.startsWith("@+") || arg.startsWith("@=") || arg.startsWith("@-")){
+								const query = arg.slice(2);
 								const rank = resolveSearch(Rank.search(query));
 								if(rank){
 									options = FishPlayer.getAllOnline().filter(p => ({
 										"-": p.rank.level <= rank.level,
 										"=": p.rank == rank,
 										"+": p.rank.level >= rank.level,
-									}[args[i][1] as "-" | "=" | "+"]));
+									}[arg[1] as "-" | "=" | "+"]));
 									break;
 								}
 								const role = resolveSearch(RoleFlag.getByName(query));
@@ -334,13 +345,13 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 									break;
 								}
 							}
-							fail(`Unknown selector ${args[i]}.`);
+							fail(`Unknown selector ${arg}.`);
 					}
 					if(Array.isArray(options)){
 						if(options.length == 0) options = null;
 						else if(options.length == 1 && !needsConfirm) options = options[0];
 					}
-				} else options = FishPlayer.search(FishPlayer.getAllOnline(), args[i]);
+				} else options = FishPlayer.search(FishPlayer.getAllOnline(), arg);
 				await disambiguateArgument(
 					options,
 					...commonArgs,
@@ -353,15 +364,15 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 			}
 			case "team": {
 				let num;
-				if(args[i] && (
-					!isNaN(num = Number(args[i])) ||
-					args[i].slice(1) && !isNaN(num = Number(args[i].slice(1))) || //discard leading #
-					args[i].slice(5) && !isNaN(num = Number(args[i].slice(5))) //discard leading team#
+				if(arg && (
+					!isNaN(num = Number(arg)) ||
+					arg.slice(1) && !isNaN(num = Number(arg.slice(1))) || //discard leading #
+					arg.slice(5) && !isNaN(num = Number(arg.slice(5))) //discard leading team#
 				)){
 					if(num <= 255 && num >= 0 && Number.isInteger(num))
 						outputArgs[cmdArg.name] = Team.all[num];
 					else fail(`Team ${num} is not inside the valid range (integers 0-255).`);
-				} else if(!args[i] && sender){
+				} else if(!arg && sender){
 					const options = Team.baseTeams.concat(Team.neoplastic);
 					Vars.state.teams.present.each(t => options.includes(t.team) || options.push(t.team));
 					const buttons: Array<Array<Team | "other">> = [
@@ -379,74 +390,85 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 						else fail(`Team ${num} is not inside the valid range (integers 0-255).`);
 					} else outputArgs[cmdArg.name] = selection;
 				} else await disambiguateArgument(
-					getTeam(args[i]),
+					getTeam(arg),
 					...commonArgs,
 					t => t.coloredName(),
 				);
 				break;
 			}
 			case "number": {
-				let number = Number(args[i]);
+				let number = Number(arg);
 				if(isNaN(number)){
-					if(/\(\d+,/.test(args[i]))
-						number = Number(args[i].slice(1, -1));
-					else if(/\d+\)/.test(args[i]))
-						number = Number(args[i].slice(0, -1));
+					if(arg == "@c"){
+						const { mouseX, mouseY } = sender?.player ?? fail(`You must have a player to use the @c selector.`);
+						if(mouseX == 0 && mouseY == 0) fail(`Unable to read your cursor position. (Mindustry says it's exactly at 0,0)`);
+						const [x, y] = [mouseX, mouseY].map(c => Math.round(c / 8));
+						number = x;
+						argsQueue.push(String(y));
+					} else if(arg == "@h"){
+						const { x, y } = sender?.player?.unit() ?? fail(`You must have a unit to use the @h selector.`);
+						number = Math.round(x / 8);
+						argsQueue.push(String(Math.round(y / 8)));
+					} else if(/\(\d+,/.test(arg)){
+						number = Number(arg.slice(1, -1));
+					} else if(/\d+\)/.test(arg)){
+						number = Number(arg.slice(0, -1));
+					}
 
 					if(isNaN(number))
-						fail(`Invalid number "${args[i]}"`);
+						fail(`Invalid number "${arg}"`);
 				}
 				outputArgs[cmdArg.name] = number;
 				break;
 			}
 			case "time": {
-				const milliseconds = parseTimeString(args[i]);
-				if(milliseconds == null) fail(`Invalid time string "${args[i]}"`);
+				const milliseconds = parseTimeString(arg);
+				if(milliseconds == null) fail(`Invalid time string "${arg}"`);
 				outputArgs[cmdArg.name] = milliseconds;
 				break;
 			}
 			case "string":
-				outputArgs[cmdArg.name] = args[i];
+				outputArgs[cmdArg.name] = arg;
 				break;
 			case "boolean":
-				switch(args[i].toLowerCase()){
+				switch(arg.toLowerCase()){
 					case "true": case "yes": case "yeah": case "ya": case "ye": case "t": case "y": case "1": outputArgs[cmdArg.name] = true; break;
 					case "false": case "no": case "nah": case "nay": case "nope": case "f": case "n": case "0": outputArgs[cmdArg.name] = false; break;
-					default: fail(`Argument ${args[i]} is not a boolean. Try "true" or "false".`);
+					default: fail(`Argument ${arg} is not a boolean. Try "true" or "false".`);
 				}
 				break;
 			case "block": {
-				const block = getBlock(args[i], "air");
+				const block = getBlock(arg, "air");
 				if(typeof block == "string") fail(block);
 				outputArgs[cmdArg.name] = block;
 				break;
 			}
 			case "unittype":
 				await disambiguateArgument(
-					getUnitType(args[i]),
+					getUnitType(arg),
 					...commonArgs,
 					u => u.emoji() + capitalizeText(u.name)
 				);
 				break;
 			case "uuid":
-				if(!uuidPattern.test(args[i])) fail(`Invalid uuid string "${args[i]}"`);
-				outputArgs[cmdArg.name] = args[i];
+				if(!uuidPattern.test(arg)) fail(`Invalid uuid string "${arg}"`);
+				outputArgs[cmdArg.name] = arg;
 				break;
 			case "map":
 				await disambiguateArgument(
-					getMap(args[i]),
+					getMap(arg),
 					...commonArgs,
 					r => r.name(),
 					2
 				);
 				break;
 			case "mapOrRandom":
-				if(["rand", "random"].includes(args[i]?.toLowerCase())){
+				if(["rand", "random"].includes(arg?.toLowerCase())){
 					outputArgs[cmdArg.name] = "random";
 					break;
 				}
 				await disambiguateArgument(
-					getMap(args[i]),
+					getMap(arg),
 					...commonArgs,
 					r => r.name(),
 					2
@@ -454,21 +476,21 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 				break;
 			case "rank":
 				await disambiguateArgument(
-					Rank.search(args[i]),
+					Rank.search(arg),
 					...commonArgs,
 					r => r.coloredName()
 				);
 				break;
 			case "roleflag":
 				await disambiguateArgument(
-					RoleFlag.search(args[i]),
+					RoleFlag.search(arg),
 					...commonArgs,
 					f => f.coloredName()
 				);
 				break;
 			case "item":
 				await disambiguateArgument(
-					getItem(args[i]),
+					getItem(arg),
 					...commonArgs,
 					i => i.emoji() + capitalizeText(i.name, "-"),
 					2
@@ -477,25 +499,16 @@ export async function processArgs(args: string[], processedCmdArgs: CommandArg[]
 			default: cmdArg.type satisfies never; crash("impossible");
 		}
 	}
+	if(argsQueue.length > 0) fail(`Too many arguments. Use double quotes around multi-word arguments. For usage instructions, run [accent]/help ${commandName}`);
 	return outputArgs;
 }
 
 const variadicArgumentTypes:CommandArgType[] = ["player", "string", "map", "mapOrRandom"];
 
-function isArgOptional(arg:CommandArg, allowMenus:boolean){
-	return arg.isOptional || allowMenus;
-}
 
 /** Converts the CommandArg[] to the format accepted by Arc CommandHandler */
-export function convertArgs(processedCmdArgs:CommandArg[], allowMenus:boolean):string {
-	return processedCmdArgs.map((arg, index, array) => {
-		const isOptional = isArgOptional(arg, allowMenus) &&
-			!array.slice(index + 1).some(c => !isArgOptional(c, allowMenus)); //this is enforced by the arc command handler
-		//TODO internalize command handler
-		const brackets = isOptional ? ["[", "]"] : ["<", ">"];
-		//if the arg is a string and last argument, make it variadic (so if `/warn player a b c d` is run, the last arg is "a b c d" not "a")
-		return brackets[0] + arg.name + (variadicArgumentTypes.includes(arg.type) && index + 1 == array.length ? "..." : "") + brackets[1];
-	}).join(" ");
+export function convertArgs(processedCmdArgs:CommandArg[]):string {
+	return processedCmdArgs.map(arg => arg.isOptional ? `[${arg.name}]` : `<${arg.name}>`).join(" ");
 }
 
 export function handleTapEvent(event:EventType["TapEvent"]){
@@ -583,13 +596,14 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 		//Process the args
 		const processedCmdArgs = data.args.map(processArgString);
 		clientHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-		clientHandler.register(
+		const cmd = clientHandler.register(
 			name,
-			convertArgs(processedCmdArgs, true),
+			processedCmdArgs.length == 0 ? "" : "[...]",
 			data.description,
-			new CommandHandler.CommandRunner({ async accept(unjoinedRawArgs: string[], sender: mindustryPlayer){
+			new CommandHandler.CommandRunner({ async accept(weirdArgs: string[], sender: mindustryPlayer){
 				if(!initialized) crash(`Commands not initialized!`);
-
+				
+				const unjoinedRawArgs = weirdArgs.length == 0 ? weirdArgs : weirdArgs[0].split(" ");
 				const fishSender = FishPlayer.get(sender) as FishPlayer<true>;
 				FishPlayer.onPlayerCommand(fishSender, name, unjoinedRawArgs);
 
@@ -608,7 +622,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 
 				//closure over processedCmdArgs, should be fine
 				//Process the args
-				const rawArgs = joinArgs(unjoinedRawArgs); //TODO: remove this when we replace the command handler
+				const rawArgs = joinArgs(unjoinedRawArgs);
 				//Resolve missing args (such as players that need to be determined through a menu)
 				let resolvedArgs;
 				try {
@@ -684,6 +698,7 @@ export function register(commands: Record<string, FishCommandData<string, any> |
 				}
 			} })
 		);
+		ArcReflect.set(cmd, "paramText", convertArgs(processedCmdArgs));
 		allCommands[name] = data;
 	}
 }
@@ -699,9 +714,9 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 		//Process the args
 		const processedCmdArgs = data.args.map(processArgString);
 		serverHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-		serverHandler.register(
+		const cmd = serverHandler.register(
 			name,
-			convertArgs(processedCmdArgs, false),
+			processedCmdArgs.length == 0 ? "" : "[...]",
 			data.description,
 			new CommandHandler.CommandRunner({ async accept(rawArgs: string[]){
 				if(!initialized) crash(`Commands not initialized!`);
@@ -757,6 +772,7 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 				}
 			} })
 		);
+		ArcReflect.set(cmd, "paramText", convertArgs(processedCmdArgs));
 		allConsoleCommands[name] = data;
 	}
 }

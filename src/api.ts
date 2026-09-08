@@ -220,7 +220,7 @@ export function fetchAntibotData() {
 		.header('Accept', '*/*');
 	req.timeout = 10000;
 	req.error((err) => {
-		Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
+		// Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
 		// Log.err(err);
 		// if(err?.response) Log.err(err.response.getResultAsString());
 		reject(err);
@@ -240,7 +240,7 @@ export function syncDosBlacklist(ips:string[]) {
 			.header('Accept', '*/*');
 		req.timeout = 10000;
 		req.error((err) => {
-			Log.err(`[API] Network error when trying to call api.syncDosBlacklist()`);
+			// Log.err(`[API] Network error when trying to call api.syncDosBlacklist()`);
 			// Log.err(err);
 			// if(err?.response) Log.err(err.response.getResultAsString());
 			reject(err);
