@@ -210,7 +210,6 @@ export function setFishPlayerData(data: UploadedFishPlayerData, repeats:number, 
 
 /** Pushes fish player data to the backend. */
 export function fetchAntibotData() {
-	if(Mode.noBackend) return;
 	const { promise, resolve, reject } = Promise.withResolvers<AntibotData, unknown>();
 	if(Mode.noBackend){
 		resolve({ nameBlacklistRegex: null, nameGraylistRegex: null });
@@ -233,7 +232,6 @@ export function fetchAntibotData() {
 }
 
 export function syncDosBlacklist(ips:string[]) {
-	if(Mode.noBackend) return;
 	const { promise, resolve, reject } = Promise.withResolvers<string[], unknown>();
 	if(Mode.noBackend) resolve([]);
 	else {

@@ -223,8 +223,6 @@ function setFishPlayerData(data, repeats, ignoreActivelySyncedFields) {
 }
 /** Pushes fish player data to the backend. */
 function fetchAntibotData() {
-    if (config_1.Mode.noBackend)
-        return;
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend) {
         resolve({ nameBlacklistRegex: null, nameGraylistRegex: null });
@@ -246,8 +244,6 @@ function fetchAntibotData() {
     return promise;
 }
 function syncDosBlacklist(ips) {
-    if (config_1.Mode.noBackend)
-        return;
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend)
         resolve([]);
