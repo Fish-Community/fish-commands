@@ -277,6 +277,7 @@ class Block {
 	emoji(): string;
 }
 class Building {
+	id: number;
 	block: Block;
 	tile: Tile;
 	items: ItemModule;
@@ -767,6 +768,7 @@ type Unit = {
 	remove():void;
 	add():void;
 	isAdded():boolean;
+	isPlayer():boolean;
 	set(x: number, y:number):void;
 	approach(vec: Vec2):void;
 	hasPayload: undefined | (() => boolean);

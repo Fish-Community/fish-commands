@@ -1708,4 +1708,23 @@ Events.on(EventType.ServerLoadEvent, function (e) {
 Timer.schedule(function () {
     FishPlayer.updateAFKCheck();
 }, 0, 1);
+//Blocks broken and blocks placed stats
+Events.on(EventType.BlockBuildBeginEvent, function (e) {
+    var _a, _b, _c, _d, _e;
+    if (e.breaking) {
+        if (((_b = (_a = e.unit) === null || _a === void 0 ? void 0 : _a.player) === null || _b === void 0 ? void 0 : _b.uuid()) && ((_c = e.tile.build.prevBuild.firstOpt()) === null || _c === void 0 ? void 0 : _c.team) != Team.derelict) {
+            var fishP = FishPlayer.get(e.unit.player);
+            fishP.tstats.blocksBroken++;
+            fishP.tstats.blockInteractionsThisMap++;
+            fishP.updateStats(function (stats) { return stats.blocksBroken++; });
+        }
+    }
+    else {
+        if ((_e = (_d = e.unit) === null || _d === void 0 ? void 0 : _d.player) === null || _e === void 0 ? void 0 : _e.uuid()) {
+            var fishP = FishPlayer.get(e.unit.player);
+            fishP.updateStats(function (stats) { return stats.blocksPlaced++; });
+            fishP.tstats.blockInteractionsThisMap++;
+        }
+    }
+});
 var templateObject_1, templateObject_2;

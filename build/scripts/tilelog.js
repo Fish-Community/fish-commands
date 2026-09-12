@@ -35,7 +35,7 @@ var players_1 = require("/players");
 var utils_1 = require("/utils");
 exports.tileHistory = {};
 exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog entry", function (e) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
     // eslint-disable-next-line prefer-const
     var tile, uuid, action, type, time = Date.now();
     if (e instanceof EventType.BlockBuildBeginEvent) {
@@ -44,28 +44,15 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
         if (e.breaking) {
             action = "broke";
             type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.previous.name : "unknown";
-            if (((_g = (_f = e.unit) === null || _f === void 0 ? void 0 : _f.player) === null || _g === void 0 ? void 0 : _g.uuid()) && ((_h = e.tile.build.prevBuild.firstOpt()) === null || _h === void 0 ? void 0 : _h.team) != Team.derelict) {
-                var fishP = players_1.FishPlayer.get(e.unit.player);
-                //TODO move this code
-                fishP.tstats.blocksBroken++;
-                fishP.tstats.blockInteractionsThisMap++;
-                fishP.updateStats(function (stats) { return stats.blocksBroken++; });
-            }
         }
         else {
             action = "built";
             type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.current.name : "unknown";
-            if ((_k = (_j = e.unit) === null || _j === void 0 ? void 0 : _j.player) === null || _k === void 0 ? void 0 : _k.uuid()) {
-                var fishP = players_1.FishPlayer.get(e.unit.player);
-                //TODO move this code
-                fishP.updateStats(function (stats) { return stats.blocksPlaced++; });
-                fishP.tstats.blockInteractionsThisMap++;
-            }
         }
     }
     else if (e instanceof EventType.ConfigEvent) {
         tile = e.tile.tile;
-        uuid = (_m = (_l = e.player) === null || _l === void 0 ? void 0 : _l.uuid()) !== null && _m !== void 0 ? _m : "unknown";
+        uuid = (_g = (_f = e.player) === null || _f === void 0 ? void 0 : _f.uuid()) !== null && _g !== void 0 ? _g : "unknown";
         if (uuid != "unknown") {
             var fishP = players_1.FishPlayer.getById(uuid);
             if (fishP)
@@ -76,7 +63,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     }
     else if (e instanceof EventType.BuildRotateEvent) {
         tile = e.build.tile;
-        uuid = (_s = (_q = (_p = (_o = e.unit) === null || _o === void 0 ? void 0 : _o.player) === null || _p === void 0 ? void 0 : _p.uuid()) !== null && _q !== void 0 ? _q : (_r = e.unit) === null || _r === void 0 ? void 0 : _r.type.name) !== null && _s !== void 0 ? _s : "unknown";
+        uuid = (_m = (_k = (_j = (_h = e.unit) === null || _h === void 0 ? void 0 : _h.player) === null || _j === void 0 ? void 0 : _j.uuid()) !== null && _k !== void 0 ? _k : (_l = e.unit) === null || _l === void 0 ? void 0 : _l.type.name) !== null && _m !== void 0 ? _m : "unknown";
         if (uuid != "unknown") {
             var fishP = players_1.FishPlayer.getById(uuid);
             if (fishP)
@@ -91,24 +78,24 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
             return;
         if (!e.unit.type.playerControllable)
             return;
-        uuid = e.unit.isPlayer() ? e.unit.getPlayer().uuid() : (_t = e.unit.lastCommanded) !== null && _t !== void 0 ? _t : "unknown";
+        uuid = e.unit.isPlayer() ? e.unit.getPlayer().uuid() : (_o = e.unit.lastCommanded) !== null && _o !== void 0 ? _o : "unknown";
         action = "killed";
         type = e.unit.type.name;
     }
     else if (e instanceof EventType.BlockDestroyEvent) {
-        if (config_1.Gamemode.attack() && ((_u = e.tile.build) === null || _u === void 0 ? void 0 : _u.team) != Vars.state.rules.defaultTeam)
+        if (config_1.Gamemode.attack() && ((_p = e.tile.build) === null || _p === void 0 ? void 0 : _p.team) != Vars.state.rules.defaultTeam)
             return; //Don't log destruction of enemy blocks
         tile = e.tile;
         uuid = "[[something]";
         action = "killed";
-        type = (_w = (_v = e.tile.block()) === null || _v === void 0 ? void 0 : _v.name) !== null && _w !== void 0 ? _w : "air";
+        type = (_r = (_q = e.tile.block()) === null || _q === void 0 ? void 0 : _q.name) !== null && _r !== void 0 ? _r : "air";
     }
     else if (e instanceof EventType.PayloadDropEvent) {
         action = "pay-dropped";
         var controller = e.carrier.controller();
-        uuid = (_z = (_y = (_x = e.carrier.player) === null || _x === void 0 ? void 0 : _x.uuid()) !== null && _y !== void 0 ? _y : (controller instanceof LogicAI && controller.controller ?
+        uuid = (_u = (_t = (_s = e.carrier.player) === null || _s === void 0 ? void 0 : _s.uuid()) !== null && _t !== void 0 ? _t : (controller instanceof LogicAI && controller.controller ?
             "".concat(e.carrier.type.name, " controlled by ").concat(controller.controller.block.name, " at ").concat(controller.controller.tileX(), ",").concat(controller.controller.tileY(), " last accessed by ").concat(e.carrier.getControllerName())
-            : null)) !== null && _z !== void 0 ? _z : e.carrier.type.name;
+            : null)) !== null && _u !== void 0 ? _u : e.carrier.type.name;
         if (e.build) {
             tile = e.build.tile;
             type = e.build.block.name;
@@ -146,10 +133,10 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     else if (e instanceof EventType.UnitControlEvent) {
         if (e.unit instanceof Packages.mindustry.gen.BlockUnitUnit) {
             action = "controlled";
-            tile = (_0 = e.unit) === null || _0 === void 0 ? void 0 : _0.tile().tile;
+            tile = (_v = e.unit) === null || _v === void 0 ? void 0 : _v.tile().tile;
             if (!tile)
                 return;
-            type = (_2 = (_1 = tile.block()) === null || _1 === void 0 ? void 0 : _1.name) !== null && _2 !== void 0 ? _2 : "air";
+            type = (_x = (_w = tile.block()) === null || _w === void 0 ? void 0 : _w.name) !== null && _x !== void 0 ? _x : "air";
             uuid = e.player.uuid();
         }
         else
@@ -158,7 +145,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     else if (e instanceof Object && "pos" in e && "uuid" in e && "action" in e && "type" in e) {
         var pos = void 0;
         (pos = e.pos, uuid = e.uuid, action = e.action, type = e.type);
-        tile = (_3 = Vars.world.tile(pos.split(",")[0], pos.split(",")[1])) !== null && _3 !== void 0 ? _3 : (0, funcs_1.crash)("Cannot log ".concat(action, " at ").concat(pos, ": Nonexistent tile"));
+        tile = (_y = Vars.world.tile(pos.split(",")[0], pos.split(",")[1])) !== null && _y !== void 0 ? _y : (0, funcs_1.crash)("Cannot log ".concat(action, " at ").concat(pos, ": Nonexistent tile"));
     }
     else
         return;
@@ -190,6 +177,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     });
 });
 function getTileHistory(x, y, player) {
+    if (player === void 0) { player = (function (x) { return x; }); }
     var historyData = exports.tileHistory["".concat(x, ",").concat(y)];
     if (!historyData)
         return null;

@@ -23,22 +23,9 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		if(e.breaking){
 			action = "broke";
 			type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.previous.name : "unknown";
-			if(e.unit?.player?.uuid() && e.tile.build.prevBuild.firstOpt()?.team != Team.derelict){
-				const fishP = FishPlayer.get(e.unit.player);
-				//TODO move this code
-				fishP.tstats.blocksBroken ++;
-				fishP.tstats.blockInteractionsThisMap ++;
-				fishP.updateStats(stats => stats.blocksBroken ++);
-			}
 		} else {
 			action = "built";
 			type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.current.name : "unknown";
-			if(e.unit?.player?.uuid()){
-				const fishP = FishPlayer.get(e.unit.player);
-				//TODO move this code
-				fishP.updateStats(stats => stats.blocksPlaced ++);
-				fishP.tstats.blockInteractionsThisMap ++;
-			}
 		}
 	} else if(e instanceof EventType.ConfigEvent){
 		tile = e.tile.tile;
@@ -139,7 +126,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 
 });
 
-export function getTileHistory(x:number, y:number, player:(p:PlayerInfo | null) => PlayerInfo | null){
+export function getTileHistory(x:number, y:number, player:(p:PlayerInfo | null) => PlayerInfo | null = (x => x)){
 	const historyData = tileHistory[`${x},${y}`];
 	if(!historyData) return null;
 	return StringIO.read(historyData, str => str.readArray(d => ({

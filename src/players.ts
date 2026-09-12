@@ -1430,3 +1430,21 @@ Events.on(EventType.ServerLoadEvent, e => {
 Timer.schedule(() => {
 	FishPlayer.updateAFKCheck();
 }, 0, 1);
+
+//Blocks broken and blocks placed stats
+Events.on(EventType.BlockBuildBeginEvent, e => {
+	if(e.breaking){
+		if(e.unit?.player?.uuid() && e.tile.build.prevBuild.firstOpt()?.team != Team.derelict){
+			const fishP = FishPlayer.get(e.unit.player);
+			fishP.tstats.blocksBroken ++;
+			fishP.tstats.blockInteractionsThisMap ++;
+			fishP.updateStats(stats => stats.blocksBroken ++);
+		}
+	} else {
+		if(e.unit?.player?.uuid()){
+			const fishP = FishPlayer.get(e.unit.player);
+			fishP.updateStats(stats => stats.blocksPlaced ++);
+			fishP.tstats.blockInteractionsThisMap ++;
+		}
+	}
+});
