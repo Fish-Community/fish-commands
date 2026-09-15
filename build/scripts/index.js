@@ -248,13 +248,14 @@ Events.on(EventType.ServerLoadEvent, function () {
         try {
             globals_1.FishEvents.fire("saveData", []);
         }
-        catch (_b) {
+        catch (err) {
             Packages.java.lang.System.out.println("[E] failed to save misc data");
+            Packages.java.lang.System.out.println(err);
         }
         try {
             players_1.FishPlayer.saveAll(false);
         }
-        catch (_c) {
+        catch (_b) {
             Packages.java.lang.System.out.println("[E] failed to save player data");
         }
         Packages.java.lang.System.out.println("Saved on exit.");

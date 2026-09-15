@@ -104,10 +104,15 @@ ${finishedRun.success && wave < bestPreviousWave ?
 	}
 
 	startTime:number = Date.now();
+	/**
+	 * Usually equal to startTime, unless there was a server restart.
+	 * Specifically, it gets shifted forward by the time the server was offline.
+	 */
+	nowMinusDuration:number = Date.now();
 	maxPlayerCount:number = 0;
 	/** In milliseconds */
 	duration(){
-		return Date.now() - this.startTime;
+		return Date.now() - this.nowMinusDuration;
 	}
 	update(){
 		this.maxPlayerCount = Math.max(this.maxPlayerCount, Groups.player.size());
@@ -126,16 +131,18 @@ ${finishedRun.success && wave < bestPreviousWave ?
 	}
 	//Used for continuing through a restart
 	write():string {
-		return `${Date.now() - this.startTime}/${this.maxPlayerCount}`;
+		return `${this.startTime}/${this.duration()}/${this.maxPlayerCount}`;
 	}
 	static read(data:string):PartialMapRun {
-		const [duration, maxPlayerCount] = data.split("/").map(Number);
-		if(isNaN(duration) || isNaN(maxPlayerCount)){
-			Log.err(`_FINDTAG_ failed to load map run stats data: ${data}`);
-		}
+		const [startTime, duration, maxPlayerCount] = data.split("/").map(Number);
 		const out = new PartialMapRun();
-		out.startTime = Date.now() - duration; //move start time forward by time when the server was off
-		out.maxPlayerCount = maxPlayerCount;
+		if(isNaN(startTime) || isNaN(duration) || isNaN(maxPlayerCount)){
+			Log.err(`_FINDTAG_ failed to load map run stats data: ${data}`);
+		} else {
+			out.startTime = startTime;
+			out.nowMinusDuration = Date.now() - duration; //move start time forward by time when the server was off
+			out.maxPlayerCount = maxPlayerCount;
+		}
 		return out;
 	}
 }

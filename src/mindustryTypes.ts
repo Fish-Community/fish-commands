@@ -162,6 +162,9 @@ type Content = {
 	items(): Seq<Item>;
 	units(): Seq<UnitType>;
 	blocks(): Seq<Block>;
+	item(id:string | number): Item;
+	unit(id:string | number): UnitType;
+	block(id:string | number): Block;
 	statusEffects(): Seq<StatusEffect>;
 };
 class World {
@@ -720,6 +723,7 @@ class ObjectIntMapEntry<K> {
 class IntMap<V> {
 	constructor(initialCapacity?:number);
 	put(key:number, value:V):void;
+	putAll(map:IntMap<V>):void;
 	get(key:number):V | null;
 	clear():void;
 	remove(key:number):number | null;

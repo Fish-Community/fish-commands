@@ -116,11 +116,16 @@ exports.FinishedMapRun = FinishedMapRun;
 var PartialMapRun = /** @class */ (function () {
     function PartialMapRun() {
         this.startTime = Date.now();
+        /**
+         * Usually equal to startTime, unless there was a server restart.
+         * Specifically, it gets shifted forward by the time the server was offline.
+         */
+        this.nowMinusDuration = Date.now();
         this.maxPlayerCount = 0;
     }
     /** In milliseconds */
     PartialMapRun.prototype.duration = function () {
-        return Date.now() - this.startTime;
+        return Date.now() - this.nowMinusDuration;
     };
     PartialMapRun.prototype.update = function () {
         this.maxPlayerCount = Math.max(this.maxPlayerCount, Groups.player.size());
@@ -138,16 +143,19 @@ var PartialMapRun = /** @class */ (function () {
     };
     //Used for continuing through a restart
     PartialMapRun.prototype.write = function () {
-        return "".concat(Date.now() - this.startTime, "/").concat(this.maxPlayerCount);
+        return "".concat(this.startTime, "/").concat(this.duration(), "/").concat(this.maxPlayerCount);
     };
     PartialMapRun.read = function (data) {
-        var _b = __read(data.split("/").map(Number), 2), duration = _b[0], maxPlayerCount = _b[1];
-        if (isNaN(duration) || isNaN(maxPlayerCount)) {
+        var _b = __read(data.split("/").map(Number), 3), startTime = _b[0], duration = _b[1], maxPlayerCount = _b[2];
+        var out = new _a();
+        if (isNaN(startTime) || isNaN(duration) || isNaN(maxPlayerCount)) {
             Log.err("_FINDTAG_ failed to load map run stats data: ".concat(data));
         }
-        var out = new _a();
-        out.startTime = Date.now() - duration; //move start time forward by time when the server was off
-        out.maxPlayerCount = maxPlayerCount;
+        else {
+            out.startTime = startTime;
+            out.nowMinusDuration = Date.now() - duration; //move start time forward by time when the server was off
+            out.maxPlayerCount = maxPlayerCount;
+        }
         return out;
     };
     var _a;

@@ -233,7 +233,7 @@ export const commands = commandList({
 					outer:
 					for(let i = minX; i <= maxX; i ++){
 						for(let j = minY; j <= maxY; j ++){
-							let history = getTileHistory(x, y);
+							let history = getTileHistory(i, j);
 							if(!history) continue;
 							if(args.action) history = history.filter(e => e.action === args.action);
 							if(history.length == 0) continue;

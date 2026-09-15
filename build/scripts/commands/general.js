@@ -395,7 +395,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     var amount = args.amount != null ? Math.floor(Math.abs(args.amount)) : 10;
                     outer: for (var i = minX; i <= maxX; i++) {
                         for (var j = minY; j <= maxY; j++) {
-                            var history = (0, tilelog_1.getTileHistory)(x, y);
+                            var history = (0, tilelog_1.getTileHistory)(i, j);
                             if (!history)
                                 continue;
                             if (args.action)

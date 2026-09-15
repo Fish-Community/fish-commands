@@ -17,12 +17,15 @@ var __assign = (this && this.__assign) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addToTileHistory = exports.tileHistory = void 0;
 exports.getTileHistory = getTileHistory;
+exports.readFile = readFile;
 var config_1 = require("/config");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
+var maps_1 = require("/maps");
 var players_1 = require("/players");
 var utils_1 = require("/utils");
 exports.tileHistory = new IntMap();
+var unitTypeOffset = 5000;
 var tilelogActions = [
     "built", "broke", "configured", "rotated", "dropped", "picked up", "setblocked",
     "destroyed", "killed", "controlled"
@@ -73,7 +76,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
             return;
         uuid = e.unit.isPlayer() ? e.unit.getPlayer().uuid() : (_o = e.unit.lastCommanded) !== null && _o !== void 0 ? _o : "unknown";
         action = "killed";
-        type = e.unit.type.id;
+        type = e.unit.type.id + unitTypeOffset;
     }
     else if (e instanceof EventType.BlockDestroyEvent) {
         if (config_1.Gamemode.attack() && ((_p = e.tile.build) === null || _p === void 0 ? void 0 : _p.team) != Vars.state.rules.defaultTeam)
@@ -97,7 +100,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
             tile = e.unit.tileOn();
             if (!tile)
                 return;
-            type = e.unit.type.id;
+            type = e.unit.type.id + unitTypeOffset;
         }
         else
             return;
@@ -118,7 +121,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
             tile = e.unit.tileOn();
             if (!tile)
                 return;
-            type = e.unit.type.id;
+            type = e.unit.type.id + unitTypeOffset;
         }
         else
             return;
@@ -170,17 +173,78 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
         }, 1); }));
     });
 });
-function getTileHistory(x, y) {
-    var historyData = exports.tileHistory.get(Point2.pack(x, y));
+function getTileHistory(x, y, history) {
+    if (history === void 0) { history = exports.tileHistory; }
+    var historyData = history.get(Point2.pack(x, y));
     if (!historyData)
         return null;
     return funcs_1.StringIO.read(historyData, function (str) { return str.readArray(function (d) { return ({
-        action: d.readString(2),
+        action: d.readEnumString(tilelogActions),
         uuid: d.readString(3),
         time: d.readNumber(16),
-        type: d.readString(2),
-    }); }, 1); }).map(function (h) { return (__assign(__assign({}, h), { info: globals_1.uuidPattern.test(h.uuid) ? Vars.netServer.admins.getInfoOptional(h.uuid) : null })); });
+        type: d.readNumber(4),
+    }); }, 1); }).map(function (h) { return (__assign(__assign({}, h), { type: (h.type >= unitTypeOffset ? Vars.content.unit(h.type - unitTypeOffset) : Vars.content.block(h.type)).localizedName, info: globals_1.uuidPattern.test(h.uuid) ? Vars.netServer.admins.getInfoOptional(h.uuid) : null })); });
 }
+/** Writes tileHistory to the specified file. */
+function writeToFile(file) {
+    var stream = new DataOutputStream(file.write());
+    try {
+        stream.writeInt(exports.tileHistory.size);
+        exports.tileHistory.forEach(function (_a) {
+            var key = _a.key, value = _a.value;
+            stream.writeInt(key);
+            stream.writeUTF(value);
+        });
+    }
+    finally {
+        stream.close();
+    }
+}
+/** Reads tilelog data from the specified file. */
+function readFile(file) {
+    var stream = new DataInputStream(file.read(1024));
+    try {
+        var size = stream.readInt();
+        var map = new IntMap(size);
+        Log.info("Reading ".concat(size, " values"));
+        for (var i = 0; i < size; i++) {
+            map.put(stream.readInt(), stream.readUTF());
+        }
+        return map;
+    }
+    finally {
+        stream.close();
+    }
+}
+function getFile(runID) {
+    return Vars.dataDirectory.child('tilelog-data').child("".concat(runID, ".bin"));
+}
+/** Writes tileHistory to the file for the current map run. */
+var writeToCurrentRunFile = (0, utils_1.logErrors)("Error writing tilelog entries", function () {
+    var _a;
+    var currentRun = (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime;
+    if (currentRun && exports.tileHistory.size > 0) {
+        Log.info("Writing to run ".concat(currentRun));
+        writeToFile(getFile(currentRun));
+    }
+});
+globals_1.FishEvents.on("saveData", writeToCurrentRunFile);
+Events.on(EventType.SaveLoadEvent, (0, utils_1.logErrors)("Error loading tilelog entries", function () {
+    var _a;
+    var currentRun = (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime;
+    if (currentRun != undefined && exports.tileHistory.size == 0) {
+        Log.info("Reading run ".concat(currentRun));
+        var file = Vars.dataDirectory.child('tilelog-data').child("".concat(currentRun, ".bin"));
+        if (file.exists()) {
+            Log.info("DEBUG: file exists, reading");
+            exports.tileHistory.putAll(readFile(file));
+        }
+        else
+            Log.info("DEBUG: b ".concat(currentRun));
+    }
+    else
+        Log.info("DEBUG: ".concat(exports.tileHistory.size));
+}));
 Events.on(EventType.BlockBuildBeginEvent, exports.addToTileHistory);
 Events.on(EventType.BuildRotateEvent, exports.addToTileHistory);
 Events.on(EventType.ConfigEvent, exports.addToTileHistory);
@@ -189,7 +253,7 @@ Events.on(EventType.PayloadDropEvent, exports.addToTileHistory);
 Events.on(EventType.UnitDestroyEvent, exports.addToTileHistory);
 Events.on(EventType.BlockDestroyEvent, exports.addToTileHistory);
 Events.on(EventType.UnitControlEvent, exports.addToTileHistory);
-Events.on(EventType.GameOverEvent, function (e) {
-    //TODO: save to a file
+Events.on(EventType.GameOverEvent, function () {
+    writeToCurrentRunFile();
     exports.tileHistory.clear();
 });

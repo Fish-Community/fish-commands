@@ -5,12 +5,14 @@ This file contains the tilelog system, which stores information about the histor
 
 import { Gamemode } from "/config";
 import { crash, StringIO } from "/funcs";
-import { uuidPattern } from "/globals";
+import { FishEvents, uuidPattern } from "/globals";
+import { PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { logErrors } from "/utils";
 
 export type TilelogEntries = IntMap<string>;
 export const tileHistory:TilelogEntries = new IntMap<string>();
+const unitTypeOffset = 5000;
 
 const tilelogActions = [
 	"built", "broke", "configured", "rotated", "dropped", "picked up", "setblocked",
@@ -21,6 +23,10 @@ type TilelogAction = (typeof tilelogActions)[number];
 type TilelogEntry = {
 	uuid: string;
 	action: TilelogAction;
+	/**
+	 * Block ID or unit ID
+	 * Offset by +5000 if it's a unit id
+	 */
 	type: number;
 	time: number;
 };
@@ -64,7 +70,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		if(!e.unit.type.playerControllable) return;
 		uuid = e.unit.isPlayer() ? e.unit.getPlayer().uuid() : e.unit.lastCommanded ?? "unknown";
 		action = "killed";
-		type = e.unit.type.id;
+		type = e.unit.type.id + unitTypeOffset;
 	} else if(e instanceof EventType.BlockDestroyEvent){
 		if(Gamemode.attack() && e.tile.build?.team != Vars.state.rules.defaultTeam) return; //Don't log destruction of enemy blocks
 		tile = e.tile;
@@ -83,7 +89,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		} else if(e.unit){
 			tile = e.unit.tileOn();
 			if(!tile) return;
-			type = e.unit.type.id;
+			type = e.unit.type.id + unitTypeOffset;
 		} else return;
 	} else if(e instanceof EventType.PickupEvent){
 		action = "picked up";
@@ -97,7 +103,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		} else if(e.unit){
 			tile = e.unit.tileOn();
 			if(!tile) return;
-			type = e.unit.type.id;
+			type = e.unit.type.id + unitTypeOffset;
 		} else return;
 	} else if(e instanceof EventType.UnitControlEvent){
 		if(e.unit instanceof Packages.mindustry.gen.BlockUnitUnit){
@@ -118,9 +124,9 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 	tile.getLinkedTiles(t => {
 		const pos = t.pos();
 		const serializedData = tileHistory.get(pos);
-		let existingData = serializedData ? StringIO.read(serializedData, str => str.readArray(d => ({
+		let existingData = serializedData ? StringIO.read(serializedData, str => str.readArray<TilelogEntry>(d => ({
 			action: d.readEnumString(tilelogActions),
-			uuid: d.readString(3),
+			uuid: d.readString(3)!,
 			time: d.readNumber(16),
 			type: d.readNumber(4),
 		}), 1)) : [];
@@ -140,19 +146,73 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 
 });
 
-export function getTileHistory(x:number, y:number){
-	const historyData = tileHistory.get(Point2.pack(x, y));
+export function getTileHistory(x:number, y:number, history = tileHistory){
+	const historyData = history.get(Point2.pack(x, y));
 	if(!historyData) return null;
-	return StringIO.read(historyData, str => str.readArray(d => ({
-		action: d.readString(2),
+	return StringIO.read(historyData, str => str.readArray<TilelogEntry>(d => ({
+		action: d.readEnumString(tilelogActions),
 		uuid: d.readString(3)!,
 		time: d.readNumber(16),
-		type: d.readString(2),
+		type: d.readNumber(4),
 	}), 1)).map(h => ({
 		...h,
+		type: (h.type >= unitTypeOffset ? Vars.content.unit(h.type - unitTypeOffset) : Vars.content.block(h.type)).localizedName,
 		info: uuidPattern.test(h.uuid) ? Vars.netServer.admins.getInfoOptional(h.uuid) : null,
 	}));
 }
+
+/** Writes tileHistory to the specified file. */
+function writeToFile(file:Fi){
+	const stream = new DataOutputStream(file.write());
+	try {
+		stream.writeInt(tileHistory.size);
+		tileHistory.forEach(({key, value}) => {
+			stream.writeInt(key);
+			stream.writeUTF(value);
+		});
+	} finally {
+		stream.close();
+	}
+}
+/** Reads tilelog data from the specified file. */
+export function readFile(file:Fi):TilelogEntries {
+	const stream = new DataInputStream(file.read(1024));
+	try {
+		const size = stream.readInt();
+		const map = new IntMap<string>(size);
+		Log.info(`Reading ${size} values`);
+		for(let i = 0; i < size; i ++){
+			map.put(stream.readInt(), stream.readUTF());
+		}
+		return map;
+	} finally {
+		stream.close();
+	}
+}
+function getFile(runID:number):Fi {
+	return Vars.dataDirectory.child('tilelog-data').child(`${runID}.bin`);
+}
+/** Writes tileHistory to the file for the current map run. */
+const writeToCurrentRunFile = logErrors("Error writing tilelog entries", () => {
+	const currentRun = PartialMapRun.current?.startTime;
+	if(currentRun && tileHistory.size > 0){
+		Log.info(`Writing to run ${currentRun}`);
+		writeToFile(getFile(currentRun));
+	}
+});
+
+FishEvents.on("saveData", writeToCurrentRunFile);
+Events.on(EventType.SaveLoadEvent, logErrors("Error loading tilelog entries", () => {
+	const currentRun = PartialMapRun.current?.startTime;
+	if(currentRun != undefined && tileHistory.size == 0){
+		Log.info(`Reading run ${currentRun}`);
+		const file = Vars.dataDirectory.child('tilelog-data').child(`${currentRun}.bin`);
+		if(file.exists()){
+			Log.info("DEBUG: file exists, reading");
+			tileHistory.putAll(readFile(file));
+		} else Log.info(`DEBUG: b ${currentRun}`);
+	} else Log.info(`DEBUG: ${tileHistory.size}`);
+}));
 
 Events.on(EventType.BlockBuildBeginEvent, addToTileHistory);
 Events.on(EventType.BuildRotateEvent, addToTileHistory);
@@ -162,9 +222,8 @@ Events.on(EventType.PayloadDropEvent, addToTileHistory);
 Events.on(EventType.UnitDestroyEvent, addToTileHistory);
 Events.on(EventType.BlockDestroyEvent, addToTileHistory);
 Events.on(EventType.UnitControlEvent, addToTileHistory);
-Events.on(EventType.GameOverEvent, (e) => {
-	//TODO: save to a file
-
+Events.on(EventType.GameOverEvent, () => {
+	writeToCurrentRunFile();
 	tileHistory.clear();
 });
 

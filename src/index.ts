@@ -213,7 +213,10 @@ Events.on(EventType.ServerLoadEvent, () => {
 		} catch { Packages.java.lang.System.out.println("[E] failed to upload"); }
 		try {
 			FishEvents.fire("saveData", []);
-		} catch { Packages.java.lang.System.out.println("[E] failed to save misc data"); }
+		} catch(err) {
+			Packages.java.lang.System.out.println("[E] failed to save misc data");
+			Packages.java.lang.System.out.println(err);
+		}
 		try {
 			FishPlayer.saveAll(false);
 		} catch { Packages.java.lang.System.out.println("[E] failed to save player data"); }
