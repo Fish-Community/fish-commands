@@ -561,7 +561,7 @@ export const commands = consoleCommandList({
 Total: ${Math.round(Core.app.getJavaHeap() / (2 ** 10))} KB
 Number of cached fish players: ${Object.keys(FishPlayer.cachedPlayers).length} (stored locally: ${Object.values(FishPlayer.cachedPlayers).filter(p => p.shouldCache()).length})
 Fish player data string length: ${FishPlayer.getFishPlayersString.length} (${Core.settings.getInt("fish-subkeys")} subkeys)
-Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, a) => acc + a.length, 0) / (2 ** 10))} KB`
+Length of tilelog entries: ${Math.round(tileHistory.values().toArray().sum(a => a.length) / 1000)} KB`
 			);
 		}
 	},

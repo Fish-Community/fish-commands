@@ -164,7 +164,7 @@ Events.on(EventType.ServerLoadEvent, () => {
 					pos: `${action.tile!.x},${action.tile!.y}`,
 					uuid: action.player.uuid(),
 					action: "picked up",
-					type: action.tile!.block()?.name ?? "nothing",
+					type: action.tile!.blockID(),
 				});
 			} else if(action.type === Administration.ActionType.control && !action.unit?.spawnedByCore && Date.now() < fishP.blockedFromPossessingUnitsUntil){
 				action.player.sendMessage(`[scarlet]\u26A0 [yellow]You are blocked from controlling units for ${formatTimeRelative(fishP.blockedFromPossessingUnitsUntil, true)}`);

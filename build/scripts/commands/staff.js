@@ -1034,7 +1034,7 @@ exports.commands = (0, commands_1.commandList)({
                 pos: "".concat(args.x, ",").concat(args.y),
                 uuid: sender.uuid,
                 action: "setblocked",
-                type: args.block.localizedName
+                type: args.block.id,
             });
             if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(args.x, ",").concat(args.y), sender);
@@ -1060,7 +1060,7 @@ exports.commands = (0, commands_1.commandList)({
                 pos: "".concat(x, ",").concat(y),
                 uuid: sender.uuid,
                 action: "setblocked",
-                type: args.block.localizedName
+                type: args.block.id,
             });
             if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(x, ",").concat(y), sender);

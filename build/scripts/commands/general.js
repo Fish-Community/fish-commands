@@ -87,6 +87,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -111,17 +122,6 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
-};
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -333,9 +333,23 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }
         },
         tapped: function (_a) {
-            var _b;
+            var e_1, _b;
+            var _c;
             var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, copy = _a.copy, player = _a.player, sender = _a.sender, data = _a.data;
-            var history = (_b = (0, tilelog_1.getTileHistory)(x, y, player)) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("There is no recorded history for the selected tile (".concat(x, ", ").concat(y, ")."));
+            var history = (_c = (0, tilelog_1.getTileHistory)(x, y)) !== null && _c !== void 0 ? _c : (0, commands_1.fail)("There is no recorded history for the selected tile (".concat(x, ", ").concat(y, ")."));
+            try {
+                for (var history_1 = __values(history), history_1_1 = history_1.next(); !history_1_1.done; history_1_1 = history_1.next()) {
+                    var entry = history_1_1.value;
+                    player(entry.info);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (history_1_1 && !history_1_1.done && (_b = history_1.return)) _b.call(history_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
             output("[yellow]Tile history for tile (".concat(tile.x, ", ").concat(tile.y, "):\n") + history.map(function (e) {
                 return e.info ?
                     (sender.hasPerm("viewUUIDs") && data.showUUID ?
@@ -372,6 +386,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             tapped: function (_a) {
                 var x = _a.x, y = _a.y, output = _a.output, outputFail = _a.outputFail, copy = _a.copy, player = _a.player, sender = _a.sender, admins = _a.admins, handleTaps = _a.handleTaps, args = _a.args;
                 function handleArea(p1, p2) {
+                    var e_2, _a;
                     var minX = Math.min(p1[0], p2[0]);
                     var maxX = Math.max(p1[0], p2[0]);
                     var minY = Math.min(p1[1], p2[1]);
@@ -380,13 +395,26 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     var amount = args.amount != null ? Math.floor(Math.abs(args.amount)) : 10;
                     outer: for (var i = minX; i <= maxX; i++) {
                         for (var j = minY; j <= maxY; j++) {
-                            var history = (0, tilelog_1.getTileHistory)(x, y, player);
+                            var history = (0, tilelog_1.getTileHistory)(x, y);
                             if (!history)
                                 continue;
                             if (args.action)
                                 history = history.filter(function (e) { return e.action === args.action; });
                             if (history.length == 0)
                                 continue;
+                            try {
+                                for (var history_2 = (e_2 = void 0, __values(history)), history_2_1 = history_2.next(); !history_2_1.done; history_2_1 = history_2.next()) {
+                                    var entry = history_2_1.value;
+                                    player(entry.info);
+                                }
+                            }
+                            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                            finally {
+                                try {
+                                    if (history_2_1 && !history_2_1.done && (_a = history_2.return)) _a.call(history_2);
+                                }
+                                finally { if (e_2) throw e_2.error; }
+                            }
                             output("[yellow]Tile history for tile (".concat(i, ", ").concat(j, "):\n") + history.map(function (e) {
                                 return e.info ?
                                     (sender.hasPerm("viewUUIDs") ?
@@ -804,7 +832,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     this.ohnos = this.ohnos.filter(function (o) { return o && o.isAdded() && !o.dead; });
                 },
                 checkAchievement: function () {
-                    var e_1, _a;
+                    var e_3, _a;
                     try {
                         for (var _b = __values(this.ohnos), _c = _b.next(); !_c.done; _c = _b.next()) {
                             var ohno = _c.value;
@@ -813,12 +841,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                 achievements_1.Achievements.ohno.grantTo(players_1.FishPlayer.get(player), false);
                         }
                     }
-                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    catch (e_3_1) { e_3 = { error: e_3_1 }; }
                     finally {
                         try {
                             if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                         }
-                        finally { if (e_1) throw e_1.error; }
+                        finally { if (e_3) throw e_3.error; }
                     }
                 },
                 killAll: function () {

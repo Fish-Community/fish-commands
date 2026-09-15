@@ -14,7 +14,7 @@ import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, uuidP
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
-import { getTileHistory, tileHistory } from "/tilelog";
+import { getTileHistory } from "/tilelog";
 import { getLanguageFromCache, isLanguageAvailable, Language, languageCache, setPlayerLanguageEntry } from "/translation";
 import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
@@ -186,8 +186,9 @@ export const commands = commandList({
 			}
 		},
 		tapped({tile, x, y, output, copy, player, sender, data}){
-			const history = getTileHistory(x, y, player)
+			const history = getTileHistory(x, y)
 				?? fail(`There is no recorded history for the selected tile (${x}, ${y}).`);
+			for(const entry of history) player(entry.info);
 			output(`[yellow]Tile history for tile (${tile.x}, ${tile.y}):\n` + history.map(e =>
 				e.info ?
 					(sender.hasPerm("viewUUIDs") && data.showUUID ?
@@ -232,10 +233,11 @@ export const commands = commandList({
 					outer:
 					for(let i = minX; i <= maxX; i ++){
 						for(let j = minY; j <= maxY; j ++){
-							let history = getTileHistory(x, y, player);
+							let history = getTileHistory(x, y);
 							if(!history) continue;
 							if(args.action) history = history.filter(e => e.action === args.action);
 							if(history.length == 0) continue;
+							for(const entry of history) player(entry.info);
 							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e =>
 								e.info ?
 									(sender.hasPerm("viewUUIDs") ?

@@ -99,12 +99,12 @@ export class StringIO {
 			this.string += str;
 		}
 	}
-	readEnumString<const T>(options: T[]): T {
+	readEnumString<const T>(options: readonly T[]): T {
 		const length = (options.length - 1).toString().length;
 		const option = this.readNumber(length);
 		return options[option];
 	}
-	writeEnumString<const T>(value: T, options: T[]) {
+	writeEnumString<const T>(value: T, options: readonly T[]) {
 		const length = (options.length - 1).toString().length;
 		const option = options.indexOf(value);
 		if (option == -1) crash(`Attempted to write invalid value "${String(value)}" for enum, valid values are (${options.join(", ")})`);

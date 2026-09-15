@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 
 /*
 Copyright © BalaM314, 2026. All Rights Reserved.
@@ -252,9 +253,11 @@ class Tile {
 	build: Building | null;
 	breakable():boolean;
 	block():Block;
+	blockID():number;
 	floor():Block;
 	remove():void;
 	removeNet():void;
+	pos():number;
 	setNet(block:Block, team:Team, rotation:number):void;
 	getLinkedTiles(callback:(t:Tile) => void):void;
 }
@@ -640,6 +643,7 @@ class Seq<T> {
 	isEmpty():boolean;
 	any():boolean;
 	map<R>(mapFunc:(item:T) => R):Seq<R>;
+	sum(summer:(item:T) => number):number;
 	flatMap<R>(mapFunc:(item:T) => Seq<R>):Seq<R>;
 	toString(separator?:string, stringifier?:(item:T) => string):string;
 	toArray():T[];
@@ -712,6 +716,22 @@ class ObjectIntMap<K> {
 class ObjectIntMapEntry<K> {
 	key:K;
 	value:number;
+}
+class IntMap<V> {
+	constructor(initialCapacity?:number);
+	put(key:number, value:V):void;
+	get(key:number):V | null;
+	clear():void;
+	remove(key:number):number | null;
+	size:number;
+	forEach(func:(_:IntMapEntry<V>) => void):void;
+	values(): {
+		toArray():Seq<V>;
+	};
+}
+class IntMapEntry<V> {
+	key:number;
+	value:V;
 }
 class StringMap {
 	getFloat(key:string):number;
@@ -818,6 +838,7 @@ class Fi {
 	length():number;
 	lastModified():number;
 	write():OutputStream;
+	read(bufferSize:number):InputStream;
 	list():Fi[];
 	name():string;
 	readBytes():number[];
@@ -964,20 +985,16 @@ class VoteSession {
 	private votes: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Array<T> {
 	filter(predicate: BooleanConstructor, thisArg?: any): Array<T extends (false | 0 | "" | null | undefined) ? never : T>;
 }
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ReadonlyArray<T> {
 	map<TThis extends ReadonlyArray<T>, U>(this:TThis, fn:(v:T, i:number, a:TThis) => U): number extends TThis["length"] ? U[] : { [K in keyof TThis]: U };
 }
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ObjectConstructor {
 	entries<const K extends PropertyKey, V>(input:Record<K, V>):Array<[K, V]>;
 	fromEntries<const K extends PropertyKey, V>(input:Array<[K, V]>):Record<K, V>;
 }
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface SymbolConstructor {
 	readonly metadata: unique symbol;
 }
@@ -1113,7 +1130,6 @@ class Ratekeeper {
 	allow(spacingMS:number, cap:number):boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface MIterable<T> {
 	iterator(): Iterator<T>;
 	forEach(_:(item:T) => void):void;
@@ -1128,6 +1144,42 @@ class AtomicInteger {
 }
 class ValidateException extends Error {
 	constructor(player:Player, s: string);
+}
+
+interface QuadTreeObject {
+	hitbox(out:Rect):void;
+}
+class Rect {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	constructor(x: number, y: number, width: number, height: number);
+}
+class QuadTree<T extends QuadTreeObject>{
+	bounds: Rect;
+	totalObjects: number;
+	objects: Seq<T>;
+	constructor(bounds: Rect);
+	insert(obj:T):void;
+	remove(obj:T):void;
+	clear():void;
+	intersect(x:number, y:number, width:number, height:number, callback:(item:T) => void):void;
+	intersect(rect:Rect, callback:(item:T) => void):void;
+	intersect(x:number, y:number, width:number, height:number, out:Seq<T>):void;
+	getObjects(out:Seq<T>):void;
+	find(x:number, y:number, width:number, height:number, predicate:(item:T) => boolean):T | null;
+}
+
+class Point2 {
+	x: number;
+	y: number;
+	constructor();
+	constructor(x: number, y: number);
+	static pack(x: number, y: number):number;
+	static x(packed: number):number;
+	static y(packed: number):number;
+	static unpack(packed: number):Point2;
 }
 
 }

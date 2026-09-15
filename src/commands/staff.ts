@@ -748,7 +748,7 @@ export const commands = commandList({
 				pos: `${args.x},${args.y}`,
 				uuid: sender.uuid,
 				action: `setblocked`,
-				type: args.block.localizedName
+				type: args.block.id,
 			});
 			if(!Gamemode.cheatsOk()) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
 			outputSuccess(f`Set block at ${args.x}, ${args.y} to ${args.block}`);
@@ -770,7 +770,7 @@ export const commands = commandList({
 				pos: `${x},${y}`,
 				uuid: sender.uuid,
 				action: `setblocked`,
-				type: args.block.localizedName
+				type: args.block.id,
 			});
 			if(!Gamemode.cheatsOk()) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
 			outputSuccess(f`Set block at ${x}, ${y} to ${args.block}`);
