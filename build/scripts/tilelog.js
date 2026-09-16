@@ -14,6 +14,44 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addToTileHistory = exports.tileHistory = void 0;
 exports.getTileHistory = getTileHistory;
@@ -26,6 +64,7 @@ var players_1 = require("/players");
 var utils_1 = require("/utils");
 exports.tileHistory = new IntMap();
 var unitTypeOffset = 5000;
+var preferredMaxPacketSize = 1452; //bytes. It's fine if it goes over this, the packet will just be fragmented
 var tilelogActions = [
     "built", "broke", "configured", "rotated", "dropped", "picked up", "setblocked",
     "destroyed", "killed", "controlled"
@@ -192,6 +231,9 @@ function getTileHistory(x, y, history) {
     var historyData = history.get(Point2.pack(x, y));
     if (!historyData)
         return null;
+    return deserializeData(historyData).map(function (h) { return (__assign(__assign({}, h), { type: (h.type >= unitTypeOffset ? Vars.content.unit(h.type - unitTypeOffset) : Vars.content.block(h.type)).localizedName, info: globals_1.uuidPattern.test(h.uuid) ? Vars.netServer.admins.getInfoOptional(h.uuid) : null })); });
+}
+function deserializeData(historyData) {
     return funcs_1.StringIO.read(historyData, function (str) { return str.readArray(function (d) { return ({
         action: d.readEnumString(tilelogActions),
         uuid: d.readString(3),
@@ -200,7 +242,7 @@ function getTileHistory(x, y, history) {
         rotation: d.readNumber(1),
         isRootTile: d.readBool(),
         rotationDirection: d.readBool(),
-    }); }, 1); }).map(function (h) { return (__assign(__assign({}, h), { type: (h.type >= unitTypeOffset ? Vars.content.unit(h.type - unitTypeOffset) : Vars.content.block(h.type)).localizedName, info: globals_1.uuidPattern.test(h.uuid) ? Vars.netServer.admins.getInfoOptional(h.uuid) : null })); });
+    }); }, 1); });
 }
 /** Writes tileHistory to the specified file. */
 function writeToFile(file) {
@@ -332,6 +374,117 @@ function writeEntry(entry, writes) {
             break;
     }
 }
+function writeHistory(tilelogEntries) {
+    var bits = new Bits(Vars.world.tiles.size());
+    var fooTileLogData = [];
+    var mainDataStream = new ByteArrayOutputStream(50000); //start at 50kb
+    var mainWriter = new Writes(new DataOutputStream(mainDataStream));
+    var tileDataStream = new ByteArrayOutputStream(); //leave it as the default
+    var tileWriter = new Writes(new DataOutputStream(tileDataStream));
+    var tilesInPacket = 0;
+    mainWriter.b(0); //add one byte for the tile count
+    tilelogEntries.forEach(function (_a) {
+        var key = _a.key, value = _a.value;
+        bits.set(key);
+        var entries = deserializeData(value);
+        tileWriter.b(entries.length);
+        for (var i = 0; i < Math.min(entries.length, 256); i++) {
+            writeEntry(entries[i], tileWriter);
+        }
+        tilesInPacket++;
+        var tileData = tileDataStream.toByteArray(); //unnecessary copy, unavoidable
+        tileDataStream.reset();
+        if (mainDataStream.size() + tileDataStream.size() > preferredMaxPacketSize || tilesInPacket == 0xFF) {
+            var bytes_1 = mainDataStream.toByteArray();
+            bytes_1[0] = tilesInPacket > 127 ? tilesInPacket - 256 : tilesInPacket;
+            fooTileLogData.push(bytes_1);
+            mainDataStream.reset();
+            mainWriter.b(0);
+        }
+        mainWriter.b(tileData);
+    });
+    var longs = Reflect.get(bits, "bits");
+    var bytes = ByteBuffer.allocate(longs.length * 8);
+    bytes.asLongBuffer().put(longs);
+    var fooTileLogs = bytes.array();
+    return { fooTileLogs: fooTileLogs, fooTileLogData: fooTileLogData };
+}
+function sendHistory(_a) {
+    var packet, i, fooTileLogData_1, fooTileLogData_1_1, data, e_1_1;
+    var e_1, _b;
+    var fooTileLogs = _a.fooTileLogs, fooTileLogData = _a.fooTileLogData;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                packet = new ClientBinaryPacketReliableCallPacket();
+                packet.type = "fooTileLogs";
+                i = 0;
+                _c.label = 1;
+            case 1:
+                if (!(i < fooTileLogs.length)) return [3 /*break*/, 4];
+                packet.contents = Packages.java.util.Arrays.copyOfRange(fooTileLogs, i, Math.min(i + preferredMaxPacketSize, fooTileLogs.length));
+                return [4 /*yield*/, packet];
+            case 2:
+                _c.sent();
+                _c.label = 3;
+            case 3:
+                i += preferredMaxPacketSize;
+                return [3 /*break*/, 1];
+            case 4:
+                packet.type = "fooTileLog";
+                _c.label = 5;
+            case 5:
+                _c.trys.push([5, 10, 11, 12]);
+                fooTileLogData_1 = __values(fooTileLogData), fooTileLogData_1_1 = fooTileLogData_1.next();
+                _c.label = 6;
+            case 6:
+                if (!!fooTileLogData_1_1.done) return [3 /*break*/, 9];
+                data = fooTileLogData_1_1.value;
+                packet.contents = data;
+                return [4 /*yield*/, packet];
+            case 7:
+                _c.sent();
+                _c.label = 8;
+            case 8:
+                fooTileLogData_1_1 = fooTileLogData_1.next();
+                return [3 /*break*/, 6];
+            case 9: return [3 /*break*/, 12];
+            case 10:
+                e_1_1 = _c.sent();
+                e_1 = { error: e_1_1 };
+                return [3 /*break*/, 12];
+            case 11:
+                try {
+                    if (fooTileLogData_1_1 && !fooTileLogData_1_1.done && (_b = fooTileLogData_1.return)) _b.call(fooTileLogData_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+                return [7 /*endfinally*/];
+            case 12: return [2 /*return*/];
+        }
+    });
+}
+function sendPacketGenerator(con, reliable, delay, generator) {
+    if (!con.hasDisconnected) {
+        for (var i = 0; i < 5; i++) {
+            var _a = generator.next(), done = _a.done, value = _a.value;
+            if (done)
+                return;
+            else
+                con.send(value, reliable);
+        }
+        Timer.schedule(function () { return sendPacketGenerator(con, reliable, delay, generator); }, delay);
+    }
+}
+Vars.netServer.addPacketHandler("fooTileLogs", function (player, version) {
+    if (version != "2")
+        player.sendMessage("Unsupported tilelog version: expected 2, got ".concat(version));
+    var fishP = players_1.FishPlayer.get(player);
+    var requestCooldown = fishP.ranksAtLeast("trusted") ? funcs_1.Duration.seconds(15) : funcs_1.Duration.minutes(2);
+    if (Date.now() - fishP.lastRequestedData < requestCooldown) {
+        fishP.lastRequestedData = Date.now();
+        sendPacketGenerator(player.con, true, 10, sendHistory(writeHistory(exports.tileHistory)));
+    }
+});
 globals_1.FishEvents.on("saveData", writeToCurrentRunFile);
 Events.on(EventType.SaveLoadEvent, (0, utils_1.logErrors)("Error loading tilelog entries", function () {
     var _a;

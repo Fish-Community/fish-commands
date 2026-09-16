@@ -4,7 +4,7 @@ This file contains the tilelog system, which stores information about the histor
 */
 
 import { Gamemode } from "/config";
-import { crash, StringIO } from "/funcs";
+import { crash, Duration, StringIO } from "/funcs";
 import { FishEvents, uuidPattern } from "/globals";
 import { PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
@@ -13,6 +13,7 @@ import { logErrors } from "/utils";
 export type TilelogEntries = IntMap<string>;
 export const tileHistory:TilelogEntries = new IntMap<string>();
 const unitTypeOffset = 5000;
+const preferredMaxPacketSize = 1452; //bytes. It's fine if it goes over this, the packet will just be fragmented
 
 const tilelogActions = [
 	"built", "broke", "configured", "rotated", "dropped", "picked up", "setblocked",
@@ -165,6 +166,14 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 export function getTileHistory(x:number, y:number, history = tileHistory){
 	const historyData = history.get(Point2.pack(x, y));
 	if(!historyData) return null;
+	return deserializeData(historyData).map(h => ({
+		...h,
+		type: (h.type >= unitTypeOffset ? Vars.content.unit(h.type - unitTypeOffset) : Vars.content.block(h.type)).localizedName,
+		info: uuidPattern.test(h.uuid) ? Vars.netServer.admins.getInfoOptional(h.uuid) : null,
+	}));
+}
+
+function deserializeData(historyData:string) {
 	return StringIO.read(historyData, str => str.readArray<TilelogEntry>(d => ({
 		action: d.readEnumString(tilelogActions),
 		uuid: d.readString(3)!,
@@ -173,11 +182,7 @@ export function getTileHistory(x:number, y:number, history = tileHistory){
 		rotation: d.readNumber(1),
 		isRootTile: d.readBool(),
 		rotationDirection: d.readBool(),
-	}), 1)).map(h => ({
-		...h,
-		type: (h.type >= unitTypeOffset ? Vars.content.unit(h.type - unitTypeOffset) : Vars.content.block(h.type)).localizedName,
-		info: uuidPattern.test(h.uuid) ? Vars.netServer.admins.getInfoOptional(h.uuid) : null,
-	}));
+	}), 1));
 }
 
 /** Writes tileHistory to the specified file. */
@@ -301,6 +306,84 @@ function writeEntry(entry:TilelogEntry, writes:Writes){
 			break;
 	}
 }
+
+function writeHistory(tilelogEntries:TilelogEntries){
+	const bits = new Bits(Vars.world.tiles.size());
+	
+	const fooTileLogData: number[][] = [];
+
+	const mainDataStream = new ByteArrayOutputStream(50_000); //start at 50kb
+	const mainWriter = new Writes(new DataOutputStream(mainDataStream));
+	const tileDataStream = new ByteArrayOutputStream(); //leave it as the default
+	const tileWriter = new Writes(new DataOutputStream(tileDataStream));
+	
+	let tilesInPacket = 0;
+
+	mainWriter.b(0); //add one byte for the tile count
+
+	tilelogEntries.forEach(({key, value}) => {
+		bits.set(key);
+		const entries = deserializeData(value);
+		tileWriter.b(entries.length);
+		for(let i = 0; i < Math.min(entries.length, 256); i ++){
+			writeEntry(entries[i], tileWriter);
+		}
+		tilesInPacket ++;
+		const tileData = tileDataStream.toByteArray(); //unnecessary copy, unavoidable
+		tileDataStream.reset();
+
+		if(mainDataStream.size() + tileDataStream.size() > preferredMaxPacketSize || tilesInPacket == 0xFF){
+			const bytes = mainDataStream.toByteArray();
+			bytes[0] = tilesInPacket > 127 ? tilesInPacket - 256 : tilesInPacket;
+			fooTileLogData.push(bytes);
+			mainDataStream.reset();
+			mainWriter.b(0);
+		}
+		mainWriter.b(tileData);
+	});
+
+	const longs = Reflect.get(bits, "bits");
+	const bytes = ByteBuffer.allocate(longs.length * 8);
+	bytes.asLongBuffer().put(longs);
+	const fooTileLogs = bytes.array();
+	
+	return {fooTileLogs, fooTileLogData};
+}
+
+function* sendHistory({fooTileLogs, fooTileLogData}:{fooTileLogs: number[]; fooTileLogData: number[][]}):Generator<ClientBinaryPacketReliableCallPacket, void, void> {
+	const packet = new ClientBinaryPacketReliableCallPacket();
+	packet.type = "fooTileLogs";
+	for(let i = 0; i < fooTileLogs.length; i += preferredMaxPacketSize){
+		packet.contents = Packages.java.util.Arrays.copyOfRange(fooTileLogs, i, Math.min(i + preferredMaxPacketSize, fooTileLogs.length));
+		yield packet;
+	}
+	packet.type = "fooTileLog";
+	for(const data of fooTileLogData){
+		packet.contents = data;
+		yield packet;
+	}
+}
+
+function sendPacketGenerator(con: NetConnection, reliable:boolean, delay:number, generator: Generator<ClientBinaryPacketReliableCallPacket, void, void>){
+	if(!con.hasDisconnected){
+		for(let i = 0; i < 5; i ++){
+			const { done, value } = generator.next();
+			if(done) return;
+			else con.send(value, reliable);
+		}
+		Timer.schedule(() => sendPacketGenerator(con, reliable, delay, generator), delay);
+	}
+}
+
+Vars.netServer.addPacketHandler("fooTileLogs", (player, version) => {
+	if(version != "2") player.sendMessage(`Unsupported tilelog version: expected 2, got ${version}`);
+	const fishP = FishPlayer.get(player);
+	const requestCooldown = fishP.ranksAtLeast("trusted") ? Duration.seconds(15) : Duration.minutes(2);
+	if(Date.now() - fishP.lastRequestedData < requestCooldown){
+		fishP.lastRequestedData = Date.now();
+		sendPacketGenerator(player.con, true, 10, sendHistory(writeHistory(tileHistory)));
+	}
+});
 
 FishEvents.on("saveData", writeToCurrentRunFile);
 Events.on(EventType.SaveLoadEvent, logErrors("Error loading tilelog entries", () => {

@@ -197,6 +197,7 @@ var FishPlayer = /** @class */ (function () {
         this.isImpersonator = false;
         this.joinedAlready = false;
         this.sneakybanned = false;
+        this.lastRequestedData = -1;
         /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
         this.overrideName = null;

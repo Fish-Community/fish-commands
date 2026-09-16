@@ -92,6 +92,7 @@ const Vars: {
 		clientCommands: CommandHandler;
 		kickAll(kickReason:any):void;
 		addPacketHandler(name:string, handler:(player:mindustryPlayer, content:string) => unknown):void;
+		addBinaryPacketHandler(name:string, handler:(player:mindustryPlayer, content:number[]) => unknown):void;
 		currentlyKicking: VoteSession | null;
 		votesRequired():number;
 		assigner: (player:Player, players:MIterable<Player>) => Team;
@@ -176,6 +177,7 @@ class World {
 	static unconv(x:number):number;
 	tiles: {
 		eachTile(func:(tile:Tile) => unknown):void;
+		size():number;
 	};
 }
 class Gamemode {
@@ -607,8 +609,10 @@ class DataInputStream extends InputStream {
 	skipBytes(n:number):number;
 }
 class ByteArrayOutputStream extends OutputStream {
-	constructor();
+	constructor(capacity?: number);
 	toByteArray():number[];
+	size():number;
+	reset():void;
 }
 class ByteArrayInputStream extends InputStream {
 	constructor(bytes:number[]);
@@ -835,6 +839,7 @@ class NetConnection {
 	kick(reason:string, duration?:number):void;
 	kick(reason:KickReason, duration?:number):void;
 	sendStream(data:any):void;
+	send(data:any, reliable:boolean):void;
 	blacklist():void;
 	isConnected(): boolean;
 }
@@ -1078,6 +1083,10 @@ class ConnectPacket {
 	mobile: boolean;
 	color: number;
 }
+class ClientBinaryPacketReliableCallPacket {
+	type: string | null;
+	contents: number[];
+}
 
 type ByteBuffer = {
 	put(bytes:number[]):void;
@@ -1214,5 +1223,7 @@ const TypeIO: {
 	writeBlock(write: Writes, block: Block | null):void;
 	writeUnitType(write: Writes, block: UnitType | null):void;
 };
+
+const ByteBuffer: any;
 
 }

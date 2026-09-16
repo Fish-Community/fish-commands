@@ -128,6 +128,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	isImpersonator = false;
 	joinedAlready = false;
 	sneakybanned = false;
+	lastRequestedData: number = -1;
 	//#endregion
 	
 	//#region Stored data
