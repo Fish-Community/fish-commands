@@ -177,7 +177,6 @@ class World {
 	static unconv(x:number):number;
 	tiles: {
 		eachTile(func:(tile:Tile) => unknown):void;
-		size():number;
 	};
 }
 class Gamemode {

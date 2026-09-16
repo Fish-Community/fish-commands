@@ -204,7 +204,6 @@ export function readFile(file:Fi):TilelogEntries {
 	try {
 		const size = stream.readInt();
 		const map = new IntMap<string>(size);
-		Log.info(`Reading ${size} values`);
 		for(let i = 0; i < size; i ++){
 			map.put(stream.readInt(), stream.readUTF());
 		}
@@ -220,7 +219,6 @@ function getFile(runID:number):Fi {
 const writeToCurrentRunFile = logErrors("Error writing tilelog entries", () => {
 	const currentRun = PartialMapRun.current?.startTime;
 	if(currentRun && tileHistory.size > 0){
-		Log.info(`Writing to run ${currentRun}`);
 		writeToFile(getFile(currentRun));
 	}
 });
@@ -308,7 +306,8 @@ function writeEntry(entry:TilelogEntry, writes:Writes){
 }
 
 function writeHistory(tilelogEntries:TilelogEntries){
-	const bits = new Bits(Vars.world.tiles.size());
+	const worldSize = Vars.world.width() * Vars.world.height();
+	const bits = new Bits(worldSize);
 	
 	const fooTileLogData: number[][] = [];
 
@@ -321,40 +320,56 @@ function writeHistory(tilelogEntries:TilelogEntries){
 
 	mainWriter.b(0); //add one byte for the tile count
 
+	Log.info("Serializing tilelog data");
+
 	tilelogEntries.forEach(({key, value}) => {
-		bits.set(key);
+		const tile = Point2.unpack(key);
+		bits.set(tile.x + tile.y * Vars.world.width());
 		const entries = deserializeData(value);
-		tileWriter.b(entries.length);
-		for(let i = 0; i < Math.min(entries.length, 256); i ++){
+		tileWriter.i(key);
+		const entriesLen = Math.min(entries.length, 256);
+		tileWriter.b(entriesLen);
+		for(let i = 0; i < entriesLen; i ++){
 			writeEntry(entries[i], tileWriter);
 		}
-		tilesInPacket ++;
 		const tileData = tileDataStream.toByteArray(); //unnecessary copy, unavoidable
 		tileDataStream.reset();
-
-		if(mainDataStream.size() + tileDataStream.size() > preferredMaxPacketSize || tilesInPacket == 0xFF){
+		
+		if(mainDataStream.size() + tileData.length > preferredMaxPacketSize || tilesInPacket == 0xFF){
 			const bytes = mainDataStream.toByteArray();
 			bytes[0] = tilesInPacket > 127 ? tilesInPacket - 256 : tilesInPacket;
+			tilesInPacket = 0;
+			Log.info("n@", bytes[0]);
 			fooTileLogData.push(bytes);
 			mainDataStream.reset();
 			mainWriter.b(0);
 		}
+		tilesInPacket ++;
 		mainWriter.b(tileData);
 	});
 
-	const longs = Reflect.get(bits, "bits");
+	Log.info("Serialized tilelog data");
+
+	const longs = Reflect.get(bits, "bits"); //the raw bytes that make up these longs are a bit too long, we need to truncate it to worldSize
+	Log.info("longs[1779] @", longs[1779]);
 	const bytes = ByteBuffer.allocate(longs.length * 8);
+	bytes.order(Packages.java.nio.ByteOrder.LITTLE_ENDIAN);
 	bytes.asLongBuffer().put(longs);
 	const fooTileLogs = bytes.array();
+	Log.info(fooTileLogs.slice(1779 * 8, 1780 * 8).join(' '));
 	
-	return {fooTileLogs, fooTileLogData};
+	return {fooTileLogs, fooTileLogsLength: Math.ceil(worldSize / 8), fooTileLogData};
 }
 
-function* sendHistory({fooTileLogs, fooTileLogData}:{fooTileLogs: number[]; fooTileLogData: number[][]}):Generator<ClientBinaryPacketReliableCallPacket, void, void> {
+function* sendHistory({fooTileLogs, fooTileLogsLength, fooTileLogData}:{
+	fooTileLogs: number[]; fooTileLogsLength: number; fooTileLogData: number[][]
+}):Generator<ClientBinaryPacketReliableCallPacket, void, void> {
 	const packet = new ClientBinaryPacketReliableCallPacket();
 	packet.type = "fooTileLogs";
-	for(let i = 0; i < fooTileLogs.length; i += preferredMaxPacketSize){
-		packet.contents = Packages.java.util.Arrays.copyOfRange(fooTileLogs, i, Math.min(i + preferredMaxPacketSize, fooTileLogs.length));
+	Log.info("Segmenting tilelog data");
+	for(let i = 0; i < fooTileLogsLength; i += preferredMaxPacketSize){
+		packet.contents = Packages.java.util.Arrays.copyOfRange(fooTileLogs, i, Math.min(i + preferredMaxPacketSize, fooTileLogsLength));
+		Log.info(packet.contents.join(' '));
 		yield packet;
 	}
 	packet.type = "fooTileLog";
@@ -362,40 +377,43 @@ function* sendHistory({fooTileLogs, fooTileLogData}:{fooTileLogs: number[]; fooT
 		packet.contents = data;
 		yield packet;
 	}
+	Log.info("Done segmenting tilelog data");
 }
 
 function sendPacketGenerator(con: NetConnection, reliable:boolean, delay:number, generator: Generator<ClientBinaryPacketReliableCallPacket, void, void>){
 	if(!con.hasDisconnected){
 		for(let i = 0; i < 5; i ++){
+			Log.info("Sending batch");
 			const { done, value } = generator.next();
 			if(done) return;
 			else con.send(value, reliable);
 		}
-		Timer.schedule(() => sendPacketGenerator(con, reliable, delay, generator), delay);
+		Timer.schedule(() => sendPacketGenerator(con, reliable, delay, generator), delay / 1000);
 	}
 }
 
-Vars.netServer.addPacketHandler("fooTileLogs", (player, version) => {
-	if(version != "2") player.sendMessage(`Unsupported tilelog version: expected 2, got ${version}`);
-	const fishP = FishPlayer.get(player);
-	const requestCooldown = fishP.ranksAtLeast("trusted") ? Duration.seconds(15) : Duration.minutes(2);
-	if(Date.now() - fishP.lastRequestedData < requestCooldown){
-		fishP.lastRequestedData = Date.now();
-		sendPacketGenerator(player.con, true, 10, sendHistory(writeHistory(tileHistory)));
-	}
+Events.on(EventType.ServerLoadEvent, () => {
+	Vars.netServer.addPacketHandler("fooTileLogs", (player, version) => {
+		if(version != "2") player.sendMessage(`Unsupported tilelog version: expected 2, got ${version}`);
+		Log.info("Preparing to send tilelog data");
+		const fishP = FishPlayer.get(player);
+		const requestCooldown = fishP.ranksAtLeast("trusted") ? Duration.seconds(15) : Duration.minutes(2);
+		if(Date.now() - fishP.lastRequestedData > requestCooldown){
+			fishP.lastRequestedData = Date.now();
+			sendPacketGenerator(player.con, true, 10, sendHistory(writeHistory(tileHistory)));
+		}
+	});
 });
 
 FishEvents.on("saveData", writeToCurrentRunFile);
 Events.on(EventType.SaveLoadEvent, logErrors("Error loading tilelog entries", () => {
 	const currentRun = PartialMapRun.current?.startTime;
 	if(currentRun != undefined && tileHistory.size == 0){
-		Log.info(`Reading run ${currentRun}`);
 		const file = Vars.dataDirectory.child('tilelog-data').child(`${currentRun}.bin`);
 		if(file.exists()){
-			Log.info("DEBUG: file exists, reading");
 			tileHistory.putAll(readFile(file));
-		} else Log.info(`DEBUG: b ${currentRun}`);
-	} else Log.info(`DEBUG: ${tileHistory.size}`);
+		}
+	}
 }));
 
 Events.on(EventType.BlockBuildBeginEvent, addToTileHistory);
