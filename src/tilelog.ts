@@ -320,8 +320,6 @@ function writeHistory(tilelogEntries:TilelogEntries){
 
 	mainWriter.b(0); //add one byte for the tile count
 
-	Log.info("Serializing tilelog data");
-
 	tilelogEntries.forEach(({key, value}) => {
 		const tile = Point2.unpack(key);
 		bits.set(tile.x + tile.y * Vars.world.width());
@@ -339,7 +337,6 @@ function writeHistory(tilelogEntries:TilelogEntries){
 			const bytes = mainDataStream.toByteArray();
 			bytes[0] = tilesInPacket > 127 ? tilesInPacket - 256 : tilesInPacket;
 			tilesInPacket = 0;
-			Log.info("n@", bytes[0]);
 			fooTileLogData.push(bytes);
 			mainDataStream.reset();
 			mainWriter.b(0);
@@ -348,15 +345,12 @@ function writeHistory(tilelogEntries:TilelogEntries){
 		mainWriter.b(tileData);
 	});
 
-	Log.info("Serialized tilelog data");
 
 	const longs = Reflect.get(bits, "bits"); //the raw bytes that make up these longs are a bit too long, we need to truncate it to worldSize
-	Log.info("longs[1779] @", longs[1779]);
 	const bytes = ByteBuffer.allocate(longs.length * 8);
 	bytes.order(Packages.java.nio.ByteOrder.LITTLE_ENDIAN);
 	bytes.asLongBuffer().put(longs);
 	const fooTileLogs = bytes.array();
-	Log.info(fooTileLogs.slice(1779 * 8, 1780 * 8).join(' '));
 	
 	return {fooTileLogs, fooTileLogsLength: Math.ceil(worldSize / 8), fooTileLogData};
 }
@@ -366,10 +360,8 @@ function* sendHistory({fooTileLogs, fooTileLogsLength, fooTileLogData}:{
 }):Generator<ClientBinaryPacketReliableCallPacket, void, void> {
 	const packet = new ClientBinaryPacketReliableCallPacket();
 	packet.type = "fooTileLogs";
-	Log.info("Segmenting tilelog data");
 	for(let i = 0; i < fooTileLogsLength; i += preferredMaxPacketSize){
 		packet.contents = Packages.java.util.Arrays.copyOfRange(fooTileLogs, i, Math.min(i + preferredMaxPacketSize, fooTileLogsLength));
-		Log.info(packet.contents.join(' '));
 		yield packet;
 	}
 	packet.type = "fooTileLog";
@@ -377,13 +369,11 @@ function* sendHistory({fooTileLogs, fooTileLogsLength, fooTileLogData}:{
 		packet.contents = data;
 		yield packet;
 	}
-	Log.info("Done segmenting tilelog data");
 }
 
 function sendPacketGenerator(con: NetConnection, reliable:boolean, delay:number, generator: Generator<ClientBinaryPacketReliableCallPacket, void, void>){
 	if(!con.hasDisconnected){
 		for(let i = 0; i < 5; i ++){
-			Log.info("Sending batch");
 			const { done, value } = generator.next();
 			if(done) return;
 			else con.send(value, reliable);
@@ -395,7 +385,6 @@ function sendPacketGenerator(con: NetConnection, reliable:boolean, delay:number,
 Events.on(EventType.ServerLoadEvent, () => {
 	Vars.netServer.addPacketHandler("fooTileLogs", (player, version) => {
 		if(version != "2") player.sendMessage(`Unsupported tilelog version: expected 2, got ${version}`);
-		Log.info("Preparing to send tilelog data");
 		const fishP = FishPlayer.get(player);
 		const requestCooldown = fishP.ranksAtLeast("trusted") ? Duration.seconds(15) : Duration.minutes(2);
 		if(Date.now() - fishP.lastRequestedData > requestCooldown){
