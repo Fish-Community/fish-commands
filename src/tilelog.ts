@@ -29,13 +29,17 @@ type TilelogEntry = {
 	 */
 	type: number;
 	time: number;
+	rotation: number;
+	/** default false */
+	rotationDirection: boolean;
+	isRootTile: boolean;
 };
 
 
 export const addToTileHistory = logErrors("Error while saving a tilelog entry", (e:any) => {
 
 	// eslint-disable-next-line prefer-const
-	let tile:Tile, uuid:string, action:TilelogAction, type:number, time:number = Date.now();
+	let tile:Tile, uuid:string, action:TilelogAction, type:number, time:number = Date.now(), rotation = 0, rotationDirection = false;
 	if(e instanceof EventType.BlockBuildBeginEvent){
 		tile = e.tile;
 		uuid = e.unit?.player?.uuid() ?? e.unit?.type.name ?? "unknown";
@@ -45,6 +49,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		} else {
 			action = "built";
 			type = (tile.build instanceof ConstructBlock.ConstructBuild) ? (tile.build as any).current.id : "unknown";
+			rotation = tile.build?.rotation ?? 0;
 		}
 	} else if(e instanceof EventType.ConfigEvent){
 		tile = e.tile.tile;
@@ -55,6 +60,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		}
 		action = "configured";
 		type = tile.blockID();
+		rotation = e.tile.rotation;
 	} else if(e instanceof EventType.BuildRotateEvent){
 		tile = e.build.tile;
 		uuid = e.unit?.player?.uuid() ?? e.unit?.type.name ?? "unknown";
@@ -64,6 +70,8 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		}
 		action = "rotated";
 		type = tile.blockID();
+		rotation = e.previous;
+		rotationDirection = getRotationDirection(rotation, e.build.rotation);
 	} else if(e instanceof EventType.UnitDestroyEvent){
 		tile = e.unit.tileOn();
 		if(!tile) return;
@@ -85,6 +93,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		: null) ?? e.carrier.type.name;
 		if(e.build){
 			tile = e.build.tile;
+			rotation = e.build.rotation;
 			type = tile.blockID();
 		} else if(e.unit){
 			tile = e.unit.tileOn();
@@ -115,11 +124,11 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		} else return;
 	} else if(e instanceof Object && "pos" in e && "uuid" in e && "action" in e && "type" in e){
 		let pos;
-		({pos, uuid, action, type} = e);
+		({pos, uuid, action, type, rotation} = e);
 		tile = Vars.world.tile(pos.split(",")[0], pos.split(",")[1]) ?? crash(`Cannot log ${action} at ${pos}: Nonexistent tile`);
 	} else return;
 	if(tile == null) return;
-	[tile, uuid, action, type, time] satisfies [Tile, string, TilelogAction, number, number];
+	[tile, uuid, action, type, time, rotation, rotationDirection] satisfies [Tile, string, TilelogAction, number, number, number, boolean];
 
 	tile.getLinkedTiles(t => {
 		const pos = t.pos();
@@ -129,10 +138,14 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 			uuid: d.readString(3)!,
 			time: d.readNumber(16),
 			type: d.readNumber(4),
+			rotation: d.readNumber(1),
+			isRootTile: d.readBool(),
+			rotationDirection: d.readBool(),
 		}), 1)) : [];
 
 		existingData.push({
-			action, uuid, time, type
+			action, uuid, time, type, rotation, rotationDirection,
+			isRootTile: t == tile,
 		});
 		existingData = existingData.slice(-9);
 		//Write
@@ -141,6 +154,9 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 			str.writeString(el.uuid, 3);
 			str.writeNumber(el.time, 16);
 			str.writeNumber(el.type, 4);
+			str.writeNumber(el.rotation, 1);
+			str.writeBool(el.isRootTile);
+			str.writeBool(el.rotationDirection);
 		}, 1)));
 	});
 
@@ -154,6 +170,9 @@ export function getTileHistory(x:number, y:number, history = tileHistory){
 		uuid: d.readString(3)!,
 		time: d.readNumber(16),
 		type: d.readNumber(4),
+		rotation: d.readNumber(1),
+		isRootTile: d.readBool(),
+		rotationDirection: d.readBool(),
 	}), 1)).map(h => ({
 		...h,
 		type: (h.type >= unitTypeOffset ? Vars.content.unit(h.type - unitTypeOffset) : Vars.content.block(h.type)).localizedName,
@@ -200,6 +219,88 @@ const writeToCurrentRunFile = logErrors("Error writing tilelog entries", () => {
 		writeToFile(getFile(currentRun));
 	}
 });
+
+/** Copy pasted from foos */
+function getRotationDirection(old: number, n: number){
+	return old < n && (old != 0 || n != 3) || old == 3 && n == 0;
+}
+
+function writeEntry(entry:TilelogEntry, writes:Writes){
+	let wasPlayer = false;
+	if(uuidPattern.test(entry.uuid)){
+		wasPlayer = true;
+		const data = FishPlayer.getById(entry.uuid);
+		if(data?.player){
+			writes.bool(true);
+			writes.str(data.name);
+			writes.str(data.cleanedName);
+			writes.i(data.player.id);
+		} else {
+			const info = Vars.netServer.admins.getInfoOptional(entry.uuid);
+			if(info){
+				writes.bool(true);
+				writes.str(info.lastName);
+				writes.str(info.plainLastName());
+				writes.i(-1);
+			} else {
+				writes.bool(false);
+			}
+		}
+	} else if(entry.uuid){
+		writes.bool(true);
+		writes.str(entry.uuid);
+		writes.str(entry.uuid); //write it twice
+		writes.i(-1);
+	} else {
+		writes.bool(false);
+	}
+	const diff = Date.now() - entry.time;
+	writes.l(Math.floor(diff / 1000)); //subtracted from current time to make unsynced clocks work
+	writes.i(diff % 1000); //we don't care
+	writes.b({
+		built: 0,
+		broke: 1,
+		configured: 2,
+		rotated: 3,
+		destroyed: 4,
+		killed: 5,
+		"picked up": 7,
+		dropped: 8,
+		//these two get mapped to the closest thing that foo knows about
+		setblocked: 0, //we tell foos that the server (player id 2147483647) placed it
+		controlled: 2, //we tell foos that it was configured with null
+	}[entry.action]);
+	switch(entry.action){
+		case "built": case "dropped":
+			writes.s(entry.type);
+			writes.b(entry.rotation);
+			TypeIO.writeObject(writes, null); //TODO: config
+			writes.bool(entry.isRootTile);
+			break;
+		case "broke": case "picked up": case "destroyed":
+			writes.s(entry.type);
+			break;
+		case "configured":
+			writes.s(entry.type);
+			writes.b(entry.rotation);
+			TypeIO.writeObject(writes, null); //TODO: config
+			break;
+		case "controlled":
+			writes.s(entry.type);
+			writes.b(entry.rotation);
+			TypeIO.writeObject(writes, null);
+			break;
+		case "rotated":
+			writes.s(entry.type);
+			writes.b(entry.rotation);
+			writes.bool(entry.rotationDirection);
+			break;
+		case "killed":
+			writes.s(entry.type - unitTypeOffset);
+			writes.bool(wasPlayer);
+			break;
+	}
+}
 
 FishEvents.on("saveData", writeToCurrentRunFile);
 Events.on(EventType.SaveLoadEvent, logErrors("Error loading tilelog entries", () => {

@@ -299,6 +299,7 @@ class Building {
 	storageCapacity?: number;
 	dead: boolean;
 	linkedCore: Building | null;
+	rotation: 0 | 1 | 2 | 3;
 	timeScale(): number;
 	kill():void;
 	tileX():number;
@@ -615,6 +616,27 @@ class ByteArrayInputStream extends InputStream {
 
 class Writes {
 	constructor(output: DataOutputStream);
+	b(value:number):void;
+	b(bytes:number[]):void;
+	bool(value:boolean):void;
+	s(value:number):void;
+	i(value:number):void;
+	l(value:number):void;
+	f(value:number):void;
+	d(value:number):void;
+	str(value:string | null):void;
+}
+class Reads {
+	constructor(input: DataInputStream);
+	b():number;
+	b(length:number):number[];
+	bool():boolean;
+	s():number;
+	i():number;
+	l():number;
+	f():number;
+	d():number;
+	str():string | null;
 }
 
 class Seq<T> {
@@ -1185,5 +1207,12 @@ class Point2 {
 	static y(packed: number):number;
 	static unpack(packed: number):Point2;
 }
+
+const TypeIO: {
+	readObject(read: Reads, boxBuildings?: boolean):unknown;
+	writeObject(write: Writes, object: unknown):void;
+	writeBlock(write: Writes, block: Block | null):void;
+	writeUnitType(write: Writes, block: UnitType | null):void;
+};
 
 }

@@ -1023,7 +1023,7 @@ exports.commands = (0, commands_1.commandList)({
         }),
         requirements: [commands_1.Req.integerRange("rotation", 0, 3)],
         handler: function (_a) {
-            var _b, _c;
+            var _b, _c, _d;
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
             var team = (_b = args.team) !== null && _b !== void 0 ? _b : sender.team();
             var tile = Vars.world.tile(args.x, args.y);
@@ -1035,6 +1035,7 @@ exports.commands = (0, commands_1.commandList)({
                 uuid: sender.uuid,
                 action: "setblocked",
                 type: args.block.id,
+                rotation: (_d = args.rotation) !== null && _d !== void 0 ? _d : 0,
             });
             if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(args.x, ",").concat(args.y), sender);
@@ -1047,7 +1048,7 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.admin,
         requirements: [commands_1.Req.integerRange("rotation", 0, 3)],
         tapped: function (_a) {
-            var _b, _c;
+            var _b, _c, _d;
             var args = _a.args, sender = _a.sender, f = _a.f, x = _a.x, y = _a.y, outputSuccess = _a.outputSuccess;
             if (!args.block)
                 (0, funcs_1.crash)("uh oh");
@@ -1061,6 +1062,7 @@ exports.commands = (0, commands_1.commandList)({
                 uuid: sender.uuid,
                 action: "setblocked",
                 type: args.block.id,
+                rotation: (_d = args.rotation) !== null && _d !== void 0 ? _d : 0,
             });
             if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(x, ",").concat(y), sender);

@@ -193,6 +193,7 @@ Events.on(EventType.ServerLoadEvent, function () {
                     uuid: action.player.uuid(),
                     action: "picked up",
                     type: action.tile.blockID(),
+                    rotation: 0,
                 });
             }
             else if (action.type === Administration.ActionType.control && !((_a = action.unit) === null || _a === void 0 ? void 0 : _a.spawnedByCore) && Date.now() < fishP.blockedFromPossessingUnitsUntil) {

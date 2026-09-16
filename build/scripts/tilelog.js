@@ -31,9 +31,9 @@ var tilelogActions = [
     "destroyed", "killed", "controlled"
 ];
 exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog entry", function (e) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
     // eslint-disable-next-line prefer-const
-    var tile, uuid, action, type, time = Date.now();
+    var tile, uuid, action, type, time = Date.now(), rotation = 0, rotationDirection = false;
     if (e instanceof EventType.BlockBuildBeginEvent) {
         tile = e.tile;
         uuid = (_e = (_c = (_b = (_a = e.unit) === null || _a === void 0 ? void 0 : _a.player) === null || _b === void 0 ? void 0 : _b.uuid()) !== null && _c !== void 0 ? _c : (_d = e.unit) === null || _d === void 0 ? void 0 : _d.type.name) !== null && _e !== void 0 ? _e : "unknown";
@@ -44,11 +44,12 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
         else {
             action = "built";
             type = (tile.build instanceof ConstructBlock.ConstructBuild) ? tile.build.current.id : "unknown";
+            rotation = (_g = (_f = tile.build) === null || _f === void 0 ? void 0 : _f.rotation) !== null && _g !== void 0 ? _g : 0;
         }
     }
     else if (e instanceof EventType.ConfigEvent) {
         tile = e.tile.tile;
-        uuid = (_g = (_f = e.player) === null || _f === void 0 ? void 0 : _f.uuid()) !== null && _g !== void 0 ? _g : "unknown";
+        uuid = (_j = (_h = e.player) === null || _h === void 0 ? void 0 : _h.uuid()) !== null && _j !== void 0 ? _j : "unknown";
         if (uuid != "unknown") {
             var fishP = players_1.FishPlayer.getById(uuid);
             if (fishP)
@@ -56,10 +57,11 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
         }
         action = "configured";
         type = tile.blockID();
+        rotation = e.tile.rotation;
     }
     else if (e instanceof EventType.BuildRotateEvent) {
         tile = e.build.tile;
-        uuid = (_m = (_k = (_j = (_h = e.unit) === null || _h === void 0 ? void 0 : _h.player) === null || _j === void 0 ? void 0 : _j.uuid()) !== null && _k !== void 0 ? _k : (_l = e.unit) === null || _l === void 0 ? void 0 : _l.type.name) !== null && _m !== void 0 ? _m : "unknown";
+        uuid = (_p = (_m = (_l = (_k = e.unit) === null || _k === void 0 ? void 0 : _k.player) === null || _l === void 0 ? void 0 : _l.uuid()) !== null && _m !== void 0 ? _m : (_o = e.unit) === null || _o === void 0 ? void 0 : _o.type.name) !== null && _p !== void 0 ? _p : "unknown";
         if (uuid != "unknown") {
             var fishP = players_1.FishPlayer.getById(uuid);
             if (fishP)
@@ -67,6 +69,8 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
         }
         action = "rotated";
         type = tile.blockID();
+        rotation = e.previous;
+        rotationDirection = getRotationDirection(rotation, e.build.rotation);
     }
     else if (e instanceof EventType.UnitDestroyEvent) {
         tile = e.unit.tileOn();
@@ -74,12 +78,12 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
             return;
         if (!e.unit.type.playerControllable)
             return;
-        uuid = e.unit.isPlayer() ? e.unit.getPlayer().uuid() : (_o = e.unit.lastCommanded) !== null && _o !== void 0 ? _o : "unknown";
+        uuid = e.unit.isPlayer() ? e.unit.getPlayer().uuid() : (_q = e.unit.lastCommanded) !== null && _q !== void 0 ? _q : "unknown";
         action = "killed";
         type = e.unit.type.id + unitTypeOffset;
     }
     else if (e instanceof EventType.BlockDestroyEvent) {
-        if (config_1.Gamemode.attack() && ((_p = e.tile.build) === null || _p === void 0 ? void 0 : _p.team) != Vars.state.rules.defaultTeam)
+        if (config_1.Gamemode.attack() && ((_r = e.tile.build) === null || _r === void 0 ? void 0 : _r.team) != Vars.state.rules.defaultTeam)
             return; //Don't log destruction of enemy blocks
         tile = e.tile;
         uuid = "[[something]";
@@ -89,11 +93,12 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     else if (e instanceof EventType.PayloadDropEvent) {
         action = "dropped";
         var controller = e.carrier.controller();
-        uuid = (_s = (_r = (_q = e.carrier.player) === null || _q === void 0 ? void 0 : _q.uuid()) !== null && _r !== void 0 ? _r : (controller instanceof LogicAI && controller.controller ?
+        uuid = (_u = (_t = (_s = e.carrier.player) === null || _s === void 0 ? void 0 : _s.uuid()) !== null && _t !== void 0 ? _t : (controller instanceof LogicAI && controller.controller ?
             "".concat(e.carrier.type.name, " controlled by ").concat(controller.controller.block.name, " at ").concat(controller.controller.tileX(), ",").concat(controller.controller.tileY(), " last accessed by ").concat(e.carrier.getControllerName())
-            : null)) !== null && _s !== void 0 ? _s : e.carrier.type.name;
+            : null)) !== null && _u !== void 0 ? _u : e.carrier.type.name;
         if (e.build) {
             tile = e.build.tile;
+            rotation = e.build.rotation;
             type = tile.blockID();
         }
         else if (e.unit) {
@@ -129,7 +134,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     else if (e instanceof EventType.UnitControlEvent) {
         if (e.unit instanceof Packages.mindustry.gen.BlockUnitUnit) {
             action = "controlled";
-            tile = (_t = e.unit) === null || _t === void 0 ? void 0 : _t.tile().tile;
+            tile = (_v = e.unit) === null || _v === void 0 ? void 0 : _v.tile().tile;
             if (!tile)
                 return;
             type = tile.blockID();
@@ -140,14 +145,14 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     }
     else if (e instanceof Object && "pos" in e && "uuid" in e && "action" in e && "type" in e) {
         var pos = void 0;
-        (pos = e.pos, uuid = e.uuid, action = e.action, type = e.type);
-        tile = (_u = Vars.world.tile(pos.split(",")[0], pos.split(",")[1])) !== null && _u !== void 0 ? _u : (0, funcs_1.crash)("Cannot log ".concat(action, " at ").concat(pos, ": Nonexistent tile"));
+        (pos = e.pos, uuid = e.uuid, action = e.action, type = e.type, rotation = e.rotation);
+        tile = (_w = Vars.world.tile(pos.split(",")[0], pos.split(",")[1])) !== null && _w !== void 0 ? _w : (0, funcs_1.crash)("Cannot log ".concat(action, " at ").concat(pos, ": Nonexistent tile"));
     }
     else
         return;
     if (tile == null)
         return;
-    [tile, uuid, action, type, time];
+    [tile, uuid, action, type, time, rotation, rotationDirection];
     tile.getLinkedTiles(function (t) {
         var pos = t.pos();
         var serializedData = exports.tileHistory.get(pos);
@@ -156,12 +161,18 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
             uuid: d.readString(3),
             time: d.readNumber(16),
             type: d.readNumber(4),
+            rotation: d.readNumber(1),
+            isRootTile: d.readBool(),
+            rotationDirection: d.readBool(),
         }); }, 1); }) : [];
         existingData.push({
             action: action,
             uuid: uuid,
             time: time,
-            type: type
+            type: type,
+            rotation: rotation,
+            rotationDirection: rotationDirection,
+            isRootTile: t == tile,
         });
         existingData = existingData.slice(-9);
         //Write
@@ -170,6 +181,9 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
             str.writeString(el.uuid, 3);
             str.writeNumber(el.time, 16);
             str.writeNumber(el.type, 4);
+            str.writeNumber(el.rotation, 1);
+            str.writeBool(el.isRootTile);
+            str.writeBool(el.rotationDirection);
         }, 1); }));
     });
 });
@@ -183,6 +197,9 @@ function getTileHistory(x, y, history) {
         uuid: d.readString(3),
         time: d.readNumber(16),
         type: d.readNumber(4),
+        rotation: d.readNumber(1),
+        isRootTile: d.readBool(),
+        rotationDirection: d.readBool(),
     }); }, 1); }).map(function (h) { return (__assign(__assign({}, h), { type: (h.type >= unitTypeOffset ? Vars.content.unit(h.type - unitTypeOffset) : Vars.content.block(h.type)).localizedName, info: globals_1.uuidPattern.test(h.uuid) ? Vars.netServer.admins.getInfoOptional(h.uuid) : null })); });
 }
 /** Writes tileHistory to the specified file. */
@@ -228,6 +245,93 @@ var writeToCurrentRunFile = (0, utils_1.logErrors)("Error writing tilelog entrie
         writeToFile(getFile(currentRun));
     }
 });
+/** Copy pasted from foos */
+function getRotationDirection(old, n) {
+    return old < n && (old != 0 || n != 3) || old == 3 && n == 0;
+}
+function writeEntry(entry, writes) {
+    var wasPlayer = false;
+    if (globals_1.uuidPattern.test(entry.uuid)) {
+        wasPlayer = true;
+        var data = players_1.FishPlayer.getById(entry.uuid);
+        if (data === null || data === void 0 ? void 0 : data.player) {
+            writes.bool(true);
+            writes.str(data.name);
+            writes.str(data.cleanedName);
+            writes.i(data.player.id);
+        }
+        else {
+            var info = Vars.netServer.admins.getInfoOptional(entry.uuid);
+            if (info) {
+                writes.bool(true);
+                writes.str(info.lastName);
+                writes.str(info.plainLastName());
+                writes.i(-1);
+            }
+            else {
+                writes.bool(false);
+            }
+        }
+    }
+    else if (entry.uuid) {
+        writes.bool(true);
+        writes.str(entry.uuid);
+        writes.str(entry.uuid); //write it twice
+        writes.i(-1);
+    }
+    else {
+        writes.bool(false);
+    }
+    var diff = Date.now() - entry.time;
+    writes.l(Math.floor(diff / 1000)); //subtracted from current time to make unsynced clocks work
+    writes.i(diff % 1000); //we don't care
+    writes.b({
+        built: 0,
+        broke: 1,
+        configured: 2,
+        rotated: 3,
+        destroyed: 4,
+        killed: 5,
+        "picked up": 7,
+        dropped: 8,
+        //these two get mapped to the closest thing that foo knows about
+        setblocked: 0, //we tell foos that the server (player id 2147483647) placed it
+        controlled: 2, //we tell foos that it was configured with null
+    }[entry.action]);
+    switch (entry.action) {
+        case "built":
+        case "dropped":
+            writes.s(entry.type);
+            writes.b(entry.rotation);
+            TypeIO.writeObject(writes, null); //TODO: config
+            writes.bool(entry.isRootTile);
+            break;
+        case "broke":
+        case "picked up":
+        case "destroyed":
+            writes.s(entry.type);
+            break;
+        case "configured":
+            writes.s(entry.type);
+            writes.b(entry.rotation);
+            TypeIO.writeObject(writes, null); //TODO: config
+            break;
+        case "controlled":
+            writes.s(entry.type);
+            writes.b(entry.rotation);
+            TypeIO.writeObject(writes, null);
+            break;
+        case "rotated":
+            writes.s(entry.type);
+            writes.b(entry.rotation);
+            writes.bool(entry.rotationDirection);
+            break;
+        case "killed":
+            writes.s(entry.type - unitTypeOffset);
+            writes.bool(wasPlayer);
+            break;
+    }
+}
 globals_1.FishEvents.on("saveData", writeToCurrentRunFile);
 Events.on(EventType.SaveLoadEvent, (0, utils_1.logErrors)("Error loading tilelog entries", function () {
     var _a;
