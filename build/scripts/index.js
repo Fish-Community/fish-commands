@@ -361,4 +361,18 @@ Events.on(EventType.AdminRequestEvent, function (e) {
         }
     }
 });
+//Auto pause (non-pvp)
+var isAutoPaused = false;
+Timer.schedule(function () {
+    if (!Vars.state.rules.pvp && Vars.state.rules.pvpAutoPause && !config_1.Mode.localDebug) {
+        if (Vars.state.isPaused() && isAutoPaused && !Groups.player.isEmpty()) {
+            isAutoPaused = false;
+            Vars.state.set(GameState.State.playing);
+        }
+        else if (Vars.state.isPlaying() && !isAutoPaused && Groups.player.isEmpty()) {
+            isAutoPaused = true;
+            Vars.state.set(GameState.State.paused);
+        }
+    }
+}, 5, 0.1);
 Log.info("fish-commands: parsing done in @ms", Date.now() - this._startTime);

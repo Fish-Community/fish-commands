@@ -6,7 +6,7 @@ This file contains the main code, which calls other functions and initializes th
 import * as api from "/api";
 import { Antibot } from "/automod";
 import { registerAll } from "/commands/aggregate";
-import { text } from "/config";
+import { Mode, text } from "/config";
 import * as menus from "/frameworks/menus";
 import { Duration } from "/funcs";
 import { FishEvents, fishPlugin, fishState, ipJoins } from "/globals";
@@ -311,5 +311,19 @@ Events.on(EventType.AdminRequestEvent, e => {
 		}
 	}
 });
+
+//Auto pause (non-pvp)
+let isAutoPaused = false;
+Timer.schedule(() => {
+	if(!Vars.state.rules.pvp && Vars.state.rules.pvpAutoPause && !Mode.localDebug){
+		if(Vars.state.isPaused() && isAutoPaused && !Groups.player.isEmpty()){
+			isAutoPaused = false;
+			Vars.state.set(GameState.State.playing);
+		} else if(Vars.state.isPlaying() && !isAutoPaused && Groups.player.isEmpty()){
+			isAutoPaused = true;
+			Vars.state.set(GameState.State.paused);
+		}
+	}
+}, 5, 0.1);
 
 Log.info("fish-commands: parsing done in @ms", Date.now() - (this as any)._startTime);
