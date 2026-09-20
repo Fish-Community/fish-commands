@@ -40,6 +40,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -50,6 +61,22 @@ var __values = (this && this.__values) || function(o) {
         }
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.translationCache = exports.playerLanguageCache = exports.languageCache = void 0;
@@ -102,106 +129,98 @@ Events.on(EventType.ServerLoadEvent, function () {
         removePlayerLanguageEntry(e.player);
     });
 });
+var disabledLanguages = ["off", "none", "auto"];
 function handleMessage(sender, message) {
     return __awaiter(this, void 0, void 0, function () {
-        var err_2, cleanedMessage;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var err_2, cleanedMessage, formatted, languagesToFetch, result, _a, _b, _c, lang, msg, _d;
+        var e_1, _e;
+        return __generator(this, function (_f) {
+            switch (_f.label) {
                 case 0:
                     if (!(exports.languageCache.isEmpty() && Date.now() - lastFailure > 60000)) return [3 /*break*/, 4];
-                    _a.label = 1;
+                    _f.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    _f.trys.push([1, 3, , 4]);
                     return [4 /*yield*/, fetchLanguageCache()];
                 case 2:
-                    _a.sent();
+                    _f.sent();
                     return [3 /*break*/, 4];
                 case 3:
-                    err_2 = _a.sent();
+                    err_2 = _f.sent();
                     Log.err("Network error while fetching language cache");
                     return [3 /*break*/, 4];
                 case 4:
-                    Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender); //return to sender immediately, they don't need to see their own translation
+                    Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender);
                     cleanedMessage = Strings.stripGlyphs(Strings.stripColors((0, utils_1.removeFoosChars)(message)));
+                    formatted = Vars.netServer.chatFormatter.format(sender, message);
+                    languagesToFetch = [];
                     exports.playerLanguageCache.each(function (lang, players) {
-                        var e_1, _a, e_2, _b;
-                        var formatted = Vars.netServer.chatFormatter.format(sender, message);
-                        var recipients = players.select(function (p) { return p != sender && p.con.isConnected(); });
-                        if (recipients.isEmpty())
-                            return;
-                        if (lang === "off" || lang === "auto" || lang === "none" || config_1.translationApiToken.string() == "unset") {
-                            try {
-                                for (var _c = __values(recipients.toArray()), _d = _c.next(); !_d.done; _d = _c.next()) {
-                                    var player = _d.value;
-                                    Call.sendMessage(player.con, formatted, message, sender);
-                                }
-                            }
-                            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                            finally {
-                                try {
-                                    if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
-                                }
-                                finally { if (e_1) throw e_1.error; }
-                            }
-                            return;
-                        }
-                        var cacheKey = "".concat(lang, "\n").concat(cleanedMessage);
-                        var cachedTranslation = exports.translationCache.get(cacheKey);
-                        if (cachedTranslation != null) {
-                            try {
-                                for (var _e = __values(recipients.toArray()), _f = _e.next(); !_f.done; _f = _e.next()) {
-                                    var player = _f.value;
-                                    Call.sendMessage(player.con, formatted, message, sender);
-                                }
-                            }
-                            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                            finally {
-                                try {
-                                    if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
-                                }
-                                finally { if (e_2) throw e_2.error; }
-                            }
-                            sendTranslatedMessage(cleanedMessage, cachedTranslation, recipients);
-                        }
-                        else {
-                            requestTranslate(cleanedMessage, lang).then(function (result) {
-                                var e_3, _a;
-                                try {
-                                    for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                                        var player = _c.value;
-                                        Call.sendMessage(player.con, formatted, message, sender);
-                                    }
-                                }
-                                catch (e_3_1) { e_3 = { error: e_3_1 }; }
-                                finally {
-                                    try {
-                                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-                                    }
-                                    finally { if (e_3) throw e_3.error; }
-                                }
-                                sendTranslatedMessage(cleanedMessage, result, recipients);
-                                Core.app.post(function () { return exports.translationCache.put(cacheKey, result); });
-                            }).catch(function () {
-                                var e_4, _a;
-                                try {
-                                    for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                                        var player = _c.value;
-                                        Call.sendMessage(player.con, formatted, message, sender);
-                                    }
-                                }
-                                catch (e_4_1) { e_4 = { error: e_4_1 }; }
-                                finally {
-                                    try {
-                                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-                                    }
-                                    finally { if (e_4) throw e_4.error; }
-                                }
-                            });
+                        if (!disabledLanguages.includes(lang) &&
+                            players.contains(boolf(function (p) { return p != sender && p.con.isConnected(); })) &&
+                            !exports.translationCache.containsKey("".concat(lang, "\n").concat(cleanedMessage))) {
+                            languagesToFetch.push(lang);
                         }
                     });
-                    return [2 /*return*/];
+                    sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
+                    if (!languagesToFetch.length) return [3 /*break*/, 8];
+                    _f.label = 5;
+                case 5:
+                    _f.trys.push([5, 7, , 8]);
+                    return [4 /*yield*/, requestTranslate(cleanedMessage, languagesToFetch)];
+                case 6:
+                    result = _f.sent();
+                    sendTranslatedMessages(sender, cleanedMessage, message, formatted, result);
+                    try {
+                        for (_a = __values(Object.entries(result)), _b = _a.next(); !_b.done; _b = _a.next()) {
+                            _c = __read(_b.value, 2), lang = _c[0], msg = _c[1];
+                            exports.translationCache.put("".concat(lang, "\n").concat(cleanedMessage), msg);
+                        }
+                    }
+                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    finally {
+                        try {
+                            if (_b && !_b.done && (_e = _a.return)) _e.call(_a);
+                        }
+                        finally { if (e_1) throw e_1.error; }
+                    }
+                    return [3 /*break*/, 8];
+                case 7:
+                    _d = _f.sent();
+                    sendNoTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
+                    return [3 /*break*/, 8];
+                case 8: return [2 /*return*/];
             }
         });
+    });
+}
+function sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch) {
+    players_1.FishPlayer.forEachPlayer(function (p) {
+        if (p.player != sender && !languagesToFetch.includes(p.language)) {
+            //Not added to the fetch list, this means it must be cached
+            var cachedTranslation = exports.translationCache.get("".concat(p.language, "\n").concat(cleanedMessage));
+            if (cachedTranslation != null) {
+                Call.sendMessage(p.con(), formatted, message, sender);
+                sendTranslatedMessage(cleanedMessage, cachedTranslation, p.player);
+            }
+        }
+    });
+}
+function sendNoTranslations(sender, message, cleanedMessage, formatted, languagesToFetch) {
+    players_1.FishPlayer.forEachPlayer(function (p) {
+        if (p.player != sender && languagesToFetch.includes(p.language)) {
+            //Wanted to fetch the translation but that failed
+            //Just send the untranslated message
+            Call.sendMessage(p.con(), formatted, message, sender);
+        }
+    });
+}
+function sendTranslatedMessages(sender, cleanedMessage, message, formatted, translated) {
+    players_1.FishPlayer.forEachPlayer(function (p) {
+        var translatedMessage = translated[p.language];
+        if (p.player != sender && translated[p.language]) {
+            Call.sendMessage(p.con(), formatted, message, sender);
+            sendTranslatedMessage(cleanedMessage, translatedMessage, p.player);
+        }
     });
 }
 function setPlayerLanguageEntry(player, language) {
@@ -216,22 +235,9 @@ var NonAlpha = Pattern.compile("[^\\p{IsAlphabetic}0-9_]");
 function stripNonWordChars(string) {
     return NonAlpha.matcher(string).replaceAll("");
 }
-function sendTranslatedMessage(cleanedMessage, translatedMessage, recipients) {
-    var e_5, _a;
+function sendTranslatedMessage(cleanedMessage, translatedMessage, player) {
     if (stripNonWordChars(translatedMessage.toLowerCase()) != stripNonWordChars(cleanedMessage.toLowerCase())) {
-        try {
-            for (var _b = __values(recipients.toArray()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var player = _c.value;
-                Call.sendMessage(player.con, "[lightgray]Translated: " + translatedMessage + "[]", translatedMessage, null);
-            }
-        }
-        catch (e_5_1) { e_5 = { error: e_5_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_5) throw e_5.error; }
-        }
+        Call.sendMessage(player.con, "[lightgray]Translated: " + translatedMessage + "[]", translatedMessage, null);
     }
 }
 function getLanguageFromCache(code) {
@@ -252,7 +258,7 @@ function fetchLanguageCache() {
         req.submit(function (t) {
             var parsed = JSON.parse(t.getResultAsString());
             Core.app.post(function () {
-                var e_6, _a;
+                var e_2, _a;
                 try {
                     exports.languageCache.clear();
                     try {
@@ -263,12 +269,12 @@ function fetchLanguageCache() {
                             exports.languageCache.put(language.code.toLowerCase(), language);
                         }
                     }
-                    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
                     finally {
                         try {
                             if (parsed_1_1 && !parsed_1_1.done && (_a = parsed_1.return)) _a.call(parsed_1);
                         }
-                        finally { if (e_6) throw e_6.error; }
+                        finally { if (e_2) throw e_2.error; }
                     }
                     resolve();
                 }
@@ -279,11 +285,10 @@ function fetchLanguageCache() {
         });
     });
 }
-function requestTranslate(message, lang) {
+function requestTranslate(message, languages) {
     return new Promise(function (resolve, reject) {
-        var req = Http.post(config_1.translationApiUrl + "/api/translate", message);
-        req.header("from", "auto");
-        req.header("to", lang);
+        var req = Http.post(config_1.translationApiUrl + "/api/translate/batch", message);
+        req.header("languages", languages.join(","));
         req.header("token", config_1.translationApiToken.string());
         req.timeout = 3500; //low timeout to not lag chat too much
         req.error(function (e) {
@@ -297,7 +302,16 @@ function requestTranslate(message, lang) {
                 reject();
             }
             else {
-                resolve(result.trim());
+                try {
+                    var _a = JSON.parse(result), refusal = _a.refusal, languages_1 = __rest(_a, ["refusal"]);
+                    if (refusal)
+                        reject();
+                    resolve(languages_1);
+                }
+                catch (_b) {
+                    Log.err("Network error in translation request: Invalid json received: ".concat(result));
+                    reject();
+                }
             }
         });
     });

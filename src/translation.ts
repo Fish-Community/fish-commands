@@ -48,6 +48,8 @@ Events.on(EventType.ServerLoadEvent, () => {
 	});
 });
 
+const disabledLanguages = ["off", "none", "auto"];
+
 export async function handleMessage(sender: Player, message: string) {
 	if(languageCache.isEmpty() && Date.now() - lastFailure > 60_000){
 		try {
@@ -57,35 +59,64 @@ export async function handleMessage(sender: Player, message: string) {
 		}
 	}
 
-	Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender); //return to sender immediately, they don't need to see their own translation
+	Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender);
+	//return to sender immediately, they don't need to see their own translation
 
 	const cleanedMessage = Strings.stripGlyphs(Strings.stripColors(removeFoosChars(message)));
+	const formatted = Vars.netServer.chatFormatter.format(sender, message);
 
+	const languagesToFetch:string[] = [];
 	playerLanguageCache.each((lang, players) => {
-		const formatted = Vars.netServer.chatFormatter.format(sender, message);
-		const recipients = players.select(p => p != sender && p.con.isConnected());
-
-		if(recipients.isEmpty()) return;
-
-		if(lang === "off" || lang === "auto" || lang === "none" || translationApiToken.string() == "unset"){
-			for (const player of recipients.toArray()) Call.sendMessage(player.con, formatted, message, sender);
-			return;
+		if(!disabledLanguages.includes(lang) &&
+			players.contains(boolf<Player>(p => p != sender && p.con.isConnected())) &&
+			!translationCache.containsKey(`${lang}\n${cleanedMessage}`))
+		{
+			languagesToFetch.push(lang);
 		}
+	});
+	sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
+	if(languagesToFetch.length){
+		try {
+			const result = await requestTranslate(cleanedMessage, languagesToFetch);
+			sendTranslatedMessages(sender, cleanedMessage, message, formatted, result);
+			for(const [lang, msg] of Object.entries(result)){
+				translationCache.put(`${lang}\n${cleanedMessage}`, msg);
+			}
+		} catch {
+			sendNoTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
+		}
+	}
+}
 
-		const cacheKey = `${lang}\n${cleanedMessage}`;
+function sendCachedTranslations(sender:Player, message:string, cleanedMessage:string, formatted:string, languagesToFetch:string[]){
+	FishPlayer.forEachPlayer(p => {
+		if(p.player != sender && !languagesToFetch.includes(p.language)){
+			//Not added to the fetch list, this means it must be cached
+			const cachedTranslation = translationCache.get(`${p.language}\n${cleanedMessage}`);
+			if(cachedTranslation != null){
+				Call.sendMessage(p.con(), formatted, message, sender);
+				sendTranslatedMessage(cleanedMessage, cachedTranslation, p.player);
+			}
+		}
+	});
+}
 
-		const cachedTranslation = translationCache.get(cacheKey);
-		if (cachedTranslation != null){
-			for (const player of recipients.toArray()) Call.sendMessage(player.con, formatted, message, sender);
-			sendTranslatedMessage(cleanedMessage, cachedTranslation, recipients);
-		} else {
-			requestTranslate(cleanedMessage, lang).then(result => {
-				for (const player of recipients.toArray()) Call.sendMessage(player.con, formatted, message, sender);
-				sendTranslatedMessage(cleanedMessage, result, recipients);
-				Core.app.post(() => translationCache.put(cacheKey, result));
-			}).catch(() => {
-				for (const player of recipients.toArray()) Call.sendMessage(player.con, formatted, message, sender);
-			});
+function sendNoTranslations(sender:Player, message:string, cleanedMessage:string, formatted:string, languagesToFetch:string[]){
+	FishPlayer.forEachPlayer(p => {
+		if(p.player != sender && languagesToFetch.includes(p.language)){
+			//Wanted to fetch the translation but that failed
+			//Just send the untranslated message
+			Call.sendMessage(p.con(), formatted, message, sender);
+		}
+	});
+}
+
+function sendTranslatedMessages(sender:Player, cleanedMessage:string, message:string, formatted:string, translated:Record<string, string>){
+	FishPlayer.forEachPlayer(p => {
+		const translatedMessage = translated[p.language];
+		if(p.player != sender && translated[p.language]){
+			Call.sendMessage(p.con(), formatted, message, sender);
+			sendTranslatedMessage(cleanedMessage, translatedMessage, p.player);
 		}
 	});
 }
@@ -109,11 +140,9 @@ function stripNonWordChars(string:string):string {
 	return NonAlpha.matcher(string).replaceAll("");
 }
 
-function sendTranslatedMessage(cleanedMessage: string, translatedMessage: string, recipients: Seq<Player>){
+function sendTranslatedMessage(cleanedMessage: string, translatedMessage: string, player: Player){
 	if(stripNonWordChars(translatedMessage.toLowerCase()) != stripNonWordChars(cleanedMessage.toLowerCase())){
-		for (const player of recipients.toArray()){
-			Call.sendMessage(player.con, "[lightgray]Translated: " + translatedMessage + "[]", translatedMessage, null);
-		}
+		Call.sendMessage(player.con, "[lightgray]Translated: " + translatedMessage + "[]", translatedMessage, null);
 	}
 }
 
@@ -152,15 +181,14 @@ function fetchLanguageCache() {
 	});
 }
 
-function requestTranslate(message:string, lang:string){
-	return new Promise<string>((resolve, reject) => {
+function requestTranslate<Lang extends string>(message:string, languages:Lang[]){
+	return new Promise<Record<Lang, string>>((resolve, reject) => {
 		const req = Http.post(
-			translationApiUrl + "/api/translate",
+			translationApiUrl + "/api/translate/batch",
 			message
 		);
 	
-		req.header("from", "auto");
-		req.header("to", lang);
+		req.header("languages", languages.join(","));
 		req.header("token", translationApiToken.string());
 		req.timeout = 3500; //low timeout to not lag chat too much
 		req.error(e => {
@@ -174,15 +202,22 @@ function requestTranslate(message:string, lang:string){
 				Log.err(`Network error in translation request: ${t.getStatus().code} ${result}`);
 				reject();
 			} else {
-				resolve(result.trim());
+				try {
+					const { refusal, ...languages } = JSON.parse(result) as Record<string, unknown>;
+					if(refusal) reject();
+					resolve(languages as Record<string, string>);
+				} catch {
+					Log.err(`Network error in translation request: Invalid json received: ${result}`);
+					reject();
+				}
 			}
 		});
 	});
 }
 
 Vars.net.handleServer(SendChatMessageCallPacket, ({player}, {message}) => {
-	if (!player?.isAdded() || message == null) return;
-	if (message.length > Vars.maxTextLength){
+	if(!player?.isAdded() || message == null) return;
+	if(message.length > Vars.maxTextLength){
 		player.sendMessage(`[scarlet]Message too long. Maximum length is ${Vars.maxTextLength} characters.`);
 		return;
 	}
@@ -194,10 +229,10 @@ Vars.net.handleServer(SendChatMessageCallPacket, ({player}, {message}) => {
 	const response = Vars.netServer.clientCommands.handleMessage(message, player);
 	if(response.type == CommandHandler.ResponseType.noCommand){
 		const filtered = Vars.netServer.admins.filterMessage(player, message);
-		if (filtered != null) void handleMessage(player, filtered);
-	}else if (response.type != CommandHandler.ResponseType.valid){
+		if(filtered != null) void handleMessage(player, filtered);
+	} else if(response.type != CommandHandler.ResponseType.valid){
 		const text = Vars.netServer.invalidHandler.handle(player, response);
-		if (text != null) player.sendMessage(text);
+		if(text != null) player.sendMessage(text);
 	}
 });
 

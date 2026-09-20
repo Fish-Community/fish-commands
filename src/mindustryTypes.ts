@@ -717,7 +717,7 @@ class IntSet {
 }
 class ObjectMap<K, V> {
 	put(key:K, value:V):void;
-	get(key:K):V;
+	get(key:K):V | null;
 	get(key:K, defaultValue:V):V;
 	get(key:K, prov:(key:K)=>V):V;
 	containsKey(key:K):boolean;
