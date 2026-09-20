@@ -1320,7 +1320,7 @@ We apologize for the inconvenience.`
 		Timer.schedule(() => {
 			if(this.unmarkTime === oldUnmarkTime && this.connected()){
 				//Only run the code if the unmark time hasn't changed
-				this.forceRespawn();
+				if(!this.ranksAtLeast("mod")) this.forceRespawn();
 				this.updateName();
 				this.sendMessage("[yellow]Your mark has automatically expired.");
 			}

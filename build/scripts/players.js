@@ -1561,7 +1561,8 @@ var FishPlayer = /** @class */ (function () {
         Timer.schedule(function () {
             if (_this.unmarkTime === oldUnmarkTime && _this.connected()) {
                 //Only run the code if the unmark time hasn't changed
-                _this.forceRespawn();
+                if (!_this.ranksAtLeast("mod"))
+                    _this.forceRespawn();
                 _this.updateName();
                 _this.sendMessage("[yellow]Your mark has automatically expired.");
             }
