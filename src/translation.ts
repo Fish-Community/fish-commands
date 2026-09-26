@@ -51,19 +51,24 @@ Events.on(EventType.ServerLoadEvent, () => {
 const disabledLanguages = ["off", "none", "auto"];
 
 export async function handleMessage(sender: Player, message: string) {
-	if(languageCache.isEmpty() && Date.now() - lastFailure > 60_000){
-		try {
-			await fetchLanguageCache();
-		} catch(err){
-			Log.err("Network error while fetching language cache");
-		}
-	}
-
 	Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender);
 	//return to sender immediately, they don't need to see their own translation
-
+	
 	const cleanedMessage = Strings.stripGlyphs(Strings.stripColors(removeFoosChars(message)));
 	const formatted = Vars.netServer.chatFormatter.format(sender, message);
+
+	if(languageCache.isEmpty()){
+		if(Date.now() - lastFailure > 60_000){
+			try {
+				await fetchLanguageCache();
+			} catch(err){
+				Log.err("Network error while fetching language cache");
+				lastFailure = Date.now();
+			}
+		}
+		sendNoTranslations(sender, message, formatted, null);
+		return;
+	}
 
 	const languagesToFetch:string[] = [];
 	playerLanguageCache.each((lang, players) => {
@@ -83,7 +88,7 @@ export async function handleMessage(sender: Player, message: string) {
 				translationCache.put(`${lang}\n${cleanedMessage}`, msg);
 			}
 		} catch {
-			sendNoTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
+			sendNoTranslations(sender, message, formatted, languagesToFetch);
 		}
 	}
 }
@@ -101,9 +106,9 @@ function sendCachedTranslations(sender:Player, message:string, cleanedMessage:st
 	});
 }
 
-function sendNoTranslations(sender:Player, message:string, cleanedMessage:string, formatted:string, languagesToFetch:string[]){
+function sendNoTranslations(sender:Player, message:string, formatted:string, languagesToFetch:string[] | null){
 	FishPlayer.forEachPlayer(p => {
-		if(p.player != sender && languagesToFetch.includes(p.language)){
+		if(p.player != sender && (languagesToFetch == null || languagesToFetch.includes(p.language))){
 			//Wanted to fetch the translation but that failed
 			//Just send the untranslated message
 			Call.sendMessage(p.con(), formatted, message, sender);

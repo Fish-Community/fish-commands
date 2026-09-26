@@ -132,12 +132,16 @@ Events.on(EventType.ServerLoadEvent, function () {
 var disabledLanguages = ["off", "none", "auto"];
 function handleMessage(sender, message) {
     return __awaiter(this, void 0, void 0, function () {
-        var err_2, cleanedMessage, formatted, languagesToFetch, result, _a, _b, _c, lang, msg, _d;
+        var cleanedMessage, formatted, err_2, languagesToFetch, result, _a, _b, _c, lang, msg, _d;
         var e_1, _e;
         return __generator(this, function (_f) {
             switch (_f.label) {
                 case 0:
-                    if (!(exports.languageCache.isEmpty() && Date.now() - lastFailure > 60000)) return [3 /*break*/, 4];
+                    Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender);
+                    cleanedMessage = Strings.stripGlyphs(Strings.stripColors((0, utils_1.removeFoosChars)(message)));
+                    formatted = Vars.netServer.chatFormatter.format(sender, message);
+                    if (!exports.languageCache.isEmpty()) return [3 /*break*/, 5];
+                    if (!(Date.now() - lastFailure > 60000)) return [3 /*break*/, 4];
                     _f.label = 1;
                 case 1:
                     _f.trys.push([1, 3, , 4]);
@@ -148,11 +152,12 @@ function handleMessage(sender, message) {
                 case 3:
                     err_2 = _f.sent();
                     Log.err("Network error while fetching language cache");
+                    lastFailure = Date.now();
                     return [3 /*break*/, 4];
                 case 4:
-                    Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender);
-                    cleanedMessage = Strings.stripGlyphs(Strings.stripColors((0, utils_1.removeFoosChars)(message)));
-                    formatted = Vars.netServer.chatFormatter.format(sender, message);
+                    sendNoTranslations(sender, message, formatted, null);
+                    return [2 /*return*/];
+                case 5:
                     languagesToFetch = [];
                     exports.playerLanguageCache.each(function (lang, players) {
                         if (!disabledLanguages.includes(lang) &&
@@ -162,12 +167,12 @@ function handleMessage(sender, message) {
                         }
                     });
                     sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
-                    if (!languagesToFetch.length) return [3 /*break*/, 8];
-                    _f.label = 5;
-                case 5:
-                    _f.trys.push([5, 7, , 8]);
-                    return [4 /*yield*/, requestTranslate(cleanedMessage, languagesToFetch)];
+                    if (!languagesToFetch.length) return [3 /*break*/, 9];
+                    _f.label = 6;
                 case 6:
+                    _f.trys.push([6, 8, , 9]);
+                    return [4 /*yield*/, requestTranslate(cleanedMessage, languagesToFetch)];
+                case 7:
                     result = _f.sent();
                     sendTranslatedMessages(sender, cleanedMessage, message, formatted, result);
                     try {
@@ -183,12 +188,12 @@ function handleMessage(sender, message) {
                         }
                         finally { if (e_1) throw e_1.error; }
                     }
-                    return [3 /*break*/, 8];
-                case 7:
+                    return [3 /*break*/, 9];
+                case 8:
                     _d = _f.sent();
-                    sendNoTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
-                    return [3 /*break*/, 8];
-                case 8: return [2 /*return*/];
+                    sendNoTranslations(sender, message, formatted, languagesToFetch);
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
             }
         });
     });
@@ -205,9 +210,9 @@ function sendCachedTranslations(sender, message, cleanedMessage, formatted, lang
         }
     });
 }
-function sendNoTranslations(sender, message, cleanedMessage, formatted, languagesToFetch) {
+function sendNoTranslations(sender, message, formatted, languagesToFetch) {
     players_1.FishPlayer.forEachPlayer(function (p) {
-        if (p.player != sender && languagesToFetch.includes(p.language)) {
+        if (p.player != sender && (languagesToFetch == null || languagesToFetch.includes(p.language))) {
             //Wanted to fetch the translation but that failed
             //Just send the untranslated message
             Call.sendMessage(p.con(), formatted, message, sender);
