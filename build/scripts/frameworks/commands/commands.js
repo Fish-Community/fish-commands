@@ -294,7 +294,6 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
             switch (_l.label) {
                 case 0:
                     outputArgs = {};
-                    Log.info(JSON.stringify(args));
                     argsQueue = args.slice().reverse();
                     _loop_1 = function (i, cmdArg) {
                         var arg, commonArgs, _m, options, uuid_1, player, info, data, needsConfirm, _o, left, right, r2, _p, _q, mouseX_1, mouseY_1, score_1, fishP, err_1, _r, mouseX_2, mouseY_2, closestPlayer, _s, x_1, y_1, query, rank_1, role_1, num, options_1, buttons, selection, num_1, number, _t, mouseX, mouseY, _u, x, y, _v, x, y, milliseconds, block;

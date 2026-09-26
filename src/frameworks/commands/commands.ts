@@ -151,7 +151,6 @@ const argsSupportingBlank: CommandArgType[] = ["player", "playerOn", "unittype",
 export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer<true> | null, commandName:string): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
 	
-	Log.info(JSON.stringify(args));
 	/** reversed */
 	const argsQueue = args.slice().reverse();
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
