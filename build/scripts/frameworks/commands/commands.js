@@ -295,6 +295,7 @@ function processArgs(args, processedCmdArgs, sender, commandName) {
             switch (_l.label) {
                 case 0:
                     outputArgs = {};
+                    Log.info(JSON.stringify(args));
                     argsQueue = args.slice().reverse();
                     _loop_1 = function (i, cmdArg) {
                         var arg, commonArgs, _m, options, uuid_1, player, info, data, needsConfirm, _o, left, right, r2, _p, _q, mouseX_1, mouseY_1, score_1, fishP, err_1, _r, mouseX_2, mouseY_2, closestPlayer, _s, x_1, y_1, query, rank_1, role_1, num, options_1, buttons, selection, num_1, number, _t, mouseX, mouseY, _u, x, y, _v, x, y, milliseconds, block;
@@ -1027,9 +1028,9 @@ function registerConsole(commands, serverHandler) {
         //Process the args
         var processedCmdArgs = data.args.map(processArgString);
         serverHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-        var cmd = serverHandler.register(name, processedCmdArgs.length == 0 ? "" : "[...]", data.description, new CommandHandler.CommandRunner({ accept: function (rawArgs) {
+        var cmd = serverHandler.register(name, processedCmdArgs.length == 0 ? "" : "[...]", data.description, new CommandHandler.CommandRunner({ accept: function (weirdArgs) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var resolvedArgs, err_4, shouldClearPlayers, usageData, failed_2;
+                    var unjoinedRawArgs, rawArgs, resolvedArgs, err_4, shouldClearPlayers, usageData, failed_2;
                     var _a;
                     var _b;
                     return __generator(this, function (_c) {
@@ -1037,11 +1038,14 @@ function registerConsole(commands, serverHandler) {
                             case 0:
                                 if (!initialized)
                                     (0, funcs_1.crash)("Commands not initialized!");
+                                unjoinedRawArgs = weirdArgs.length == 0 ? weirdArgs : weirdArgs[0].split(" ");
+                                rawArgs = joinArgs(unjoinedRawArgs);
                                 _c.label = 1;
                             case 1:
                                 _c.trys.push([1, 3, , 4]);
                                 return [4 /*yield*/, processArgs(rawArgs, processedCmdArgs, null, name)];
                             case 2:
+                                //closure over processedCmdArgs, should be fine
                                 resolvedArgs = _c.sent();
                                 return [3 /*break*/, 4];
                             case 3:

@@ -151,6 +151,7 @@ const argsSupportingBlank: CommandArgType[] = ["player", "playerOn", "unittype",
 export async function processArgs(args: string[], processedCmdArgs: CommandArg[], sender: FishPlayer<true> | null, commandName:string): Promise<Record<string, FishCommandArgType>> {
 	const outputArgs: Record<string, FishCommandArgType> = {};
 	
+	Log.info(JSON.stringify(args));
 	/** reversed */
 	const argsQueue = args.slice().reverse();
 	for(const [i, cmdArg] of processedCmdArgs.entries()){
@@ -718,13 +719,15 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 			name,
 			processedCmdArgs.length == 0 ? "" : "[...]",
 			data.description,
-			new CommandHandler.CommandRunner({ async accept(rawArgs: string[]){
+			new CommandHandler.CommandRunner({ async accept(weirdArgs: string[]){
 				if(!initialized) crash(`Commands not initialized!`);
 
-				//closure over processedCmdArgs, should be fine
-				//Process the args
+				const unjoinedRawArgs = weirdArgs.length == 0 ? weirdArgs : weirdArgs[0].split(" ");
+				const rawArgs = joinArgs(unjoinedRawArgs);
 				let resolvedArgs;
+				//Process the args
 				try {
+					//closure over processedCmdArgs, should be fine
 					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, null, name);
 				} catch(err){
 					//if args are invalid
