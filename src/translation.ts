@@ -80,6 +80,7 @@ export async function handleMessage(sender: Player, message: string) {
 		}
 	});
 	sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
+	sendNoTranslations(sender, message, formatted, disabledLanguages);
 	if(languagesToFetch.length){
 		try {
 			const result = await requestTranslate(cleanedMessage, languagesToFetch);

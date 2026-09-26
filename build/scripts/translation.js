@@ -167,6 +167,7 @@ function handleMessage(sender, message) {
                         }
                     });
                     sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
+                    sendNoTranslations(sender, message, formatted, disabledLanguages);
                     if (!languagesToFetch.length) return [3 /*break*/, 9];
                     _f.label = 6;
                 case 6:
