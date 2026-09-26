@@ -360,7 +360,7 @@ export const commands = commandList({
 					id, timeRemaining / 1000, labelx, labely
 				);
 			}, 0, 1, args.time / 1000);
-			fishState.labels.push({ x: labelx, y: labely, id, task});
+			fishState.labels.push({ x: labelx, y: labely, id, task, expiry: end});
 			outputSuccess(f`Placed label "${args.message}" for ${formatTime(args.time)}.`);
 		}
 	},
@@ -395,6 +395,7 @@ export const commands = commandList({
 				if(index == -1) fail(`No sticky label found.`);
 				label = fishState.labels.splice(index, 1)[0];
 			} else {
+				fishState.labels = fishState.labels.filter(l => l.expiry < Date.now());
 				const unit = sender.unit() ?? fail(`Cannot remove the closest label because you are dead.`);
 				const dist = function(label: {x: number | null; y: number | null}){
 					if(label.x == null || label.y == null) return Infinity;

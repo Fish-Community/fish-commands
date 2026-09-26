@@ -119,6 +119,7 @@ export type Label = {
 	y: number | null;
 	task: TimerTask | null;
 	id: number;
+	expiry: number;
 };
 
 export type AntibotData = {

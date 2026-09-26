@@ -592,7 +592,7 @@ exports.commands = (0, commands_1.commandList)({
                 if (timeRemaining > 0)
                     Call.label("".concat(sender.name, "\n\n[white]").concat(args.message, "\n\n[acid]").concat((0, utils_1.formatTimeShort)(timeRemaining)), id, timeRemaining / 1000, labelx, labely);
             }, 0, 1, args.time / 1000);
-            globals_1.fishState.labels.push({ x: labelx, y: labely, id: id, task: task });
+            globals_1.fishState.labels.push({ x: labelx, y: labely, id: id, task: task, expiry: end });
             outputSuccess(f(templateObject_26 || (templateObject_26 = __makeTemplateObject(["Placed label \"", "\" for ", "."], ["Placed label \"", "\" for ", "."])), args.message, (0, utils_1.formatTime)(args.time)));
         }
     },
@@ -632,6 +632,7 @@ exports.commands = (0, commands_1.commandList)({
                 label = globals_1.fishState.labels.splice(index, 1)[0];
             }
             else {
+                globals_1.fishState.labels = globals_1.fishState.labels.filter(function (l) { return l.expiry < Date.now(); });
                 var unit_1 = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Cannot remove the closest label because you are dead.");
                 var dist_1 = function (label) {
                     if (label.x == null || label.y == null)
