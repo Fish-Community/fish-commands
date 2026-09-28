@@ -777,6 +777,17 @@ export function applyEffectMode(modeString:string, unit:Unit, ticks:number){
 		},
 		shield(unit){
 			unit.shield = 1e15;
+		},
+		fly(unit:any){
+			try {
+				unit.flying = true;
+				return;
+			} catch {}
+			try {
+				unit.elevation = 1;
+				return;
+			} catch {}
+			fail(`Failed to make the unit fly.`);
 		}
 	} satisfies Record<string, StatusEffect[] | ((u:Unit) => void)>;
 	for(const mode of modeString.split(/[ ,.|&]/)){

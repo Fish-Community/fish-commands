@@ -958,6 +958,19 @@ function applyEffectMode(modeString, unit, ticks) {
         },
         shield: function (unit) {
             unit.shield = 1e15;
+        },
+        fly: function (unit) {
+            try {
+                unit.flying = true;
+                return;
+            }
+            catch (_a) { }
+            try {
+                unit.elevation = 1;
+                return;
+            }
+            catch (_b) { }
+            (0, commands_1.fail)("Failed to make the unit fly.");
         }
     };
     try {
