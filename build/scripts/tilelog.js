@@ -126,7 +126,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
             return; //Don't log destruction of enemy blocks
         tile = e.tile;
         uuid = "[[something]";
-        action = "killed";
+        action = "destroyed";
         type = tile.blockID();
     }
     else if (e instanceof EventType.PayloadDropEvent) {
@@ -325,6 +325,9 @@ function writeEntry(entry, writes) {
     var diff = Date.now() - entry.time;
     writes.l(Math.floor(diff / 1000)); //subtracted from current time to make unsynced clocks work
     writes.i(diff % 1000); //we don't care
+    //TEMPORARY FIX TODO REMOVE
+    if (entry.action == "killed" && entry.type < 5000)
+        entry.action = "destroyed";
     writes.b({
         built: 0,
         broke: 1,

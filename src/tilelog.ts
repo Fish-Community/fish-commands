@@ -84,7 +84,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		if(Gamemode.attack() && e.tile.build?.team != Vars.state.rules.defaultTeam) return; //Don't log destruction of enemy blocks
 		tile = e.tile;
 		uuid = "[[something]";
-		action = "killed";
+		action = "destroyed";
 		type = tile.blockID();
 	} else if(e instanceof EventType.PayloadDropEvent){
 		action = "dropped";
@@ -260,6 +260,10 @@ function writeEntry(entry:TilelogEntry, writes:Writes){
 	const diff = Date.now() - entry.time;
 	writes.l(Math.floor(diff / 1000)); //subtracted from current time to make unsynced clocks work
 	writes.i(diff % 1000); //we don't care
+
+	//TEMPORARY FIX TODO REMOVE
+	if(entry.action == "killed" && entry.type < 5000) entry.action = "destroyed";
+
 	writes.b({
 		built: 0,
 		broke: 1,
