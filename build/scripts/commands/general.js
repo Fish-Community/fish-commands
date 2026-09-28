@@ -290,7 +290,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var sender = _a.sender, nodeatheffects = _a.args.nodeatheffects;
             var unit = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(Math.random() > 0.9 ? "[cyan]omae wa mou shindeiru" : "You are already dead.");
             if (nodeatheffects)
-                unit.remove();
+                Call.unitSafeDeath(unit);
             else
                 unit.kill();
         },

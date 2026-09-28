@@ -146,7 +146,7 @@ export const commands = commandList({
 		}, `You do not have permission to die.`),
 		handler({ sender, args: { nodeatheffects } }) {
 			const unit = sender.unit() ?? fail(Math.random() > 0.9 ? "[cyan]omae wa mou shindeiru" : `You are already dead.`);
-			if(nodeatheffects) unit.remove();
+			if(nodeatheffects) Call.unitSafeDeath(unit);
 			else unit.kill();
 		},
 	},
