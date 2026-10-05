@@ -96,7 +96,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
         }
         action = "configured";
         type = tile.blockID();
-        rotation = e.tile.rotation;
+        rotation = e.tile instanceof MassDriver.MassDriverBuild ? 0 : e.tile.rotation;
     }
     else if (e instanceof EventType.BuildRotateEvent) {
         tile = e.build.tile;
@@ -195,15 +195,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     tile.getLinkedTiles(function (t) {
         var pos = t.pos();
         var serializedData = exports.tileHistory.get(pos);
-        var existingData = serializedData ? funcs_1.StringIO.read(serializedData, function (str) { return str.readArray(function (d) { return ({
-            action: d.readEnumString(tilelogActions),
-            uuid: d.readString(3),
-            time: d.readNumber(16),
-            type: d.readNumber(4),
-            rotation: d.readNumber(1),
-            isRootTile: d.readBool(),
-            rotationDirection: d.readBool(),
-        }); }, 1); }) : [];
+        var existingData = serializedData ? deserializeData(serializedData) : [];
         existingData.push({
             action: action,
             uuid: uuid,

@@ -61,7 +61,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 		}
 		action = "configured";
 		type = tile.blockID();
-		rotation = e.tile.rotation;
+		rotation = e.tile instanceof MassDriver.MassDriverBuild ? 0 : e.tile.rotation;
 	} else if(e instanceof EventType.BuildRotateEvent){
 		tile = e.build.tile;
 		uuid = e.unit?.player?.uuid() ?? e.unit?.type.name ?? "unknown";
@@ -134,15 +134,7 @@ export const addToTileHistory = logErrors("Error while saving a tilelog entry", 
 	tile.getLinkedTiles(t => {
 		const pos = t.pos();
 		const serializedData = tileHistory.get(pos);
-		let existingData = serializedData ? StringIO.read(serializedData, str => str.readArray<TilelogEntry>(d => ({
-			action: d.readEnumString(tilelogActions),
-			uuid: d.readString(3)!,
-			time: d.readNumber(16),
-			type: d.readNumber(4),
-			rotation: d.readNumber(1),
-			isRootTile: d.readBool(),
-			rotationDirection: d.readBool(),
-		}), 1)) : [];
+		let existingData = serializedData ? deserializeData(serializedData) : [];
 
 		existingData.push({
 			action, uuid, time, type, rotation, rotationDirection,

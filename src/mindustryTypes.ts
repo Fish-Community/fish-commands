@@ -926,6 +926,9 @@ type AdminAction = {};
 class ConstructBlock {
 	static ConstructBuild: any;
 }
+class MassDriver {
+	static MassDriverBuild: any;
+}
 class CoreBlock {
 
 }
