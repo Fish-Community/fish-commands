@@ -149,7 +149,7 @@ export const heuristics = {
 };
 export const stopAntiEvadeTime = Duration.minutes(30);
 export const backendIP = '127.0.0.1:5082';
-export const translationApiUrl = "https://translate.eradication.fun";
+export const translationApiUrl = "https://translate.eradication.industries";
 
 export const translationApiToken = new Administration.Config("translationApiToken", "Token to use with the translation API.", "unset");
 

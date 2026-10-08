@@ -11,12 +11,13 @@ import * as fjsContext from "/fjsContext";
 import { command, commandList, fail, Perm, Req } from "/frameworks/commands";
 import { listeners, Menu } from "/frameworks/menus";
 import { crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, parseError, setToArray, to2DArray } from "/funcs";
-import { FishEvents, fishState, ipPattern, maxTime, uuidPattern } from "/globals";
+import { FishEvents, fishState, ipPattern, uuidPattern } from "/globals";
 import { FMap } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
+import { addToTileHistory } from "/tilelog";
 import { Label } from "/types";
-import { addToTileHistory, applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatHistoryEntry, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, getDuration, logAction, match, serverRestartLoop, syncManual, unblacklist, untilForever, updateBans } from "/utils";
+import { applyEffectMode, crashClient, definitelyRealMemoryCorruption, formatHistoryEntry, formatTime, formatTimeRelative, formatTimeShort, formatTimestamp, getAntiBotInfo, getDuration, logAction, match, serverRestartLoop, syncManual, unblacklist, untilForever, updateBans } from "/utils";
 
 export const commands = commandList({
 	warn: {
@@ -359,7 +360,7 @@ export const commands = commandList({
 					id, timeRemaining / 1000, labelx, labely
 				);
 			}, 0, 1, args.time / 1000);
-			fishState.labels.push({ x: labelx, y: labely, id, task});
+			fishState.labels.push({ x: labelx, y: labely, id, task, expiry: end});
 			outputSuccess(f`Placed label "${args.message}" for ${formatTime(args.time)}.`);
 		}
 	},
@@ -394,6 +395,7 @@ export const commands = commandList({
 				if(index == -1) fail(`No sticky label found.`);
 				label = fishState.labels.splice(index, 1)[0];
 			} else {
+				fishState.labels = fishState.labels.filter(l => l.expiry < Date.now());
 				const unit = sender.unit() ?? fail(`Cannot remove the closest label because you are dead.`);
 				const dist = function(label: {x: number | null; y: number | null}){
 					if(label.x == null || label.y == null) return Infinity;
@@ -747,7 +749,8 @@ export const commands = commandList({
 				pos: `${args.x},${args.y}`,
 				uuid: sender.uuid,
 				action: `setblocked`,
-				type: args.block.localizedName
+				type: args.block.id,
+				rotation: args.rotation ?? 0,
 			});
 			if(!Gamemode.cheatsOk()) logAction(`set block to ${args.block.localizedName} at ${args.x},${args.y}`, sender);
 			outputSuccess(f`Set block at ${args.x}, ${args.y} to ${args.block}`);
@@ -769,7 +772,8 @@ export const commands = commandList({
 				pos: `${x},${y}`,
 				uuid: sender.uuid,
 				action: `setblocked`,
-				type: args.block.localizedName
+				type: args.block.id,
+				rotation: args.rotation ?? 0,
 			});
 			if(!Gamemode.cheatsOk()) logAction(`set block to ${args.block.localizedName} at ${x},${y}`, sender);
 			outputSuccess(f`Set block at ${x}, ${y} to ${args.block}`);

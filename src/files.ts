@@ -6,7 +6,7 @@ Maintenance: @author BalaM314
 */
 
 import { Gamemode, mapRepoURLs } from "/config";
-import { crash } from "/funcs";
+import { crash, Duration, DurationSecs } from "/funcs";
 import { fishState } from "/globals";
 import { Promise } from "/promise";
 import { getHash } from "/utils";
@@ -119,3 +119,18 @@ export function updateMaps():Promise<boolean, string> {
 		});
 	});
 }
+
+Timer.schedule(() => {
+	updateMaps()
+		.then((result) => {
+			if(result){
+				Call.sendMessage(`[orange]Maps have been updated. Run [white]/maps[] to view available maps.`);
+				Log.info(`Updated maps.`);
+			}
+		})
+		.catch((message) => {
+			if(Date.now() - fishState.lastSuccessfulMapUpdate >= Duration.hours(1))
+				Call.sendMessage(`[scarlet]Automated maps update failed too many times, please report this to a staff member.`);
+			Log.err(`Automated map update failed: ${String(message)}`);
+		});
+}, DurationSecs.minutes(1), DurationSecs.minutes(10));

@@ -7,12 +7,12 @@ For functions that don't need values from other files, see funcs.ts.
 import { Antibot } from "/automod";
 import * as api from "/api";
 import { adminNames, automaticNames, bannedWords, Gamemode, GamemodeName, multiCharSubstitutions, substitutions, text } from "/config";
-import { CommandError, fail, PartialFormatString } from "/frameworks/commands";
+import { fail } from "/frameworks/commands";
 import { Cancel, Menu } from "/frameworks/menus";
-import { crash, Duration, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed, StringIO } from "/funcs";
-import { dosBlacklistCopy, FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, tileHistory, uuidPattern } from "/globals";
+import { crash, Duration, escapeStringColorsServer, escapeTextDiscord, parseError, random, searchFixed } from "/funcs";
+import { dosBlacklistCopy, FishEvents, fishState, ipPattern, ipPortPattern, ipRangeCIDRPattern, ipRangeWildcardPattern, maxTime, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
-import { PlayerHistoryEntry, SelectEnumClassKeys } from "/types";
+import { PlayerHistoryEntry, SelectEnumClassKeys, PartialFormatString } from "/types";
 
 
 export function memoizeChatFilter(impl:(arg:string) => string){
@@ -306,9 +306,11 @@ export function parseTimeString(str:string):number | null {
 		[/(\d+)m/, 60],
 		[/(\d+)h/, 3600],
 		[/(\d+)d/, 86400],
-		[/(\d+)w/, 604800]
+		[/(\d+)w/, 604800],
+		[/(\d+)mo/, 2592000]
 	] as Array<[RegExp, number]>).map(([regex, mult]) => [Pattern.compile(regex.source), mult] as const);
 	if(str == "forever") return (maxTime - Date.now() - 10000);
+	if(Number(str) == 0) return 0;
 	for(const [pattern, mult] of formats){
 		//rhino regex doesn't work
 		const matcher = pattern.matcher(str);
@@ -472,16 +474,6 @@ export function skipWaves(requestedWaves: number, runIntermediateWaves: boolean)
 		Vars.logic.skipWave();
 	}
 }
-
-export const vnwCondition = {
-	waveUnits: new Seq<Unit>(),
-	onWaveStart(){
-		this.waveUnits = Groups.unit.copy().retainAll(u => u.team == Vars.state.rules.waveTeam);
-	},
-	check(){
-		return !this.waveUnits.contains(boolf<Unit>(u => !u.dead && u.team == Vars.state.rules.waveTeam));
-	}
-};
 
 
 export function logHTrip(player:FishPlayer, name:string, message?:string){
@@ -666,132 +658,6 @@ export const foolifyChat = memoizeChatFilter(function foolifyChat(message:string
 	}
 });
 
-export const addToTileHistory = logErrors("Error while saving a tilelog entry", (e:any) => {
-
-	// eslint-disable-next-line prefer-const
-	let tile:Tile, uuid:string, action:string, type:string, time:number = Date.now();
-	if(e instanceof EventType.BlockBuildBeginEvent){
-		tile = e.tile;
-		uuid = e.unit?.player?.uuid() ?? e.unit?.type.name ?? "unknown";
-		if(e.breaking){
-			action = "broke";
-			type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.previous.name : "unknown";
-			if(e.unit?.player?.uuid() && e.tile.build.prevBuild.firstOpt()?.team != Team.derelict){
-				const fishP = FishPlayer.get(e.unit.player);
-				//TODO move this code
-				fishP.tstats.blocksBroken ++;
-				fishP.tstats.blockInteractionsThisMap ++;
-				fishP.updateStats(stats => stats.blocksBroken ++);
-			}
-		} else {
-			action = "built";
-			type = (e.tile.build instanceof ConstructBlock.ConstructBuild) ? e.tile.build.current.name : "unknown";
-			if(e.unit?.player?.uuid()){
-				const fishP = FishPlayer.get(e.unit.player);
-				//TODO move this code
-				fishP.updateStats(stats => stats.blocksPlaced ++);
-				fishP.tstats.blockInteractionsThisMap ++;
-			}
-		}
-	} else if(e instanceof EventType.ConfigEvent){
-		tile = e.tile.tile;
-		uuid = e.player?.uuid() ?? "unknown";
-		if(uuid != "unknown"){
-			const fishP = FishPlayer.getById(uuid);
-			if(fishP) fishP.tstats.blockInteractionsThisMap ++;
-		}
-		action = "configured";
-		type = e.tile.block.name;
-	} else if(e instanceof EventType.BuildRotateEvent){
-		tile = e.build.tile;
-		uuid = e.unit?.player?.uuid() ?? e.unit?.type.name ?? "unknown";
-		if(uuid != "unknown"){
-			const fishP = FishPlayer.getById(uuid);
-			if(fishP) fishP.tstats.blockInteractionsThisMap ++;
-		}
-		action = "rotated";
-		type = e.build.block.name;
-	} else if(e instanceof EventType.UnitDestroyEvent){
-		tile = e.unit.tileOn();
-		if(!tile) return;
-		if(!e.unit.type.playerControllable) return;
-		uuid = e.unit.isPlayer() ? e.unit.getPlayer().uuid() : e.unit.lastCommanded ?? "unknown";
-		action = "killed";
-		type = e.unit.type.name;
-	} else if(e instanceof EventType.BlockDestroyEvent){
-		if(Gamemode.attack() && e.tile.build?.team != Vars.state.rules.defaultTeam) return; //Don't log destruction of enemy blocks
-		tile = e.tile;
-		uuid = "[[something]";
-		action = "killed";
-		type = e.tile.block()?.name ?? "air";
-	} else if(e instanceof EventType.PayloadDropEvent){
-		action = "pay-dropped";
-		const controller = e.carrier.controller();
-		uuid = e.carrier.player?.uuid() ?? (controller instanceof LogicAI && controller.controller ?
-			`${e.carrier.type.name} controlled by ${controller.controller.block.name} at ${controller.controller.tileX()},${controller.controller.tileY()} last accessed by ${e.carrier.getControllerName()}`
-		: null) ?? e.carrier.type.name;
-		if(e.build){
-			tile = e.build.tile;
-			type = e.build.block.name;
-		} else if(e.unit){
-			tile = e.unit.tileOn();
-			if(!tile) return;
-			type = e.unit.type.name;
-		} else return;
-	} else if(e instanceof EventType.PickupEvent){
-		action = "picked up";
-		if(e.carrier.isPlayer()) return; //This event would have been handled by actionfilter
-		const controller = e.carrier.controller();
-		if(!(controller instanceof LogicAI && controller.controller != null)) return;
-		uuid = `${e.carrier.type.name} controlled by ${controller.controller.block.name} at ${controller.controller.tileX()},${controller.controller.tileY()} last accessed by ${e.carrier.getControllerName()}`;
-		if(e.build){
-			tile = e.build.tile;
-			type = e.build.block.name;
-		} else if(e.unit){
-			tile = e.unit.tileOn();
-			if(!tile) return;
-			type = e.unit.type.name;
-		} else return;
-	} else if(e instanceof EventType.UnitControlEvent){
-		if(e.unit instanceof Packages.mindustry.gen.BlockUnitUnit){
-			action = "controlled";
-			tile = e.unit?.tile().tile;
-			if(!tile) return;
-			type = tile.block()?.name ?? "air";
-			uuid = (e.player as mindustryPlayer).uuid();
-		} else return;
-	} else if(e instanceof Object && "pos" in e && "uuid" in e && "action" in e && "type" in e){
-		let pos;
-		({pos, uuid, action, type} = e);
-		tile = Vars.world.tile(pos.split(",")[0], pos.split(",")[1]) ?? crash(`Cannot log ${action} at ${pos}: Nonexistent tile`);
-	} else return;
-	if(tile == null) return;
-	[tile, uuid, action, type, time] satisfies [Tile, string, string, string, number];
-
-	tile.getLinkedTiles(t => {
-		const pos = `${t.x},${t.y}`;
-		let existingData = tileHistory[pos] ? StringIO.read(tileHistory[pos], str => str.readArray(d => ({
-			action: d.readString(2),
-			uuid: d.readString(3),
-			time: d.readNumber(16),
-			type: d.readString(2),
-		}), 1)) : [];
-
-		existingData.push({
-			action, uuid, time, type
-		});
-		existingData = existingData.slice(-9);
-		//Write
-		tileHistory[t.x + ',' + t.y] = StringIO.write(existingData, (str, data) => str.writeArray(data, el => {
-			str.writeString(el.action, 2);
-			str.writeString(el.uuid, 3);
-			str.writeNumber(el.time, 16);
-			str.writeString(el.type, 2);
-		}, 1));
-	});
-
-});
-
 export function getIPRange(input:string, error?:(message:string) => never):string | null {
 	if(ipRangeCIDRPattern.test(input)){
 		const [ip, maskLength] = input.split("/");
@@ -911,6 +777,17 @@ export function applyEffectMode(modeString:string, unit:Unit, ticks:number){
 		},
 		shield(unit){
 			unit.shield = 1e15;
+		},
+		fly(unit:any){
+			try {
+				unit.flying = true;
+				return;
+			} catch {}
+			try {
+				unit.elevation = 1;
+				return;
+			} catch {}
+			fail(`Failed to make the unit fly.`);
 		}
 	} satisfies Record<string, StatusEffect[] | ((u:Unit) => void)>;
 	for(const mode of modeString.split(/[ ,.|&]/)){
@@ -924,24 +801,6 @@ export function applyEffectMode(modeString:string, unit:Unit, ticks:number){
 				unit.apply(effect, ticks);
 			}
 		}
-	}
-}
-
-export function handleError(err:unknown, sender:FishPlayer, outputFail: (message: string | PartialFormatString, sender: FishPlayer) => void, context?: string){
-	if(err instanceof CommandError){
-		//If the error is a command error, then just outputFail
-		outputFail(err.data, sender);
-	} else if(err === Cancel){
-		//Menu cancelled, do nothing
-		return;
-	} else {
-		sender.sendMessage(`[scarlet]\u274C An error occurred while executing the command!`);
-		if(sender.hasPerm("seeErrorMessages")) sender.sendMessage(parseError(err));
-		Log.err(context ?
-			`Unhandled error in command execution: ${context}`
-		: `Unhandled error in command execution.`);
-		Log.err(err);
-		if(typeof err == "object" && err != null && "stack" in err) Log.err(err.stack);
 	}
 }
 

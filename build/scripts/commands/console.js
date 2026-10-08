@@ -124,6 +124,7 @@ var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
+var tilelog_1 = require("/tilelog");
 var utils_1 = require("/utils");
 exports.commands = (0, commands_1.consoleCommandList)({
     setrank: {
@@ -840,7 +841,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
         description: "Checks memory usage of various objects.",
         handler: function (_a) {
             var output = _a.output;
-            output("Memory usage:\nTotal: ".concat(Math.round(Core.app.getJavaHeap() / (Math.pow(2, 10))), " KB\nNumber of cached fish players: ").concat(Object.keys(players_1.FishPlayer.cachedPlayers).length, " (stored locally: ").concat(Object.values(players_1.FishPlayer.cachedPlayers).filter(function (p) { return p.shouldCache(); }).length, ")\nFish player data string length: ").concat(players_1.FishPlayer.getFishPlayersString.length, " (").concat(Core.settings.getInt("fish-subkeys"), " subkeys)\nLength of tilelog entries: ").concat(Math.round(Object.values(globals_1.tileHistory).reduce(function (acc, a) { return acc + a.length; }, 0) / (Math.pow(2, 10))), " KB"));
+            output("Memory usage:\nTotal: ".concat(Math.round(Core.app.getJavaHeap() / (Math.pow(2, 10))), " KB\nNumber of cached fish players: ").concat(Object.keys(players_1.FishPlayer.cachedPlayers).length, " (stored locally: ").concat(Object.values(players_1.FishPlayer.cachedPlayers).filter(function (p) { return p.shouldCache(); }).length, ")\nFish player data string length: ").concat(players_1.FishPlayer.getFishPlayersString.length, " (").concat(Core.settings.getInt("fish-subkeys"), " subkeys)\nLength of tilelog entries: ").concat(Math.round(tilelog_1.tileHistory.values().toArray().sum(function (a) { return a.length; }) / 1000), " KB"));
         }
     },
     stopplayer: {
@@ -941,7 +942,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 uptime < funcs_1.Duration.days(5) ? "&ly" :
                     uptime < funcs_1.Duration.days(9) ? "&y" :
                         "&br";
-            output("\nStatus:\nPlaying on map &fi".concat(Vars.state.map.plainName(), "&fr for ").concat((0, utils_1.formatTime)(1000 * Vars.state.tick / 60), "\n").concat(Vars.state.rules.waves ? "Wave &c".concat(Vars.state.wave, "&fr, &c").concat(Math.ceil(Vars.state.wavetime / 60), "&fr seconds until next wave.\n") : "", "&c").concat(Groups.unit.size(), "&fr units, &c").concat(Vars.state.enemies, "&fr enemies, &c").concat(Groups.build.size(), "&fr buildings\nTPS: ").concat((0, utils_1.colorNumber)(Core.graphics.getFramesPerSecond(), function (f) { return f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w"; }, "server"), ", Memory: &c").concat(Math.round(Core.app.getJavaHeap() / 1048576), "&fr MB\nServer uptime: ").concat(uptimeColor).concat((0, utils_1.formatTime)(uptime), "&fr (since ").concat((0, utils_1.formatTimestampFull)(Date.now() - uptime), ")\n").concat([
+            output("\nStatus:\n".concat(Vars.state.isPaused() ? "Playing" : "Paused", " on map &fi").concat(Vars.state.map.plainName(), "&fr for ").concat((0, utils_1.formatTime)(1000 * Vars.state.tick / 60), "\n").concat(Vars.state.rules.waves ? "Wave &c".concat(Vars.state.wave, "&fr, &c").concat(Math.ceil(Vars.state.wavetime / 60), "&fr seconds until next wave.\n") : "", "&c").concat(Groups.unit.size(), "&fr units, &c").concat(Vars.state.enemies, "&fr enemies, &c").concat(Groups.build.size(), "&fr buildings\nTPS: ").concat((0, utils_1.colorNumber)(Core.graphics.getFramesPerSecond(), function (f) { return f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w"; }, "server"), ", Memory: &c").concat(Math.round(Core.app.getJavaHeap() / 1048576), "&fr MB\nServer uptime: ").concat(uptimeColor).concat((0, utils_1.formatTime)(uptime), "&fr (since ").concat((0, utils_1.formatTimestampFull)(Date.now() - uptime), ")\n").concat([
                 globals_1.fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
                 globals_1.fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",
                 automod_1.Antibot.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + (0, utils_1.getAntiBotInfo)("server") : "",

@@ -17,6 +17,7 @@ importClass(Packages.java.lang.Thread);
 importClass(Packages.java.lang.Runtime);
 importClass(Packages.java.lang.ProcessBuilder);
 importClass(Packages.java.nio.file.Paths);
+importClass(Packages.java.nio.ByteBuffer);
 importClass(Packages.java.io.ByteArrayOutputStream);
 importClass(Packages.java.io.DataOutputStream);
 importClass(Packages.java.io.ByteArrayInputStream);

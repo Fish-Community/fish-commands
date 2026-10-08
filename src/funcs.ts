@@ -3,8 +3,7 @@ Copyright © BalaM314, 2026. All Rights Reserved.
 This file contains dozens of simple functions that do not need access to any values from other files.
 For functions that do need values from other files, see utils.ts.
 */
-import type { SearchResult, TagFunction } from "/types";
-import type { PartialFormatString } from "/frameworks/commands";
+import type { PartialFormatString, SearchResult, TagFunction } from "/types";
 
 const storedValues: Record<string, {
 	value: unknown;
@@ -100,12 +99,12 @@ export class StringIO {
 			this.string += str;
 		}
 	}
-	readEnumString<const T>(options: T[]): T {
+	readEnumString<const T>(options: readonly T[]): T {
 		const length = (options.length - 1).toString().length;
 		const option = this.readNumber(length);
 		return options[option];
 	}
-	writeEnumString<const T>(value: T, options: T[]) {
+	writeEnumString<const T>(value: T, options: readonly T[]) {
 		const length = (options.length - 1).toString().length;
 		const option = options.indexOf(value);
 		if (option == -1) crash(`Attempted to write invalid value "${String(value)}" for enum, valid values are (${options.join(", ")})`);

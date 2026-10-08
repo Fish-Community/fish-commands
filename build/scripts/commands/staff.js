@@ -137,6 +137,7 @@ var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
+var tilelog_1 = require("/tilelog");
 var utils_1 = require("/utils");
 exports.commands = (0, commands_1.commandList)({
     warn: {
@@ -591,7 +592,7 @@ exports.commands = (0, commands_1.commandList)({
                 if (timeRemaining > 0)
                     Call.label("".concat(sender.name, "\n\n[white]").concat(args.message, "\n\n[acid]").concat((0, utils_1.formatTimeShort)(timeRemaining)), id, timeRemaining / 1000, labelx, labely);
             }, 0, 1, args.time / 1000);
-            globals_1.fishState.labels.push({ x: labelx, y: labely, id: id, task: task });
+            globals_1.fishState.labels.push({ x: labelx, y: labely, id: id, task: task, expiry: end });
             outputSuccess(f(templateObject_26 || (templateObject_26 = __makeTemplateObject(["Placed label \"", "\" for ", "."], ["Placed label \"", "\" for ", "."])), args.message, (0, utils_1.formatTime)(args.time)));
         }
     },
@@ -631,6 +632,7 @@ exports.commands = (0, commands_1.commandList)({
                 label = globals_1.fishState.labels.splice(index, 1)[0];
             }
             else {
+                globals_1.fishState.labels = globals_1.fishState.labels.filter(function (l) { return l.expiry < Date.now(); });
                 var unit_1 = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("Cannot remove the closest label because you are dead.");
                 var dist_1 = function (label) {
                     if (label.x == null || label.y == null)
@@ -1022,18 +1024,19 @@ exports.commands = (0, commands_1.commandList)({
         }),
         requirements: [commands_1.Req.integerRange("rotation", 0, 3)],
         handler: function (_a) {
-            var _b, _c;
+            var _b, _c, _d;
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
             var team = (_b = args.team) !== null && _b !== void 0 ? _b : sender.team();
             var tile = Vars.world.tile(args.x, args.y);
             if (tile == null)
                 (0, commands_1.fail)(f(templateObject_55 || (templateObject_55 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), args.x, args.y));
             tile.setNet(args.block, team, (_c = args.rotation) !== null && _c !== void 0 ? _c : 0);
-            (0, utils_1.addToTileHistory)({
+            (0, tilelog_1.addToTileHistory)({
                 pos: "".concat(args.x, ",").concat(args.y),
                 uuid: sender.uuid,
                 action: "setblocked",
-                type: args.block.localizedName
+                type: args.block.id,
+                rotation: (_d = args.rotation) !== null && _d !== void 0 ? _d : 0,
             });
             if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(args.x, ",").concat(args.y), sender);
@@ -1046,7 +1049,7 @@ exports.commands = (0, commands_1.commandList)({
         perm: commands_1.Perm.admin,
         requirements: [commands_1.Req.integerRange("rotation", 0, 3)],
         tapped: function (_a) {
-            var _b, _c;
+            var _b, _c, _d;
             var args = _a.args, sender = _a.sender, f = _a.f, x = _a.x, y = _a.y, outputSuccess = _a.outputSuccess;
             if (!args.block)
                 (0, funcs_1.crash)("uh oh");
@@ -1055,11 +1058,12 @@ exports.commands = (0, commands_1.commandList)({
             if (tile == null)
                 (0, commands_1.fail)(f(templateObject_57 || (templateObject_57 = __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), x, y));
             tile.setNet(args.block, team, (_c = args.rotation) !== null && _c !== void 0 ? _c : 0);
-            (0, utils_1.addToTileHistory)({
+            (0, tilelog_1.addToTileHistory)({
                 pos: "".concat(x, ",").concat(y),
                 uuid: sender.uuid,
                 action: "setblocked",
-                type: args.block.localizedName
+                type: args.block.id,
+                rotation: (_d = args.rotation) !== null && _d !== void 0 ? _d : 0,
             });
             if (!config_1.Gamemode.cheatsOk())
                 (0, utils_1.logAction)("set block to ".concat(args.block.localizedName, " at ").concat(x, ",").concat(y), sender);

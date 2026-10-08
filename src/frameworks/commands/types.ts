@@ -7,7 +7,7 @@ import type { FFunction } from "/frameworks/commands/formatting";
 import type { Perm } from "/frameworks/commands/perm";
 import type { FishPlayer } from "/players";
 import type { Rank, RoleFlag } from "/ranks";
-import type { Expand, TagFunction } from "/types";
+import type { Expand, PartialFormatString, TagFunction } from "/types";
 
 /** All valid command arg types. */
 export const commandArgTypes = [
@@ -75,12 +75,7 @@ export type TapHandleMode = "off" | "once" | "on";
 
 /** Anything that can be formatted by the `f` tagged template function. */
 export type Formattable = FishPlayer | Rank | RoleFlag | Error | mindustryPlayer | string | boolean | number | PlayerInfo | UnitType | Block | Team | Item;
-/**
- * A message that requires some other data to complete it.
- * For example, format string cannot be fully interpolated without knowing their start color,
- * so they return a function that accepts that information.
- */
-export type PartialFormatString<TData = string | null> = ((data: TData) => string) & { __partialFormatString: true; };
+
 /** The data passed to a command handler. */
 export type FishCommandHandlerData<ArgType extends string, StoredData> = {
 	/** Raw arguments that were passed to the command. */

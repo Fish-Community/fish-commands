@@ -99,3 +99,17 @@ function updateMaps() {
         });
     });
 }
+Timer.schedule(function () {
+    updateMaps()
+        .then(function (result) {
+        if (result) {
+            Call.sendMessage("[orange]Maps have been updated. Run [white]/maps[] to view available maps.");
+            Log.info("Updated maps.");
+        }
+    })
+        .catch(function (message) {
+        if (Date.now() - globals_1.fishState.lastSuccessfulMapUpdate >= funcs_1.Duration.hours(1))
+            Call.sendMessage("[scarlet]Automated maps update failed too many times, please report this to a staff member.");
+        Log.err("Automated map update failed: ".concat(String(message)));
+    });
+}, funcs_1.DurationSecs.minutes(1), funcs_1.DurationSecs.minutes(10));

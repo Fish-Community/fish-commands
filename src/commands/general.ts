@@ -9,13 +9,14 @@ import { FColor, FishServer, Gamemode, text } from "/config";
 import { command, commandList, fail, formatArg, Perm, PermCategory, Req } from "/frameworks/commands";
 import type { FishCommandData } from "/frameworks/commands/types";
 import { Menu } from "/frameworks/menus";
-import { capitalizeText, crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, StringBuilder, StringIO, to2DArray } from "/funcs";
-import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers, tileHistory, uuidPattern } from "/globals";
+import { capitalizeText, crash, delay, Duration, escapeStringColorsClient, escapeTextDiscord, StringBuilder, to2DArray } from "/funcs";
+import { FishEvents, fishPlugin, fishState, ipPortPattern, recentWhispers } from "/globals";
 import { FMap, PartialMapRun } from "/maps";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
+import { getTileHistory } from "/tilelog";
 import { getLanguageFromCache, isLanguageAvailable, Language, languageCache, setPlayerLanguageEntry } from "/translation";
-import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer, vnwCondition } from "/utils";
+import { formatTime, formatTimeRelative, getColor, logAction, nearbyEnemyTile, neutralGameover, skipWaves, teleportPlayer } from "/utils";
 import { VoteManager } from "/votes";
 
 export const commands = commandList({
@@ -145,7 +146,7 @@ export const commands = commandList({
 		}, `You do not have permission to die.`),
 		handler({ sender, args: { nodeatheffects } }) {
 			const unit = sender.unit() ?? fail(Math.random() > 0.9 ? "[cyan]omae wa mou shindeiru" : `You are already dead.`);
-			if(nodeatheffects) unit.remove();
+			if(nodeatheffects) Call.unitSafeDeath(unit);
 			else unit.kill();
 		},
 	},
@@ -184,17 +185,10 @@ export const commands = commandList({
 				outputSuccess(`Tilelog disabled.`);
 			}
 		},
-		tapped({tile, x, y, output, copy, player, sender, admins, data}){
-			const historyData = tileHistory[`${x},${y}`] ?? fail(`There is no recorded history for the selected tile (${tile.x}, ${tile.y}).`);
-			const history = StringIO.read(historyData, str => str.readArray(d => ({
-				action: d.readString(2),
-				uuid: d.readString(3)!,
-				time: d.readNumber(16),
-				type: d.readString(2),
-			}), 1)).map(h => ({
-				...h,
-				info: uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null,
-			}));
+		tapped({tile, x, y, output, copy, player, sender, data}){
+			const history = getTileHistory(x, y)
+				?? fail(`There is no recorded history for the selected tile (${x}, ${y}).`);
+			for(const entry of history) player(entry.info);
 			output(`[yellow]Tile history for tile (${tile.x}, ${tile.y}):\n` + history.map(e =>
 				e.info ?
 					(sender.hasPerm("viewUUIDs") && data.showUUID ?
@@ -239,19 +233,11 @@ export const commands = commandList({
 					outer:
 					for(let i = minX; i <= maxX; i ++){
 						for(let j = minY; j <= maxY; j ++){
-							const tileData = tileHistory[`${i},${j}`];
-							if(!tileData) continue;
-							let history = StringIO.read(tileHistory[`${i},${j}`], str => str.readArray(d => ({
-								action: d.readString(2) ?? "??",
-								uuid: d.readString(3) ?? "??",
-								time: d.readNumber(16),
-								type: d.readString(2) ?? "??",
-							}), 1)).map(h => ({
-								...h,
-								info: uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null,
-							}));;
+							let history = getTileHistory(i, j);
+							if(!history) continue;
 							if(args.action) history = history.filter(e => e.action === args.action);
 							if(history.length == 0) continue;
+							for(const entry of history) player(entry.info);
 							output(`[yellow]Tile history for tile (${i}, ${j}):\n` + history.map(e =>
 								e.info ?
 									(sender.hasPerm("viewUUIDs") ?
@@ -561,6 +547,11 @@ ${target == sender ? `Your` : `${target.cleanedName}'s`} rank prefix is now ${ta
 		args: ['type:string?', 'color:string?'],
 		description: 'Use command to see options and toggle trail on/off.',
 		perm: Perm.none,
+		init(){
+			Timer.schedule(() =>
+				FishPlayer.forEachPlayer(p => p.displayTrail()),
+			5, 0.15);
+		},
 		handler({ args, sender, output, outputFail, outputSuccess }) {
 			//overload 1: type not specified
 			if(!args.type){
@@ -821,18 +812,28 @@ Please stop attacking and [lime]build defenses[] first!`
 		args: ["waves:number?"],
 		description: "Vote to start the next wave.",
 		perm: Perm.play,
-		init: () => ({
-			manager: new VoteManager<number>(Duration.minutes(1.5))
-				.on("success", (t) => skipWaves(t.session!.data, true))
-				.on("vote passed", () => Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'))
-				.on("vote failed", () => Call.sendMessage('VNW: [red]Vote failed.'))
-				.on("player vote change", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has voted on skipping [accent]${t.session!.data}[white] wave(s). [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
-				.on("player vote removed", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has left. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
-		}),
+		init(){
+			let waveUnits = new Seq<Unit>();
+			Events.on(EventType.WaveEvent, () => {
+				if (Vars.state.rules.mode().name() === "survival"){
+					waveUnits = Groups.unit.copy().retainAll(u => u.team == Vars.state.rules.waveTeam);
+				}
+			});
+			return {
+				waveUnitsAlive(this:void){
+					return waveUnits.contains(boolf<Unit>(u => !u.dead && u.team == Vars.state.rules.waveTeam));
+				},
+				manager: new VoteManager<number>(Duration.minutes(1.5))
+					.on("success", (t) => skipWaves(t.session!.data, true))
+					.on("vote passed", () => Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'))
+					.on("vote failed", () => Call.sendMessage('VNW: [red]Vote failed.'))
+					.on("player vote change", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has voted on skipping [accent]${t.session!.data}[white] wave(s). [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`))
+					.on("player vote removed", (t, player) => Call.sendMessage(`VNW: ${player.name} [white] has left. [green]${t.currentVotes()}[white] votes, [green]${t.requiredVotes()}[white] required.`)),
+			};
+		},
 		requirements: [Req.cooldown(3000), Req.integerRange("waves", 1, 15), Req.mode("survival", "testsrv"), Req.gameRunning],
-		async handler({sender, args: {waves}, data:{manager}}){
-			
-			if (!vnwCondition.check()) fail("You can only do that when all units from previous waves are dead.");
+		async handler({sender, args: {waves}, data:{manager, waveUnitsAlive}}){
+			if(waveUnitsAlive()) fail("You can only run /vnw when all units from previous waves are dead.");
 			//Disable narrowing, this is async
 			if(!manager.session as boolean){
 				waves ??= await Menu.menu(

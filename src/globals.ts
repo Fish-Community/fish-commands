@@ -7,7 +7,6 @@ import { EventEmitter } from "/funcs";
 import { FishPlayer } from "/players";
 import { Label } from "/types";
 
-export const tileHistory:Record<string, string> = {};
 export const recentWhispers:Record<string, string> = {};
 export const fishState = {
 	restartQueued: false,
@@ -36,8 +35,6 @@ export const fishPlugin = {
 	version: null as null | string,
 };
 export const ipJoins = new ObjectIntMap<string>();
-export const joinDemographics = new ObjectMap<number, string>();
-export const joinDemographics2 = new ObjectMap<number, string>();
 export const dosBlacklistCopy = new ObjectSet<string>();
 
 export const uuidPattern = /^[a-zA-Z0-9+/]{22}==$/;

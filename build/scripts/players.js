@@ -197,6 +197,7 @@ var FishPlayer = /** @class */ (function () {
         this.isImpersonator = false;
         this.joinedAlready = false;
         this.sneakybanned = false;
+        this.lastRequestedData = -1;
         /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
         this.overrideName = null;
@@ -456,52 +457,55 @@ var FishPlayer = /** @class */ (function () {
         }
         this.infoUpdated = true;
     };
-    FishPlayer.prototype.updateData = function (data) {
+    FishPlayer.prototype.updateData = function (data, onlyActivelySyncedFields) {
         var _a;
-        if (data.name != undefined) {
-            this.name = data.name;
-            this.cleanedName = Strings.stripColors(data.name).trim();
-            if (this.prefixedName == "Unnamed player [ERROR}")
-                this.prefixedName = data.name;
+        if (onlyActivelySyncedFields === void 0) { onlyActivelySyncedFields = false; }
+        if (!onlyActivelySyncedFields) {
+            if (data.name != undefined) {
+                this.name = data.name;
+                this.cleanedName = Strings.stripColors(data.name).trim();
+                if (this.prefixedName == "Unnamed player [ERROR}")
+                    this.prefixedName = data.name;
+            }
+            if (data.overrideName !== undefined)
+                this.overrideName = data.overrideName;
+            if (data.lastJoined != undefined)
+                this.lastJoined = data.lastJoined;
+            if (data.firstJoined != undefined)
+                this.firstJoined = data.firstJoined;
+            if (data.globalLastJoined != undefined)
+                this.globalLastJoined = data.globalLastJoined;
+            if (data.globalFirstJoined != undefined)
+                this.globalFirstJoined = data.globalFirstJoined;
+            if (data.highlight != undefined)
+                this.highlight = data.highlight;
+            if (data.history != undefined)
+                this.history = data.history;
+            if (data.rainbow != undefined)
+                this.rainbow = data.rainbow;
+            if (data.usid != undefined)
+                this.usid = data.usid;
+            if (data.chatStrictness != undefined)
+                this.chatStrictness = data.chatStrictness;
+            if (data.language != undefined)
+                this.language = data.language;
+            if (data.stats != undefined)
+                this.stats = data.stats;
+            if (data.globalStats != undefined)
+                this.globalStats = data.globalStats;
+            if (data.showRankPrefix != undefined)
+                this.showRankPrefix = data.showRankPrefix;
+            if (data.achievements != undefined)
+                this.achievements = JsonIO.read(Bits, "{bits:".concat(data.achievements, "}"));
         }
-        if (data.overrideName !== undefined)
-            this.overrideName = data.overrideName;
-        if (data.unmuteTime != undefined)
-            this.unmuteTime = data.unmuteTime;
-        if (data.unmarkTime != undefined)
-            this.unmarkTime = data.unmarkTime;
-        if (data.lastJoined != undefined)
-            this.lastJoined = data.lastJoined;
-        if (data.firstJoined != undefined)
-            this.firstJoined = data.firstJoined;
-        if (data.globalLastJoined != undefined)
-            this.globalLastJoined = data.globalLastJoined;
-        if (data.globalFirstJoined != undefined)
-            this.globalFirstJoined = data.globalFirstJoined;
-        if (data.highlight != undefined)
-            this.highlight = data.highlight;
-        if (data.history != undefined)
-            this.history = data.history;
-        if (data.rainbow != undefined)
-            this.rainbow = data.rainbow;
-        if (data.usid != undefined)
-            this.usid = data.usid;
-        if (data.chatStrictness != undefined)
-            this.chatStrictness = data.chatStrictness;
-        if (data.language != undefined)
-            this.language = data.language;
-        if (data.stats != undefined)
-            this.stats = data.stats;
-        if (data.globalStats != undefined)
-            this.globalStats = data.globalStats;
-        if (data.showRankPrefix != undefined)
-            this.showRankPrefix = data.showRankPrefix;
         if (data.rank != undefined)
             this.rank = (_a = ranks_1.Rank.getByName(data.rank)) !== null && _a !== void 0 ? _a : ranks_1.Rank.player;
         if (data.flags != undefined)
             this.flags = new Set(data.flags.map(ranks_1.RoleFlag.getByName).filter(Boolean));
-        if (data.achievements != undefined)
-            this.achievements = JsonIO.read(Bits, "{bits:".concat(data.achievements, "}"));
+        if (data.unmuteTime != undefined)
+            this.unmuteTime = data.unmuteTime;
+        if (data.unmarkTime != undefined)
+            this.unmarkTime = data.unmarkTime;
     };
     /** Use when creating a new FishPlayer. */
     FishPlayer.prototype.downloadData = function () {
@@ -555,7 +559,7 @@ var FishPlayer = /** @class */ (function () {
                     case 1:
                         data = _a.sent();
                         if (data)
-                            this.updateData(data);
+                            this.updateData(data, true); //Ignore changes to the other fields, they may be lost
                         update(this);
                         //of course, this is a race condition
                         //but it's unlikely to happen
@@ -1309,7 +1313,7 @@ var FishPlayer = /** @class */ (function () {
             players.forEach(function (p) { return _this.cachedPlayers[p.uuid] = p; });
         }
         catch (err) {
-            Log.err("[CRITICAL] FAILED TO LOAD CACHED FISH PLAYER DATA");
+            Log.err("Failed to load cached fish player data:");
             Log.err((0, funcs_1.parseError)(err));
             Log.err("=============================");
             Log.err(string);
@@ -1560,7 +1564,8 @@ var FishPlayer = /** @class */ (function () {
         Timer.schedule(function () {
             if (_this.unmarkTime === oldUnmarkTime && _this.connected()) {
                 //Only run the code if the unmark time hasn't changed
-                _this.forceRespawn();
+                if (!_this.ranksAtLeast("mod"))
+                    _this.forceRespawn();
                 _this.updateName();
                 _this.sendMessage("[yellow]Your mark has automatically expired.");
             }
@@ -1701,5 +1706,30 @@ Events.on(EventType.WorldLoadEvent, function () {
 });
 Events.on(EventType.GameOverEvent, function (e) {
     FishPlayer.onGameOver(e.winner);
+});
+Events.on(EventType.ServerLoadEvent, function (e) {
+    FishPlayer.loadAll();
+});
+Timer.schedule(function () {
+    FishPlayer.updateAFKCheck();
+}, 0, 1);
+//Blocks broken and blocks placed stats
+Events.on(EventType.BlockBuildBeginEvent, function (e) {
+    var _a, _b, _c, _d, _e;
+    if (e.breaking) {
+        if (((_b = (_a = e.unit) === null || _a === void 0 ? void 0 : _a.player) === null || _b === void 0 ? void 0 : _b.uuid()) && ((_c = e.tile.build.prevBuild.firstOpt()) === null || _c === void 0 ? void 0 : _c.team) != Team.derelict) {
+            var fishP = FishPlayer.get(e.unit.player);
+            fishP.tstats.blocksBroken++;
+            fishP.tstats.blockInteractionsThisMap++;
+            fishP.updateStats(function (stats) { return stats.blocksBroken++; });
+        }
+    }
+    else {
+        if ((_e = (_d = e.unit) === null || _d === void 0 ? void 0 : _d.player) === null || _e === void 0 ? void 0 : _e.uuid()) {
+            var fishP = FishPlayer.get(e.unit.player);
+            fishP.updateStats(function (stats) { return stats.blocksPlaced++; });
+            fishP.tstats.blockInteractionsThisMap++;
+        }
+    }
 });
 var templateObject_1, templateObject_2;

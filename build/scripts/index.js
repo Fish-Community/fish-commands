@@ -48,20 +48,21 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var automod_1 = require("/automod");
 var api = __importStar(require("/api"));
+var automod_1 = require("/automod");
 var aggregate_1 = require("/commands/aggregate");
 var config_1 = require("/config");
-var commands_1 = require("/frameworks/commands");
 var menus = __importStar(require("/frameworks/menus"));
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var packetHandlers_1 = require("/packetHandlers");
 var players_1 = require("/players");
+var tilelog_1 = require("/tilelog");
 var timers = __importStar(require("/timers"));
 var utils_1 = require("/utils");
 var Menu = menus.Menu;
+//#region connections
 Events.on(EventType.ConnectionEvent, function (e) {
     if (Vars.netServer.admins.bannedIPs.contains(e.connection.address)) {
         api.getBanned({
@@ -123,22 +124,6 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         automod_1.Antibot.triggerAntibot(60000, (veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"), "automatic", false);
         return;
     }
-    var region = Reflect.invoke(e.packet.uuid, "hashCode");
-    var cachedRegion = globals_1.joinDemographics.get(region);
-    if (!cachedRegion) {
-        globals_1.joinDemographics.put(region, e.packet.uuid);
-    }
-    else if (cachedRegion != e.packet.uuid) {
-        var cachedRegion2 = globals_1.joinDemographics2.get(region);
-        if (!cachedRegion2) {
-            globals_1.joinDemographics2.put(region, e.packet.uuid);
-        }
-        else if (cachedRegion2 != e.packet.uuid) {
-            e.connection.blacklist();
-            e.connection.kicked = true;
-            automod_1.Antibot.triggerAntibot(480000, "suspicious UUIDs", "automatic", false, true);
-        }
-    }
     var suspiciousModName = e.packet.mods.contains(function (str) { return str.includes('\x1B'); });
     if (suspiciousModName || e.packet.name.includes('\x1B')) {
         e.connection.blacklist();
@@ -174,17 +159,14 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
     });
     players_1.FishPlayer.onConnectPacket(e.packet);
 });
-Events.on(EventType.ContentInitEvent, function () {
-    //Unhide latum and renale
-    UnitTypes.latum.hidden = false;
-    UnitTypes.renale.hidden = false;
-});
+//#endregion
+//#region event handling
+//Trigger chat effects
 Events.on(EventType.PlayerChatEvent, function (e) { return (0, utils_1.processChat)(e.player, e.message, true); }); //only run effects once
 Events.on(EventType.ServerLoadEvent, function () {
     Time.mark();
     var clientHandler = Vars.netServer.clientCommands;
     var serverHandler = ServerControl.instance.handler;
-    players_1.FishPlayer.loadAll();
     globals_1.FishEvents.fire("loadData", []);
     timers.initializeTimers();
     menus.registerListeners();
@@ -195,7 +177,7 @@ Events.on(EventType.ServerLoadEvent, function () {
     // Vars.netServer.admins.addChatFilter((p, message) => FishPlayer.get(p).hasPerm("member") ? message : foolifyChat(message));
     // Action filters
     Vars.netServer.admins.addActionFilter(function (action) {
-        var _a, _b, _c;
+        var _a;
         var player = action.player;
         var fishP = players_1.FishPlayer.get(player);
         //prevent stopped players from doing anything
@@ -206,14 +188,15 @@ Events.on(EventType.ServerLoadEvent, function () {
         }
         else {
             if (action.type === Administration.ActionType.pickupBlock) {
-                (0, utils_1.addToTileHistory)({
+                (0, tilelog_1.addToTileHistory)({
                     pos: "".concat(action.tile.x, ",").concat(action.tile.y),
                     uuid: action.player.uuid(),
                     action: "picked up",
-                    type: (_b = (_a = action.tile.block()) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : "nothing",
+                    type: action.tile.blockID(),
+                    rotation: 0,
                 });
             }
-            else if (action.type === Administration.ActionType.control && !((_c = action.unit) === null || _c === void 0 ? void 0 : _c.spawnedByCore) && Date.now() < fishP.blockedFromPossessingUnitsUntil) {
+            else if (action.type === Administration.ActionType.control && !((_a = action.unit) === null || _a === void 0 ? void 0 : _a.spawnedByCore) && Date.now() < fishP.blockedFromPossessingUnitsUntil) {
                 action.player.sendMessage("[scarlet]\u26A0 [yellow]You are blocked from controlling units for ".concat((0, utils_1.formatTimeRelative)(fishP.blockedFromPossessingUnitsUntil, true)));
                 return false;
             }
@@ -266,13 +249,14 @@ Events.on(EventType.ServerLoadEvent, function () {
         try {
             globals_1.FishEvents.fire("saveData", []);
         }
-        catch (_b) {
+        catch (err) {
             Packages.java.lang.System.out.println("[E] failed to save misc data");
+            Packages.java.lang.System.out.println(err);
         }
         try {
             players_1.FishPlayer.saveAll(false);
         }
-        catch (_c) {
+        catch (_b) {
             Packages.java.lang.System.out.println("[E] failed to save player data");
         }
         Packages.java.lang.System.out.println("Saved on exit.");
@@ -307,15 +291,18 @@ Events.on(EventType.ServerLoadEvent, function () {
     };
     Log.info("fish-commands: initialized in @ms (incl previous)", Time.elapsed());
 });
-// Keeps track of any action performed on a tile for use in tilelog.
-Events.on(EventType.BlockBuildBeginEvent, utils_1.addToTileHistory);
-Events.on(EventType.BuildRotateEvent, utils_1.addToTileHistory);
-Events.on(EventType.ConfigEvent, utils_1.addToTileHistory);
-Events.on(EventType.PickupEvent, utils_1.addToTileHistory);
-Events.on(EventType.PayloadDropEvent, utils_1.addToTileHistory);
-Events.on(EventType.UnitDestroyEvent, utils_1.addToTileHistory);
-Events.on(EventType.BlockDestroyEvent, utils_1.addToTileHistory);
-Events.on(EventType.UnitControlEvent, utils_1.addToTileHistory);
+Events.on(EventType.GameOverEvent, function () {
+    if (globals_1.fishState.restartQueued) {
+        //restart
+        Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
+        (0, utils_1.serverRestartLoop)(12, true);
+        Events.on(EventType.WorldLoadBeginEvent, function () {
+            //Remove save
+            (0, utils_1.restartNow)(true);
+        });
+    }
+});
+//Patch for Anuken/Mindustry#12521
 Events.on(EventType.UnitControlEvent, function (e) {
     var e_1, _a;
     if (e.unit) {
@@ -334,41 +321,15 @@ Events.on(EventType.UnitControlEvent, function (e) {
         }
     }
 });
-Events.on(EventType.TapEvent, commands_1.handleTapEvent);
-Events.on(EventType.GameOverEvent, function (e) {
-    var e_2, _a;
-    try {
-        for (var _b = __values(Object.keys(globals_1.tileHistory)), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var key = _c.value;
-            //clear tilelog
-            globals_1.tileHistory[key] = null;
-            delete globals_1.tileHistory[key];
-        }
-    }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-    finally {
-        try {
-            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-        }
-        finally { if (e_2) throw e_2.error; }
-    }
-    if (globals_1.fishState.restartQueued) {
-        //restart
-        Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
-        (0, utils_1.serverRestartLoop)(12, true);
-        Events.on(EventType.WorldLoadBeginEvent, function () {
-            //Remove save
-            (0, utils_1.restartNow)(true);
-        });
-    }
+Events.on(EventType.ContentInitEvent, function () {
+    //Unhide latum and renale
+    UnitTypes.latum.hidden = false;
+    UnitTypes.renale.hidden = false;
 });
 Events.on(EventType.PlayEvent, function () {
     globals_1.fishState.startTime = Date.now();
 });
-Events.on(EventType.WaveEvent, function () {
-    if (Vars.state.rules.mode().name() === "survival")
-        utils_1.vnwCondition.onWaveStart();
-});
+//Add a confirm menu for admin requests
 Events.on(EventType.AdminRequestEvent, function (e) {
     if (e.action == Packets.AdminAction.wave) {
         var fishP_2 = players_1.FishPlayer.get(e.player);
@@ -400,4 +361,18 @@ Events.on(EventType.AdminRequestEvent, function (e) {
         }
     }
 });
+//Auto pause (non-pvp)
+var isAutoPaused = false;
+Timer.schedule(function () {
+    if (!Vars.state.rules.pvp && Vars.state.rules.pvpAutoPause && !config_1.Mode.localDebug) {
+        if (Vars.state.isPaused() && isAutoPaused && !Groups.player.isEmpty()) {
+            isAutoPaused = false;
+            Vars.state.set(GameState.State.playing);
+        }
+        else if (Vars.state.isPlaying() && !isAutoPaused && Groups.player.isEmpty()) {
+            isAutoPaused = true;
+            Vars.state.set(GameState.State.paused);
+        }
+    }
+}, 5, 0.1);
 Log.info("fish-commands: parsing done in @ms", Date.now() - this._startTime);

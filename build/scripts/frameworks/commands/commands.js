@@ -131,7 +131,6 @@ exports.joinArgs = joinArgs;
 exports.disambiguateArgument = disambiguateArgument;
 exports.processArgs = processArgs;
 exports.convertArgs = convertArgs;
-exports.handleTapEvent = handleTapEvent;
 exports.register = register;
 exports.registerConsole = registerConsole;
 exports.initialize = initialize;
@@ -794,7 +793,7 @@ var variadicArgumentTypes = ["player", "string", "map", "mapOrRandom"];
 function convertArgs(processedCmdArgs) {
     return processedCmdArgs.map(function (arg) { return arg.isOptional ? "[".concat(arg.name, "]") : "<".concat(arg.name, ">"); }).join(" ");
 }
-function handleTapEvent(event) {
+Events.on(EventType.TapEvent, function (event) {
     var _a;
     var sender = players_1.FishPlayer.get(event.player);
     if (sender.tapInfo.resolve) {
@@ -863,7 +862,7 @@ function handleTapEvent(event) {
             usageData.tapLastUsedSuccessfully = Date.now();
     }
     catch (err) {
-        (0, utils_1.handleError)(err, sender, utils_1.outputFail, "".concat(sender.cleanedName, " ran /").concat(sender.tapInfo.commandName, " and tapped"));
+        (0, errors_1.handleError)(err, sender, utils_1.outputFail, "".concat(sender.cleanedName, " ran /").concat(sender.tapInfo.commandName, " and tapped"));
     }
     finally {
         if (sender.tapInfo.mode == "once" && !handleTapsUpdated) {
@@ -871,7 +870,7 @@ function handleTapEvent(event) {
         }
         usageData.tapLastUsed = Date.now();
     }
-}
+});
 /**
  * Registers all commands in a list to a client command handler.
  **/
@@ -918,7 +917,7 @@ function register(commands, clientHandler, serverHandler) {
                                 return [3 /*break*/, 4];
                             case 3:
                                 err_2 = _b.sent();
-                                (0, utils_1.handleError)(err_2, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
+                                (0, errors_1.handleError)(err_2, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
                                 return [2 /*return*/];
                             case 4:
                                 shouldClearCopy = true;
@@ -991,7 +990,7 @@ function register(commands, clientHandler, serverHandler) {
                                 return [3 /*break*/, 9];
                             case 7:
                                 err_3 = _b.sent();
-                                (0, utils_1.handleError)(err_3, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
+                                (0, errors_1.handleError)(err_3, fishSender, utils_1.outputFail, "".concat(fishSender.cleanedName, " ran /").concat(name));
                                 return [3 /*break*/, 9];
                             case 8:
                                 usageData.lastUsed = globalUsageData[name].lastUsed = Date.now();
@@ -1027,9 +1026,9 @@ function registerConsole(commands, serverHandler) {
         //Process the args
         var processedCmdArgs = data.args.map(processArgString);
         serverHandler.removeCommand(name); //The function silently fails if the argument doesn't exist so this is safe
-        var cmd = serverHandler.register(name, processedCmdArgs.length == 0 ? "" : "[...]", data.description, new CommandHandler.CommandRunner({ accept: function (rawArgs) {
+        var cmd = serverHandler.register(name, processedCmdArgs.length == 0 ? "" : "[...]", data.description, new CommandHandler.CommandRunner({ accept: function (weirdArgs) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var resolvedArgs, err_4, shouldClearPlayers, usageData, failed_2;
+                    var unjoinedRawArgs, rawArgs, resolvedArgs, err_4, shouldClearPlayers, usageData, failed_2;
                     var _a;
                     var _b;
                     return __generator(this, function (_c) {
@@ -1037,11 +1036,14 @@ function registerConsole(commands, serverHandler) {
                             case 0:
                                 if (!initialized)
                                     (0, funcs_1.crash)("Commands not initialized!");
+                                unjoinedRawArgs = weirdArgs.length == 0 ? weirdArgs : weirdArgs[0].split(" ");
+                                rawArgs = joinArgs(unjoinedRawArgs);
                                 _c.label = 1;
                             case 1:
                                 _c.trys.push([1, 3, , 4]);
                                 return [4 /*yield*/, processArgs(rawArgs, processedCmdArgs, null, name)];
                             case 2:
+                                //closure over processedCmdArgs, should be fine
                                 resolvedArgs = _c.sent();
                                 return [3 /*break*/, 4];
                             case 3:

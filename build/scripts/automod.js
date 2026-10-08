@@ -145,6 +145,16 @@ exports.Antibot = {
             this.whackFlaggedPlayers();
     }
 };
+Timer.schedule(function () {
+    //deliberately updating state on clock tick:
+    //avoids memory leak and other complications from Record<ip, IndexedRatekeeper>
+    globals_1.ipJoins.clear();
+}, 0, funcs_1.DurationSecs.minutes(1));
+Timer.schedule(function () {
+    if (exports.Antibot.antiBotMode()) {
+        Call.infoToast("[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ".concat(Vars.netServer.admins.dosBlacklist.size), 2);
+    }
+}, 0, 1);
 function checkVotekickAction(fishP, message) {
     var e_1, _a, e_2, _b, e_3, _c;
     var _d, _e;

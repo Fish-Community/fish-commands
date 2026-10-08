@@ -87,6 +87,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -112,17 +123,6 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
@@ -136,6 +136,7 @@ var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
+var tilelog_1 = require("/tilelog");
 var translation_1 = require("/translation");
 var utils_1 = require("/utils");
 var votes_1 = require("/votes");
@@ -289,7 +290,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var sender = _a.sender, nodeatheffects = _a.args.nodeatheffects;
             var unit = (_b = sender.unit()) !== null && _b !== void 0 ? _b : (0, commands_1.fail)(Math.random() > 0.9 ? "[cyan]omae wa mou shindeiru" : "You are already dead.");
             if (nodeatheffects)
-                unit.remove();
+                Call.unitSafeDeath(unit);
             else
                 unit.kill();
         },
@@ -332,15 +333,23 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             }
         },
         tapped: function (_a) {
-            var _b;
-            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, copy = _a.copy, player = _a.player, sender = _a.sender, admins = _a.admins, data = _a.data;
-            var historyData = (_b = globals_1.tileHistory["".concat(x, ",").concat(y)]) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("There is no recorded history for the selected tile (".concat(tile.x, ", ").concat(tile.y, ")."));
-            var history = funcs_1.StringIO.read(historyData, function (str) { return str.readArray(function (d) { return ({
-                action: d.readString(2),
-                uuid: d.readString(3),
-                time: d.readNumber(16),
-                type: d.readString(2),
-            }); }, 1); }).map(function (h) { return (__assign(__assign({}, h), { info: globals_1.uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null })); });
+            var e_1, _b;
+            var _c;
+            var tile = _a.tile, x = _a.x, y = _a.y, output = _a.output, copy = _a.copy, player = _a.player, sender = _a.sender, data = _a.data;
+            var history = (_c = (0, tilelog_1.getTileHistory)(x, y)) !== null && _c !== void 0 ? _c : (0, commands_1.fail)("There is no recorded history for the selected tile (".concat(x, ", ").concat(y, ")."));
+            try {
+                for (var history_1 = __values(history), history_1_1 = history_1.next(); !history_1_1.done; history_1_1 = history_1.next()) {
+                    var entry = history_1_1.value;
+                    player(entry.info);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (history_1_1 && !history_1_1.done && (_b = history_1.return)) _b.call(history_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
             output("[yellow]Tile history for tile (".concat(tile.x, ", ").concat(tile.y, "):\n") + history.map(function (e) {
                 return e.info ?
                     (sender.hasPerm("viewUUIDs") && data.showUUID ?
@@ -377,6 +386,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             tapped: function (_a) {
                 var x = _a.x, y = _a.y, output = _a.output, outputFail = _a.outputFail, copy = _a.copy, player = _a.player, sender = _a.sender, admins = _a.admins, handleTaps = _a.handleTaps, args = _a.args;
                 function handleArea(p1, p2) {
+                    var e_2, _a;
                     var minX = Math.min(p1[0], p2[0]);
                     var maxX = Math.max(p1[0], p2[0]);
                     var minY = Math.min(p1[1], p2[1]);
@@ -385,23 +395,26 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     var amount = args.amount != null ? Math.floor(Math.abs(args.amount)) : 10;
                     outer: for (var i = minX; i <= maxX; i++) {
                         for (var j = minY; j <= maxY; j++) {
-                            var tileData = globals_1.tileHistory["".concat(i, ",").concat(j)];
-                            if (!tileData)
+                            var history = (0, tilelog_1.getTileHistory)(i, j);
+                            if (!history)
                                 continue;
-                            var history = funcs_1.StringIO.read(globals_1.tileHistory["".concat(i, ",").concat(j)], function (str) { return str.readArray(function (d) {
-                                var _a, _b, _c;
-                                return ({
-                                    action: (_a = d.readString(2)) !== null && _a !== void 0 ? _a : "??",
-                                    uuid: (_b = d.readString(3)) !== null && _b !== void 0 ? _b : "??",
-                                    time: d.readNumber(16),
-                                    type: (_c = d.readString(2)) !== null && _c !== void 0 ? _c : "??",
-                                });
-                            }, 1); }).map(function (h) { return (__assign(__assign({}, h), { info: globals_1.uuidPattern.test(h.uuid) ? player(admins.getInfoOptional(h.uuid)) : null })); });
-                            ;
                             if (args.action)
                                 history = history.filter(function (e) { return e.action === args.action; });
                             if (history.length == 0)
                                 continue;
+                            try {
+                                for (var history_2 = (e_2 = void 0, __values(history)), history_2_1 = history_2.next(); !history_2_1.done; history_2_1 = history_2.next()) {
+                                    var entry = history_2_1.value;
+                                    player(entry.info);
+                                }
+                            }
+                            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                            finally {
+                                try {
+                                    if (history_2_1 && !history_2_1.done && (_a = history_2.return)) _a.call(history_2);
+                                }
+                                finally { if (e_2) throw e_2.error; }
+                            }
                             output("[yellow]Tile history for tile (".concat(i, ", ").concat(j, "):\n") + history.map(function (e) {
                                 return e.info ?
                                     (sender.hasPerm("viewUUIDs") ?
@@ -751,6 +764,11 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         args: ['type:string?', 'color:string?'],
         description: 'Use command to see options and toggle trail on/off.',
         perm: commands_1.Perm.none,
+        init: function () {
+            Timer.schedule(function () {
+                return players_1.FishPlayer.forEachPlayer(function (p) { return p.displayTrail(); });
+            }, 5, 0.15);
+        },
         handler: function (_a) {
             var args = _a.args, sender = _a.sender, output = _a.output, outputFail = _a.outputFail, outputSuccess = _a.outputSuccess;
             //overload 1: type not specified
@@ -814,7 +832,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     this.ohnos = this.ohnos.filter(function (o) { return o && o.isAdded() && !o.dead; });
                 },
                 checkAchievement: function () {
-                    var e_1, _a;
+                    var e_3, _a;
                     try {
                         for (var _b = __values(this.ohnos), _c = _b.next(); !_c.done; _c = _b.next()) {
                             var ohno = _c.value;
@@ -823,12 +841,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                 achievements_1.Achievements.ohno.grantTo(players_1.FishPlayer.get(player), false);
                         }
                     }
-                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    catch (e_3_1) { e_3 = { error: e_3_1 }; }
                     finally {
                         try {
                             if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                         }
-                        finally { if (e_1) throw e_1.error; }
+                        finally { if (e_3) throw e_3.error; }
                     }
                 },
                 killAll: function () {
@@ -1015,24 +1033,35 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         args: ["waves:number?"],
         description: "Vote to start the next wave.",
         perm: commands_1.Perm.play,
-        init: function () { return ({
-            manager: new votes_1.VoteManager(funcs_1.Duration.minutes(1.5))
-                .on("success", function (t) { return (0, utils_1.skipWaves)(t.session.data, true); })
-                .on("vote passed", function () { return Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'); })
-                .on("vote failed", function () { return Call.sendMessage('VNW: [red]Vote failed.'); })
-                .on("player vote change", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has voted on skipping [accent]").concat(t.session.data, "[white] wave(s). [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
-                .on("player vote removed", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has left. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
-        }); },
+        init: function () {
+            var waveUnits = new Seq();
+            Events.on(EventType.WaveEvent, function () {
+                if (Vars.state.rules.mode().name() === "survival") {
+                    waveUnits = Groups.unit.copy().retainAll(function (u) { return u.team == Vars.state.rules.waveTeam; });
+                }
+            });
+            return {
+                waveUnitsAlive: function () {
+                    return waveUnits.contains(boolf(function (u) { return !u.dead && u.team == Vars.state.rules.waveTeam; }));
+                },
+                manager: new votes_1.VoteManager(funcs_1.Duration.minutes(1.5))
+                    .on("success", function (t) { return (0, utils_1.skipWaves)(t.session.data, true); })
+                    .on("vote passed", function () { return Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.'); })
+                    .on("vote failed", function () { return Call.sendMessage('VNW: [red]Vote failed.'); })
+                    .on("player vote change", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has voted on skipping [accent]").concat(t.session.data, "[white] wave(s). [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); })
+                    .on("player vote removed", function (t, player) { return Call.sendMessage("VNW: ".concat(player.name, " [white] has left. [green]").concat(t.currentVotes(), "[white] votes, [green]").concat(t.requiredVotes(), "[white] required.")); }),
+            };
+        },
         requirements: [commands_1.Req.cooldown(3000), commands_1.Req.integerRange("waves", 1, 15), commands_1.Req.mode("survival", "testsrv"), commands_1.Req.gameRunning],
         handler: function (_a) {
             return __awaiter(this, arguments, void 0, function (_b) {
                 var _c;
-                var sender = _b.sender, waves = _b.args.waves, manager = _b.data.manager;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var sender = _b.sender, waves = _b.args.waves, _d = _b.data, manager = _d.manager, waveUnitsAlive = _d.waveUnitsAlive;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
-                            if (!utils_1.vnwCondition.check())
-                                (0, commands_1.fail)("You can only do that when all units from previous waves are dead.");
+                            if (waveUnitsAlive())
+                                (0, commands_1.fail)("You can only run /vnw when all units from previous waves are dead.");
                             if (!!manager.session) return [3 /*break*/, 4];
                             if (!(waves !== null && waves !== void 0)) return [3 /*break*/, 1];
                             _c = waves;
@@ -1042,8 +1071,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                 optionStringifier: function (n) { return "".concat(n, " waves"); }
                             })];
                         case 2:
-                            _c = (waves = _d.sent());
-                            _d.label = 3;
+                            _c = (waves = _e.sent());
+                            _e.label = 3;
                         case 3:
                             _c;
                             if (manager.session) {
@@ -1059,7 +1088,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             return [3 /*break*/, 5];
                         case 4:
                             manager.vote(sender, sender.voteWeight(), null);
-                            _d.label = 5;
+                            _e.label = 5;
                         case 5: return [2 /*return*/];
                     }
                 });

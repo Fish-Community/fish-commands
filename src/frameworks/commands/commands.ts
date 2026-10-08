@@ -8,7 +8,7 @@ For maintenance information, see docs/frameworks.md
 
 import * as api from "/api";
 import { prefixes } from "/config";
-import { CommandError, fail } from "/frameworks/commands/errors";
+import { CommandError, fail, handleError } from "/frameworks/commands/errors";
 import { f_client, f_server, outputFormatter_client } from "/frameworks/commands/formatting";
 import type { FishCommandArgType, FishCommandData, FishCommandHandlerData, FishCommandHandlerUtils, FishConsoleCommandData } from "/frameworks/commands/types";
 import { commandArgNames, CommandArgType, commandArgTypes } from "/frameworks/commands/types";
@@ -18,7 +18,7 @@ import { FishEvents, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank, RoleFlag } from "/ranks";
 import type { ClientCommandHandler, CommandArg, SearchResult, ServerCommandHandler } from "/types";
-import { getBlock, getItem, getMap, getTeam, getUnitType, handleError, match, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
+import { getBlock, getItem, getMap, getTeam, getUnitType, outputConsole, outputFail, outputMessage, outputSuccess, parseTimeString } from "/utils";
 
 const hiddenUnauthorizedMessage = "[scarlet]Unknown command. Check [lightgray]/help[scarlet].";
 
@@ -511,7 +511,7 @@ export function convertArgs(processedCmdArgs:CommandArg[]):string {
 	return processedCmdArgs.map(arg => arg.isOptional ? `[${arg.name}]` : `<${arg.name}>`).join(" ");
 }
 
-export function handleTapEvent(event:EventType["TapEvent"]){
+Events.on(EventType.TapEvent, (event:EventType["TapEvent"]) => {
 	const sender = FishPlayer.get(event.player) as FishPlayer<true>;
 	if(sender.tapInfo.resolve){
 		const tmp = sender.tapInfo.resolve;
@@ -581,7 +581,7 @@ export function handleTapEvent(event:EventType["TapEvent"]){
 		}
 		usageData.tapLastUsed = Date.now();
 	}
-}
+});
 
 /**
  * Registers all commands in a list to a client command handler.
@@ -718,13 +718,15 @@ export function registerConsole(commands:Record<string, FishConsoleCommandData<s
 			name,
 			processedCmdArgs.length == 0 ? "" : "[...]",
 			data.description,
-			new CommandHandler.CommandRunner({ async accept(rawArgs: string[]){
+			new CommandHandler.CommandRunner({ async accept(weirdArgs: string[]){
 				if(!initialized) crash(`Commands not initialized!`);
 
-				//closure over processedCmdArgs, should be fine
-				//Process the args
+				const unjoinedRawArgs = weirdArgs.length == 0 ? weirdArgs : weirdArgs[0].split(" ");
+				const rawArgs = joinArgs(unjoinedRawArgs);
 				let resolvedArgs;
+				//Process the args
 				try {
+					//closure over processedCmdArgs, should be fine
 					resolvedArgs = await processArgs(rawArgs, processedCmdArgs, null, name);
 				} catch(err){
 					//if args are invalid

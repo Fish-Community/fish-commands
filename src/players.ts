@@ -128,6 +128,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 	isImpersonator = false;
 	joinedAlready = false;
 	sneakybanned = false;
+	lastRequestedData: number = -1;
 	//#endregion
 	
 	//#region Stored data
@@ -366,31 +367,33 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		}
 		this.infoUpdated = true;
 	}
-	updateData(data: Partial<FishPlayerData>){
-		if(data.name != undefined){
-			this.name = data.name;
-			this.cleanedName = Strings.stripColors(data.name).trim();
-			if(this.prefixedName == "Unnamed player [ERROR}") this.prefixedName = data.name;
+	updateData(data: Partial<FishPlayerData>, onlyActivelySyncedFields = false){
+		if(!onlyActivelySyncedFields){
+			if(data.name != undefined){
+				this.name = data.name;
+				this.cleanedName = Strings.stripColors(data.name).trim();
+				if(this.prefixedName == "Unnamed player [ERROR}") this.prefixedName = data.name;
+			}
+			if(data.overrideName !== undefined) this.overrideName = data.overrideName;
+			if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
+			if(data.firstJoined != undefined) this.firstJoined = data.firstJoined;
+			if(data.globalLastJoined != undefined) this.globalLastJoined = data.globalLastJoined;
+			if(data.globalFirstJoined != undefined) this.globalFirstJoined = data.globalFirstJoined;
+			if(data.highlight != undefined) this.highlight = data.highlight;
+			if(data.history != undefined) this.history = data.history;
+			if(data.rainbow != undefined) this.rainbow = data.rainbow;
+			if(data.usid != undefined) this.usid = data.usid;
+			if(data.chatStrictness != undefined) this.chatStrictness = data.chatStrictness;
+			if(data.language != undefined) this.language = data.language;
+			if(data.stats != undefined) this.stats = data.stats;
+			if(data.globalStats != undefined) this.globalStats = data.globalStats;
+			if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
+			if(data.achievements != undefined) this.achievements = JsonIO.read(Bits, `{bits:${data.achievements}}`);
 		}
-		if(data.overrideName !== undefined) this.overrideName = data.overrideName;
-		if(data.unmuteTime != undefined) this.unmuteTime = data.unmuteTime;
-		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
-		if(data.lastJoined != undefined) this.lastJoined = data.lastJoined;
-		if(data.firstJoined != undefined) this.firstJoined = data.firstJoined;
-		if(data.globalLastJoined != undefined) this.globalLastJoined = data.globalLastJoined;
-		if(data.globalFirstJoined != undefined) this.globalFirstJoined = data.globalFirstJoined;
-		if(data.highlight != undefined) this.highlight = data.highlight;
-		if(data.history != undefined) this.history = data.history;
-		if(data.rainbow != undefined) this.rainbow = data.rainbow;
-		if(data.usid != undefined) this.usid = data.usid;
-		if(data.chatStrictness != undefined) this.chatStrictness = data.chatStrictness;
-		if(data.language != undefined) this.language = data.language;
-		if(data.stats != undefined) this.stats = data.stats;
-		if(data.globalStats != undefined) this.globalStats = data.globalStats;
-		if(data.showRankPrefix != undefined) this.showRankPrefix = data.showRankPrefix;
 		if(data.rank != undefined) this.rank = Rank.getByName(data.rank) ?? Rank.player;
 		if(data.flags != undefined) this.flags = new Set(data.flags.map(RoleFlag.getByName).filter(Boolean));
-		if(data.achievements != undefined) this.achievements = JsonIO.read(Bits, `{bits:${data.achievements}}`);
+		if(data.unmuteTime != undefined) this.unmuteTime = data.unmuteTime;
+		if(data.unmarkTime != undefined) this.unmarkTime = data.unmarkTime;
 	}
 	/** Use when creating a new FishPlayer. */
 	async downloadData(){
@@ -416,7 +419,7 @@ export class FishPlayer<Connected extends boolean = boolean> {
 		update(this);
 		beforeFetch?.(this);
 		const data = await api.getFishPlayerData(this.uuid);
-		if(data) this.updateData(data);
+		if(data) this.updateData(data, true); //Ignore changes to the other fields, they may be lost
 		update(this);
 		//of course, this is a race condition
 		//but it's unlikely to happen
@@ -1062,7 +1065,7 @@ We apologize for the inconvenience.`
 			out.expectEOF();
 			players.forEach(p => this.cachedPlayers[p.uuid] = p);
 		} catch(err){
-			Log.err(`[CRITICAL] FAILED TO LOAD CACHED FISH PLAYER DATA`);
+			Log.err(`Failed to load cached fish player data:`);
 			Log.err(parseError(err));
 			Log.err("=============================");
 			Log.err(string);
@@ -1319,7 +1322,7 @@ We apologize for the inconvenience.`
 		Timer.schedule(() => {
 			if(this.unmarkTime === oldUnmarkTime && this.connected()){
 				//Only run the code if the unmark time hasn't changed
-				this.forceRespawn();
+				if(!this.ranksAtLeast("mod")) this.forceRespawn();
 				this.updateName();
 				this.sendMessage("[yellow]Your mark has automatically expired.");
 			}
@@ -1423,4 +1426,28 @@ Events.on(EventType.WorldLoadEvent, () => {
 });
 Events.on(EventType.GameOverEvent, (e) => {
 	FishPlayer.onGameOver(e.winner);
+});
+Events.on(EventType.ServerLoadEvent, e => {
+	FishPlayer.loadAll();
+});
+Timer.schedule(() => {
+	FishPlayer.updateAFKCheck();
+}, 0, 1);
+
+//Blocks broken and blocks placed stats
+Events.on(EventType.BlockBuildBeginEvent, e => {
+	if(e.breaking){
+		if(e.unit?.player?.uuid() && e.tile.build.prevBuild.firstOpt()?.team != Team.derelict){
+			const fishP = FishPlayer.get(e.unit.player);
+			fishP.tstats.blocksBroken ++;
+			fishP.tstats.blockInteractionsThisMap ++;
+			fishP.updateStats(stats => stats.blocksBroken ++);
+		}
+	} else {
+		if(e.unit?.player?.uuid()){
+			const fishP = FishPlayer.get(e.unit.player);
+			fishP.updateStats(stats => stats.blocksPlaced ++);
+			fishP.tstats.blockInteractionsThisMap ++;
+		}
+	}
 });

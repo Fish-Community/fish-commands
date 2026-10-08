@@ -6,11 +6,11 @@ For usage information, see docs/framework-usage-guide.md
 For maintenance information, see docs/frameworks.md
 */
 
-import { fail } from "/frameworks/commands";
+import { fail, handleError } from "/frameworks/commands";
 import { to2DArray } from "/funcs";
 import { FishPlayer } from "/players";
 import { Promise } from "/promise";
-import { handleError, outputFail } from "/utils";
+import { outputFail } from "/utils";
 
 /** Used to change the behavior of adding another menu when being run in a menu callback. */
 let isInMenuCallback = false;

@@ -10,9 +10,10 @@ import { updateMaps } from "/files";
 import * as fjsContext from "/fjsContext";
 import { consoleCommandList, fail } from "/frameworks/commands";
 import { Duration, escapeStringColorsServer, to2DArray } from "/funcs";
-import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, tileHistory, uuidPattern } from "/globals";
+import { FishEvents, fishState, ipPattern, ipPortPattern, maxTime, uuidPattern } from "/globals";
 import { FishPlayer } from "/players";
 import { Rank } from "/ranks";
+import { tileHistory } from "/tilelog";
 import { colorNumber, fishCommandsRootDirPath, formatTime, formatTimeRelative, formatTimestampFull, getAntiBotInfo, getIPRange, logAction, serverRestartLoop, unblacklist, updateBans } from "/utils";
 
 
@@ -560,7 +561,7 @@ export const commands = consoleCommandList({
 Total: ${Math.round(Core.app.getJavaHeap() / (2 ** 10))} KB
 Number of cached fish players: ${Object.keys(FishPlayer.cachedPlayers).length} (stored locally: ${Object.values(FishPlayer.cachedPlayers).filter(p => p.shouldCache()).length})
 Fish player data string length: ${FishPlayer.getFishPlayersString.length} (${Core.settings.getInt("fish-subkeys")} subkeys)
-Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, a) => acc + a.length, 0) / (2 ** 10))} KB`
+Length of tilelog entries: ${Math.round(tileHistory.values().toArray().sum(a => a.length) / 1000)} KB`
 			);
 		}
 	},
@@ -633,7 +634,7 @@ Length of tilelog entries: ${Math.round(Object.values(tileHistory).reduce((acc, 
 				"&br";
 			output(`
 Status:
-Playing on map &fi${Vars.state.map.plainName()}&fr for ${formatTime(1000 * Vars.state.tick / 60)}
+${Vars.state.isPaused() ? "Playing" : "Paused"} on map &fi${Vars.state.map.plainName()}&fr for ${formatTime(1000 * Vars.state.tick / 60)}
 ${Vars.state.rules.waves ? `Wave &c${Vars.state.wave}&fr, &c${Math.ceil(Vars.state.wavetime / 60)}&fr seconds until next wave.\n` : ""}\
 &c${Groups.unit.size()}&fr units, &c${Vars.state.enemies}&fr enemies, &c${Groups.build.size()}&fr buildings
 TPS: ${colorNumber(Core.graphics.getFramesPerSecond(), f => f > 58 ? "&g" : f > 30 ? "&y" : f > 10 ? "&r" : "&br&w", "server")}, \

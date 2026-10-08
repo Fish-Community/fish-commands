@@ -119,6 +119,7 @@ export type Label = {
 	y: number | null;
 	task: TimerTask | null;
 	id: number;
+	expiry: number;
 };
 
 export type AntibotData = {
@@ -127,3 +128,11 @@ export type AntibotData = {
 };
 
 export type SearchResult<T> = T | T[] | null;
+
+/**
+ * A message that requires some other data to complete it.
+ * For example, format string cannot be fully interpolated without knowing their start color,
+ * so they return a function that accepts that information.
+ */
+export type PartialFormatString<TData = string | null> = ((data: TData) => string) & { __partialFormatString: true; };
+

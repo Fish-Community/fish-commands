@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 
 /*
 Copyright © BalaM314, 2026. All Rights Reserved.
@@ -91,6 +92,7 @@ const Vars: {
 		clientCommands: CommandHandler;
 		kickAll(kickReason:any):void;
 		addPacketHandler(name:string, handler:(player:mindustryPlayer, content:string) => unknown):void;
+		addBinaryPacketHandler(name:string, handler:(player:mindustryPlayer, content:number[]) => unknown):void;
 		currentlyKicking: VoteSession | null;
 		votesRequired():number;
 		assigner: (player:Player, players:MIterable<Player>) => Team;
@@ -161,6 +163,9 @@ type Content = {
 	items(): Seq<Item>;
 	units(): Seq<UnitType>;
 	blocks(): Seq<Block>;
+	item(id:string | number): Item;
+	unit(id:string | number): UnitType;
+	block(id:string | number): Block;
 	statusEffects(): Seq<StatusEffect>;
 };
 class World {
@@ -252,9 +257,11 @@ class Tile {
 	build: Building | null;
 	breakable():boolean;
 	block():Block;
+	blockID():number;
 	floor():Block;
 	remove():void;
 	removeNet():void;
+	pos():number;
 	setNet(block:Block, team:Team, rotation:number):void;
 	getLinkedTiles(callback:(t:Tile) => void):void;
 }
@@ -277,6 +284,7 @@ class Block {
 	emoji(): string;
 }
 class Building {
+	id: number;
 	block: Block;
 	tile: Tile;
 	items: ItemModule;
@@ -292,6 +300,7 @@ class Building {
 	storageCapacity?: number;
 	dead: boolean;
 	linkedCore: Building | null;
+	rotation: 0 | 1 | 2 | 3;
 	timeScale(): number;
 	kill():void;
 	tileX():number;
@@ -599,8 +608,10 @@ class DataInputStream extends InputStream {
 	skipBytes(n:number):number;
 }
 class ByteArrayOutputStream extends OutputStream {
-	constructor();
+	constructor(capacity?: number);
 	toByteArray():number[];
+	size():number;
+	reset():void;
 }
 class ByteArrayInputStream extends InputStream {
 	constructor(bytes:number[]);
@@ -608,6 +619,27 @@ class ByteArrayInputStream extends InputStream {
 
 class Writes {
 	constructor(output: DataOutputStream);
+	b(value:number):void;
+	b(bytes:number[]):void;
+	bool(value:boolean):void;
+	s(value:number):void;
+	i(value:number):void;
+	l(value:number):void;
+	f(value:number):void;
+	d(value:number):void;
+	str(value:string | null):void;
+}
+class Reads {
+	constructor(input: DataInputStream);
+	b():number;
+	b(length:number):number[];
+	bool():boolean;
+	s():number;
+	i():number;
+	l():number;
+	f():number;
+	d():number;
+	str():string | null;
 }
 
 class Seq<T> {
@@ -639,6 +671,7 @@ class Seq<T> {
 	isEmpty():boolean;
 	any():boolean;
 	map<R>(mapFunc:(item:T) => R):Seq<R>;
+	sum(summer:(item:T) => number):number;
 	flatMap<R>(mapFunc:(item:T) => Seq<R>):Seq<R>;
 	toString(separator?:string, stringifier?:(item:T) => string):string;
 	toArray():T[];
@@ -684,7 +717,7 @@ class IntSet {
 }
 class ObjectMap<K, V> {
 	put(key:K, value:V):void;
-	get(key:K):V;
+	get(key:K):V | null;
 	get(key:K, defaultValue:V):V;
 	get(key:K, prov:(key:K)=>V):V;
 	containsKey(key:K):boolean;
@@ -711,6 +744,23 @@ class ObjectIntMap<K> {
 class ObjectIntMapEntry<K> {
 	key:K;
 	value:number;
+}
+class IntMap<V> {
+	constructor(initialCapacity?:number);
+	put(key:number, value:V):void;
+	putAll(map:IntMap<V>):void;
+	get(key:number):V | null;
+	clear():void;
+	remove(key:number):number | null;
+	size:number;
+	forEach(func:(_:IntMapEntry<V>) => void):void;
+	values(): {
+		toArray():Seq<V>;
+	};
+}
+class IntMapEntry<V> {
+	key:number;
+	value:V;
 }
 class StringMap {
 	getFloat(key:string):number;
@@ -767,6 +817,7 @@ type Unit = {
 	remove():void;
 	add():void;
 	isAdded():boolean;
+	isPlayer():boolean;
 	set(x: number, y:number):void;
 	approach(vec: Vec2):void;
 	hasPayload: undefined | (() => boolean);
@@ -787,6 +838,7 @@ class NetConnection {
 	kick(reason:string, duration?:number):void;
 	kick(reason:KickReason, duration?:number):void;
 	sendStream(data:any):void;
+	send(data:any, reliable:boolean):void;
 	blacklist():void;
 	isConnected(): boolean;
 }
@@ -816,6 +868,7 @@ class Fi {
 	length():number;
 	lastModified():number;
 	write():OutputStream;
+	read(bufferSize:number):InputStream;
 	list():Fi[];
 	name():string;
 	readBytes():number[];
@@ -872,6 +925,9 @@ type AdminAction = {};
 
 class ConstructBlock {
 	static ConstructBuild: any;
+}
+class MassDriver {
+	static MassDriverBuild: any;
 }
 class CoreBlock {
 
@@ -962,20 +1018,16 @@ class VoteSession {
 	private votes: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Array<T> {
 	filter(predicate: BooleanConstructor, thisArg?: any): Array<T extends (false | 0 | "" | null | undefined) ? never : T>;
 }
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ReadonlyArray<T> {
 	map<TThis extends ReadonlyArray<T>, U>(this:TThis, fn:(v:T, i:number, a:TThis) => U): number extends TThis["length"] ? U[] : { [K in keyof TThis]: U };
 }
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ObjectConstructor {
 	entries<const K extends PropertyKey, V>(input:Record<K, V>):Array<[K, V]>;
 	fromEntries<const K extends PropertyKey, V>(input:Array<[K, V]>):Record<K, V>;
 }
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface SymbolConstructor {
 	readonly metadata: unique symbol;
 }
@@ -1032,6 +1084,10 @@ class ConnectPacket {
 	usid: string;
 	mobile: boolean;
 	color: number;
+}
+class ClientBinaryPacketReliableCallPacket {
+	type: string | null;
+	contents: number[];
 }
 
 type ByteBuffer = {
@@ -1111,7 +1167,6 @@ class Ratekeeper {
 	allow(spacingMS:number, cap:number):boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface MIterable<T> {
 	iterator(): Iterator<T>;
 	forEach(_:(item:T) => void):void;
@@ -1127,5 +1182,50 @@ class AtomicInteger {
 class ValidateException extends Error {
 	constructor(player:Player, s: string);
 }
+
+interface QuadTreeObject {
+	hitbox(out:Rect):void;
+}
+class Rect {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	constructor(x: number, y: number, width: number, height: number);
+}
+class QuadTree<T extends QuadTreeObject>{
+	bounds: Rect;
+	totalObjects: number;
+	objects: Seq<T>;
+	constructor(bounds: Rect);
+	insert(obj:T):void;
+	remove(obj:T):void;
+	clear():void;
+	intersect(x:number, y:number, width:number, height:number, callback:(item:T) => void):void;
+	intersect(rect:Rect, callback:(item:T) => void):void;
+	intersect(x:number, y:number, width:number, height:number, out:Seq<T>):void;
+	getObjects(out:Seq<T>):void;
+	find(x:number, y:number, width:number, height:number, predicate:(item:T) => boolean):T | null;
+}
+
+class Point2 {
+	x: number;
+	y: number;
+	constructor();
+	constructor(x: number, y: number);
+	static pack(x: number, y: number):number;
+	static x(packed: number):number;
+	static y(packed: number):number;
+	static unpack(packed: number):Point2;
+}
+
+const TypeIO: {
+	readObject(read: Reads, boxBuildings?: boolean):unknown;
+	writeObject(write: Writes, object: unknown):void;
+	writeBlock(write: Writes, block: Block | null):void;
+	writeUnitType(write: Writes, block: UnitType | null):void;
+};
+
+const ByteBuffer: any;
 
 }
