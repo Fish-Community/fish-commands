@@ -12,7 +12,7 @@ Most important player information is stored in the FishPlayer class. This data n
 
 ### Data
 
-See `type FishPlayerData` in [src/types.ts](/src/types.ts) for up-to-date information.
+The synchronized fields are assembled by `FishPlayer.getData()` and applied by its data-loading methods in [src/players.yopta](/src/players.yopta). TypeScript-only type declarations were removed during the YoptaScript migration; the runtime data format and serialization behavior remain in these methods.
 
 Some data is "unsynced", meaning it is not synced between servers and can be different on each server. However, this data is still stored on the database, to make it easy to change the gamemode of a server.
 
@@ -111,7 +111,7 @@ Player count data is stored on each server using the serialization framework.
 
 Some information about the current map run is stored locally, to keep it through a server restart. The maximum player count reached and the time elapsed are stored in `Core.settings`.
 
-Some information is stored for each run on a map. See `class FinishedMapRun` in [src/maps.ts](/src/maps.ts) for up-to-date information.
+Some information is stored for each run on a map. See `FinishedMapRun` in [src/maps.yopta](/src/maps.yopta) for up-to-date information.
 
 Map run data is stored on each server using the serialization framework. This data gets processed into statistics and displayed by the `/mapinfo` command.
 
@@ -126,4 +126,3 @@ We use the vanilla PlayerInfo system to track the following fields for moderatio
 These fields are read by the `info` and `/info` commands. Join count is used in many places throughout the plugin for decision logic.
 
 This data is currently not synced.
-

@@ -1,11 +1,4 @@
 "use strict";
-/* eslint-disable @typescript-eslint/array-type */
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the menu framework.
-For usage information, see docs/framework-usage-guide.md
-For maintenance information, see docs/frameworks.md
-*/
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -72,18 +65,15 @@ var funcs_1 = require("/funcs");
 var players_1 = require("/players");
 var promise_1 = require("/promise");
 var utils_1 = require("/utils");
-/** Used to change the behavior of adding another menu when being run in a menu callback. */
 var isInMenuCallback = false;
-/** Stores a mapping from name to the numeric id of a listener that has been registered. */
 var registeredListeners = {};
 exports.listeners = registeredListeners;
-/** Stores all listeners in use by fish-commands. */
 var listeners = {
     generic: function (player, option) {
         var fishSender = players_1.FishPlayer.get(player);
         var prevCallback = fishSender.activeMenus.shift();
         if (!prevCallback)
-            return; //No menu to process, do nothing
+            return;
         if (prevCallback.type != "menu")
             return;
         isInMenuCallback = true;
@@ -91,19 +81,16 @@ var listeners = {
         isInMenuCallback = false;
     },
     none: function (player, option) {
-        //do nothing
     }
 };
-/** Stores a mapping from name to the numeric id of a listener that has been registered. */
 var registeredTextListeners = {};
 exports.textListeners = registeredTextListeners;
-/** Stores all listeners in use by fish-commands. */
 var textListeners = {
     generic: function (player, text) {
         var fishSender = players_1.FishPlayer.get(player);
         var prevCallback = fishSender.activeMenus.shift();
         if (!prevCallback)
-            return; //No menu to process, do nothing
+            return;
         if (prevCallback.type != "text")
             return;
         isInMenuCallback = true;
@@ -111,11 +98,9 @@ var textListeners = {
         isInMenuCallback = false;
     },
     none: function (player, option) {
-        //do nothing
     }
 };
 exports.Cancel = Symbol("Cancel");
-/** Registers all listeners, should be called on server load. */
 function registerListeners() {
     var e_1, _a, e_2, _b;
     var _c, _d;
@@ -147,23 +132,13 @@ function registerListeners() {
     }
 }
 exports.Menu = {
-    /** Displays a menu to a player, returning a Promise. */
     raw: function (title, description, arrangedOptions, target, _a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.optionStringifier, optionStringifier = _c === void 0 ? String : _c, _d = _b.onCancel, onCancel = _d === void 0 ? "reject" : _d, _e = _b.cancelOptionId, cancelOptionId = _e === void 0 ? -1 : _e;
         var _f = promise_1.Promise.withResolvers(), promise = _f.promise, reject = _f.reject, resolve = _f.resolve;
-        //The target fishPlayer has a property called activeMenu, which stores information about the last menu triggered.
-        //If menu() is being called from a menu calback, add it to the front of the queue so it is processed before any other menus.
-        //Otherwise, two multi-step menus queued together would alternate, which would confuse the player.
         target.activeMenus[isInMenuCallback ? "unshift" : "push"]({ type: "menu", callback: function (option) {
-                //Additional permission validation could be done here, but the only way that callback() can be called is if the above statement executed,
-                //and on sensitive menus such as the stop menu, the only way to reach that is if menu() was called by the /stop command,
-                //which already checks permissions.
-                //Additionally, the callback is cleared by the generic menu listener after it is executed.
                 try {
                     var options = arrangedOptions.flat();
-                    //We do need to validate option though, as it can be any number.
                     if (option === -1 || option === cancelOptionId || !(option in options)) {
-                        //Consider any invalid option to be a cancellation
                         if (onCancel == "null")
                             resolve(null);
                         else if (onCancel == "reject")
@@ -189,18 +164,10 @@ exports.Menu = {
         Call.menu(target.con(), registeredListeners.generic, title, description, stringifiedOptions);
         return promise;
     },
-    /** Displays a text input menu to a player, returning a Promise. */
     text: function (title, description, target, _a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.onCancel, onCancel = _c === void 0 ? "reject" : _c, _d = _b.defaultValue, defaultValue = _d === void 0 ? "" : _d, _e = _b.maxTextLength, maxTextLength = _e === void 0 ? 9999 : _e, _f = _b.positiveIntegersOnly, positiveIntegersOnly = _f === void 0 ? false : _f, _g = _b.allowEmpty, allowEmpty = _g === void 0 ? false : _g;
         var _h = promise_1.Promise.withResolvers(), promise = _h.promise, reject = _h.reject, resolve = _h.resolve;
-        //The target fishPlayer has a property called activeMenu, which stores information about the last menu triggered.
-        //If menu() is being called from a menu calback, add it to the front of the queue so it is processed before any other menus.
-        //Otherwise, two multi-step menus queued together would alternate, which would confuse the player.
         target.activeMenus[isInMenuCallback ? "unshift" : "push"]({ type: "text", callback: function (text) {
-                //Additional permission validation could be done here, but the only way that callback() can be called is if the above statement executed,
-                //and on sensitive menus such as the stop menu, the only way to reach that is if menu() was called by the /stop command,
-                //which already checks permissions.
-                //Additionally, the callback is cleared by the generic menu listener after it is executed.
                 try {
                     if (positiveIntegersOnly && text != null) {
                         var number = Number(text);
@@ -225,16 +192,11 @@ exports.Menu = {
         Call.textInput(target.con(), registeredListeners.generic, title, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty);
         return promise;
     },
-    /** Displays a menu to a player, returning a Promise. Arranges provided options into a 2D array, and can add a Cancel option. */
     menu: function (title, description, options, target, _a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.includeCancel, includeCancel = _c === void 0 ? false : _c, _d = _b.optionStringifier, optionStringifier = _d === void 0 ? String : _d, _e = _b.columns, columns = _e === void 0 ? 3 : _e, _f = _b.onCancel, onCancel = _f === void 0 ? "reject" : _f, _g = _b.cancelOptionId, cancelOptionId = _g === void 0 ? -1 : _g;
-        //Set up the 2D array of options, and maybe add cancel
-        //Call.menu() with [[]] will cause a client crash, make sure to pass [] instead
         var arrangedOptions = (options.length == 0 && !includeCancel) ? [] : (0, funcs_1.to2DArray)(options, columns);
         if (includeCancel) {
             arrangedOptions.push(["[red]Cancel[]"]);
-            //This is safe because cancelOptionId is set,
-            //so the handler will never get called with "Cancel".
             cancelOptionId = options.length;
         }
         return exports.Menu.raw(title, description, arrangedOptions, target, {
@@ -243,7 +205,6 @@ exports.Menu = {
             optionStringifier: optionStringifier
         });
     },
-    /** Rejects with a CommandError if the user chooses to cancel. */
     confirm: function (target, description, _a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.cancelOutput, cancelOutput = _c === void 0 ? "Cancelled." : _c, _d = _b.title, title = _d === void 0 ? "Confirm" : _d, _e = _b.confirmText, confirmText = _e === void 0 ? "[green]Confirm" : _e, _f = _b.cancelText, cancelText = _f === void 0 ? "[red]Cancel" : _f;
         if (Date.now() < target.skipConfirm)
@@ -251,10 +212,9 @@ exports.Menu = {
         return exports.Menu.menu(title, description, [confirmText, cancelText], target, { onCancel: "reject", cancelOptionId: 1 }).catch(function (e) {
             if (e === exports.Cancel)
                 (0, commands_1.fail)(cancelOutput);
-            throw e; //some random error, rethrow it
+            throw e;
         });
     },
-    /** Same as confirm(), but with inverted colors, for potentially dangerous actions. */
     confirmDangerous: function (target, description, _a) {
         if (_a === void 0) { _a = {}; }
         var _b = _a.confirmText, confirmText = _b === void 0 ? "[red]Confirm" : _b, _c = _a.cancelText, cancelText = _c === void 0 ? "[green]Cancel" : _c, rest = __rest(_a, ["confirmText", "cancelText"]);
@@ -262,10 +222,6 @@ exports.Menu = {
             return;
         return exports.Menu.confirm(target, description, __assign({ cancelText: cancelText, confirmText: confirmText }, rest));
     },
-    /**
-     * Displays a menu to a player, returning a Promise.
-     * Accepts pre-generated data and text. Alternative to optionStringifier if the text is already generated.
-     */
     buttons: function (target, title, description, options, cfg) {
         if (cfg === void 0) { cfg = {}; }
         var cancelOptionId, i;
@@ -279,11 +235,6 @@ exports.Menu = {
         }
         return exports.Menu.raw(title, description, options, target, __assign(__assign({}, cfg), { cancelOptionId: cancelOptionId, optionStringifier: function (o) { return o.text; } })).then(function (o) { return o === null || o === void 0 ? void 0 : o.data; });
     },
-    /**
-     * Displays a menu to a player, returning a Promise.
-     * Adds left and right arrows to switch pages.
-     * Shows different options based on the page.
-     */
     pages: function (target, title, description, options, cfg) {
         var _a = promise_1.Promise.withResolvers(), promise = _a.promise, reject = _a.reject, resolve = _a.resolve;
         function showPage(index) {
@@ -302,23 +253,16 @@ exports.Menu = {
                 else if (response === "left")
                     showPage(Math.max(index - 1, 0));
                 else {
-                    //Treat numbers as cancel
                     if (cfg.onCancel == "null")
                         resolve(null);
                     else if (cfg.onCancel == "reject")
                         reject(exports.Cancel);
-                    //otherwise, just let the promise hang
                 }
             });
         }
         showPage(0);
         return promise;
     },
-    /**
-     * Displays a menu to a player, returning a Promise.
-     * Adds left and right arrows to switch pages.
-     * Shows different text based on the current page.
-     */
     textPages: function (target, pages, options, cfg) {
         if (options === void 0) { options = []; }
         if (cfg === void 0) { cfg = {}; }
@@ -348,12 +292,10 @@ exports.Menu = {
                     resolve([index, options[response[0]]]);
                 }
                 else {
-                    //Treat numbers as cancel
                     if (cfg.onCancel == "null")
                         resolve(null);
                     else if (cfg.onCancel == "reject")
                         reject(exports.Cancel);
-                    //otherwise, just let the promise hang
                 }
             });
         }
@@ -376,12 +318,6 @@ exports.Menu = {
         showPage(index);
         return promise;
     },
-    /**
-     * Displays a menu to a player, returning a Promise.
-     * Accepts a 2D array of options and shows a region of that 2D grid.
-     * Adds arrows to scroll left/right/up/down.
-     * Resolves to the selected option.
-     */
     scroll2D: function (target, title, description, options, cfg) {
         var _a, _b;
         if (cfg === void 0) { cfg = {}; }
@@ -423,41 +359,28 @@ exports.Menu = {
                 else if (response === "down")
                     showPage(x, Math.min(y + 1, height - rows));
                 else {
-                    //Treat numbers as cancel
                     if (cfg.onCancel == "null")
                         resolve(null);
                     else if (cfg.onCancel == "reject")
                         reject(exports.Cancel);
-                    //otherwise, just let the promise hang
                 }
             });
         }
         showPage(Math.min((_a = cfg.x) !== null && _a !== void 0 ? _a : 0, width - cols), Math.min((_b = cfg.y) !== null && _b !== void 0 ? _b : 0, height - rows));
         return promise;
     },
-    /**
-     * Displays a menu to a player, returning a Promise.
-     * Adds left and right arrows to switch pages. Automatically paginates provided options.
-     * Accepts pre-generated data and text. Alternative to optionStringifier if the text is already generated.
-     */
     pagedListButtons: function (target, title, description, options, _a) {
         var _b;
         var _c = _a.rowsPerPage, rowsPerPage = _c === void 0 ? 10 : _c, _d = _a.columns, columns = _d === void 0 ? 3 : _d, cfg = __rest(_a, ["rowsPerPage", "columns"]);
-        //Generate pages
         var pages = (0, funcs_1.to2DArray)((0, funcs_1.to2DArray)(options, columns), rowsPerPage);
         if (pages.length <= 1)
             return exports.Menu.buttons(target, title, description, (_b = pages[0]) !== null && _b !== void 0 ? _b : [], cfg);
         return exports.Menu.pages(target, title, description, pages, cfg);
     },
-    /**
-     * Displays a menu to a player, returning a Promise.
-     * Adds left and right arrows to switch pages. Automatically paginates provided options.
-     */
     pagedList: function (target, title, description, options, _a) {
         var _b;
         if (_a === void 0) { _a = {}; }
         var _c = _a.rowsPerPage, rowsPerPage = _c === void 0 ? 10 : _c, _d = _a.columns, columns = _d === void 0 ? 3 : _d, _e = _a.optionStringifier, optionStringifier = _e === void 0 ? String : _e, cfg = __rest(_a, ["rowsPerPage", "columns", "optionStringifier"]);
-        //Generate pages
         var pages = (0, funcs_1.to2DArray)((0, funcs_1.to2DArray)(options.map(function (o) { return ({ data: o, get text() { return optionStringifier(o); } }); }), columns), rowsPerPage);
         if (pages.length <= 1)
             return exports.Menu.buttons(target, title, description, (_b = pages[0]) !== null && _b !== void 0 ? _b : [], cfg);

@@ -1,10 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the code for automated map syncing.
-Original contributor: @author Jurorno9
-Maintenance: @author BalaM314
-*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateMaps = updateMaps;
 var config_1 = require("/config");
@@ -12,7 +6,6 @@ var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var promise_1 = require("/promise");
 var utils_1 = require("/utils");
-//if we switch to a self-hosted setup, just make it respond with the githubfile object for a drop-in replacement
 function fetchGithubContents() {
     return new promise_1.Promise(function (resolve, reject) {
         var url = config_1.mapRepoURLs[config_1.Gamemode.name()];
@@ -23,7 +16,6 @@ function fetchGithubContents() {
         res.error(function (err) { return reject("Network error while fetching github repository contents: " + err); });
         res.submit(function (res) {
             try {
-                //Trust github to return valid JSON data
                 resolve(JSON.parse(res.getResultAsString()));
             }
             catch (e) {
@@ -66,13 +58,8 @@ function downloadMaps(githubListing) {
         return downloadFile(fileEntry.download_url, Vars.customMapDirectory.child(fileEntry.name).absolutePath());
     })).then(function (v) { });
 }
-/**
- * @returns whether any maps were changed
- */
 function updateMaps() {
-    //get github map listing
     return fetchGithubContents().then(function (listing) {
-        //filter only valid mindustry maps
         var mapList = listing
             .filter(function (entry) { return entry.type == 'file'; })
             .filter(function (entry) { return entry.name.endsWith(".msav"); });
@@ -87,7 +74,7 @@ function updateMaps() {
         var mapsToDownload = mapList
             .filter(function (entry) {
             var file = Vars.customMapDirectory.child(entry.name);
-            return !file.exists() || entry.sha !== (0, utils_1.getHash)(file); //sha'd
+            return !file.exists() || entry.sha !== (0, utils_1.getHash)(file);
         });
         if (mapsToDownload.length == 0) {
             return mapsToDelete.length > 0 ? true : false;

@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the map run tracker and statistics computation.
-*/
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -76,10 +72,8 @@ var io_1 = require("/frameworks/io");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var utils_1 = require("/utils");
-var FinishedMapRun = /** @class */ (function (_super) {
+var FinishedMapRun = (function (_super) {
     __extends(FinishedMapRun, _super);
-    //this constructor is useless, but rhino crashes with a bizarre error when trying to run the emitted code
-    //do not remove this useless constructor
     function FinishedMapRun(data) {
         return _super.call(this, data) || this;
     }
@@ -113,17 +107,12 @@ var FinishedMapRun = /** @class */ (function (_super) {
     return FinishedMapRun;
 }((0, io_1.dataClass)()));
 exports.FinishedMapRun = FinishedMapRun;
-var PartialMapRun = /** @class */ (function () {
+var PartialMapRun = (function () {
     function PartialMapRun() {
         this.startTime = Date.now();
-        /**
-         * Usually equal to startTime, unless there was a server restart.
-         * Specifically, it gets shifted forward by the time the server was offline.
-         */
         this.nowMinusDuration = Date.now();
         this.maxPlayerCount = 0;
     }
-    /** In milliseconds */
     PartialMapRun.prototype.duration = function () {
         return Date.now() - this.nowMinusDuration;
     };
@@ -141,7 +130,6 @@ var PartialMapRun = /** @class */ (function () {
             wave: Vars.state.wave,
         });
     };
-    //Used for continuing through a restart
     PartialMapRun.prototype.write = function () {
         return "".concat(this.startTime, "/").concat(this.duration(), "/").concat(this.maxPlayerCount);
     };
@@ -153,7 +141,7 @@ var PartialMapRun = /** @class */ (function () {
         }
         else {
             out.startTime = startTime;
-            out.nowMinusDuration = Date.now() - duration; //move start time forward by time when the server was off
+            out.nowMinusDuration = Date.now() - duration;
             out.maxPlayerCount = maxPlayerCount;
         }
         return out;
@@ -173,14 +161,11 @@ var PartialMapRun = /** @class */ (function () {
                 _a.current = _a.read(data);
             }
             else {
-                //loading a map, but there is no run information, create one
                 _a.current = new _a();
             }
         });
         Events.on(EventType.SaveLoadEvent, function (e) {
             var _b;
-            //create a new run, if there isn't one already
-            //loadData will have run first if it is a server restart
             (_b = _a.current) !== null && _b !== void 0 ? _b : (_a.current = new _a());
         });
         Timer.schedule(function () {
@@ -194,7 +179,6 @@ var PartialMapRun = /** @class */ (function () {
                 var fmap = FMap.getCreate(Vars.state.map);
                 if (!fmap)
                     return;
-                //Highscore message
                 if (config_1.Gamemode.attack() && finishedRun.success) {
                     var bestPreviousTime = fmap.stats().shortestWinTime;
                     var duration = finishedRun.duration();
@@ -225,11 +209,9 @@ var FMap = function () {
     var _static_allMaps_decorators;
     var _static_allMaps_initializers = [];
     var _static_allMaps_extraInitializers = [];
-    return _b = /** @class */ (function (_super) {
+    return _b = (function (_super) {
             __extends(FMap, _super);
-            function FMap(data, 
-            //O(n^2)... should be fine?
-            map) {
+            function FMap(data, map) {
                 if (map === void 0) { map = Vars.maps.customMaps().find(function (m) { return m.file.name() === data.mapFileName; }); }
                 var _this = _super.call(this, data) || this;
                 _this.map = map;
@@ -255,7 +237,7 @@ var FMap = function () {
             };
             FMap.prototype.stats = function () {
                 var _c;
-                var runs = this.runs.filter(function (r) { return r.maxPlayerCount > 0; }); //Remove all runs with no players on
+                var runs = this.runs.filter(function (r) { return r.maxPlayerCount > 0; });
                 var allRunCount = runs.length;
                 var victories = runs.filter(function (r) { return r.outcome()[1] === "win"; });
                 var losses = runs.filter(function (r) { return r.outcome()[0] === "loss"; }).length;
@@ -275,7 +257,6 @@ var FMap = function () {
                     var _d = __read(_c, 2), team = _d[0], wins = _d[1];
                     return [team, wins / significantRunCount];
                 }));
-                //Remove runs that were on wave 0, due to a silly bug we have thousands of runs with a max wave of 0
                 var waveStats = (0, funcs_1.computeStatistics)(runs.filter(function (r) { return r.outcome()[0] !== "rtv" && r.wave !== 0; }).map(function (r) { return r.wave; }));
                 return {
                     allRunCount: allRunCount,
@@ -352,16 +333,13 @@ var FMap = function () {
         (function () {
             globals_1.FishEvents.on("dataLoaded", function () {
                 var _c;
-                //This event listener runs after the data has been loaded into allMaps
                 ((_c = _b.allMaps) !== null && _c !== void 0 ? _c : (_b.allMaps = [])).forEach(function (map) {
                     _b.maps[map.mapFileName] = map;
                     map.runs.forEach(function (run) {
                         var _c;
-                        //this should not even happen, I think GameOverEvent is sending winTeam as null sometimes??
                         (_c = run.winTeam) !== null && _c !== void 0 ? _c : (run.winTeam = Team.derelict);
                     });
                 });
-                //create all the data
                 Vars.maps.customMaps().each(function (m) { return void _b.getCreate(m); });
             });
         })(),

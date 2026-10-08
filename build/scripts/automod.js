@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains automatic moderation and antibot code.
-*/
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
@@ -126,7 +122,6 @@ exports.Antibot = {
     triggerAntibot: function (duration, reason, category, kickNewPlayers, pingConsole) {
         if (pingConsole === void 0) { pingConsole = false; }
         if (category == "automatic") {
-            //Ping reports based on time
             var message = void 0;
             if (Date.now() - this.antibotExpires > funcs_1.Duration.hours(1))
                 message = "!!! ".concat(config_1.text.reportsPing, " Possible ongoing bot attack in **").concat(config_1.Gamemode.name(), "**  Reason: ").concat((0, funcs_1.escapeTextDiscord)(reason));
@@ -146,8 +141,6 @@ exports.Antibot = {
     }
 };
 Timer.schedule(function () {
-    //deliberately updating state on clock tick:
-    //avoids memory leak and other complications from Record<ip, IndexedRatekeeper>
     globals_1.ipJoins.clear();
 }, 0, funcs_1.DurationSecs.minutes(1));
 Timer.schedule(function () {
@@ -167,15 +160,14 @@ function checkVotekickAction(fishP, message) {
             return;
         target = Groups.player.getByID(id);
         if (!target)
-            return; //invalid votekick command, harmless
+            return;
     }
-    else { //TODO these "harmless" actions could be indications of a malfunctioning vkbot and should be logged if they repeat a lot (eg more than 5 times per minute)
+    else {
         if (!Vars.netServer.currentlyKicking)
-            return; //nobody to votekick, harmless
+            return;
         target = Reflect.get(Vars.netServer.currentlyKicking, "target");
     }
     var targetSusLevel = players_1.FishPlayer.get(target).suspicionLevel();
-    //Evaluate if this action should be blocked
     if (sus <= 1)
         return;
     var reason = undefined;
@@ -190,18 +182,15 @@ function checkVotekickAction(fishP, message) {
     else if (sus >= 2 && exports.lastVKActions.filter(function (a) { return a.playerSusLevel >= 2; }).length >= 6 && exports.lastVKActions.filter(function (a) { return a.player == fishP; }).length >= 3)
         reason = "More than 6 slightly suspicious votekick actions within the past 20 minutes and this player has already performed 3 of them";
     if (reason != undefined) {
-        //Should we ban everyone?
         var suspiciousActions = exports.lastVKActions.filter(function (action) {
             return (action.playerSusLevel == 3 || (action.targetSusLevel <= 2 && action.playerSusLevel >= 2) || action.player == fishP) && Date.now() - action.time < 78000;
         });
         if (suspiciousActions.length >= 3) {
-            //Ban everyone
             var playersToBan = suspiciousActions.map(function (a) { return a.player; }).reduce(function (map, p) {
                 var _a;
                 map.set(p, ((_a = map.get(p)) !== null && _a !== void 0 ? _a : 0) + 1);
                 return map;
             }, new Map());
-            //Only ban players that appeared in the list twice or are high suslevel
             var admins = Vars.netServer.admins;
             try {
                 for (var playersToBan_1 = __values(playersToBan), playersToBan_1_1 = playersToBan_1.next(); !playersToBan_1_1.done; playersToBan_1_1 = playersToBan_1.next()) {
@@ -223,7 +212,6 @@ function checkVotekickAction(fishP, message) {
                 finally { if (e_1) throw e_1.error; }
             }
             (0, utils_1.updateBans)(function (player) { return "[scarlet]Player [yellow]".concat(player.name, "[scarlet] has been whacked automatically for suspected votekick abuse."); });
-            //Pardon most of the votekick targets (the ones that weren't voted on by a non-sus player)
             var candidatePardons = new Set(exports.lastVKActions.map(function (a) { return a.target; }));
             try {
                 for (var lastVKActions_1 = __values(exports.lastVKActions), lastVKActions_1_1 = lastVKActions_1.next(); !lastVKActions_1_1.done; lastVKActions_1_1 = lastVKActions_1.next()) {
@@ -241,7 +229,6 @@ function checkVotekickAction(fishP, message) {
             }
             var playersToPardon = __spreadArray([], __read(candidatePardons), false).map(players_1.FishPlayer.get);
             try {
-                //Don't pardon players with suslevel 3
                 for (var playersToPardon_1 = __values(playersToPardon), playersToPardon_1_1 = playersToPardon_1.next(); !playersToPardon_1_1.done; playersToPardon_1_1 = playersToPardon_1.next()) {
                     var p = playersToPardon_1_1.value;
                     if (!p.isSuspicious("high")) {
@@ -261,11 +248,9 @@ function checkVotekickAction(fishP, message) {
             }
         }
         else {
-            //Just kick the player
             (0, utils_1.logHTrip)(fishP, "votekick abuse", "sus=".concat(sus));
             fishP.kick("You have been kicked [accent]automatically[] due to suspicious behavior. Please wait [accent]35[] seconds before rejoining.", 30000);
             Call.sendMessage("[scarlet]Player [yellow]".concat(fishP.prefixedName, "[scarlet] was kicked due to suspected votekick abuse."));
-            //If this message is going to start a votekick, cancel it
             if (message.startsWith("/votekick") && Vars.netServer.currentlyKicking == null)
                 Core.app.post(function () {
                     Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff."));
@@ -273,14 +258,12 @@ function checkVotekickAction(fishP, message) {
                         Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
                     Vars.netServer.currentlyKicking = null;
                 });
-            //If there is an ongoing votekick and the initiator is suspicious, cancel that
             else if (((_e = exports.lastVKActions.slice().reverse().find(function (a) { return a.type == "start"; })) === null || _e === void 0 ? void 0 : _e.playerSusLevel) == 3) {
                 Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.name, "[lightgray].[accent] (-\u221E/").concat(Vars.netServer.votesRequired(), ")\n\t[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff."));
                 if (Vars.netServer.currentlyKicking)
                     Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
                 Vars.netServer.currentlyKicking = null;
             }
-            //Otherwise, revoke the vote
             else
                 Core.app.post(function () {
                     if (Vars.netServer.currentlyKicking) {
@@ -294,7 +277,6 @@ function checkVotekickAction(fishP, message) {
                 });
         }
     }
-    //Update state to catch future actions
     exports.lastVKActions.push({
         player: fishP,
         playerSusLevel: sus,
@@ -334,7 +316,7 @@ function checkVPNAndJoins(fishP) {
                 exports.Antibot.triggerAntibot(funcs_1.Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic", false);
                 return;
             }
-            if ((info.timesJoined <= 1 || (exports.Antibot.autoflagRate.occurences > 3 && info.timesJoined <= 10)) //is this smart?
+            if ((info.timesJoined <= 1 || (exports.Antibot.autoflagRate.occurences > 3 && info.timesJoined <= 10))
                 && !fishP.ranksAtLeast("active")
                 && exports.Automod.shouldAutoflag()) {
                 fishP.autoflagged = true;
@@ -342,7 +324,7 @@ function checkVPNAndJoins(fishP) {
                     fishP.stopUnit();
                 fishP.updateName();
                 if (exports.Antibot.shouldWhackFlaggedPlayers()) {
-                    exports.Antibot.whackFlaggedPlayers(); //calls whack all flagged players
+                    exports.Antibot.whackFlaggedPlayers();
                 }
                 else {
                     (0, utils_1.logAction)("autoflagged", "AntiVPN", fishP);
@@ -373,7 +355,6 @@ function checkVPNAndJoins(fishP) {
         }
         if (info.timesJoined == 1) {
             var message = "&lrNew player joined: &c".concat(fishP.cleanedName, "&lr (&c").concat(fishP.uuid, "&lr/&c").concat(ip, "&lr)");
-            //Add BEL, this causes an audible noise
             if (globals_1.fishState.joinBell)
                 message += '\x07';
             Log.info(message);
@@ -391,7 +372,6 @@ function validateVotekickSession() {
     var target = players_1.FishPlayer.get(Reflect.get(Vars.netServer.currentlyKicking, "target"));
     var voted = Reflect.get(Vars.netServer.currentlyKicking, "voted");
     if (voted.size == 2) {
-        //Try to find the UUID of the initiator
         var uuid_1 = null;
         voted.entries().toArray().each(function (e) {
             if (globals_1.uuidPattern.test(e.key))
@@ -422,7 +402,6 @@ function validateVotekickSession() {
                 return;
             }
             else if (target.isSuspicious("high") && !target.hasPerm("bypassVotekick")) {
-                //Increase votes by 1, from 1 to 2
                 Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(2));
                 voted.put("__server__", 1);
                 Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (2/").concat(Vars.netServer.votesRequired(), ")\n[lightgray]Type[orange] /vote <y/n>[] to agree."));
@@ -436,7 +415,6 @@ function validateVotekickSession() {
         Vars.netServer.currentlyKicking = null;
     }
     else if (target.ranksAtLeast("trusted") && Groups.player.size() > 4 && voted.get("__server__") == 0) {
-        //decrease votes by two, goes from 1 to negative 1
         Reflect.set(Vars.netServer.currentlyKicking, "votes", Packages.java.lang.Integer(-1));
         voted.put("__server__", -2);
         Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".concat(target.prefixedName, "[lightgray].[accent] (-1/").concat(Vars.netServer.votesRequired(), ")\n[lightgray]Type[orange] /vote <y/n>[] to agree."));
@@ -444,12 +422,6 @@ function validateVotekickSession() {
 }
 Timer.schedule(validateVotekickSession, 1, 0.3);
 exports.Automod = {
-    /**
-     * List of IPs that were recently punished.
-     * If a new account joins from one of these IPs,
-     * we assume they are trying to evade the punishment
-     * and the IP gets banned.
-     */
     punishedIPs: [],
     updatePunishedIPs: function () {
         for (var i = 0; i < this.punishedIPs.length; i++) {
@@ -520,7 +492,6 @@ exports.Heuristics = {
         var _this = this;
         var _a;
         if (config_1.sneakybannedNames.includes((_a = fishP.originalName) !== null && _a !== void 0 ? _a : fishP.player.name)) {
-            //exact match
             var time = (0, funcs_1.random)(7, 22);
             Timer.schedule(function () {
                 fishP.sneakybanned = true;
@@ -535,7 +506,6 @@ exports.Heuristics = {
         }
         if (config_1.Gamemode.hexed() || config_1.Gamemode.sandbox() || config_1.Gamemode.testsrv())
             return;
-        //Blocks broken check
         if (fishP.joinsLessThan(5)) {
             var tripped_1 = false;
             fishP.tstats.blocksBroken = 0;
@@ -584,11 +554,6 @@ exports.Heuristics = {
     }
 };
 Events.on(EventType.PlayerJoin, function (e) {
-    //Don't activate heuristics until they've joined
-    //a lot of time can pass between connect and join
-    //also the player might connect but fail to join for a lot of reasons,
-    //or connect, fail to join, then connect again and join successfully
-    //which would cause heuristics to activate twice
     exports.Heuristics.activateHeuristics(players_1.FishPlayer.get(e.player));
 });
 var templateObject_1, templateObject_2;

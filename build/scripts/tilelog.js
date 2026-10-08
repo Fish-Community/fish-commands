@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the tilelog system, which stores information about the history of each tile.
-*/
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -64,14 +60,13 @@ var players_1 = require("/players");
 var utils_1 = require("/utils");
 exports.tileHistory = new IntMap();
 var unitTypeOffset = 5000;
-var preferredMaxPacketSize = 1452; //bytes. It's fine if it goes over this, the packet will just be fragmented
+var preferredMaxPacketSize = 1452;
 var tilelogActions = [
     "built", "broke", "configured", "rotated", "dropped", "picked up", "setblocked",
     "destroyed", "killed", "controlled"
 ];
 exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog entry", function (e) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
-    // eslint-disable-next-line prefer-const
     var tile, uuid, action, type, time = Date.now(), rotation = 0, rotationDirection = false;
     if (e instanceof EventType.BlockBuildBeginEvent) {
         tile = e.tile;
@@ -123,7 +118,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     }
     else if (e instanceof EventType.BlockDestroyEvent) {
         if (config_1.Gamemode.attack() && ((_r = e.tile.build) === null || _r === void 0 ? void 0 : _r.team) != Vars.state.rules.defaultTeam)
-            return; //Don't log destruction of enemy blocks
+            return;
         tile = e.tile;
         uuid = "[[something]";
         action = "destroyed";
@@ -152,7 +147,7 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
     else if (e instanceof EventType.PickupEvent) {
         action = "picked up";
         if (e.carrier.isPlayer())
-            return; //This event would have been handled by actionfilter
+            return;
         var controller = e.carrier.controller();
         if (!(controller instanceof LogicAI && controller.controller != null))
             return;
@@ -206,7 +201,6 @@ exports.addToTileHistory = (0, utils_1.logErrors)("Error while saving a tilelog 
             isRootTile: t == tile,
         });
         existingData = existingData.slice(-9);
-        //Write
         exports.tileHistory.put(pos, funcs_1.StringIO.write(existingData, function (str, data) { return str.writeArray(data, function (el) {
             str.writeEnumString(el.action, tilelogActions);
             str.writeString(el.uuid, 3);
@@ -236,7 +230,6 @@ function deserializeData(historyData) {
         rotationDirection: d.readBool(),
     }); }, 1); });
 }
-/** Writes tileHistory to the specified file. */
 function writeToFile(file) {
     var stream = new DataOutputStream(file.write());
     try {
@@ -251,7 +244,6 @@ function writeToFile(file) {
         stream.close();
     }
 }
-/** Reads tilelog data from the specified file. */
 function readFile(file) {
     var stream = new DataInputStream(file.read(1024));
     try {
@@ -269,7 +261,6 @@ function readFile(file) {
 function getFile(runID) {
     return Vars.dataDirectory.child('tilelog-data').child("".concat(runID, ".bin"));
 }
-/** Writes tileHistory to the file for the current map run. */
 var writeToCurrentRunFile = (0, utils_1.logErrors)("Error writing tilelog entries", function () {
     var _a;
     var currentRun = (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime;
@@ -277,7 +268,6 @@ var writeToCurrentRunFile = (0, utils_1.logErrors)("Error writing tilelog entrie
         writeToFile(getFile(currentRun));
     }
 });
-/** Copy pasted from foos */
 function getRotationDirection(old, n) {
     return old < n && (old != 0 || n != 3) || old == 3 && n == 0;
 }
@@ -308,16 +298,15 @@ function writeEntry(entry, writes) {
     else if (entry.uuid) {
         writes.bool(true);
         writes.str(entry.uuid);
-        writes.str(entry.uuid); //write it twice
+        writes.str(entry.uuid);
         writes.i(-1);
     }
     else {
         writes.bool(false);
     }
     var diff = Date.now() - entry.time;
-    writes.l(Math.floor(diff / 1000)); //subtracted from current time to make unsynced clocks work
-    writes.i(diff % 1000); //we don't care
-    //TEMPORARY FIX TODO REMOVE
+    writes.l(Math.floor(diff / 1000));
+    writes.i(diff % 1000);
     if (entry.action == "killed" && entry.type < 5000)
         entry.action = "destroyed";
     writes.b({
@@ -329,16 +318,15 @@ function writeEntry(entry, writes) {
         killed: 5,
         "picked up": 7,
         dropped: 8,
-        //these two get mapped to the closest thing that foo knows about
-        setblocked: 0, //we tell foos that the server (player id 2147483647) placed it
-        controlled: 2, //we tell foos that it was configured with null
+        setblocked: 0,
+        controlled: 2,
     }[entry.action]);
     switch (entry.action) {
         case "built":
         case "dropped":
             writes.s(entry.type);
             writes.b(entry.rotation);
-            TypeIO.writeObject(writes, null); //TODO: config
+            TypeIO.writeObject(writes, null);
             writes.bool(entry.isRootTile);
             break;
         case "broke":
@@ -349,7 +337,7 @@ function writeEntry(entry, writes) {
         case "configured":
             writes.s(entry.type);
             writes.b(entry.rotation);
-            TypeIO.writeObject(writes, null); //TODO: config
+            TypeIO.writeObject(writes, null);
             break;
         case "controlled":
             writes.s(entry.type);
@@ -371,12 +359,12 @@ function writeHistory(tilelogEntries) {
     var worldSize = Vars.world.width() * Vars.world.height();
     var bits = new Bits(worldSize);
     var fooTileLogData = [];
-    var mainDataStream = new ByteArrayOutputStream(50000); //start at 50kb
+    var mainDataStream = new ByteArrayOutputStream(50000);
     var mainWriter = new Writes(new DataOutputStream(mainDataStream));
-    var tileDataStream = new ByteArrayOutputStream(); //leave it as the default
+    var tileDataStream = new ByteArrayOutputStream();
     var tileWriter = new Writes(new DataOutputStream(tileDataStream));
     var tilesInPacket = 0;
-    mainWriter.b(0); //add one byte for the tile count
+    mainWriter.b(0);
     tilelogEntries.forEach(function (_a) {
         var key = _a.key, value = _a.value;
         var tile = Point2.unpack(key);
@@ -388,7 +376,7 @@ function writeHistory(tilelogEntries) {
         for (var i = 0; i < entriesLen; i++) {
             writeEntry(entries[i], tileWriter);
         }
-        var tileData = tileDataStream.toByteArray(); //unnecessary copy, unavoidable
+        var tileData = tileDataStream.toByteArray();
         tileDataStream.reset();
         if (mainDataStream.size() + tileData.length > preferredMaxPacketSize || tilesInPacket == 0xFF) {
             var bytes_1 = mainDataStream.toByteArray();
@@ -401,7 +389,7 @@ function writeHistory(tilelogEntries) {
         tilesInPacket++;
         mainWriter.b(tileData);
     });
-    var longs = Reflect.get(bits, "bits"); //the raw bytes that make up these longs are a bit too long, we need to truncate it to worldSize
+    var longs = Reflect.get(bits, "bits");
     var bytes = ByteBuffer.allocate(longs.length * 8);
     bytes.order(Packages.java.nio.ByteOrder.LITTLE_ENDIAN);
     bytes.asLongBuffer().put(longs);
@@ -420,15 +408,15 @@ function sendHistory(_a) {
                 i = 0;
                 _c.label = 1;
             case 1:
-                if (!(i < fooTileLogsLength)) return [3 /*break*/, 4];
+                if (!(i < fooTileLogsLength)) return [3, 4];
                 packet.contents = Packages.java.util.Arrays.copyOfRange(fooTileLogs, i, Math.min(i + preferredMaxPacketSize, fooTileLogsLength));
-                return [4 /*yield*/, packet];
+                return [4, packet];
             case 2:
                 _c.sent();
                 _c.label = 3;
             case 3:
                 i += preferredMaxPacketSize;
-                return [3 /*break*/, 1];
+                return [3, 1];
             case 4:
                 packet.type = "fooTileLog";
                 _c.label = 5;
@@ -437,28 +425,28 @@ function sendHistory(_a) {
                 fooTileLogData_1 = __values(fooTileLogData), fooTileLogData_1_1 = fooTileLogData_1.next();
                 _c.label = 6;
             case 6:
-                if (!!fooTileLogData_1_1.done) return [3 /*break*/, 9];
+                if (!!fooTileLogData_1_1.done) return [3, 9];
                 data = fooTileLogData_1_1.value;
                 packet.contents = data;
-                return [4 /*yield*/, packet];
+                return [4, packet];
             case 7:
                 _c.sent();
                 _c.label = 8;
             case 8:
                 fooTileLogData_1_1 = fooTileLogData_1.next();
-                return [3 /*break*/, 6];
-            case 9: return [3 /*break*/, 12];
+                return [3, 6];
+            case 9: return [3, 12];
             case 10:
                 e_1_1 = _c.sent();
                 e_1 = { error: e_1_1 };
-                return [3 /*break*/, 12];
+                return [3, 12];
             case 11:
                 try {
                     if (fooTileLogData_1_1 && !fooTileLogData_1_1.done && (_b = fooTileLogData_1.return)) _b.call(fooTileLogData_1);
                 }
                 finally { if (e_1) throw e_1.error; }
-                return [7 /*endfinally*/];
-            case 12: return [2 /*return*/];
+                return [7];
+            case 12: return [2];
         }
     });
 }

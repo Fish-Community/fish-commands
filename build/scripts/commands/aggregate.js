@@ -34,10 +34,6 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerAll = registerAll;
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file combines all the commands defined in various files into one function.
-*/
 var console_1 = require("/commands/console");
 var general_1 = require("/commands/general");
 var member_1 = require("/commands/member");

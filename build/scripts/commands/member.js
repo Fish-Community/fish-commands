@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains member commands, which are fun cosmetics for donators.
-*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 var commands_1 = require("/frameworks/commands");
@@ -71,7 +67,6 @@ exports.commands = (0, commands_1.commandList)({
                             currentPet.apply(StatusEffects.fast, 60);
                         }
                         Call.label(petName, id, -1, currentPet.x, currentPet.y + 5);
-                        //Pets share the sender's trail
                         if (sender.trail) {
                             Call.effect(Fx[sender.trail.type], currentPet.x, currentPet.y, 0, sender.trail.color);
                         }

@@ -1,9 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the voting system.
-Some contributions: @author Jurorno9
-*/
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -61,8 +56,7 @@ var commands_1 = require("/frameworks/commands");
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
-/** Manages a vote. */
-var VoteManager = /** @class */ (function (_super) {
+var VoteManager = (function (_super) {
     __extends(VoteManager, _super);
     function VoteManager(voteTime, goal, isEligible, isCounted) {
         if (goal === void 0) { goal = ["fractionOfVoters", 0.50001]; }
@@ -73,7 +67,6 @@ var VoteManager = /** @class */ (function (_super) {
         _this.goal = goal;
         _this.isEligible = isEligible;
         _this.isCounted = isCounted;
-        /** The ongoing voting session, if there is one. */
         _this.session = null;
         if (goal[0] == "fractionOfVoters") {
             if (goal[1] < 0 || goal[1] > 1)
@@ -85,14 +78,12 @@ var VoteManager = /** @class */ (function (_super) {
         }
         Events.on(EventType.PlayerLeave, function (_a) {
             var player = _a.player;
-            //Run once the player has been removed, but resolve the player first in case the connection gets nulled
             var fishP = players_1.FishPlayer.get(player);
             Core.app.post(function () { return _this.unvote(fishP); });
         });
         Events.on(EventType.GameOverEvent, function () { return _this.resetVote(); });
         return _this;
     }
-    /** @throws CommandError */
     VoteManager.prototype.start = function (player, newVote, data) {
         var _this = this;
         if (data === null)
@@ -106,7 +97,6 @@ var VoteManager = /** @class */ (function (_super) {
         };
         this.vote(player, newVote, data);
     };
-    /** @throws CommandError */
     VoteManager.prototype.vote = function (player, newVote, data) {
         var _this = this;
         if (!this.session)
@@ -133,7 +123,6 @@ var VoteManager = /** @class */ (function (_super) {
             this._checkVote(false);
         }
     };
-    /** Does not fire the events used to display messages, please print one before calling this */
     VoteManager.prototype.forceVote = function (outcome) {
         if (outcome) {
             this.fire("success", [true]);

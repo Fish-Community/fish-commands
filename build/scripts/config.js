@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains configurable constants.
-*/
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
@@ -45,26 +41,16 @@ function processBannedWordList(words) {
     });
 }
 exports.bannedWords = {
-    // README: Information on how to update this list
-    // All words must be in *lowercase*.
-    // Words need to be separated by commas, even if they are on a new line.
-    // If a word can be contained in another word that should be allowed (the scunthorpe problem),
-    // surround the entire thing in square brackets, then list out the words after
-    // like this: ["badw", "goodbadw"]
-    /** Chat: banned only in chat, but not in names. */
     chat: processBannedWordList([
-        "fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon", "drizzle"], "skibidi", //With love, DarthScion
-        //>:( -dart
-        // "uwu", //lol
+        "fanum tax", "gyatt", ["rizz", "grizzly", "frizz", "horizzon", "drizzle"], "skibidi",
     ]),
-    /** Normal: banned always. */
     normal: processBannedWordList([
-        "nig" + "ger", "nig" + "ga", "niger", "ni8" + "8er", "nig" + "gre", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер", /\bnegr\b/, //our apologies to citizens of the Republic of Niger
+        "nig" + "ger", "nig" + "ga", "niger", "ni8" + "8er", "nig" + "gre", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер", /\bnegr\b/,
         ["ni" + "ga", "anniga", "inniga", "unniga", "aniga", "iniga", "eniga", "oniga"],
         /\bnig\b/,
         "re" + "tard",
         'kill yourself', 'kill urself', /\bkys\b/,
-        "kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", /\b1488\b/, //nazi-related words
+        "kill blacks", "heil hitler", "heil nazis", "heil the nazis", "sieg heil", "hail hitler", "hail nazis", "hail the nazis", "sieg hail", /\b1488\b/,
         ["co" + "ck", "cockroach", "poppycock", "cocktail", "cocky"], "suck dick", "sucking dick",
         "iamasussyimposter",
         ["cu" + "nt", "scunthorpe"],
@@ -79,21 +65,17 @@ exports.bannedWords = {
         "ur gay", "your gay", "youre gay", "you're gay",
         "gooning", "gooner", "dildo", /\bloli/, /\banal\b/, "cunny"
     ]),
-    /** Strict: banned in names and for players with a chat strictness level of 'strict'. */
     strict: processBannedWordList([
         "fu" + "ck", "bi" + "tch", ["sh" + "it", "harshit"], /\ba(s)s\b/, "as" + "shole", ["dick", "medick", "dickens"],
     ]),
-    /** Names: banned only in names. */
     names: processBannedWordList([
         "sex", /\bgoldberg\b/, "hitler", "stalin", "putin", "lenin", /^something$/, "[something]", "[[something]", "卐", "diddy", "epstein", "nazi",
         globals_1.uuidPattern, globals_1.ipPattern, globals_1.ipPortPattern
     ]),
-    /** autoWhack: new players saying one of these words will be automatically stopped and muted. Comes with \b so no need to add it. */
     autoWhack: [
         "nig" + "ger", "nig" + "ga", "ni8" + "8er", "nig" + "g3r", "hit" + "ler", "fa" + "gg" + "ot", "nazis", "негр", "ниг" + "гер", "нигер", "нігер", "ніг" + "гер", "negr"
     ],
 };
-//for some reason the external mindustry server does not read the files correctly, so we can only use ASCII
 exports.substitutions = Object.fromEntries(Object.entries({
     "a": "\u0430\u1E9A\u1EA1\u1E01\u00E4\u03B1@\u0101\u0103\u0105\u03AC",
     "b": "\u1E03\u1E07\u1E03\u0253\u0185",
@@ -155,13 +137,9 @@ exports.substitutions = Object.fromEntries(Object.entries({
 exports.multiCharSubstitutions = [
     [/\|-\|/g, "H"]
 ];
-//#endregion
-//#region misc
-/** Used for anti-impersonation. Make sure to replace numbers with letters, for example, balam314 -> balamei4. */
 exports.adminNames = ["fish", "balamei4", "clashgone", "darthscion", "firefridge", "aricia", "rawsewage", "skeledragon", "edh8e", "everydayhuman8e", "benjamonsrl", "eradicator"];
 exports.sneakybannedNames = ["☠[#0]Ðï[gray]§¢[white]ðÐ[#f]☠"];
 exports.heuristics = {
-    /** Will trip if more than this many blocks are broken within 25 seconds of joining. */
     blocksBrokenAfterJoin: 40,
 };
 exports.stopAntiEvadeTime = funcs_1.Duration.minutes(30);
@@ -174,9 +152,6 @@ exports.Mode = {
     isChristmas: new Date().getMonth() == 11,
     isAprilFools: new Date().getMonth() == 3 && new Date().getDate() == 1,
 };
-//#endregion
-//#region servers
-/** Stores the repository url for the maps for each gamemode. */
 exports.mapRepoURLs = {
     attack: "https://api.github.com/repos/Fish-Community/fish-maps/contents/attack",
     survival: "https://api.github.com/repos/Fish-Community/fish-maps/contents/survival",
@@ -187,13 +162,8 @@ exports.mapRepoURLs = {
     testsrv: "https://api.github.com/repos/Fish-Community/fish-maps/contents/testsrv",
     minigame: "https://api.github.com/repos/Fish-Community/fish-maps/contents/minigame",
 };
-/** Stores the names and addresses of each active server. */
-var FishServer = /** @class */ (function () {
-    function FishServer(name, ip, port, aliases, 
-    /** If set, this permission is required to switch to or get information about this server. */
-    requiredPerm, 
-    /** If set, this permission is required to see switch messages about this server. */
-    messagePerm) {
+var FishServer = (function () {
+    function FishServer(name, ip, port, aliases, requiredPerm, messagePerm) {
         this.name = name;
         this.ip = ip;
         this.port = port;
@@ -220,7 +190,6 @@ var FishServer = /** @class */ (function () {
 }());
 exports.FishServer = FishServer;
 exports.GamemodeNames = ["attack", "survival", "pvp", "sandbox", "hexed", "minigame", "testsrv", "hardcore"];
-/** Stores functions that return whether the specified gamemode is the current gamemode. */
 exports.Gamemode = {
     attack: function () { return exports.Gamemode.name() == "attack"; },
     survival: function () { return exports.Gamemode.name() == "survival"; },
@@ -233,8 +202,6 @@ exports.Gamemode = {
     minigame: function () { return exports.Gamemode.name() == "minigame"; },
     name: function () { return Core.settings.get("mode", Vars.state.rules.mode().name()); },
 };
-//#endregion
-//#region text content
 exports.prefixes = {
     marked: '[yellow]\u26A0[scarlet]Marked Griefer[]\u26A0[]',
     flagged: '[yellow]\u26A0[orange]Flagged[]\u26A0[]',
@@ -252,30 +219,10 @@ exports.text = {
         message: function () { return "I really hope everyone is having a fun time :) <3"; },
         messageShort: function () { return "I hope we're all having a fun time :) <3"; },
         highlight: function () { return "[#f456f]"; },
-        // 	`[#22AA22]Merry [#EC4444]Christmas!`,
-        // 	`[gold]Happy Holidays! [white]•*•☃*•`,
-        // 	`[gold]Happy Hanukkah!`,
-        // 	`[#EC4444]May your days be merry and bright!`,
-        // 	`[gold]Merry Fishmas! >|||> [white]☃`,
-        // 	`[gold]Deck the halls with lots of fun!`,
-        // 	`[gold]>|||> Fish wishes you [#22AA22]a merry Christmas!`,
-        // ]),
-        // chatFilterReplacement: {
-        // 	message: () => random([
-        // 		`Have a holly jolly Christmas :) <3`,
-        // 		`I really hope everyone is jolly for the season! :D`,
-        // 		`All I want for Christmaaaaaaas is everyone having a fun time! :)`,
-        // 		`Remember to be nice in chat: Santa is watching! <3`,
-        // 		`All I want for Christmas is Fish! >|||>`,
-        // 	]),
-        // 	highlight: () => random([
-        // 		`[#22AA22]`, `[#EC4444]`, `[#FFFFFF]`
-        // 	]),
     },
     dataFetchFailed: "[scarlet]\u26A0 Data fetch failed!\n[white]Please disconnect and rejoin the server if you encounter further issues, such as missing rank or statistics.",
     selectorsHelp: "[coral]-- General selectors --\nThese selectors can be used for any command.\n[accent]@[]: Placeholder. You will be asked to enter the value later.\n[accent]@0[]: Negative placeholder. This specifies that you want to leave the argument empty.\n\n[coral]-- Player selectors --\nPlayer selectors can be used instead of a player name when specifying a player in a command.\n\n[accent]@cyrillic, @russian[]: Names containing Cyrillic letters\n[accent]@chinese, @cny[]: Names containing Chinese letters\n[accent]@japanese, @jpy[]: Names containing Japanese letters\n[accent]@korean, @kor[]: Names containing Korean letters\n[accent]@nonenglish, @noneng[]: Names containing any non-English characters\n[accent]@short[]: Short names\n\n[accent]@stopped, @marked[]: Marked griefers\n[accent]@muted[]: Muted players\n[accent]@=rank, @-rank, @+rank[]: Players with exactly, no more than, or at least the specified rank. Example: [accent]@+trusted[] selects all players with trusted rank or higher.\n\n[accent]@rand[]: Selects a random player.\n[accent]@s[]: Yourself.\n[accent]@cursor, @c[]: The closest player to your cursor.\n[accent]@h, @p[]: The closest player to your unit, except yourself.\n\n[accent]@offline, @off, @o[]: An offline player. Search by name with [accent]@offline[]:[gray]<NAME>[]\n[accent]@create[]: Creates a player data entry by UUID.\n[accent]@click[]: Run the command, then click a player's unit to select them.\n[accent]@recent[]: Selects players that were printed by the most recent command you run. For example, you can run /tilelog, click a tile, then use @recent."
 };
-//TODO use this
 exports.FColor = (function (data) {
     return Object.fromEntries(Object.entries(data).map(function (_a) {
         var _b = __read(_a, 2), k = _b[0], c = _b[1];
@@ -292,13 +239,11 @@ exports.FColor = (function (data) {
     }));
 })({
     discord: "[#7289DA]",
-    /** Used for tips and welcome messages. */
     tip: "[gold]",
     member: "[pink]",
     achievement: "[lime]",
     mapStats: "[#CCFFCC]",
 });
-/** Tips that are shown to players randomly. */
 exports.tips = {
     ads: [
         "".concat(exports.FColor.member(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Fish Membership"], ["Fish Membership"]))), " subscribers can access the ").concat(exports.FColor.member(templateObject_2 || (templateObject_2 = __makeTemplateObject(["/pet"], ["/pet"]))), " command, which spawns a merui that follows you around. Get a Fish Membership at[sky] ").concat(exports.text.membershipURL, " []"),
@@ -308,14 +253,12 @@ exports.tips = {
         "Join our ".concat(exports.FColor.discord(templateObject_8 || (templateObject_8 = __makeTemplateObject(["Discord server"], ["Discord server"]))), "[]! ").concat(exports.FColor.discord(exports.text.discordURL), " or type ").concat(exports.FColor.discord(templateObject_9 || (templateObject_9 = __makeTemplateObject(["/discord"], ["/discord"])))),
     ],
     normal: [
-        //commands
         "You can spawn an [scarlet]Ohno[] with the [scarlet]/ohno[] command. Ohnos are harmless creatures that were created by fusing an alpha and an atrax.",
         "Ohnos cannot be spawned near enemy buildings, because they are peaceful and do not want to be used for attacks.",
         "You can use [white]/tp[] to teleport directly to any other player! (But only when you're in a core unit)",
         "You can unload bulk conveyors (\uF819 or \uF732) with unloaders (\uF864 or \uF731).",
         "Hate boulders? You can remove them with [white]/clean[].",
         "You can check our rules at any time by running [white]/rules[].",
-        // `You can kill your unit by running [white]/die[].`,
         "We have a tilelog system to help catch griefers. Run [white]/tilelog[], then click a tile to see what's happened there.",
         "Run [white]/tilelog 1[] to check the tile history of multiple tiles.",
         "Tilelog stores when a building is placed, broken, rotated, configured, and picked up/dropped by a payload unit. Access it with [white]/tilelog[]",
@@ -335,7 +278,6 @@ exports.tips = {
         "Is someone impersonating a staff member? Run [white]/rank[] to see their real rank.",
         "Don't like the map? Vote to change it with [white]/rtv[].",
         "If you want to end the current map, DO NOT BREAK DEFENCES! Vote to change the map with [white]/rtv[].",
-        //misc
         "Anyone attempting to impersonate a ranked player, or the server, will have ".concat(exports.prefixes.impersonator, " prepended to their name. Beware!"),
         "Griefers will often be found with the text ".concat(exports.prefixes.marked, " prepended to their name: they are harmless and cannot grief again."),
         "Don't votekick ".concat(exports.prefixes.marked.slice(0, -3), "[][scarlet]s [gold]if they aren't breaking the rules: they are incapable of griefing more."),
@@ -375,4 +317,3 @@ exports.automaticNames = {
     adjectives: ["Happy", "Sad", "Angry", "Zealous", "Cheerful", "Grumpy", "Stoic", "Witty", "Chatty", "Speedy", "Brave", "Pensive", "Lazy", "Fierce", "Honorable", "Jealous", "Skeptical", "Anxious", "Timid", "Jovial", "Unjust", "Lethargic", "Saline", "Brackish", "Prefixed", "Thalassophobic"],
 };
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9;
-//#endregion

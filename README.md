@@ -25,6 +25,19 @@ Interested in contributing? See [CONTRIBUTING.md](CONTRIBUTING.md), and thanks i
 * Tile logs
 ----
 
+## Build and install
+
+The plugin's application source is written in [YoptaScript](https://github.com/samgozman/YoptaScript). Source modules live in `src/` as `.yopta` files. The build runs the original YoptaScript compiler and writes the JavaScript loaded by Mindustry to `build/scripts/`; `src/main.js` remains the Rhino startup and compatibility entrypoint.
+
+Install dependencies and build the plugin with:
+
+```sh
+pnpm install
+pnpm build
+```
+
+Copy the resulting `build/` directory to the server's `config/mods/fish-commands/` directory. For local development, `pnpm dev` builds the plugin and starts the configured Mindustry development server. To link it to an existing server installation, run `pnpm attach /path/to/server.jar`.
+
 Contributors:
 
 [<img width=80 alt="Brandons404" src="https://github.com/Brandons404.png">](https://github.com/Brandons404/)
@@ -46,4 +59,3 @@ Contributors:
 [<img width=80 alt="TheRadioactiveBanana" src="https://github.com/TheRadioactiveBanana.png">](https://github.com/TheRadioactiveBanana/)
 
 Join our Discord: [https://discord.gg/VpzcYSQ33Y](https://discord.gg/VpzcYSQ33Y)
-

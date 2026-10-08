@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains all the console commands, which can be run through the server console.
-*/
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
@@ -140,13 +136,13 @@ exports.commands = (0, commands_1.consoleCommandList)({
                                 (0, commands_1.fail)(f(templateObject_1 || (templateObject_1 = __makeTemplateObject(["Rank ", " is immutable."], ["Rank ", " is immutable."])), args.rank));
                             if (args.player.immutable() && !config_1.Mode.localDebug)
                                 (0, commands_1.fail)(f(templateObject_2 || (templateObject_2 = __makeTemplateObject(["Player ", " is immutable."], ["Player ", " is immutable."])), args.player));
-                            return [4 /*yield*/, args.player.setRank(args.rank)];
+                            return [4, args.player.setRank(args.rank)];
                         case 1:
                             _c.sent();
                             (0, utils_1.logAction)("set rank to ".concat(args.rank.name, " for"), "console", args.player);
                             outputSuccess(f(templateObject_3 || (templateObject_3 = __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), args.player, args.rank));
                             args.player.sendMessage("[royal]Your rank has been set to ".concat(args.rank.coloredName(), "."));
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -167,12 +163,12 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 var args = _b.args, outputSuccess = _b.outputSuccess, f = _b.f;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
-                        case 0: return [4 /*yield*/, args.player.setFlag(args.flag, args.value)];
+                        case 0: return [4, args.player.setFlag(args.flag, args.value)];
                         case 1:
                             _c.sent();
                             (0, utils_1.logAction)("set roleflag ".concat(args.flag.name, " to ").concat(args.value, " for"), "console", args.player);
                             outputSuccess(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["Set role flag ", " of player ", " to ", ""], ["Set role flag ", " of player ", " to ", ""])), args.flag, args.player, args.value));
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -263,12 +259,10 @@ exports.commands = (0, commands_1.consoleCommandList)({
                                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                                 return a;
                             });
-                            if (!(playersToFetch.length == 0)) return [3 /*break*/, 1];
+                            if (!(playersToFetch.length == 0)) return [3, 1];
                             display(infoList);
-                            return [3 /*break*/, 13];
+                            return [3, 13];
                         case 1:
-                            //Attempt to fetch data
-                            //If there are too many players, give up
                             if (playersToFetch.length > 50)
                                 display(infoList);
                             output("Fetching data...");
@@ -281,13 +275,13 @@ exports.commands = (0, commands_1.consoleCommandList)({
                             _c = __values((0, funcs_1.to2DArray)(playersToFetch, 10)), _d = _c.next();
                             _f.label = 4;
                         case 4:
-                            if (!!_d.done) return [3 /*break*/, 7];
+                            if (!!_d.done) return [3, 7];
                             batch = _d.value;
-                            return [4 /*yield*/, Promise.all(batch.map(function (info) { return __awaiter(_this, void 0, void 0, function () {
+                            return [4, Promise.all(batch.map(function (info) { return __awaiter(_this, void 0, void 0, function () {
                                     var data, fishP;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
-                                            case 0: return [4 /*yield*/, api.getFishPlayerData(info.id)];
+                                            case 0: return [4, api.getFishPlayerData(info.id)];
                                             case 1:
                                                 data = _a.sent();
                                                 if (data) {
@@ -295,7 +289,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                                                     fishP.updateData(data);
                                                     players_1.FishPlayer.cachedPlayers[info.id] = fishP;
                                                 }
-                                                return [2 /*return*/];
+                                                return [2];
                                         }
                                     });
                                 }); }))];
@@ -304,30 +298,30 @@ exports.commands = (0, commands_1.consoleCommandList)({
                             _f.label = 6;
                         case 6:
                             _d = _c.next();
-                            return [3 /*break*/, 4];
-                        case 7: return [3 /*break*/, 10];
+                            return [3, 4];
+                        case 7: return [3, 10];
                         case 8:
                             e_1_1 = _f.sent();
                             e_1 = { error: e_1_1 };
-                            return [3 /*break*/, 10];
+                            return [3, 10];
                         case 9:
                             try {
                                 if (_d && !_d.done && (_e = _c.return)) _e.call(_c);
                             }
                             finally { if (e_1) throw e_1.error; }
-                            return [7 /*endfinally*/];
-                        case 10: return [3 /*break*/, 12];
+                            return [7];
+                        case 10: return [3, 12];
                         case 11:
                             err_1 = _f.sent();
                             Log.err(err_1);
-                            return [3 /*break*/, 12];
+                            return [3, 12];
                         case 12:
                             infoList = admins.findByName(args.player)
                                 .toSeq().toArray()
                                 .map(function (p) { return [p, players_1.FishPlayer.getById(p.id)]; });
                             display(infoList);
                             _f.label = 13;
-                        case 13: return [2 /*return*/];
+                        case 13: return [2];
                     }
                 });
             });
@@ -419,7 +413,6 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var args = _a.args, output = _a.output, outputFail = _a.outputFail, admins = _a.admins;
             var range;
             if (globals_1.ipPattern.test(args.target)) {
-                //target is an ip
                 api.ban({ ip: args.target });
                 var info = admins.findByIP(args.target);
                 if (info)
@@ -496,7 +489,6 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var args = _a.args, output = _a.output, admins = _a.admins;
             var range;
             if (globals_1.ipPattern.test(args.target)) {
-                //target is an ip
                 if (automod_1.Automod.removePunishedIP(args.target)) {
                     output("Removed IP &c\"".concat(args.target, "\"&fr from the anti-evasion list."));
                 }
@@ -817,12 +809,10 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 (0, commands_1.fail)(f(templateObject_5 || (templateObject_5 = __makeTemplateObject(["Operation aborted: Player ", " is insufficiently trollable."], ["Operation aborted: Player ", " is insufficiently trollable."])), args.player));
             var oldName = args.player.name;
             if (args.player.ranksAtLeast("active")) {
-                //Joke
                 args.player.setJokeName(args.newname);
                 outputSuccess("Temporarily renamed ".concat(oldName, " to ").concat(args.newname, "."));
             }
             else {
-                //Real
                 args.player.setName(args.newname);
                 outputSuccess("Renamed ".concat(oldName, " to ").concat(args.newname, "."));
             }
@@ -855,26 +845,25 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 return __generator(this, function (_f) {
                     switch (_f.label) {
                         case 0:
-                            if (!args.player.marked()) return [3 /*break*/, 2];
-                            //overload: overwrite stoptime
+                            if (!args.player.marked()) return [3, 2];
                             if (!args.time)
                                 (0, commands_1.fail)(f(templateObject_6 || (templateObject_6 = __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player));
                             previousTime = (0, utils_1.formatTime)(args.player.unmarkTime - Date.now());
-                            return [4 /*yield*/, args.player.updateStopTime(args.time)];
+                            return [4, args.player.updateStopTime(args.time)];
                         case 1:
                             _f.sent();
                             outputSuccess(f(templateObject_7 || (templateObject_7 = __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.time), previousTime));
-                            return [2 /*return*/];
+                            return [2];
                         case 2:
                             time = (_c = args.time) !== null && _c !== void 0 ? _c : funcs_1.Duration.days(7);
                             if (time + Date.now() > globals_1.maxTime)
                                 (0, commands_1.fail)("Error: time too high.");
-                            return [4 /*yield*/, args.player.stop("console", time, (_d = args.message) !== null && _d !== void 0 ? _d : undefined)];
+                            return [4, args.player.stop("console", time, (_d = args.message) !== null && _d !== void 0 ? _d : undefined)];
                         case 3:
                             _f.sent();
                             (0, utils_1.logAction)('stopped', "console", args.player, (_e = args.message) !== null && _e !== void 0 ? _e : undefined, time);
                             Call.sendMessage("[scarlet]Player \"".concat(args.player.prefixedName, "[scarlet]\" has been marked for ").concat((0, utils_1.formatTime)(time)).concat(args.message ? " with reason: [white]".concat(args.message, "[]") : "", "."));
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -895,12 +884,12 @@ exports.commands = (0, commands_1.consoleCommandList)({
                             if (info == null)
                                 (0, commands_1.fail)("Unknown player ".concat(uuid));
                             fishP = players_1.FishPlayer.getFromInfo(info);
-                            return [4 /*yield*/, fishP.stop("console", stopTime)];
+                            return [4, fishP.stop("console", stopTime)];
                         case 1:
                             _d.sent();
                             (0, utils_1.logAction)('stopped', "console", info, undefined, stopTime);
                             outputSuccess("Player \"".concat(info.lastName, "\" was marked for ").concat((0, utils_1.formatTime)(stopTime), "."));
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -1053,7 +1042,6 @@ exports.commands = (0, commands_1.consoleCommandList)({
             var args = _a.args;
             if (globals_1.ipPortPattern.test(args.server)) {
                 Groups.player.each(function (target) {
-                    //direct connect
                     Call.connect.apply(Call, __spreadArray([target.con], __read(args.server.split(":")), false));
                 });
             }
@@ -1078,12 +1066,12 @@ exports.commands = (0, commands_1.consoleCommandList)({
                             (_c = args.duration) !== null && _c !== void 0 ? _c : (args.duration = globals_1.maxTime);
                             if (args.player.muted())
                                 (0, commands_1.fail)(f(templateObject_8 || (templateObject_8 = __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player));
-                            return [4 /*yield*/, args.player.mute("console", args.duration)];
+                            return [4, args.player.mute("console", args.duration)];
                         case 1:
                             _d.sent();
                             (0, utils_1.logAction)('muted', "console", args.player);
                             outputSuccess(f(templateObject_9 || (templateObject_9 = __makeTemplateObject(["Muted player ", " for ", "."], ["Muted player ", " for ", "."])), args.player, (0, utils_1.formatTime)(args.duration)));
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -1102,12 +1090,12 @@ exports.commands = (0, commands_1.consoleCommandList)({
                                 (0, commands_1.fail)(f(templateObject_10 || (templateObject_10 = __makeTemplateObject(["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."], ["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."])), args.player));
                             if (!args.player.muted())
                                 (0, commands_1.fail)(f(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Player ", " is not muted."], ["Player ", " is not muted."])), args.player));
-                            return [4 /*yield*/, args.player.unmute("console")];
+                            return [4, args.player.unmute("console")];
                         case 1:
                             _c.sent();
                             (0, utils_1.logAction)('unmuted', "console", args.player);
                             outputSuccess(f(templateObject_12 || (templateObject_12 = __makeTemplateObject(["Unmuted player ", "."], ["Unmuted player ", "."])), args.player));
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -1122,13 +1110,13 @@ exports.commands = (0, commands_1.consoleCommandList)({
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
-                            if (!args.player.marked()) return [3 /*break*/, 2];
-                            return [4 /*yield*/, args.player.free("console")];
+                            if (!args.player.marked()) return [3, 2];
+                            return [4, args.player.free("console")];
                         case 1:
                             _c.sent();
                             (0, utils_1.logAction)('freed', "console", args.player);
                             outputSuccess(f(templateObject_13 || (templateObject_13 = __makeTemplateObject(["Player ", " has been unmarked."], ["Player ", " has been unmarked."])), args.player));
-                            return [3 /*break*/, 3];
+                            return [3, 3];
                         case 2:
                             if (args.player.autoflagged) {
                                 args.player.autoflagged = false;
@@ -1143,7 +1131,7 @@ exports.commands = (0, commands_1.consoleCommandList)({
                                 outputFail(f(templateObject_15 || (templateObject_15 = __makeTemplateObject(["Player ", " is not marked or autoflagged."], ["Player ", " is not marked or autoflagged."])), args.player));
                             }
                             _c.label = 3;
-                        case 3: return [2 /*return*/];
+                        case 3: return [2];
                     }
                 });
             });

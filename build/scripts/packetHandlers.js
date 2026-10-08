@@ -1,24 +1,12 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the visual effects system.
-Original contributor: @author TheEt1234
-Fixes: @author BalaM314
-Fixes: @author Dart25
-Fixes: @author Jurorno9
-*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commands = void 0;
 exports.loadPacketHandlers = loadPacketHandlers;
 exports.bulkInfoMsg = bulkInfoMsg;
 var commands_1 = require("/frameworks/commands");
 var players_1 = require("/players");
-//some much needed restrictions
-/** point in which effects will refuse to render */
 var MIN_EFFECT_TPS = 20;
-/** maximum duration for user-created labels (seconds) */
 var MAX_LABEL_TIME = 20;
-//info tracker
 var lastLabel = '';
 var lastAccessedBulkLabel = null;
 var lastAccessedLabel = null;
@@ -35,13 +23,10 @@ var lowTPSError = '[red]Low server TPS, skipping request.';
 var tmpLinePacket = new EffectCallPacket2();
 var tmpLabelPacket = new LabelReliableCallPacket();
 function loadPacketHandlers() {
-    //initialize line packet
     tmpLinePacket.effect = Fx.pointBeam;
     tmpLinePacket.rotation = 0.0;
     tmpLinePacket.color = Tmp.c1;
     tmpLinePacket.data = Tmp.v1;
-    //labels
-    //fmt: "content,duration,x,y"
     Vars.netServer.addPacketHandler('label', function (player, content) {
         var p = players_1.FishPlayer.get(player);
         try {
@@ -72,7 +57,6 @@ function loadPacketHandlers() {
                 return;
             }
             lastAccessedBulkLabel = p;
-            //get individual labels
             var labels = [];
             var inQuotes = false;
             var startIdx = 0;
@@ -83,7 +67,6 @@ function loadPacketHandlers() {
                             break;
                         inQuotes = !inQuotes;
                         break;
-                    //separate
                     case bulkSeparator:
                         if (inQuotes)
                             break;
@@ -94,7 +77,6 @@ function loadPacketHandlers() {
                         break;
                 }
             }
-            //last label
             if (startIdx < content.length) {
                 labels.push(content.substring(startIdx, content.length - 1));
             }
@@ -102,8 +84,6 @@ function loadPacketHandlers() {
                 p.sendMessage(tooLongText, 1000);
                 return;
             }
-            //display labels
-            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (var i = 0; i < labels.length; i++) {
                 var label = labels[i];
                 if (label.trim().length <= 0)
@@ -116,7 +96,6 @@ function loadPacketHandlers() {
             p.sendMessage(procError, 1000);
         }
     });
-    //lines
     Vars.netServer.addPacketHandler('lineEffect', function (player, content) {
         var p = players_1.FishPlayer.get(player);
         try {
@@ -136,7 +115,6 @@ function loadPacketHandlers() {
             p.sendMessage(procError, 1000);
         }
     });
-    //this is the silas effect but it's way too real
     Vars.netServer.addPacketHandler('bulkLineEffect', function (player, content) {
         var p = players_1.FishPlayer.get(player);
         if (Core.graphics.getFramesPerSecond() < MIN_EFFECT_TPS) {
@@ -153,7 +131,6 @@ function loadPacketHandlers() {
                 p.sendMessage(tooLongText, 1000);
                 return;
             }
-            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i];
                 if (line.trim().length <= 0)
@@ -168,7 +145,6 @@ function loadPacketHandlers() {
         }
     });
 }
-//commands
 exports.commands = (0, commands_1.commandList)({
     pklast: {
         args: [],
@@ -202,10 +178,8 @@ exports.commands = (0, commands_1.commandList)({
         }
     }
 });
-//#region utils
 function findEndQuote(content, startPos) {
     if (content[startPos] != '"') {
-        //not a start quote??
         return -1;
     }
     for (var i = startPos + 1; i < content.length; i++) {
@@ -218,14 +192,12 @@ function findEndQuote(content, startPos) {
 function handleLabel(player, content, isSingle) {
     var endPos = findEndQuote(content, 0);
     if (endPos == -1) {
-        //invalid content
         player.sendMessage(invalidContentText);
         return false;
     }
-    //label, clean up \"s
     var message = content.substring(1, endPos).replace('\\"', '"');
     var parts = content.substring(endPos + 2).split(',');
-    if (parts.length != 3) { //dur,x,y
+    if (parts.length != 3) {
         player.sendMessage(invalidReq);
         return false;
     }
@@ -241,12 +213,6 @@ function handleLabel(player, content, isSingle) {
         player.sendMessage(invalidReq);
         return false;
     }
-    /*Call.labelReliable(
-        message, //message
-        Number(parts[0]), //duration
-        Number(parts[1]), //x
-        Number(parts[2]) //y
-    );*/
     tmpLabelPacket.message = message;
     tmpLabelPacket.duration = duration;
     tmpLabelPacket.worldx = x;
@@ -256,18 +222,12 @@ function handleLabel(player, content, isSingle) {
 }
 function handleLine(content, player) {
     var parts = content.split(',');
-    if (parts.length != 5) { //x0,y0,x1,y1,color
+    if (parts.length != 5) {
         player.sendMessage(invalidReq);
         return false;
     }
-    Tmp.v1.set(Number(parts[2]), Number(parts[3])); //x1,y1
-    Color.valueOf(Tmp.c1, parts[4]); //color
-    /*Call.effect(
-        Fx.pointBeam,
-        Number(parts[0]), Number(parts[1]), //x,y
-        0, Tmp.c1, //color
-        Tmp.v1 //x1,y1
-    );*/
+    Tmp.v1.set(Number(parts[2]), Number(parts[3]));
+    Color.valueOf(Tmp.c1, parts[4]);
     tmpLinePacket.x = Number(parts[0]);
     tmpLinePacket.y = Number(parts[1]);
     Vars.net.send(tmpLinePacket, false);
@@ -278,4 +238,3 @@ function bulkInfoMsg(messages, conn) {
         Call.infoMessage(conn, messages[i]);
     }
 }
-//#endregion

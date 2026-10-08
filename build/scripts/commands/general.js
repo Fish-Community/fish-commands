@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains most in-game chat commands that can be run by untrusted players.
-*/
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
@@ -203,12 +199,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 return __generator(this, function (_f) {
                     switch (_f.label) {
                         case 0:
-                            if (!((_e = args.language) !== null && _e !== void 0)) return [3 /*break*/, 1];
+                            if (!((_e = args.language) !== null && _e !== void 0)) return [3, 1];
                             _c = _e;
-                            return [3 /*break*/, 3];
+                            return [3, 3];
                         case 1:
                             _d = args;
-                            return [4 /*yield*/, menus_1.Menu.menu("Translation Language", "Select a language. Messages will be translated to this language.", translation_1.languageCache.values().toSeq()
+                            return [4, menus_1.Menu.menu("Translation Language", "Select a language. Messages will be translated to this language.", translation_1.languageCache.values().toSeq()
                                     .sort(Packages.java.util.Comparator({ compare: function (a, b) {
                                         return Packages.java.lang.String(a.code).compareTo(Packages.java.lang.String(b));
                                     } }))
@@ -230,7 +226,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             sender.language = targetLanguage.code;
                             (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage.code);
                             outputSuccess("Your translation language is now set to ".concat(targetLanguage.name, "."));
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -259,22 +255,22 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             i = 0;
                             _c.label = 1;
                         case 1:
-                            if (!(i < array.length)) return [3 /*break*/, 4];
+                            if (!(i < array.length)) return [3, 4];
                             t = array[i];
-                            if (!(t.breakable() && t.block() instanceof Prop)) return [3 /*break*/, 3];
+                            if (!(t.breakable() && t.block() instanceof Prop)) return [3, 3];
                             t.removeNet();
                             removed++;
-                            if (!(removed % 500 == 0)) return [3 /*break*/, 3];
-                            return [4 /*yield*/, (0, funcs_1.delay)(100)];
+                            if (!(removed % 500 == 0)) return [3, 3];
+                            return [4, (0, funcs_1.delay)(100)];
                         case 2:
                             _c.sent();
                             _c.label = 3;
                         case 3:
                             i++;
-                            return [3 /*break*/, 1];
+                            return [3, 1];
                         case 4:
                             outputSuccess("Cleared the map of boulders.");
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -522,13 +518,11 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 (0, commands_1.fail)(f(templateObject_4 || (templateObject_4 = __makeTemplateObject(["You do not have permission to switch player ", "."], ["You do not have permission to switch player ", "."])), args.target));
             var target = (_b = args.target) !== null && _b !== void 0 ? _b : sender;
             if (globals_1.ipPortPattern.test(args.server) && sender.hasPerm("admin")) {
-                //direct connect
                 Call.connect.apply(Call, __spreadArray([target.con()], __read(args.server.split(":")), false));
             }
             else {
                 var unknownServerMessage = "Unknown server ".concat(args.server, ". Valid options: ").concat(config_1.FishServer.all.filter(function (s) { return !s.requiredPerm || sender.hasPerm(s.requiredPerm); }).map(function (s) { return s.name; }).join(", "));
                 var server = (_c = config_1.FishServer.byName(args.server)) !== null && _c !== void 0 ? _c : (0, commands_1.fail)(unknownServerMessage);
-                //Pretend the server doesn't exist
                 if (server.requiredPerm && !sender.hasPerm(server.requiredPerm))
                     (0, commands_1.fail)(unknownServerMessage);
                 if (target == sender && Date.now() - lastUsedSuccessfullySender > funcs_1.Duration.minutes(1))
@@ -556,32 +550,23 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             _f.label = 1;
                         case 1:
                             _f.trys.push([1, 3, , 4]);
-                            return [4 /*yield*/, api.sendStaffMessage(args.message, (_e = sender.overrideName) !== null && _e !== void 0 ? _e : sender.name, sender.hasPerm("mod"))];
+                            return [4, api.sendStaffMessage(args.message, (_e = sender.overrideName) !== null && _e !== void 0 ? _e : sender.name, sender.hasPerm("mod"))];
                         case 2:
                             _f.sent();
                             if (!sender.hasPerm("mod")) {
                                 outputSuccess("Message sent to [orange]all online staff.");
                             }
-                            return [3 /*break*/, 4];
+                            return [3, 4];
                         case 3:
                             _c = _f.sent();
                             outputFail("Failed to send message to other servers.");
-                            return [3 /*break*/, 4];
-                        case 4: return [2 /*return*/];
+                            return [3, 4];
+                        case 4: return [2];
                     }
                 });
             });
         },
-    }, 
-    /**
-     * This command is mostly for mobile (or players without foos).
-     *
-     * Since the player's unit follows the camera and we are moving the
-     * camera, we need to keep setting the players real position to the
-     * spot the command was made. This is pretty buggy but otherwise the
-     * player will be up the target player's butt
-     */
-    watch: (0, commands_1.command)({
+    }, watch: (0, commands_1.command)({
         args: ['player:playerOn?'],
         description: "Watch/unwatch a player.",
         perm: commands_1.Perm.none,
@@ -594,8 +579,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
-                            if (!!sender.con().mobile) return [3 /*break*/, 2];
-                            return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.")];
+                            if (!!sender.con().mobile) return [3, 2];
+                            return [4, menus_1.Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.")];
                         case 1:
                             _d.sent();
                             _d.label = 2;
@@ -613,7 +598,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                                 (function watch() {
                                     var unit = target_1.unit();
                                     if (data.has(sender.uuid) && unit) {
-                                        // Self.X+(172.5-Self.X)/10
                                         Call.setCameraPosition(sender.con(), unit.x, unit.y);
                                         if (senderUnit_1)
                                             senderUnit_1.set(stayX_1, stayY_1);
@@ -627,13 +611,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             else {
                                 outputFail("No player to unwatch.");
                             }
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
         },
     }), spectate: (0, commands_1.command)(function () {
-        /** Mapping between player and original team */
         var spectators = new Map();
         function spectate(target) {
             spectators.set(target, target.team());
@@ -643,7 +626,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         }
         function resume(target) {
             if (spectators.get(target) == null)
-                return; // this state is possible for a person who left not in spectate
+                return;
             target.setTeam(spectators.get(target));
             spectators.delete(target);
             target.forceRespawn();
@@ -694,7 +677,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 output(config_1.text.selectorsHelp);
             }
             else if (args.name && isNaN(parseInt(args.name)) && !['mod', 'admin', 'member', 'manager', 'trusted'].includes(args.name)) {
-                //name is not a number or a category, therefore it is probably a command name
                 if (args.name in allCommands && (!allCommands[args.name].isHidden || allCommands[args.name].perm.check(sender))) {
                     if (args.name == "help")
                         achievements_1.Achievements.help_help.grantTo(sender, false);
@@ -771,7 +753,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         },
         handler: function (_a) {
             var args = _a.args, sender = _a.sender, output = _a.output, outputFail = _a.outputFail, outputSuccess = _a.outputSuccess;
-            //overload 1: type not specified
             if (!args.type) {
                 if (sender.trail != null) {
                     sender.trail = null;
@@ -782,7 +763,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 }
                 return;
             }
-            //overload 2: type specified
             var trailTypes = {
                 "1": 'fluxVapor',
                 "2": 'overclocked',
@@ -823,7 +803,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     ohno.set(x, y);
                     ohno.type = UnitTypes.alpha;
                     ohno.apply(StatusEffects.disarmed, Number.MAX_SAFE_INTEGER);
-                    ohno.resetController(); //does this work?
+                    ohno.resetController();
                     ohno.add();
                     this.ohnos.push(ohno);
                     return ohno;
@@ -1062,11 +1042,11 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                         case 0:
                             if (waveUnitsAlive())
                                 (0, commands_1.fail)("You can only run /vnw when all units from previous waves are dead.");
-                            if (!!manager.session) return [3 /*break*/, 4];
-                            if (!(waves !== null && waves !== void 0)) return [3 /*break*/, 1];
+                            if (!!manager.session) return [3, 4];
+                            if (!(waves !== null && waves !== void 0)) return [3, 1];
                             _c = waves;
-                            return [3 /*break*/, 3];
-                        case 1: return [4 /*yield*/, menus_1.Menu.menu("Start a Next Wave Vote", "Select the amount of waves you would like to skip.", [1, 5, 10], sender, {
+                            return [3, 3];
+                        case 1: return [4, menus_1.Menu.menu("Start a Next Wave Vote", "Select the amount of waves you would like to skip.", [1, 5, 10], sender, {
                                 includeCancel: true,
                                 optionStringifier: function (n) { return "".concat(n, " waves"); }
                             })];
@@ -1076,7 +1056,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                         case 3:
                             _c;
                             if (manager.session) {
-                                //Someone else started a vote
                                 if (manager.session.data != waves)
                                     (0, commands_1.fail)("Someone else started a vote with a different number of waves to skip.");
                                 else
@@ -1085,11 +1064,11 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             else {
                                 manager.start(sender, sender.voteWeight(), waves);
                             }
-                            return [3 /*break*/, 5];
+                            return [3, 5];
                         case 4:
                             manager.vote(sender, sender.voteWeight(), null);
                             _e.label = 5;
-                        case 5: return [2 /*return*/];
+                        case 5: return [2];
                     }
                 });
             });
@@ -1118,7 +1097,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         description: 'Rock the vote to change map.',
         perm: commands_1.Perm.play,
         init: function () { return ({
-            manager: new votes_1.VoteManager(funcs_1.Duration.minutes(1.5), config_1.Gamemode.hexed() ? ["fractionOfVoters", 1] : undefined) //Require unanimity in Hexed, as it is often 1 v everyone
+            manager: new votes_1.VoteManager(funcs_1.Duration.minutes(1.5), config_1.Gamemode.hexed() ? ["fractionOfVoters", 1] : undefined)
                 .on("success", function () { return (0, utils_1.neutralGameover)(); })
                 .on("vote passed", function () { return Call.sendMessage("RTV: [green]Vote has passed, changing map."); })
                 .on("vote failed", function () { return Call.sendMessage("RTV: [red]Vote failed."); })
@@ -1128,33 +1107,9 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         requirements: [commands_1.Req.cooldown(10000), commands_1.Req.gameRunning],
         handler: function (_a) {
             var sender = _a.sender, manager = _a.data.manager;
-            manager.vote(sender, 1, 0); //No weighting for RTV except for removing AFK players
+            manager.vote(sender, 1, 0);
         }
-    }), 
-    // votekick: command({
-    // 	args: ["target:player"],
-    // 	description: "Starts a vote to kick a player.",
-    // 	perm: Perm.play,
-    // 	data: new VoteManager<FishPlayer>(
-    // 		Duration.seconds(20),
-    // 		["absolute", 3],
-    // 		(fishP, target) => fishP.team() == target.team() || fishP.hasPerm("voteOtherTeams")
-    // 	),
-    // 	handler({args, sender, data: votekickmanager}){
-    // 		if(votekickmanager.session) fail(`There is already a votekick in progress.`);
-    // 		votekickmanager.start(sender, 1, args.target);
-    // 	}
-    // }),
-    // vote: {
-    // 	 args: ["vote:boolean"],
-    // 	 description: "Use /votekick instead.",
-    // 	 perm: Perm.play,
-    // 	 handler({sender, args, allCommands}){
-    // 		const votekickmanager = allCommands.votekick.data;
-    // 		votekickmanager.handleVote(sender, args ? 1 : -1);
-    // 	 }
-    // },
-    forcenextmap: {
+    }), forcenextmap: {
         args: ["map:mapOrRandom"],
         description: 'Override the next map in queue.',
         perm: commands_1.Perm.admin.exceptModes({
@@ -1164,7 +1119,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var allCommands = _a.allCommands, args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess, f = _a.f;
             Vars.maps.setNextMapOverride(args.map == "random" ? null : args.map);
             if (allCommands.nextmap.data.voteEndTime() > -1) {
-                //Cancel /nextmap vote if it's ongoing
                 allCommands.nextmap.data.resetVotes();
                 Call.sendMessage("[red]Admin ".concat(sender.name, "[red] has cancelled the vote. The next map will be ").concat(args.map == "random" ? "random" : "[yellow]".concat(args.map.name()), "."));
             }
@@ -1219,11 +1173,10 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         }
         function endVote() {
             if (voteEndTime == -1)
-                return; //aborted somehow
+                return;
             if (votes.size == 0)
-                return; //no votes?
+                return;
             if (votes.size + 2 <= lastVoteCount && (Date.now() - lastVoteTime) < funcs_1.Duration.minutes(10)) {
-                //If the number of votes is 2 less than the previous number of votes for a vote in the past 10 minutes, abor
                 Call.sendMessage("[cyan]Next Map Vote: [scarlet]Vote aborted because a previous vote had significantly higher turnout");
                 resetVotes();
                 return;
@@ -1313,29 +1266,29 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             case 0:
                                 t = sender.hasPerm("admin") && team ? team : sender.team();
                                 manager = managers[t.id];
-                                if (!(sender.hasPerm("admin") && force != undefined)) return [3 /*break*/, 4];
-                                if (!force) return [3 /*break*/, 2];
-                                return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to force team ".concat(t.coloredName(), "[] to lose?"))];
+                                if (!(sender.hasPerm("admin") && force != undefined)) return [3, 4];
+                                if (!force) return [3, 2];
+                                return [4, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to force team ".concat(t.coloredName(), "[] to lose?"))];
                             case 1:
                                 _d.sent();
                                 manager.messageEligibleVoters(prefix + "Vote forced by admin ".concat(sender.name, "[white]."));
                                 Call.sendMessage(prefix + "Team ".concat(t.coloredName(), " has voted to forfeit this match."));
-                                return [3 /*break*/, 3];
+                                return [3, 3];
                             case 2:
                                 manager.messageEligibleVoters(prefix + "Votes cleared by admin ".concat(sender.name, "[white]."));
                                 _d.label = 3;
                             case 3:
                                 manager.forceVote(force);
-                                return [2 /*return*/];
+                                return [2];
                             case 4:
-                                if (!(manager.getEligibleVoters().length == 1)) return [3 /*break*/, 6];
-                                return [4 /*yield*/, menus_1.Menu.confirmDangerous(sender, "Are you really sure you want to surrender? All of your buildings will be destroyed and the enemy team will win.")];
+                                if (!(manager.getEligibleVoters().length == 1)) return [3, 6];
+                                return [4, menus_1.Menu.confirmDangerous(sender, "Are you really sure you want to surrender? All of your buildings will be destroyed and the enemy team will win.")];
                             case 5:
                                 _d.sent();
                                 _d.label = 6;
                             case 6:
                                 manager.vote(sender, 1, 0);
-                                return [2 /*return*/];
+                                return [2];
                         }
                     });
                 });
@@ -1353,25 +1306,25 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                     switch (_f.label) {
                         case 0:
                             player(target);
-                            if (!!target.dataSynced) return [3 /*break*/, 5];
+                            if (!!target.dataSynced) return [3, 5];
                             _f.label = 1;
                         case 1:
                             _f.trys.push([1, 3, , 4]);
-                            return [4 /*yield*/, target.downloadData()];
+                            return [4, target.downloadData()];
                         case 2:
                             _f.sent();
-                            return [3 /*break*/, 4];
+                            return [3, 4];
                         case 3:
                             _c = _f.sent();
                             (0, commands_1.fail)("Error fetching data.");
-                            return [3 /*break*/, 4];
+                            return [3, 4];
                         case 4:
                             target.dataSynced = true;
                             _f.label = 5;
                         case 5:
                             stats = global ? target.globalStats : target.stats;
                             output(f(templateObject_19 || (templateObject_19 = __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, global ? "across all servers" : "on this server", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished));
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -1429,7 +1382,6 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         },
         handler: function (_a) {
             var args = _a.args, sender = _a.sender, outputSuccess = _a.outputSuccess;
-            //Unpause
             Vars.state.set(GameState.State.playing);
             switch (args.mode) {
                 case "attack":
@@ -1476,7 +1428,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             var _b = sender.unit(), team = _b.team, x = _b.x, y = _b.y;
             var unit = args.base.create(team);
             unit.type = args.type;
-            unit.maxHealth = args.type.health; //because half-dead units aren't fun
+            unit.maxHealth = args.type.health;
             unit.set(x, y);
             unit.add();
             outputSuccess(f(templateObject_20 || (templateObject_20 = __makeTemplateObject(["Spawned a ", " that is partly a ", "."], ["Spawned a ", " that is partly a ", "."])), args.type, args.base));
@@ -1496,22 +1448,22 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             matching = achievements_1.Achievement.all.filter(function (a) { return Strings.stripColors(a.name).toLowerCase().includes(name); });
                             if (matching.length == 0)
                                 (0, commands_1.fail)(f(templateObject_21 || (templateObject_21 = __makeTemplateObject(["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."], ["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."])), name));
-                            if (!(matching.length > 2)) return [3 /*break*/, 2];
-                            return [4 /*yield*/, menus_1.Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, {
+                            if (!(matching.length > 2)) return [3, 2];
+                            return [4, menus_1.Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, {
                                     onCancel: "reject",
                                     columns: 2,
                                     optionStringifier: function (a) { return "".concat(a.icon, "[] ").concat(a.name); }
                                 })];
                         case 1:
                             _c = _g.sent();
-                            return [3 /*break*/, 3];
+                            return [3, 3];
                         case 2:
                             _c = matching[0];
                             _g.label = 3;
                         case 3:
                             achievement = _c;
                             output(config_1.FColor.achievement(templateObject_22 || (templateObject_22 = __makeTemplateObject(["Achievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "", "", ""], ["\\\nAchievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n", "\\\n", "\\\n"])), achievement.icon, copy(achievement.name), copy(achievement.description + (achievement.extendedDescription ? ("\n" + "[gray]".concat(achievement.extendedDescription)) : "")), achievement.modesText, f.boolGood(achievement.has(sender)), verbose ? "[gray]ID: (".concat(achievement.nid, ")").concat(achievement.sid, "\n") : "", verbose ? "[gray]Notifies: ".concat(achievement.notify, "\n") : "", achievement.hidden ? "This achievement is secret." : ""));
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -1525,14 +1477,14 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                 var sender = _b.sender, _c = _b.args.target, target = _c === void 0 ? sender : _c, f = _b.f;
                 return __generator(this, function (_d) {
                     switch (_d.label) {
-                        case 0: return [4 /*yield*/, menus_1.Menu.textPages(sender, achievements_1.Achievement.all.filter(function (a) { return !a.hidden || a.has(target); })
+                        case 0: return [4, menus_1.Menu.textPages(sender, achievements_1.Achievement.all.filter(function (a) { return !a.hidden || a.has(target); })
                                 .map(function (a) { return [
                                 "".concat(a.icon, "[] ").concat(a.name),
                                 function () { return config_1.FColor.achievement(templateObject_23 || (templateObject_23 = __makeTemplateObject(["", "\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : ""); }
                             ]; }))];
                         case 1:
                             _d.sent();
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -1560,18 +1512,17 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             a = null;
                             _e.label = 1;
                         case 1:
-                            if (!true) return [3 /*break*/, 3];
-                            return [4 /*yield*/, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_24 || (templateObject_24 = __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") :
+                            if (!true) return [3, 3];
+                            return [4, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_24 || (templateObject_24 = __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.name, a.description + (a.extendedDescription ? ("\n" + "[gray]".concat(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.hidden ? "This achievement is secret." : "") :
                                     (target == sender ? "You have ".concat(numberAchievements, "/").concat(totalAchievements, " achievements.")
                                         : config_1.FColor.achievement(templateObject_25 || (templateObject_25 = __makeTemplateObject(["Player ", " has ", "/", " achievements."], ["Player ", " has ", "/", " achievements."])), target.prefixedName, numberAchievements, totalAchievements))
                                         + "\nClick an achievement icon to show more information.", options, { onCancel: "reject", columns: 5, rows: 4, getCenterText: function () { return String.fromCharCode(Iconc.settings); }, x: x, y: y })];
                         case 2:
-                            //the loop will be aborted if the menu is cancelled (promise will reject)
                             _c = __read.apply(void 0, [_e.sent(), 3]), a = _c[0], x = _c[1], y = _c[2];
                             if (a == achievements_1.Achievements.click_me && target == sender)
                                 a.grantTo(sender);
-                            return [3 /*break*/, 1];
-                        case 3: return [2 /*return*/];
+                            return [3, 1];
+                        case 3: return [2];
                     }
                 });
             });
@@ -1611,10 +1562,10 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                         case 0:
                             if (!sender.copyOptions || sender.copyOptions.length == 0)
                                 (0, commands_1.fail)("There is nothing to copy.");
-                            if (!(sender.copyOptions.length == 1)) return [3 /*break*/, 1];
+                            if (!(sender.copyOptions.length == 1)) return [3, 1];
                             _c = sender.copyOptions[0];
-                            return [3 /*break*/, 3];
-                        case 1: return [4 /*yield*/, menus_1.Menu.pagedList(sender, "Copy", "Select a text to copy it", sender.copyOptions, { optionStringifier: funcs_1.escapeStringColorsClient, columns: 1 })];
+                            return [3, 3];
+                        case 1: return [4, menus_1.Menu.pagedList(sender, "Copy", "Select a text to copy it", sender.copyOptions, { optionStringifier: funcs_1.escapeStringColorsClient, columns: 1 })];
                         case 2:
                             _c = _d.sent();
                             _d.label = 3;
@@ -1622,7 +1573,7 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             response = _c;
                             Call.copyToClipboard(sender.con(), response);
                             outputSuccess("Copied.");
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });
@@ -1651,12 +1602,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
                             if (globals_1.fishState.teamAssignerMode instanceof Team) {
                                 (0, commands_1.fail)(f(templateObject_27 || (templateObject_27 = __makeTemplateObject(["Team ", " is already playing 1 v all."], ["Team ", " is already playing 1 v all."])), globals_1.fishState.teamAssignerMode));
                             }
-                            return [4 /*yield*/, menus_1.Menu.confirm(sender, "Are you sure you want to play 1 vs all? All other players will be assigned to the other teams.")];
+                            return [4, menus_1.Menu.confirm(sender, "Are you sure you want to play 1 vs all? All other players will be assigned to the other teams.")];
                         case 1:
                             _c.sent();
                             globals_1.fishState.teamAssignerMode = sender.team();
                             outputSuccess('Enabled 1 vs all mode.');
-                            return [2 /*return*/];
+                            return [2];
                     }
                 });
             });

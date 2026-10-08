@@ -1,9 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the context for the "fjs" command,
-which executes code with access to the plugin's internals.
-*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runJS = runJS;
 var achievements = require("/achievements");
@@ -40,7 +35,7 @@ var FishEvents = globals.FishEvents, fishPlugin = globals.fishPlugin, fishState 
 var FMap = maps.FMap;
 var Rank = ranks.Rank, RoleFlag = ranks.RoleFlag;
 var Menu = menus.Menu;
-Object.assign(this, utils, funcs); //global scope goes brrrrr, I'm sure this will not cause any bugs whatsoever
+Object.assign(this, utils, funcs);
 var Ranks = null;
 var $ = Object.assign(function $(input) {
     if (typeof input == "string") {
@@ -70,7 +65,6 @@ var $ = Object.assign(function $(input) {
     me: null,
     meM: null,
 });
-/** Used to persist variables. */
 var vars = {};
 function runJS(input, outputFunction, errorFunction, player) {
     if (outputFunction === void 0) { outputFunction = Log.info; }

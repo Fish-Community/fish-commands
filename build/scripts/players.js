@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the FishPlayer class, and many player-related functions.
-*/
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
@@ -124,14 +120,9 @@ var globals_1 = require("/globals");
 var maps_1 = require("/maps");
 var ranks_1 = require("/ranks");
 var utils_1 = require("/utils");
-var FishPlayer = /** @class */ (function () {
-    //#endregion
+var FishPlayer = (function () {
     function FishPlayer(uuid, data, player) {
-        //#region Transient properties
-        //Commands framework
-        /** Front-to-back queue of menus to show. */
         this.activeMenus = [];
-        /** Mapping from command to usage data. */
         this.usageData = {};
         this.tapInfo = {
             resolve: null,
@@ -139,53 +130,31 @@ var FishPlayer = /** @class */ (function () {
             lastArgs: {},
             mode: "once",
         };
-        //Misc
         this.player = null;
-        /** Used for the /trail command. */
         this.trail = null;
-        /** Like name but without the colors. */
         this.cleanedName = "Unnamed player [ERROR}";
-        /** Includes prefixes. Same as .player.name */
         this.prefixedName = "Unnamed player [ERROR}";
-        /** Set when ClashGone is feeling especially chaotic. Used instead of {@link name} for prefixed name computation. */
         this.jokeName = null;
-        /** Used to freeze players temporarily. */
         this.frozen = false;
-        /** Used to avoid spamming players with ads by the tip message system */
         this.lastShownAd = globals_1.maxTime;
-        /** Used to avoid spamming players with ads by the tip message system */
         this.showAdNext = false;
-        /** Transient statistics, used by the automatic griefer detection. */
         this.tstats = {
-            //remember to clear this in updateSavedInfoFromPlayer!
             blocksBroken: 0,
             blockInteractionsThisMap: 0,
             lastMapStartTime: 0,
             lastMapPlayedTime: 0,
             wavesSurvived: 0,
         };
-        /** Whether the player has manually marked themselves as AFK. */
         this.manualAfk = false;
-        //Used for AFK detection.
         this.lastMousePosition = [0, 0];
         this.lastUnitPosition = [0, 0];
         this.lastActive = Date.now();
-        /** Used by the sendMessage() ratelimit system. */
         this.lastRatelimitedMessage = -1;
-        /** Keeps track of whether a player has changed team this match, for win rate calculation. */
         this.changedTeam = false;
-        /** Whether the player's IP was detected as a VPN. */
         this.ipDetectedVpn = false;
-        /**
-         * If a player's IP is detected as a VPN on their first join,
-         * they are autoflagged and cannot build or talk in chat.
-         */
         this.autoflagged = false;
-        /** Timestamp until which this player will not be allowed to control units. */
         this.blockedFromPossessingUnitsUntil = 0;
-        /** Timestamp until which this player will not be allowed to control units. */
         this.blockedFromCommandingUnitsUntil = 0;
-        // Used by the data syncing framework.
         this.infoUpdated = false;
         this.dataSynced = false;
         this.restoreTeam = null;
@@ -198,35 +167,21 @@ var FishPlayer = /** @class */ (function () {
         this.joinedAlready = false;
         this.sneakybanned = false;
         this.lastRequestedData = -1;
-        /** The effective original name. Usually the same as originalName, but can be modified by filters and commands. */
         this.name = "Unnamed player [ERROR}";
         this.overrideName = null;
         this.unmuteTime = -1;
         this.unmarkTime = -1;
         this.rank = ranks_1.Rank.player;
         this.flags = new Set();
-        /** Used to color chat messages for the member command */
         this.highlight = null;
-        /** Used to color the player's name for the member command */
         this.rainbow = null;
-        /** List of all moderation actions that have been performed on this player. */
         this.history = [];
-        /**
-         * The USID for this player.
-         * USID stands for Unique Server IDentifier. It is like a UUID, but unique to each server (by IP and port).
-         * It cannot be viewed by admins and it cannot be obtained by other servers.
-         */
         this.usid = null;
-        /** If chat strictness is set to "strict", the player will not be allowed to swear. */
         this.chatStrictness = "chat";
         this.language = "";
-        /** -1 represents unknown */
         this.lastJoined = -1;
-        /** -1 represents unknown */
         this.firstJoined = -1;
-        /** -1 represents unknown */
         this.globalLastJoined = -1;
-        /** -1 represents unknown */
         this.globalFirstJoined = -1;
         this.stats = {
             blocksBroken: 0,
@@ -237,15 +192,12 @@ var FishPlayer = /** @class */ (function () {
             gamesWon: 0,
         };
         this.globalStats = this.stats;
-        /** Used for the /vanish command. */
         this.showRankPrefix = true;
         this.achievements = new Bits();
         this.uuid = uuid;
         this.player = player;
         this.updateData(data);
     }
-    //#region getplayer
-    //Contains methods used to get FishPlayer instances.
     FishPlayer.createFromPlayer = function (player) {
         return new this(player.uuid(), {}, player);
     };
@@ -279,7 +231,6 @@ var FishPlayer = /** @class */ (function () {
         var _a;
         return (_a = this.cachedPlayers[id]) !== null && _a !== void 0 ? _a : null;
     };
-    /** Returns the FishPlayer representing the first online player matching a given name. */
     FishPlayer.getByName = function (name) {
         if (name == "")
             return null;
@@ -294,7 +245,6 @@ var FishPlayer = /** @class */ (function () {
         return realPlayer ? this.get(realPlayer) : null;
     };
     ;
-    /** Returns the FishPlayers representing all online players matching a given name. */
     FishPlayer.getAllByName = function (name, strict) {
         if (strict === void 0) { strict = true; }
         if (name == "")
@@ -315,9 +265,7 @@ var FishPlayer = /** @class */ (function () {
         var matchingPlayers;
         var filters = [
             function (p) { return p.name === str; },
-            // p => Strings.stripColors(p.name) === str,
             function (p) { return Strings.stripColors(p.name).toLowerCase() === str.toLowerCase(); },
-            // p => p.name.includes(str),
             function (p) { return p.name.toLowerCase().includes(str.toLowerCase()); },
             function (p) { return Strings.stripColors(p.name).includes(str); },
             function (p) { return Strings.stripColors(p.name).toLowerCase().includes(str.toLowerCase()); },
@@ -341,7 +289,6 @@ var FishPlayer = /** @class */ (function () {
         }
         return "none";
     };
-    //This method exists only because there is no easy way to turn an entitygroup into an array
     FishPlayer.getAllOnline = function () {
         var players = [];
         Groups.player.each(function (p) {
@@ -351,7 +298,6 @@ var FishPlayer = /** @class */ (function () {
         });
         return players;
     };
-    /** Returns all cached FishPlayers with names matching the search string. */
     FishPlayer.getAllOfflineByName = function (name) {
         var e_2, _a;
         var matching = [];
@@ -382,7 +328,7 @@ var FishPlayer = /** @class */ (function () {
         }
         api.getFishPlayerData(uuid).then(function (data) {
             if (!data)
-                return; //nothing to sync
+                return;
             var fishP;
             if (!(uuid in _this.cachedPlayers)) {
                 fishP = new FishPlayer(uuid, data, null);
@@ -396,13 +342,10 @@ var FishPlayer = /** @class */ (function () {
                 fishP.dataSynced = true;
                 fishP.updateData(data);
                 if (fishP.infoUpdated) {
-                    //Player has already connected
-                    //Run it again
                     if (fishP.player)
                         fishP.updateSavedInfoFromPlayer(fishP.player, true);
                 }
                 else {
-                    //Player has not connected yet, nothing further needed
                 }
             }
             if (fishP.connected()) {
@@ -426,7 +369,6 @@ var FishPlayer = /** @class */ (function () {
                 _this.dataFetchFailedUuids.add(uuid);
         });
     };
-    /** Must be called at player join, before updateName(). */
     FishPlayer.prototype.updateSavedInfoFromPlayer = function (player, repeated) {
         if (repeated === void 0) { repeated = false; }
         this.player = player;
@@ -438,7 +380,6 @@ var FishPlayer = /** @class */ (function () {
         }
         if (this.firstJoined < 1)
             this.firstJoined = Date.now();
-        //Do not update USID here
         this.manualAfk = false;
         this.cleanedName = Strings.stripColors(this.name);
         this.lastJoined = Date.now();
@@ -507,18 +448,17 @@ var FishPlayer = /** @class */ (function () {
         if (data.unmarkTime != undefined)
             this.unmarkTime = data.unmarkTime;
     };
-    /** Use when creating a new FishPlayer. */
     FishPlayer.prototype.downloadData = function () {
         return __awaiter(this, void 0, void 0, function () {
             var data;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, api.getFishPlayerData(this.uuid)];
+                    case 0: return [4, api.getFishPlayerData(this.uuid)];
                     case 1:
                         data = _a.sent();
                         if (data)
                             this.updateData(data);
-                        return [2 /*return*/, data != null];
+                        return [2, data != null];
                 }
             });
         });
@@ -546,7 +486,6 @@ var FishPlayer = /** @class */ (function () {
             achievements: JsonIO.write(Reflect.get(this.achievements, "bits"))
         };
     };
-    /** Warning: the "update" callback is run twice. */
     FishPlayer.prototype.updateSynced = function (update, beforeFetch, afterFetch) {
         return __awaiter(this, void 0, void 0, function () {
             var data;
@@ -555,26 +494,21 @@ var FishPlayer = /** @class */ (function () {
                     case 0:
                         update(this);
                         beforeFetch === null || beforeFetch === void 0 ? void 0 : beforeFetch(this);
-                        return [4 /*yield*/, api.getFishPlayerData(this.uuid)];
+                        return [4, api.getFishPlayerData(this.uuid)];
                     case 1:
                         data = _a.sent();
                         if (data)
-                            this.updateData(data, true); //Ignore changes to the other fields, they may be lost
+                            this.updateData(data, true);
                         update(this);
-                        //of course, this is a race condition
-                        //but it's unlikely to happen
-                        //could be fixed by transmitting the update operation to the server as a mongo update command
                         afterFetch === null || afterFetch === void 0 ? void 0 : afterFetch(this);
-                        return [4 /*yield*/, api.setFishPlayerData(this.getData(), 1, false)];
+                        return [4, api.setFishPlayerData(this.getData(), 1, false)];
                     case 2:
                         _a.sent();
-                        return [2 /*return*/];
+                        return [2];
                 }
             });
         });
     };
-    //#endregion
-    //#region actively synced data updates
     FishPlayer.prototype.stop = function (by, duration, message, notify) {
         var _this = this;
         if (notify === void 0) { notify = true; }
@@ -596,7 +530,6 @@ var FishPlayer = /** @class */ (function () {
                     ? "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]".concat(message, "[]")
                     : "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.");
                 if (duration < funcs_1.Duration.hours(1)) {
-                    //less than one hour
                     _this.sendMessage("[yellow]Your mark will expire in ".concat((0, utils_1.formatTime)(duration), "."));
                 }
             }
@@ -609,7 +542,7 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.free = function (by) {
         var _this = this;
         by !== null && by !== void 0 ? by : (by = "console");
-        this.autoflagged = false; //Might as well set autoflagged to false
+        this.autoflagged = false;
         automod_1.Automod.removePunishedIP(this.ip());
         automod_1.Automod.removePunishedUUID(this.uuid);
         return this.updateSynced(function () {
@@ -638,14 +571,14 @@ var FishPlayer = /** @class */ (function () {
                         }
                         if (rank == ranks_1.Rank.pi && !config_1.Mode.localDebug)
                             throw new TypeError("Cannot find function setRank in object [object Object].");
-                        return [4 /*yield*/, this.updateSynced(function () {
+                        return [4, this.updateSynced(function () {
                                 _this.rank = rank;
                                 _this.updateName();
                                 _this.updateAdminStatus();
                             }, function () { return FishPlayer.saveAll(); })];
                     case 1:
                         _a.sent();
-                        return [2 /*return*/];
+                        return [2];
                 }
             });
         });
@@ -660,10 +593,9 @@ var FishPlayer = /** @class */ (function () {
                         flag = typeof flag_ == "string" ?
                             (ranks_1.RoleFlag.getByName(flag_))
                             : flag_;
-                        // eslint-disable-next-line @typescript-eslint/no-base-to-string
                         if (!flag)
                             (0, funcs_1.crash)("Type error in FishPlayer.setFlag(): flag ".concat(String(flag_), " is invalid"));
-                        return [4 /*yield*/, this.updateSynced(function () {
+                        return [4, this.updateSynced(function () {
                                 if (value) {
                                     _this.flags.add(flag);
                                 }
@@ -675,7 +607,7 @@ var FishPlayer = /** @class */ (function () {
                             })];
                     case 1:
                         _a.sent();
-                        return [2 /*return*/];
+                        return [2];
                 }
             });
         });
@@ -700,7 +632,6 @@ var FishPlayer = /** @class */ (function () {
                     ? "[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members. Reason: [white]".concat(message)
                     : "[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.");
                 if (duration < funcs_1.Duration.hours(1)) {
-                    //less than one hour
                     _this.sendMessage("[yellow]Your mute will expire in ".concat((0, utils_1.formatTime)(duration), "."));
                 }
             }
@@ -727,10 +658,6 @@ var FishPlayer = /** @class */ (function () {
             time: Date.now(),
         }); });
     };
-    //#endregion
-    //#region eventhandling
-    //Contains methods that handle an event and must be called by other code (usually through Events.on).
-    /** Must be run on PlayerConnectEvent. */
     FishPlayer.onPlayerConnect = function (player) {
         var _a;
         var _b, _c;
@@ -752,13 +679,11 @@ var FishPlayer = /** @class */ (function () {
             fishPlayer.updateName();
             fishPlayer.updateAdminStatus();
             (0, automod_1.checkVPNAndJoins)(fishPlayer);
-            //I think this is a better spot for this
             if (fishPlayer.firstJoin())
                 void fishPlayer.showRules();
         }
     };
     FishPlayer.updateAFKCheck = function () {
-        //TODO better AFK check
         this.forEachPlayer(function (fishP, mp) {
             if (fishP.lastMousePosition[0] != mp.mouseX || fishP.lastMousePosition[1] != mp.mouseY) {
                 fishP.lastActive = Date.now();
@@ -771,16 +696,13 @@ var FishPlayer = /** @class */ (function () {
             fishP.updateName();
         });
     };
-    /** Must be run on PlayerLeaveEvent. */
     FishPlayer.onPlayerLeave = function (player) {
         var _a;
         var fishP = this.cachedPlayers[player.uuid()];
-        //at PlayerLeaveEvent, the player is still added
         if (!fishP)
             return;
         if (Vars.netServer.currentlyKicking &&
             Reflect.get(Vars.netServer.currentlyKicking, "target") == player) {
-            //Anti votekick evasion
             var votes_1 = Reflect.get(Vars.netServer.currentlyKicking, "votes");
             if ((function () {
                 if (fishP.hasPerm("bypassVotekick"))
@@ -792,19 +714,17 @@ var FishPlayer = /** @class */ (function () {
                 return votes_1 >= 1;
             })()) {
                 var kickDuration = NetServer.kickDuration;
-                //Pass the votekick
                 Call.sendMessage("[orange]Vote passed.[scarlet] ".concat(player.name, "[orange] will be banned from the server for ").concat(kickDuration / 60, " minutes."));
-                player.kick(Packets.KickReason.vote, kickDuration * 1000); //it is stored in seconds but needs to be converted to millis
+                player.kick(Packets.KickReason.vote, kickDuration * 1000);
                 Reflect.get(Vars.netServer.currentlyKicking, "task").cancel();
                 Vars.netServer.currentlyKicking = null;
             }
         }
-        //Clear temporary states such as menu and taphandler
         fishP.activeMenus = [];
         fishP.tapInfo.commandName = null;
         fishP.tapInfo.resolve = null;
         if (fishP.lastJoined > 1000)
-            fishP.updateStats(function (stats) { return stats.timeInGame += (Date.now() - fishP.lastJoined); }); //Time between joining and leaving
+            fishP.updateStats(function (stats) { return stats.timeInGame += (Date.now() - fishP.lastJoined); });
         fishP.lastJoined = Date.now();
         this.recentLeaves.unshift(fishP);
         if (this.recentLeaves.length > 10)
@@ -815,24 +735,21 @@ var FishPlayer = /** @class */ (function () {
         var currentRun = (_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime;
         if (currentRun)
             Core.app.post(function () {
-                //Wait for the /spectate command's handler to fix their team before saving it
                 fishP.restoreTeam = [fishP.player.team(), Date.now(), currentRun];
             });
     };
     FishPlayer.onPlayerCommand = function (player, command, unjoinedRawArgs) {
         if (command == "msg" && unjoinedRawArgs[1] == "Please do not use that logic, as it is attem83 logic and is bad to use. For more information please read www.mindustry.dev/attem")
-            return; //Attemwarfare message, not sent by the player
+            return;
         player.lastActive = Date.now();
     };
     FishPlayer.onGameOver = function (winningTeam) {
         var _this = this;
         globals_1.FishEvents.fire("gameOver", [winningTeam]);
         this.forEachPlayer(function (fishPlayer) {
-            //Clear temporary states such as menu and taphandler
             fishPlayer.activeMenus = [];
             fishPlayer.tapInfo.commandName = null;
             fishPlayer.tapInfo.resolve = null;
-            //Update stats
             if (!_this.ignoreGameOver && fishPlayer.team() != Team.derelict && winningTeam != Team.derelict) {
                 fishPlayer.updateStats(function (stats) { return stats.gamesFinished++; });
                 if (fishPlayer.changedTeam) {
@@ -883,12 +800,11 @@ var FishPlayer = /** @class */ (function () {
             this.rainbow = null;
         }
     };
-    /** Updates the mindustry player's name, using the prefixes of the current rank and role flags. */
     FishPlayer.prototype.updateName = function () {
         var e_3, _a;
         var _b;
         if (!this.connected())
-            return; //No player, no need to update
+            return;
         var name = (_b = this.jokeName) !== null && _b !== void 0 ? _b : this.name;
         if (this.marked())
             this.showRankPrefix = true;
@@ -923,9 +839,7 @@ var FishPlayer = /** @class */ (function () {
             prefix += " ";
         var replacedName;
         if ((0, utils_1.cleanText)(name, true).includes("hacker")) {
-            //"Don't be a script kiddie"
-            //-LiveOverflow, 2015
-            if (/h.*a.*c.*k.*[3e].*r/i.test(name)) { //try to only replace the part that contains "hacker" if it can be found with a simple regex
+            if (/h.*a.*c.*k.*[3e].*r/i.test(name)) {
                 replacedName = name.replace(/h.*a.*c.*k.*[3e].*r/gi, "[brown]script kiddie[]");
             }
             else {
@@ -956,14 +870,11 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.validate = function () {
         return this.checkName() && this.checkUsid() && automod_1.Automod.checkAntiEvasion(this);
     };
-    /** Checks if this player's name is allowed. */
     FishPlayer.prototype.checkName = function () {
         if ((0, utils_1.matchFilter)(this.name, "name")) {
             this.kick("[scarlet]\"".concat(this.name, "[scarlet]\" is not an allowed name because it contains a banned word.\n\nIf you are unable to change it, please download Mindustry from Steam or itch.io."), 1);
         }
         else {
-            //Non-critical invalid names
-            //If one of these cases trigger, we will rename the player by editing FishPlayer.name
             if (FishPlayer.oddBrackets.matcher(this.name).find()) {
                 this.setName(this.name + "[");
             }
@@ -987,7 +898,6 @@ var FishPlayer = /** @class */ (function () {
         }
         return false;
     };
-    /** Checks if this player's USID is correct. */
     FishPlayer.prototype.checkUsid = function () {
         var storedUSID = this.usid;
         var usidMissing = storedUSID == null || !storedUSID;
@@ -996,7 +906,6 @@ var FishPlayer = /** @class */ (function () {
             var code = (Math.floor(Date.now() / 5000) % 100000).toString().padStart(5, '0') + "-" + (++FishPlayer.codeCounter);
             if (usidMissing) {
                 if (this.hasPerm("mod")) {
-                    //Staff missing USID, don't let them in
                     Log.err("&rUSID missing for privileged player &c\"".concat(this.cleanedName, "\"&r: no stored usid, cannot authenticate.\nRun &lgsetusid ").concat(this.uuid, " ").concat(receivedUSID, "&fr if you have verified this connection attempt."));
                     this.kick("Authorization failure!\nPlease run [cyan];approveauth ".concat(config_1.Gamemode.name(), " ").concat(code, "[] in a private channel."), 1);
                     FishPlayer.lastAuthKicked = this;
@@ -1046,14 +955,12 @@ var FishPlayer = /** @class */ (function () {
             this.sendMessage("[gold]Hello there! Your rank prefix is currently hidden. You can show it again by running [white]/vanish[].");
         else {
             this.sendMessage(config_1.text.welcomeMessage());
-            //show tips
             var showAd = false;
             if (Date.now() - this.lastShownAd > funcs_1.Duration.days(1)) {
                 this.lastShownAd = Date.now();
                 this.showAdNext = true;
             }
             else if (this.lastShownAd == globals_1.maxTime) {
-                //this is the first time they joined, show ad the next time they join
                 this.showAdNext = true;
                 this.lastShownAd = Date.now();
             }
@@ -1064,7 +971,6 @@ var FishPlayer = /** @class */ (function () {
             var messagePool = showAd ? config_1.tips.ads : (config_1.Mode.isChristmas && Math.random() > 0.6) ? config_1.tips.christmas : config_1.tips.normal;
             var messageText = messagePool[Math.floor(Math.random() * messagePool.length)];
             var message_1 = showAd ? "[gold]".concat(messageText, "[]") : "[gold]Tip: ".concat(messageText, "[]");
-            //Delay sending the message so it doesn't get lost in the spam of messages that usually occurs when you join
             Timer.schedule(function () { return _this.sendMessage(message_1); }, 3);
         }
     };
@@ -1101,8 +1007,6 @@ var FishPlayer = /** @class */ (function () {
             finally { if (e_4) throw e_4.error; }
         }
     };
-    //#endregion
-    //#region I/O
     FishPlayer.read = function (version, fishPlayerData, player) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         switch (version) {
@@ -1229,7 +1133,7 @@ var FishPlayer = /** @class */ (function () {
         out.writeString(this.uuid, 2);
         out.writeString(this.name, 2, true);
         out.writeNumber(this.unmuteTime, 13);
-        out.writeNumber(this.unmarkTime, 13); // this will stop working in 2286! https://en.wikipedia.org/wiki/Time_formatting_and_storage_bugs#Year_2286
+        out.writeNumber(this.unmarkTime, 13);
         out.writeString(this.highlight, 2, true);
         out.writeArray(this.history.slice(-5), function (i, str) {
             str.writeString(i.action, 2);
@@ -1252,7 +1156,6 @@ var FishPlayer = /** @class */ (function () {
         out.writeNumber(this.stats.gamesWon, 5, true);
         out.writeBool(this.showRankPrefix);
     };
-    /** Saves cached FishPlayers to JSON in Core.settings. */
     FishPlayer.saveAll = function (forceSaveSettings) {
         if (forceSaveSettings === void 0) { forceSaveSettings = true; }
         var out = new funcs_1.StringIO();
@@ -1282,7 +1185,6 @@ var FishPlayer = /** @class */ (function () {
             return void api.setFishPlayerData(fishP.getData(), 1, true);
         });
     };
-    /** Does not include stats */
     FishPlayer.prototype.hasData = function () {
         return (this.rank != ranks_1.Rank.player) || this.muted() || (this.flags.size > 0) || this.chatStrictness != "chat";
     };
@@ -1299,13 +1201,12 @@ var FishPlayer = /** @class */ (function () {
             return Core.settings.get("fish", "");
         }
     };
-    /** Loads cached FishPlayers from JSON in Core.settings. */
     FishPlayer.loadAll = function (string) {
         var _this = this;
         if (string === void 0) { string = this.getFishPlayersString(); }
         try {
             if (string == "")
-                return; //If it's empty, don't try to load anything
+                return;
             var out = new funcs_1.StringIO(string);
             var version_1 = out.readNumber(2);
             var players = out.readArray(function (str) { return FishPlayer.read(version_1, str, null); }, 6);
@@ -1378,14 +1279,8 @@ var FishPlayer = /** @class */ (function () {
         return this.player != null && !this.player.con.hasDisconnected;
     };
     FishPlayer.prototype.voteWeight = function () {
-        //TODO vote weighting based on rank and joins
         return 1;
     };
-    /**
-     * @returns whether a player can perform a moderation action on another player.
-     * @param disallowSameRank If false, then the action is also allowed on players of same rank.
-     * @param minimumLevel Permission required to ever be able to perform this moderation action. Default: mod.
-     */
     FishPlayer.prototype.canModerate = function (player, disallowSameRank, minimumLevel, allowSelfIfUnauthorized) {
         if (disallowSameRank === void 0) { disallowSameRank = true; }
         if (minimumLevel === void 0) { minimumLevel = "mod"; }
@@ -1393,7 +1288,7 @@ var FishPlayer = /** @class */ (function () {
         if (player == this && allowSelfIfUnauthorized)
             return true;
         if (!this.hasPerm(minimumLevel))
-            return; //players below mod rank have no moderation permissions and cannot moderate anybody, except themselves
+            return;
         if (player == this)
             return true;
         if (disallowSameRank)
@@ -1435,10 +1330,6 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.info = function () {
         return Vars.netServer.admins.getInfo(this.uuid);
     };
-    /**
-     * Sends this player a chat message.
-     * @param ratelimit Time in milliseconds before sending another ratelimited message.
-     */
     FishPlayer.prototype.sendMessage = function (message, ratelimit) {
         var _a;
         if (ratelimit === void 0) { ratelimit = 0; }
@@ -1484,12 +1375,6 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.joinsLessThan = function (amount) {
         return this.info().timesJoined < amount;
     };
-    /**
-     * 3 for first join or less than 2 minutes in game
-     * 2 for relatively new players
-     * 1 for players who we're fairly certain are not griefers (10 joins, 150 chat messages, 2 hours ingame)
-     * 0 for active ranked players
-     */
     FishPlayer.prototype.suspicionLevel = function () {
         if (this.ranksAtLeast("active") || this.stats.chatMessagesSent > 2000)
             return 0;
@@ -1524,21 +1409,13 @@ var FishPlayer = /** @class */ (function () {
             _this.tapInfo.resolve = function (x, y) { return resolve([x, y]); };
         });
     };
-    /**
-     * Returns a score between 0 and 1, as an estimate of the player's skill level.
-     * Defaults to 0.2 (guessing that the best trusted players can beat 5 noobs)
-     */
     FishPlayer.prototype.teamBalanceScore = function () {
         var _this = this;
-        /** A number between 0 and 0.7 */
         var score = (function () {
             if (_this.stats.gamesFinished < 10)
                 return 0.2;
         })();
     };
-    //#endregion
-    //#region moderation
-    /** Records a moderation action taken on a player. */
     FishPlayer.prototype.addHistoryEntry = function (entry) {
         this.history.push(entry);
     };
@@ -1563,7 +1440,6 @@ var FishPlayer = /** @class */ (function () {
         var oldUnmarkTime = this.unmarkTime;
         Timer.schedule(function () {
             if (_this.unmarkTime === oldUnmarkTime && _this.connected()) {
-                //Only run the code if the unmark time hasn't changed
                 if (!_this.ranksAtLeast("mod"))
                     _this.forceRespawn();
                 _this.updateName();
@@ -1576,8 +1452,6 @@ var FishPlayer = /** @class */ (function () {
         var oldUnmuteTime = this.unmuteTime;
         Timer.schedule(function () {
             if (_this.unmuteTime === oldUnmuteTime && _this.connected()) {
-                //Only run the code if the unmark time hasn't changed
-                //Otherwise, a different timer will do it
                 _this.updateName();
                 _this.sendMessage("[yellow]Your mute has automatically expired.");
             }
@@ -1607,7 +1481,6 @@ var FishPlayer = /** @class */ (function () {
     FishPlayer.prototype.unfreeze = function () {
         this.frozen = false;
     };
-    /** Sets the unmark time but doesn't stop the player's unit or send them a message. */
     FishPlayer.prototype.updateStopTime = function (duration) {
         var _this = this;
         var time = Math.min(Date.now() + duration, globals_1.maxTime);
@@ -1616,7 +1489,6 @@ var FishPlayer = /** @class */ (function () {
             _this.updateName();
         }, function () { return _this.setUnmarkTimer(duration); });
     };
-    /** Sets the unmute time but doesn't send a message. */
     FishPlayer.prototype.updateMuteTime = function (duration) {
         var _this = this;
         var time = Math.min(Date.now() + duration, globals_1.maxTime);
@@ -1635,7 +1507,6 @@ var FishPlayer = /** @class */ (function () {
             }
             else {
                 this.forceRespawn();
-                //This will cause FishPlayer.onRespawn to run, calling this function again, but then the player will be in a core unit, which can be safely stell'd
             }
         }
     };
@@ -1644,34 +1515,17 @@ var FishPlayer = /** @class */ (function () {
         var joins = this.info().timesJoined;
         return "".concat(this.rank != ranks_1.Rank.player ? "[cyan]Rank: ".concat(this.rank.coloredName(), "\n") : "", "[lightgray]Playtime: ").concat((0, utils_1.formatTimeShort)(this.globalStats.timeInGame), "\n").concat(joins == 1 ? "[scarlet]first join[]" : "[lightgray]Joins: ".concat(joins), "\n[lightgray]History:\n").concat(this.history.slice(-5).map(function (e) { return (0, utils_1.formatHistoryEntry)(_this, e, true); }).join("\n\n") || "<none>", "\n");
     };
-    //#region Static constants
-    /** Save version used for serialized FishPlayers. */
     FishPlayer.saveVersion = 14;
-    /** Maximum chunk size used when writing FishPlayer data to Core.settings. */
     FishPlayer.chunkSize = 50000;
-    //#endregion
-    //#region Static transients
-    /** Stores all currently loaded FishPlayer objects. */
     FishPlayer.cachedPlayers = {};
     FishPlayer.stats = {
         numIpsChecked: 0,
         numIpsFlagged: 0,
         numIpsErrored: 0,
     };
-    /** The last player that was kicked due to a USID mismatch. */
     FishPlayer.lastAuthKicked = null;
-    /** Stores the 10 most recent players that left. */
     FishPlayer.recentLeaves = [];
-    FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { var _a; return ((_a = p.player) === null || _a === void 0 ? void 0 : _a.id.toString()) === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, function (p, str) { var _a; return ((_a = p.overrideName) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === str.toLowerCase(); }, 
-    // (p, str) => p.cleanedName === str,
-    function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, 
-    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-    function (p, str) { return p.overrideName != null && p.overrideName.toLowerCase().includes(str.toLowerCase()); }, 
-    // (p, str) => p.cleanedName.includes(str),
-    function (p, str) { return p.cleanedName.toLowerCase().includes(str.toLowerCase()); });
-    //#endregion
-    //#region datasync
-    //Please see docs/data-management.md for a description of the update syncing algorithm.
+    FishPlayer.search = (0, funcs_1.search)(function (p, str) { return p.uuid === str; }, function (p, str) { var _a; return ((_a = p.player) === null || _a === void 0 ? void 0 : _a.id.toString()) === str; }, function (p, str) { return p.name.toLowerCase() === str.toLowerCase(); }, function (p, str) { var _a; return ((_a = p.overrideName) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === str.toLowerCase(); }, function (p, str) { return p.cleanedName.toLowerCase() === str.toLowerCase(); }, function (p, str) { return p.name.toLowerCase().includes(str.toLowerCase()); }, function (p, str) { return p.overrideName != null && p.overrideName.toLowerCase().includes(str.toLowerCase()); }, function (p, str) { return p.cleanedName.toLowerCase().includes(str.toLowerCase()); });
     FishPlayer.dataFetchFailedUuids = new Set();
     FishPlayer.ignoreGameOver = false;
     FishPlayer.oddBrackets = Pattern.compile("(?<!\\[)(\\[\\[)*\\[$");
@@ -1679,7 +1533,6 @@ var FishPlayer = /** @class */ (function () {
     return FishPlayer;
 }());
 exports.FishPlayer = FishPlayer;
-//TODO move these to appropriately located static init blocks
 Events.on(EventType.WaveEvent, function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.wavesSurvived++; }); });
 Events.on(EventType.PlayerChatEvent, function (_a) {
     var player = _a.player;
@@ -1693,7 +1546,7 @@ Events.on(EventType.PlayerLeave, function (e) {
 Events.on(EventType.UnitChangeEvent, function (e) {
     var _a;
     if ((_a = e.unit) === null || _a === void 0 ? void 0 : _a.spawnedByCore) {
-        var fishP = FishPlayer.get(e.player); //must be connected
+        var fishP = FishPlayer.get(e.player);
         if (fishP.stelled())
             fishP.stopUnit();
     }
@@ -1701,7 +1554,6 @@ Events.on(EventType.UnitChangeEvent, function (e) {
 Events.on(EventType.WorldLoadEvent, function () {
     var startTime = Date.now();
     globals_1.fishState.lastMapStartTime = startTime;
-    //wait 20 seconds for players to join
     Timer.schedule(function () { return FishPlayer.forEachPlayer(function (p) { return p.tstats.lastMapStartTime = startTime; }); }, 20);
 });
 Events.on(EventType.GameOverEvent, function (e) {
@@ -1713,7 +1565,6 @@ Events.on(EventType.ServerLoadEvent, function (e) {
 Timer.schedule(function () {
     FishPlayer.updateAFKCheck();
 }, 0, 1);
-//Blocks broken and blocks placed stats
 Events.on(EventType.BlockBuildBeginEvent, function (e) {
     var _a, _b, _c, _d, _e;
     if (e.breaking) {

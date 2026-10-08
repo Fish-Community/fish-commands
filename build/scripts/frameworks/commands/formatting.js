@@ -35,7 +35,7 @@ exports.outputFormatter_server = (0, funcs_1.tagProcessorPartial)(function (chun
         return "&r".concat((0, funcs_1.escapeStringColorsServer)(chunk.toString()), "&fr");
     }
     else if (chunk instanceof Player) {
-        var player = chunk; //not sure why this is necessary, typescript randomly converts any to unknown
+        var player = chunk;
         return "&cPlayer#".concat(player.id, " (").concat((0, funcs_1.escapeStringColorsServer)(Strings.stripColors(player.name)), ")&fr");
     }
     else if (typeof chunk == "string") {
@@ -74,7 +74,7 @@ exports.outputFormatter_server = (0, funcs_1.tagProcessorPartial)(function (chun
         chunk;
         Log.err("Invalid format object!");
         Log.info(chunk);
-        return chunk; //let it get stringified by the JS engine
+        return chunk;
     }
 });
 exports.outputFormatter_client = (0, funcs_1.tagProcessorPartial)(function (chunk, i, data, stringChunks) {
@@ -104,7 +104,6 @@ exports.outputFormatter_client = (0, funcs_1.tagProcessorPartial)(function (chun
             return "[blue]".concat(chunk, "[]");
         }
         else {
-            //TODO reset color?
             return chunk;
         }
     }
@@ -133,7 +132,7 @@ exports.outputFormatter_client = (0, funcs_1.tagProcessorPartial)(function (chun
         chunk;
         Log.err("Invalid format object!");
         Log.info(chunk);
-        return chunk; //allow it to get stringified by the engine
+        return chunk;
     }
 });
 exports.fFunctions = {

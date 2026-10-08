@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the code for each achievement.
-*/
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -48,7 +44,6 @@ var globals_1 = require("/globals");
 var players_1 = require("/players");
 var ranks_1 = require("/ranks");
 var utils_1 = require("/utils");
-//scrap doesn't count
 var serpuloItems = [Items.copper, Items.lead, Items.graphite, Items.silicon, Items.metaglass, Items.titanium, Items.plastanium, Items.thorium, Items.surgeAlloy, Items.phaseFabric];
 var erekirItems = [Items.beryllium, Items.graphite, Items.silicon, Items.tungsten, Items.oxide, Items.surgeAlloy, Items.thorium, Items.carbide, Items.phaseFabric];
 var usefulItems10k = {
@@ -60,26 +55,16 @@ var allItems1k = Vars.content.items().select(function (i) { return !i.hidden; })
 var mixtechItems = Items.serpuloItems.copy();
 Items.erekirItems.each(function (i) { return mixtechItems.add(i); });
 exports.Achievements = {
-    // ===========================
-    // ╦ ╦ ╔═╗ ╦═╗ ╔╗╔ ╦ ╔╗╔ ╔═╗ ┬
-    // ║║║ ╠═╣ ╠╦╝ ║║║ ║ ║║║ ║ ╦ │
-    // ╚╩╝ ╩ ╩ ╩╚═ ╝╚╝ ╩ ╝╚╝ ╚═╝ o
-    // ===========================
-    // Do not change the order of any achievements.
-    // Do not remove any achievements: instead, set the "disabled" option to true.
-    // Reordering achievements will cause ID shifts.
-    //Joining based
     welcome: new framework_1.Achievement(["gold", Iconc.infoCircle], "Welcome", "Join the server.", {
         checkPlayerJoin: function () { return true; },
         notify: "nobody"
     }),
     migratory_fish: new framework_1.Achievement(Iconc.exit, "Migratory Fish", "Join all of our servers.", {
         disabled: true
-    }), //TODO
+    }),
     frequent_visitor: new framework_1.Achievement(Iconc.planeOutline, "Frequent Visitor", ["Join the server 100 times.", "Note: Do not reconnect frequently, that will not work. This achievement requires that you have been playing for 1 month."], {
         checkPlayerJoin: function (p) { return p.info().timesJoined >= 100 && (Date.now() - p.globalFirstJoined > funcs_1.Duration.months(1)); }
     }),
-    //Gamemode based
     attack: new framework_1.Achievement(Iconc.modeAttack, "Attack", ["Defeat an attack map.", "You must be present for the beginning and end of the game."], {
         modes: ["only", "attack"],
         checkPlayerGameover: function (player, winTeam) {
@@ -114,7 +99,6 @@ exports.Achievements = {
             return player.team() == winTeam && player.tstats.lastMapStartTime == globals_1.fishState.lastMapStartTime;
         },
     }),
-    //playtime based
     playtime_1: new framework_1.Achievement(["white", Iconc.googleplay], "Playtime 1", "Spend 1 hour in-game.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.timeInGame >= funcs_1.Duration.hours(1); }
     }),
@@ -127,7 +111,6 @@ exports.Achievements = {
     playtime_4: new framework_1.Achievement(["yellow", Iconc.googleplay], "Playtime 4", "Spend 10 days in-game.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.timeInGame >= funcs_1.Duration.days(10); }
     }),
-    //victories based
     victory_1: new framework_1.Achievement(["white", Iconc.star], "First Victory", "Win a map run.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesWon >= 1; }
     }),
@@ -141,7 +124,6 @@ exports.Achievements = {
         checkPlayerGameover: function (p) { return p.globalStats.gamesWon >= 100; },
         notify: "everyone"
     }),
-    //games based
     games_1: new framework_1.Achievement(["white", Iconc.itchio], "Games 1", "Play 10 map runs.", {
         checkPlayerGameover: function (p) { return p.globalStats.gamesFinished >= 10; }
     }),
@@ -155,7 +137,6 @@ exports.Achievements = {
         checkPlayerGameover: function (p) { return p.globalStats.gamesFinished >= 200; },
         notify: "everyone"
     }),
-    //messages based
     messages_1: new framework_1.Achievement(["white", Iconc.chat], "Hello", "Send your first chat message.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 1; },
         notify: "nobody"
@@ -173,7 +154,6 @@ exports.Achievements = {
         checkPlayerInfrequent: function (p) { return p.globalStats.chatMessagesSent >= 5000; },
         notify: "everyone"
     }),
-    //blocks built based
     builds_1: new framework_1.Achievement(["white", Iconc.fileText], "The Factory Must Prepare", "Construct 1 buildings.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.blocksPlaced >= 1; },
         notify: "nobody"
@@ -187,7 +167,6 @@ exports.Achievements = {
     builds_4: new framework_1.Achievement(["yellow", Iconc.fileText], "The Factory Must Grow", "Construct 5000 buildings.", {
         checkPlayerInfrequent: function (p) { return p.globalStats.blocksPlaced > 5000; },
     }),
-    //units
     t5: new framework_1.Achievement(Blocks.tetrativeReconstructor.emoji(), "T5", "Control a T5 unit.", {
         modes: ["not", "sandbox"],
         checkPlayerFrequent: function (player) {
@@ -198,14 +177,13 @@ exports.Achievements = {
     dibs: new framework_1.Achievement(["green", Blocks.tetrativeReconstructor.emoji()], "Dibs", "Be the first player to control the first T5 unit made by a reconstructor that you placed.", {
         modes: ["not", "sandbox"],
         disabled: true
-    }), //TODO
+    }),
     worm: new framework_1.Achievement(UnitTypes.latum.emoji(), "Worm", "Control a Latum.", {
         checkPlayerFrequent: function (player) {
             var _a;
             return ((_a = player.unit()) === null || _a === void 0 ? void 0 : _a.type) == UnitTypes.latum;
         }
     }),
-    //pvp
     above_average: new framework_1.Achievement(Iconc.chartBar, "Above Average", ["Reach a win rate above 50%.", "Must be over at least 20 games of PVP."], {
         modes: ["only", "pvp"],
         checkPlayerInfrequent: function (p) { return p.stats.gamesWon / p.stats.gamesFinished > 0.5 && p.stats.gamesFinished >= 20; }
@@ -213,27 +191,23 @@ exports.Achievements = {
     head_start: new framework_1.Achievement(Iconc.commandAttack, "Head Start", ["Win a match of PVP where your opponents have a 5 minute head start.", "Your team must wait for the first 5 minutes without building or descontructing any buildings."], {
         modes: ["only", "pvp"],
         disabled: true
-    }), //TODO
+    }),
     one_v_two: new framework_1.Achievement(["red", Iconc.modePvp], "1v2", "Defeat two (or more) opponents in PVP without help from other players.", {
         modes: ["only", "pvp"],
         disabled: true
-    }), //TODO
-    //sandbox
+    }),
     underpowered: new framework_1.Achievement(["red", Blocks.powerSource.emoji()], "Underpowered", "Overload a power source.", {
         modes: ["only", "sandbox"],
         checkFrequent: function () {
             var found = false;
-            //deliberate ordering for performance reasons
             Groups.powerGraph.each(function (_a) {
                 var graph = _a.graph;
-                //we don't need to actually check for power sources, just assume that ~1mil power is a source
                 if (graph.lastPowerNeeded > graph.lastPowerProduced && graph.lastPowerNeeded < 1e10 && (graph.lastPowerProduced / Time.delta * 60) >= 999900)
                     found = true;
             });
             return found;
         }
     }),
-    //easter eggs
     memory_corruption: new framework_1.Achievement(["red", Iconc.host], "Is the server OK?", "Witness a memory corruption.", {
         notify: "nobody"
     }),
@@ -246,7 +220,6 @@ exports.Achievements = {
     hacker: new framework_1.Achievement(["lightgray", Iconc.host], "Hacker", "Find a bug in the server and report it responsibly.", {
         hidden: true
     }),
-    //items based
     items_10k: new framework_1.Achievement(["green", Iconc.distribution], "Cornucopia", "Obtain 10k of every useful resource.", {
         modes: ["not", "sandbox"],
         checkPlayerFrequent: function (player) {
@@ -294,7 +267,6 @@ exports.Achievements = {
         modes: ["not", "sandbox"],
         checkFrequent: function (team) { return team.items().has(Items.silicon, 100000); }
     }),
-    //other players based
     alone: new framework_1.Achievement(["red", Iconc.players], "Alone", "Be the only player online for more than two minutes", {
         notify: "nobody"
     }),
@@ -312,22 +284,18 @@ exports.Achievements = {
     see_marked_griefer: new framework_1.Achievement(["red", Iconc.hammer], "Flying Tonk", "See a marked griefer in-game.", {
         checkInfrequent: function () { return Groups.player.contains(function (p) { return players_1.FishPlayer.get(p).marked(); }); },
     }),
-    //maps based
     beat_map_not_in_rotation: new framework_1.Achievement(["pink", Iconc.map], "How?", "Beat a map that isn't in the list of maps.", {
         notify: "everyone",
         modes: ["not", "pvp"],
         checkGameover: function (team) { return team == Vars.state.rules.defaultTeam && !Vars.state.map.custom; }
     }),
-    //misc
     power_1mil: new framework_1.Achievement(["green", Blocks.powerSource.emoji()], "Who needs sources?", "Reach a power production of 1 million without using power sources.", {
         modes: ["not", "sandbox"],
         checkFrequent: function (team) {
             var found = false;
-            //deliberate ordering for performance reasons
             Groups.powerGraph.each(function (_a) {
                 var _b;
                 var graph = _a.graph;
-                //we need to actually check for power sources
                 if ((graph.lastPowerProduced / Time.delta * 60) > 1e6 &&
                     !graph.producers.contains(boolf(function (b) { return b.block == Blocks.powerSource; })) &&
                     ((_b = graph.producers.firstOpt()) === null || _b === void 0 ? void 0 : _b.team) == team)
@@ -339,7 +307,7 @@ exports.Achievements = {
     pacifist_crawler: new framework_1.Achievement(UnitTypes.crawler.emoji(), "Pacifist Crawler", "Control a crawler for 15 minutes without exploding.", {
         modes: ["not", "sandbox"],
         disabled: true
-    }), //TODO
+    }),
     core_low_hp: new framework_1.Achievement(["yellow", Blocks.coreNucleus.emoji()], "Close Call", "Have your core reach less than 50 health, but survive.", {
         modes: ["not", "sandbox"],
     }),
@@ -394,7 +362,6 @@ exports.Achievements = {
         notify: "everyone",
         checkInfrequent: function (team) {
             var found = false;
-            //deliberate ordering for performance reasons
             Groups.powerGraph.each(function (_a) {
                 var graph = _a.graph;
                 if (graph.producers.size >= 15 && graph.producers.count(function (b) { return b.block == Blocks.impactReactor && b.warmup > 0.99999; }) > 15 && graph.producers.first().team == team)
@@ -555,7 +522,6 @@ if (!config_1.Gamemode.sandbox())
                     coreHealthTime.delete(core);
                 }
                 else if (core.health > 50) {
-                    //grant achievement
                     exports.Achievements.core_low_hp.grantToAllOnline(core.team);
                     players_1.FishPlayer.forEachPlayer(function (p) {
                         if (core.team != p.team())

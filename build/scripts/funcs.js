@@ -60,30 +60,16 @@ exports.searchFixed = searchFixed;
 exports.resolveSearch = resolveSearch;
 exports.delay = delay;
 var storedValues = {};
-/**
- * Stores the output of a function and returns that value
- * instead of running the function again unless any
- * dependencies have changed to improve performance with
- * functions that have expensive computation.
- * @param callback function to run if a dependancy has changed
- * @param dep dependency array of values to monitor
- * @param id arbitrary unique id of the function for storage purposes.
- */
 function memoize(callback, dep, id) {
     if (!storedValues[id]) {
         storedValues[id] = { value: callback(), dep: dep };
     }
     else if (dep.some(function (d, ind) { return d !== storedValues[id].dep[ind]; })) {
-        //If the value changed
         storedValues[id].value = callback();
         storedValues[id].dep = dep;
     }
     return storedValues[id].value;
-} /**
- * Converts a 1D array into a 2D array.
- * @param width the max length of each row.
- * The last row may not be full.
- */
+}
 function to2DArray(array, width) {
     if (array.length == 0)
         return [];
@@ -101,7 +87,7 @@ function setToArray(set) {
     set.each(function (item) { return array.push(item); });
     return array;
 }
-var StringBuilder = /** @class */ (function () {
+var StringBuilder = (function () {
     function StringBuilder(str) {
         if (str === void 0) { str = ""; }
         this.str = str;
@@ -119,11 +105,7 @@ var StringBuilder = /** @class */ (function () {
     return StringBuilder;
 }());
 exports.StringBuilder = StringBuilder;
-/**
- * Used for serialization to strings.
- * @deprecated use Serializer instead, which serializes to byte[]
- */
-var StringIO = /** @class */ (function () {
+var StringIO = (function () {
     function StringIO(string) {
         if (string === void 0) { string = ""; }
         this.string = string;
@@ -138,7 +120,7 @@ var StringIO = /** @class */ (function () {
     StringIO.prototype.write = function (str) {
         this.string += str;
     };
-    StringIO.prototype.readString = function (/** The length of the written length. */ lenlen) {
+    StringIO.prototype.readString = function (lenlen) {
         if (lenlen === void 0) { lenlen = 3; }
         var length = parseInt(this.read(lenlen));
         if (length == 0)
@@ -185,7 +167,6 @@ var StringIO = /** @class */ (function () {
         if (size === void 0) { size = 4; }
         var data = this.read(size);
         if (/^0*-\d+$/.test(data)) {
-            //negative numbers were incorrectly stored in previous versions
             data = "-" + data.split("-")[1];
         }
         if (isNaN(Number(data)))
@@ -251,8 +232,7 @@ var StringIO = /** @class */ (function () {
     return StringIO;
 }());
 exports.StringIO = StringIO;
-/** Something that emits events. */
-var EventEmitter = /** @class */ (function () {
+var EventEmitter = (function () {
     function EventEmitter() {
         this.listeners = {};
     }
@@ -265,7 +245,6 @@ var EventEmitter = /** @class */ (function () {
     EventEmitter.prototype.fire = function (event, args) {
         var _a;
         var listeners = (_a = this.listeners[event]) !== null && _a !== void 0 ? _a : [];
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (var i = 0; i < listeners.length; i++) {
             listeners[i].apply(listeners, __spreadArray([this], __read(args), false));
         }
@@ -276,7 +255,6 @@ exports.EventEmitter = EventEmitter;
 function crash(message) {
     throw new Error(message);
 }
-/** Best effort title-capitalization of a word. */
 function capitalizeText(text, separator) {
     if (separator === void 0) { separator = " "; }
     return text
@@ -285,7 +263,6 @@ function capitalizeText(text, separator) {
         i !== 0 && i !== arr.length - 1) ? word
         : word[0].toUpperCase() + word.substring(1).toLowerCase(); }).join(" ");
 }
-/** Best effort prepends an indefinite article (either "a" or "an") to provided text. */
 function indefiniteArticle(text) {
     var cText = Strings.stripColors(text);
     if (/^[aeiou]/.test(cText) || cText == "hour")
@@ -297,16 +274,10 @@ var pattern = Pattern.compile("([*\\_~`|:])");
 function escapeTextDiscord(text) {
     return pattern.matcher(text).replaceAll("\\\\$1\u200B");
 }
-/** Prevents Mindustry from displaying color tags in a string by escaping them. Example: turns [scarlet]red to [[scarlet]red. */
 function escapeStringColorsClient(str) {
     return str.replace(/\[/g, "[[");
 }
-// export function highlightStringColorsClient(str:string):string {
-// 	return str.replace(/(?<!\[)\[[a-z0-9#]{2,10}\]/gi, "[gray][$0[]");
-// }
-/** Prevents Mindustry from displaying color tags in a string by escaping them. Example: turns &bamogus to &\x02bamogus. */
 function escapeStringColorsServer(str) {
-    //throw in U+0002 as this seems to be ignored by most terminals
     return str.replace(/&/g, "&\x02").replace(/\x1B/g, "&lr\\x1B&fr");
 }
 function parseError(thing) {
@@ -322,7 +293,6 @@ function parseError(thing) {
         return "Unable to parse error object";
     }
 }
-/** Generates a tag template processor from a function that processes one value at a time. */
 function tagProcessor(transformer) {
     return function (stringChunks) {
         var varChunks = [];
@@ -332,8 +302,6 @@ function tagProcessor(transformer) {
         return String.raw.apply(String, __spreadArray([{ raw: stringChunks }], __read(varChunks.map(function (chunk, i) { return transformer(chunk, i, stringChunks, varChunks); })), false));
     };
 }
-//third order function ._. warning: causes major confusion
-/** Generates a tag template partial processor from a function that processes one value at a time. */
 function tagProcessorPartial(transformer) {
     return function (stringChunks) {
         var varChunks = [];
@@ -386,7 +354,6 @@ function invalidtoNull(input) {
         return null;
     return input;
 }
-/** Prevents improperly formed color tags from breaking when combined with other strings. */
 function cleanColors(input) {
     if (input.endsWith("[") && !input.endsWith("[["))
         return input + "[";
@@ -395,20 +362,16 @@ function cleanColors(input) {
 }
 function computeStatistics(data) {
     if (data.length == 0)
-        data = [NaN]; //return NaN for all properties
+        data = [NaN];
     var lowest = Math.min.apply(Math, __spreadArray([], __read(data), false));
     var highest = Math.max.apply(Math, __spreadArray([], __read(data), false));
     return {
         lowest: lowest,
         highest: highest,
         range: highest - lowest,
-        //variance? stdev?
         average: (data.reduce(function (a, b) { return a + b; }, 0) / data.length),
     };
 }
-/**
- * Uses an array of progressively less specific search functions to return none, one, or multiple matches.
- */
 function search() {
     var filters = [];
     for (var _i = 0; _i < arguments.length; _i++) {

@@ -7,12 +7,12 @@ What kind of changes do you want to make?
 
 You can make these changes entirely through the GitHub website. You will need a GitHub account.
 
-1. Open the file that you want to edit. If you are unsure of which file to edit, try using GitHub's search feature. For this step, do not edit the files in `build/scripts/`, instead, **edit the .ts file** in `src/`.
+1. Open the file that you want to edit. If you are unsure of which file to edit, try using GitHub's search feature. Edit the `.yopta` source file in `src/`, not the generated files in `build/scripts/`.
 2. Click the edit icon in the toolbar. If GitHub tells you to create a fork, do that.
 3. Make your change, then click "Commit changes..."
 4. Write a message, then click Propose changes.
   - If you are a member of the Fish-Community org, you will see a message about branch protection. Select "Create a new branch and start a pull request".
-  - If you are not a member, you will also need to manually edit the corresponding JS file, which is located in `build/scripts`. For example, if you edited `src/config.ts`, you will need to make the same change to `build/scripts/config.js`.
+  - The generated JavaScript in `build/scripts/` is refreshed by the build and should not be edited by hand.
 5. Create a pull request and request a review. If you see a message about failing checks, there may be a problem with your changes.
 
 ## I want to make significant code changes (in VSCode)
@@ -22,9 +22,9 @@ First: read [info.md](docs/info.md)
 To get started with development:
 1. Create a fork of fish-commands through the GitHub website.
 2. Clone that fork into a folder of your choice by `cd`ing into the folder and running `git clone https://github.com/`(your username here)`/fish-commands .`
-3. Run `npm install`
-4. Run `npm watch` in one terminal. (Or, open VS Code and tell it to trust the project)
-5. In another terminal, run `npm dev` to start up a Mindustry development server with fish-commands installed.
+3. Run `pnpm install`.
+4. Run `pnpm watch` in one terminal to rebuild when `.yopta` source files change.
+5. In another terminal, run `pnpm dev` to build the plugin and start a Mindustry development server with fish-commands installed.
 
 ### Making changes
 1. Edit the code, which is in `/src`.

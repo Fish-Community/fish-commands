@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the main code, which calls other functions and initializes the plugin.
-*/
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -62,14 +58,12 @@ var tilelog_1 = require("/tilelog");
 var timers = __importStar(require("/timers"));
 var utils_1 = require("/utils");
 var Menu = menus.Menu;
-//#region connections
 Events.on(EventType.ConnectionEvent, function (e) {
     if (Vars.netServer.admins.bannedIPs.contains(e.connection.address)) {
         api.getBanned({
             ip: e.connection.address,
         }, function (banned) {
             if (!banned) {
-                //If they were previously banned locally, but the API says they aren't banned, then unban them and clear the kick that the outer function already did
                 Vars.netServer.admins.bannedIPs.remove(e.connection.address);
                 Vars.netServer.admins.kickedIPs.remove(e.connection.address);
             }
@@ -83,7 +77,6 @@ Events.on(EventType.ConnectionEvent, function (e) {
 });
 Events.on(EventType.PlayerConnect, function (e) {
     if (automod_1.Antibot.shouldKickNewPlayers() && e.player.info.timesJoined == 1) {
-        //do not use the helper function, for maximum performance
         e.player.kick("Please rejoin the server in 20 seconds. We apologize for the inconvenience, we are currently under DDoS attack.", 3600000);
     }
     else
@@ -97,7 +90,7 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
     }
     globals_1.ipJoins.increment(e.connection.address);
     if (e.connection.hasBegunConnecting)
-        return; //will get kicked
+        return;
     var info = Vars.netServer.admins.getInfoOptional(e.packet.uuid);
     var underAttack = automod_1.Antibot.antiBotMode();
     var newPlayer = !info || info.timesJoined < 10;
@@ -138,7 +131,6 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
         return;
     }
     if (Vars.netServer.admins.isDosBlacklisted(e.connection.address)) {
-        //threading moment, i think
         e.connection.kicked = true;
         return;
     }
@@ -159,10 +151,7 @@ Events.on(EventType.ConnectPacketEvent, function (e) {
     });
     players_1.FishPlayer.onConnectPacket(e.packet);
 });
-//#endregion
-//#region event handling
-//Trigger chat effects
-Events.on(EventType.PlayerChatEvent, function (e) { return (0, utils_1.processChat)(e.player, e.message, true); }); //only run effects once
+Events.on(EventType.PlayerChatEvent, function (e) { return (0, utils_1.processChat)(e.player, e.message, true); });
 Events.on(EventType.ServerLoadEvent, function () {
     Time.mark();
     var clientHandler = Vars.netServer.clientCommands;
@@ -170,17 +159,12 @@ Events.on(EventType.ServerLoadEvent, function () {
     globals_1.FishEvents.fire("loadData", []);
     timers.initializeTimers();
     menus.registerListeners();
-    //Cap delta
     Time.setDeltaProvider(function () { return Math.min(Core.graphics.getDeltaTime() * 60, 10); });
-    // Mute muted players
     Vars.netServer.admins.addChatFilter(function (player, message) { return (0, utils_1.processChat)(player, message); });
-    // Vars.netServer.admins.addChatFilter((p, message) => FishPlayer.get(p).hasPerm("member") ? message : foolifyChat(message));
-    // Action filters
     Vars.netServer.admins.addActionFilter(function (action) {
         var _a;
         var player = action.player;
         var fishP = players_1.FishPlayer.get(player);
-        //prevent stopped players from doing anything
         if (!fishP.hasPerm("play")) {
             if (!fishP.sneakybanned)
                 action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.');
@@ -211,7 +195,6 @@ Events.on(EventType.ServerLoadEvent, function () {
                     return false;
                 }
                 else if ((0, utils_1.matchFilter)(action.pingText, "chat", false)) {
-                    //Allow it, but replace
                     player.pingX = action.pingX;
                     player.pingY = action.pingY;
                     player.pingTime = 1;
@@ -224,7 +207,6 @@ Events.on(EventType.ServerLoadEvent, function () {
     });
     (0, aggregate_1.registerAll)(clientHandler, serverHandler);
     (0, packetHandlers_1.loadPacketHandlers)();
-    //Load plugin data
     try {
         var path = (0, utils_1.fishCommandsRootDirPath)();
         globals_1.fishPlugin.directory = path.toString();
@@ -264,7 +246,6 @@ Events.on(EventType.ServerLoadEvent, function () {
     Vars.netServer.assigner = function (player, _) {
         var _a;
         if (Vars.state.rules.pvp) {
-            //find team with minimum amount of players and auto-assign player to that.
             var fishP = players_1.FishPlayer.get(player);
             var preferredTeam_1 = null;
             if (fishP.restoreTeam && (Date.now() - fishP.restoreTeam[1] < funcs_1.Duration.minutes(5)) && fishP.restoreTeam[2] == ((_a = maps_1.PartialMapRun.current) === null || _a === void 0 ? void 0 : _a.startTime))
@@ -274,7 +255,6 @@ Events.on(EventType.ServerLoadEvent, function () {
                 !data.hasCore() ||
                 data.team == Team.derelict ||
                 !data.team.rules().protectCores); }).min(floatf(function (data) {
-                //Only if the team is valid
                 if (data.team == preferredTeam_1)
                     return -1;
                 if (data.team == globals_1.fishState.teamAssignerMode)
@@ -293,16 +273,13 @@ Events.on(EventType.ServerLoadEvent, function () {
 });
 Events.on(EventType.GameOverEvent, function () {
     if (globals_1.fishState.restartQueued) {
-        //restart
         Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
         (0, utils_1.serverRestartLoop)(12, true);
         Events.on(EventType.WorldLoadBeginEvent, function () {
-            //Remove save
             (0, utils_1.restartNow)(true);
         });
     }
 });
-//Patch for Anuken/Mindustry#12521
 Events.on(EventType.UnitControlEvent, function (e) {
     var e_1, _a;
     if (e.unit) {
@@ -322,14 +299,12 @@ Events.on(EventType.UnitControlEvent, function (e) {
     }
 });
 Events.on(EventType.ContentInitEvent, function () {
-    //Unhide latum and renale
     UnitTypes.latum.hidden = false;
     UnitTypes.renale.hidden = false;
 });
 Events.on(EventType.PlayEvent, function () {
     globals_1.fishState.startTime = Date.now();
 });
-//Add a confirm menu for admin requests
 Events.on(EventType.AdminRequestEvent, function (e) {
     if (e.action == Packets.AdminAction.wave) {
         var fishP_2 = players_1.FishPlayer.get(e.player);
@@ -353,15 +328,10 @@ Events.on(EventType.AdminRequestEvent, function (e) {
                 else
                     fishP_2.sendMessage("Wave skipped.");
             }).catch(Log.err);
-            // throw new ValidateException(e.player, "Skip wave admin action blocked, requesting confirmation");
-            //Bizarre hack
-            //We cannot throw a validate exception directly because it gets wrapped by rhino
-            //so we send invalid data to this random java function so it can throw the exception for us
             Packages.mindustry.input.InputHandler.tileConfig(null, null, null);
         }
     }
 });
-//Auto pause (non-pvp)
 var isAutoPaused = false;
 Timer.schedule(function () {
     if (!Vars.state.rules.pvp && Vars.state.rules.pvpAutoPause && !config_1.Mode.localDebug) {

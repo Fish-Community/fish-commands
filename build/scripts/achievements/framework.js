@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the code for the achievements system.
-*/
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
@@ -39,7 +35,7 @@ exports.Achievement = void 0;
 var config_1 = require("/config");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
-var Achievement = /** @class */ (function () {
+var Achievement = (function () {
     function Achievement(icon, name, description, options) {
         var _a;
         if (options === void 0) { options = {}; }
@@ -109,7 +105,6 @@ var Achievement = /** @class */ (function () {
             }
         });
     };
-    /** Do not call this in a loop on an achievement set to notify everyone. */
     Achievement.prototype.grantTo = function (player, allowRepeatMessage) {
         if (allowRepeatMessage === void 0) { allowRepeatMessage = false; }
         var has = this.has(player);
@@ -123,16 +118,13 @@ var Achievement = /** @class */ (function () {
             this.setObtained(player);
     };
     Achievement.prototype.setObtained = function (player) {
-        //void player.updateSynced(fishP => fishP.achievements.set(this.nid));
         player.achievements.set(this.nid);
     };
     Achievement.prototype.has = function (player) {
         return player.achievements.get(this.nid);
     };
     Achievement.all = [];
-    /** Checked every second. */
     Achievement.checkFrequent = [];
-    /** Checked every 10 seconds. Use for states that can be gained but not lost, such as "x wins". */
     Achievement.checkInfrequent = [];
     Achievement.checkJoin = [];
     Achievement.checkGameover = [];
@@ -152,7 +144,7 @@ Events.on(EventType.PlayerJoin, function (_a) {
                 if (fishP_1.dataSynced)
                     ach.grantTo(fishP_1);
                 else
-                    Timer.schedule(function () { return ach.grantTo(fishP_1); }, 2); //2 seconds should be enough
+                    Timer.schedule(function () { return ach.grantTo(fishP_1); }, 2);
             }
         }
     };

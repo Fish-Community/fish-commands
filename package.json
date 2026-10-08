@@ -5,13 +5,13 @@
 	"main": "scripts/main.js",
 	"private": "true",
 	"scripts": {
-		"attach": "node scripts/attach.js",
-		"watch": "tsc --watch",
-		"build": "tsc -p tsconfig.json",
+		"attach": "pnpm build && node scripts/attach.js",
+		"watch": "node --watch --watch-path=src scripts/build-yopta.js",
+		"build": "node scripts/build-yopta.js",
 		"lint": "eslint",
 		"lint:fix": "eslint --fix",
-		"dev": "node scripts/dev.js",
-		"test": "tsc -p tsconfig.json && node scripts/remap-imports.js && tsc -p spec && jasmine"
+		"dev": "pnpm build && node scripts/dev.js",
+		"test": "pnpm build && node scripts/remap-imports.js && tsc -p spec && jasmine"
 	},
 	"keywords": [],
 	"author": "",
@@ -25,7 +25,8 @@
 		"jasmine": "^5.13.0",
 		"jiti": "^2.6.1",
 		"typescript": "^6.0.3",
-		"typescript-eslint": "^8.61.1"
+		"typescript-eslint": "^8.61.1",
+		"yopta": "2.0.6"
 	},
 	"resolutions": {
 		"glob": "12.0.0"

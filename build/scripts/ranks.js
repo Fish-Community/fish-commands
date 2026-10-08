@@ -1,15 +1,9 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the definitions for ranks and role flags.
-*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoleFlag = exports.Rank = void 0;
 var funcs_1 = require("/funcs");
-/** Each player has one rank, which is used to determine their prefix, permissions, and which other players they can perform moderation actions on. */
-var Rank = /** @class */ (function () {
-    function Rank(name, 
-    /** Used to determine whether a rank outranks another. */ level, description, prefix, shortPrefix, color, autoRankData) {
+var Rank = (function () {
+    function Rank(name, level, description, prefix, shortPrefix, color, autoRankData) {
         var _a, _b, _c, _d, _e;
         this.name = name;
         this.level = level;
@@ -49,7 +43,7 @@ var Rank = /** @class */ (function () {
     Rank.mod = new Rank("mod", 3, "Moderators who can mute, stop, and kick players.", "[black]<[#6FFC7C]\uE817[]>[]", "&lg[M]&fr", "[#6FFC7C]");
     Rank.admin = new Rank("admin", 4, "Administrators with the power to ban players.", "[black]<[cyan]\uE82C[]>[]", "&lr[A]&fr", "[cyan]");
     Rank.manager = new Rank("manager", 10, "Managers have file and console access.", "[black]<[scarlet]\uE88E[]>[]", "&c[E]&fr", "[scarlet]");
-    Rank.pi = new Rank("pi", 11, "3.14159265358979323846264338327950288419716 (manager)", "[black]<[#FF8000]\u03C0[]>[]", "&b[+]&fr", "[blue]"); //i want pi rank
+    Rank.pi = new Rank("pi", 11, "3.14159265358979323846264338327950288419716 (manager)", "[black]<[#FF8000]\u03C0[]>[]", "&b[+]&fr", "[blue]");
     Rank.fish = new Rank("fish", 999, "Owner.", "[blue]>|||>[] ", "&b[F]&fr", "[blue]");
     Rank.search = (0, funcs_1.searchFixed)(Object.values(Rank.ranks), [
         function (r, str) { return r.name == str.toLowerCase(); },
@@ -58,12 +52,8 @@ var Rank = /** @class */ (function () {
     return Rank;
 }());
 exports.Rank = Rank;
-Object.freeze(Rank.pi); //anti-trolling
-/**
- * Role flags are used to determine a player's prefix and permissions.
- * Players can have any combination of the role flags.
- */
-var RoleFlag = /** @class */ (function () {
+Object.freeze(Rank.pi);
+var RoleFlag = (function () {
     function RoleFlag(name, prefix, description, color, assignableByModerators) {
         if (assignableByModerators === void 0) { assignableByModerators = true; }
         this.name = name;

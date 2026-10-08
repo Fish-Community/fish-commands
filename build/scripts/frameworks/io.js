@@ -45,15 +45,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SettingsSerializer = exports.Serializer = exports.DataClass = void 0;
 exports.dataClass = dataClass;
 exports.serialize = serialize;
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the serialization framework.
-For usage information, see docs/framework-usage-guide.md
-For maintenance information, see docs/frameworks.md
-*/
 var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
-var DataClass = /** @class */ (function () {
+var DataClass = (function () {
     function DataClass(data) {
         Object.assign(this, data);
     }
@@ -74,7 +68,7 @@ function checkBounds(type, value, min, max) {
     }
     return value;
 }
-var Serializer = /** @class */ (function () {
+var Serializer = (function () {
     function Serializer(schema, oldSchema) {
         this.schema = schema;
         this.oldSchema = oldSchema;
@@ -83,7 +77,7 @@ var Serializer = /** @class */ (function () {
         Serializer.writeNode(this.schema, object, output);
     };
     Serializer.prototype.read = function (input) {
-        input.mark(0xFFFF); //1MB
+        input.mark(0xFFFF);
         try {
             return Serializer.readNode(this.schema, input);
         }
@@ -145,7 +139,7 @@ var Serializer = /** @class */ (function () {
                             break;
                         case 'u32':
                             output.writeInt(value & 0xFFFFFFFF);
-                            break; //If the value is greater than 0x7FFFFFFF, make it negative so Java writes it correctly
+                            break;
                         case 'i8':
                             output.writeByte(value);
                             break;
@@ -172,14 +166,13 @@ var Serializer = /** @class */ (function () {
                 break;
             case 'team':
                 if (!value)
-                    Log.err("attempting to serialize a Team, but it was null"); //temporary debug message
+                    Log.err("attempting to serialize a Team, but it was null");
                 output.writeByte(value.id);
                 break;
             case 'object':
                 try {
                     for (var _c = __values(schema[1]), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var _e = __read(_d.value, 2), key = _e[0], childSchema = _e[1];
-                        //correspondence
                         this.writeNode(childSchema, value[key], output);
                     }
                 }
@@ -195,7 +188,6 @@ var Serializer = /** @class */ (function () {
                 try {
                     for (var _f = __values(schema[2]), _g = _f.next(); !_g.done; _g = _f.next()) {
                         var _h = __read(_g.value, 2), key = _h[0], childSchema = _h[1];
-                        //correspondence
                         this.writeNode(childSchema, value[key], output);
                     }
                 }
@@ -217,7 +209,6 @@ var Serializer = /** @class */ (function () {
                         value.length = schema[1];
                     }
                 }
-                // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (var i = 0; i < value.length; i++) {
                     this.writeNode(schema[2], value[i], output);
                 }
@@ -238,7 +229,7 @@ var Serializer = /** @class */ (function () {
                     case 'u8': return input.readUnsignedByte();
                     case 'u16': return input.readUnsignedShort();
                     case 'u32': {
-                        var value = input.readInt(); //Java does not support unsigned ints
+                        var value = input.readInt();
                         return value < 0 ? value + Math.pow(2, 32) : value;
                     }
                     case 'i8': return input.readByte();
@@ -309,7 +300,7 @@ var Serializer = /** @class */ (function () {
     return Serializer;
 }());
 exports.Serializer = Serializer;
-var SettingsSerializer = /** @class */ (function (_super) {
+var SettingsSerializer = (function (_super) {
     __extends(SettingsSerializer, _super);
     function SettingsSerializer(settingsKey, schema, oldSchema) {
         var _this = _super.call(this, schema, oldSchema) || this;
@@ -352,7 +343,6 @@ function serialize(settingsKey, schema, oldSchema, fixer, saveEvent) {
                 return new SettingsSerializer(settingsKey, schema(), oldSchema === null || oldSchema === void 0 ? void 0 : oldSchema());
             });
             globals_1.FishEvents.on("loadData", function () { return Threads.daemon(function () {
-                //Load data multithreaded
                 var start = Time.nanos();
                 var value = serializer().readSettings();
                 if (value) {

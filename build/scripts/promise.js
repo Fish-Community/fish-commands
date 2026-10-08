@@ -1,9 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains a custom polyfill for promises with slightly different behavior.
-*/
-/* eslint-disable @typescript-eslint/no-floating-promises */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Promise = void 0;
 exports.queueMicrotask = queueMicrotask;
@@ -21,7 +16,7 @@ function queueMicrotask(callback, errorHandler) {
         }
     });
 }
-var Promise = /** @class */ (function () {
+var Promise = (function () {
     function Promise(initializer, skipMicrotask) {
         if (skipMicrotask === void 0) { skipMicrotask = false; }
         var _this = this;
@@ -92,7 +87,6 @@ var Promise = /** @class */ (function () {
                 resolve(result);
             }
         });
-        //If the original promise resolves successfully, the new one also needs to resolve
         this.resolveHandlers.push(function (value) { return resolve(value); });
         return promise;
     };

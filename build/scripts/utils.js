@@ -1,9 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains many utility functions that need access to any values from other files.
-For functions that don't need values from other files, see funcs.ts.
-*/
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -217,7 +212,6 @@ function formatTimeShort(time) {
         (seconds || time < 1000) && !(months || days) && "".concat(seconds, "s"),
     ].filter(Boolean).join(" ");
 }
-//TODO move this data to be right next to Mode
 function formatModeName(name) {
     return {
         "attack": "Attack",
@@ -251,7 +245,6 @@ function formatTimeRelative(time, raw) {
     else
         return formatTime(difference) + (raw ? "" : " ago");
 }
-/** Attempts to parse a Color from the input. */
 function getColor(input) {
     try {
         if (input.includes(',')) {
@@ -278,9 +271,7 @@ function getColor(input) {
         return null;
     }
 }
-/** Searches for an enemy tile near a unit. */
 function nearbyEnemyTile(unit, dist) {
-    //because the indexer is buggy
     if (dist > 10)
         (0, funcs_1.crash)("nearbyEnemyTile(): dist (".concat(dist, ") is too high!"));
     var x = Math.floor(unit.x / Vars.tilesize);
@@ -294,7 +285,6 @@ function nearbyEnemyTile(unit, dist) {
     }
     return null;
 }
-/** Attempts to parse a Team from the input. */
 exports.getTeam = (0, funcs_1.searchFixed)(Team.baseTeams.concat(Team.neoplastic), [
     function (i, s) { return i.name == s; },
     function (i, s) { return i.name == s.toLowerCase(); },
@@ -302,7 +292,6 @@ exports.getTeam = (0, funcs_1.searchFixed)(Team.baseTeams.concat(Team.neoplastic
     function (i, s) { return i.name.includes(s.toLowerCase()); },
     function (i, s) { return i.name.includes(s.toLowerCase().replace(" ", "-")); },
 ]);
-/** Attempts to parse an Item from the input. */
 exports.getItem = (0, funcs_1.searchFixed)(Vars.content.items().toArray(), [
     function (i, s) { return i.name == s; },
     function (i, s) { return i.name == s.toLowerCase(); },
@@ -310,10 +299,6 @@ exports.getItem = (0, funcs_1.searchFixed)(Vars.content.items().toArray(), [
     function (i, s) { return i.name.includes(s.toLowerCase().replace(" ", "-")); },
     function (i, s) { return i.emoji() == s; },
 ]);
-/**
- * @param wordList "chat" is least strict, followed by "strict", and "name" is most strict.
- * @returns a
- */
 function matchFilter(input, wordList, aggressive) {
     var e_1, _a, e_2, _b;
     if (wordList === void 0) { wordList = "chat"; }
@@ -326,7 +311,6 @@ function matchFilter(input, wordList, aggressive) {
     ].filter(Boolean).flat();
     if (aggressive)
         currentBannedWords.push(["hitler", []]);
-    //Replace substitutions
     var variations = [input, cleanText(input, false)];
     if (aggressive)
         variations.push(cleanText(input, true));
@@ -336,11 +320,10 @@ function matchFilter(input, wordList, aggressive) {
             var _loop_1 = function (text_1) {
                 if (banned instanceof RegExp ? banned.test(text_1) : text_1.includes(banned)) {
                     var modifiedText_1 = text_1;
-                    whitelist.forEach(function (w) { return modifiedText_1 = modifiedText_1.replace(new RegExp(w, "g"), ""); }); //Replace whitelisted words with nothing
-                    if (banned instanceof RegExp ? banned.test(modifiedText_1) : modifiedText_1.includes(banned)) //If the text still matches, fail
+                    whitelist.forEach(function (w) { return modifiedText_1 = modifiedText_1.replace(new RegExp(w, "g"), ""); });
+                    if (banned instanceof RegExp ? banned.test(modifiedText_1) : modifiedText_1.includes(banned))
                         return { value: (banned === globals_1.uuidPattern ? "a Mindustry UUID" :
                                 banned === globals_1.ipPattern || banned === globals_1.ipPortPattern ? "an IP address" :
-                                    //parsing regex with regex, massive hack
                                     banned instanceof RegExp ? banned.source.replace(/\\b|\(\?<!.+?\)|\(\?!.+?\)/g, "") :
                                         banned) };
                 }
@@ -377,7 +360,6 @@ function removeFoosChars(text) {
 }
 function cleanText(text, applyAntiEvasion) {
     if (applyAntiEvasion === void 0) { applyAntiEvasion = false; }
-    //Replace substitutions
     var replacedText = config_1.multiCharSubstitutions.reduce(function (acc, _a) {
         var _b = __read(_a, 2), from = _b[0], to = _b[1];
         return acc.replace(from, to);
@@ -414,7 +396,6 @@ function isImpersonator(name, isAdmin) {
     var replacedText = cleanText(name);
     var antiEvasionText = cleanText(name, true);
     try {
-        //very clean code i know
         for (var filters_1 = __values(filters), filters_1_1 = filters_1.next(); !filters_1_1.done; filters_1_1 = filters_1.next()) {
             var _b = __read(filters_1_1.value, 2), check = _b[0], message = _b[1];
             if (check(replacedText, isAdmin))
@@ -434,15 +415,15 @@ function isImpersonator(name, isAdmin) {
 }
 function logAction(action, by, to, reason, duration) {
     var _a, _b;
-    if (by === undefined) { //overload 1
+    if (by === undefined) {
         api.sendModerationMessage("".concat(action, "\n**Server:** ").concat(config_1.Gamemode.name()));
         return;
     }
-    if (to === undefined) { //overload 2
+    if (to === undefined) {
         api.sendModerationMessage("".concat((0, funcs_1.escapeTextDiscord)(Strings.stripColors(by.name)), " ").concat(action, "\n**Server:** ").concat(config_1.Gamemode.name()));
         return;
     }
-    if (to) { //overload 3
+    if (to) {
         var name = void 0, uuid = void 0, ip = void 0;
         var actor = typeof by === "string" ? by : (0, funcs_1.escapeTextDiscord)(Strings.stripColors((_a = by.overrideName) !== null && _a !== void 0 ? _a : by.name));
         if (to instanceof players_1.FishPlayer) {
@@ -471,7 +452,6 @@ function logAction(action, by, to, reason, duration) {
         return;
     }
 }
-/** @returns the number of milliseconds. */
 function parseTimeString(str) {
     var e_4, _a;
     var formats = [
@@ -492,7 +472,6 @@ function parseTimeString(str) {
     try {
         for (var formats_1 = __values(formats), formats_1_1 = formats_1.next(); !formats_1_1.done; formats_1_1 = formats_1.next()) {
             var _b = __read(formats_1_1.value, 2), pattern = _b[0], mult = _b[1];
-            //rhino regex doesn't work
             var matcher = pattern.matcher(str);
             if (matcher.matches()) {
                 var num = Number(matcher.group(1));
@@ -510,10 +489,6 @@ function parseTimeString(str) {
     }
     return null;
 }
-/**
- * Triggers the restart countdown. Execution always returns from this function.
- * @param [fake=false] if set, server will not actually restart.
- */
 function serverRestartLoop(sec, fake) {
     if (fake === void 0) { fake = false; }
     if (sec > 0) {
@@ -525,10 +500,6 @@ function serverRestartLoop(sec, fake) {
         restartNow();
     }
 }
-/**
- * Actually restarts. Kicks all players. Execution always returns from this function.
- * @param [removeSave=false] If set, save will be deleted instead of saved. Used to start a new game after the restart.
- */
 function restartNow(removeSave) {
     if (removeSave === void 0) { removeSave = false; }
     Log.info("Restarting...");
@@ -556,27 +527,26 @@ exports.getUnitType = (0, funcs_1.searchFixed)(function () { return Vars.content
     function (u, q) { return u.name == q; },
     function (u, q) { return u.name.includes(q.toLowerCase()); },
 ]);
-/** The vanilla validation code doesn't work on servers */
 function isMapValidForGamemode(map) {
     if (map.custom)
-        return true; //we assume that all custom maps are appropriate for the selected gamemode
-    var pvpMaps = ["Veins", "Glacier", "Passage"]; //Maps.pvpMaps
+        return true;
+    var pvpMaps = ["Veins", "Glacier", "Passage"];
     switch (Vars.state.rules.mode().name()) {
         case "sandbox":
-        case "editor": return true; //sandbox can be played on any map
+        case "editor": return true;
         case "attack":
-        case "pvp": return pvpMaps.includes(map.name()); //technically the pvp maps are valid attack maps, since they have an (undefended) enemy core
+        case "pvp": return pvpMaps.includes(map.name());
         case "survival": return !pvpMaps.includes(map.name());
-        default: return false; //unreachable
+        default: return false;
     }
 }
 exports.getMap = (0, funcs_1.searchFixed)(function () { return Vars.maps.all().select(isMapValidForGamemode).toArray(); }, [
-    function (m, name) { return m.name().replace(/ /g, "_") === name; }, //exact match with spaces replaced
-    function (m, name) { return m.name().replace(/ /g, "_").toLowerCase() === name.toLowerCase(); }, //exact match with spaces replaced ignoring case
-    function (m, name) { return m.plainName().replace(/ /g, "_").toLowerCase() === name.toLowerCase(); }, //exact match with spaces replaced ignoring case and colors
-    function (m, name) { return m.plainName().toLowerCase().includes(name.toLowerCase()); }, //partial match ignoring case and colors
-    function (m, name) { return m.plainName().replace(/ /g, "_").toLowerCase().includes(name.toLowerCase()); }, //partial match with spaces replaced ignoring case and colors
-    function (m, name) { return m.plainName().replace(/ /g, "").toLowerCase().includes(name.toLowerCase()); }, //partial match with spaces removed ignoring case and colors
+    function (m, name) { return m.name().replace(/ /g, "_") === name; },
+    function (m, name) { return m.name().replace(/ /g, "_").toLowerCase() === name.toLowerCase(); },
+    function (m, name) { return m.plainName().replace(/ /g, "_").toLowerCase() === name.toLowerCase(); },
+    function (m, name) { return m.plainName().toLowerCase().includes(name.toLowerCase()); },
+    function (m, name) { return m.plainName().replace(/ /g, "_").toLowerCase().includes(name.toLowerCase()); },
+    function (m, name) { return m.plainName().replace(/ /g, "").toLowerCase().includes(name.toLowerCase()); },
     function (m, name) { return m.plainName().replace(/[^a-zA-Z]/gi, "").toLowerCase().includes(name.toLowerCase()); },
 ], "recomputeOptions");
 function getBlock(block, filter) {
@@ -654,7 +624,6 @@ function neutralGameover() {
         Events.fire(new EventType.GameOverEvent(getEnemyTeam()));
     });
 }
-/** Please validate requestedWaves to ensure it is not huge */
 function skipWaves(requestedWaves, runIntermediateWaves) {
     var winWave = Vars.state.rules.winWave;
     if (winWave <= 0)
@@ -676,7 +645,6 @@ function logHTrip(player, name, message) {
     api.sendModerationMessage("Player `".concat(player.cleanedName, "` (`").concat(player.uuid, "`/`").concat(player.ip(), "`) tripped **").concat(name, "**").concat(message ? ": ".concat(message) : "", "\n**Server:** ").concat(config_1.Gamemode.name()));
 }
 function setType(input) {
-    //does not do any checking
 }
 function untilForever() {
     return (globals_1.maxTime - Date.now() - 10000);
@@ -760,27 +728,16 @@ function processChat(player, message, effects) {
     return (highlight !== null && highlight !== void 0 ? highlight : "") + message;
 }
 var replacements = [
-    //Serpulo units
     ["dagger", "mace", "fortress", "scepter", "reign", "nova", "pulsar", "quasar", "vela", "corvus", "crawler", "atrax", "spiroct", "arkyid", "toxopid", "flare", "horizon", "zenith", "antumbra", "eclipse", "mono", "poly", "mega", "quad", "oct", "risso", "minke", "bryde", "sei", "omura", "retusa", "oxynoe", "cyerce", "aegires", "navanax", "fort", "toxo", "flarogus"],
-    //Erekir units
     ["stell", "locus", "precept", "vanquish", "conquer", "merui", "cleroi", "anthicus", "tecta", "collaris", "elude", "avert", "obviate", "quell", "disrupt", "vanq", "crab", "anthi", "larry", "obvi"],
-    //Items, full form
     ["copper", "lead", "metaglass", "graphite", "sand", "coal", "titanium", "thorium", "scrap", "silicon", "plastanium", "phase fabric", "surge alloy", "spore pod", "blast compound", "pyratite", "beryllium", "tungsten", "oxide", "carbide"],
-    //Items, short form
     ["coppa", "meta", "graph", "tita", "titan", "thor", "scrap", "sili", "plast", "phase", "surge", "spore", "blast", "pyra", "beryl", "tung", "oxide", "carb"],
-    //Liquids
     ["water", "slag", "oil", "cryo", "cryofluid"],
-    //Liquids/gases (erekir)
     ["hydrogen", "ozone", "nitrogen", "cyanogen", "cyan", "nitro", "hydro", "arky", "arkycite", "neoplasm"],
-    //Gamemodes
     ["attack", "sandbox", "pvp", "hexed", "survival"],
-    //teams
     ["crux", "sharded", "malis", "neoplastic"],
-    //maps
     ["rampant", "harbor war", "cave canal", "acheron", "wolframfestung", "avast", "fallen omura", "assault"],
-    //aquatic animals
     ["fish", "shark", "whale", "dolphin", "salmon", "tuna", "squid", "jellyfish", "turtle"],
-    //antonym adjectives
     ["fast", "slow"], ["big", "little"], ["hot", "cold"], ["hard", "easy", "difficult", "ez"], ["hello", "bye"],
 ].map(function (set) { return [set, new RegExp("\\b(?:".concat(set.join("|"), ")(e?s?(?:i?gone)?)\\b"), 'g')]; });
 var foolCounter = 0;
@@ -789,7 +746,6 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
     var cleanedMessage = removeFoosChars(message);
     setShuffle: {
         if (foolCounter < 8) {
-            //Skip the next 5 messages no matter what
             foolCounter++;
             break setShuffle;
         }
@@ -812,7 +768,6 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
         }
         if (replacedMessage !== cleanedMessage) {
             if (foolCounter < 11) {
-                //Skip the next 2 messages that would get altered
                 foolCounter++;
                 break setShuffle;
             }
@@ -825,7 +780,6 @@ exports.foolifyChat = memoizeChatFilter(function foolifyChat(message) {
     }
     if (Math.random() < 0.01) {
         return cleanedMessage.split("").reverse().join("");
-        // eslint-disable-next-line no-dupe-else-if
     }
     else if (Math.random() < 0.01) {
         return "[scarlet]I really hope everyone is having a fun time :} <3";
@@ -851,8 +805,6 @@ function getIPRange(input, error) {
         }
     }
     else if (globals_1.ipRangeWildcardPattern.test(input)) {
-        //1.2.3.*
-        //1.2.*
         var _b = __read(input.split("."), 4), a = _b[0], b = _b[1], c = _b[2], d = _b[3];
         if (c !== "*")
             return "".concat(a, ".").concat(b, ".").concat(c, ".");
@@ -861,7 +813,6 @@ function getIPRange(input, error) {
     else
         return null;
 }
-//this brings me physical pain
 function getHash(file, algorithm) {
     if (algorithm === void 0) { algorithm = "SHA-1"; }
     try {
@@ -886,20 +837,16 @@ function getHash(file, algorithm) {
 function match(value, clauses, defaultValue) {
     return Object.prototype.hasOwnProperty.call(clauses, value) ? clauses[value] : defaultValue;
 }
-/** @throws CommandError */
 function fishCommandsRootDirPath() {
     var commandsDir = Vars.modDirectory.child("fish-commands");
     if (!commandsDir.exists())
         (0, commands_1.fail)("Fish commands directory at path ".concat(commandsDir.absolutePath(), " does not exist!"));
     var fishCommandsRootDirPath = Paths.get(commandsDir.file().path);
     if (Packages.java.nio.file.Files.isSymbolicLink(fishCommandsRootDirPath)) {
-        //fish-commands is linked to the build directory of somewhere else
-        //resolve and get the parent directory of the build directory
         fishCommandsRootDirPath = fishCommandsRootDirPath.toRealPath().getParent();
     }
     return fishCommandsRootDirPath;
 }
-/** Fails if "modeString" is invalid. */
 function applyEffectMode(modeString, unit, ticks) {
     var e_6, _a, e_7, _b;
     var _c;
@@ -1026,7 +973,6 @@ function syncManual(player, rules, emptyMap) {
             SaveIO.getSaveWriter().writeContentHeader(stream);
             SaveIO.getSaveWriter().writeContentPatches(stream);
             if (emptyMap) {
-                //fake world, all the same tile
                 stream.writeShort(emptyMap.width);
                 stream.writeShort(emptyMap.height);
                 var area = emptyMap.width * emptyMap.height;
@@ -1074,7 +1020,6 @@ function syncManual(player, rules, emptyMap) {
 function crashClient(player) {
     var planetBackground = Object.assign(new Packages.mindustry.graphics.g3d.PlanetParams(), { planet: null });
     if (Vars.state.rules.planetBackground) {
-        //There are already planet params, need to force sync
         var rules = Object.assign(Vars.state.rules.copy(), { planetBackground: planetBackground });
         void syncManual(player, rules, {
             width: 1,
@@ -1131,20 +1076,17 @@ function unblacklist_once(ip) {
         return false;
 }
 function unblacklist(ip) {
-    //best race condition fix (real)
-    //just try it thrice
     Timer.schedule(function () { return unblacklist_once(ip); }, 0.5, 1, 2);
     return unblacklist_once(ip);
 }
-/** May fail(), or throw the Cancel symbol. */
 function getDuration(player_1, title_1, description_1) {
-    return __awaiter(this, arguments, void 0, function (player, title, description, suggestForever) {
+    return __awaiter(this, arguments, Promise, function (player, title, description, suggestForever) {
         var result, result_1;
         var _a;
         if (suggestForever === void 0) { suggestForever = false; }
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, menus_1.Menu.buttons(player, title, description, [
+                case 0: return [4, menus_1.Menu.buttons(player, title, description, [
                         [
                             { text: "2 days", data: funcs_1.Duration.days(2) },
                             { text: "7 days", data: funcs_1.Duration.days(7) },
@@ -1156,16 +1098,16 @@ function getDuration(player_1, title_1, description_1) {
                     ], { onCancel: "reject" })];
                 case 1:
                     result = _b.sent();
-                    if (!(result == "custom")) return [3 /*break*/, 3];
-                    return [4 /*yield*/, menus_1.Menu.text(title, description, player, {
+                    if (!(result == "custom")) return [3, 3];
+                    return [4, menus_1.Menu.text(title, description, player, {
                             allowEmpty: false,
                             maxTextLength: 12,
                             onCancel: "reject",
                         })];
                 case 2:
                     result_1 = _b.sent();
-                    return [2 /*return*/, (_a = parseTimeString(result_1)) !== null && _a !== void 0 ? _a : (0, commands_1.fail)("Invalid time string \"".concat(result_1, "\""))];
-                case 3: return [2 /*return*/, result];
+                    return [2, (_a = parseTimeString(result_1)) !== null && _a !== void 0 ? _a : (0, commands_1.fail)("Invalid time string \"".concat(result_1, "\""))];
+                case 3: return [2, result];
             }
         });
     });

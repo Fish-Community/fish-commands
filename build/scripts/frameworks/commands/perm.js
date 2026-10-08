@@ -5,16 +5,11 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Perm = void 0;
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains the Perm class.
-*/
 var config_1 = require("/config");
 var funcs_1 = require("/funcs");
 var ranks_1 = require("/ranks");
 var utils_1 = require("/utils");
-/** Represents a permission that is required to do something. */
-var Perm = /** @class */ (function () {
+var Perm = (function () {
     function Perm(name, check, category_, color, unauthorizedMessage, modes) {
         if (category_ === void 0) { category_ = typeof check == "string" ? rankToCategory(check) : (0, funcs_1.crash)("category is required"); }
         if (color === void 0) { color = ""; }
@@ -35,7 +30,6 @@ var Perm = /** @class */ (function () {
         }
         Perm.perms[name] = this;
     }
-    /** Creates a new Perm with overrides for specified gamemodes. */
     Perm.prototype.exceptModes = function (modes, unauthorizedMessage) {
         var _this = this;
         if (unauthorizedMessage === void 0) { unauthorizedMessage = this.unauthorizedMessage; }
@@ -90,7 +84,6 @@ var Perm = /** @class */ (function () {
         minigame: Perm.trusted,
         testsrv: Perm.trusted,
     });
-    /** Whether players should be allowed to change the team of a unit or building. If not, they will be kicked out of their current unit or building before switching teams. */
     Perm.changeTeamExternal = new Perm("changeTeamExternal", "admin").exceptModes({
         sandbox: Perm.trusted,
         testsrv: Perm.trusted,

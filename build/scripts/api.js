@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains wrappers over the API calls to the backend server.
-*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cachedIps = void 0;
 exports.isVpn = isVpn;
@@ -24,14 +20,12 @@ var globals_1 = require("/globals");
 var players_1 = require("/players");
 var promise_1 = require("/promise");
 exports.cachedIps = {};
-/** Make an API request to see if an IP is likely VPN. */
 function isVpn(ip, callback, callbackError) {
     if (ip in exports.cachedIps)
         return callback(exports.cachedIps[ip]);
     Http.get("http://ip-api.com/json/".concat(ip, "?fields=proxy,hosting,lat,lon"), function (res) {
         var data = res.getResultAsString();
         var json = JSON.parse(data);
-        //TEMPORARY: remove this before it causes a giant memleak
         globals_1.fishState.geolocationData.push([json.lat, json.lon]);
         var isVpn = json.proxy || json.hosting;
         exports.cachedIps[ip] = isVpn;
@@ -48,7 +42,6 @@ function isVpn(ip, callback, callbackError) {
 function isVpnCached(ip) {
     return exports.cachedIps[ip];
 }
-/** Send text to the moderation logs channel in Discord. */
 function sendModerationMessage(message) {
     if (config_1.Mode.noBackend) {
         Log.info("Sent moderation log message: ".concat(message));
@@ -58,10 +51,8 @@ function sendModerationMessage(message) {
     req.timeout = 10000;
     req.error(function () { return Log.err("[API] Network error when trying to call api.sendModerationMessage()"); });
     req.submit(function (response) {
-        //Log.info(response.getResultAsString());
     });
 }
-/** Get staff messages from discord. */
 function getStaffMessages(callback) {
     if (config_1.Mode.noBackend)
         return;
@@ -77,14 +68,11 @@ function getStaffMessages(callback) {
             callback(JSON.parse(temp).messages);
     });
 }
-/** Send staff messages from server. */
 function sendStaffMessage(message, playerName, isStaff) {
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend)
         return reject('local debug mode'), promise;
-    var req = Http.post("http://".concat(config_1.backendIP, "/api/sendStaffMessage/v2"), 
-    // need to send both name variants so one can be sent to the other servers with color and discord can use the clean one
-    JSON.stringify({ message: message, playerName: playerName, cleanedName: Strings.stripColors(playerName), server: config_1.Gamemode.name(), isStaff: isStaff })).header('Content-Type', 'application/json').header('Accept', '*/*');
+    var req = Http.post("http://".concat(config_1.backendIP, "/api/sendStaffMessage/v2"), JSON.stringify({ message: message, playerName: playerName, cleanedName: Strings.stripColors(playerName), server: config_1.Gamemode.name(), isStaff: isStaff })).header('Content-Type', 'application/json').header('Accept', '*/*');
     req.timeout = 10000;
     req.error(function (err) {
         Log.err("[API] Network error when trying to call api.sendStaffMessage()");
@@ -96,7 +84,6 @@ function sendStaffMessage(message, playerName, isStaff) {
     });
     return promise;
 }
-/** Bans the provided ip and/or uuid. */
 function ban(data, callback) {
     if (callback === void 0) { callback = function () { }; }
     if (config_1.Mode.noBackend)
@@ -113,7 +100,6 @@ function ban(data, callback) {
         callback(JSON.parse(str).data);
     });
 }
-/** Unbans the provided ip and/or uuid. */
 function unban(data, callback) {
     if (callback === void 0) { callback = function () { }; }
     if (config_1.Mode.noBackend)
@@ -131,14 +117,12 @@ function unban(data, callback) {
         callback(parsedData.status, parsedData.error);
     });
 }
-/** Gets if either the provided uuid or ip is banned. */
 function getBanned(data, callback) {
     if (config_1.Mode.noBackend) {
         Log.info("[API] Attempted to getBanned(".concat(data.uuid, "/").concat(data.ip, "), assuming false due to local debug"));
         callback(false);
         return;
     }
-    //TODO cache 4s
     var req = Http.post("http://".concat(config_1.backendIP, "/api/checkIsBanned"), JSON.stringify(data))
         .header('Content-Type', 'application/json')
         .header('Accept', '*/*');
@@ -151,9 +135,6 @@ function getBanned(data, callback) {
         callback(JSON.parse(str).data);
     });
 }
-/**
- * Fetches fish player data from the backend.
- **/
 function getFishPlayerData(uuid) {
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     function fail(err) {
@@ -189,7 +170,6 @@ function getFishPlayerData(uuid) {
     });
     return promise;
 }
-/** Pushes fish player data to the backend. */
 function setFishPlayerData(data, repeats, ignoreActivelySyncedFields) {
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend) {
@@ -221,7 +201,6 @@ function setFishPlayerData(data, repeats, ignoreActivelySyncedFields) {
     });
     return promise;
 }
-/** Pushes fish player data to the backend. */
 function fetchAntibotData() {
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend) {
@@ -233,9 +212,6 @@ function fetchAntibotData() {
         .header('Accept', '*/*');
     req.timeout = 10000;
     req.error(function (err) {
-        // Log.err(`[API] Network error when trying to call api.fetchAntibotData()`);
-        // Log.err(err);
-        // if(err?.response) Log.err(err.response.getResultAsString());
         reject(err);
     });
     req.submit(function (response) {
@@ -253,9 +229,6 @@ function syncDosBlacklist(ips) {
             .header('Accept', '*/*');
         req.timeout = 10000;
         req.error(function (err) {
-            // Log.err(`[API] Network error when trying to call api.syncDosBlacklist()`);
-            // Log.err(err);
-            // if(err?.response) Log.err(err.response.getResultAsString());
             reject(err);
         });
         req.submit(function (response) {
@@ -284,7 +257,6 @@ function unBlacklist(ip) {
     }
     return promise;
 }
-/** Reports a USID rejection to the backend to allow it to reset the USID with a code. */
 function reportUsidRejection(uuid, rejectedUsid, code) {
     var _a = promise_1.Promise.withResolvers(), promise = _a.promise, resolve = _a.resolve, reject = _a.reject;
     if (config_1.Mode.noBackend) {

@@ -1,8 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-This file contains timers that run code at regular intervals.
-*/
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -56,12 +52,10 @@ var funcs_1 = require("/funcs");
 var globals_1 = require("/globals");
 var players_1 = require("/players");
 var utils_1 = require("/utils");
-/** Must be called once, and only once, on server start. */
 function initializeTimers() {
     Timer.schedule(function () {
         var e_1, _a;
         Time.mark();
-        //Autosave
         var file = Vars.saveDirectory.child('1' + '.' + Vars.saveExtension);
         Core.app.post(function () {
             Time.mark();
@@ -77,7 +71,6 @@ function initializeTimers() {
             Log.debug("autosave on main thread @", Time.elapsed());
         });
         try {
-            //Unblacklist trusted players
             for (var _b = __values(Object.values(players_1.FishPlayer.cachedPlayers)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var fishP = _c.value;
                 if (fishP.ranksAtLeast("trusted")) {
@@ -94,14 +87,11 @@ function initializeTimers() {
         }
         Log.debug("autosave @", Time.elapsed());
     }, 10, funcs_1.DurationSecs.minutes(5));
-    //Memory corruption prank
     Timer.schedule(function () {
         if (Math.random() < 0.2 && !config_1.Gamemode.hexed()) {
-            //Timer triggers every 17 hours, and the random chance is 20%, so the average interval between pranks is 85 hours
             (0, utils_1.definitelyRealMemoryCorruption)();
         }
     }, funcs_1.DurationSecs.hours(1), funcs_1.DurationSecs.hours(17));
-    //Staff chat
     if (!config.Mode.noBackend)
         Timer.schedule(function () {
             (0, api_1.getStaffMessages)(function (messages) {
@@ -120,13 +110,10 @@ function initializeTimers() {
             var dosBlacklist = Vars.netServer.admins.dosBlacklist;
             var newIPs = [];
             if (globals_1.dosBlacklistCopy.size != dosBlacklist.size) {
-                //Find new IPs
                 dosBlacklist.each(function (ip) { return globals_1.dosBlacklistCopy.add(ip) && newIPs.push(ip); });
             }
             (0, api_1.syncDosBlacklist)(newIPs).then(function (ips) {
                 if (ips.length != dosBlacklist.size) {
-                    //this is technically wrong as the returned data could lose x and gain x ips at once
-                    //close enough
                     dosBlacklist.clear();
                     globals_1.dosBlacklistCopy.clear();
                     dosBlacklist.addAll(ips);
@@ -134,9 +121,8 @@ function initializeTimers() {
                 }
             }).catch(function () { });
         }, 5, 2);
-    //Tip
     Timer.schedule(function () {
-        var showAd = Math.random() < 0.10; //10% chance every 15 minutes
+        var showAd = Math.random() < 0.10;
         var messagePool = showAd ? config.tips.ads :
             (config.Mode.isChristmas && Math.random() > 0.5) ? config.tips.christmas :
                 config.tips.normal;
@@ -144,7 +130,6 @@ function initializeTimers() {
         var message = showAd ? "[gold]".concat(messageText, "[]") : "[gold]Tip: ".concat(messageText, "[]");
         Call.sendMessage(message);
     }, 60, funcs_1.DurationSecs.minutes(15));
-    //State check
     Timer.schedule(function () {
         if (Groups.unit.size() > 10000) {
             Call.sendMessage("\n[scarlet]!!!!!\n[scarlet]Way too many units! Game over!\n[scarlet]!!!!!\n");
@@ -152,7 +137,6 @@ function initializeTimers() {
             (0, utils_1.neutralGameover)();
         }
     }, 0, 1);
-    //Background offset scrolling (custom feature for maps)
     Events.run(Trigger.update, function () {
         var speed = Vars.state.map.tags.getFloat("backgroundOffsetXSpeed");
         if (speed != 0) {
@@ -163,13 +147,11 @@ function initializeTimers() {
     Timer.schedule(function () {
         Vars.dataDirectory.child('geolocation-data').child("".concat(Date.now(), ".json")).writeString(JSON.stringify(globals_1.fishState.geolocationData));
     }, 10, 1200);
-    //PVP autosurrender
     if (config_1.Gamemode.name() == "pvp")
         Timer.schedule(function () {
             if (Vars.state.isPaused() && Vars.state.tick > 60 * 60 * 6) {
                 if (!Groups.player.isEmpty()) {
                     Vars.state.teams.updateTeamStats();
-                    //More than 6 minutes, paused with players online
                     Vars.state.teams.getActive().each(function (t) { return t.players.isEmpty(); }, function (t) {
                         var timer = --globals_1.fishState.autoloseCountdown[t.team.id];
                         if (timer <= 0) {

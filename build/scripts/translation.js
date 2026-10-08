@@ -1,9 +1,4 @@
 "use strict";
-/*
-Copyright © BalaM314, 2026. All Rights Reserved.
-mostly written by @author TheRadioactiveBanana
-This file contains a translation client implementation for https://github.com/TheRadioactiveBanana/translate-api-wrapper
-*/
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -91,11 +86,9 @@ var utils_1 = require("/utils");
 exports.languageCache = new ObjectMap();
 var lastFailure = 0;
 exports.playerLanguageCache = new ObjectMap();
-/** Only modify on main thread */
 exports.translationCache = new ObjectMap();
 Events.on(EventType.ServerLoadEvent, function () {
     void fetchLanguageCache().catch(Log.err);
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     Events.on(EventType.PlayerJoin, function (e) { return __awaiter(void 0, void 0, void 0, function () {
         var fishPlayer, language, err_1;
         return __generator(this, function (_a) {
@@ -104,24 +97,24 @@ Events.on(EventType.ServerLoadEvent, function () {
                     fishPlayer = players_1.FishPlayer.get(e.player);
                     language = getLanguageFromCache(fishPlayer.language || e.player.locale);
                     fishPlayer.language = language.code;
-                    if (!exports.languageCache.isEmpty()) return [3 /*break*/, 4];
+                    if (!exports.languageCache.isEmpty()) return [3, 4];
                     if (Date.now() - lastFailure < 60000)
-                        return [2 /*return*/];
+                        return [2];
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, fetchLanguageCache()];
+                    return [4, fetchLanguageCache()];
                 case 2:
                     _a.sent();
-                    return [3 /*break*/, 4];
+                    return [3, 4];
                 case 3:
                     err_1 = _a.sent();
                     Log.err("Network error while fetching language cache");
                     lastFailure = Date.now();
-                    return [2 /*return*/];
+                    return [2];
                 case 4:
                     setPlayerLanguageEntry(e.player, language.code);
-                    return [2 /*return*/];
+                    return [2];
             }
         });
     }); });
@@ -140,23 +133,23 @@ function handleMessage(sender, message) {
                     Call.sendMessage(sender.con, Vars.netServer.chatFormatter.format(sender, message), message, sender);
                     cleanedMessage = Strings.stripGlyphs(Strings.stripColors((0, utils_1.removeFoosChars)(message)));
                     formatted = Vars.netServer.chatFormatter.format(sender, message);
-                    if (!exports.languageCache.isEmpty()) return [3 /*break*/, 5];
-                    if (!(Date.now() - lastFailure > 60000)) return [3 /*break*/, 4];
+                    if (!exports.languageCache.isEmpty()) return [3, 5];
+                    if (!(Date.now() - lastFailure > 60000)) return [3, 4];
                     _f.label = 1;
                 case 1:
                     _f.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, fetchLanguageCache()];
+                    return [4, fetchLanguageCache()];
                 case 2:
                     _f.sent();
-                    return [3 /*break*/, 4];
+                    return [3, 4];
                 case 3:
                     err_2 = _f.sent();
                     Log.err("Network error while fetching language cache");
                     lastFailure = Date.now();
-                    return [3 /*break*/, 4];
+                    return [3, 4];
                 case 4:
                     sendNoTranslations(sender, message, formatted, null);
-                    return [2 /*return*/];
+                    return [2];
                 case 5:
                     languagesToFetch = [];
                     exports.playerLanguageCache.each(function (lang, players) {
@@ -168,11 +161,11 @@ function handleMessage(sender, message) {
                     });
                     sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch);
                     sendNoTranslations(sender, message, formatted, disabledLanguages);
-                    if (!languagesToFetch.length) return [3 /*break*/, 9];
+                    if (!languagesToFetch.length) return [3, 9];
                     _f.label = 6;
                 case 6:
                     _f.trys.push([6, 8, , 9]);
-                    return [4 /*yield*/, requestTranslate(cleanedMessage, languagesToFetch)];
+                    return [4, requestTranslate(cleanedMessage, languagesToFetch)];
                 case 7:
                     result = _f.sent();
                     sendTranslatedMessages(sender, cleanedMessage, message, formatted, result);
@@ -189,12 +182,12 @@ function handleMessage(sender, message) {
                         }
                         finally { if (e_1) throw e_1.error; }
                     }
-                    return [3 /*break*/, 9];
+                    return [3, 9];
                 case 8:
                     _d = _f.sent();
                     sendNoTranslations(sender, message, formatted, languagesToFetch);
-                    return [3 /*break*/, 9];
-                case 9: return [2 /*return*/];
+                    return [3, 9];
+                case 9: return [2];
             }
         });
     });
@@ -202,7 +195,6 @@ function handleMessage(sender, message) {
 function sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch) {
     players_1.FishPlayer.forEachPlayer(function (p) {
         if (p.player != sender && !languagesToFetch.includes(p.language)) {
-            //Not added to the fetch list, this means it must be cached
             var cachedTranslation = exports.translationCache.get("".concat(p.language, "\n").concat(cleanedMessage));
             if (cachedTranslation != null) {
                 Call.sendMessage(p.con(), formatted, message, sender);
@@ -214,8 +206,6 @@ function sendCachedTranslations(sender, message, cleanedMessage, formatted, lang
 function sendNoTranslations(sender, message, formatted, languagesToFetch) {
     players_1.FishPlayer.forEachPlayer(function (p) {
         if (p.player != sender && (languagesToFetch == null || languagesToFetch.includes(p.language))) {
-            //Wanted to fetch the translation but that failed
-            //Just send the untranslated message
             Call.sendMessage(p.con(), formatted, message, sender);
         }
     });
@@ -252,7 +242,7 @@ function getLanguageFromCache(code) {
     if (normalizedCode == "none" || normalizedCode == "off") {
         return { code: "none", name: "Off" };
     }
-    return (_a = exports.languageCache.get(normalizedCode)) !== null && _a !== void 0 ? _a : { code: "none", name: "Off" }; //unsupported
+    return (_a = exports.languageCache.get(normalizedCode)) !== null && _a !== void 0 ? _a : { code: "none", name: "Off" };
 }
 function isLanguageAvailable(code) {
     return getLanguageFromCache(code).code != "none";
@@ -296,7 +286,7 @@ function requestTranslate(message, languages) {
         var req = Http.post(config_1.translationApiUrl + "/api/translate/batch", message);
         req.header("languages", languages.join(","));
         req.header("token", config_1.translationApiToken.string());
-        req.timeout = 3500; //low timeout to not lag chat too much
+        req.timeout = 3500;
         req.error(function (e) {
             Log.err("Network error in translation request: ".concat("response" in e ? e.response.getResultAsString() : e));
             reject();
