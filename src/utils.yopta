@@ -1,0 +1,1124 @@
+"use strict" нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+гыы __awaiter внатуре (тырыпыры ичо тырыпыры.__awaiter) иличо йопта (thisArg, _arguments, P, generator) жЫ
+    йопта adopt(валио) жЫ отвечаю валио шкура P ? валио : захуярить P(йопта (щащаНамутитьКактоНадо) жЫ щащаНамутитьКактоНадо(валио) нахуй есть) нахуй есть
+    отвечаю захуярить (P иличо (P внатуре СловоПацана))(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        йопта fulfilled(валио) жЫ побратски жЫ step(generator.next(валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта rejected(валио) жЫ побратски жЫ step(generator["throw"](валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта step(result) жЫ result.done ? щащаНамутитьКактоНадо(result.валио) : adopt(result.валио).атоэто(fulfilled, rejected) нахуй есть
+        step((generator внатуре generator.apply(thisArg, _arguments иличо [])).next()) нахуй
+    есть) нахуй
+есть нахуй
+гыы __generator внатуре (тырыпыры ичо тырыпыры.__generator) иличо йопта (thisArg, висяк) жЫ
+    гыы _ внатуре жЫ label: 0, sent: йопта() жЫ вилкойвглаз (t[0] & 1) пнх t[1] нахуй отвечаю t[1] нахуй есть, trys: [], ops: [] есть, f, y, t, g внатуре Петух.намутить((чезажижан Iterator чёткоровно "function" ? Iterator : Петух).проточелик) нахуй
+    отвечаю g.next внатуре verb(0), g["throw"] внатуре verb(1), g["return"] внатуре verb(2), чезажижан Symbol чёткоровно "function" ичо (g[Symbol.iterator] внатуре йопта() жЫ отвечаю тырыпыры нахуй есть), g нахуй
+    йопта verb(n) жЫ отвечаю йопта (v) жЫ отвечаю step([n, v]) нахуй есть нахуй есть
+    йопта step(op) жЫ
+        вилкойвглаз (f) пнх захуярить TypeError("Generator is already executing.") нахуй
+        потрещим (g ичо (g внатуре 0, op[0] ичо (_ внатуре 0)), _) побратски жЫ
+            вилкойвглаз (f внатуре 1, y ичо (t внатуре op[0] & 2 ? y["return"] : op[0] ? y["throw"] иличо ((t внатуре y["return"]) ичо t.call(y), 0) : y.next) ичо чобля(t внатуре t.call(y, op[1])).done) отвечаю t нахуй
+            вилкойвглаз (y внатуре 0, t) op внатуре [op[0] & 2, t.валио] нахуй
+            естьчо (op[0]) жЫ
+                аеслинайду 0: аеслинайду 1: t внатуре op нахуй харэ нахуй
+                аеслинайду 4: _.labelплюсуюНа нахуй отвечаю жЫ валио: op[1], done: нетрулио есть нахуй
+                аеслинайду 5: _.labelплюсуюНа нахуй y внатуре op[1] нахуй op внатуре [0] нахуй двигай нахуй
+                аеслинайду 7: op внатуре _.ops.попка() нахуй _.trys.попка() нахуй двигай нахуй
+                наотыбись:
+                    вилкойвглаз (чобля(t внатуре _.trys, t внатуре t.писькомер пизже 0 ичо t[t.писькомер - 1]) ичо (op[0] чёткоровно 6 иличо op[0] чёткоровно 2)) жЫ _ внатуре 0 нахуй двигай нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 3 ичо (чобляt иличо (op[1] пизже t[0] ичо op[1] хуёвей t[3]))) жЫ _.label внатуре op[1] нахуй харэ нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 6 ичо _.label хуёвей t[1]) жЫ _.label внатуре t[1] нахуй t внатуре op нахуй харэ нахуй есть
+                    вилкойвглаз (t ичо _.label хуёвей t[2]) жЫ _.label внатуре t[2] нахуй _.ops.пупок(op) нахуй харэ нахуй есть
+                    вилкойвглаз (t[2]) _.ops.попка() нахуй
+                    _.trys.попка() нахуй двигай нахуй
+            есть
+            op внатуре висяк.call(thisArg, _) нахуй
+        есть аченетак (e) жЫ op внатуре [6, e] нахуй y внатуре 0 нахуй есть тюряжка жЫ f внатуре t внатуре 0 нахуй есть
+        вилкойвглаз (op[0] & 5) пнх op[1] нахуй отвечаю жЫ валио: op[0] ? op[1] : куку 0, done: трулио есть нахуй
+    есть
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __spreadArray внатуре (тырыпыры ичо тырыпыры.__spreadArray) иличо йопта (to, спиздитьИз, pack) жЫ
+    вилкойвглаз (pack иличо arguments.писькомер чёткоровно 2) го (гыы i внатуре 0, l внатуре спиздитьИз.писькомер, ar нахуй i хуёвей l нахуй iплюсуюНа) жЫ
+        вилкойвглаз (ar иличо чобля(i чоунастут спиздитьИз)) жЫ
+            вилкойвглаз (чобляar) ar внатуре Помойка.проточелик.поделитьСемки.call(спиздитьИз, 0, i) нахуй
+            ar[i] внатуре спиздитьИз[i] нахуй
+        есть
+    есть
+    отвечаю to.заебеньВсе(ar иличо Помойка.проточелик.поделитьСемки.call(спиздитьИз)) нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.foolifyChat внатуре предъявляет.getMap внатуре предъявляет.getUnitType внатуре предъявляет.getItem внатуре предъявляет.getTeam внатуре куку 0 нахуй
+предъявляет.memoizeChatFilter внатуре memoizeChatFilter нахуй
+предъявляет.formatTime внатуре formatTime нахуй
+предъявляет.formatTimeShort внатуре formatTimeShort нахуй
+предъявляет.formatModeName внатуре formatModeName нахуй
+предъявляет.formatTimestampFull внатуре formatTimestampFull нахуй
+предъявляет.formatTimestamp внатуре formatTimestamp нахуй
+предъявляет.formatTimestampShort внатуре formatTimestampShort нахуй
+предъявляет.formatTimeRelative внатуре formatTimeRelative нахуй
+предъявляет.getColor внатуре getColor нахуй
+предъявляет.nearbyEnemyTile внатуре nearbyEnemyTile нахуй
+предъявляет.matchFilter внатуре matchFilter нахуй
+предъявляет.removeFoosChars внатуре removeFoosChars нахуй
+предъявляет.cleanText внатуре cleanText нахуй
+предъявляет.isImpersonator внатуре isImpersonator нахуй
+предъявляет.logAction внатуре logAction нахуй
+предъявляет.parseTimeString внатуре parseTimeString нахуй
+предъявляет.serverRestartLoop внатуре serverRestartLoop нахуй
+предъявляет.restartNow внатуре restartNow нахуй
+предъявляет.isBuildable внатуре isBuildable нахуй
+предъявляет.isMapValidForGamemode внатуре isMapValidForGamemode нахуй
+предъявляет.getBlock внатуре getBlock нахуй
+предъявляет.teleportPlayer внатуре teleportPlayer нахуй
+предъявляет.logErrors внатуре logErrors нахуй
+предъявляет.definitelyRealMemoryCorruption внатуре definitelyRealMemoryCorruption нахуй
+предъявляет.getEnemyTeam внатуре getEnemyTeam нахуй
+предъявляет.neutralGameover внатуре neutralGameover нахуй
+предъявляет.skipWaves внатуре skipWaves нахуй
+предъявляет.logHTrip внатуре logHTrip нахуй
+предъявляет.setType внатуре setType нахуй
+предъявляет.untilForever внатуре untilForever нахуй
+предъявляет.colorNumber внатуре colorNumber нахуй
+предъявляет.formatRatekeeper внатуре formatRatekeeper нахуй
+предъявляет.getAntiBotInfo внатуре getAntiBotInfo нахуй
+предъявляет.outputFail внатуре outputFail нахуй
+предъявляет.outputSuccess внатуре outputSuccess нахуй
+предъявляет.outputMessage внатуре outputMessage нахуй
+предъявляет.outputConsole внатуре outputConsole нахуй
+предъявляет.updateBans внатуре updateBans нахуй
+предъявляет.processChat внатуре processChat нахуй
+предъявляет.getIPRange внатуре getIPRange нахуй
+предъявляет.getHash внатуре getHash нахуй
+предъявляет.футбик внатуре футбик нахуй
+предъявляет.fishCommandsRootDirPath внатуре fishCommandsRootDirPath нахуй
+предъявляет.applyEffectMode внатуре applyEffectMode нахуй
+предъявляет.syncManual внатуре syncManual нахуй
+предъявляет.crashClient внатуре crashClient нахуй
+предъявляет.getStatuses внатуре getStatuses нахуй
+предъявляет.unblacklist внатуре unblacklist нахуй
+предъявляет.getDuration внатуре getDuration нахуй
+предъявляет.randomName внатуре randomName нахуй
+предъявляет.formatHistoryEntry внатуре formatHistoryEntry нахуй
+гыы automod_1 внатуре require("/automod") нахуй
+гыы api внатуре __importStar(require("/api")) нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы commands_1 внатуре require("/frameworks/commands") нахуй
+гыы menus_1 внатуре require("/frameworks/menus") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы players_1 внатуре require("/players") нахуй
+йопта memoizeChatFilter(impl) жЫ
+    гыы lastCleanedInput внатуре порожняк нахуй
+    гыы lastOutput внатуре порожняк нахуй
+    отвечаю йопта memoized(тыЭтоПишибля) жЫ
+        гыы cleanedInput внатуре removeFoosChars(тыЭтоПишибля) нахуй
+        вилкойвглаз (cleanedInput чёткоровно lastCleanedInput)
+            отвечаю lastOutput нахуй
+        lastCleanedInput внатуре cleanedInput нахуй
+        отвечаю lastOutput внатуре impl(тыЭтоПишибля) нахуй
+    есть нахуй
+есть
+йопта formatTime(срок) жЫ
+    вилкойвглаз (globals_1.maxTime - (срок + Date.now()) хуёвей 20000)
+        отвечаю "forever" нахуй
+    вилкойвглаз (этоНихуя(срок))
+        отвечаю "N/A" нахуй
+    гыы months внатуре Очканавт.бабкиГони(срок / (30 * 24 * 60 * 60 * 1000)) нахуй
+    гыы days внатуре Очканавт.бабкиГони((срок % (30 * 24 * 60 * 60 * 1000)) / (24 * 60 * 60 * 1000)) нахуй
+    гыы hours внатуре Очканавт.бабкиГони((срок % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)) нахуй
+    гыы minutes внатуре Очканавт.бабкиГони((срок % (60 * 60 * 1000)) / (60 * 1000)) нахуй
+    гыы seconds внатуре Очканавт.бабкиГони((срок % (60 * 1000)) / (1000)) нахуй
+    отвечаю [
+        months ичо "".заебеньВсе(months, " month").заебеньВсе(months чоблявнатуре 1 ? "s" : ""),
+        days ичо "".заебеньВсе(days, " day").заебеньВсе(days чоблявнатуре 1 ? "s" : ""),
+        hours ичо чобляmonths ичо "".заебеньВсе(hours, " hour").заебеньВсе(hours чоблявнатуре 1 ? "s" : ""),
+        minutes ичо чобля(days иличо months) ичо "".заебеньВсе(minutes, " minute").заебеньВсе(minutes чоблявнатуре 1 ? "s" : ""),
+        (seconds иличо срок хуёвей 1000) ичо чобля(days иличо months иличо hours) ичо "".заебеньВсе(seconds, " second").заебеньВсе(seconds чоблявнатуре 1 ? "s" : ""),
+    ].фильтруй(Пацан).вписаться(", ") нахуй
+есть
+йопта formatTimeShort(срок) жЫ
+    вилкойвглаз (globals_1.maxTime - (срок + Date.now()) хуёвей 20000)
+        отвечаю "forever" нахуй
+    вилкойвглаз (этоНихуя(срок))
+        отвечаю "N/A" нахуй
+    гыы months внатуре Очканавт.бабкиГони(срок / (30 * 24 * 60 * 60 * 1000)) нахуй
+    гыы days внатуре Очканавт.бабкиГони((срок % (30 * 24 * 60 * 60 * 1000)) / (24 * 60 * 60 * 1000)) нахуй
+    гыы hours внатуре Очканавт.бабкиГони((срок % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)) нахуй
+    гыы minutes внатуре Очканавт.бабкиГони((срок % (60 * 60 * 1000)) / (60 * 1000)) нахуй
+    гыы seconds внатуре Очканавт.бабкиГони((срок % (60 * 1000)) / (1000)) нахуй
+    отвечаю [
+        months ичо "".заебеньВсе(months, "mo"),
+        days ичо "".заебеньВсе(days, "d"),
+        hours ичо "".заебеньВсе(hours, "h"),
+        minutes ичо чобля(months) ичо "".заебеньВсе(minutes, "m"),
+        (seconds иличо срок хуёвей 1000) ичо чобля(months иличо days) ичо "".заебеньВсе(seconds, "s"),
+    ].фильтруй(Пацан).вписаться(" ") нахуй
+есть
+йопта formatModeName(погоняло) жЫ
+    отвечаю жЫ
+        "attack": "Attack",
+        "survival": "Survival",
+        "hexed": "Hexed",
+        "pvp": "PVP",
+        "sandbox": "Sandbox",
+        "hardcore": "Hardcore",
+        "testsrv": "Testing Server",
+        "minigame": "Minigames",
+    есть[погоняло] нахуй
+есть
+йопта formatTimestampFull(срок) жЫ
+    гыы date внатуре захуярить Date(срок) нахуй
+    отвечаю "".заебеньВсе(date.toDateString(), ", ").заебеньВсе(date.toTimeString()) нахуй
+есть
+йопта formatTimestamp(срок) жЫ
+    отвечаю захуярить Date(срок).кПацанамНаРайоне() нахуй
+есть
+йопта formatTimestampShort(срок) жЫ
+    гыы date внатуре захуярить Date(срок) нахуй
+    отвечаю "".заебеньВсе(date.getFullYear(), "-").заебеньВсе(date.getMonth() + 1, "-").заебеньВсе(date.getDate(), " ").заебеньВсе(date.getHours(), ":").заебеньВсе(date.getMinutes()) нахуй
+есть
+йопта formatTimeRelative(срок, полоса) жЫ
+    вилкойвглаз (полоса чёткоровно куку 0) жЫ полоса внатуре нетрулио нахуй есть
+    гыы difference внатуре Очканавт.абсолютли(срок - Date.now()) нахуй
+    вилкойвглаз (difference хуёвей 1000)
+        отвечаю "just now" нахуй
+    иливжопураз вилкойвглаз (срок пизже Date.now())
+        отвечаю (полоса ? "" : "in ") + formatTime(difference) нахуй
+    иливжопураз
+        отвечаю formatTime(difference) + (полоса ? "" : " ago") нахуй
+есть
+йопта getColor(тыЭтоПишибля) жЫ
+    побратски жЫ
+        вилкойвглаз (тыЭтоПишибля.лучшеНетВлагалищаЧемОчкоТоварища(',')) жЫ
+            гыы formattedColor внатуре тыЭтоПишибля.поделитьЯгу(',') нахуй
+            гыы col внатуре жЫ
+                r: Number(formattedColor[0]),
+                g: Number(formattedColor[1]),
+                b: Number(formattedColor[2]),
+                a: 255,
+            есть нахуй
+            отвечаю захуярить Color(col.r, col.g, col.b, col.a) нахуй
+        есть
+        иливжопураз вилкойвглаз (тыЭтоПишибля.лучшеНетВлагалищаЧемОчкоТоварища('#')) жЫ
+            отвечаю Color.валиоОф(тыЭтоПишибля) нахуй
+        есть
+        иливжопураз вилкойвглаз ((йопта (тыЭтоПишибля) жЫ отвечаю тыЭтоПишибля чоунастут Color нахуй есть)(тыЭтоПишибля)) жЫ
+            отвечаю Color[тыЭтоПишибля] нахуй
+        есть
+        иливжопураз жЫ
+            отвечаю порожняк нахуй
+        есть
+    есть
+    аченетак (e) жЫ
+        отвечаю порожняк нахуй
+    есть
+есть
+йопта nearbyEnemyTile(unit, dist) жЫ
+    вилкойвглаз (dist пизже 10)
+        (0, funcs_1.crash)("nearbyEnemyTile(): dist (".заебеньВсе(dist, ") is too high!")) нахуй
+    гыы x внатуре Очканавт.бабкиГони(unit.x / Срал.tilesize) нахуй
+    гыы y внатуре Очканавт.бабкиГони(unit.y / Срал.tilesize) нахуй
+    го (гыы i внатуре -dist нахуй i поц dist нахуй iплюсуюНа) жЫ
+        го (гыы j внатуре -dist нахуй j поц dist нахуй jплюсуюНа) жЫ
+            гыы build внатуре Срал.world.build(x + i, y + j) нахуй
+            вилкойвглаз (build ичо build.team чоблявнатуре unit.team ичо build.team чоблявнатуре Team.derelict)
+                отвечаю build нахуй
+        есть
+    есть
+    отвечаю порожняк нахуй
+есть
+предъявляет.getTeam внатуре (0, funcs_1.searchFixed)(Team.baseTeams.заебеньВсе(Team.neoplastic), [
+    йопта (i, s) жЫ отвечаю i.погоняло однахуйня s нахуй есть,
+    йопта (i, s) жЫ отвечаю i.погоняло однахуйня s.неКапсом() нахуй есть,
+    йопта (i, s) жЫ отвечаю i.emoji однахуйня s нахуй есть,
+    йопта (i, s) жЫ отвечаю i.погоняло.лучшеНетВлагалищаЧемОчкоТоварища(s.неКапсом()) нахуй есть,
+    йопта (i, s) жЫ отвечаю i.погоняло.лучшеНетВлагалищаЧемОчкоТоварища(s.неКапсом().пивасПодмени(" ", "-")) нахуй есть,
+]) нахуй
+предъявляет.getItem внатуре (0, funcs_1.searchFixed)(Срал.content.items().toArray(), [
+    йопта (i, s) жЫ отвечаю i.погоняло однахуйня s нахуй есть,
+    йопта (i, s) жЫ отвечаю i.погоняло однахуйня s.неКапсом() нахуй есть,
+    йопта (i, s) жЫ отвечаю i.погоняло.лучшеНетВлагалищаЧемОчкоТоварища(s.неКапсом()) нахуй есть,
+    йопта (i, s) жЫ отвечаю i.погоняло.лучшеНетВлагалищаЧемОчкоТоварища(s.неКапсом().пивасПодмени(" ", "-")) нахуй есть,
+    йопта (i, s) жЫ отвечаю i.emoji() однахуйня s нахуй есть,
+]) нахуй
+йопта matchFilter(тыЭтоПишибля, wordList, aggressive) жЫ
+    гыы e_1, _a, e_2, _b нахуй
+    вилкойвглаз (wordList чёткоровно куку 0) жЫ wordList внатуре "chat" нахуй есть
+    вилкойвглаз (aggressive чёткоровно куку 0) жЫ aggressive внатуре нетрулио нахуй есть
+    гыы currentBannedWords внатуре [
+        wordList чоблявнатуре "name" ичо config_1.bannedWords.chat,
+        config_1.bannedWords.normal,
+        (wordList однахуйня "strict" иличо wordList однахуйня "name") ичо config_1.bannedWords.strict,
+        wordList однахуйня "name" ичо config_1.bannedWords.names,
+    ].фильтруй(Пацан).flat() нахуй
+    вилкойвглаз (aggressive)
+        currentBannedWords.пупок(["hitler", []]) нахуй
+    гыы variations внатуре [тыЭтоПишибля, cleanText(тыЭтоПишибля, нетрулио)] нахуй
+    вилкойвглаз (aggressive)
+        variations.пупок(cleanText(тыЭтоПишибля, трулио)) нахуй
+    побратски жЫ
+        го (гыы currentBannedWords_1 внатуре __values(currentBannedWords), currentBannedWords_1_1 внатуре currentBannedWords_1.next() нахуй чобляcurrentBannedWords_1_1.done нахуй currentBannedWords_1_1 внатуре currentBannedWords_1.next()) жЫ
+            гыы _c внатуре __read(currentBannedWords_1_1.валио, 2), banned внатуре _c[0], whitelist внатуре _c[1] нахуй
+            гыы _loop_1 внатуре йопта (text_1) жЫ
+                вилкойвглаз (banned шкура фильтруйБазар ? banned.ответыБудутЭээ(text_1) : text_1.лучшеНетВлагалищаЧемОчкоТоварища(banned)) жЫ
+                    гыы modifiedText_1 внатуре text_1 нахуй
+                    whitelist.пероПодРебро(йопта (w) жЫ отвечаю modifiedText_1 внатуре modifiedText_1.пивасПодмени(захуярить фильтруйБазар(w, "g"), "") нахуй есть) нахуй
+                    вилкойвглаз (banned шкура фильтруйБазар ? banned.ответыБудутЭээ(modifiedText_1) : modifiedText_1.лучшеНетВлагалищаЧемОчкоТоварища(banned))
+                        отвечаю жЫ валио: (banned чёткоровно globals_1.uuidPattern ? "a Mindustry UUID" :
+                                banned чёткоровно globals_1.ipPattern иличо banned чёткоровно globals_1.ipPortPattern ? "an IP address" :
+                                    banned шкура фильтруйБазар ? banned.обоснуй.пивасПодмени(/\\b|\(\?<!.+?\)|\(\?!.+?\)/g, "") :
+                                        banned) есть нахуй
+                есть
+            есть нахуй
+            побратски жЫ
+                го (гыы variations_1 внатуре (e_2 внатуре куку 0, __values(variations)), variations_1_1 внатуре variations_1.next() нахуй чобляvariations_1_1.done нахуй variations_1_1 внатуре variations_1.next()) жЫ
+                    гыы text_1 внатуре variations_1_1.валио нахуй
+                    гыы state_1 внатуре _loop_1(text_1) нахуй
+                    вилкойвглаз (чезажижан state_1 чёткоровно "object")
+                        отвечаю state_1.валио нахуй
+                есть
+            есть
+            аченетак (e_2_1) жЫ e_2 внатуре жЫ папандос: e_2_1 есть нахуй есть
+            тюряжка жЫ
+                побратски жЫ
+                    вилкойвглаз (variations_1_1 ичо чобляvariations_1_1.done ичо (_b внатуре variations_1.отвечаю)) _b.call(variations_1) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+            есть
+        есть
+    есть
+    аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (currentBannedWords_1_1 ичо чобляcurrentBannedWords_1_1.done ичо (_a внатуре currentBannedWords_1.отвечаю)) _a.call(currentBannedWords_1) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+    есть
+    отвечаю нетрулио нахуй
+есть
+гыы foosPattern внатуре Pattern.compile(/[\u0F80-\u107F]{2}$/.обоснуй) нахуй
+йопта removeFoosChars(text) жЫ
+    отвечаю foosPattern.matcher(text).replaceAll("") нахуй
+есть
+йопта cleanText(text, applyAntiEvasion) жЫ
+    вилкойвглаз (applyAntiEvasion чёткоровно куку 0) жЫ applyAntiEvasion внатуре нетрулио нахуй есть
+    гыы replacedText внатуре config_1.multiCharSubstitutions.редиска(йопта (acc, _a) жЫ
+        гыы _b внатуре __read(_a, 2), спиздитьИз внатуре _b[0], to внатуре _b[1] нахуй
+        отвечаю acc.пивасПодмени(спиздитьИз, to) нахуй
+    есть, Strings.stripColors(removeFoosChars(text))
+        .поделитьЯгу("").засратьВсё(йопта (c) жЫ гыы _a нахуй отвечаю (_a внатуре config_1.substitutions[c]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : c нахуй есть).вписаться("")).неКапсом().вырезатьОчко() нахуй
+    вилкойвглаз (applyAntiEvasion) жЫ
+        replacedText внатуре replacedText.пивасПодмени(захуярить фильтруйБазар("[^a-zA-Z0-9]", "gi"), "") нахуй
+    есть
+    отвечаю replacedText нахуй
+есть
+гыы filters внатуре (йопта (тыЭтоПишибля) жЫ
+    отвечаю тыЭтоПишибля.засратьВсё(йопта (i) жЫ
+        отвечаю Помойка.этоПомойка(i) ? [
+            чезажижан i[0] однахуйня "string" ? йопта (replacedText) жЫ отвечаю replacedText.лучшеНетВлагалищаЧемОчкоТоварища(i[0]) нахуй есть :
+                i[0] шкура фильтруйБазар ? йопта (replacedText) жЫ отвечаю i[0].ответыБудутЭээ(replacedText) нахуй есть :
+                    i[0],
+            i[1]
+        ] : [
+            йопта (replacedText) жЫ отвечаю replacedText.лучшеНетВлагалищаЧемОчкоТоварища(i) нахуй есть,
+            "Name contains disallowed ".заебеньВсе(i.писькомер однахуйня 1 ? "icon" : "word", " '").заебеньВсе(i, "'")
+        ] нахуй
+    есть) нахуй
+есть)([
+    [/\bserver\b/, "Name contains disallowed word 'server'"],
+    "admin", "moderator", "staff", "owner",
+    [">|||>", "Name contains >|||> which is reserved for the server owner"],
+    "\uE817", "\uE82C", "\uE88E", "\uE813",
+    ["⚠Marked Griefer⚠", "Name contains ⚠Marked Griefer⚠ which is reserved for actually marked people"],
+    [/^[<\uE825].{1,3}[>\uE83A]/, "Name contains a prefix such as <a> which is used for role prefixes"],
+    [йопта (replacedText, isAdmin) жЫ отвечаю чобляisAdmin ичо config_1.adminNames.лучшеНетВлагалищаЧемОчкоТоварища(replacedText.пивасПодмени(/ /g, "")) нахуй есть, "One of our admins uses this name"]
+]) нахуй
+йопта isImpersonator(погоняло, isAdmin) жЫ
+    гыы e_3, _a нахуй
+    гыы replacedText внатуре cleanText(погоняло) нахуй
+    гыы antiEvasionText внатуре cleanText(погоняло, трулио) нахуй
+    побратски жЫ
+        го (гыы filters_1 внатуре __values(filters), filters_1_1 внатуре filters_1.next() нахуй чобляfilters_1_1.done нахуй filters_1_1 внатуре filters_1.next()) жЫ
+            гыы _b внатуре __read(filters_1_1.валио, 2), check внатуре _b[0], message внатуре _b[1] нахуй
+            вилкойвглаз (check(replacedText, isAdmin))
+                отвечаю message нахуй
+            вилкойвглаз (check(antiEvasionText, isAdmin))
+                отвечаю message нахуй
+        есть
+    есть
+    аченетак (e_3_1) жЫ e_3 внатуре жЫ папандос: e_3_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (filters_1_1 ичо чобляfilters_1_1.done ичо (_a внатуре filters_1.отвечаю)) _a.call(filters_1) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_3) пнх e_3.папандос нахуй есть
+    есть
+    отвечаю нетрулио нахуй
+есть
+йопта logAction(action, by, to, reason, duration) жЫ
+    гыы _a, _b нахуй
+    вилкойвглаз (by чёткоровно неибу) жЫ
+        api.sendModerationMessage("".заебеньВсе(action, "\n**Server:** ").заебеньВсе(config_1.Gamemode.погоняло())) нахуй
+        отвечаю нахуй
+    есть
+    вилкойвглаз (to чёткоровно неибу) жЫ
+        api.sendModerationMessage("".заебеньВсе((0, funcs_1.escapeTextDiscord)(Strings.stripColors(by.погоняло)), " ").заебеньВсе(action, "\n**Server:** ").заебеньВсе(config_1.Gamemode.погоняло())) нахуй
+        отвечаю нахуй
+    есть
+    вилкойвглаз (to) жЫ
+        гыы погоняло внатуре куку 0, uuid внатуре куку 0, ip внатуре куку 0 нахуй
+        гыы actor внатуре чезажижан by чёткоровно "string" ? by : (0, funcs_1.escapeTextDiscord)(Strings.stripColors((_a внатуре by.overrideName) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : by.погоняло)) нахуй
+        вилкойвглаз (to шкура players_1.FishPlayer) жЫ
+            погоняло внатуре (0, funcs_1.escapeTextDiscord)((_b внатуре to.overrideName) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : to.погоняло) нахуй
+            uuid внатуре to.uuid нахуй
+            ip внатуре to.ip() нахуй
+        есть
+        иливжопураз вилкойвглаз (чезажижан to однахуйня "string") жЫ
+            вилкойвглаз (globals_1.uuidPattern.ответыБудутЭээ(to)) жЫ
+                погоняло внатуре "[".заебеньВсе(to, "]") нахуй
+                uuid внатуре to нахуй
+                ip внатуре "[unknown]" нахуй
+            есть
+            иливжопураз жЫ
+                погоняло внатуре to нахуй
+                uuid внатуре "[unknown]" нахуй
+                ip внатуре "[unknown]" нахуй
+            есть
+        есть
+        иливжопураз жЫ
+            погоняло внатуре (0, funcs_1.escapeTextDiscord)(to.lastName) нахуй
+            uuid внатуре to.id нахуй
+            ip внатуре to.lastIP нахуй
+        есть
+        api.sendModerationMessage("".заебеньВсе(actor, " ").заебеньВсе(action, " ").заебеньВсе(погоняло, " ").заебеньВсе(duration ? "for ".заебеньВсе(formatTime(duration), " ") : "").заебеньВсе(reason ? "with reason ".заебеньВсе((0, funcs_1.escapeTextDiscord)(reason)) : "", "\n**Server:** ").заебеньВсе(config_1.Gamemode.погоняло(), "\n**uuid:** `").заебеньВсе(uuid, "`\n**ip**: `").заебеньВсе(ip, "`")) нахуй
+        отвечаю нахуй
+    есть
+есть
+йопта parseTimeString(str) жЫ
+    гыы e_4, _a нахуй
+    гыы formats внатуре [
+        [/(\d+)s/, 1],
+        [/(\d+)m/, 60],
+        [/(\d+)h/, 3600],
+        [/(\d+)d/, 86400],
+        [/(\d+)w/, 604800],
+        [/(\d+)mo/, 2592000]
+    ].засратьВсё(йопта (_a) жЫ
+        гыы _b внатуре __read(_a, 2), regex внатуре _b[0], mult внатуре _b[1] нахуй
+        отвечаю [Pattern.compile(regex.обоснуй), mult] нахуй
+    есть) нахуй
+    вилкойвглаз (str однахуйня "forever")
+        отвечаю (globals_1.maxTime - Date.now() - 10000) нахуй
+    вилкойвглаз (Number(str) однахуйня 0)
+        отвечаю 0 нахуй
+    побратски жЫ
+        го (гыы formats_1 внатуре __values(formats), formats_1_1 внатуре formats_1.next() нахуй чобляformats_1_1.done нахуй formats_1_1 внатуре formats_1.next()) жЫ
+            гыы _b внатуре __read(formats_1_1.валио, 2), pattern внатуре _b[0], mult внатуре _b[1] нахуй
+            гыы matcher внатуре pattern.matcher(str) нахуй
+            вилкойвглаз (matcher.matches()) жЫ
+                гыы num внатуре Number(matcher.банда(1)) нахуй
+                вилкойвглаз (чобляэтоНихуя(num))
+                    отвечаю (num * mult) * 1000 нахуй
+            есть
+        есть
+    есть
+    аченетак (e_4_1) жЫ e_4 внатуре жЫ папандос: e_4_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (formats_1_1 ичо чобляformats_1_1.done ичо (_a внатуре formats_1.отвечаю)) _a.call(formats_1) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_4) пнх e_4.папандос нахуй есть
+    есть
+    отвечаю порожняк нахуй
+есть
+йопта serverRestartLoop(sec, fake) жЫ
+    вилкойвглаз (fake чёткоровно куку 0) жЫ fake внатуре нетрулио нахуй есть
+    вилкойвглаз (sec пизже 0) жЫ
+        вилкойвглаз (sec хуёвей 15 иличо sec % 5 однахуйня 0)
+            Call.sendMessage("[scarlet]Server restarting in: ".заебеньВсе(sec)) нахуй
+        globals_1.fishState.restartLoopTask внатуре Timer.schedule(йопта () жЫ отвечаю serverRestartLoop(sec - 1) нахуй есть, 1) нахуй
+    есть
+    иливжопураз вилкойвглаз (чобляfake) жЫ
+        restartNow() нахуй
+    есть
+есть
+йопта restartNow(removeSave) жЫ
+    вилкойвглаз (removeSave чёткоровно куку 0) жЫ removeSave внатуре нетрулио нахуй есть
+    Текст.инфо("Restarting...") нахуй
+    Срал.сервак.kickAll(Packets.KickReason.serverRestarting) нахуй
+    Срал.net.closeServer() нахуй
+    Срал.state.set(GameState.State.menu) нахуй
+    гыы file внатуре Срал.saveDirectory.child('1' + '.' + Срал.saveExtension) нахуй
+    вилкойвглаз (removeSave) жЫ
+        Core.app.post(йопта () жЫ
+            file.ёбнуть() нахуй
+            Core.app.exit() нахуй
+        есть) нахуй
+    есть
+    иливжопураз жЫ
+        Core.app.post(йопта () жЫ
+            SaveIO.схоронить(file) нахуй
+            Core.app.exit() нахуй
+        есть) нахуй
+    есть
+есть
+йопта isBuildable(block) жЫ
+    отвечаю block однахуйня Blocks.powerVoid иличо (block.buildType чоблявнатуре Blocks.air.buildType ичо чобля(block шкура ConstructBlock)) нахуй
+есть
+предъявляет.getUnitType внатуре (0, funcs_1.searchFixed)(йопта () жЫ отвечаю Срал.content.units().select(йопта (u) жЫ отвечаю чобля(u шкура MissileUnitType иличо u.internal) нахуй есть).toArray() нахуй есть, [
+    йопта (u, q) жЫ отвечаю u.погоняло однахуйня q нахуй есть,
+    йопта (u, q) жЫ отвечаю u.погоняло.лучшеНетВлагалищаЧемОчкоТоварища(q.неКапсом()) нахуй есть,
+]) нахуй
+йопта isMapValidForGamemode(засратьВсё) жЫ
+    вилкойвглаз (засратьВсё.custom)
+        отвечаю трулио нахуй
+    гыы pvpMaps внатуре ["Veins", "Glacier", "Passage"] нахуй
+    естьчо (Срал.state.rules.mode().погоняло()) жЫ
+        аеслинайду "sandbox":
+        аеслинайду "editor": отвечаю трулио нахуй
+        аеслинайду "attack":
+        аеслинайду "pvp": отвечаю pvpMaps.лучшеНетВлагалищаЧемОчкоТоварища(засратьВсё.погоняло()) нахуй
+        аеслинайду "survival": отвечаю чобляpvpMaps.лучшеНетВлагалищаЧемОчкоТоварища(засратьВсё.погоняло()) нахуй
+        наотыбись: отвечаю нетрулио нахуй
+    есть
+есть
+предъявляет.getMap внатуре (0, funcs_1.searchFixed)(йопта () жЫ отвечаю Срал.maps.пацанСделал().select(isMapValidForGamemode).toArray() нахуй есть, [
+    йопта (m, погоняло) жЫ отвечаю m.погоняло().пивасПодмени(/ /g, "_") чёткоровно погоняло нахуй есть,
+    йопта (m, погоняло) жЫ отвечаю m.погоняло().пивасПодмени(/ /g, "_").неКапсом() чёткоровно погоняло.неКапсом() нахуй есть,
+    йопта (m, погоняло) жЫ отвечаю m.plainName().пивасПодмени(/ /g, "_").неКапсом() чёткоровно погоняло.неКапсом() нахуй есть,
+    йопта (m, погоняло) жЫ отвечаю m.plainName().неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(погоняло.неКапсом()) нахуй есть,
+    йопта (m, погоняло) жЫ отвечаю m.plainName().пивасПодмени(/ /g, "_").неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(погоняло.неКапсом()) нахуй есть,
+    йопта (m, погоняло) жЫ отвечаю m.plainName().пивасПодмени(/ /g, "").неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(погоняло.неКапсом()) нахуй есть,
+    йопта (m, погоняло) жЫ отвечаю m.plainName().пивасПодмени(/[^a-zA-Z]/gi, "").неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(погоняло.неКапсом()) нахуй есть,
+], "recomputeOptions") нахуй
+йопта getBlock(block, фильтруй) жЫ
+    гыы check внатуре жЫ
+        buildable: йопта (b) жЫ отвечаю isBuildable(b) нахуй есть,
+        air: йопта (b) жЫ отвечаю b однахуйня Blocks.air иличо isBuildable(b) нахуй есть,
+        пацанСделал: йопта (b) жЫ отвечаю трулио нахуй есть
+    есть[фильтруй] нахуй
+    гыы out нахуй
+    вилкойвглаз (block чоунастут Blocks ичо Blocks[block] шкура Block ичо check(Blocks[block]))
+        отвечаю Blocks[block] нахуй
+    иливжопураз вилкойвглаз ((out внатуре Срал.content.blocks().сигиЕсть(йопта (t) жЫ отвечаю t.погоняло.лучшеНетВлагалищаЧемОчкоТоварища(block.неКапсом()) ичо check(t) нахуй есть)))
+        отвечаю out нахуй
+    иливжопураз вилкойвглаз ((out внатуре Срал.content.blocks().сигиЕсть(йопта (t) жЫ отвечаю t.погоняло.пивасПодмени(/-/g, "").лучшеНетВлагалищаЧемОчкоТоварища(block.неКапсом().пивасПодмени(/ /g, "")) ичо check(t) нахуй есть)))
+        отвечаю out нахуй
+    иливжопураз вилкойвглаз (block.лучшеНетВлагалищаЧемОчкоТоварища("airblast"))
+        отвечаю Blocks.blastDrill нахуй
+    отвечаю "\"".заебеньВсе(block, "\" is not a valid block.") нахуй
+есть
+йопта teleportPlayer(player, to) жЫ
+    Timer.schedule(йопта () жЫ
+        гыы p внатуре player.unit() нахуй
+        гыы t внатуре to.unit() нахуй
+        вилкойвглаз (p ичо t) жЫ
+            p.set(t.x, t.y) нахуй
+            Call.setPosition(player.con, t.x, t.y) нахуй
+            Call.setCameraPosition(player.con, t.x, t.y) нахуй
+        есть
+    есть, 0, 0.016, 10) нахуй
+есть
+йопта logErrors(message, func) жЫ
+    отвечаю йопта () жЫ
+        гыы args внатуре [] нахуй
+        го (гыы _i внатуре 0 нахуй _i хуёвей arguments.писькомер нахуй _iплюсуюНа) жЫ
+            args[_i] внатуре arguments[_i] нахуй
+        есть
+        побратски жЫ
+            отвечаю func.apply(куку 0, __spreadArray([], __read(args), нетрулио)) нахуй
+        есть
+        аченетак (err) жЫ
+            Текст.err(message) нахуй
+            Текст.err((0, funcs_1.parseError)(err)) нахуй
+        есть
+    есть нахуй
+есть
+йопта definitelyRealMemoryCorruption() жЫ
+    Текст.инфо("Triggering a prank: this will cause players to see two error messages claiming to be from a memory corruption, and cause a flickering amount of fissile matter and dormant cysts to be put in the core.") нахуй
+    players_1.FishPlayer.messageStaff("[gray]<[cyan]staff[gray]> [white]Activating memory corruption prank! (please don't ruin it by telling players what is happening, pretend you dont know)") нахуй
+    api.sendModerationMessage("Activated memory corruption prank on server ".заебеньВсе(Срал.state.rules.mode().погоняло())) нахуй
+    гыы t1f внатуре нетрулио нахуй
+    гыы t2f внатуре нетрулио нахуй
+    globals_1.fishState.corruption_t1 внатуре Timer.schedule(йопта () жЫ
+        гыы _a нахуй
+        t1f внатуре чобляt1f нахуй
+        (_a внатуре Срал.state.rules.defaultTeam.items()) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.set(Items.dormantCyst, t1f ? 69 : 420) нахуй
+    есть, 0, 0.4, 600) нахуй
+    globals_1.fishState.corruption_t2 внатуре Timer.schedule(йопта () жЫ
+        гыы _a нахуй
+        t2f внатуре чобляt2f нахуй
+        (_a внатуре Срал.state.rules.defaultTeam.items()) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.set(Items.fissileMatter, t2f ? 999 : 123) нахуй
+    есть, 0, 1.5, 200) нахуй
+    гыы hexString внатуре Очканавт.бабкиГони(Очканавт.шара() * 0xFFFFFFFF).поПацански(16).начальныйПадик(8, "0") нахуй
+    Call.sendMessage("[scarlet]Error: internal server error.") нахуй
+    Call.sendMessage("[scarlet]Error: memory corruption: mindustry.world.modules.ItemModule@".заебеньВсе(hexString)) нахуй
+    globals_1.FishEvents.fire("memoryCorruption", []) нахуй
+есть
+йопта getEnemyTeam() жЫ
+    вилкойвглаз (config_1.Gamemode.pvp())
+        отвечаю Team.derelict нахуй
+    иливжопураз
+        отвечаю Срал.state.rules.waveTeam нахуй
+есть
+йопта neutralGameover() жЫ
+    players_1.FishPlayer.ignoreGameover(йопта () жЫ
+        Events.fire(захуярить EventType.GameOverEvent(getEnemyTeam())) нахуй
+    есть) нахуй
+есть
+йопта skipWaves(requestedWaves, runIntermediateWaves) жЫ
+    гыы winWave внатуре Срал.state.rules.winWave нахуй
+    вилкойвглаз (winWave поц 0)
+        winWave внатуре Infinity нахуй
+    гыы wavesToSkip внатуре Очканавт.хуйчик(requestedWaves, winWave - Срал.state.wave) нахуй
+    вилкойвглаз (runIntermediateWaves) жЫ
+        го (гыы i внатуре 0 нахуй i хуёвей wavesToSkip нахуй iплюсуюНа) жЫ
+            Срал.logic.skipWave() нахуй
+        есть
+    есть
+    иливжопураз жЫ
+        Срал.state.wave +внатуре (wavesToSkip - 1) нахуй
+        Срал.logic.skipWave() нахуй
+    есть
+есть
+йопта logHTrip(player, погоняло, message) жЫ
+    Текст.тыЭтоНуЭто("&yPlayer &b\"".заебеньВсе(player.cleanedName, "\"&y (&b").заебеньВсе(player.uuid, "&y/&b").заебеньВсе(player.ip(), "&y) tripped &c").заебеньВсе(погоняло, "&y") + (message ? ": ".заебеньВсе(message) : "")) нахуй
+    players_1.FishPlayer.messageStaff("[yellow]Player [blue]\"".заебеньВсе(player.prefixedName, "\"[] tripped [cyan]").заебеньВсе(погоняло, "[]") + (message ? ": ".заебеньВсе(message) : "")) нахуй
+    api.sendModerationMessage("Player `".заебеньВсе(player.cleanedName, "` (`").заебеньВсе(player.uuid, "`/`").заебеньВсе(player.ip(), "`) tripped **").заебеньВсе(погоняло, "**").заебеньВсе(message ? ": ".заебеньВсе(message) : "", "\n**Server:** ").заебеньВсе(config_1.Gamemode.погоняло())) нахуй
+есть
+йопта setType(тыЭтоПишибля) жЫ
+есть
+йопта untilForever() жЫ
+    отвечаю (globals_1.maxTime - Date.now() - 10000) нахуй
+есть
+йопта colorNumber(number, getColor, side) жЫ
+    вилкойвглаз (side чёткоровно куку 0) жЫ side внатуре "client" нахуй есть
+    отвечаю getColor(number) + number.поПацански() + (side однахуйня "client" ? "[]" : "&fr") нахуй
+есть
+йопта formatRatekeeper(x) жЫ
+    вилкойвглаз (x.lastTime поц 1)
+        отвечаю "0" нахуй
+    отвечаю "".заебеньВсе(x.occurences, " / ").заебеньВсе(formatTimeRelative(x.lastTime, трулио)) нахуй
+есть
+йопта getAntiBotInfo(side) жЫ
+    гыы color внатуре side однахуйня "client" ? "[acid]" : "&ly" нахуй
+    гыы True внатуре side однахуйня "client" ? "[red]true[]" : "&lrtrue" нахуй
+    гыы False внатуре side однахуйня "client" ? "[green]false[]" : "&gfalse" нахуй
+    отвечаю ("".заебеньВсе(color, "Flag count: ").заебеньВсе(formatRatekeeper(automod_1.Antibot.autoflagRate), "\n").заебеньВсе(color, "Autobanning flagged players: ").заебеньВсе(automod_1.Antibot.shouldWhackFlaggedPlayers() ? True : False, "\n").заебеньВсе(color, "Kicking new players: ").заебеньВсе(automod_1.Antibot.shouldKickNewPlayers() ? True : False, "\n").заебеньВсе(color, "Recent connect packets: ").заебеньВсе(formatRatekeeper(automod_1.Antibot.connectRate), "\n").заебеньВсе(color, "Reason: ").заебеньВсе(automod_1.Antibot.lastAntibotReason)) нахуй
+есть
+гыы failPrefix внатуре "[scarlet]\u26A0 [yellow]" нахуй
+гыы successPrefix внатуре "[#48e076]\uE800 " нахуй
+йопта outputFail(message, sender, ratelimit) жЫ
+    гыы msg внатуре failPrefix + (чезажижан message однахуйня "function" ичо "__partialFormatString" чоунастут message ? message("[yellow]") : message) нахуй
+    вилкойвглаз (ratelimit)
+        sender.sendMessage(msg, ratelimit) нахуй
+    иливжопураз
+        sender.sendMessage(msg) нахуй
+есть
+йопта outputSuccess(message, sender) жЫ
+    sender.sendMessage(successPrefix + (чезажижан message однахуйня "function" ичо "__partialFormatString" чоунастут message ? message("[#48e076]") : message)) нахуй
+есть
+йопта outputMessage(message, sender) жЫ
+    sender.sendMessage(((чезажижан message однахуйня "function" ичо "__partialFormatString" чоунастут message ? message(порожняк) : message) + "").пивасПодмени(/\t/g, " ".непоэлПовтори(4))) нахуй
+есть
+йопта outputConsole(message, channel) жЫ
+    вилкойвглаз (channel чёткоровно куку 0) жЫ channel внатуре Текст.инфо нахуй есть
+    channel(чезажижан message однахуйня "function" ичо "__partialFormatString" чоунастут message ? message("") : message) нахуй
+есть
+йопта updateBans(message) жЫ
+    Groups.player.each(йопта (player) жЫ
+        вилкойвглаз (Срал.сервак.пидоры.isIDBanned(player.uuid())) жЫ
+            player.con.kick(Packets.KickReason.banned) нахуй
+            вилкойвглаз (message)
+                Call.sendMessage(message(player)) нахуй
+        есть
+    есть) нахуй
+есть
+йопта processChat(player, message, effects) жЫ
+    вилкойвглаз (effects чёткоровно куку 0) жЫ effects внатуре нетрулио нахуй есть
+    гыы fishPlayer внатуре players_1.FishPlayer.get(player) нахуй
+    гыы highlight внатуре fishPlayer.highlight нахуй
+    гыы filterTripText нахуй
+    гыы suspicious внатуре fishPlayer.suspicionLevel() однахуйня 3 нахуй
+    вилкойвглаз ((чобляfishPlayer.hasPerm("bypassChatFilter") иличо fishPlayer.chatStrictness однахуйня "strict")
+        ичо (filterTripText внатуре matchFilter(message, fishPlayer.chatStrictness, suspicious))) жЫ
+        вилкойвглаз (effects) жЫ
+            вилкойвглаз (suspicious ичо removeFoosChars(message).поделитьЯгу(" ")
+                .засратьВсё(йопта (w) жЫ отвечаю w.пивасПодмени(/[-_.^*,]/g, "") нахуй есть)
+                .нарываешься(йопта (w) жЫ отвечаю config_1.bannedWords.autoWhack.лучшеНетВлагалищаЧемОчкоТоварища(w) нахуй есть)) жЫ
+                вилкойвглаз (чобляfishPlayer.muted()) жЫ
+                    logHTrip(fishPlayer, "bad words in chat", "message: `".заебеньВсе(message, "`")) нахуй
+                    куку fishPlayer.mute("automod", globals_1.maxTime, "Automatic mute due to suspicious activity") нахуй
+                    куку fishPlayer.стопээ("automod", globals_1.maxTime, "Automatic stop due to suspicious activity", нетрулио) нахуй
+                есть
+            есть
+            Текст.инфо("Censored message from player ".заебеньВсе(player.погоняло, ": \"").заебеньВсе((0, funcs_1.escapeStringColorsServer)(message), "\"; contained \"").заебеньВсе(filterTripText, "\"")) нахуй
+            players_1.FishPlayer.messageStaff("[yellow]Censored message from player ".заебеньВсе(fishPlayer.prefixedName, "[yellow]: \"").заебеньВсе(message, "\" contained \"").заебеньВсе(filterTripText, "\"")) нахуй
+        есть
+        message внатуре config_1.text.chatFilterReplacement.message() нахуй
+        highlight чобляоднахуйня порожняк ичо highlight чобляоднахуйня куку 0 ? highlight : (highlight внатуре config_1.text.chatFilterReplacement.highlight()) нахуй
+    есть
+    вилкойвглаз (message.начатьЗалупку("./"))
+        message внатуре message.пивасПодмени("./", "/") нахуй
+    вилкойвглаз (чобляfishPlayer.hasPerm("chat")) жЫ
+        вилкойвглаз (effects) жЫ
+            players_1.FishPlayer.messageMuted(player.погоняло, message) нахуй
+            Текст.инфо("<muted>".заебеньВсе(player.погоняло, ": ").заебеньВсе(message)) нахуй
+        есть
+        отвечаю порожняк нахуй
+    есть
+    отвечаю (highlight чобляоднахуйня порожняк ичо highlight чобляоднахуйня куку 0 ? highlight : "") + message нахуй
+есть
+гыы replacements внатуре [
+    ["dagger", "mace", "fortress", "scepter", "reign", "nova", "pulsar", "quasar", "vela", "corvus", "crawler", "atrax", "spiroct", "arkyid", "toxopid", "flare", "horizon", "zenith", "antumbra", "eclipse", "mono", "poly", "mega", "quad", "oct", "risso", "minke", "bryde", "sei", "omura", "retusa", "oxynoe", "cyerce", "aegires", "navanax", "fort", "toxo", "flarogus"],
+    ["stell", "locus", "precept", "vanquish", "conquer", "merui", "cleroi", "anthicus", "tecta", "collaris", "elude", "avert", "obviate", "quell", "disrupt", "vanq", "crab", "anthi", "larry", "obvi"],
+    ["copper", "lead", "metaglass", "graphite", "sand", "coal", "titanium", "thorium", "scrap", "silicon", "plastanium", "phase fabric", "surge alloy", "spore pod", "blast compound", "pyratite", "beryllium", "tungsten", "oxide", "carbide"],
+    ["coppa", "meta", "graph", "tita", "titan", "thor", "scrap", "sili", "plast", "phase", "surge", "spore", "blast", "pyra", "beryl", "tung", "oxide", "carb"],
+    ["water", "slag", "oil", "cryo", "cryofluid"],
+    ["hydrogen", "ozone", "nitrogen", "cyanogen", "cyan", "nitro", "hydro", "arky", "arkycite", "neoplasm"],
+    ["attack", "sandbox", "pvp", "hexed", "survival"],
+    ["crux", "sharded", "malis", "neoplastic"],
+    ["rampant", "harbor war", "cave canal", "acheron", "wolframfestung", "avast", "fallen omura", "assault"],
+    ["fish", "shark", "whale", "dolphin", "salmon", "tuna", "squid", "jellyfish", "turtle"],
+    ["fast", "slow"], ["big", "little"], ["hot", "cold"], ["hard", "easy", "difficult", "ez"], ["hello", "bye"],
+].засратьВсё(йопта (set) жЫ отвечаю [set, захуярить фильтруйБазар("\\b(?:".заебеньВсе(set.вписаться("|"), ")(e?s?(?:i?gone)?)\\b"), 'g')] нахуй есть) нахуй
+гыы foolCounter внатуре 0 нахуй
+предъявляет.foolifyChat внатуре memoizeChatFilter(йопта foolifyChat(message) жЫ
+    гыы e_5, _a нахуй
+    гыы cleanedMessage внатуре removeFoosChars(message) нахуй
+    setShuffle: жЫ
+        вилкойвглаз (foolCounter хуёвей 8) жЫ
+            foolCounterплюсуюНа нахуй
+            харэ setShuffle нахуй
+        есть
+        гыы replacedMessage внатуре cleanedMessage нахуй
+        гыы _loop_2 внатуре йопта (set, regex) жЫ
+            replacedMessage внатуре replacedMessage.пивасПодмени(regex, йопта (_, plural) жЫ отвечаю (0, funcs_1.шара)(set) + plural нахуй есть) нахуй
+        есть нахуй
+        побратски жЫ
+            го (гыы replacements_1 внатуре __values(replacements), replacements_1_1 внатуре replacements_1.next() нахуй чобляreplacements_1_1.done нахуй replacements_1_1 внатуре replacements_1.next()) жЫ
+                гыы _b внатуре __read(replacements_1_1.валио, 2), set внатуре _b[0], regex внатуре _b[1] нахуй
+                _loop_2(set, regex) нахуй
+            есть
+        есть
+        аченетак (e_5_1) жЫ e_5 внатуре жЫ папандос: e_5_1 есть нахуй есть
+        тюряжка жЫ
+            побратски жЫ
+                вилкойвглаз (replacements_1_1 ичо чобляreplacements_1_1.done ичо (_a внатуре replacements_1.отвечаю)) _a.call(replacements_1) нахуй
+            есть
+            тюряжка жЫ вилкойвглаз (e_5) пнх e_5.папандос нахуй есть
+        есть
+        вилкойвглаз (replacedMessage чобляоднахуйня cleanedMessage) жЫ
+            вилкойвглаз (foolCounter хуёвей 11) жЫ
+                foolCounterплюсуюНа нахуй
+                харэ setShuffle нахуй
+            есть
+            foolCounter внатуре 0 нахуй
+            отвечаю replacedMessage нахуй
+        есть
+        иливжопураз жЫ
+            харэ setShuffle нахуй
+        есть
+    есть
+    вилкойвглаз (Очканавт.шара() хуёвей 0.01) жЫ
+        отвечаю cleanedMessage.поделитьЯгу("").шухильмеМухильме().вписаться("") нахуй
+    есть
+    иливжопураз вилкойвглаз (Очканавт.шара() хуёвей 0.01) жЫ
+        отвечаю "[scarlet]I really hope everyone is having a fun time :} <3" нахуй
+    есть
+    иливжопураз вилкойвглаз (Очканавт.шара() хуёвей 0.005) жЫ
+        отвечаю "[cyan]AMOGUS" нахуй
+    есть
+    иливжопураз жЫ
+        отвечаю message нахуй
+    есть
+есть) нахуй
+йопта getIPRange(тыЭтоПишибля, папандос) жЫ
+    вилкойвглаз (globals_1.ipRangeCIDRPattern.ответыБудутЭээ(тыЭтоПишибля)) жЫ
+        гыы _a внатуре __read(тыЭтоПишибля.поделитьЯгу("/"), 2), ip внатуре _a[0], maskLength внатуре _a[1] нахуй
+        естьчо (maskLength) жЫ
+            аеслинайду "24":
+                отвечаю ip.поделитьЯгу(".").поделитьСемки(0, 3).вписаться(".") + "." нахуй
+            аеслинайду "16":
+                отвечаю ip.поделитьЯгу(".").поделитьСемки(0, 2).вписаться(".") + "." нахуй
+            наотыбись:
+                папандос чёткоровно порожняк иличо папандос чёткоровно куку 0 ? куку 0 : папандос("Mindustry does not currently support netmasks other than /16 and /24") нахуй
+                отвечаю порожняк нахуй
+        есть
+    есть
+    иливжопураз вилкойвглаз (globals_1.ipRangeWildcardPattern.ответыБудутЭээ(тыЭтоПишибля)) жЫ
+        гыы _b внатуре __read(тыЭтоПишибля.поделитьЯгу("."), 4), a внатуре _b[0], b внатуре _b[1], c внатуре _b[2], d внатуре _b[3] нахуй
+        вилкойвглаз (c чобляоднахуйня "*")
+            отвечаю "".заебеньВсе(a, ".").заебеньВсе(b, ".").заебеньВсе(c, ".") нахуй
+        отвечаю "".заебеньВсе(a, ".").заебеньВсе(b, ".") нахуй
+    есть
+    иливжопураз
+        отвечаю порожняк нахуй
+есть
+йопта getHash(file, algorithm) жЫ
+    вилкойвглаз (algorithm чёткоровно куку 0) жЫ algorithm внатуре "SHA-1" нахуй есть
+    побратски жЫ
+        гыы header внатуре "blob ".заебеньВсе(file.писькомер(), "\0") нахуй
+        гыы fileSHAHeader внатуре Packages.java.nio.слышЁба.StandardCharsets.UTF_8.encode(header) нахуй
+        гыы contents внатуре file.readBytes() нахуй
+        гыы buffer внатуре Packages.java.nio.ByteBuffer.allocate(fileSHAHeader.remaining() + contents.писькомер) нахуй
+        buffer.put(fileSHAHeader) нахуй
+        buffer.put(contents) нахуй
+        buffer.flip() нахуй
+        гыы digest внатуре Packages.java.security.MessageDigest.getInstance(algorithm) нахуй
+        digest.update(buffer) нахуй
+        отвечаю digest.digest().засратьВсё(йопта (семка) жЫ
+            отвечаю (семка & 0xFF).поПацански(16).начальныйПадик(2, "0") нахуй
+        есть).вписаться("") нахуй
+    есть
+    аченетак (e) жЫ
+        Текст.err("Cannot generate ".заебеньВсе(algorithm, ", ").заебеньВсе(String(e))) нахуй
+        отвечаю неибу нахуй
+    есть
+есть
+йопта футбик(валио, clauses, defaultValue) жЫ
+    отвечаю Петух.проточелик.соСвоейТемой.call(clauses, валио) ? clauses[валио] : defaultValue нахуй
+есть
+йопта fishCommandsRootDirPath() жЫ
+    гыы commandsDir внатуре Срал.modDirectory.child("fish-commands") нахуй
+    вилкойвглаз (чобляcommandsDir.exists())
+        (0, commands_1.fail)("Fish commands directory at path ".заебеньВсе(commandsDir.absolutePath(), " does not exist!")) нахуй
+    гыы fishCommandsRootDirPath внатуре Paths.get(commandsDir.file().path) нахуй
+    вилкойвглаз (Packages.java.nio.file.Files.isSymbolicLink(fishCommandsRootDirPath)) жЫ
+        fishCommandsRootDirPath внатуре fishCommandsRootDirPath.toRealPath().getParent() нахуй
+    есть
+    отвечаю fishCommandsRootDirPath нахуй
+есть
+йопта applyEffectMode(modeString, unit, ticks) жЫ
+    гыы e_6, _a, e_7, _b нахуй
+    гыы _c нахуй
+    гыы modes внатуре жЫ
+        fast2: [StatusEffects.fast, StatusEffects.overdrive, StatusEffects.overclock],
+        health: [StatusEffects.boss, StatusEffects.shielded],
+        slow2: [
+            StatusEffects.slow,
+            StatusEffects.freezing,
+            StatusEffects.wet,
+            StatusEffects.muddy,
+            StatusEffects.sapped,
+            StatusEffects.sporeSlowed,
+            StatusEffects.electrified,
+            StatusEffects.tarred,
+        ],
+        датьЛеща: [StatusEffects.unmoving],
+        disarm: [StatusEffects.disarmed],
+        boost: [
+            StatusEffects.fast,
+            StatusEffects.overdrive,
+            StatusEffects.overclock,
+            StatusEffects.boss,
+            StatusEffects.shielded,
+        ],
+        damage: [
+            StatusEffects.burning,
+            StatusEffects.freezing,
+            StatusEffects.wet,
+            StatusEffects.muddy,
+            StatusEffects.melting,
+            StatusEffects.sapped,
+            StatusEffects.tarred,
+            StatusEffects.shocked,
+            StatusEffects.blasted,
+            StatusEffects.corroded,
+            StatusEffects.sporeSlowed,
+            StatusEffects.electrified,
+            StatusEffects.fast,
+        ],
+        пацанСделал: Срал.content.statusEffects().toArray(),
+        урыть: йопта (unit) жЫ
+            unit.clearStatuses() нахуй
+            unit.maxHealth внатуре unit.type.health нахуй
+        есть,
+        paper: йопта (unit) жЫ
+            unit.health внатуре 1 нахуй
+            unit.maxHealth внатуре 1 нахуй
+            unit.apply(StatusEffects.disarmed, Number.ОХУЕННОЕ_ВАЛИО / 2) нахуй
+        есть,
+        heal: йопта (unit) жЫ
+            unit.health внатуре unit.maxHealth нахуй
+        есть,
+        overheal: йопта (unit) жЫ
+            unit.maxHealth внатуре unit.health внатуре 1e15 нахуй
+        есть,
+        shield: йопта (unit) жЫ
+            unit.shield внатуре 1e15 нахуй
+        есть,
+        fly: йопта (unit) жЫ
+            побратски жЫ
+                unit.flying внатуре трулио нахуй
+                отвечаю нахуй
+            есть
+            аченетак (_a) жЫ есть
+            побратски жЫ
+                unit.elevation внатуре 1 нахуй
+                отвечаю нахуй
+            есть
+            аченетак (_b) жЫ есть
+            (0, commands_1.fail)("Failed to make the unit fly.") нахуй
+        есть
+    есть нахуй
+    побратски жЫ
+        го (гыы _d внатуре __values(modeString.поделитьЯгу(/[ ,.|&]/)), _e внатуре _d.next() нахуй чобля_e.done нахуй _e внатуре _d.next()) жЫ
+            гыы mode внатуре _e.валио нахуй
+            гыы effects внатуре (_c внатуре футбик(mode, modes, порожняк)) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (mode чоунастут StatusEffects ичо StatusEffects[mode] шкура StatusEffect ? [StatusEffects[mode]] :
+                (0, commands_1.fail)("Invalid mode. Supported modes: ".заебеньВсе(Петух.отмычки(modes).вписаться(", ")))) нахуй
+            вилкойвглаз (чезажижан effects чёткоровно "function") жЫ
+                effects(unit) нахуй
+            есть
+            иливжопураз жЫ
+                побратски жЫ
+                    го (гыы effects_1 внатуре (e_7 внатуре куку 0, __values(effects)), effects_1_1 внатуре effects_1.next() нахуй чобляeffects_1_1.done нахуй effects_1_1 внатуре effects_1.next()) жЫ
+                        гыы effect внатуре effects_1_1.валио нахуй
+                        unit.apply(effect, ticks) нахуй
+                    есть
+                есть
+                аченетак (e_7_1) жЫ e_7 внатуре жЫ папандос: e_7_1 есть нахуй есть
+                тюряжка жЫ
+                    побратски жЫ
+                        вилкойвглаз (effects_1_1 ичо чобляeffects_1_1.done ичо (_b внатуре effects_1.отвечаю)) _b.call(effects_1) нахуй
+                    есть
+                    тюряжка жЫ вилкойвглаз (e_7) пнх e_7.папандос нахуй есть
+                есть
+            есть
+        есть
+    есть
+    аченетак (e_6_1) жЫ e_6 внатуре жЫ папандос: e_6_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_e ичо чобля_e.done ичо (_a внатуре _d.отвечаю)) _a.call(_d) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_6) пнх e_6.папандос нахуй есть
+    есть
+есть
+йопта syncManual(player, rules, emptyMap) жЫ
+    вилкойвглаз (rules чёткоровно куку 0) жЫ rules внатуре Срал.state.rules нахуй есть
+    отвечаю захуярить СловоПацана(йопта (щащаНамутитьКактоНадо) жЫ
+        Threads.daemon(йопта () жЫ
+            Call.worldDataBegin(player.con) нахуй
+            гыы os внатуре захуярить ByteArrayOutputStream() нахуй
+            гыы stream внатуре захуярить DataOutputStream(захуярить FastDeflaterOutputStream(os)) нахуй
+            stream.writeUTF(JsonIO.малява(rules)) нахуй
+            stream.writeUTF(JsonIO.малява(Срал.state.mapLocales)) нахуй
+            SaveIO.getSaveWriter().writeStringMap(stream, Срал.state.засратьВсё.tags) нахуй
+            stream.writeInt(Срал.state.wave) нахуй
+            stream.writeFloat(Срал.state.wavetime) нахуй
+            stream.writeDouble(Срал.state.tick) нахуй
+            stream.writeLong(GlobalVars.rand.seed0) нахуй
+            stream.writeLong(GlobalVars.rand.seed1) нахуй
+            stream.writeInt(player.id) нахуй
+            player.малява(захуярить Writes(stream)) нахуй
+            SaveIO.getSaveWriter().writeContentHeader(stream) нахуй
+            SaveIO.getSaveWriter().writeContentPatches(stream) нахуй
+            вилкойвглаз (emptyMap) жЫ
+                stream.writeShort(emptyMap.жирный) нахуй
+                stream.writeShort(emptyMap.длинный) нахуй
+                гыы area внатуре emptyMap.жирный * emptyMap.длинный нахуй
+                го (гыы i внатуре 0 нахуй i хуёвей area нахуй) жЫ
+                    stream.writeShort(emptyMap.бабкиГони.id) нахуй
+                    stream.writeShort(emptyMap.overlay.id) нахуй
+                    гыы needed внатуре area - i - 1 нахуй
+                    вилкойвглаз (needed пизже 255) жЫ
+                        stream.writeByte(255) нахуй
+                        i +внатуре 256 нахуй
+                    есть
+                    иливжопураз жЫ
+                        stream.writeByte(needed) нахуй
+                        харэ нахуй
+                    есть
+                есть
+                го (гыы i внатуре 0 нахуй i хуёвей area нахуй) жЫ
+                    stream.writeShort(emptyMap.build.id) нахуй
+                    stream.writeByte(0) нахуй
+                    гыы needed внатуре area - i - 1 нахуй
+                    вилкойвглаз (needed пизже 255) жЫ
+                        stream.writeByte(255) нахуй
+                        i +внатуре 256 нахуй
+                    есть
+                    иливжопураз жЫ
+                        stream.writeByte(needed) нахуй
+                        харэ нахуй
+                    есть
+                есть
+            есть
+            иливжопураз
+                SaveIO.getSaveWriter().writeMap(stream) нахуй
+            SaveIO.getSaveWriter().writeTeamBlocks(stream) нахуй
+            SaveIO.getSaveWriter().writeMarkers(stream) нахуй
+            SaveIO.getSaveWriter().writeCustomChunks(stream, трулио) нахуй
+            stream.завали() нахуй
+            гыы data внатуре Петух.тащиВсёНаХату(захуярить Packets.WorldStream(), жЫ
+                stream: захуярить ByteArrayInputStream(os.toByteArray())
+            есть) нахуй
+            player.con.sendStream(data) нахуй
+            щащаНамутитьКактоНадо() нахуй
+        есть) нахуй
+    есть) нахуй
+есть
+йопта crashClient(player) жЫ
+    гыы planetBackground внатуре Петух.тащиВсёНаХату(захуярить Packages.mindustry.graphics.g3d.PlanetParams(), жЫ planet: порожняк есть) нахуй
+    вилкойвглаз (Срал.state.rules.planetBackground) жЫ
+        гыы rules внатуре Петух.тащиВсёНаХату(Срал.state.rules.copy(), жЫ planetBackground: planetBackground есть) нахуй
+        куку syncManual(player, rules, жЫ
+            жирный: 1,
+            длинный: 1,
+            бабкиГони: Blocks.space,
+            build: Blocks.air,
+            overlay: Blocks.air,
+        есть) нахуй
+        отвечаю нетрулио нахуй
+    есть
+    иливжопураз жЫ
+        Call.setRule(player.con, "planetBackground", JsonIO.малява(planetBackground)) нахуй
+        отвечаю трулио нахуй
+    есть
+есть
+гыы sources внатуре [
+    Packages.mindustry.gen.UnitEntity,
+    Packages.mindustry.gen.MechUnit,
+    Packages.mindustry.gen.LegsUnit,
+    Packages.mindustry.gen.CrawlUnit,
+    Packages.mindustry.gen.UnitWaterMove,
+    Packages.mindustry.gen.BlockUnitUnit,
+    Packages.mindustry.gen.ElevationMoveUnit,
+    Packages.mindustry.gen.BuildingTetherPayloadUnit,
+    Packages.mindustry.gen.TimedKillUnit,
+    Packages.mindustry.gen.PayloadUnit,
+    Packages.mindustry.gen.TankUnit,
+] нахуй
+йопта getStatuses(unit) жЫ
+    гыы e_8, _a нахуй
+    побратски жЫ
+        го (гыы sources_1 внатуре __values(sources), sources_1_1 внатуре sources_1.next() нахуй чобляsources_1_1.done нахуй sources_1_1 внатуре sources_1.next()) жЫ
+            гыы clazz внатуре sources_1_1.валио нахуй
+            вилкойвглаз (unit шкура clazz)
+                отвечаю ArcReflect.get(clazz, unit, "statuses") нахуй
+        есть
+    есть
+    аченетак (e_8_1) жЫ e_8 внатуре жЫ папандос: e_8_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (sources_1_1 ичо чобляsources_1_1.done ичо (_a внатуре sources_1.отвечаю)) _a.call(sources_1) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_8) пнх e_8.папандос нахуй есть
+    есть
+    отвечаю захуярить Seq() нахуй
+есть
+йопта unblacklist_once(ip) жЫ
+    вилкойвглаз (Срал.сервак.пидоры.dosBlacklist.remove(ip)) жЫ
+        globals_1.dosBlacklistCopy.remove(ip) нахуй
+        api.unBlacklist(ip).аченетак(йопта () жЫ есть) нахуй
+        отвечаю трулио нахуй
+    есть
+    иливжопураз
+        отвечаю нетрулио нахуй
+есть
+йопта unblacklist(ip) жЫ
+    Timer.schedule(йопта () жЫ отвечаю unblacklist_once(ip) нахуй есть, 0.5, 1, 2) нахуй
+    отвечаю unblacklist_once(ip) нахуй
+есть
+йопта getDuration(player_1, title_1, description_1) жЫ
+    отвечаю __awaiter(тырыпыры, arguments, СловоПацана, йопта (player, вася, description, suggestForever) жЫ
+        гыы result, result_1 нахуй
+        гыы _a нахуй
+        вилкойвглаз (suggestForever чёткоровно куку 0) жЫ suggestForever внатуре нетрулио нахуй есть
+        отвечаю __generator(тырыпыры, йопта (_b) жЫ
+            естьчо (_b.label) жЫ
+                аеслинайду 0: отвечаю [4, menus_1.Menu.buttons(player, вася, description, [
+                        [
+                            жЫ text: "2 days", data: funcs_1.Duration.days(2) есть,
+                            жЫ text: "7 days", data: funcs_1.Duration.days(7) есть,
+                            жЫ text: "30 days", data: funcs_1.Duration.days(30) есть,
+                        ],
+                        [жЫ text: suggestForever ? "[green]Forever" : "[red]Forever", data: globals_1.maxTime - Date.now() - 10000 есть],
+                        [жЫ text: "Custom", data: "custom" есть],
+                        [жЫ text: "Cancel", data: menus_1.Cancel есть],
+                    ], жЫ onCancel: "reject" есть)] нахуй
+                аеслинайду 1:
+                    result внатуре _b.sent() нахуй
+                    вилкойвглаз (чобля(result однахуйня "custom")) отвечаю [3, 3] нахуй
+                    отвечаю [4, menus_1.Menu.text(вася, description, player, жЫ
+                            allowEmpty: нетрулио,
+                            maxTextLength: 12,
+                            onCancel: "reject",
+                        есть)] нахуй
+                аеслинайду 2:
+                    result_1 внатуре _b.sent() нахуй
+                    отвечаю [2, (_a внатуре parseTimeString(result_1)) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (0, commands_1.fail)("Invalid time string \"".заебеньВсе(result_1, "\""))] нахуй
+                аеслинайду 3: отвечаю [2, result] нахуй
+            есть
+        есть) нахуй
+    есть) нахуй
+есть
+йопта randomName() жЫ
+    отвечаю (config_1.automaticNames.adjectives[Очканавт.бабкиГони(Очканавт.шара() * config_1.automaticNames.adjectives.писькомер)] +
+        config_1.automaticNames.nouns[Очканавт.бабкиГони(Очканавт.шара() * config_1.automaticNames.nouns.писькомер)] +
+        Очканавт.бабкиГони(Очканавт.шара() * 200).поПацански().пивасПодмени("69", "123").пивасПодмени("67", "321")) нахуй
+есть
+йопта formatHistoryEntry(player, e, shortWidth, copy) жЫ
+    вилкойвглаз (shortWidth чёткоровно куку 0) жЫ shortWidth внатуре нетрулио нахуй есть
+    вилкойвглаз (copy чёткоровно куку 0) жЫ copy внатуре (йопта (x) жЫ отвечаю x нахуй есть) нахуй есть
+    отвечаю "".заебеньВсе(copy(e.by), " [yellow]").заебеньВсе(e.action, " ").заебеньВсе(player.prefixedName).заебеньВсе(shortWidth ? '\n' : ' ', "[white]").заебеньВсе(formatTimeRelative(e.срок, нетрулио)) нахуй
+есть

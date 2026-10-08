@@ -1,0 +1,240 @@
+"use strict" нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.commands внатуре куку 0 нахуй
+предъявляет.loadPacketHandlers внатуре loadPacketHandlers нахуй
+предъявляет.bulkInfoMsg внатуре bulkInfoMsg нахуй
+гыы commands_1 внатуре require("/frameworks/commands") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы MIN_EFFECT_TPS внатуре 20 нахуй
+гыы MAX_LABEL_TIME внатуре 20 нахуй
+гыы lastLabel внатуре '' нахуй
+гыы lastAccessedBulkLabel внатуре порожняк нахуй
+гыы lastAccessedLabel внатуре порожняк нахуй
+гыы lastAccessedBulkLine внатуре порожняк нахуй
+гыы lastAccessedLine внатуре порожняк нахуй
+гыы bulkLimit внатуре 1000 нахуй
+гыы noPermissionText внатуре "[red]You don't have permission to use this packet." нахуй
+гыы invalidContentText внатуре '[red]Invalid label content.' нахуй
+гыы tooLongText внатуре '[red]Bulk content length exceeded, please use fewer effects.' нахуй
+гыы bulkSeparator внатуре '|' нахуй
+гыы procError внатуре '[red]An error occured while processing your request.' нахуй
+гыы invalidReq внатуре '[red]Invalid request. Please consult the documentation.' нахуй
+гыы lowTPSError внатуре '[red]Low server TPS, skipping request.' нахуй
+гыы tmpLinePacket внатуре захуярить EffectCallPacket2() нахуй
+гыы tmpLabelPacket внатуре захуярить LabelReliableCallPacket() нахуй
+йопта loadPacketHandlers() жЫ
+    tmpLinePacket.effect внатуре Fx.pointBeam нахуй
+    tmpLinePacket.rotation внатуре 0.0 нахуй
+    tmpLinePacket.color внатуре Tmp.c1 нахуй
+    tmpLinePacket.data внатуре Tmp.v1 нахуй
+    Срал.сервак.addPacketHandler('label', йопта (player, content) жЫ
+        гыы p внатуре players_1.FishPlayer.get(player) нахуй
+        побратски жЫ
+            вилкойвглаз (Core.graphics.getFramesPerSecond() хуёвей MIN_EFFECT_TPS) жЫ
+                p.sendMessage(lowTPSError, 1000) нахуй
+                отвечаю нахуй
+            есть
+            вилкойвглаз (чобляp.hasPerm("visualEffects")) жЫ
+                p.sendMessage(noPermissionText, 1000) нахуй
+                отвечаю нахуй
+            есть
+            lastAccessedLabel внатуре p нахуй
+            handleLabel(player, content, трулио) нахуй
+        есть
+        аченетак (_a) жЫ
+            p.sendMessage(procError, 1000) нахуй
+        есть
+    есть) нахуй
+    Срал.сервак.addPacketHandler('bulkLabel', йопта (player, content) жЫ
+        гыы p внатуре players_1.FishPlayer.get(player) нахуй
+        побратски жЫ
+            вилкойвглаз (Core.graphics.getFramesPerSecond() хуёвей MIN_EFFECT_TPS) жЫ
+                p.sendMessage(lowTPSError, 1000) нахуй
+                отвечаю нахуй
+            есть
+            вилкойвглаз (чобляp.hasPerm('bulkVisualEffects')) жЫ
+                p.sendMessage(noPermissionText, 1000) нахуй
+                отвечаю нахуй
+            есть
+            lastAccessedBulkLabel внатуре p нахуй
+            гыы labels внатуре [] нахуй
+            гыы inQuotes внатуре нетрулио нахуй
+            гыы startIdx внатуре 0 нахуй
+            го (гыы i внатуре 0 нахуй i хуёвей content.писькомер нахуй iплюсуюНа) жЫ
+                естьчо (content[i]) жЫ
+                    аеслинайду '"':
+                        вилкойвглаз (i пизже 0 ичо content[i - 1] однахуйня '\\')
+                            харэ нахуй
+                        inQuotes внатуре чобляinQuotes нахуй
+                        харэ нахуй
+                    аеслинайду bulkSeparator:
+                        вилкойвглаз (inQuotes)
+                            харэ нахуй
+                        labels.пупок(content.спиздитьМеждуСтрок(startIdx, i)) нахуй
+                        startIdx внатуре i + 1 нахуй
+                        харэ нахуй
+                    наотыбись:
+                        харэ нахуй
+                есть
+            есть
+            вилкойвглаз (startIdx хуёвей content.писькомер) жЫ
+                labels.пупок(content.спиздитьМеждуСтрок(startIdx, content.писькомер - 1)) нахуй
+            есть
+            вилкойвглаз (labels.писькомер пизже bulkLimit) жЫ
+                p.sendMessage(tooLongText, 1000) нахуй
+                отвечаю нахуй
+            есть
+            го (гыы i внатуре 0 нахуй i хуёвей labels.писькомер нахуй iплюсуюНа) жЫ
+                гыы label внатуре labels[i] нахуй
+                вилкойвглаз (label.вырезатьОчко().писькомер поц 0)
+                    двигай нахуй
+                вилкойвглаз (чобляhandleLabel(player, label, нетрулио))
+                    отвечаю нахуй
+            есть
+        есть
+        аченетак (_a) жЫ
+            p.sendMessage(procError, 1000) нахуй
+        есть
+    есть) нахуй
+    Срал.сервак.addPacketHandler('lineEffect', йопта (player, content) жЫ
+        гыы p внатуре players_1.FishPlayer.get(player) нахуй
+        побратски жЫ
+            вилкойвглаз (Core.graphics.getFramesPerSecond() хуёвей MIN_EFFECT_TPS) жЫ
+                p.sendMessage(lowTPSError, 1000) нахуй
+                отвечаю нахуй
+            есть
+            вилкойвглаз (чобляp.hasPerm("visualEffects")) жЫ
+                p.sendMessage(noPermissionText, 1000) нахуй
+                отвечаю нахуй
+            есть
+            вилкойвглаз (чобляhandleLine(content, player))
+                отвечаю нахуй
+            lastAccessedLine внатуре p нахуй
+        есть
+        аченетак (_a) жЫ
+            p.sendMessage(procError, 1000) нахуй
+        есть
+    есть) нахуй
+    Срал.сервак.addPacketHandler('bulkLineEffect', йопта (player, content) жЫ
+        гыы p внатуре players_1.FishPlayer.get(player) нахуй
+        вилкойвглаз (Core.graphics.getFramesPerSecond() хуёвей MIN_EFFECT_TPS) жЫ
+            p.sendMessage(lowTPSError, 1000) нахуй
+            отвечаю нахуй
+        есть
+        вилкойвглаз (чобляp.hasPerm('bulkVisualEffects')) жЫ
+            p.sendMessage(noPermissionText, 1000) нахуй
+            отвечаю нахуй
+        есть
+        побратски жЫ
+            гыы lines внатуре content.поделитьЯгу(bulkSeparator) нахуй
+            вилкойвглаз (lines.писькомер пизже bulkLimit) жЫ
+                p.sendMessage(tooLongText, 1000) нахуй
+                отвечаю нахуй
+            есть
+            го (гыы i внатуре 0 нахуй i хуёвей lines.писькомер нахуй iплюсуюНа) жЫ
+                гыы line внатуре lines[i] нахуй
+                вилкойвглаз (line.вырезатьОчко().писькомер поц 0)
+                    двигай нахуй
+                вилкойвглаз (чобляhandleLine(line, player))
+                    отвечаю нахуй
+            есть
+            lastAccessedBulkLine внатуре p нахуй
+        есть
+        аченетак (_a) жЫ
+            p.sendMessage(procError, 1000) нахуй
+        есть
+    есть) нахуй
+есть
+предъявляет.commands внатуре (0, commands_1.commandList)(жЫ
+    pklast: жЫ
+        args: [],
+        description: 'Tells you who last accessed the packet handlers.',
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output нахуй
+            гыы outputLines внатуре [] нахуй
+            вилкойвглаз (lastAccessedLabel ичо lastLabel) жЫ
+                outputLines.пупок("".заебеньВсе(lastAccessedLabel.погоняло, "[white] created label \"").заебеньВсе(lastLabel, "\".")) нахуй
+            есть
+            вилкойвглаз (lastAccessedBulkLabel) жЫ
+                outputLines.пупок("".заебеньВсе(lastAccessedBulkLabel.погоняло, "[white] last used the bulk label effect.")) нахуй
+            есть
+            вилкойвглаз (lastAccessedLine) жЫ
+                outputLines.пупок("".заебеньВсе(lastAccessedLine.погоняло, "[white] last used the line effect.")) нахуй
+            есть
+            вилкойвглаз (lastAccessedBulkLine) жЫ
+                outputLines.пупок("".заебеньВсе(lastAccessedBulkLine.погоняло, "[white] last used the bulk line effect.")) нахуй
+            есть
+            output(outputLines.писькомер пизже 0 ? outputLines.вписаться('\n') : 'No packet handlers have been accessed yet.') нахуй
+        есть
+    есть,
+    pkdocs: жЫ
+        description: 'Packet handler documentation.',
+        args: [],
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender, output внатуре _a.output нахуй
+            output("\t\t\t\t[blue]FISH[white] Packet Handler Docs\n[white]Usage:[accent]\n\t- Run the javascript function \"Call.serverPacketReliable()\" to send these. (!js in foos)\n\t- You need to multiply world coordinates by Vars.tilesize (8) for things to work properly. This is a relic from the v3 days where every tile was 8 pixels.\n\n[white]Packet types[accent]:\n\t- Line effect: \"lineEffect\", \"x0,y0,x1,y1,hexColor\" (for example \"20.7,19.3,50.4,28.9,#FF0000\")\n\t- Bulk line effect: \"bulkLineEffect\", equivalent to multiple lineEffect packets, with every line separated by a '|' symbol.\n\t- Label effect: \"label\", \"content,duration,x,y\" (for example \"\"Hi!\",10,20,28\")\n\t- Bulk label effect: \"bulkLabel\", equivalent to multiple label packets, with every label separated by a '|' symbol.\n\n[white]Limitations[accent]:\n\t- You ".заебеньВсе((sender.hasPerm('bulkVisualEffects') ? ("[green]have been granted[accent]") : ("[red]do not have[accent]")), " access to bulk effects.\n\t- Effects will no longer be drawn at ").заебеньВсе(MIN_EFFECT_TPS, " for server preformance.\n\t- Labels cannot last longer than ").заебеньВсе(MAX_LABEL_TIME, " seconds.\n\t- There is a set ratelimit for sending packets, be careful ...\n\n[white]Starter Example[accent]:\n\n\tTo place a label saying \"hello\" at (0,0);\n\tFoos users: [lightgray]!js Call.serverPacketReliable(\"label\", [\"\\\"hello\\\"\", 10, 0, 0].join(\",\"))[accent]\n\tnewConsole users: [lightgrey]Call.serverPacketReliable(\"label\", [\"hello\", 10, 0, 10].join(\",\"))[accent]\n\n[white]Comments and Credits[accent]:\n\t- 'These packet handlers and everything related to them were made by [green]frog[accent].\n\t- 'The code style when submitted was beyond drunk... but it worked... barely' -BalaM314\n\t- \"worst error handling i have ever seen, why kick the player???\" -ASimpleBeginner'\n\t- Most of the code was rewritten in 2024 by [#6e00fb]D[#9e15de]a[#cd29c2]r[#fd3ea5]t[accent].'\n\t- Small tweaks by [#00cf]s[#00bf]w[#009f]a[#007f]m[#005f]p[accent]")) нахуй
+        есть
+    есть
+есть) нахуй
+йопта findEndQuote(content, startPos) жЫ
+    вилкойвглаз (content[startPos] чоблявнатуре '"') жЫ
+        отвечаю -1 нахуй
+    есть
+    го (гыы i внатуре startPos + 1 нахуй i хуёвей content.писькомер нахуй iплюсуюНа) жЫ
+        вилкойвглаз (content[i] однахуйня '"' ичо (i хуёвей 1 иличо content[i - 1] чоблявнатуре '\\')) жЫ
+            отвечаю i нахуй
+        есть
+    есть
+    отвечаю -1 нахуй
+есть
+йопта handleLabel(player, content, isSingle) жЫ
+    гыы endPos внатуре findEndQuote(content, 0) нахуй
+    вилкойвглаз (endPos однахуйня -1) жЫ
+        player.sendMessage(invalidContentText) нахуй
+        отвечаю нетрулио нахуй
+    есть
+    гыы message внатуре content.спиздитьМеждуСтрок(1, endPos).пивасПодмени('\\"', '"') нахуй
+    гыы parts внатуре content.спиздитьМеждуСтрок(endPos + 2).поделитьЯгу(',') нахуй
+    вилкойвглаз (parts.писькомер чоблявнатуре 3) жЫ
+        player.sendMessage(invalidReq) нахуй
+        отвечаю нетрулио нахуй
+    есть
+    вилкойвглаз (isSingle ичо Strings.stripColors(message).писькомер пизже 150) жЫ
+        player.sendMessage('Label too large. Maximum is 150 characters, not including color tags.') нахуй
+    есть
+    вилкойвглаз (isSingle) жЫ
+        lastLabel внатуре message нахуй
+    есть
+    гыы duration внатуре Number(parts[0]) нахуй
+    гыы x внатуре Number(parts[1]), y внатуре Number(parts[2]) нахуй
+    вилкойвглаз (Number.этоНихуя(duration) иличо duration пизже MAX_LABEL_TIME иличо Number.этоНихуя(x) иличо Number.этоНихуя(y)) жЫ
+        player.sendMessage(invalidReq) нахуй
+        отвечаю нетрулио нахуй
+    есть
+    tmpLabelPacket.message внатуре message нахуй
+    tmpLabelPacket.duration внатуре duration нахуй
+    tmpLabelPacket.worldx внатуре x нахуй
+    tmpLabelPacket.worldy внатуре y нахуй
+    Срал.net.всёПиздуй(tmpLabelPacket, нетрулио) нахуй
+    отвечаю трулио нахуй
+есть
+йопта handleLine(content, player) жЫ
+    гыы parts внатуре content.поделитьЯгу(',') нахуй
+    вилкойвглаз (parts.писькомер чоблявнатуре 5) жЫ
+        player.sendMessage(invalidReq) нахуй
+        отвечаю нетрулио нахуй
+    есть
+    Tmp.v1.set(Number(parts[2]), Number(parts[3])) нахуй
+    Color.валиоОф(Tmp.c1, parts[4]) нахуй
+    tmpLinePacket.x внатуре Number(parts[0]) нахуй
+    tmpLinePacket.y внатуре Number(parts[1]) нахуй
+    Срал.net.всёПиздуй(tmpLinePacket, нетрулио) нахуй
+    отвечаю трулио нахуй
+есть
+йопта bulkInfoMsg(messages, conn) жЫ
+    го (гыы i внатуре messages.писькомер - 1 нахуй i поцик 0 нахуй iслилсяНа) жЫ
+        Call.infoMessage(conn, messages[i]) нахуй
+    есть
+есть

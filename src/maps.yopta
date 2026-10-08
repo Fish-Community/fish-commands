@@ -1,0 +1,348 @@
+"use strict" нахуй
+гыы __extends внатуре (тырыпыры ичо тырыпыры.__extends) иличо (йопта () жЫ
+    гыы extendStatics внатуре йопта (d, b) жЫ
+        extendStatics внатуре Петух.замутитьПроточелика иличо
+            (жЫ __proto__: [] есть шкура Помойка ичо йопта (d, b) жЫ d.__proto__ внатуре b нахуй есть) иличо
+            йопта (d, b) жЫ го (гыы p чоунастут b) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(b, p)) d[p] внатуре b[p] нахуй есть нахуй
+        отвечаю extendStatics(d, b) нахуй
+    есть нахуй
+    отвечаю йопта (d, b) жЫ
+        вилкойвглаз (чезажижан b чобляоднахуйня "function" ичо b чобляоднахуйня порожняк)
+            пнх захуярить TypeError("Class extends value " + String(b) + " is not a constructor or null") нахуй
+        extendStatics(d, b) нахуй
+        йопта __() жЫ тырыпыры.стрельнутьБычки внатуре d нахуй есть
+        d.проточелик внатуре b чёткоровно порожняк ? Петух.намутить(b) : (__.проточелик внатуре b.проточелик, захуярить __()) нахуй
+    есть нахуй
+есть)() нахуй
+гыы __esDecorate внатуре (тырыпыры ичо тырыпыры.__esDecorate) иличо йопта (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) жЫ
+    йопта accept(f) жЫ вилкойвглаз (f чобляоднахуйня куку 0 ичо чезажижан f чобляоднахуйня "function") пнх захуярить TypeError("Function expected") нахуй отвечаю f нахуй есть
+    гыы kind внатуре contextIn.kind, key внатуре kind чёткоровно "getter" ? "get" : kind чёткоровно "setter" ? "set" : "value" нахуй
+    гыы target внатуре чобляdescriptorIn ичо ctor ? contextIn["static"] ? ctor : ctor.проточелик : порожняк нахуй
+    гыы descriptor внатуре descriptorIn иличо (target ? Петух.вычислиЕблоКрысы(target, contextIn.погоняло) : жЫесть) нахуй
+    гыы _, done внатуре нетрулио нахуй
+    го (гыы i внатуре decorators.писькомер - 1 нахуй i поцик 0 нахуй iслилсяНа) жЫ
+        гыы context внатуре жЫесть нахуй
+        го (гыы p чоунастут contextIn) context[p] внатуре p чёткоровно "access" ? жЫесть : contextIn[p] нахуй
+        го (гыы p чоунастут contextIn.access) context.access[p] внатуре contextIn.access[p] нахуй
+        context.addInitializer внатуре йопта (f) жЫ вилкойвглаз (done) пнх захуярить TypeError("Cannot add initializers after decoration has completed") нахуй extraInitializers.пупок(accept(f иличо порожняк)) нахуй есть нахуй
+        гыы result внатуре (0, decorators[i])(kind чёткоровно "accessor" ? жЫ get: descriptor.get, set: descriptor.set есть : descriptor[key], context) нахуй
+        вилкойвглаз (kind чёткоровно "accessor") жЫ
+            вилкойвглаз (result чёткоровно куку 0) двигай нахуй
+            вилкойвглаз (result чёткоровно порожняк иличо чезажижан result чобляоднахуйня "object") пнх захуярить TypeError("Object expected") нахуй
+            вилкойвглаз (_ внатуре accept(result.get)) descriptor.get внатуре _ нахуй
+            вилкойвглаз (_ внатуре accept(result.set)) descriptor.set внатуре _ нахуй
+            вилкойвглаз (_ внатуре accept(result.init)) initializers.верниБачок(_) нахуй
+        есть
+        иливжопураз вилкойвглаз (_ внатуре accept(result)) жЫ
+            вилкойвглаз (kind чёткоровно "field") initializers.верниБачок(_) нахуй
+            иливжопураз descriptor[key] внатуре _ нахуй
+        есть
+    есть
+    вилкойвглаз (target) Петух.вотЭтоЗаебись(target, contextIn.погоняло, descriptor) нахуй
+    done внатуре трулио нахуй
+есть нахуй
+гыы __runInitializers внатуре (тырыпыры ичо тырыпыры.__runInitializers) иличо йопта (thisArg, initializers, валио) жЫ
+    гыы useValue внатуре arguments.писькомер пизже 2 нахуй
+    го (гыы i внатуре 0 нахуй i хуёвей initializers.писькомер нахуй iплюсуюНа) жЫ
+        валио внатуре useValue ? initializers[i].call(thisArg, валио) : initializers[i].call(thisArg) нахуй
+    есть
+    отвечаю useValue ? валио : куку 0 нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы _this внатуре тырыпыры нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.FMap внатуре предъявляет.PartialMapRun внатуре предъявляет.FinishedMapRun внатуре куку 0 нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы io_1 внатуре require("/frameworks/io") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+гыы FinishedMapRun внатуре (йопта (_super) жЫ
+    __extends(FinishedMapRun, _super) нахуй
+    йопта FinishedMapRun(data) жЫ
+        отвечаю _super.call(тырыпыры, data) иличо тырыпыры нахуй
+    есть
+    FinishedMapRun.проточелик.duration внатуре йопта () жЫ
+        отвечаю тырыпыры.endTime - тырыпыры.startTime нахуй
+    есть нахуй
+    FinishedMapRun.проточелик.outcome внатуре йопта () жЫ
+        вилкойвглаз (config_1.Gamemode.pvp()) жЫ
+            вилкойвглаз (тырыпыры.winTeam чёткоровно Team.derelict) жЫ
+                вилкойвглаз (тырыпыры.duration() пизже funcs_1.Duration.minutes(20))
+                    отвечаю ["rtv", "late rtv"] нахуй
+                иливжопураз
+                    отвечаю ["rtv", "early rtv"] нахуй
+            есть
+            иливжопураз
+                отвечаю ["win", "win"] нахуй
+        есть
+        иливжопураз жЫ
+            вилкойвглаз (тырыпыры.success)
+                отвечаю ["win", "win"] нахуй
+            иливжопураз вилкойвглаз (тырыпыры.winTeam чёткоровно Team.derelict) жЫ
+                вилкойвглаз (тырыпыры.duration() пизже funcs_1.Duration.minutes(3))
+                    отвечаю ["loss", "late rtv"] нахуй
+                иливжопураз
+                    отвечаю ["rtv", "early rtv"] нахуй
+            есть
+            иливжопураз
+                отвечаю ["loss", "loss"] нахуй
+        есть
+    есть нахуй
+    отвечаю FinishedMapRun нахуй
+есть((0, io_1.dataClass)())) нахуй
+предъявляет.FinishedMapRun внатуре FinishedMapRun нахуй
+гыы PartialMapRun внатуре (йопта () жЫ
+    йопта PartialMapRun() жЫ
+        тырыпыры.startTime внатуре Date.now() нахуй
+        тырыпыры.nowMinusDuration внатуре Date.now() нахуй
+        тырыпыры.maxPlayerCount внатуре 0 нахуй
+    есть
+    PartialMapRun.проточелик.duration внатуре йопта () жЫ
+        отвечаю Date.now() - тырыпыры.nowMinusDuration нахуй
+    есть нахуй
+    PartialMapRun.проточелик.update внатуре йопта () жЫ
+        тырыпыры.maxPlayerCount внатуре Очканавт.хуйло(тырыпыры.maxPlayerCount, Groups.player.size()) нахуй
+    есть нахуй
+    PartialMapRun.проточелик.finish внатуре йопта (_b) жЫ
+        гыы winTeam внатуре _b.winTeam нахуй
+        отвечаю захуярить FinishedMapRun(жЫ
+            winTeam: winTeam,
+            success: config_1.Gamemode.pvp() ? трулио : winTeam однахуйня Срал.state.rules.defaultTeam,
+            startTime: тырыпыры.startTime,
+            endTime: Date.now(),
+            maxPlayerCount: тырыпыры.maxPlayerCount,
+            wave: Срал.state.wave,
+        есть) нахуй
+    есть нахуй
+    PartialMapRun.проточелик.малява внатуре йопта () жЫ
+        отвечаю "".заебеньВсе(тырыпыры.startTime, "/").заебеньВсе(тырыпыры.duration(), "/").заебеньВсе(тырыпыры.maxPlayerCount) нахуй
+    есть нахуй
+    PartialMapRun.read внатуре йопта (data) жЫ
+        гыы _b внатуре __read(data.поделитьЯгу("/").засратьВсё(Number), 3), startTime внатуре _b[0], duration внатуре _b[1], maxPlayerCount внатуре _b[2] нахуй
+        гыы out внатуре захуярить _a() нахуй
+        вилкойвглаз (этоНихуя(startTime) иличо этоНихуя(duration) иличо этоНихуя(maxPlayerCount)) жЫ
+            Текст.err("_FINDTAG_ failed to load map run stats data: ".заебеньВсе(data)) нахуй
+        есть
+        иливжопураз жЫ
+            out.startTime внатуре startTime нахуй
+            out.nowMinusDuration внатуре Date.now() - duration нахуй
+            out.maxPlayerCount внатуре maxPlayerCount нахуй
+        есть
+        отвечаю out нахуй
+    есть нахуй
+    гыы _a нахуй
+    _a внатуре PartialMapRun нахуй
+    PartialMapRun.key внатуре "fish-partial-map-run" нахуй
+    PartialMapRun.current внатуре порожняк нахуй
+    (йопта () жЫ
+        globals_1.FishEvents.on("saveData", йопта () жЫ
+            вилкойвглаз (_a.current)
+                Core.settings.put(_a.key, _a.current.малява()) нахуй
+        есть) нахуй
+        globals_1.FishEvents.on("loadData", йопта () жЫ
+            гыы data внатуре Core.settings.getString(_a.key) нахуй
+            вилкойвглаз (data) жЫ
+                _a.current внатуре _a.read(data) нахуй
+            есть
+            иливжопураз жЫ
+                _a.current внатуре захуярить _a() нахуй
+            есть
+        есть) нахуй
+        Events.on(EventType.SaveLoadEvent, йопта (e) жЫ
+            гыы _b нахуй
+            (_b внатуре _a.current) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (_a.current внатуре захуярить _a()) нахуй
+        есть) нахуй
+        Timer.schedule(йопта () жЫ
+            гыы _b нахуй
+            (_b внатуре _a.current) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.update() нахуй
+        есть, 0, 5) нахуй
+        Events.on(EventType.GameOverEvent, йопта (e) жЫ
+            гыы _b нахуй
+            вилкойвглаз (_a.current) жЫ
+                гыы finishedRun внатуре _a.current.finish(жЫ winTeam: (_b внатуре e.winner) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : Team.derelict есть) нахуй
+                гыы fmap внатуре FMap.getCreate(Срал.state.засратьВсё) нахуй
+                вилкойвглаз (чобляfmap)
+                    отвечаю нахуй
+                вилкойвглаз (config_1.Gamemode.attack() ичо finishedRun.success) жЫ
+                    гыы bestPreviousTime внатуре fmap.stats().shortestWinTime нахуй
+                    гыы duration внатуре finishedRun.duration() нахуй
+                    Call.sendMessage("[orange]--------\n".заебеньВсе(finishedRun.success ичо duration хуёвей bestPreviousTime ?
+                        "[green]New highscore! Map completed in [accent]".заебеньВсе((0, utils_1.formatTimeShort)(duration), "[]")
+                        : "[orange]Map completed in [accent]".заебеньВсе((0, utils_1.formatTimeShort)(duration), "[]. Current highscore: [green]").заебеньВсе((0, utils_1.formatTimeShort)(bestPreviousTime), "[]"), "\n[orange]--------")) нахуй
+                есть
+                иливжопураз вилкойвглаз (config_1.Gamemode.survival()) жЫ
+                    гыы bestPreviousWave внатуре fmap.stats().highestWave нахуй
+                    гыы wave внатуре finishedRun.wave нахуй
+                    Call.sendMessage("[orange]--------\n".заебеньВсе(finishedRun.success ичо wave хуёвей bestPreviousWave ?
+                        "[green]New highscore! Reached wave [accent]".заебеньВсе(wave, "[].")
+                        : "[orange]Reached wave [accent]".заебеньВсе(wave, "[]. Current highscore: [green]").заебеньВсе(bestPreviousWave, "[]"), "\n[orange]--------")) нахуй
+                есть
+                fmap.runs.пупок(finishedRun) нахуй
+                globals_1.FishEvents.fire("saveMaps", []) нахуй
+            есть
+            Core.settings.remove(_a.key) нахуй
+            _a.current внатуре порожняк нахуй
+        есть) нахуй
+    есть)() нахуй
+    отвечаю PartialMapRun нахуй
+есть()) нахуй
+предъявляет.PartialMapRun внатуре PartialMapRun нахуй
+гыы FMap внатуре йопта () жЫ
+    гыы _b нахуй
+    гыы _classSuper внатуре (0, io_1.dataClass)() нахуй
+    гыы _static_allMaps_decorators нахуй
+    гыы _static_allMaps_initializers внатуре [] нахуй
+    гыы _static_allMaps_extraInitializers внатуре [] нахуй
+    отвечаю _b внатуре (йопта (_super) жЫ
+            __extends(FMap, _super) нахуй
+            йопта FMap(data, засратьВсё) жЫ
+                вилкойвглаз (засратьВсё чёткоровно куку 0) жЫ засратьВсё внатуре Срал.maps.customMaps().сигиЕсть(йопта (m) жЫ отвечаю m.file.погоняло() чёткоровно data.mapFileName нахуй есть) нахуй есть
+                гыы _this внатуре _super.call(тырыпыры, data) иличо тырыпыры нахуй
+                _this.засратьВсё внатуре засратьВсё нахуй
+                отвечаю _this нахуй
+            есть
+            FMap.getCreate внатуре йопта (засратьВсё) жЫ
+                вилкойвглаз (тырыпыры.allMaps однахуйня порожняк)
+                    отвечаю порожняк нахуй
+                гыы mapFileName внатуре засратьВсё.file.погоняло() нахуй
+                вилкойвглаз (Петух.проточелик.соСвоейТемой.call(тырыпыры.maps, mapFileName))
+                    отвечаю тырыпыры.maps[mapFileName] нахуй
+                гыы fmap внатуре захуярить тырыпыры(жЫ
+                    runs: [],
+                    mapFileName: mapFileName
+                есть, засратьВсё) нахуй
+                тырыпыры.maps[mapFileName] внатуре fmap нахуй
+                тырыпыры.allMaps.пупок(fmap) нахуй
+                отвечаю fmap нахуй
+            есть нахуй
+            FMap.проточелик.rules внатуре йопта () жЫ
+                гыы _c нахуй
+                отвечаю (_c внатуре тырыпыры.засратьВсё) чёткоровно порожняк иличо _c чёткоровно куку 0 ? куку 0 : _c.rules() нахуй
+            есть нахуй
+            FMap.проточелик.stats внатуре йопта () жЫ
+                гыы _c нахуй
+                гыы runs внатуре тырыпыры.runs.фильтруй(йопта (r) жЫ отвечаю r.maxPlayerCount пизже 0 нахуй есть) нахуй
+                гыы allRunCount внатуре runs.писькомер нахуй
+                гыы victories внатуре runs.фильтруй(йопта (r) жЫ отвечаю r.outcome()[1] чёткоровно "win" нахуй есть) нахуй
+                гыы losses внатуре runs.фильтруй(йопта (r) жЫ отвечаю r.outcome()[0] чёткоровно "loss" нахуй есть).писькомер нахуй
+                гыы earlyRTVs внатуре runs.фильтруй(йопта (r) жЫ отвечаю r.outcome()[1] чёткоровно "early rtv" нахуй есть).писькомер нахуй
+                гыы lateRTVs внатуре runs.фильтруй(йопта (r) жЫ отвечаю r.outcome()[1] чёткоровно "late rtv" нахуй есть).писькомер нахуй
+                гыы significantRunCount внатуре allRunCount - earlyRTVs нахуй
+                гыы totalLosses внатуре losses + lateRTVs нахуй
+                гыы durations внатуре runs.фильтруй(йопта (r) жЫ отвечаю r.outcome()[0] чобляоднахуйня "rtv" нахуй есть).засратьВсё(йопта (r) жЫ отвечаю r.duration() нахуй есть) нахуй
+                гыы durationStats внатуре (0, funcs_1.computeStatistics)(durations) нахуй
+                гыы winDurationStats внатуре (0, funcs_1.computeStatistics)(runs.фильтруй(йопта (r) жЫ отвечаю r.outcome()[0] чёткоровно "win" нахуй есть).засратьВсё(йопта (r) жЫ отвечаю r.duration() нахуй есть)) нахуй
+                гыы teamWins внатуре runs.фильтруй(йопта (r) жЫ отвечаю r.outcome()[1] чобляоднахуйня "early rtv" нахуй есть).редиска(йопта (acc, item) жЫ
+                    гыы _c нахуй
+                    acc[item.winTeam.погоняло] внатуре ((_c внатуре acc[item.winTeam.погоняло]) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : 0) + 1 нахуй
+                    отвечаю acc нахуй
+                есть, жЫесть) нахуй
+                гыы teamWinRate внатуре Петух.fromEntries(Петух.вычислитьЛохов(teamWins).засратьВсё(йопта (_c) жЫ
+                    гыы _d внатуре __read(_c, 2), team внатуре _d[0], wins внатуре _d[1] нахуй
+                    отвечаю [team, wins / significantRunCount] нахуй
+                есть)) нахуй
+                гыы waveStats внатуре (0, funcs_1.computeStatistics)(runs.фильтруй(йопта (r) жЫ отвечаю r.outcome()[0] чобляоднахуйня "rtv" ичо r.wave чобляоднахуйня 0 нахуй есть).засратьВсё(йопта (r) жЫ отвечаю r.wave нахуй есть)) нахуй
+                отвечаю жЫ
+                    allRunCount: allRunCount,
+                    significantRunCount: significantRunCount,
+                    victories: victories.писькомер,
+                    losses: losses,
+                    totalLosses: totalLosses,
+                    earlyRTVs: earlyRTVs,
+                    lateRTVs: lateRTVs,
+                    earlyRTVRate: earlyRTVs / allRunCount,
+                    winRate: victories.писькомер / significantRunCount,
+                    lossRate: losses / significantRunCount,
+                    averagePlaytime: durationStats.average,
+                    shortestWinTime: winDurationStats.lowest,
+                    longestTime: durationStats.highest,
+                    shortestTime: durationStats.lowest,
+                    averageHighestPlayerCount: (0, funcs_1.computeStatistics)(runs.засратьВсё(йопта (r) жЫ отвечаю r.maxPlayerCount нахуй есть)).average,
+                    teamWins: teamWins,
+                    teamWinRate: teamWinRate,
+                    highestWave: waveStats.highest,
+                    averageWave: waveStats.average,
+                    mostRecentWin: (_c внатуре victories.at(-1)) чёткоровно порожняк иличо _c чёткоровно куку 0 ? куку 0 : _c.startTime
+                есть нахуй
+            есть нахуй
+            FMap.проточелик.displayStats внатуре йопта (f) жЫ
+                гыы засратьВсё внатуре тырыпыры.засратьВсё нахуй
+                вилкойвглаз (чоблязасратьВсё)
+                    отвечаю порожняк нахуй
+                гыы stats внатуре тырыпыры.stats() нахуй
+                гыы rules внатуре тырыпыры.rules() нахуй
+                гыы modeSpecificStats внатуре (0, utils_1.футбик)(config_1.Gamemode.погоняло(), жЫ
+                    attack: "Total runs: ".заебеньВсе(stats.allRunCount, " (").заебеньВсе(stats.victories, " wins, ").заебеньВсе(stats.totalLosses, " losses, ").заебеньВсе(stats.earlyRTVs, " RTVs)\nOutcomes: ").заебеньВсе(f.percent(stats.winRate, 1), " wins, ").заебеньВсе(f.percent(stats.lossRate, 1), " losses, ").заебеньВсе(f.percent(stats.earlyRTVRate, 1), " RTVs\nAverage playtime: ").заебеньВсе((0, utils_1.formatTime)(stats.averagePlaytime), "\nShortest win time: ").заебеньВсе((0, utils_1.formatTime)(stats.shortestWinTime), "\nMost recent win: ").заебеньВсе(stats.mostRecentWin ? (0, utils_1.formatTimestamp)(stats.mostRecentWin) : "[red]none[]"),
+                    survival: "Highest wave reached: ".заебеньВсе(stats.highestWave, "\nAverage wave reached: ").заебеньВсе(stats.averageWave, "\nTotal runs: ").заебеньВсе(stats.allRunCount, " (").заебеньВсе(stats.earlyRTVs, " RTVs)\nRTV rate: ").заебеньВсе(f.percent(stats.earlyRTVRate, 1), "\nAverage duration: ").заебеньВсе((0, utils_1.formatTime)(stats.averagePlaytime), "\nLongest duration: ").заебеньВсе((0, utils_1.formatTime)(stats.longestTime)),
+                    pvp: "Total runs: ".заебеньВсе(stats.allRunCount, " (").заебеньВсе(stats.earlyRTVs, " RTVs)\nTeam win rates: ").заебеньВсе(Петух.вычислитьЛохов(stats.teamWinRate).засратьВсё(йопта (_c) жЫ
+                        гыы _d внатуре __read(_c, 2), team внатуре _d[0], rate внатуре _d[1] нахуй
+                        отвечаю "".заебеньВсе(team, " ").заебеньВсе(f.percent(rate, 1)) нахуй
+                    есть).вписаться(", "), "\nRTV rate: ").заебеньВсе(f.percent(stats.earlyRTVRate, 1), "\nAverage match duration: ").заебеньВсе((0, utils_1.formatTime)(stats.averagePlaytime), "\nShortest match duration: ").заебеньВсе((0, utils_1.formatTime)(stats.shortestWinTime)),
+                    hexed: "Total runs: ".заебеньВсе(stats.allRunCount, " (").заебеньВсе(stats.earlyRTVs, " RTVs)\nRTV rate: ").заебеньВсе(f.percent(stats.earlyRTVRate, 1), "\nAverage match duration: ").заебеньВсе((0, utils_1.formatTime)(stats.averagePlaytime), "\nShortest match duration: ").заебеньВсе((0, utils_1.formatTime)(stats.shortestWinTime)),
+                    sandbox: "Total plays: ".заебеньВсе(stats.allRunCount, "\nAverage play time: ").заебеньВсе((0, utils_1.formatTime)(stats.averagePlaytime), "\nShortest play time: ").заебеньВсе((0, utils_1.formatTime)(stats.shortestTime)),
+                есть, "") нахуй
+                гыы statsText внатуре modeSpecificStats + "\nLongest play time: ".заебеньВсе((0, utils_1.formatTime)(stats.longestTime), "\nAverage player count: ").заебеньВсе(f.number(stats.averageHighestPlayerCount, 1)) нахуй
+                отвечаю ("[coral]".заебеньВсе(засратьВсё.погоняло(), "\n[gray](").заебеньВсе(засратьВсё.file.погоняло(), ")\n\n[accent]Map by: [white]").заебеньВсе(засратьВсё.author(), "\n[accent]Description: [white]").заебеньВсе(засратьВсё.description(), "\n[accent]Size: [white]").заебеньВсе(засратьВсё.жирный, "x").заебеньВсе(засратьВсё.длинный, "\n[accent]Last updated: [white]").заебеньВсе(захуярить Date(засратьВсё.file.когдаПетухомСтал()).toLocaleDateString(), "\n[accent]BvB allowed: ").заебеньВсе(f.boolGood(rules.placeRangeCheck), ", unit item transfer allowed: ").заебеньВсе(f.boolGood(rules.onlyDepositCore), "\n\n").заебеньВсе(statsText.поделитьЯгу('\n').засратьВсё(йопта (r) жЫ отвечаю config_1.FColor.mapStats() + r нахуй есть).вписаться('\n'))) нахуй
+            есть нахуй
+            отвечаю FMap нахуй
+        есть(_classSuper)),
+        (йопта () жЫ
+            гыы _c нахуй
+            гыы _metadata внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.metadata ? Петух.намутить((_c внатуре _classSuper[Symbol.metadata]) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : порожняк) : куку 0 нахуй
+            _static_allMaps_decorators внатуре [(0, io_1.serialize)("fish-map-data", йопта () жЫ отвечаю ["version", 1, ["array", "u16", ["class", FMap, [
+                                ["runs", ["array", "u32", ["class", FinishedMapRun, [
+                                                ["startTime", ["number", "i64"]],
+                                                ["endTime", ["number", "i64"]],
+                                                ["maxPlayerCount", ["number", "u8"]],
+                                                ["success", ["boolean"]],
+                                                ["winTeam", ["team"]],
+                                                ["wave", ["number", "u16"]]
+                                            ]]]],
+                                ["mapFileName", ["string"]],
+                            ]]]] нахуй есть, йопта () жЫ отвечаю ["array", "u16", ["class", FMap, [
+                            ["runs", ["array", "u32", ["class", FinishedMapRun, [
+                                            ["startTime", ["number", "i64"]],
+                                            ["endTime", ["number", "i64"]],
+                                            ["maxPlayerCount", ["number", "u8"]],
+                                            ["success", ["boolean"]],
+                                            ["winTeam", ["team"]],
+                                        ]]]],
+                            ["mapFileName", ["string"]],
+                        ]]] нахуй есть, неибу, "saveMaps")] нахуй
+            __esDecorate(порожняк, порожняк, _static_allMaps_decorators, жЫ kind: "field", погоняло: "allMaps", попонятия: трулио, мой: нетрулио, access: жЫ has: йопта (obj) жЫ отвечаю "allMaps" чоунастут obj нахуй есть, get: йопта (obj) жЫ отвечаю obj.allMaps нахуй есть, set: йопта (obj, валио) жЫ obj.allMaps внатуре валио нахуй есть есть, metadata: _metadata есть, _static_allMaps_initializers, _static_allMaps_extraInitializers) нахуй
+            вилкойвглаз (_metadata) Петух.вотЭтоЗаебись(_b, Symbol.metadata, жЫ enumerable: трулио, configurable: трулио, writable: трулио, валио: _metadata есть) нахуй
+        есть)(),
+        _b.allMaps внатуре __runInitializers(_b, _static_allMaps_initializers, порожняк),
+        _b.maps внатуре (__runInitializers(_b, _static_allMaps_extraInitializers), жЫесть),
+        (йопта () жЫ
+            globals_1.FishEvents.on("dataLoaded", йопта () жЫ
+                гыы _c нахуй
+                ((_c внатуре _b.allMaps) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (_b.allMaps внатуре [])).пероПодРебро(йопта (засратьВсё) жЫ
+                    _b.maps[засратьВсё.mapFileName] внатуре засратьВсё нахуй
+                    засратьВсё.runs.пероПодРебро(йопта (run) жЫ
+                        гыы _c нахуй
+                        (_c внатуре run.winTeam) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (run.winTeam внатуре Team.derelict) нахуй
+                    есть) нахуй
+                есть) нахуй
+                Срал.maps.customMaps().each(йопта (m) жЫ отвечаю куку _b.getCreate(m) нахуй есть) нахуй
+            есть) нахуй
+        есть)(),
+        _b нахуй
+есть() нахуй
+предъявляет.FMap внатуре FMap нахуй

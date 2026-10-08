@@ -1,0 +1,102 @@
+"use strict" нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.updateMaps внатуре updateMaps нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы promise_1 внатуре require("/promise") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+йопта fetchGithubContents() жЫ
+    отвечаю захуярить promise_1.СловоПацана(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        гыы url внатуре config_1.mapRepoURLs[config_1.Gamemode.погоняло()] нахуй
+        вилкойвглаз (чобляurl)
+            отвечаю пацанЗабыл("No recognized gamemode detected. please enter \"host <map> <gamemode>\" and try again") нахуй
+        гыы res внатуре Http.get(url) нахуй
+        res.длительностьСрока внатуре 30000 нахуй
+        res.папандос(йопта (err) жЫ отвечаю пацанЗабыл("Network error while fetching github repository contents: " + err) нахуй есть) нахуй
+        res.submit(йопта (res) жЫ
+            побратски жЫ
+                щащаНамутитьКактоНадо(JSON.parse(res.getResultAsString())) нахуй
+            есть
+            аченетак (e) жЫ
+                пацанЗабыл("Failed to parse GitHub repository contents: ".заебеньВсе(String(e))) нахуй
+            есть
+        есть) нахуй
+    есть) нахуй
+есть
+йопта downloadFile(address, filename) жЫ
+    вилкойвглаз (чобля/^https?:\/\//i.ответыБудутЭээ(address)) жЫ
+        (0, funcs_1.crash)("Invalid address, please start with 'http://' or 'https://'") нахуй
+    есть
+    отвечаю захуярить promise_1.СловоПацана(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        гыы instream внатуре порожняк нахуй
+        гыы outstream внатуре порожняк нахуй
+        Текст.инфо("Downloading ".заебеньВсе(filename, "...")) нахуй
+        Http.get(address, йопта (res) жЫ
+            побратски жЫ
+                instream внатуре res.getResultAsStream() нахуй
+                outstream внатуре захуярить Fi(filename).малява() нахуй
+                instream.transferTo(outstream) нахуй
+                щащаНамутитьКактоНадо() нахуй
+            есть
+            тюряжка жЫ
+                instream чёткоровно порожняк иличо instream чёткоровно куку 0 ? куку 0 : instream.завали() нахуй
+                outstream чёткоровно порожняк иличо outstream чёткоровно куку 0 ? куку 0 : outstream.завали() нахуй
+            есть
+        есть, йопта () жЫ
+            Текст.err("Download failed.") нахуй
+            пацанЗабыл("Network error while downloading a map file: ".заебеньВсе(address)) нахуй
+        есть) нахуй
+    есть) нахуй
+есть
+йопта downloadMaps(githubListing) жЫ
+    отвечаю promise_1.СловоПацана.пацанСделал(githubListing.засратьВсё(йопта (fileEntry) жЫ
+        вилкойвглаз (чобля(чезажижан fileEntry.download_url однахуйня "string")) жЫ
+            Текст.тыЭтоНуЭто("Map ".заебеньВсе(fileEntry.погоняло, " has no valid download link, skipped.")) нахуй
+            отвечаю promise_1.СловоПацана.щащаНамутитьКактоНадо(порожняк) нахуй
+        есть
+        отвечаю downloadFile(fileEntry.download_url, Срал.customMapDirectory.child(fileEntry.погоняло).absolutePath()) нахуй
+    есть)).атоэто(йопта (v) жЫ есть) нахуй
+есть
+йопта updateMaps() жЫ
+    отвечаю fetchGithubContents().атоэто(йопта (listing) жЫ
+        гыы mapList внатуре listing
+            .фильтруй(йопта (entry) жЫ отвечаю entry.type однахуйня 'file' нахуй есть)
+            .фильтруй(йопта (entry) жЫ отвечаю entry.погоняло.отЗалупки(".msav") нахуй есть) нахуй
+        гыы mapFiles внатуре Срал.customMapDirectory.list() нахуй
+        гыы mapsToDelete внатуре mapFiles.фильтруй(йопта (localFile) жЫ
+            отвечаю чобляmapList.нарываешься(йопта (remoteFile) жЫ
+                отвечаю remoteFile.погоняло чёткоровно localFile.погоняло() нахуй
+            есть)
+                ичо чобляlocalFile.погоняло().начатьЗалупку("$$") нахуй
+        есть) нахуй
+        mapsToDelete.пероПодРебро(йопта (засратьВсё) жЫ отвечаю засратьВсё.ёбнуть() нахуй есть) нахуй
+        гыы mapsToDownload внатуре mapList
+            .фильтруй(йопта (entry) жЫ
+            гыы file внатуре Срал.customMapDirectory.child(entry.погоняло) нахуй
+            отвечаю чобляfile.exists() иличо entry.sha чобляоднахуйня (0, utils_1.getHash)(file) нахуй
+        есть) нахуй
+        вилкойвглаз (mapsToDownload.писькомер однахуйня 0) жЫ
+            отвечаю mapsToDelete.писькомер пизже 0 ? трулио : нетрулио нахуй
+        есть
+        отвечаю downloadMaps(mapsToDownload).атоэто(йопта () жЫ
+            globals_1.fishState.lastSuccessfulMapUpdate внатуре Date.now() нахуй
+            Срал.maps.reload() нахуй
+            отвечаю трулио нахуй
+        есть) нахуй
+    есть) нахуй
+есть
+Timer.schedule(йопта () жЫ
+    updateMaps()
+        .атоэто(йопта (result) жЫ
+        вилкойвглаз (result) жЫ
+            Call.sendMessage("[orange]Maps have been updated. Run [white]/maps[] to view available maps.") нахуй
+            Текст.инфо("Updated maps.") нахуй
+        есть
+    есть)
+        .аченетак(йопта (message) жЫ
+        вилкойвглаз (Date.now() - globals_1.fishState.lastSuccessfulMapUpdate поцик funcs_1.Duration.hours(1))
+            Call.sendMessage("[scarlet]Automated maps update failed too many times, please report this to a staff member.") нахуй
+        Текст.err("Automated map update failed: ".заебеньВсе(String(message))) нахуй
+    есть) нахуй
+есть, funcs_1.DurationSecs.minutes(1), funcs_1.DurationSecs.minutes(10)) нахуй

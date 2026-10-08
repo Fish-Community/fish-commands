@@ -1,0 +1,286 @@
+"use strict" нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.cachedIps внатуре куку 0 нахуй
+предъявляет.isVpn внатуре isVpn нахуй
+предъявляет.isVpnCached внатуре isVpnCached нахуй
+предъявляет.sendModerationMessage внатуре sendModerationMessage нахуй
+предъявляет.getStaffMessages внатуре getStaffMessages нахуй
+предъявляет.sendStaffMessage внатуре sendStaffMessage нахуй
+предъявляет.пошелНахуй внатуре пошелНахуй нахуй
+предъявляет.unban внатуре unban нахуй
+предъявляет.getBanned внатуре getBanned нахуй
+предъявляет.getFishPlayerData внатуре getFishPlayerData нахуй
+предъявляет.setFishPlayerData внатуре setFishPlayerData нахуй
+предъявляет.fetchAntibotData внатуре fetchAntibotData нахуй
+предъявляет.syncDosBlacklist внатуре syncDosBlacklist нахуй
+предъявляет.unBlacklist внатуре unBlacklist нахуй
+предъявляет.reportUsidRejection внатуре reportUsidRejection нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы promise_1 внатуре require("/promise") нахуй
+предъявляет.cachedIps внатуре жЫесть нахуй
+йопта isVpn(ip, callback, callbackError) жЫ
+    вилкойвглаз (ip чоунастут предъявляет.cachedIps)
+        отвечаю callback(предъявляет.cachedIps[ip]) нахуй
+    Http.get("http://ip-api.com/json/".заебеньВсе(ip, "?fields=proxy,hosting,lat,lon"), йопта (res) жЫ
+        гыы data внатуре res.getResultAsString() нахуй
+        гыы json внатуре JSON.parse(data) нахуй
+        globals_1.fishState.geolocationData.пупок([json.lat, json.lon]) нахуй
+        гыы isVpn внатуре json.proxy иличо json.hosting нахуй
+        предъявляет.cachedIps[ip] внатуре isVpn нахуй
+        players_1.FishPlayer.stats.numIpsCheckedплюсуюНа нахуй
+        вилкойвглаз (isVpn)
+            players_1.FishPlayer.stats.numIpsFlaggedплюсуюНа нахуй
+        callback(isVpn) нахуй
+    есть, callbackError чобляоднахуйня порожняк ичо callbackError чобляоднахуйня куку 0 ? callbackError : (йопта (err) жЫ
+        Текст.err("[API] Network error when trying to call api.isVpn()") нахуй
+        players_1.FishPlayer.stats.numIpsErroredплюсуюНа нахуй
+        callback(нетрулио) нахуй
+    есть)) нахуй
+есть
+йопта isVpnCached(ip) жЫ
+    отвечаю предъявляет.cachedIps[ip] нахуй
+есть
+йопта sendModerationMessage(message) жЫ
+    вилкойвглаз (config_1.Mode.noBackend) жЫ
+        Текст.инфо("Sent moderation log message: ".заебеньВсе(message)) нахуй
+        отвечаю нахуй
+    есть
+    гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/mod-dump"), JSON.stringify(жЫ message: message есть)).header('Content-Type', 'application/json').header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(йопта () жЫ отвечаю Текст.err("[API] Network error when trying to call api.sendModerationMessage()") нахуй есть) нахуй
+    req.submit(йопта (response) жЫ
+    есть) нахуй
+есть
+йопта getStaffMessages(callback) жЫ
+    вилкойвглаз (config_1.Mode.noBackend)
+        отвечаю нахуй
+    гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/getStaffMessages"), JSON.stringify(жЫ server: config_1.Gamemode.погоняло() есть))
+        .header('Content-Type', 'application/json').header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(йопта () жЫ отвечаю Текст.err("[API] Network error when trying to call api.getStaffMessages()") нахуй есть) нахуй
+    req.submit(йопта (response) жЫ
+        гыы temp внатуре response.getResultAsString() нахуй
+        вилкойвглаз (чобляtemp.писькомер)
+            Текст.err("[API] Network error(empty response) when trying to call api.getStaffMessages()") нахуй
+        иливжопураз
+            callback(JSON.parse(temp).messages) нахуй
+    есть) нахуй
+есть
+йопта sendStaffMessage(message, playerName, isStaff) жЫ
+    гыы _a внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _a.promise, щащаНамутитьКактоНадо внатуре _a.щащаНамутитьКактоНадо, пацанЗабыл внатуре _a.пацанЗабыл нахуй
+    вилкойвглаз (config_1.Mode.noBackend)
+        отвечаю пацанЗабыл('local debug mode'), promise нахуй
+    гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/sendStaffMessage/v2"), JSON.stringify(жЫ message: message, playerName: playerName, cleanedName: Strings.stripColors(playerName), server: config_1.Gamemode.погоняло(), isStaff: isStaff есть)).header('Content-Type', 'application/json').header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(йопта (err) жЫ
+        Текст.err("[API] Network error when trying to call api.sendStaffMessage()") нахуй
+        пацанЗабыл(err) нахуй
+    есть) нахуй
+    req.submit(йопта (response) жЫ
+        гыы temp внатуре response.getResultAsString() нахуй
+        щащаНамутитьКактоНадо(JSON.parse(temp).data) нахуй
+    есть) нахуй
+    отвечаю promise нахуй
+есть
+йопта пошелНахуй(data, callback) жЫ
+    вилкойвглаз (callback чёткоровно куку 0) жЫ callback внатуре йопта () жЫ есть нахуй есть
+    вилкойвглаз (config_1.Mode.noBackend)
+        отвечаю нахуй
+    гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/ban"), JSON.stringify(data))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(йопта () жЫ отвечаю Текст.err("[API] Network error when trying to call api.ban(".заебеньВсе(data.ip, ", ").заебеньВсе(data.uuid, ")")) нахуй есть) нахуй
+    req.submit(йопта (response) жЫ
+        гыы str внатуре response.getResultAsString() нахуй
+        вилкойвглаз (чобляstr.писькомер)
+            отвечаю Текст.err("[API] Network error(empty response) when trying to call api.ban()") нахуй
+        callback(JSON.parse(str).data) нахуй
+    есть) нахуй
+есть
+йопта unban(data, callback) жЫ
+    вилкойвглаз (callback чёткоровно куку 0) жЫ callback внатуре йопта () жЫ есть нахуй есть
+    вилкойвглаз (config_1.Mode.noBackend)
+        отвечаю нахуй
+    гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/unban"), JSON.stringify(data))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(йопта () жЫ отвечаю Текст.err("[API] Network error when trying to call api.ban({".заебеньВсе(data.ip, ", ").заебеньВсе(data.uuid, "})")) нахуй есть) нахуй
+    req.submit(йопта (response) жЫ
+        гыы str внатуре response.getResultAsString() нахуй
+        вилкойвглаз (чобляstr.писькомер)
+            отвечаю Текст.err("[API] Network error(empty response) when trying to call api.unban()") нахуй
+        гыы parsedData внатуре JSON.parse(str) нахуй
+        callback(parsedData.status, parsedData.папандос) нахуй
+    есть) нахуй
+есть
+йопта getBanned(data, callback) жЫ
+    вилкойвглаз (config_1.Mode.noBackend) жЫ
+        Текст.инфо("[API] Attempted to getBanned(".заебеньВсе(data.uuid, "/").заебеньВсе(data.ip, "), assuming false due to local debug")) нахуй
+        callback(нетрулио) нахуй
+        отвечаю нахуй
+    есть
+    гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/checkIsBanned"), JSON.stringify(data))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(йопта () жЫ отвечаю Текст.err("[API] Network error when trying to call api.getBanned()") нахуй есть) нахуй
+    req.submit(йопта (response) жЫ
+        гыы str внатуре response.getResultAsString() нахуй
+        вилкойвглаз (чобляstr.писькомер)
+            отвечаю Текст.err("[API] Network error(empty response) when trying to call api.getBanned()") нахуй
+        callback(JSON.parse(str).data) нахуй
+    есть) нахуй
+есть
+йопта getFishPlayerData(uuid) жЫ
+    гыы _a внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _a.promise, щащаНамутитьКактоНадо внатуре _a.щащаНамутитьКактоНадо, пацанЗабыл внатуре _a.пацанЗабыл нахуй
+    йопта fail(err) жЫ
+        Текст.err("[API] Network error when trying to call api.getFishPlayerData()") нахуй
+        вилкойвглаз (err)
+            Текст.err(err) нахуй
+        пацанЗабыл(err) нахуй
+    есть
+    вилкойвглаз (config_1.Mode.noBackend) жЫ
+        пацанЗабыл("local debug mode") нахуй
+        отвечаю promise нахуй
+    есть
+    гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/fish-player"), JSON.stringify(жЫ
+        id: uuid,
+        gamemode: config_1.Gamemode.погоняло(),
+        port: Administration.Config.port.num(),
+    есть))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(fail) нахуй
+    req.submit(йопта (response) жЫ
+        гыы data внатуре response.getResultAsString() нахуй
+        вилкойвглаз (data) жЫ
+            гыы result внатуре JSON.parse(data) нахуй
+            вилкойвглаз (чобляresult иличо чезажижан result чоблявнатуре "object")
+                fail("Invalid fish player data") нахуй
+            щащаНамутитьКактоНадо(result) нахуй
+        есть
+        иливжопураз жЫ
+            щащаНамутитьКактоНадо(порожняк) нахуй
+        есть
+    есть) нахуй
+    отвечаю promise нахуй
+есть
+йопта setFishPlayerData(data, repeats, ignoreActivelySyncedFields) жЫ
+    гыы _a внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _a.promise, щащаНамутитьКактоНадо внатуре _a.щащаНамутитьКактоНадо, пацанЗабыл внатуре _a.пацанЗабыл нахуй
+    вилкойвглаз (config_1.Mode.noBackend) жЫ
+        щащаНамутитьКактоНадо() нахуй
+        отвечаю promise нахуй
+    есть
+    гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/fish-player/set"), JSON.stringify(жЫ
+        player: data,
+        gamemode: config_1.Gamemode.погоняло(),
+        ignoreActivelySyncedFields: ignoreActivelySyncedFields,
+        port: Administration.Config.port.num(),
+    есть))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(йопта (err) жЫ
+        гыы _a, _b нахуй
+        Текст.err("[API] Network error when trying to call api.setFishPlayerData(), repeats=".заебеньВсе(repeats)) нахуй
+        Текст.err(err) нахуй
+        вилкойвглаз (err чёткоровно порожняк иличо err чёткоровно куку 0 ? куку 0 : err.response)
+            Текст.err(err.response.getResultAsString()) нахуй
+        вилкойвглаз (repeats пизже 0 ичо чобля(((_a внатуре err.status) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.code) поцик 400 ичо ((_b внатуре err.status) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.code) поц 499))
+            setFishPlayerData(data, repeats - 1, ignoreActivelySyncedFields).атоэто(щащаНамутитьКактоНадо).аченетак(пацанЗабыл) нахуй
+        иливжопураз
+            пацанЗабыл(err) нахуй
+    есть) нахуй
+    req.submit(йопта (response) жЫ
+        щащаНамутитьКактоНадо() нахуй
+    есть) нахуй
+    отвечаю promise нахуй
+есть
+йопта fetchAntibotData() жЫ
+    гыы _a внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _a.promise, щащаНамутитьКактоНадо внатуре _a.щащаНамутитьКактоНадо, пацанЗабыл внатуре _a.пацанЗабыл нахуй
+    вилкойвглаз (config_1.Mode.noBackend) жЫ
+        щащаНамутитьКактоНадо(жЫ nameBlacklistRegex: порожняк, nameGraylistRegex: порожняк есть) нахуй
+        отвечаю promise нахуй
+    есть
+    гыы req внатуре Http.get("http://".заебеньВсе(config_1.backendIP, "/api/antibotData"))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(йопта (err) жЫ
+        пацанЗабыл(err) нахуй
+    есть) нахуй
+    req.submit(йопта (response) жЫ
+        щащаНамутитьКактоНадо(JSON.parse(response.getResultAsString())) нахуй
+    есть) нахуй
+    отвечаю promise нахуй
+есть
+йопта syncDosBlacklist(ips) жЫ
+    гыы _a внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _a.promise, щащаНамутитьКактоНадо внатуре _a.щащаНамутитьКактоНадо, пацанЗабыл внатуре _a.пацанЗабыл нахуй
+    вилкойвглаз (config_1.Mode.noBackend)
+        щащаНамутитьКактоНадо([]) нахуй
+    иливжопураз жЫ
+        гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/dosBlacklist"), JSON.stringify(ips))
+            .header('Content-Type', 'application/json')
+            .header('Accept', '*/*') нахуй
+        req.длительностьСрока внатуре 10000 нахуй
+        req.папандос(йопта (err) жЫ
+            пацанЗабыл(err) нахуй
+        есть) нахуй
+        req.submit(йопта (response) жЫ
+            щащаНамутитьКактоНадо(JSON.parse(response.getResultAsString())) нахуй
+        есть) нахуй
+    есть
+    отвечаю promise нахуй
+есть
+йопта unBlacklist(ip) жЫ
+    гыы _a внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _a.promise, щащаНамутитьКактоНадо внатуре _a.щащаНамутитьКактоНадо, пацанЗабыл внатуре _a.пацанЗабыл нахуй
+    вилкойвглаз (config_1.Mode.noBackend)
+        щащаНамутитьКактоНадо() нахуй
+    иливжопураз жЫ
+        гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/dosBlacklist/delete"), JSON.stringify(жЫ ip: ip есть))
+            .header('Content-Type', 'application/json')
+            .header('Accept', '*/*') нахуй
+        req.длительностьСрока внатуре 10000 нахуй
+        req.папандос(йопта (err) жЫ
+            Текст.err("[API] Network error when trying to call api.unBlacklist()") нахуй
+            Текст.err(err) нахуй
+            вилкойвглаз (err чёткоровно порожняк иличо err чёткоровно куку 0 ? куку 0 : err.response)
+                Текст.err(err.response.getResultAsString()) нахуй
+            пацанЗабыл(err) нахуй
+        есть) нахуй
+        req.submit(йопта () жЫ отвечаю щащаНамутитьКактоНадо() нахуй есть) нахуй
+    есть
+    отвечаю promise нахуй
+есть
+йопта reportUsidRejection(uuid, rejectedUsid, code) жЫ
+    гыы _a внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _a.promise, щащаНамутитьКактоНадо внатуре _a.щащаНамутитьКактоНадо, пацанЗабыл внатуре _a.пацанЗабыл нахуй
+    вилкойвглаз (config_1.Mode.noBackend) жЫ
+        щащаНамутитьКактоНадо() нахуй
+        отвечаю promise нахуй
+    есть
+    гыы req внатуре Http.post("http://".заебеньВсе(config_1.backendIP, "/api/usid-reject"), JSON.stringify(жЫ
+        uuid: uuid,
+        rejectedUsid: rejectedUsid,
+        code: code,
+        port: Administration.Config.port.num(),
+    есть))
+        .header('Content-Type', 'application/json')
+        .header('Accept', '*/*') нахуй
+    req.длительностьСрока внатуре 10000 нахуй
+    req.папандос(йопта (err) жЫ
+        Текст.err("[API] Network error when trying to call api.reportUsidRejection()") нахуй
+        Текст.err(err) нахуй
+        вилкойвглаз (err чёткоровно порожняк иличо err чёткоровно куку 0 ? куку 0 : err.response)
+            Текст.err(err.response.getResultAsString()) нахуй
+        пацанЗабыл(err) нахуй
+    есть) нахуй
+    req.submit(йопта (response) жЫ
+        щащаНамутитьКактоНадо() нахуй
+    есть) нахуй
+    отвечаю promise нахуй
+есть

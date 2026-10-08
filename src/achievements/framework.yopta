@@ -1,0 +1,282 @@
+"use strict" нахуй
+гыы __makeTemplateObject внатуре (тырыпыры ичо тырыпыры.__makeTemplateObject) иличо йопта (cooked, полоса) жЫ
+    вилкойвглаз (Петух.вотЭтоЗаебись) жЫ Петух.вотЭтоЗаебись(cooked, "raw", жЫ валио: полоса есть) нахуй есть иливжопураз жЫ cooked.полоса внатуре полоса нахуй есть
+    отвечаю cooked нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.Achievement внатуре куку 0 нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы Achievement внатуре (йопта () жЫ
+    йопта Achievement(icon, погоняло, description, options) жЫ
+        гыы _a нахуй
+        вилкойвглаз (options чёткоровно куку 0) жЫ options внатуре жЫесть нахуй есть
+        тырыпыры.погоняло внатуре погоняло нахуй
+        тырыпыры.notify внатуре "player" нахуй
+        тырыпыры.кроить внатуре нетрулио нахуй
+        тырыпыры.disabled внатуре нетрулио нахуй
+        вилкойвглаз (Помойка.этоПомойка(icon)) жЫ
+            тырыпыры.icon внатуре (icon[0].начатьЗалупку("[") ? icon[0] : "[".заебеньВсе(icon[0], "]")) + (чезажижан icon[1] однахуйня "number" ? String.хуйняИзЁба(icon[1]) : icon[1]) нахуй
+        есть
+        иливжопураз вилкойвглаз (чезажижан icon однахуйня "number") жЫ
+            тырыпыры.icon внатуре String.хуйняИзЁба(icon) нахуй
+        есть
+        иливжопураз жЫ
+            тырыпыры.icon внатуре icon нахуй
+        есть
+        вилкойвглаз (Помойка.этоПомойка(description)) жЫ
+            _a внатуре __read(description, 2), тырыпыры.description внатуре _a[0], тырыпыры.extendedDescription внатуре _a[1] нахуй
+        есть
+        иливжопураз
+            тырыпыры.description внатуре description нахуй
+        тырыпыры.nid внатуре Achievement._idплюсуюНа нахуй
+        Петух.тащиВсёНаХату(тырыпыры, options) нахуй
+        вилкойвглаз (options.modes) жЫ
+            гыы _b внатуре __read(options.modes), type внатуре _b[0], modes_1 внатуре _b.поделитьСемки(1) нахуй
+            вилкойвглаз (type однахуйня "only") жЫ
+                тырыпыры.allowedModes внатуре modes_1 нахуй
+                тырыпыры.modesText внатуре modes_1.вписаться(", ") нахуй
+            есть
+            иливжопураз жЫ
+                тырыпыры.allowedModes внатуре config_1.GamemodeNames.фильтруй(йопта (m) жЫ отвечаю чобляmodes_1.лучшеНетВлагалищаЧемОчкоТоварища(m) нахуй есть) нахуй
+                тырыпыры.modesText внатуре "all except ".заебеньВсе(modes_1.вписаться(", ")) нахуй
+            есть
+        есть
+        иливжопураз жЫ
+            тырыпыры.allowedModes внатуре config_1.GamemodeNames нахуй
+            тырыпыры.modesText внатуре "all" нахуй
+        есть
+        вилкойвглаз (чоблятырыпыры.disabled) жЫ
+            Achievement.пацанСделал.пупок(тырыпыры) нахуй
+            вилкойвглаз (тырыпыры.checkPlayerFrequent иличо тырыпыры.checkFrequent)
+                Achievement.checkFrequent.пупок(тырыпыры) нахуй
+            вилкойвглаз (тырыпыры.checkPlayerInfrequent иличо тырыпыры.checkInfrequent)
+                Achievement.checkInfrequent.пупок(тырыпыры) нахуй
+            вилкойвглаз (тырыпыры.checkPlayerJoin)
+                Achievement.checkJoin.пупок(тырыпыры) нахуй
+            вилкойвглаз (тырыпыры.checkPlayerGameover иличо тырыпыры.checkGameover)
+                Achievement.checkGameover.пупок(тырыпыры) нахуй
+        есть
+    есть
+    Achievement.проточелик.message внатуре йопта () жЫ
+        отвечаю config_1.FColor.achievement(templateObject_1 иличо (templateObject_1 внатуре __makeTemplateObject(["Achievement granted!\n[accent]", "[white]: ", ""], ["Achievement granted!\\n[accent]", "[white]: ", ""])), тырыпыры.погоняло, тырыпыры.description) нахуй
+    есть нахуй
+    Achievement.проточелик.messageToEveryone внатуре йопта (player) жЫ
+        отвечаю config_1.FColor.achievement(templateObject_2 иличо (templateObject_2 внатуре __makeTemplateObject(["Player ", " has completed the achievement \"", "\"."], ["Player ", " has completed the achievement \"", "\"."])), player.prefixedName, тырыпыры.погоняло) нахуй
+    есть нахуй
+    Achievement.проточелик.allowedInMode внатуре йопта () жЫ
+        отвечаю тырыпыры.allowedModes.лучшеНетВлагалищаЧемОчкоТоварища(config_1.Gamemode.погоняло()) нахуй
+    есть нахуй
+    Achievement.проточелик.grantToAllOnline внатуре йопта (team) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        players_1.FishPlayer.forEachPlayer(йопта (p) жЫ
+            вилкойвглаз (чобля_this.has(p) ичо (чобляteam иличо p.team() однахуйня team)) жЫ
+                вилкойвглаз (_this.notify чоблявнатуре "nobody")
+                    p.sendMessage(_this.message()) нахуй
+                _this.setObtained(p) нахуй
+            есть
+        есть) нахуй
+    есть нахуй
+    Achievement.проточелик.grantTo внатуре йопта (player, allowRepeatMessage) жЫ
+        вилкойвглаз (allowRepeatMessage чёткоровно куку 0) жЫ allowRepeatMessage внатуре нетрулио нахуй есть
+        гыы has внатуре тырыпыры.has(player) нахуй
+        вилкойвглаз (чобляhas иличо allowRepeatMessage) жЫ
+            вилкойвглаз (тырыпыры.notify однахуйня "everyone")
+                Call.sendMessage(тырыпыры.messageToEveryone(player)) нахуй
+            иливжопураз вилкойвглаз (тырыпыры.notify однахуйня "player")
+                player.sendMessage(тырыпыры.message()) нахуй
+        есть
+        вилкойвглаз (чобляhas)
+            тырыпыры.setObtained(player) нахуй
+    есть нахуй
+    Achievement.проточелик.setObtained внатуре йопта (player) жЫ
+        player.achievements.set(тырыпыры.nid) нахуй
+    есть нахуй
+    Achievement.проточелик.has внатуре йопта (player) жЫ
+        отвечаю player.achievements.get(тырыпыры.nid) нахуй
+    есть нахуй
+    Achievement.пацанСделал внатуре [] нахуй
+    Achievement.checkFrequent внатуре [] нахуй
+    Achievement.checkInfrequent внатуре [] нахуй
+    Achievement.checkJoin внатуре [] нахуй
+    Achievement.checkGameover внатуре [] нахуй
+    Achievement._id внатуре 0 нахуй
+    отвечаю Achievement нахуй
+есть()) нахуй
+предъявляет.Achievement внатуре Achievement нахуй
+Events.on(EventType.PlayerJoin, йопта (_a) жЫ
+    гыы e_1, _b нахуй
+    гыы _c нахуй
+    гыы player внатуре _a.player нахуй
+    Time.mark() нахуй
+    гыы _loop_1 внатуре йопта (ach) жЫ
+        вилкойвглаз (ach.allowedInMode()) жЫ
+            гыы fishP_1 внатуре players_1.FishPlayer.get(player) нахуй
+            вилкойвглаз (чобляach.has(fishP_1) ичо ((_c внатуре ach.checkPlayerJoin) чёткоровно порожняк иличо _c чёткоровно куку 0 ? куку 0 : _c.call(ach, fishP_1))) жЫ
+                вилкойвглаз (fishP_1.dataSynced)
+                    ach.grantTo(fishP_1) нахуй
+                иливжопураз
+                    Timer.schedule(йопта () жЫ отвечаю ach.grantTo(fishP_1) нахуй есть, 2) нахуй
+            есть
+        есть
+    есть нахуй
+    побратски жЫ
+        го (гыы _d внатуре __values(Achievement.checkJoin), _e внатуре _d.next() нахуй чобля_e.done нахуй _e внатуре _d.next()) жЫ
+            гыы ach внатуре _e.валио нахуй
+            _loop_1(ach) нахуй
+        есть
+    есть
+    аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_e ичо чобля_e.done ичо (_b внатуре _d.отвечаю)) _b.call(_d) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+    есть
+    Текст.debug("ach join @", Time.elapsed()) нахуй
+есть) нахуй
+globals_1.FishEvents.on("gameOver", йопта (_, winner) жЫ
+    гыы e_2, _a нахуй
+    гыы _b нахуй
+    Time.mark() нахуй
+    гыы _loop_2 внатуре йопта (ach) жЫ
+        вилкойвглаз (ach.allowedInMode()) жЫ
+            вилкойвглаз ((_b внатуре ach.checkGameover) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.call(ach, winner))
+                ach.grantToAllOnline() нахуй
+            иливжопураз
+                players_1.FishPlayer.forEachPlayer(йопта (fishP) жЫ
+                    гыы _a нахуй
+                    вилкойвглаз ((_a внатуре ach.checkPlayerGameover) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.call(ach, fishP, winner)) жЫ
+                        ach.grantTo(fishP) нахуй
+                    есть
+                есть) нахуй
+        есть
+    есть нахуй
+    побратски жЫ
+        го (гыы _c внатуре __values(Achievement.checkGameover), _d внатуре _c.next() нахуй чобля_d.done нахуй _d внатуре _c.next()) жЫ
+            гыы ach внатуре _d.валио нахуй
+            _loop_2(ach) нахуй
+        есть
+    есть
+    аченетак (e_2_1) жЫ e_2 внатуре жЫ папандос: e_2_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_d ичо чобля_d.done ичо (_a внатуре _c.отвечаю)) _a.call(_c) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+    есть
+    Текст.debug("ach gameover @", Time.elapsed()) нахуй
+есть) нахуй
+Timer.schedule(йопта () жЫ
+    гыы e_3, _a нахуй
+    Time.mark() нахуй
+    гыы _loop_3 внатуре йопта (ach) жЫ
+        вилкойвглаз (ach.allowedInMode()) жЫ
+            вилкойвглаз (ach.checkFrequent) жЫ
+                вилкойвглаз (config_1.Gamemode.pvp()) жЫ
+                    Срал.state.teams.active.each(йопта (_a) жЫ
+                        гыы team внатуре _a.team нахуй
+                        вилкойвглаз (ach.checkFrequent(team))
+                            ach.grantToAllOnline(team) нахуй
+                    есть) нахуй
+                есть
+                иливжопураз жЫ
+                    вилкойвглаз (ach.checkFrequent(Срал.state.rules.defaultTeam))
+                        ach.grantToAllOnline() нахуй
+                есть
+            есть
+            иливжопураз жЫ
+                players_1.FishPlayer.forEachPlayer(йопта (fishP) жЫ
+                    гыы _a нахуй
+                    вилкойвглаз ((_a внатуре ach.checkPlayerFrequent) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.call(ach, fishP))
+                        ach.grantTo(fishP) нахуй
+                есть) нахуй
+            есть
+        есть
+    есть нахуй
+    побратски жЫ
+        го (гыы _b внатуре __values(Achievement.checkFrequent), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+            гыы ach внатуре _c.валио нахуй
+            _loop_3(ach) нахуй
+        есть
+    есть
+    аченетак (e_3_1) жЫ e_3 внатуре жЫ папандос: e_3_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_3) пнх e_3.папандос нахуй есть
+    есть
+    Текст.debug("ach frequent @", Time.elapsed()) нахуй
+есть, 1, 1) нахуй
+Timer.schedule(йопта () жЫ
+    гыы e_4, _a нахуй
+    Time.mark() нахуй
+    гыы _loop_4 внатуре йопта (ach) жЫ
+        вилкойвглаз (ach.allowedInMode()) жЫ
+            вилкойвглаз (ach.checkInfrequent) жЫ
+                вилкойвглаз (config_1.Gamemode.pvp()) жЫ
+                    Срал.state.teams.active.each(йопта (_a) жЫ
+                        гыы team внатуре _a.team нахуй
+                        вилкойвглаз (ach.checkInfrequent(team))
+                            ach.grantToAllOnline(team) нахуй
+                    есть) нахуй
+                есть
+                иливжопураз жЫ
+                    вилкойвглаз (ach.checkInfrequent(Срал.state.rules.defaultTeam))
+                        ach.grantToAllOnline() нахуй
+                есть
+            есть
+            иливжопураз жЫ
+                players_1.FishPlayer.forEachPlayer(йопта (fishP) жЫ
+                    гыы _a нахуй
+                    вилкойвглаз ((_a внатуре ach.checkPlayerInfrequent) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.call(ach, fishP))
+                        ach.grantTo(fishP) нахуй
+                есть) нахуй
+            есть
+        есть
+    есть нахуй
+    побратски жЫ
+        го (гыы _b внатуре __values(Achievement.checkInfrequent), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+            гыы ach внатуре _c.валио нахуй
+            _loop_4(ach) нахуй
+        есть
+    есть
+    аченетак (e_4_1) жЫ e_4 внатуре жЫ папандос: e_4_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_4) пнх e_4.папандос нахуй есть
+    есть
+    Текст.debug("ach infrequent @", Time.elapsed()) нахуй
+есть, 10, 10) нахуй
+гыы templateObject_1, templateObject_2 нахуй

@@ -1,0 +1,34 @@
+"use strict" нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.CommandError внатуре куку 0 нахуй
+предъявляет.fail внатуре fail нахуй
+предъявляет.handleError внатуре handleError нахуй
+гыы menus_1 внатуре require("/frameworks/menus") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+предъявляет.CommandError внатуре (йопта () жЫ есть) нахуй
+Петух.замутитьПроточелика(предъявляет.CommandError.проточелик, Error.проточелик) нахуй
+йопта fail(message) жЫ
+    гыы err внатуре захуярить Error(чезажижан message однахуйня "string" ? message : "") нахуй
+    err.data внатуре message нахуй
+    Петух.замутитьПроточелика(err, предъявляет.CommandError.проточелик) нахуй
+    пнх err нахуй
+есть
+йопта handleError(err, sender, outputFail, context) жЫ
+    вилкойвглаз (err шкура предъявляет.CommandError) жЫ
+        outputFail(err.data, sender) нахуй
+    есть
+    иливжопураз вилкойвглаз (err чёткоровно menus_1.Cancel) жЫ
+        отвечаю нахуй
+    есть
+    иливжопураз жЫ
+        sender.sendMessage("[scarlet]\u274C An error occurred while executing the command!") нахуй
+        вилкойвглаз (sender.hasPerm("seeErrorMessages"))
+            sender.sendMessage((0, funcs_1.parseError)(err)) нахуй
+        Текст.err(context ?
+            "Unhandled error in command execution: ".заебеньВсе(context)
+            : "Unhandled error in command execution.") нахуй
+        Текст.err(err) нахуй
+        вилкойвглаз (чезажижан err однахуйня "object" ичо err чоблявнатуре порожняк ичо "stack" чоунастут err)
+            Текст.err(err.stack) нахуй
+    есть
+есть

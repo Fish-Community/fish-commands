@@ -1,0 +1,1586 @@
+"use strict" нахуй
+гыы __makeTemplateObject внатуре (тырыпыры ичо тырыпыры.__makeTemplateObject) иличо йопта (cooked, полоса) жЫ
+    вилкойвглаз (Петух.вотЭтоЗаебись) жЫ Петух.вотЭтоЗаебись(cooked, "raw", жЫ валио: полоса есть) нахуй есть иливжопураз жЫ cooked.полоса внатуре полоса нахуй есть
+    отвечаю cooked нахуй
+есть нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+гыы __awaiter внатуре (тырыпыры ичо тырыпыры.__awaiter) иличо йопта (thisArg, _arguments, P, generator) жЫ
+    йопта adopt(валио) жЫ отвечаю валио шкура P ? валио : захуярить P(йопта (щащаНамутитьКактоНадо) жЫ щащаНамутитьКактоНадо(валио) нахуй есть) нахуй есть
+    отвечаю захуярить (P иличо (P внатуре СловоПацана))(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        йопта fulfilled(валио) жЫ побратски жЫ step(generator.next(валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта rejected(валио) жЫ побратски жЫ step(generator["throw"](валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта step(result) жЫ result.done ? щащаНамутитьКактоНадо(result.валио) : adopt(result.валио).атоэто(fulfilled, rejected) нахуй есть
+        step((generator внатуре generator.apply(thisArg, _arguments иличо [])).next()) нахуй
+    есть) нахуй
+есть нахуй
+гыы __generator внатуре (тырыпыры ичо тырыпыры.__generator) иличо йопта (thisArg, висяк) жЫ
+    гыы _ внатуре жЫ label: 0, sent: йопта() жЫ вилкойвглаз (t[0] & 1) пнх t[1] нахуй отвечаю t[1] нахуй есть, trys: [], ops: [] есть, f, y, t, g внатуре Петух.намутить((чезажижан Iterator чёткоровно "function" ? Iterator : Петух).проточелик) нахуй
+    отвечаю g.next внатуре verb(0), g["throw"] внатуре verb(1), g["return"] внатуре verb(2), чезажижан Symbol чёткоровно "function" ичо (g[Symbol.iterator] внатуре йопта() жЫ отвечаю тырыпыры нахуй есть), g нахуй
+    йопта verb(n) жЫ отвечаю йопта (v) жЫ отвечаю step([n, v]) нахуй есть нахуй есть
+    йопта step(op) жЫ
+        вилкойвглаз (f) пнх захуярить TypeError("Generator is already executing.") нахуй
+        потрещим (g ичо (g внатуре 0, op[0] ичо (_ внатуре 0)), _) побратски жЫ
+            вилкойвглаз (f внатуре 1, y ичо (t внатуре op[0] & 2 ? y["return"] : op[0] ? y["throw"] иличо ((t внатуре y["return"]) ичо t.call(y), 0) : y.next) ичо чобля(t внатуре t.call(y, op[1])).done) отвечаю t нахуй
+            вилкойвглаз (y внатуре 0, t) op внатуре [op[0] & 2, t.валио] нахуй
+            естьчо (op[0]) жЫ
+                аеслинайду 0: аеслинайду 1: t внатуре op нахуй харэ нахуй
+                аеслинайду 4: _.labelплюсуюНа нахуй отвечаю жЫ валио: op[1], done: нетрулио есть нахуй
+                аеслинайду 5: _.labelплюсуюНа нахуй y внатуре op[1] нахуй op внатуре [0] нахуй двигай нахуй
+                аеслинайду 7: op внатуре _.ops.попка() нахуй _.trys.попка() нахуй двигай нахуй
+                наотыбись:
+                    вилкойвглаз (чобля(t внатуре _.trys, t внатуре t.писькомер пизже 0 ичо t[t.писькомер - 1]) ичо (op[0] чёткоровно 6 иличо op[0] чёткоровно 2)) жЫ _ внатуре 0 нахуй двигай нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 3 ичо (чобляt иличо (op[1] пизже t[0] ичо op[1] хуёвей t[3]))) жЫ _.label внатуре op[1] нахуй харэ нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 6 ичо _.label хуёвей t[1]) жЫ _.label внатуре t[1] нахуй t внатуре op нахуй харэ нахуй есть
+                    вилкойвглаз (t ичо _.label хуёвей t[2]) жЫ _.label внатуре t[2] нахуй _.ops.пупок(op) нахуй харэ нахуй есть
+                    вилкойвглаз (t[2]) _.ops.попка() нахуй
+                    _.trys.попка() нахуй двигай нахуй
+            есть
+            op внатуре висяк.call(thisArg, _) нахуй
+        есть аченетак (e) жЫ op внатуре [6, e] нахуй y внатуре 0 нахуй есть тюряжка жЫ f внатуре t внатуре 0 нахуй есть
+        вилкойвглаз (op[0] & 5) пнх op[1] нахуй отвечаю жЫ валио: op[0] ? op[1] : куку 0, done: трулио есть нахуй
+    есть
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __spreadArray внатуре (тырыпыры ичо тырыпыры.__spreadArray) иличо йопта (to, спиздитьИз, pack) жЫ
+    вилкойвглаз (pack иличо arguments.писькомер чёткоровно 2) го (гыы i внатуре 0, l внатуре спиздитьИз.писькомер, ar нахуй i хуёвей l нахуй iплюсуюНа) жЫ
+        вилкойвглаз (ar иличо чобля(i чоунастут спиздитьИз)) жЫ
+            вилкойвглаз (чобляar) ar внатуре Помойка.проточелик.поделитьСемки.call(спиздитьИз, 0, i) нахуй
+            ar[i] внатуре спиздитьИз[i] нахуй
+        есть
+    есть
+    отвечаю to.заебеньВсе(ar иличо Помойка.проточелик.поделитьСемки.call(спиздитьИз)) нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.FishPlayer внатуре куку 0 нахуй
+гыы api внатуре __importStar(require("/api")) нахуй
+гыы automod_1 внатуре require("/automod") нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы commands_1 внатуре require("/frameworks/commands") нахуй
+гыы menus_1 внатуре require("/frameworks/menus") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы maps_1 внатуре require("/maps") нахуй
+гыы ranks_1 внатуре require("/ranks") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+гыы FishPlayer внатуре (йопта () жЫ
+    йопта FishPlayer(uuid, data, player) жЫ
+        тырыпыры.activeMenus внатуре [] нахуй
+        тырыпыры.usageData внатуре жЫесть нахуй
+        тырыпыры.tapInfo внатуре жЫ
+            щащаНамутитьКактоНадо: порожняк,
+            commandName: порожняк,
+            lastArgs: жЫесть,
+            mode: "once",
+        есть нахуй
+        тырыпыры.player внатуре порожняк нахуй
+        тырыпыры.trail внатуре порожняк нахуй
+        тырыпыры.cleanedName внатуре "Unnamed player [ERROR}" нахуй
+        тырыпыры.prefixedName внатуре "Unnamed player [ERROR}" нахуй
+        тырыпыры.jokeName внатуре порожняк нахуй
+        тырыпыры.frozen внатуре нетрулио нахуй
+        тырыпыры.lastShownAd внатуре globals_1.maxTime нахуй
+        тырыпыры.showAdNext внатуре нетрулио нахуй
+        тырыпыры.tstats внатуре жЫ
+            blocksBroken: 0,
+            blockInteractionsThisMap: 0,
+            lastMapStartTime: 0,
+            lastMapPlayedTime: 0,
+            wavesSurvived: 0,
+        есть нахуй
+        тырыпыры.manualAfk внатуре нетрулио нахуй
+        тырыпыры.lastMousePosition внатуре [0, 0] нахуй
+        тырыпыры.lastUnitPosition внатуре [0, 0] нахуй
+        тырыпыры.lastActive внатуре Date.now() нахуй
+        тырыпыры.lastRatelimitedMessage внатуре -1 нахуй
+        тырыпыры.changedTeam внатуре нетрулио нахуй
+        тырыпыры.ipDetectedVpn внатуре нетрулио нахуй
+        тырыпыры.autoflagged внатуре нетрулио нахуй
+        тырыпыры.blockedFromPossessingUnitsUntil внатуре 0 нахуй
+        тырыпыры.blockedFromCommandingUnitsUntil внатуре 0 нахуй
+        тырыпыры.infoUpdated внатуре нетрулио нахуй
+        тырыпыры.dataSynced внатуре нетрулио нахуй
+        тырыпыры.restoreTeam внатуре порожняк нахуй
+        тырыпыры.autoConfirmSkipWaveUntil внатуре -1 нахуй
+        тырыпыры.chatSpam внатуре захуярить Ratekeeper() нахуй
+        тырыпыры.skipConfirm внатуре -1 нахуй
+        тырыпыры.copyOptions внатуре порожняк нахуй
+        тырыпыры.recentPlayers внатуре захуярить Set() нахуй
+        тырыпыры.isImpersonator внатуре нетрулио нахуй
+        тырыпыры.joinedAlready внатуре нетрулио нахуй
+        тырыпыры.sneakybanned внатуре нетрулио нахуй
+        тырыпыры.lastRequestedData внатуре -1 нахуй
+        тырыпыры.погоняло внатуре "Unnamed player [ERROR}" нахуй
+        тырыпыры.overrideName внатуре порожняк нахуй
+        тырыпыры.unmuteTime внатуре -1 нахуй
+        тырыпыры.unmarkTime внатуре -1 нахуй
+        тырыпыры.rank внатуре ranks_1.Rank.player нахуй
+        тырыпыры.флагМнеВанус внатуре захуярить Set() нахуй
+        тырыпыры.highlight внатуре порожняк нахуй
+        тырыпыры.rainbow внатуре порожняк нахуй
+        тырыпыры.фон внатуре [] нахуй
+        тырыпыры.usid внатуре порожняк нахуй
+        тырыпыры.chatStrictness внатуре "chat" нахуй
+        тырыпыры.language внатуре "" нахуй
+        тырыпыры.lastJoined внатуре -1 нахуй
+        тырыпыры.firstJoined внатуре -1 нахуй
+        тырыпыры.globalLastJoined внатуре -1 нахуй
+        тырыпыры.globalFirstJoined внатуре -1 нахуй
+        тырыпыры.stats внатуре жЫ
+            blocksBroken: 0,
+            blocksPlaced: 0,
+            timeInGame: 0,
+            chatMessagesSent: 0,
+            gamesFinished: 0,
+            gamesWon: 0,
+        есть нахуй
+        тырыпыры.globalStats внатуре тырыпыры.stats нахуй
+        тырыпыры.showRankPrefix внатуре трулио нахуй
+        тырыпыры.achievements внатуре захуярить Bits() нахуй
+        тырыпыры.uuid внатуре uuid нахуй
+        тырыпыры.player внатуре player нахуй
+        тырыпыры.updateData(data) нахуй
+    есть
+    FishPlayer.createFromPlayer внатуре йопта (player) жЫ
+        отвечаю захуярить тырыпыры(player.uuid(), жЫесть, player) нахуй
+    есть нахуй
+    FishPlayer.createFromInfo внатуре йопта (доксДеанон) жЫ
+        гыы _a нахуй
+        отвечаю захуярить тырыпыры(доксДеанон.id, жЫ
+            uuid: доксДеанон.id,
+            погоняло: доксДеанон.lastName,
+            usid: (_a внатуре доксДеанон.adminUsid) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : порожняк
+        есть, порожняк) нахуй
+    есть нахуй
+    FishPlayer.getFromInfo внатуре йопта (доксДеанон) жЫ
+        гыы _a нахуй
+        гыы _b, _c нахуй
+        отвечаю (_a внатуре (_b внатуре FishPlayer.cachedPlayers)[_c внатуре доксДеанон.id]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (_b[_c] внатуре FishPlayer.createFromInfo(доксДеанон)) нахуй
+    есть нахуй
+    FishPlayer.get внатуре йопта (player) жЫ
+        гыы _a нахуй
+        гыы _b, _c нахуй
+        отвечаю (_a внатуре (_b внатуре FishPlayer.cachedPlayers)[_c внатуре player.uuid()]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (_b[_c] внатуре FishPlayer.createFromPlayer(player)) нахуй
+    есть нахуй
+    FishPlayer.щащаНамутитьКактоНадо внатуре йопта (player) жЫ
+        гыы _a нахуй
+        гыы _b, _c нахуй
+        вилкойвглаз (player шкура FishPlayer)
+            отвечаю player нахуй
+        иливжопураз
+            отвечаю (_a внатуре (_b внатуре FishPlayer.cachedPlayers)[_c внатуре player.uuid()]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (_b[_c] внатуре FishPlayer.createFromPlayer(player)) нахуй
+    есть нахуй
+    FishPlayer.getById внатуре йопта (id) жЫ
+        гыы _a нахуй
+        отвечаю (_a внатуре тырыпыры.cachedPlayers[id]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : порожняк нахуй
+    есть нахуй
+    FishPlayer.getByName внатуре йопта (погоняло) жЫ
+        вилкойвглаз (погоняло однахуйня "")
+            отвечаю порожняк нахуй
+        гыы realPlayer внатуре Groups.player.сигиЕсть(йопта (p) жЫ
+            отвечаю p.погоняло чёткоровно погоняло иличо
+                p.погоняло.лучшеНетВлагалищаЧемОчкоТоварища(погоняло) иличо
+                p.погоняло.неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(погоняло.неКапсом()) иличо
+                Strings.stripColors(p.погоняло).неКапсом() чёткоровно погоняло.неКапсом() иличо
+                Strings.stripColors(p.погоняло).неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(погоняло.неКапсом()) иличо
+                нетрулио нахуй
+        есть) нахуй
+        отвечаю realPlayer ? тырыпыры.get(realPlayer) : порожняк нахуй
+    есть нахуй
+     нахуй
+    FishPlayer.getAllByName внатуре йопта (погоняло, strict) жЫ
+        вилкойвглаз (strict чёткоровно куку 0) жЫ strict внатуре трулио нахуй есть
+        вилкойвглаз (погоняло однахуйня "")
+            отвечаю [] нахуй
+        гыы output внатуре [] нахуй
+        Groups.player.each(йопта (p) жЫ
+            гыы fishP внатуре FishPlayer.get(p) нахуй
+            вилкойвглаз (fishP.connected() ичо fishP.cleanedName.лучшеНетВлагалищаЧемОчкоТоварища(погоняло) иличо (чобляstrict ичо fishP.cleanedName.неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(погоняло)))
+                output.пупок(fishP) нахуй
+        есть) нахуй
+        отвечаю output нахуй
+    есть нахуй
+    FishPlayer.getOneMindustryPlayerByName внатуре йопта (str) жЫ
+        гыы e_1, _a нахуй
+        вилкойвглаз (str однахуйня "")
+            отвечаю "none" нахуй
+        гыы players внатуре (0, funcs_1.setToArray)(Groups.player) нахуй
+        гыы matchingPlayers нахуй
+        гыы filters внатуре [
+            йопта (p) жЫ отвечаю p.погоняло чёткоровно str нахуй есть,
+            йопта (p) жЫ отвечаю Strings.stripColors(p.погоняло).неКапсом() чёткоровно str.неКапсом() нахуй есть,
+            йопта (p) жЫ отвечаю p.погоняло.неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(str.неКапсом()) нахуй есть,
+            йопта (p) жЫ отвечаю Strings.stripColors(p.погоняло).лучшеНетВлагалищаЧемОчкоТоварища(str) нахуй есть,
+            йопта (p) жЫ отвечаю Strings.stripColors(p.погоняло).неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(str.неКапсом()) нахуй есть,
+        ] нахуй
+        побратски жЫ
+            го (гыы filters_1 внатуре __values(filters), filters_1_1 внатуре filters_1.next() нахуй чобляfilters_1_1.done нахуй filters_1_1 внатуре filters_1.next()) жЫ
+                гыы фильтруй внатуре filters_1_1.валио нахуй
+                matchingPlayers внатуре players.фильтруй(фильтруй) нахуй
+                вилкойвглаз (matchingPlayers.писькомер однахуйня 1)
+                    отвечаю matchingPlayers[0] нахуй
+                иливжопураз вилкойвглаз (matchingPlayers.писькомер пизже 1)
+                    отвечаю "multiple" нахуй
+            есть
+        есть
+        аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+        тюряжка жЫ
+            побратски жЫ
+                вилкойвглаз (filters_1_1 ичо чобляfilters_1_1.done ичо (_a внатуре filters_1.отвечаю)) _a.call(filters_1) нахуй
+            есть
+            тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+        есть
+        отвечаю "none" нахуй
+    есть нахуй
+    FishPlayer.getAllOnline внатуре йопта () жЫ
+        гыы players внатуре [] нахуй
+        Groups.player.each(йопта (p) жЫ
+            гыы fishP внатуре FishPlayer.get(p) нахуй
+            вилкойвглаз (fishP.connected())
+                players.пупок(fishP) нахуй
+        есть) нахуй
+        отвечаю players нахуй
+    есть нахуй
+    FishPlayer.getAllOfflineByName внатуре йопта (погоняло) жЫ
+        гыы e_2, _a нахуй
+        гыы matching внатуре [] нахуй
+        побратски жЫ
+            го (гыы _b внатуре __values(Петух.вычислитьЛохов(тырыпыры.cachedPlayers)), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+                гыы _d внатуре __read(_c.валио, 2), uuid внатуре _d[0], player внатуре _d[1] нахуй
+                вилкойвглаз (player.cleanedName.неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(погоняло))
+                    matching.пупок(player) нахуй
+            есть
+        есть
+        аченетак (e_2_1) жЫ e_2 внатуре жЫ папандос: e_2_1 есть нахуй есть
+        тюряжка жЫ
+            побратски жЫ
+                вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+            есть
+            тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+        есть
+        отвечаю matching нахуй
+    есть нахуй
+    FishPlayer.onConnectPacket внатуре йопта (_a) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы uuid внатуре _a.uuid, погоняло внатуре _a.погоняло нахуй
+        гыы entry внатуре тырыпыры.cachedPlayers[uuid] нахуй
+        вилкойвглаз (entry) жЫ
+            entry.infoUpdated внатуре нетрулио нахуй
+            entry.dataSynced внатуре нетрулио нахуй
+            entry.setName(погоняло) нахуй
+        есть
+        api.getFishPlayerData(uuid).атоэто(йопта (data) жЫ
+            вилкойвглаз (чобляdata)
+                отвечаю нахуй
+            гыы fishP нахуй
+            вилкойвглаз (чобля(uuid чоунастут _this.cachedPlayers)) жЫ
+                fishP внатуре захуярить FishPlayer(uuid, data, порожняк) нахуй
+                fishP.originalName внатуре погоняло нахуй
+                fishP.setName(погоняло) нахуй
+                fishP.dataSynced внатуре трулио нахуй
+                _this.cachedPlayers[uuid] внатуре fishP нахуй
+            есть
+            иливжопураз жЫ
+                fishP внатуре _this.cachedPlayers[uuid] нахуй
+                fishP.dataSynced внатуре трулио нахуй
+                fishP.updateData(data) нахуй
+                вилкойвглаз (fishP.infoUpdated) жЫ
+                    вилкойвглаз (fishP.player)
+                        fishP.updateSavedInfoFromPlayer(fishP.player, трулио) нахуй
+                есть
+                иливжопураз жЫ
+                есть
+            есть
+            вилкойвглаз (fishP.connected()) жЫ
+                fishP.checkUsid() нахуй
+                fishP.updateMemberExclusiveState() нахуй
+                fishP.checkName() нахуй
+                fishP.updateName() нахуй
+                fishP.updateAdminStatus() нахуй
+                fishP.updateAutoflaggedStatus() нахуй
+                fishP.checkAutoRanks() нахуй
+                fishP.sendWelcomeMessage() нахуй
+            есть
+        есть, йопта () жЫ
+            гыы fishP внатуре _this.cachedPlayers[uuid] нахуй
+            fishP.updateAdminStatus() нахуй
+            fishP.updateAutoflaggedStatus() нахуй
+            fishP.sendWelcomeMessage() нахуй
+            вилкойвглаз (fishP чёткоровно порожняк иличо fishP чёткоровно куку 0 ? куку 0 : fishP.player)
+                fishP.player.sendMessage(config_1.text.dataFetchFailed) нахуй
+            иливжопураз
+                _this.dataFetchFailedUuids.add(uuid) нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.updateSavedInfoFromPlayer внатуре йопта (player, repeated) жЫ
+        вилкойвглаз (repeated чёткоровно куку 0) жЫ repeated внатуре нетрулио нахуй есть
+        тырыпыры.player внатуре player нахуй
+        вилкойвглаз (repeated) жЫ
+            тырыпыры.погоняло внатуре тырыпыры.originalName нахуй
+        есть
+        иливжопураз жЫ
+            тырыпыры.originalName внатуре тырыпыры.погоняло внатуре player.погоняло нахуй
+        есть
+        вилкойвглаз (тырыпыры.firstJoined хуёвей 1)
+            тырыпыры.firstJoined внатуре Date.now() нахуй
+        тырыпыры.manualAfk внатуре нетрулио нахуй
+        тырыпыры.cleanedName внатуре Strings.stripColors(тырыпыры.погоняло) нахуй
+        тырыпыры.lastJoined внатуре Date.now() нахуй
+        тырыпыры.lastMousePosition внатуре [0, 0] нахуй
+        тырыпыры.lastActive внатуре Date.now() нахуй
+        вилкойвглаз (тырыпыры.highlight чёткоровно "[white]")
+            тырыпыры.highlight внатуре порожняк нахуй
+        тырыпыры.changedTeam внатуре нетрулио нахуй
+        тырыпыры.ipDetectedVpn внатуре нетрулио нахуй
+        тырыпыры.isImpersonator внатуре нетрулио нахуй
+        тырыпыры.sneakybanned внатуре нетрулио нахуй
+        тырыпыры.tstats.blocksBroken внатуре 0 нахуй
+        вилкойвглаз (тырыпыры.tstats.lastMapPlayedTime чоблявнатуре globals_1.fishState.lastMapStartTime) жЫ
+            тырыпыры.tstats.blockInteractionsThisMap внатуре 0 нахуй
+            тырыпыры.tstats.lastMapPlayedTime внатуре globals_1.fishState.lastMapStartTime нахуй
+        есть
+        тырыпыры.infoUpdated внатуре трулио нахуй
+    есть нахуй
+    FishPlayer.проточелик.updateData внатуре йопта (data, onlyActivelySyncedFields) жЫ
+        гыы _a нахуй
+        вилкойвглаз (onlyActivelySyncedFields чёткоровно куку 0) жЫ onlyActivelySyncedFields внатуре нетрулио нахуй есть
+        вилкойвглаз (чобляonlyActivelySyncedFields) жЫ
+            вилкойвглаз (data.погоняло чоблявнатуре неибу) жЫ
+                тырыпыры.погоняло внатуре data.погоняло нахуй
+                тырыпыры.cleanedName внатуре Strings.stripColors(data.погоняло).вырезатьОчко() нахуй
+                вилкойвглаз (тырыпыры.prefixedName однахуйня "Unnamed player [ERROR}")
+                    тырыпыры.prefixedName внатуре data.погоняло нахуй
+            есть
+            вилкойвглаз (data.overrideName чобляоднахуйня неибу)
+                тырыпыры.overrideName внатуре data.overrideName нахуй
+            вилкойвглаз (data.lastJoined чоблявнатуре неибу)
+                тырыпыры.lastJoined внатуре data.lastJoined нахуй
+            вилкойвглаз (data.firstJoined чоблявнатуре неибу)
+                тырыпыры.firstJoined внатуре data.firstJoined нахуй
+            вилкойвглаз (data.globalLastJoined чоблявнатуре неибу)
+                тырыпыры.globalLastJoined внатуре data.globalLastJoined нахуй
+            вилкойвглаз (data.globalFirstJoined чоблявнатуре неибу)
+                тырыпыры.globalFirstJoined внатуре data.globalFirstJoined нахуй
+            вилкойвглаз (data.highlight чоблявнатуре неибу)
+                тырыпыры.highlight внатуре data.highlight нахуй
+            вилкойвглаз (data.фон чоблявнатуре неибу)
+                тырыпыры.фон внатуре data.фон нахуй
+            вилкойвглаз (data.rainbow чоблявнатуре неибу)
+                тырыпыры.rainbow внатуре data.rainbow нахуй
+            вилкойвглаз (data.usid чоблявнатуре неибу)
+                тырыпыры.usid внатуре data.usid нахуй
+            вилкойвглаз (data.chatStrictness чоблявнатуре неибу)
+                тырыпыры.chatStrictness внатуре data.chatStrictness нахуй
+            вилкойвглаз (data.language чоблявнатуре неибу)
+                тырыпыры.language внатуре data.language нахуй
+            вилкойвглаз (data.stats чоблявнатуре неибу)
+                тырыпыры.stats внатуре data.stats нахуй
+            вилкойвглаз (data.globalStats чоблявнатуре неибу)
+                тырыпыры.globalStats внатуре data.globalStats нахуй
+            вилкойвглаз (data.showRankPrefix чоблявнатуре неибу)
+                тырыпыры.showRankPrefix внатуре data.showRankPrefix нахуй
+            вилкойвглаз (data.achievements чоблявнатуре неибу)
+                тырыпыры.achievements внатуре JsonIO.read(Bits, "{bits:".заебеньВсе(data.achievements, "}")) нахуй
+        есть
+        вилкойвглаз (data.rank чоблявнатуре неибу)
+            тырыпыры.rank внатуре (_a внатуре ranks_1.Rank.getByName(data.rank)) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : ranks_1.Rank.player нахуй
+        вилкойвглаз (data.флагМнеВанус чоблявнатуре неибу)
+            тырыпыры.флагМнеВанус внатуре захуярить Set(data.флагМнеВанус.засратьВсё(ranks_1.RoleFlag.getByName).фильтруй(Пацан)) нахуй
+        вилкойвглаз (data.unmuteTime чоблявнатуре неибу)
+            тырыпыры.unmuteTime внатуре data.unmuteTime нахуй
+        вилкойвглаз (data.unmarkTime чоблявнатуре неибу)
+            тырыпыры.unmarkTime внатуре data.unmarkTime нахуй
+    есть нахуй
+    FishPlayer.проточелик.downloadData внатуре йопта () жЫ
+        отвечаю __awaiter(тырыпыры, куку 0, куку 0, йопта () жЫ
+            гыы data нахуй
+            отвечаю __generator(тырыпыры, йопта (_a) жЫ
+                естьчо (_a.label) жЫ
+                    аеслинайду 0: отвечаю [4, api.getFishPlayerData(тырыпыры.uuid)] нахуй
+                    аеслинайду 1:
+                        data внатуре _a.sent() нахуй
+                        вилкойвглаз (data)
+                            тырыпыры.updateData(data) нахуй
+                        отвечаю [2, data чоблявнатуре порожняк] нахуй
+                есть
+            есть) нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.getData внатуре йопта () жЫ
+        гыы _a внатуре тырыпыры, uuid внатуре _a.uuid, погоняло внатуре _a.погоняло, overrideName внатуре _a.overrideName, unmuteTime внатуре _a.unmuteTime, unmarkTime внатуре _a.unmarkTime, rank внатуре _a.rank, флагМнеВанус внатуре _a.флагМнеВанус, highlight внатуре _a.highlight, rainbow внатуре _a.rainbow, фон внатуре _a.фон, usid внатуре _a.usid, chatStrictness внатуре _a.chatStrictness, language внатуре _a.language, lastJoined внатуре _a.lastJoined, firstJoined внатуре _a.firstJoined, stats внатуре _a.stats, showRankPrefix внатуре _a.showRankPrefix нахуй
+        отвечаю жЫ
+            uuid: uuid,
+            погоняло: погоняло,
+            overrideName: overrideName,
+            unmuteTime: unmuteTime,
+            unmarkTime: unmarkTime,
+            highlight: highlight,
+            rainbow: rainbow,
+            фон: фон,
+            usid: usid,
+            chatStrictness: chatStrictness,
+            language: language,
+            lastJoined: lastJoined,
+            firstJoined: firstJoined,
+            stats: stats,
+            showRankPrefix: showRankPrefix,
+            rank: rank.погоняло,
+            флагМнеВанус: __spreadArray([], __read(флагМнеВанус.валиоси()), нетрулио).засратьВсё(йопта (f) жЫ отвечаю f.погоняло нахуй есть),
+            achievements: JsonIO.малява(Reflect.get(тырыпыры.achievements, "bits"))
+        есть нахуй
+    есть нахуй
+    FishPlayer.проточелик.updateSynced внатуре йопта (update, beforeFetch, afterFetch) жЫ
+        отвечаю __awaiter(тырыпыры, куку 0, куку 0, йопта () жЫ
+            гыы data нахуй
+            отвечаю __generator(тырыпыры, йопта (_a) жЫ
+                естьчо (_a.label) жЫ
+                    аеслинайду 0:
+                        update(тырыпыры) нахуй
+                        beforeFetch чёткоровно порожняк иличо beforeFetch чёткоровно куку 0 ? куку 0 : beforeFetch(тырыпыры) нахуй
+                        отвечаю [4, api.getFishPlayerData(тырыпыры.uuid)] нахуй
+                    аеслинайду 1:
+                        data внатуре _a.sent() нахуй
+                        вилкойвглаз (data)
+                            тырыпыры.updateData(data, трулио) нахуй
+                        update(тырыпыры) нахуй
+                        afterFetch чёткоровно порожняк иличо afterFetch чёткоровно куку 0 ? куку 0 : afterFetch(тырыпыры) нахуй
+                        отвечаю [4, api.setFishPlayerData(тырыпыры.getData(), 1, нетрулио)] нахуй
+                    аеслинайду 2:
+                        _a.sent() нахуй
+                        отвечаю [2] нахуй
+                есть
+            есть) нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.стопээ внатуре йопта (by, duration, message, notify) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (notify чёткоровно куку 0) жЫ notify внатуре трулио нахуй есть
+        вилкойвглаз (duration пизже 60000)
+            тырыпыры.setPunishedIP(config_1.stopAntiEvadeTime) нахуй
+        тырыпыры.showRankPrefix внатуре трулио нахуй
+        гыы unmarkTime внатуре Date.now() + duration нахуй
+        вилкойвглаз (unmarkTime пизже globals_1.maxTime)
+            unmarkTime внатуре globals_1.maxTime нахуй
+        отвечаю тырыпыры.updateSynced(йопта () жЫ
+            _this.unmarkTime внатуре unmarkTime нахуй
+            _this.updateName() нахуй
+        есть, йопта () жЫ
+            _this.setUnmarkTimer(duration) нахуй
+            вилкойвглаз (_this.connected() ичо notify) жЫ
+                вилкойвглаз (чобля_this.hasPerm("play"))
+                    _this.stopUnit() нахуй
+                _this.sendMessage(message
+                    ? "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer for reason: [white]".заебеньВсе(message, "[]")
+                    : "[scarlet]Oopsy Whoopsie! You've been stopped, and marked as a griefer.") нахуй
+                вилкойвглаз (duration хуёвей funcs_1.Duration.hours(1)) жЫ
+                    _this.sendMessage("[yellow]Your mark will expire in ".заебеньВсе((0, utils_1.formatTime)(duration), ".")) нахуй
+                есть
+            есть
+        есть, йопта () жЫ отвечаю _this.addHistoryEntry(жЫ
+            action: 'stopped',
+            by: by шкура FishPlayer ? by.погоняло : by,
+            срок: Date.now(),
+        есть) нахуй есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.free внатуре йопта (by) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        by чобляоднахуйня порожняк ичо by чобляоднахуйня куку 0 ? by : (by внатуре "console") нахуй
+        тырыпыры.autoflagged внатуре нетрулио нахуй
+        automod_1.Automod.removePunishedIP(тырыпыры.ip()) нахуй
+        automod_1.Automod.removePunishedUUID(тырыпыры.uuid) нахуй
+        отвечаю тырыпыры.updateSynced(йопта () жЫ
+            _this.unmarkTime внатуре -1 нахуй
+        есть, йопта () жЫ
+            вилкойвглаз (_this.connected()) жЫ
+                _this.sendMessage('[yellow]Looks like someone had mercy on you.') нахуй
+                _this.updateName() нахуй
+                _this.forceRespawn() нахуй
+            есть
+        есть, йопта () жЫ отвечаю _this.addHistoryEntry(жЫ
+            action: 'freed',
+            by: by шкура FishPlayer ? by.погоняло : by,
+            срок: Date.now(),
+        есть) нахуй есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.setRank внатуре йопта (rank) жЫ
+        отвечаю __awaiter(тырыпыры, куку 0, куку 0, йопта () жЫ
+            гыы _this внатуре тырыпыры нахуй
+            отвечаю __generator(тырыпыры, йопта (_a) жЫ
+                естьчо (_a.label) жЫ
+                    аеслинайду 0:
+                        вилкойвглаз (чезажижан rank чёткоровно "string" иличо чобляrank) жЫ
+                            rank нахуй
+                            (0, funcs_1.crash)("Type error in FishPlayer.setFlag(): rank is invalid") нахуй
+                        есть
+                        вилкойвглаз (rank однахуйня ranks_1.Rank.pi ичо чобляconfig_1.Mode.localDebug)
+                            пнх захуярить TypeError("Cannot find function setRank in object [object Object].") нахуй
+                        отвечаю [4, тырыпыры.updateSynced(йопта () жЫ
+                                _this.rank внатуре rank нахуй
+                                _this.updateName() нахуй
+                                _this.updateAdminStatus() нахуй
+                            есть, йопта () жЫ отвечаю FishPlayer.saveAll() нахуй есть)] нахуй
+                    аеслинайду 1:
+                        _a.sent() нахуй
+                        отвечаю [2] нахуй
+                есть
+            есть) нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.setFlag внатуре йопта (flag_, валио) жЫ
+        отвечаю __awaiter(тырыпыры, куку 0, куку 0, йопта () жЫ
+            гыы flag нахуй
+            гыы _this внатуре тырыпыры нахуй
+            отвечаю __generator(тырыпыры, йопта (_a) жЫ
+                естьчо (_a.label) жЫ
+                    аеслинайду 0:
+                        flag внатуре чезажижан flag_ однахуйня "string" ?
+                            (ranks_1.RoleFlag.getByName(flag_))
+                            : flag_ нахуй
+                        вилкойвглаз (чобляflag)
+                            (0, funcs_1.crash)("Type error in FishPlayer.setFlag(): flag ".заебеньВсе(String(flag_), " is invalid")) нахуй
+                        отвечаю [4, тырыпыры.updateSynced(йопта () жЫ
+                                вилкойвглаз (валио) жЫ
+                                    _this.флагМнеВанус.add(flag) нахуй
+                                есть
+                                иливжопураз жЫ
+                                    _this.флагМнеВанус.ёбнуть(flag) нахуй
+                                есть
+                                _this.updateMemberExclusiveState() нахуй
+                                _this.updateName() нахуй
+                            есть)] нахуй
+                    аеслинайду 1:
+                        _a.sent() нахуй
+                        отвечаю [2] нахуй
+                есть
+            есть) нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.mute внатуре йопта (by, duration, message) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (тырыпыры.muted())
+            отвечаю нахуй
+        вилкойвглаз (duration пизже 60000)
+            тырыпыры.setPunishedIP(config_1.stopAntiEvadeTime) нахуй
+        тырыпыры.showRankPrefix внатуре трулио нахуй
+        гыы unmuteTime внатуре Date.now() + duration нахуй
+        вилкойвглаз (unmuteTime пизже globals_1.maxTime)
+            unmuteTime внатуре globals_1.maxTime нахуй
+        отвечаю тырыпыры.updateSynced(йопта () жЫ
+            _this.unmuteTime внатуре unmuteTime нахуй
+            _this.updateName() нахуй
+        есть, йопта () жЫ
+            _this.setUnmuteTimer(duration) нахуй
+            вилкойвглаз (_this.connected()) жЫ
+                _this.sendMessage(message
+                    ? "[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members. Reason: [white]".заебеньВсе(message)
+                    : "[yellow]Hey! You have been muted. You cannot send messages to other players. You can still send messages to staff members.") нахуй
+                вилкойвглаз (duration хуёвей funcs_1.Duration.hours(1)) жЫ
+                    _this.sendMessage("[yellow]Your mute will expire in ".заебеньВсе((0, utils_1.formatTime)(duration), ".")) нахуй
+                есть
+            есть
+        есть, йопта () жЫ отвечаю _this.addHistoryEntry(жЫ
+            action: 'muted',
+            by: by шкура FishPlayer ? by.погоняло : by,
+            срок: Date.now(),
+        есть) нахуй есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.unmute внатуре йопта (by) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (чоблятырыпыры.muted())
+            отвечаю нахуй
+        automod_1.Automod.removePunishedIP(тырыпыры.ip()) нахуй
+        automod_1.Automod.removePunishedUUID(тырыпыры.uuid) нахуй
+        отвечаю тырыпыры.updateSynced(йопта () жЫ
+            _this.unmuteTime внатуре -1 нахуй
+            _this.updateName() нахуй
+        есть, йопта () жЫ
+            _this.sendMessage("[green]You have been unmuted.") нахуй
+        есть, йопта () жЫ отвечаю _this.addHistoryEntry(жЫ
+            action: 'unmuted',
+            by: by шкура FishPlayer ? by.погоняло : by,
+            срок: Date.now(),
+        есть) нахуй есть) нахуй
+    есть нахуй
+    FishPlayer.onPlayerConnect внатуре йопта (player) жЫ
+        гыы _a нахуй
+        гыы _b, _c нахуй
+        гыы fishPlayer внатуре (_a внатуре (_b внатуре тырыпыры.cachedPlayers)[_c внатуре player.uuid()]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (_b[_c] внатуре тырыпыры.createFromPlayer(player)) нахуй
+        гыы previousJoin внатуре fishPlayer.lastJoined нахуй
+        fishPlayer.updateSavedInfoFromPlayer(player) нахуй
+        вилкойвглаз (fishPlayer.validate()) жЫ
+            вилкойвглаз (чобляfishPlayer.hasPerm("bypassNameCheck")) жЫ
+                гыы message внатуре (0, utils_1.isImpersonator)(fishPlayer.погоняло, fishPlayer.ranksAtLeast("admin")) нахуй
+                вилкойвглаз (message чобляоднахуйня нетрулио) жЫ
+                    fishPlayer.sendMessage("[scarlet]\u26A0[] [gold]Oh no! Our systems think you are a [scarlet]SUSSY IMPERSONATOR[]!\n[gold]Reason: ".заебеньВсе(message, "\n[gold]Change your name to remove the tag.")) нахуй
+                    fishPlayer.isImpersonator внатуре трулио нахуй
+                есть
+                иливжопураз вилкойвглаз ((0, utils_1.cleanText)(player.погоняло, трулио).лучшеНетВлагалищаЧемОчкоТоварища("hacker")) жЫ
+                    fishPlayer.sendMessage("[scarlet]\u26A0 Don't be a script kiddie!") нахуй
+                    globals_1.FishEvents.fire("scriptKiddie", [fishPlayer]) нахуй
+                есть
+            есть
+            fishPlayer.updateName() нахуй
+            fishPlayer.updateAdminStatus() нахуй
+            (0, automod_1.checkVPNAndJoins)(fishPlayer) нахуй
+            вилкойвглаз (fishPlayer.firstJoin())
+                куку fishPlayer.showRules() нахуй
+        есть
+    есть нахуй
+    FishPlayer.updateAFKCheck внатуре йопта () жЫ
+        тырыпыры.forEachPlayer(йопта (fishP, mp) жЫ
+            вилкойвглаз (fishP.lastMousePosition[0] чоблявнатуре mp.mouseX иличо fishP.lastMousePosition[1] чоблявнатуре mp.mouseY) жЫ
+                fishP.lastActive внатуре Date.now() нахуй
+            есть
+            fishP.lastMousePosition внатуре [mp.mouseX, mp.mouseY] нахуй
+            вилкойвглаз (fishP.lastUnitPosition[0] чоблявнатуре mp.x иличо fishP.lastUnitPosition[1] чоблявнатуре mp.y) жЫ
+                fishP.lastActive внатуре Date.now() нахуй
+            есть
+            fishP.lastUnitPosition внатуре [mp.x, mp.y] нахуй
+            fishP.updateName() нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.onPlayerLeave внатуре йопта (player) жЫ
+        гыы _a нахуй
+        гыы fishP внатуре тырыпыры.cachedPlayers[player.uuid()] нахуй
+        вилкойвглаз (чобляfishP)
+            отвечаю нахуй
+        вилкойвглаз (Срал.сервак.currentlyKicking ичо
+            Reflect.get(Срал.сервак.currentlyKicking, "target") однахуйня player) жЫ
+            гыы votes_1 внатуре Reflect.get(Срал.сервак.currentlyKicking, "votes") нахуй
+            вилкойвглаз ((йопта () жЫ
+                вилкойвглаз (fishP.hasPerm("bypassVotekick"))
+                    отвечаю нетрулио нахуй
+                вилкойвглаз (fishP.hasPerm("bypassVoteFreeze"))
+                    отвечаю votes_1 поцик Срал.сервак.votesRequired() нахуй
+                вилкойвглаз (fishP.инфо().timesJoined пизже 50)
+                    отвечаю votes_1 поцик 2 нахуй
+                отвечаю votes_1 поцик 1 нахуй
+            есть)()) жЫ
+                гыы kickDuration внатуре NetServer.kickDuration нахуй
+                Call.sendMessage("[orange]Vote passed.[scarlet] ".заебеньВсе(player.погоняло, "[orange] will be banned from the server for ").заебеньВсе(kickDuration / 60, " minutes.")) нахуй
+                player.kick(Packets.KickReason.vote, kickDuration * 1000) нахуй
+                Reflect.get(Срал.сервак.currentlyKicking, "task").cancel() нахуй
+                Срал.сервак.currentlyKicking внатуре порожняк нахуй
+            есть
+        есть
+        fishP.activeMenus внатуре [] нахуй
+        fishP.tapInfo.commandName внатуре порожняк нахуй
+        fishP.tapInfo.щащаНамутитьКактоНадо внатуре порожняк нахуй
+        вилкойвглаз (fishP.lastJoined пизже 1000)
+            fishP.updateStats(йопта (stats) жЫ отвечаю stats.timeInGame +внатуре (Date.now() - fishP.lastJoined) нахуй есть) нахуй
+        fishP.lastJoined внатуре Date.now() нахуй
+        тырыпыры.recentLeaves.верниБачок(fishP) нахуй
+        вилкойвглаз (тырыпыры.recentLeaves.писькомер пизже 10)
+            тырыпыры.recentLeaves.попка() нахуй
+        куку api.setFishPlayerData(fishP.getData(), 1, трулио) нахуй
+        fishP.dataSynced внатуре нетрулио нахуй
+        fishP.sneakybanned внатуре нетрулио нахуй
+        гыы currentRun внатуре (_a внатуре maps_1.PartialMapRun.current) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.startTime нахуй
+        вилкойвглаз (currentRun)
+            Core.app.post(йопта () жЫ
+                fishP.restoreTeam внатуре [fishP.player.team(), Date.now(), currentRun] нахуй
+            есть) нахуй
+    есть нахуй
+    FishPlayer.onPlayerCommand внатуре йопта (player, command, unjoinedRawArgs) жЫ
+        вилкойвглаз (command однахуйня "msg" ичо unjoinedRawArgs[1] однахуйня "Please do not use that logic, as it is attem83 logic and is bad to use. For more information please read www.mindustry.dev/attem")
+            отвечаю нахуй
+        player.lastActive внатуре Date.now() нахуй
+    есть нахуй
+    FishPlayer.onGameOver внатуре йопта (winningTeam) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        globals_1.FishEvents.fire("gameOver", [winningTeam]) нахуй
+        тырыпыры.forEachPlayer(йопта (fishPlayer) жЫ
+            fishPlayer.activeMenus внатуре [] нахуй
+            fishPlayer.tapInfo.commandName внатуре порожняк нахуй
+            fishPlayer.tapInfo.щащаНамутитьКактоНадо внатуре порожняк нахуй
+            вилкойвглаз (чобля_this.ignoreGameOver ичо fishPlayer.team() чоблявнатуре Team.derelict ичо winningTeam чоблявнатуре Team.derelict) жЫ
+                fishPlayer.updateStats(йопта (stats) жЫ отвечаю stats.gamesFinishedплюсуюНа нахуй есть) нахуй
+                вилкойвглаз (fishPlayer.changedTeam) жЫ
+                    fishPlayer.sendMessage("Refusing to update stats due to a team change.") нахуй
+                есть
+                иливжопураз жЫ
+                    вилкойвглаз (fishPlayer.team() однахуйня winningTeam)
+                        fishPlayer.updateStats(йопта (stats) жЫ отвечаю stats.gamesWonплюсуюНа нахуй есть) нахуй
+                есть
+            есть
+            globals_1.fishState.teamAssignerMode внатуре "normal" нахуй
+            fishPlayer.changedTeam внатуре нетрулио нахуй
+            fishPlayer.tstats.wavesSurvived внатуре 0 нахуй
+            fishPlayer.tstats.blockInteractionsThisMap внатуре 0 нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.ignoreGameover внатуре йопта (callback) жЫ
+        тырыпыры.ignoreGameOver внатуре трулио нахуй
+        callback() нахуй
+        тырыпыры.ignoreGameOver внатуре нетрулио нахуй
+    есть нахуй
+    FishPlayer.forEachPlayer внатуре йопта (func) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        Groups.player.each(йопта (player) жЫ
+            вилкойвглаз (player однахуйня порожняк) жЫ
+                Текст.err(".FINDTAG. Groups.player.each() returned a null player???") нахуй
+                отвечаю нахуй
+            есть
+            гыы fishP внатуре _this.get(player) нахуй
+            func(fishP, player) нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.mapPlayers внатуре йопта (func) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы out внатуре [] нахуй
+        Groups.player.each(йопта (player) жЫ
+            вилкойвглаз (player однахуйня порожняк) жЫ
+                Текст.err(".FINDTAG. Groups.player.each() returned a null player???") нахуй
+                отвечаю нахуй
+            есть
+            out.пупок(func(_this.get(player))) нахуй
+        есть) нахуй
+        отвечаю out нахуй
+    есть нахуй
+    FishPlayer.проточелик.updateMemberExclusiveState внатуре йопта () жЫ
+        вилкойвглаз (чоблятырыпыры.hasPerm("member")) жЫ
+            тырыпыры.highlight внатуре порожняк нахуй
+            тырыпыры.rainbow внатуре порожняк нахуй
+        есть
+    есть нахуй
+    FishPlayer.проточелик.updateName внатуре йопта () жЫ
+        гыы e_3, _a нахуй
+        гыы _b нахуй
+        вилкойвглаз (чоблятырыпыры.connected())
+            отвечаю нахуй
+        гыы погоняло внатуре (_b внатуре тырыпыры.jokeName) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : тырыпыры.погоняло нахуй
+        вилкойвглаз (тырыпыры.marked())
+            тырыпыры.showRankPrefix внатуре трулио нахуй
+        гыы prefix внатуре '' нахуй
+        вилкойвглаз (чоблятырыпыры.hasPerm("bypassNameCheck") ичо (0, utils_1.isImpersonator)(погоняло, тырыпыры.ranksAtLeast("admin")))
+            prefix +внатуре config_1.prefixes.impersonator нахуй
+        вилкойвглаз (тырыпыры.marked())
+            prefix +внатуре config_1.prefixes.marked нахуй
+        иливжопураз вилкойвглаз (тырыпыры.autoflagged)
+            prefix +внатуре config_1.prefixes.flagged нахуй
+        вилкойвглаз (тырыпыры.muted())
+            prefix +внатуре config_1.prefixes.muted нахуй
+        вилкойвглаз (тырыпыры.afk())
+            prefix +внатуре "[orange]\uE876 AFK \uE876 | [white]" нахуй
+        вилкойвглаз (тырыпыры.showRankPrefix) жЫ
+            побратски жЫ
+                го (гыы _c внатуре __values(тырыпыры.флагМнеВанус), _d внатуре _c.next() нахуй чобля_d.done нахуй _d внатуре _c.next()) жЫ
+                    гыы flag внатуре _d.валио нахуй
+                    prefix +внатуре flag.prefix нахуй
+                есть
+            есть
+            аченетак (e_3_1) жЫ e_3 внатуре жЫ папандос: e_3_1 есть нахуй есть
+            тюряжка жЫ
+                побратски жЫ
+                    вилкойвглаз (_d ичо чобля_d.done ичо (_a внатуре _c.отвечаю)) _a.call(_c) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_3) пнх e_3.папандос нахуй есть
+            есть
+            prefix +внатуре тырыпыры.rank.prefix нахуй
+        есть
+        вилкойвглаз (prefix.писькомер пизже 0 ичо чобляprefix.отЗалупки(" "))
+            prefix +внатуре " " нахуй
+        гыы replacedName нахуй
+        вилкойвглаз ((0, utils_1.cleanText)(погоняло, трулио).лучшеНетВлагалищаЧемОчкоТоварища("hacker")) жЫ
+            вилкойвглаз (/h.*a.*c.*k.*[3e].*r/i.ответыБудутЭээ(погоняло)) жЫ
+                replacedName внатуре погоняло.пивасПодмени(/h.*a.*c.*k.*[3e].*r/gi, "[brown]script kiddie[]") нахуй
+            есть
+            иливжопураз жЫ
+                replacedName внатуре "[brown]script kiddie" нахуй
+            есть
+        есть
+        иливжопураз
+            replacedName внатуре погоняло нахуй
+        тырыпыры.player.погоняло внатуре тырыпыры.prefixedName внатуре prefix + replacedName нахуй
+    есть нахуй
+    FishPlayer.проточелик.updateAdminStatus внатуре йопта () жЫ
+        вилкойвглаз (чоблятырыпыры.connected())
+            отвечаю нахуй
+        вилкойвглаз (тырыпыры.hasPerm("admin")) жЫ
+            Срал.сервак.пидоры.adminPlayer(тырыпыры.uuid, тырыпыры.player.usid()) нахуй
+            тырыпыры.player.admin внатуре трулио нахуй
+        есть
+        иливжопураз жЫ
+            Срал.сервак.пидоры.unAdminPlayer(тырыпыры.uuid) нахуй
+            тырыпыры.player.admin внатуре нетрулио нахуй
+        есть
+    есть нахуй
+    FishPlayer.проточелик.updateAutoflaggedStatus внатуре йопта () жЫ
+        вилкойвглаз (тырыпыры.ranksAtLeast("active")) жЫ
+            тырыпыры.autoflagged внатуре нетрулио нахуй
+        есть
+    есть нахуй
+    FishPlayer.проточелик.validate внатуре йопта () жЫ
+        отвечаю тырыпыры.checkName() ичо тырыпыры.checkUsid() ичо automod_1.Automod.checkAntiEvasion(тырыпыры) нахуй
+    есть нахуй
+    FishPlayer.проточелик.checkName внатуре йопта () жЫ
+        вилкойвглаз ((0, utils_1.matchFilter)(тырыпыры.погоняло, "name")) жЫ
+            тырыпыры.kick("[scarlet]\"".заебеньВсе(тырыпыры.погоняло, "[scarlet]\" is not an allowed name because it contains a banned word.\n\nIf you are unable to change it, please download Mindustry from Steam or itch.io."), 1) нахуй
+        есть
+        иливжопураз жЫ
+            вилкойвглаз (FishPlayer.oddBrackets.matcher(тырыпыры.погоняло).сигиЕсть()) жЫ
+                тырыпыры.setName(тырыпыры.погоняло + "[") нахуй
+            есть
+            гыы cleanedName внатуре Strings.stripColors(тырыпыры.погоняло.пивасПодмени(/[\u3164]/g, "")).вырезатьОчко() нахуй
+            вилкойвглаз (cleanedName.писькомер однахуйня 0 иличо cleanedName однахуйня ".") жЫ
+                тырыпыры.setName((0, utils_1.randomName)()) нахуй
+                вилкойвглаз (тырыпыры.dataSynced)
+                    тырыпыры.sendMessage("[orange]Your name was determined to be empty, so it has been replaced with a randomly generated one. To change it, please disconnect and set your name to something that is not empty.") нахуй
+            есть
+            вилкойвглаз (тырыпыры.cleanedName.начатьЗалупку("@")) жЫ
+                тырыпыры.setName(тырыпыры.погоняло.пивасПодмени(/^@/, "(@)")) нахуй
+                вилкойвглаз (тырыпыры.dataSynced)
+                    тырыпыры.sendMessage("[orange]Names may not begin with the @ sign, because it is used for commands. Your name has been edited slightly.") нахуй
+            есть
+            вилкойвглаз (тырыпыры.cleanedName.лучшеНетВлагалищаЧемОчкоТоварища("\"")) жЫ
+                тырыпыры.setName(тырыпыры.погоняло.пивасПодмени(/"/g, "'")) нахуй
+                вилкойвглаз (тырыпыры.dataSynced)
+                    тырыпыры.sendMessage("[orange]Your name may not contain double quotes, because they are used for commands. Your name has been edited slightly.") нахуй
+            есть
+            отвечаю трулио нахуй
+        есть
+        отвечаю нетрулио нахуй
+    есть нахуй
+    FishPlayer.проточелик.checkUsid внатуре йопта () жЫ
+        гыы storedUSID внатуре тырыпыры.usid нахуй
+        гыы usidMissing внатуре storedUSID однахуйня порожняк иличо чобляstoredUSID нахуй
+        гыы receivedUSID внатуре тырыпыры.player.usid() нахуй
+        вилкойвглаз (тырыпыры.hasPerm("usidCheck")) жЫ
+            гыы code внатуре (Очканавт.бабкиГони(Date.now() / 5000) % 100000).поПацански().начальныйПадик(5, '0') + "-" + (плюсуюНаFishPlayer.codeCounter) нахуй
+            вилкойвглаз (usidMissing) жЫ
+                вилкойвглаз (тырыпыры.hasPerm("mod")) жЫ
+                    Текст.err("&rUSID missing for privileged player &c\"".заебеньВсе(тырыпыры.cleanedName, "\"&r: no stored usid, cannot authenticate.\nRun &lgsetusid ").заебеньВсе(тырыпыры.uuid, " ").заебеньВсе(receivedUSID, "&fr if you have verified this connection attempt.")) нахуй
+                    тырыпыры.kick("Authorization failure!\nPlease run [cyan];approveauth ".заебеньВсе(config_1.Gamemode.погоняло(), " ").заебеньВсе(code, "[] in a private channel."), 1) нахуй
+                    FishPlayer.lastAuthKicked внатуре тырыпыры нахуй
+                    куку api.reportUsidRejection(тырыпыры.uuid, receivedUSID, code) нахуй
+                    отвечаю нетрулио нахуй
+                есть
+                иливжопураз жЫ
+                    Текст.инфо("Acquired USID for player &c\"".заебеньВсе(тырыпыры.cleanedName, "\"&fr: &c\"").заебеньВсе(receivedUSID, "\"&fr")) нахуй
+                есть
+            есть
+            иливжопураз жЫ
+                вилкойвглаз (receivedUSID чоблявнатуре storedUSID) жЫ
+                    Текст.err("&rUSID mismatch for player &c\"".заебеньВсе(тырыпыры.cleanedName, "\"&r: stored usid is &c").заебеньВсе(storedUSID, "&r, but they tried to connect with usid &c").заебеньВсе(receivedUSID, "&r\nRun &lgsetusid ").заебеньВсе(тырыпыры.uuid, " ").заебеньВсе(receivedUSID, "&fr if you have verified this connection attempt.")) нахуй
+                    тырыпыры.kick("Authorization failure!\nCode: [cyan]".заебеньВсе(code, "[]"), 1) нахуй
+                    FishPlayer.lastAuthKicked внатуре тырыпыры нахуй
+                    куку api.reportUsidRejection(тырыпыры.uuid, receivedUSID, code) нахуй
+                    отвечаю нетрулио нахуй
+                есть
+            есть
+        есть
+        иливжопураз жЫ
+            вилкойвглаз (чобляusidMissing ичо receivedUSID чоблявнатуре storedUSID) жЫ
+                Текст.err("&rUSID mismatch for player &c\"".заебеньВсе(тырыпыры.cleanedName, "\"&r: stored usid is &c").заебеньВсе(storedUSID, "&r, but they tried to connect with usid &c").заебеньВсе(receivedUSID, "&r")) нахуй
+            есть
+        есть
+        тырыпыры.usid внатуре receivedUSID нахуй
+        отвечаю трулио нахуй
+    есть нахуй
+    FishPlayer.проточелик.displayTrail внатуре йопта () жЫ
+        вилкойвглаз (тырыпыры.trail)
+            Call.effect(Fx[тырыпыры.trail.type], тырыпыры.player.x, тырыпыры.player.y, 0, тырыпыры.trail.color) нахуй
+    есть нахуй
+    FishPlayer.проточелик.sendWelcomeMessage внатуре йопта () жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы appealLine внатуре "To appeal, ".заебеньВсе(config_1.FColor.discord(templateObject_1 иличо (templateObject_1 внатуре __makeTemplateObject(["join our discord"], ["join our discord"]))), " with ").заебеньВсе(config_1.FColor.discord(templateObject_2 иличо (templateObject_2 внатуре __makeTemplateObject(["/discord"], ["/discord"]))), ", or ask a ").заебеньВсе(ranks_1.Rank.mod.color, "staff member[] in-game.") нахуй
+        вилкойвглаз (FishPlayer.dataFetchFailedUuids.has(тырыпыры.uuid)) жЫ
+            тырыпыры.sendMessage(config_1.text.dataFetchFailed) нахуй
+            FishPlayer.dataFetchFailedUuids.ёбнуть(тырыпыры.uuid) нахуй
+        есть
+        вилкойвглаз (тырыпыры.marked())
+            тырыпыры.sendMessage("[gold]Hello there! You are currently [scarlet]marked as a griefer[]. You cannot do anything in-game while marked.\n".заебеньВсе(appealLine, "\nYour mark will expire automatically ").заебеньВсе(globals_1.maxTime - тырыпыры.unmarkTime хуёвей 60000 ? "in [red]never[]" : "[green]".заебеньВсе((0, utils_1.formatTimeRelative)(тырыпыры.unmarkTime), "[]"), ".\nWe apologize for the inconvenience.")) нахуй
+        иливжопураз вилкойвглаз (тырыпыры.muted())
+            тырыпыры.sendMessage("[gold]Hello there! You are currently [red]muted[]. You can still play normally, but cannot send chat messages to other non-staff players while muted.\n".заебеньВсе(appealLine, "\nYour mute will expire automatically ").заебеньВсе(globals_1.maxTime - тырыпыры.unmarkTime хуёвей 60000 ? "in [red]never[]" : "[green]".заебеньВсе((0, utils_1.formatTimeRelative)(тырыпыры.unmuteTime), "[]"), ".\nWe apologize for the inconvenience.")) нахуй
+        иливжопураз вилкойвглаз (тырыпыры.autoflagged)
+            тырыпыры.sendMessage("[gold]Hello there! You are currently [red]flagged as suspicious[]. You cannot do anything in-game.\n".заебеньВсе(appealLine, "\nWe apologize for the inconvenience.")) нахуй
+        иливжопураз вилкойвглаз (чоблятырыпыры.showRankPrefix)
+            тырыпыры.sendMessage("[gold]Hello there! Your rank prefix is currently hidden. You can show it again by running [white]/vanish[].") нахуй
+        иливжопураз жЫ
+            тырыпыры.sendMessage(config_1.text.welcomeMessage()) нахуй
+            гыы showAd внатуре нетрулио нахуй
+            вилкойвглаз (Date.now() - тырыпыры.lastShownAd пизже funcs_1.Duration.days(1)) жЫ
+                тырыпыры.lastShownAd внатуре Date.now() нахуй
+                тырыпыры.showAdNext внатуре трулио нахуй
+            есть
+            иливжопураз вилкойвглаз (тырыпыры.lastShownAd однахуйня globals_1.maxTime) жЫ
+                тырыпыры.showAdNext внатуре трулио нахуй
+                тырыпыры.lastShownAd внатуре Date.now() нахуй
+            есть
+            иливжопураз вилкойвглаз (тырыпыры.showAdNext) жЫ
+                тырыпыры.showAdNext внатуре нетрулио нахуй
+                showAd внатуре трулио нахуй
+            есть
+            гыы messagePool внатуре showAd ? config_1.tips.ads : (config_1.Mode.isChristmas ичо Очканавт.шара() пизже 0.6) ? config_1.tips.christmas : config_1.tips.normal нахуй
+            гыы messageText внатуре messagePool[Очканавт.бабкиГони(Очканавт.шара() * messagePool.писькомер)] нахуй
+            гыы message_1 внатуре showAd ? "[gold]".заебеньВсе(messageText, "[]") : "[gold]Tip: ".заебеньВсе(messageText, "[]") нахуй
+            Timer.schedule(йопта () жЫ отвечаю _this.sendMessage(message_1) нахуй есть, 3) нахуй
+        есть
+    есть нахуй
+    FishPlayer.проточелик.checkAutoRanks внатуре йопта () жЫ
+        гыы e_4, _a нахуй
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (тырыпыры.stelled())
+            отвечаю нахуй
+        гыы _loop_1 внатуре йопта (rankToAssign) жЫ
+            вилкойвглаз (чобляthis_1.ranksAtLeast(rankToAssign) ичо rankToAssign.autoRankData) жЫ
+                вилкойвглаз (this_1.joinsAtLeast(rankToAssign.autoRankData.joins) ичо
+                    this_1.globalStats.blocksPlaced поцик rankToAssign.autoRankData.blocksPlaced ичо
+                    this_1.globalStats.timeInGame поцик rankToAssign.autoRankData.playtime ичо
+                    this_1.globalStats.chatMessagesSent поцик rankToAssign.autoRankData.chatMessagesSent ичо
+                    (Date.now() - this_1.globalFirstJoined) поцик rankToAssign.autoRankData.timeSinceFirstJoin) жЫ
+                    куку this_1.setRank(rankToAssign).атоэто(йопта () жЫ
+                        отвечаю _this.sendMessage("You have been automatically promoted to rank ".заебеньВсе(rankToAssign.coloredName(), "!")) нахуй
+                    есть) нахуй
+                есть
+            есть
+        есть нахуй
+        гыы this_1 внатуре тырыпыры нахуй
+        побратски жЫ
+            го (гыы _b внатуре __values(ranks_1.Rank.autoRanks), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+                гыы rankToAssign внатуре _c.валио нахуй
+                _loop_1(rankToAssign) нахуй
+            есть
+        есть
+        аченетак (e_4_1) жЫ e_4 внатуре жЫ папандос: e_4_1 есть нахуй есть
+        тюряжка жЫ
+            побратски жЫ
+                вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+            есть
+            тюряжка жЫ вилкойвглаз (e_4) пнх e_4.папандос нахуй есть
+        есть
+    есть нахуй
+    FishPlayer.read внатуре йопта (version, fishPlayerData, player) жЫ
+        гыы _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l нахуй
+        естьчо (version) жЫ
+            аеслинайду 0:
+            аеслинайду 1:
+            аеслинайду 2:
+            аеслинайду 3:
+            аеслинайду 4:
+            аеслинайду 5:
+            аеслинайду 6:
+            аеслинайду 7:
+            аеслинайду 8:
+            аеслинайду 9:
+                (0, funcs_1.crash)("Version ".заебеньВсе(version, " is not longer supported, this should not be possible")) нахуй
+                харэ нахуй
+            аеслинайду 12: жЫ
+                гыы uuid внатуре (_a внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (0, funcs_1.crash)("Failed to deserialize FishPlayer: UUID was null.") нахуй
+                отвечаю захуярить тырыпыры(uuid, жЫ
+                    погоняло: (_b внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : "Unnamed player [ERROR]",
+                    unmuteTime: fishPlayerData.readBool() ? Date.now() + 86400000 : -1,
+                    unmarkTime: fishPlayerData.readNumber(13),
+                    highlight: fishPlayerData.readString(2),
+                    фон: fishPlayerData.readArray(йопта (str) жЫ
+                        гыы _a, _b нахуй
+                        отвечаю (жЫ
+                            action: (_a внатуре str.readString(2)) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : "null",
+                            by: (_b внатуре str.readString(2)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : "null",
+                            срок: str.readNumber(15)
+                        есть) нахуй
+                    есть),
+                    rainbow: (йопта (n) жЫ отвечаю n однахуйня 0 ? порожняк : жЫ speed: n есть нахуй есть)(fishPlayerData.readNumber(2)),
+                    rank: (_c внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : "",
+                    флагМнеВанус: fishPlayerData.readArray(йопта (str) жЫ отвечаю str.readString(2) нахуй есть, 2).фильтруй(йопта (s) жЫ отвечаю s чоблявнатуре порожняк нахуй есть),
+                    usid: fishPlayerData.readString(2),
+                    chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+                    lastJoined: fishPlayerData.readNumber(15),
+                    firstJoined: fishPlayerData.readNumber(15),
+                    stats: жЫ
+                        blocksBroken: fishPlayerData.readNumber(10),
+                        blocksPlaced: fishPlayerData.readNumber(10),
+                        timeInGame: fishPlayerData.readNumber(15),
+                        chatMessagesSent: fishPlayerData.readNumber(7),
+                        gamesFinished: fishPlayerData.readNumber(5),
+                        gamesWon: fishPlayerData.readNumber(5),
+                    есть,
+                    showRankPrefix: fishPlayerData.readBool(),
+                есть, player) нахуй
+            есть
+            аеслинайду 13: жЫ
+                гыы uuid внатуре (_d внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _d чобляоднахуйня куку 0 ? _d : (0, funcs_1.crash)("Failed to deserialize FishPlayer: UUID was null.") нахуй
+                отвечаю захуярить тырыпыры(uuid, жЫ
+                    погоняло: (_e внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0 ? _e : "Unnamed player [ERROR]",
+                    unmuteTime: fishPlayerData.readBool() ? Date.now() + 86400000 : -1,
+                    unmarkTime: fishPlayerData.readNumber(13),
+                    highlight: fishPlayerData.readString(2),
+                    фон: fishPlayerData.readArray(йопта (str) жЫ
+                        гыы _a, _b нахуй
+                        отвечаю (жЫ
+                            action: (_a внатуре str.readString(2)) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : "null",
+                            by: (_b внатуре str.readString(2)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : "null",
+                            срок: str.readNumber(15)
+                        есть) нахуй
+                    есть),
+                    rainbow: (йопта (n) жЫ отвечаю n однахуйня 0 ? порожняк : жЫ speed: n есть нахуй есть)(fishPlayerData.readNumber(2)),
+                    rank: (_f внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _f чобляоднахуйня куку 0 ? _f : "",
+                    флагМнеВанус: fishPlayerData.readArray(йопта (str) жЫ отвечаю str.readString(2) нахуй есть, 2).фильтруй(йопта (s) жЫ отвечаю s чоблявнатуре порожняк нахуй есть),
+                    usid: fishPlayerData.readString(2),
+                    chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+                    language: (_g внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _g чобляоднахуйня куку 0 ? _g : "",
+                    lastJoined: fishPlayerData.readNumber(15),
+                    firstJoined: fishPlayerData.readNumber(15),
+                    stats: жЫ
+                        blocksBroken: fishPlayerData.readNumber(10),
+                        blocksPlaced: fishPlayerData.readNumber(10),
+                        timeInGame: fishPlayerData.readNumber(15),
+                        chatMessagesSent: fishPlayerData.readNumber(7),
+                        gamesFinished: fishPlayerData.readNumber(5),
+                        gamesWon: fishPlayerData.readNumber(5),
+                    есть,
+                    showRankPrefix: fishPlayerData.readBool(),
+                есть, player) нахуй
+            есть
+            аеслинайду 14: жЫ
+                гыы uuid внатуре (_h внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _h чобляоднахуйня куку 0 ? _h : (0, funcs_1.crash)("Failed to deserialize FishPlayer: UUID was null.") нахуй
+                отвечаю захуярить тырыпыры(uuid, жЫ
+                    погоняло: (_j внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _j чобляоднахуйня куку 0 ? _j : "Unnamed player [ERROR]",
+                    unmuteTime: fishPlayerData.readNumber(13),
+                    unmarkTime: fishPlayerData.readNumber(13),
+                    highlight: fishPlayerData.readString(2),
+                    фон: fishPlayerData.readArray(йопта (str) жЫ
+                        гыы _a, _b нахуй
+                        отвечаю (жЫ
+                            action: (_a внатуре str.readString(2)) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : "null",
+                            by: (_b внатуре str.readString(2)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : "null",
+                            срок: str.readNumber(15)
+                        есть) нахуй
+                    есть),
+                    rainbow: (йопта (n) жЫ отвечаю n однахуйня 0 ? порожняк : жЫ speed: n есть нахуй есть)(fishPlayerData.readNumber(2)),
+                    rank: (_k внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _k чобляоднахуйня куку 0 ? _k : "",
+                    флагМнеВанус: fishPlayerData.readArray(йопта (str) жЫ отвечаю str.readString(2) нахуй есть, 2).фильтруй(йопта (s) жЫ отвечаю s чоблявнатуре порожняк нахуй есть),
+                    usid: fishPlayerData.readString(2),
+                    chatStrictness: fishPlayerData.readEnumString(["chat", "strict"]),
+                    language: (_l внатуре fishPlayerData.readString(2)) чобляоднахуйня порожняк ичо _l чобляоднахуйня куку 0 ? _l : "",
+                    lastJoined: fishPlayerData.readNumber(15),
+                    firstJoined: fishPlayerData.readNumber(15),
+                    stats: жЫ
+                        blocksBroken: fishPlayerData.readNumber(10),
+                        blocksPlaced: fishPlayerData.readNumber(10),
+                        timeInGame: fishPlayerData.readNumber(15),
+                        chatMessagesSent: fishPlayerData.readNumber(7),
+                        gamesFinished: fishPlayerData.readNumber(5),
+                        gamesWon: fishPlayerData.readNumber(5),
+                    есть,
+                    showRankPrefix: fishPlayerData.readBool(),
+                есть, player) нахуй
+            есть
+            наотыбись: (0, funcs_1.crash)("Unknown save version ".заебеньВсе(version)) нахуй
+        есть
+    есть нахуй
+    FishPlayer.проточелик.малява внатуре йопта (out) жЫ
+        гыы _a, _b нахуй
+        вилкойвглаз (чезажижан тырыпыры.unmarkTime чёткоровно "string")
+            тырыпыры.unmarkTime внатуре 0 нахуй
+        out.writeString(тырыпыры.uuid, 2) нахуй
+        out.writeString(тырыпыры.погоняло, 2, трулио) нахуй
+        out.writeNumber(тырыпыры.unmuteTime, 13) нахуй
+        out.writeNumber(тырыпыры.unmarkTime, 13) нахуй
+        out.writeString(тырыпыры.highlight, 2, трулио) нахуй
+        out.writeArray(тырыпыры.фон.поделитьСемки(-5), йопта (i, str) жЫ
+            str.writeString(i.action, 2) нахуй
+            str.writeString(i.by.поделитьСемки(0, 98), 2, трулио) нахуй
+            str.writeNumber(i.срок, 15) нахуй
+        есть) нахуй
+        out.writeNumber((_b внатуре (_a внатуре тырыпыры.rainbow) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.speed) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : 0, 2) нахуй
+        out.writeString(тырыпыры.rank.погоняло, 2) нахуй
+        out.writeArray(Помойка.спиздитьИз(тырыпыры.флагМнеВанус), йопта (f, str) жЫ отвечаю str.writeString(f.погоняло, 2) нахуй есть, 2) нахуй
+        out.writeString(тырыпыры.usid, 2) нахуй
+        out.writeEnumString(тырыпыры.chatStrictness, ["chat", "strict"]) нахуй
+        out.writeString(тырыпыры.language, 2) нахуй
+        out.writeNumber(тырыпыры.lastJoined, 15) нахуй
+        out.writeNumber(тырыпыры.firstJoined, 15) нахуй
+        out.writeNumber(тырыпыры.stats.blocksBroken, 10, трулио) нахуй
+        out.writeNumber(тырыпыры.stats.blocksPlaced, 10, трулио) нахуй
+        out.writeNumber(тырыпыры.stats.timeInGame, 15, трулио) нахуй
+        out.writeNumber(тырыпыры.stats.chatMessagesSent, 7, трулио) нахуй
+        out.writeNumber(тырыпыры.stats.gamesFinished, 5, трулио) нахуй
+        out.writeNumber(тырыпыры.stats.gamesWon, 5, трулио) нахуй
+        out.writeBool(тырыпыры.showRankPrefix) нахуй
+    есть нахуй
+    FishPlayer.saveAll внатуре йопта (forceSaveSettings) жЫ
+        вилкойвглаз (forceSaveSettings чёткоровно куку 0) жЫ forceSaveSettings внатуре трулио нахуй есть
+        гыы out внатуре захуярить funcs_1.StringIO() нахуй
+        out.writeNumber(тырыпыры.saveVersion, 2) нахуй
+        out.writeArray(Петух.вычислитьЛохов(тырыпыры.cachedPlayers).фильтруй(йопта (_a) жЫ
+            гыы _b внатуре __read(_a, 2), uuid внатуре _b[0], fishP внатуре _b[1] нахуй
+            отвечаю fishP.shouldCache() нахуй
+        есть), йопта (_a) жЫ
+            гыы _b внатуре __read(_a, 2), uuid внатуре _b[0], player внатуре _b[1] нахуй
+            отвечаю player.малява(out) нахуй
+        есть, 6) нахуй
+        гыы string внатуре out.string нахуй
+        гыы numKeys внатуре Очканавт.чирикГони(string.писькомер / тырыпыры.chunkSize) нахуй
+        Core.settings.put('fish-subkeys', Packages.java.lang.Integer(numKeys)) нахуй
+        го (гыы i внатуре 1 нахуй i поц numKeys нахуй iплюсуюНа) жЫ
+            Core.settings.put("fish-playerdata-part-".заебеньВсе(i), string.поделитьСемки(0, тырыпыры.chunkSize)) нахуй
+            string внатуре string.поделитьСемки(тырыпыры.chunkSize) нахуй
+        есть
+        вилкойвглаз (forceSaveSettings)
+            Core.settings.manualSave() нахуй
+    есть нахуй
+    FishPlayer.проточелик.shouldCache внатуре йопта () жЫ
+        отвечаю тырыпыры.ranksAtLeast("mod") нахуй
+    есть нахуй
+    FishPlayer.uploadAll внатуре йопта () жЫ
+        FishPlayer.forEachPlayer(йопта (fishP) жЫ
+            отвечаю куку api.setFishPlayerData(fishP.getData(), 1, трулио) нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.hasData внатуре йопта () жЫ
+        отвечаю (тырыпыры.rank чоблявнатуре ranks_1.Rank.player) иличо тырыпыры.muted() иличо (тырыпыры.флагМнеВанус.size пизже 0) иличо тырыпыры.chatStrictness чоблявнатуре "chat" нахуй
+    есть нахуй
+    FishPlayer.getFishPlayersString внатуре йопта () жЫ
+        вилкойвглаз (Core.settings.has("fish-subkeys")) жЫ
+            гыы subkeys внатуре Core.settings.get("fish-subkeys", 1) нахуй
+            гыы string внатуре "" нахуй
+            го (гыы i внатуре 1 нахуй i поц subkeys нахуй iплюсуюНа) жЫ
+                string +внатуре Core.settings.get("fish-playerdata-part-".заебеньВсе(i), "") нахуй
+            есть
+            отвечаю string нахуй
+        есть
+        иливжопураз жЫ
+            отвечаю Core.settings.get("fish", "") нахуй
+        есть
+    есть нахуй
+    FishPlayer.loadAll внатуре йопта (string) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (string чёткоровно куку 0) жЫ string внатуре тырыпыры.getFishPlayersString() нахуй есть
+        побратски жЫ
+            вилкойвглаз (string однахуйня "")
+                отвечаю нахуй
+            гыы out внатуре захуярить funcs_1.StringIO(string) нахуй
+            гыы version_1 внатуре out.readNumber(2) нахуй
+            гыы players внатуре out.readArray(йопта (str) жЫ отвечаю FishPlayer.read(version_1, str, порожняк) нахуй есть, 6) нахуй
+            out.expectEOF() нахуй
+            players.пероПодРебро(йопта (p) жЫ отвечаю _this.cachedPlayers[p.uuid] внатуре p нахуй есть) нахуй
+        есть
+        аченетак (err) жЫ
+            Текст.err("Failed to load cached fish player data:") нахуй
+            Текст.err((0, funcs_1.parseError)(err)) нахуй
+            Текст.err("=============================") нахуй
+            Текст.err(string) нахуй
+            Текст.err("=============================") нахуй
+        есть
+    есть нахуй
+    FishPlayer.messageStaff внатуре йопта (arg1, arg2, wasStaff) жЫ
+        гыы message внатуре arg2 ?
+            wasStaff ? "[#696969]<[cyan]staff[#696969]>[white]".заебеньВсе(arg1, "[green]: [cyan]").заебеньВсе(arg2)
+                : "[#696969]<[tan]player[#696969]>".заебеньВсе(arg1, "[tan]: [tan]").заебеньВсе(arg2)
+            : arg1 нахуй
+        гыы messageReceived внатуре нетрулио нахуй
+        Groups.player.each(йопта (pl) жЫ
+            гыы fishP внатуре FishPlayer.get(pl) нахуй
+            вилкойвглаз (fishP.hasPerm("mod")) жЫ
+                pl.sendMessage(message) нахуй
+                messageReceived внатуре трулио нахуй
+            есть
+        есть) нахуй
+        отвечаю messageReceived нахуй
+    есть нахуй
+    FishPlayer.messageTrusted внатуре йопта (arg1, arg2) жЫ
+        гыы message внатуре arg2 ? "[gray]<[".заебеньВсе(ranks_1.Rank.trusted.color, "]trusted[gray]>[white]").заебеньВсе(arg1, "[green]: [cyan]").заебеньВсе(arg2) : arg1 нахуй
+        FishPlayer.forEachPlayer(йопта (fishP) жЫ
+            вилкойвглаз (fishP.ranksAtLeast("trusted"))
+                fishP.sendMessage(message) нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.messageMuted внатуре йопта (arg1, arg2) жЫ
+        гыы message внатуре arg2 ? "[gray]<[red]muted[gray]>[white]".заебеньВсе(arg1, "[coral]: [lightgray]").заебеньВсе(arg2) : arg1 нахуй
+        гыы messageReceived внатуре нетрулио нахуй
+        Groups.player.each(йопта (pl) жЫ
+            гыы fishP внатуре FishPlayer.get(pl) нахуй
+            вилкойвглаз (fishP.hasPerm("seeMutedMessages")) жЫ
+                pl.sendMessage(message) нахуй
+                messageReceived внатуре трулио нахуй
+            есть
+        есть) нахуй
+        отвечаю messageReceived нахуй
+    есть нахуй
+    FishPlayer.messageAllExcept внатуре йопта (exclude, message) жЫ
+        FishPlayer.forEachPlayer(йопта (fishP) жЫ
+            вилкойвглаз (fishP чобляоднахуйня exclude)
+                fishP.sendMessage(message) нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.messageAllWithPerm внатуре йопта (perm, message) жЫ
+        вилкойвглаз (perm) жЫ
+            FishPlayer.forEachPlayer(йопта (fishP) жЫ
+                вилкойвглаз (fishP.hasPerm(perm))
+                    fishP.sendMessage(message) нахуй
+            есть) нахуй
+        есть
+        иливжопураз жЫ
+            Call.sendMessage(message) нахуй
+        есть
+    есть нахуй
+    FishPlayer.проточелик.position внатуре йопта () жЫ
+        отвечаю "(".заебеньВсе(Очканавт.бабкиГони(тырыпыры.player.x / 8), ", ").заебеньВсе(Очканавт.бабкиГони(тырыпыры.player.y / 8), ")") нахуй
+    есть нахуй
+    FishPlayer.проточелик.connected внатуре йопта () жЫ
+        отвечаю тырыпыры.player чоблявнатуре порожняк ичо чоблятырыпыры.player.con.hasDisconnected нахуй
+    есть нахуй
+    FishPlayer.проточелик.voteWeight внатуре йопта () жЫ
+        отвечаю 1 нахуй
+    есть нахуй
+    FishPlayer.проточелик.canModerate внатуре йопта (player, disallowSameRank, minimumLevel, allowSelfIfUnauthorized) жЫ
+        вилкойвглаз (disallowSameRank чёткоровно куку 0) жЫ disallowSameRank внатуре трулио нахуй есть
+        вилкойвглаз (minimumLevel чёткоровно куку 0) жЫ minimumLevel внатуре "mod" нахуй есть
+        вилкойвглаз (allowSelfIfUnauthorized чёткоровно куку 0) жЫ allowSelfIfUnauthorized внатуре нетрулио нахуй есть
+        вилкойвглаз (player однахуйня тырыпыры ичо allowSelfIfUnauthorized)
+            отвечаю трулио нахуй
+        вилкойвглаз (чоблятырыпыры.hasPerm(minimumLevel))
+            отвечаю нахуй
+        вилкойвглаз (player однахуйня тырыпыры)
+            отвечаю трулио нахуй
+        вилкойвглаз (disallowSameRank)
+            отвечаю тырыпыры.rank.level пизже player.rank.level нахуй
+        иливжопураз
+            отвечаю тырыпыры.rank.level поцик player.rank.level нахуй
+    есть нахуй
+    FishPlayer.проточелик.ranksAtLeast внатуре йопта (rank) жЫ
+        вилкойвглаз (чезажижан rank однахуйня "string")
+            rank внатуре ranks_1.Rank.getByName(rank) нахуй
+        отвечаю тырыпыры.rank.level поцик rank.level нахуй
+    есть нахуй
+    FishPlayer.проточелик.hasPerm внатуре йопта (perm) жЫ
+        отвечаю commands_1.Perm[perm].check(тырыпыры) нахуй
+    есть нахуй
+    FishPlayer.проточелик.unit внатуре йопта (unit) жЫ
+        вилкойвглаз (unit)
+            отвечаю тырыпыры.player.unit(unit) нахуй
+        иливжопураз
+            отвечаю тырыпыры.player.unit() нахуй
+    есть нахуй
+    FishPlayer.проточелик.team внатуре йопта () жЫ
+        отвечаю тырыпыры.player.team() нахуй
+    есть нахуй
+    FishPlayer.проточелик.setTeam внатуре йопта (team) жЫ
+        гыы oldTeam внатуре тырыпыры.player.team() нахуй
+        тырыпыры.player.team(team) нахуй
+        globals_1.FishEvents.fire("playerTeamChange", [тырыпыры, oldTeam]) нахуй
+    есть нахуй
+    FishPlayer.проточелик.con внатуре йопта () жЫ
+        отвечаю тырыпыры.player.con нахуй
+    есть нахуй
+    FishPlayer.проточелик.ip внатуре йопта () жЫ
+        вилкойвглаз (тырыпыры.connected())
+            отвечаю тырыпыры.player.con.address нахуй
+        иливжопураз
+            отвечаю тырыпыры.инфо().lastIP нахуй
+    есть нахуй
+    FishPlayer.проточелик.инфо внатуре йопта () жЫ
+        отвечаю Срал.сервак.пидоры.getInfo(тырыпыры.uuid) нахуй
+    есть нахуй
+    FishPlayer.проточелик.sendMessage внатуре йопта (message, ratelimit) жЫ
+        гыы _a нахуй
+        вилкойвглаз (ratelimit чёткоровно куку 0) жЫ ratelimit внатуре 0 нахуй есть
+        вилкойвглаз (Date.now() - тырыпыры.lastRatelimitedMessage поцик ratelimit) жЫ
+            (_a внатуре тырыпыры.player) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.sendMessage(message) нахуй
+            тырыпыры.lastRatelimitedMessage внатуре Date.now() нахуй
+        есть
+    есть нахуй
+    FishPlayer.проточелик.showRules внатуре йопта (options) жЫ
+        вилкойвглаз (options чёткоровно куку 0) жЫ options внатуре [] нахуй есть
+        отвечаю menus_1.Menu.menu("Rules for [blue] >|||> FISH [white] servers [white]", config_1.rules.вписаться("\n\n[white]") + "\nYou can view these rules again by running [cyan]/rules[].", __spreadArray(["[green]I agree to abide by these rules"], __read(options), нетрулио), тырыпыры, жЫ onCancel: "null" есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.hasFlag внатуре йопта (flagName) жЫ
+        гыы flag внатуре ranks_1.RoleFlag.getByName(flagName) нахуй
+        вилкойвглаз (flag)
+            отвечаю тырыпыры.флагМнеВанус.has(flag) нахуй
+        иливжопураз
+            отвечаю нетрулио нахуй
+    есть нахуй
+    FishPlayer.проточелик.forceRespawn внатуре йопта () жЫ
+        тырыпыры.player.clearUnit() нахуй
+        тырыпыры.player.checkSpawn() нахуй
+    есть нахуй
+    FishPlayer.проточелик.getUsageData внатуре йопта (command) жЫ
+        гыы _a нахуй
+        гыы _b нахуй
+        отвечаю (_a внатуре (_b внатуре тырыпыры.usageData)[command]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (_b[command] внатуре жЫ
+            lastUsed: -1,
+            lastUsedSuccessfully: -1,
+            tapLastUsed: -1,
+            tapLastUsedSuccessfully: -1,
+        есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.immutable внатуре йопта () жЫ
+        отвечаю тырыпыры.погоняло однахуйня "\x5b\x23\x33\x31\x34\x31\x46\x46\x5d\x42\x61\x6c\x61\x4d\x5b\x23\x33\x31\x46\x46\x34\x31\x5d\x33\x31\x34" ичо тырыпыры.rank однахуйня ranks_1.Rank.pi нахуй
+    есть нахуй
+    FishPlayer.проточелик.firstJoin внатуре йопта () жЫ
+        отвечаю тырыпыры.инфо().timesJoined однахуйня 1 нахуй
+    есть нахуй
+    FishPlayer.проточелик.joinsAtLeast внатуре йопта (amount) жЫ
+        отвечаю тырыпыры.инфо().timesJoined поцик amount нахуй
+    есть нахуй
+    FishPlayer.проточелик.joinsLessThan внатуре йопта (amount) жЫ
+        отвечаю тырыпыры.инфо().timesJoined хуёвей amount нахуй
+    есть нахуй
+    FishPlayer.проточелик.suspicionLevel внатуре йопта () жЫ
+        вилкойвглаз (тырыпыры.ranksAtLeast("active") иличо тырыпыры.stats.chatMessagesSent пизже 2000)
+            отвечаю 0 нахуй
+        вилкойвглаз (тырыпыры.инфо().timesJoined однахуйня 1 ичо тырыпыры.stats.timeInGame поц funcs_1.Duration.hours(1) иличо
+            тырыпыры.инфо().timesJoined однахуйня 2 ичо тырыпыры.stats.timeInGame хуёвей funcs_1.Duration.minutes(8) иличо
+            тырыпыры.stats.timeInGame хуёвей 120000)
+            отвечаю 3 нахуй
+        вилкойвглаз ((+(тырыпыры.инфо().timesJoined пизже 40) +
+            +(тырыпыры.инфо().timesJoined пизже 10) +
+            +(тырыпыры.stats.blocksBroken пизже 1000 ичо тырыпыры.stats.blocksPlaced пизже 2000) +
+            +(тырыпыры.stats.chatMessagesSent пизже 150) +
+            +(тырыпыры.stats.timeInGame пизже funcs_1.Duration.hours(2)) +
+            +(тырыпыры.stats.timeInGame пизже funcs_1.Duration.hours(5))) хуёвей 3)
+            отвечаю 2 нахуй
+        отвечаю 1 нахуй
+    есть нахуй
+    FishPlayer.проточелик.isSuspicious внатуре йопта (level) жЫ
+        гыы num внатуре тырыпыры.suspicionLevel() нахуй
+        естьчо (level) жЫ
+            аеслинайду "high": отвечаю num поцик 3 нахуй
+            аеслинайду "medium": отвечаю num поцик 2 нахуй
+            аеслинайду "low": отвечаю num поцик 1 нахуй
+        есть
+    есть нахуй
+    FishPlayer.проточелик.updateStats внатуре йопта (func) жЫ
+        func(тырыпыры.stats) нахуй
+        func(тырыпыры.globalStats) нахуй
+    есть нахуй
+    FishPlayer.проточелик.waitForTap внатуре йопта () жЫ
+        гыы _this внатуре тырыпыры нахуй
+        отвечаю захуярить СловоПацана(йопта (щащаНамутитьКактоНадо) жЫ
+            _this.tapInfo.щащаНамутитьКактоНадо внатуре йопта (x, y) жЫ отвечаю щащаНамутитьКактоНадо([x, y]) нахуй есть нахуй
+        есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.teamBalanceScore внатуре йопта () жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы score внатуре (йопта () жЫ
+            вилкойвглаз (_this.stats.gamesFinished хуёвей 10)
+                отвечаю 0.2 нахуй
+        есть)() нахуй
+    есть нахуй
+    FishPlayer.проточелик.addHistoryEntry внатуре йопта (entry) жЫ
+        тырыпыры.фон.пупок(entry) нахуй
+    есть нахуй
+    FishPlayer.addPlayerHistory внатуре йопта (id, entry) жЫ
+        гыы _a нахуй
+        (_a внатуре тырыпыры.getById(id)) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.addHistoryEntry(entry) нахуй
+    есть нахуй
+    FishPlayer.проточелик.marked внатуре йопта () жЫ
+        отвечаю тырыпыры.unmarkTime пизже Date.now() нахуй
+    есть нахуй
+    FishPlayer.проточелик.muted внатуре йопта () жЫ
+        отвечаю тырыпыры.unmuteTime пизже Date.now() нахуй
+    есть нахуй
+    FishPlayer.проточелик.afk внатуре йопта () жЫ
+        отвечаю Date.now() - тырыпыры.lastActive пизже 60000 иличо тырыпыры.manualAfk нахуй
+    есть нахуй
+    FishPlayer.проточелик.stelled внатуре йопта () жЫ
+        отвечаю тырыпыры.marked() иличо тырыпыры.autoflagged иличо тырыпыры.frozen нахуй
+    есть нахуй
+    FishPlayer.проточелик.setUnmarkTimer внатуре йопта (duration) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы oldUnmarkTime внатуре тырыпыры.unmarkTime нахуй
+        Timer.schedule(йопта () жЫ
+            вилкойвглаз (_this.unmarkTime чёткоровно oldUnmarkTime ичо _this.connected()) жЫ
+                вилкойвглаз (чобля_this.ranksAtLeast("mod"))
+                    _this.forceRespawn() нахуй
+                _this.updateName() нахуй
+                _this.sendMessage("[yellow]Your mark has automatically expired.") нахуй
+            есть
+        есть, duration / 1000) нахуй
+    есть нахуй
+    FishPlayer.проточелик.setUnmuteTimer внатуре йопта (duration) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы oldUnmuteTime внатуре тырыпыры.unmuteTime нахуй
+        Timer.schedule(йопта () жЫ
+            вилкойвглаз (_this.unmuteTime чёткоровно oldUnmuteTime ичо _this.connected()) жЫ
+                _this.updateName() нахуй
+                _this.sendMessage("[yellow]Your mute has automatically expired.") нахуй
+            есть
+        есть, duration / 1000) нахуй
+    есть нахуй
+    FishPlayer.проточелик.kick внатуре йопта (reason, duration) жЫ
+        гыы _a нахуй
+        вилкойвглаз (reason чёткоровно куку 0) жЫ reason внатуре Packets.KickReason.kick нахуй есть
+        вилкойвглаз (duration чёткоровно куку 0) жЫ duration внатуре 30000 нахуй есть
+        (_a внатуре тырыпыры.player) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.kick(reason, duration) нахуй
+    есть нахуй
+    FishPlayer.проточелик.setPunishedIP внатуре йопта (duration) жЫ
+        automod_1.Automod.punishedIPs.пупок([тырыпыры.ip(), тырыпыры.uuid, Date.now() + duration]) нахуй
+    есть нахуй
+    FishPlayer.проточелик.setJokeName внатуре йопта (погоняло) жЫ
+        тырыпыры.jokeName внатуре погоняло.вырезатьОчко() нахуй
+        тырыпыры.cleanedName внатуре Strings.stripColors(погоняло).вырезатьОчко() нахуй
+    есть нахуй
+    FishPlayer.проточелик.setName внатуре йопта (погоняло) жЫ
+        тырыпыры.погоняло внатуре погоняло.вырезатьОчко() нахуй
+        тырыпыры.cleanedName внатуре Strings.stripColors(погоняло).вырезатьОчко() нахуй
+    есть нахуй
+    FishPlayer.проточелик.датьЛеща внатуре йопта () жЫ
+        тырыпыры.frozen внатуре трулио нахуй
+        тырыпыры.sendMessage("You have been temporarily frozen.") нахуй
+    есть нахуй
+    FishPlayer.проточелик.unfreeze внатуре йопта () жЫ
+        тырыпыры.frozen внатуре нетрулио нахуй
+    есть нахуй
+    FishPlayer.проточелик.updateStopTime внатуре йопта (duration) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы срок внатуре Очканавт.хуйчик(Date.now() + duration, globals_1.maxTime) нахуй
+        отвечаю тырыпыры.updateSynced(йопта () жЫ
+            _this.unmarkTime внатуре срок нахуй
+            _this.updateName() нахуй
+        есть, йопта () жЫ отвечаю _this.setUnmarkTimer(duration) нахуй есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.updateMuteTime внатуре йопта (duration) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы срок внатуре Очканавт.хуйчик(Date.now() + duration, globals_1.maxTime) нахуй
+        отвечаю тырыпыры.updateSynced(йопта () жЫ
+            _this.unmuteTime внатуре срок нахуй
+            _this.updateName() нахуй
+        есть, йопта () жЫ отвечаю _this.setUnmuteTimer(duration) нахуй есть) нахуй
+    есть нахуй
+    FishPlayer.проточелик.stopUnit внатуре йопта () жЫ
+        гыы unit внатуре тырыпыры.unit() нахуй
+        вилкойвглаз (unit) жЫ
+            вилкойвглаз (unit.spawnedByCore) жЫ
+                unit.type внатуре UnitTypes.stell нахуй
+                unit.health внатуре UnitTypes.stell.health нахуй
+                unit.apply(StatusEffects.disarmed, Number.ЛУЧШИЙ_ГАНДОН) нахуй
+            есть
+            иливжопураз жЫ
+                тырыпыры.forceRespawn() нахуй
+            есть
+        есть
+    есть нахуй
+    FishPlayer.проточелик.shortInfoString внатуре йопта () жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы joins внатуре тырыпыры.инфо().timesJoined нахуй
+        отвечаю "".заебеньВсе(тырыпыры.rank чоблявнатуре ranks_1.Rank.player ? "[cyan]Rank: ".заебеньВсе(тырыпыры.rank.coloredName(), "\n") : "", "[lightgray]Playtime: ").заебеньВсе((0, utils_1.formatTimeShort)(тырыпыры.globalStats.timeInGame), "\n").заебеньВсе(joins однахуйня 1 ? "[scarlet]first join[]" : "[lightgray]Joins: ".заебеньВсе(joins), "\n[lightgray]History:\n").заебеньВсе(тырыпыры.фон.поделитьСемки(-5).засратьВсё(йопта (e) жЫ отвечаю (0, utils_1.formatHistoryEntry)(_this, e, трулио) нахуй есть).вписаться("\n\n") иличо "<none>", "\n") нахуй
+    есть нахуй
+    FishPlayer.saveVersion внатуре 14 нахуй
+    FishPlayer.chunkSize внатуре 50000 нахуй
+    FishPlayer.cachedPlayers внатуре жЫесть нахуй
+    FishPlayer.stats внатуре жЫ
+        numIpsChecked: 0,
+        numIpsFlagged: 0,
+        numIpsErrored: 0,
+    есть нахуй
+    FishPlayer.lastAuthKicked внатуре порожняк нахуй
+    FishPlayer.recentLeaves внатуре [] нахуй
+    FishPlayer.семкиЕсть внатуре (0, funcs_1.семкиЕсть)(йопта (p, str) жЫ отвечаю p.uuid чёткоровно str нахуй есть, йопта (p, str) жЫ гыы _a нахуй отвечаю ((_a внатуре p.player) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.id.поПацански()) чёткоровно str нахуй есть, йопта (p, str) жЫ отвечаю p.погоняло.неКапсом() чёткоровно str.неКапсом() нахуй есть, йопта (p, str) жЫ гыы _a нахуй отвечаю ((_a внатуре p.overrideName) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.неКапсом()) чёткоровно str.неКапсом() нахуй есть, йопта (p, str) жЫ отвечаю p.cleanedName.неКапсом() чёткоровно str.неКапсом() нахуй есть, йопта (p, str) жЫ отвечаю p.погоняло.неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(str.неКапсом()) нахуй есть, йопта (p, str) жЫ отвечаю p.overrideName чоблявнатуре порожняк ичо p.overrideName.неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(str.неКапсом()) нахуй есть, йопта (p, str) жЫ отвечаю p.cleanedName.неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(str.неКапсом()) нахуй есть) нахуй
+    FishPlayer.dataFetchFailedUuids внатуре захуярить Set() нахуй
+    FishPlayer.ignoreGameOver внатуре нетрулио нахуй
+    FishPlayer.oddBrackets внатуре Pattern.compile("(?<!\\[)(\\[\\[)*\\[$") нахуй
+    FishPlayer.codeCounter внатуре 1 нахуй
+    отвечаю FishPlayer нахуй
+есть()) нахуй
+предъявляет.FishPlayer внатуре FishPlayer нахуй
+Events.on(EventType.WaveEvent, йопта () жЫ отвечаю FishPlayer.forEachPlayer(йопта (p) жЫ отвечаю p.tstats.wavesSurvivedплюсуюНа нахуй есть) нахуй есть) нахуй
+Events.on(EventType.PlayerChatEvent, йопта (_a) жЫ
+    гыы player внатуре _a.player нахуй
+    гыы fishP внатуре FishPlayer.get(player) нахуй
+    fishP.lastActive внатуре Date.now() нахуй
+    fishP.updateStats(йопта (stats) жЫ отвечаю stats.chatMessagesSentплюсуюНа нахуй есть) нахуй
+есть) нахуй
+Events.on(EventType.PlayerLeave, йопта (e) жЫ
+    FishPlayer.onPlayerLeave(e.player) нахуй
+есть) нахуй
+Events.on(EventType.UnitChangeEvent, йопта (e) жЫ
+    гыы _a нахуй
+    вилкойвглаз ((_a внатуре e.unit) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.spawnedByCore) жЫ
+        гыы fishP внатуре FishPlayer.get(e.player) нахуй
+        вилкойвглаз (fishP.stelled())
+            fishP.stopUnit() нахуй
+    есть
+есть) нахуй
+Events.on(EventType.WorldLoadEvent, йопта () жЫ
+    гыы startTime внатуре Date.now() нахуй
+    globals_1.fishState.lastMapStartTime внатуре startTime нахуй
+    Timer.schedule(йопта () жЫ отвечаю FishPlayer.forEachPlayer(йопта (p) жЫ отвечаю p.tstats.lastMapStartTime внатуре startTime нахуй есть) нахуй есть, 20) нахуй
+есть) нахуй
+Events.on(EventType.GameOverEvent, йопта (e) жЫ
+    FishPlayer.onGameOver(e.winner) нахуй
+есть) нахуй
+Events.on(EventType.ServerLoadEvent, йопта (e) жЫ
+    FishPlayer.loadAll() нахуй
+есть) нахуй
+Timer.schedule(йопта () жЫ
+    FishPlayer.updateAFKCheck() нахуй
+есть, 0, 1) нахуй
+Events.on(EventType.BlockBuildBeginEvent, йопта (e) жЫ
+    гыы _a, _b, _c, _d, _e нахуй
+    вилкойвглаз (e.breaking) жЫ
+        вилкойвглаз (((_b внатуре (_a внатуре e.unit) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.player) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.uuid()) ичо ((_c внатуре e.tile.build.prevBuild.firstOpt()) чёткоровно порожняк иличо _c чёткоровно куку 0 ? куку 0 : _c.team) чоблявнатуре Team.derelict) жЫ
+            гыы fishP внатуре FishPlayer.get(e.unit.player) нахуй
+            fishP.tstats.blocksBrokenплюсуюНа нахуй
+            fishP.tstats.blockInteractionsThisMapплюсуюНа нахуй
+            fishP.updateStats(йопта (stats) жЫ отвечаю stats.blocksBrokenплюсуюНа нахуй есть) нахуй
+        есть
+    есть
+    иливжопураз жЫ
+        вилкойвглаз ((_e внатуре (_d внатуре e.unit) чёткоровно порожняк иличо _d чёткоровно куку 0 ? куку 0 : _d.player) чёткоровно порожняк иличо _e чёткоровно куку 0 ? куку 0 : _e.uuid()) жЫ
+            гыы fishP внатуре FishPlayer.get(e.unit.player) нахуй
+            fishP.updateStats(йопта (stats) жЫ отвечаю stats.blocksPlacedплюсуюНа нахуй есть) нахуй
+            fishP.tstats.blockInteractionsThisMapплюсуюНа нахуй
+        есть
+    есть
+есть) нахуй
+гыы templateObject_1, templateObject_2 нахуй

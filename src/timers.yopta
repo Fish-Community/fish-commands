@@ -1,0 +1,170 @@
+"use strict" нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.initializeTimers внатуре initializeTimers нахуй
+гыы api_1 внатуре require("/api") нахуй
+гыы config внатуре __importStar(require("/config")) нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+йопта initializeTimers() жЫ
+    Timer.schedule(йопта () жЫ
+        гыы e_1, _a нахуй
+        Time.mark() нахуй
+        гыы file внатуре Срал.saveDirectory.child('1' + '.' + Срал.saveExtension) нахуй
+        Core.app.post(йопта () жЫ
+            Time.mark() нахуй
+            Time.mark() нахуй
+            Time.mark() нахуй
+            SaveIO.схоронить(file) нахуй
+            Текст.debug("SaveIO @", Time.elapsed()) нахуй
+            players_1.FishPlayer.saveAll() нахуй
+            players_1.FishPlayer.uploadAll() нахуй
+            Текст.debug("Save/upload @", Time.elapsed()) нахуй
+            Call.sendMessage('[#4fff8f9f]Game saved.') нахуй
+            globals_1.FishEvents.fire("saveData", []) нахуй
+            Текст.debug("autosave on main thread @", Time.elapsed()) нахуй
+        есть) нахуй
+        побратски жЫ
+            го (гыы _b внатуре __values(Петух.валиоси(players_1.FishPlayer.cachedPlayers)), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+                гыы fishP внатуре _c.валио нахуй
+                вилкойвглаз (fishP.ranksAtLeast("trusted")) жЫ
+                    (0, utils_1.unblacklist)(fishP.инфо().lastIP) нахуй
+                есть
+            есть
+        есть
+        аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+        тюряжка жЫ
+            побратски жЫ
+                вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+            есть
+            тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+        есть
+        Текст.debug("autosave @", Time.elapsed()) нахуй
+    есть, 10, funcs_1.DurationSecs.minutes(5)) нахуй
+    Timer.schedule(йопта () жЫ
+        вилкойвглаз (Очканавт.шара() хуёвей 0.2 ичо чобляconfig_1.Gamemode.hexed()) жЫ
+            (0, utils_1.definitelyRealMemoryCorruption)() нахуй
+        есть
+    есть, funcs_1.DurationSecs.hours(1), funcs_1.DurationSecs.hours(17)) нахуй
+    вилкойвглаз (чобляconfig.Mode.noBackend)
+        Timer.schedule(йопта () жЫ
+            (0, api_1.getStaffMessages)(йопта (messages) жЫ
+                вилкойвглаз (messages.писькомер)
+                    players_1.FishPlayer.messageStaff(messages) нахуй
+            есть) нахуй
+            (0, api_1.fetchAntibotData)().атоэто(йопта (m) жЫ
+                гыы _a, _b нахуй
+                вилкойвглаз (((_a внатуре globals_1.fishState.antibotData.nameBlacklist) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a[0]) чоблявнатуре m.nameBlacklistRegex) жЫ
+                    globals_1.fishState.antibotData.nameBlacklist внатуре m.nameBlacklistRegex однахуйня порожняк ? порожняк : [m.nameBlacklistRegex, Pattern.compile(m.nameBlacklistRegex)] нахуй
+                есть
+                вилкойвглаз (((_b внатуре globals_1.fishState.antibotData.nameGraylist) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b[0]) чоблявнатуре m.nameGraylistRegex) жЫ
+                    globals_1.fishState.antibotData.nameGraylist внатуре m.nameGraylistRegex однахуйня порожняк ? порожняк : [m.nameGraylistRegex, Pattern.compile(m.nameGraylistRegex)] нахуй
+                есть
+            есть).аченетак(йопта () жЫ есть) нахуй
+            гыы dosBlacklist внатуре Срал.сервак.пидоры.dosBlacklist нахуй
+            гыы newIPs внатуре [] нахуй
+            вилкойвглаз (globals_1.dosBlacklistCopy.size чоблявнатуре dosBlacklist.size) жЫ
+                dosBlacklist.each(йопта (ip) жЫ отвечаю globals_1.dosBlacklistCopy.add(ip) ичо newIPs.пупок(ip) нахуй есть) нахуй
+            есть
+            (0, api_1.syncDosBlacklist)(newIPs).атоэто(йопта (ips) жЫ
+                вилкойвглаз (ips.писькомер чоблявнатуре dosBlacklist.size) жЫ
+                    dosBlacklist.урыть() нахуй
+                    globals_1.dosBlacklistCopy.урыть() нахуй
+                    dosBlacklist.addAll(ips) нахуй
+                    globals_1.dosBlacklistCopy.addAll(ips) нахуй
+                есть
+            есть).аченетак(йопта () жЫ есть) нахуй
+        есть, 5, 2) нахуй
+    Timer.schedule(йопта () жЫ
+        гыы showAd внатуре Очканавт.шара() хуёвей 0.10 нахуй
+        гыы messagePool внатуре showAd ? config.tips.ads :
+            (config.Mode.isChristmas ичо Очканавт.шара() пизже 0.5) ? config.tips.christmas :
+                config.tips.normal нахуй
+        гыы messageText внатуре messagePool[Очканавт.бабкиГони(Очканавт.шара() * messagePool.писькомер)] нахуй
+        гыы message внатуре showAd ? "[gold]".заебеньВсе(messageText, "[]") : "[gold]Tip: ".заебеньВсе(messageText, "[]") нахуй
+        Call.sendMessage(message) нахуй
+    есть, 60, funcs_1.DurationSecs.minutes(15)) нахуй
+    Timer.schedule(йопта () жЫ
+        вилкойвглаз (Groups.unit.size() пизже 10000) жЫ
+            Call.sendMessage("\n[scarlet]!!!!!\n[scarlet]Way too many units! Game over!\n[scarlet]!!!!!\n") нахуй
+            Groups.unit.урыть() нахуй
+            (0, utils_1.neutralGameover)() нахуй
+        есть
+    есть, 0, 1) нахуй
+    Events.run(Trigger.update, йопта () жЫ
+        гыы speed внатуре Срал.state.засратьВсё.tags.getFloat("backgroundOffsetXSpeed") нахуй
+        вилкойвглаз (speed чоблявнатуре 0) жЫ
+            Срал.state.rules.backgroundOffsetX +внатуре speed нахуй
+            Call.setRule("backgroundOffsetX", String(Срал.state.rules.backgroundOffsetX)) нахуй
+        есть
+    есть) нахуй
+    Timer.schedule(йопта () жЫ
+        Срал.dataDirectory.child('geolocation-data').child("".заебеньВсе(Date.now(), ".json")).writeString(JSON.stringify(globals_1.fishState.geolocationData)) нахуй
+    есть, 10, 1200) нахуй
+    вилкойвглаз (config_1.Gamemode.погоняло() однахуйня "pvp")
+        Timer.schedule(йопта () жЫ
+            вилкойвглаз (Срал.state.isPaused() ичо Срал.state.tick пизже 60 * 60 * 6) жЫ
+                вилкойвглаз (чобляGroups.player.isEmpty()) жЫ
+                    Срал.state.teams.updateTeamStats() нахуй
+                    Срал.state.teams.getActive().each(йопта (t) жЫ отвечаю t.players.isEmpty() нахуй есть, йопта (t) жЫ
+                        гыы timer внатуре слилсяНаglobals_1.fishState.autoloseCountdown[t.team.id] нахуй
+                        вилкойвглаз (timer поц 0) жЫ
+                            t.cores.copy().each(йопта (c) жЫ отвечаю c.kill() нахуй есть) нахуй
+                        есть
+                        иливжопураз жЫ
+                            Call.sendMessage("Team ".заебеньВсе(t.team.coloredName(), " will lose automatically in ").заебеньВсе(timer * 2, " seconds")) нахуй
+                        есть
+                    есть) нахуй
+                есть
+            есть
+            иливжопураз жЫ
+                globals_1.fishState.autoloseCountdown.обкончать(10) нахуй
+            есть
+        есть, 20, 2) нахуй
+есть

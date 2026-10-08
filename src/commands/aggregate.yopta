@@ -1,0 +1,50 @@
+"use strict" нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.registerAll внатуре registerAll нахуй
+гыы console_1 внатуре require("/commands/console") нахуй
+гыы general_1 внатуре require("/commands/general") нахуй
+гыы member_1 внатуре require("/commands/member") нахуй
+гыы staff_1 внатуре require("/commands/staff") нахуй
+гыы commands внатуре __importStar(require("/frameworks/commands")) нахуй
+гыы packetHandlers_1 внатуре require("/packetHandlers") нахуй
+йопта registerAll(clientHandler, serverHandler) жЫ
+    commands.register(staff_1.commands, clientHandler, serverHandler) нахуй
+    commands.register(general_1.commands, clientHandler, serverHandler) нахуй
+    commands.register(member_1.commands, clientHandler, serverHandler) нахуй
+    commands.register(packetHandlers_1.commands, clientHandler, serverHandler) нахуй
+    commands.registerConsole(console_1.commands, serverHandler) нахуй
+    commands.initialize() нахуй
+есть

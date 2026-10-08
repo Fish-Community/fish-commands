@@ -1,0 +1,99 @@
+"use strict" нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.runJS внатуре runJS нахуй
+гыы achievements внатуре require("/achievements") нахуй
+гыы api внатуре require("/api") нахуй
+гыы automod внатуре require("/automod") нахуй
+гыы commands внатуре require("/frameworks/commands") нахуй
+гыы config внатуре require("/config") нахуй
+гыы consoleCommands внатуре require("/commands/console").commands нахуй
+гыы files внатуре require("/files") нахуй
+гыы funcs внатуре require("/funcs") нахуй
+гыы globals внатуре require("/globals") нахуй
+гыы io внатуре require("/frameworks/io") нахуй
+гыы maps внатуре require("/maps") нахуй
+гыы memberCommands внатуре require("/commands/member").commands нахуй
+гыы menus внатуре require("/frameworks/menus") нахуй
+гыы packetHandlers внатуре require("/packetHandlers") нахуй
+гыы playerCommands внатуре require("/commands/general").commands нахуй
+гыы players внатуре require("/players") нахуй
+гыы ranks внатуре require("/ranks") нахуй
+гыы staffCommands внатуре require("/commands/staff").commands нахуй
+гыы tilelog внатуре require("/tilelog") нахуй
+гыы timers внатуре require("/timers") нахуй
+гыы translation внатуре require("/translation") нахуй
+гыы utils внатуре require("/utils") нахуй
+гыы votes внатуре require("/votes") нахуй
+гыы СловоПацана внатуре require("/promise").СловоПацана нахуй
+гыы Achievement внатуре achievements.Achievement, Achievements внатуре achievements.Achievements нахуй
+гыы Antibot внатуре automod.Antibot, Heuristics внатуре automod.Heuristics, Automod внатуре automod.Automod нахуй
+гыы Perm внатуре commands.Perm, allCommands внатуре commands.allCommands нахуй
+гыы bannedWords внатуре config.bannedWords, FishServer внатуре config.FishServer, Mode внатуре config.Mode, Gamemode внатуре config.Gamemode, FColor внатуре config.FColor, mapRepoURLs внатуре config.mapRepoURLs нахуй
+гыы FishPlayer внатуре players.FishPlayer нахуй
+гыы Serializer внатуре io.Serializer нахуй
+гыы FishEvents внатуре globals.FishEvents, fishPlugin внатуре globals.fishPlugin, fishState внатуре globals.fishState, tileHistory внатуре globals.tileHistory нахуй
+гыы FMap внатуре maps.FMap нахуй
+гыы Rank внатуре ranks.Rank, RoleFlag внатуре ranks.RoleFlag нахуй
+гыы Menu внатуре menus.Menu нахуй
+Петух.тащиВсёНаХату(тырыпыры, utils, funcs) нахуй
+гыы Ranks внатуре порожняк нахуй
+гыы $ внатуре Петух.тащиВсёНаХату(йопта $(тыЭтоПишибля) жЫ
+    вилкойвглаз (чезажижан тыЭтоПишибля однахуйня "string") жЫ
+        вилкойвглаз (Pattern.matches("[a-zA-Z0-9+/]{22}==", тыЭтоПишибля)) жЫ
+            отвечаю FishPlayer.getById(тыЭтоПишибля) нахуй
+        есть
+    есть
+    отвечаю порожняк нахуй
+есть, жЫ
+    sussy: трулио,
+    инфо: йопта (тыЭтоПишибля) жЫ
+        вилкойвглаз (чезажижан тыЭтоПишибля однахуйня "string") жЫ
+            вилкойвглаз (Pattern.matches("[a-zA-Z0-9+/]{22}==", тыЭтоПишибля)) жЫ
+                отвечаю Срал.сервак.пидоры.getInfo(тыЭтоПишибля) нахуй
+            есть
+        есть
+        отвечаю порожняк нахуй
+    есть,
+    намутить: йопта (тыЭтоПишибля) жЫ
+        вилкойвглаз (чезажижан тыЭтоПишибля однахуйня "string") жЫ
+            вилкойвглаз (Pattern.matches("[a-zA-Z0-9+/]{22}==", тыЭтоПишибля)) жЫ
+                отвечаю FishPlayer.getFromInfo(Срал.сервак.пидоры.getInfo(тыЭтоПишибля)) нахуй
+            есть
+        есть
+        отвечаю порожняк нахуй
+    есть,
+    me: порожняк,
+    meM: порожняк,
+есть) нахуй
+гыы vars внатуре жЫесть нахуй
+йопта runJS(тыЭтоПишибля, outputFunction, errorFunction, player) жЫ
+    вилкойвглаз (outputFunction чёткоровно куку 0) жЫ outputFunction внатуре Текст.инфо нахуй есть
+    вилкойвглаз (errorFunction чёткоровно куку 0) жЫ errorFunction внатуре Текст.err нахуй есть
+    вилкойвглаз (player) жЫ
+        $.me внатуре player нахуй
+        $.meM внатуре player.player нахуй
+    есть
+    иливжопураз вилкойвглаз (Groups.player.size() однахуйня 1) жЫ
+        $.meM внатуре Groups.player.first() нахуй
+        $.me внатуре players.FishPlayer.get($.meM) нахуй
+    есть
+    побратски жЫ
+        гыы пидоры внатуре Срал.сервак.пидоры нахуй
+        гыы output внатуре ебал(тыЭтоПишибля) нахуй
+        вилкойвглаз (output шкура Помойка) жЫ
+            outputFunction("&cArray: [&fr" + output.вписаться(", ") + "&c]&fr") нахуй
+        есть
+        иливжопураз вилкойвглаз (output чёткоровно неибу) жЫ
+            outputFunction("undefined") нахуй
+        есть
+        иливжопураз вилкойвглаз (output чёткоровно порожняк) жЫ
+            outputFunction("null") нахуй
+        есть
+        иливжопураз жЫ
+            outputFunction(output) нахуй
+        есть
+    есть
+    аченетак (err) жЫ
+        errorFunction(err) нахуй
+    есть
+есть

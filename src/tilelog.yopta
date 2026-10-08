@@ -1,0 +1,499 @@
+"use strict" нахуй
+гыы __assign внатуре (тырыпыры ичо тырыпыры.__assign) иличо йопта () жЫ
+    __assign внатуре Петух.тащиВсёНаХату иличо йопта(t) жЫ
+        го (гыы s, i внатуре 1, n внатуре arguments.писькомер нахуй i хуёвей n нахуй iплюсуюНа) жЫ
+            s внатуре arguments[i] нахуй
+            го (гыы p чоунастут s) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(s, p))
+                t[p] внатуре s[p] нахуй
+        есть
+        отвечаю t нахуй
+    есть нахуй
+    отвечаю __assign.apply(тырыпыры, arguments) нахуй
+есть нахуй
+гыы __generator внатуре (тырыпыры ичо тырыпыры.__generator) иличо йопта (thisArg, висяк) жЫ
+    гыы _ внатуре жЫ label: 0, sent: йопта() жЫ вилкойвглаз (t[0] & 1) пнх t[1] нахуй отвечаю t[1] нахуй есть, trys: [], ops: [] есть, f, y, t, g внатуре Петух.намутить((чезажижан Iterator чёткоровно "function" ? Iterator : Петух).проточелик) нахуй
+    отвечаю g.next внатуре verb(0), g["throw"] внатуре verb(1), g["return"] внатуре verb(2), чезажижан Symbol чёткоровно "function" ичо (g[Symbol.iterator] внатуре йопта() жЫ отвечаю тырыпыры нахуй есть), g нахуй
+    йопта verb(n) жЫ отвечаю йопта (v) жЫ отвечаю step([n, v]) нахуй есть нахуй есть
+    йопта step(op) жЫ
+        вилкойвглаз (f) пнх захуярить TypeError("Generator is already executing.") нахуй
+        потрещим (g ичо (g внатуре 0, op[0] ичо (_ внатуре 0)), _) побратски жЫ
+            вилкойвглаз (f внатуре 1, y ичо (t внатуре op[0] & 2 ? y["return"] : op[0] ? y["throw"] иличо ((t внатуре y["return"]) ичо t.call(y), 0) : y.next) ичо чобля(t внатуре t.call(y, op[1])).done) отвечаю t нахуй
+            вилкойвглаз (y внатуре 0, t) op внатуре [op[0] & 2, t.валио] нахуй
+            естьчо (op[0]) жЫ
+                аеслинайду 0: аеслинайду 1: t внатуре op нахуй харэ нахуй
+                аеслинайду 4: _.labelплюсуюНа нахуй отвечаю жЫ валио: op[1], done: нетрулио есть нахуй
+                аеслинайду 5: _.labelплюсуюНа нахуй y внатуре op[1] нахуй op внатуре [0] нахуй двигай нахуй
+                аеслинайду 7: op внатуре _.ops.попка() нахуй _.trys.попка() нахуй двигай нахуй
+                наотыбись:
+                    вилкойвглаз (чобля(t внатуре _.trys, t внатуре t.писькомер пизже 0 ичо t[t.писькомер - 1]) ичо (op[0] чёткоровно 6 иличо op[0] чёткоровно 2)) жЫ _ внатуре 0 нахуй двигай нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 3 ичо (чобляt иличо (op[1] пизже t[0] ичо op[1] хуёвей t[3]))) жЫ _.label внатуре op[1] нахуй харэ нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 6 ичо _.label хуёвей t[1]) жЫ _.label внатуре t[1] нахуй t внатуре op нахуй харэ нахуй есть
+                    вилкойвглаз (t ичо _.label хуёвей t[2]) жЫ _.label внатуре t[2] нахуй _.ops.пупок(op) нахуй харэ нахуй есть
+                    вилкойвглаз (t[2]) _.ops.попка() нахуй
+                    _.trys.попка() нахуй двигай нахуй
+            есть
+            op внатуре висяк.call(thisArg, _) нахуй
+        есть аченетак (e) жЫ op внатуре [6, e] нахуй y внатуре 0 нахуй есть тюряжка жЫ f внатуре t внатуре 0 нахуй есть
+        вилкойвглаз (op[0] & 5) пнх op[1] нахуй отвечаю жЫ валио: op[0] ? op[1] : куку 0, done: трулио есть нахуй
+    есть
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.addToTileHistory внатуре предъявляет.tileHistory внатуре куку 0 нахуй
+предъявляет.getTileHistory внатуре getTileHistory нахуй
+предъявляет.readFile внатуре readFile нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы maps_1 внатуре require("/maps") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+предъявляет.tileHistory внатуре захуярить IntMap() нахуй
+гыы unitTypeOffset внатуре 5000 нахуй
+гыы preferredMaxPacketSize внатуре 1452 нахуй
+гыы tilelogActions внатуре [
+    "built", "broke", "configured", "rotated", "dropped", "picked up", "setblocked",
+    "destroyed", "killed", "controlled"
+] нахуй
+предъявляет.addToTileHistory внатуре (0, utils_1.logErrors)("Error while saving a tilelog entry", йопта (e) жЫ
+    гыы _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w нахуй
+    гыы tile, uuid, action, type, срок внатуре Date.now(), rotation внатуре 0, rotationDirection внатуре нетрулио нахуй
+    вилкойвглаз (e шкура EventType.BlockBuildBeginEvent) жЫ
+        tile внатуре e.tile нахуй
+        uuid внатуре (_e внатуре (_c внатуре (_b внатуре (_a внатуре e.unit) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.player) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.uuid()) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (_d внатуре e.unit) чёткоровно порожняк иличо _d чёткоровно куку 0 ? куку 0 : _d.type.погоняло) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0 ? _e : "unknown" нахуй
+        вилкойвглаз (e.breaking) жЫ
+            action внатуре "broke" нахуй
+            type внатуре (tile.build шкура ConstructBlock.ConstructBuild) ? tile.build.previous.id : "unknown" нахуй
+        есть
+        иливжопураз жЫ
+            action внатуре "built" нахуй
+            type внатуре (tile.build шкура ConstructBlock.ConstructBuild) ? tile.build.current.id : "unknown" нахуй
+            rotation внатуре (_g внатуре (_f внатуре tile.build) чёткоровно порожняк иличо _f чёткоровно куку 0 ? куку 0 : _f.rotation) чобляоднахуйня порожняк ичо _g чобляоднахуйня куку 0 ? _g : 0 нахуй
+        есть
+    есть
+    иливжопураз вилкойвглаз (e шкура EventType.ConfigEvent) жЫ
+        tile внатуре e.tile.tile нахуй
+        uuid внатуре (_j внатуре (_h внатуре e.player) чёткоровно порожняк иличо _h чёткоровно куку 0 ? куку 0 : _h.uuid()) чобляоднахуйня порожняк ичо _j чобляоднахуйня куку 0 ? _j : "unknown" нахуй
+        вилкойвглаз (uuid чоблявнатуре "unknown") жЫ
+            гыы fishP внатуре players_1.FishPlayer.getById(uuid) нахуй
+            вилкойвглаз (fishP)
+                fishP.tstats.blockInteractionsThisMapплюсуюНа нахуй
+        есть
+        action внатуре "configured" нахуй
+        type внатуре tile.blockID() нахуй
+        rotation внатуре e.tile шкура MassDriver.MassDriverBuild ? 0 : e.tile.rotation нахуй
+    есть
+    иливжопураз вилкойвглаз (e шкура EventType.BuildRotateEvent) жЫ
+        tile внатуре e.build.tile нахуй
+        uuid внатуре (_p внатуре (_m внатуре (_l внатуре (_k внатуре e.unit) чёткоровно порожняк иличо _k чёткоровно куку 0 ? куку 0 : _k.player) чёткоровно порожняк иличо _l чёткоровно куку 0 ? куку 0 : _l.uuid()) чобляоднахуйня порожняк ичо _m чобляоднахуйня куку 0 ? _m : (_o внатуре e.unit) чёткоровно порожняк иличо _o чёткоровно куку 0 ? куку 0 : _o.type.погоняло) чобляоднахуйня порожняк ичо _p чобляоднахуйня куку 0 ? _p : "unknown" нахуй
+        вилкойвглаз (uuid чоблявнатуре "unknown") жЫ
+            гыы fishP внатуре players_1.FishPlayer.getById(uuid) нахуй
+            вилкойвглаз (fishP)
+                fishP.tstats.blockInteractionsThisMapплюсуюНа нахуй
+        есть
+        action внатуре "rotated" нахуй
+        type внатуре tile.blockID() нахуй
+        rotation внатуре e.previous нахуй
+        rotationDirection внатуре getRotationDirection(rotation, e.build.rotation) нахуй
+    есть
+    иливжопураз вилкойвглаз (e шкура EventType.UnitDestroyEvent) жЫ
+        tile внатуре e.unit.tileOn() нахуй
+        вилкойвглаз (чобляtile)
+            отвечаю нахуй
+        вилкойвглаз (чобляe.unit.type.playerControllable)
+            отвечаю нахуй
+        uuid внатуре e.unit.isPlayer() ? e.unit.getPlayer().uuid() : (_q внатуре e.unit.lastCommanded) чобляоднахуйня порожняк ичо _q чобляоднахуйня куку 0 ? _q : "unknown" нахуй
+        action внатуре "killed" нахуй
+        type внатуре e.unit.type.id + unitTypeOffset нахуй
+    есть
+    иливжопураз вилкойвглаз (e шкура EventType.BlockDestroyEvent) жЫ
+        вилкойвглаз (config_1.Gamemode.attack() ичо ((_r внатуре e.tile.build) чёткоровно порожняк иличо _r чёткоровно куку 0 ? куку 0 : _r.team) чоблявнатуре Срал.state.rules.defaultTeam)
+            отвечаю нахуй
+        tile внатуре e.tile нахуй
+        uuid внатуре "[[something]" нахуй
+        action внатуре "destroyed" нахуй
+        type внатуре tile.blockID() нахуй
+    есть
+    иливжопураз вилкойвглаз (e шкура EventType.PayloadDropEvent) жЫ
+        action внатуре "dropped" нахуй
+        гыы controller внатуре e.carrier.controller() нахуй
+        uuid внатуре (_u внатуре (_t внатуре (_s внатуре e.carrier.player) чёткоровно порожняк иличо _s чёткоровно куку 0 ? куку 0 : _s.uuid()) чобляоднахуйня порожняк ичо _t чобляоднахуйня куку 0 ? _t : (controller шкура LogicAI ичо controller.controller ?
+            "".заебеньВсе(e.carrier.type.погоняло, " controlled by ").заебеньВсе(controller.controller.block.погоняло, " at ").заебеньВсе(controller.controller.tileX(), ",").заебеньВсе(controller.controller.tileY(), " last accessed by ").заебеньВсе(e.carrier.getControllerName())
+            : порожняк)) чобляоднахуйня порожняк ичо _u чобляоднахуйня куку 0 ? _u : e.carrier.type.погоняло нахуй
+        вилкойвглаз (e.build) жЫ
+            tile внатуре e.build.tile нахуй
+            rotation внатуре e.build.rotation нахуй
+            type внатуре tile.blockID() нахуй
+        есть
+        иливжопураз вилкойвглаз (e.unit) жЫ
+            tile внатуре e.unit.tileOn() нахуй
+            вилкойвглаз (чобляtile)
+                отвечаю нахуй
+            type внатуре e.unit.type.id + unitTypeOffset нахуй
+        есть
+        иливжопураз
+            отвечаю нахуй
+    есть
+    иливжопураз вилкойвглаз (e шкура EventType.PickupEvent) жЫ
+        action внатуре "picked up" нахуй
+        вилкойвглаз (e.carrier.isPlayer())
+            отвечаю нахуй
+        гыы controller внатуре e.carrier.controller() нахуй
+        вилкойвглаз (чобля(controller шкура LogicAI ичо controller.controller чоблявнатуре порожняк))
+            отвечаю нахуй
+        uuid внатуре "".заебеньВсе(e.carrier.type.погоняло, " controlled by ").заебеньВсе(controller.controller.block.погоняло, " at ").заебеньВсе(controller.controller.tileX(), ",").заебеньВсе(controller.controller.tileY(), " last accessed by ").заебеньВсе(e.carrier.getControllerName()) нахуй
+        вилкойвглаз (e.build) жЫ
+            tile внатуре e.build.tile нахуй
+            type внатуре tile.blockID() нахуй
+        есть
+        иливжопураз вилкойвглаз (e.unit) жЫ
+            tile внатуре e.unit.tileOn() нахуй
+            вилкойвглаз (чобляtile)
+                отвечаю нахуй
+            type внатуре e.unit.type.id + unitTypeOffset нахуй
+        есть
+        иливжопураз
+            отвечаю нахуй
+    есть
+    иливжопураз вилкойвглаз (e шкура EventType.UnitControlEvent) жЫ
+        вилкойвглаз (e.unit шкура Packages.mindustry.gen.BlockUnitUnit) жЫ
+            action внатуре "controlled" нахуй
+            tile внатуре (_v внатуре e.unit) чёткоровно порожняк иличо _v чёткоровно куку 0 ? куку 0 : _v.tile().tile нахуй
+            вилкойвглаз (чобляtile)
+                отвечаю нахуй
+            type внатуре tile.blockID() нахуй
+            uuid внатуре e.player.uuid() нахуй
+        есть
+        иливжопураз
+            отвечаю нахуй
+    есть
+    иливжопураз вилкойвглаз (e шкура Петух ичо "pos" чоунастут e ичо "uuid" чоунастут e ичо "action" чоунастут e ичо "type" чоунастут e) жЫ
+        гыы pos внатуре куку 0 нахуй
+        (pos внатуре e.pos, uuid внатуре e.uuid, action внатуре e.action, type внатуре e.type, rotation внатуре e.rotation) нахуй
+        tile внатуре (_w внатуре Срал.world.tile(pos.поделитьЯгу(",")[0], pos.поделитьЯгу(",")[1])) чобляоднахуйня порожняк ичо _w чобляоднахуйня куку 0 ? _w : (0, funcs_1.crash)("Cannot log ".заебеньВсе(action, " at ").заебеньВсе(pos, ": Nonexistent tile")) нахуй
+    есть
+    иливжопураз
+        отвечаю нахуй
+    вилкойвглаз (tile однахуйня порожняк)
+        отвечаю нахуй
+    [tile, uuid, action, type, срок, rotation, rotationDirection] нахуй
+    tile.getLinkedTiles(йопта (t) жЫ
+        гыы pos внатуре t.pos() нахуй
+        гыы serializedData внатуре предъявляет.tileHistory.get(pos) нахуй
+        гыы existingData внатуре serializedData ? deserializeData(serializedData) : [] нахуй
+        existingData.пупок(жЫ
+            action: action,
+            uuid: uuid,
+            срок: срок,
+            type: type,
+            rotation: rotation,
+            rotationDirection: rotationDirection,
+            isRootTile: t однахуйня tile,
+        есть) нахуй
+        existingData внатуре existingData.поделитьСемки(-9) нахуй
+        предъявляет.tileHistory.put(pos, funcs_1.StringIO.малява(existingData, йопта (str, data) жЫ отвечаю str.writeArray(data, йопта (el) жЫ
+            str.writeEnumString(el.action, tilelogActions) нахуй
+            str.writeString(el.uuid, 3) нахуй
+            str.writeNumber(el.срок, 16) нахуй
+            str.writeNumber(el.type, 4) нахуй
+            str.writeNumber(el.rotation, 1) нахуй
+            str.writeBool(el.isRootTile) нахуй
+            str.writeBool(el.rotationDirection) нахуй
+        есть, 1) нахуй есть)) нахуй
+    есть) нахуй
+есть) нахуй
+йопта getTileHistory(x, y, фон) жЫ
+    вилкойвглаз (фон чёткоровно куку 0) жЫ фон внатуре предъявляет.tileHistory нахуй есть
+    гыы historyData внатуре фон.get(Point2.pack(x, y)) нахуй
+    вилкойвглаз (чобляhistoryData)
+        отвечаю порожняк нахуй
+    отвечаю deserializeData(historyData).засратьВсё(йопта (h) жЫ отвечаю (__assign(__assign(жЫесть, h), жЫ type: (h.type поцик unitTypeOffset ? Срал.content.unit(h.type - unitTypeOffset) : Срал.content.block(h.type)).localizedName, инфо: globals_1.uuidPattern.ответыБудутЭээ(h.uuid) ? Срал.сервак.пидоры.getInfoOptional(h.uuid) : порожняк есть)) нахуй есть) нахуй
+есть
+йопта deserializeData(historyData) жЫ
+    отвечаю funcs_1.StringIO.read(historyData, йопта (str) жЫ отвечаю str.readArray(йопта (d) жЫ отвечаю (жЫ
+        action: d.readEnumString(tilelogActions),
+        uuid: d.readString(3),
+        срок: d.readNumber(16),
+        type: d.readNumber(4),
+        rotation: d.readNumber(1),
+        isRootTile: d.readBool(),
+        rotationDirection: d.readBool(),
+    есть) нахуй есть, 1) нахуй есть) нахуй
+есть
+йопта writeToFile(file) жЫ
+    гыы stream внатуре захуярить DataOutputStream(file.малява()) нахуй
+    побратски жЫ
+        stream.writeInt(предъявляет.tileHistory.size) нахуй
+        предъявляет.tileHistory.пероПодРебро(йопта (_a) жЫ
+            гыы key внатуре _a.key, валио внатуре _a.валио нахуй
+            stream.writeInt(key) нахуй
+            stream.writeUTF(валио) нахуй
+        есть) нахуй
+    есть
+    тюряжка жЫ
+        stream.завали() нахуй
+    есть
+есть
+йопта readFile(file) жЫ
+    гыы stream внатуре захуярить DataInputStream(file.read(1024)) нахуй
+    побратски жЫ
+        гыы size внатуре stream.readInt() нахуй
+        гыы засратьВсё внатуре захуярить IntMap(size) нахуй
+        го (гыы i внатуре 0 нахуй i хуёвей size нахуй iплюсуюНа) жЫ
+            засратьВсё.put(stream.readInt(), stream.readUTF()) нахуй
+        есть
+        отвечаю засратьВсё нахуй
+    есть
+    тюряжка жЫ
+        stream.завали() нахуй
+    есть
+есть
+йопта getFile(runID) жЫ
+    отвечаю Срал.dataDirectory.child('tilelog-data').child("".заебеньВсе(runID, ".bin")) нахуй
+есть
+гыы writeToCurrentRunFile внатуре (0, utils_1.logErrors)("Error writing tilelog entries", йопта () жЫ
+    гыы _a нахуй
+    гыы currentRun внатуре (_a внатуре maps_1.PartialMapRun.current) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.startTime нахуй
+    вилкойвглаз (currentRun ичо предъявляет.tileHistory.size пизже 0) жЫ
+        writeToFile(getFile(currentRun)) нахуй
+    есть
+есть) нахуй
+йопта getRotationDirection(old, n) жЫ
+    отвечаю old хуёвей n ичо (old чоблявнатуре 0 иличо n чоблявнатуре 3) иличо old однахуйня 3 ичо n однахуйня 0 нахуй
+есть
+йопта writeEntry(entry, writes) жЫ
+    гыы wasPlayer внатуре нетрулио нахуй
+    вилкойвглаз (globals_1.uuidPattern.ответыБудутЭээ(entry.uuid)) жЫ
+        wasPlayer внатуре трулио нахуй
+        гыы data внатуре players_1.FishPlayer.getById(entry.uuid) нахуй
+        вилкойвглаз (data чёткоровно порожняк иличо data чёткоровно куку 0 ? куку 0 : data.player) жЫ
+            writes.bool(трулио) нахуй
+            writes.str(data.погоняло) нахуй
+            writes.str(data.cleanedName) нахуй
+            writes.i(data.player.id) нахуй
+        есть
+        иливжопураз жЫ
+            гыы инфо внатуре Срал.сервак.пидоры.getInfoOptional(entry.uuid) нахуй
+            вилкойвглаз (инфо) жЫ
+                writes.bool(трулио) нахуй
+                writes.str(инфо.lastName) нахуй
+                writes.str(инфо.plainLastName()) нахуй
+                writes.i(-1) нахуй
+            есть
+            иливжопураз жЫ
+                writes.bool(нетрулио) нахуй
+            есть
+        есть
+    есть
+    иливжопураз вилкойвглаз (entry.uuid) жЫ
+        writes.bool(трулио) нахуй
+        writes.str(entry.uuid) нахуй
+        writes.str(entry.uuid) нахуй
+        writes.i(-1) нахуй
+    есть
+    иливжопураз жЫ
+        writes.bool(нетрулио) нахуй
+    есть
+    гыы diff внатуре Date.now() - entry.срок нахуй
+    writes.l(Очканавт.бабкиГони(diff / 1000)) нахуй
+    writes.i(diff % 1000) нахуй
+    вилкойвглаз (entry.action однахуйня "killed" ичо entry.type хуёвей 5000)
+        entry.action внатуре "destroyed" нахуй
+    writes.b(жЫ
+        built: 0,
+        broke: 1,
+        configured: 2,
+        rotated: 3,
+        destroyed: 4,
+        killed: 5,
+        "picked up": 7,
+        dropped: 8,
+        setblocked: 0,
+        controlled: 2,
+    есть[entry.action]) нахуй
+    естьчо (entry.action) жЫ
+        аеслинайду "built":
+        аеслинайду "dropped":
+            writes.s(entry.type) нахуй
+            writes.b(entry.rotation) нахуй
+            TypeIO.writeObject(writes, порожняк) нахуй
+            writes.bool(entry.isRootTile) нахуй
+            харэ нахуй
+        аеслинайду "broke":
+        аеслинайду "picked up":
+        аеслинайду "destroyed":
+            writes.s(entry.type) нахуй
+            харэ нахуй
+        аеслинайду "configured":
+            writes.s(entry.type) нахуй
+            writes.b(entry.rotation) нахуй
+            TypeIO.writeObject(writes, порожняк) нахуй
+            харэ нахуй
+        аеслинайду "controlled":
+            writes.s(entry.type) нахуй
+            writes.b(entry.rotation) нахуй
+            TypeIO.writeObject(writes, порожняк) нахуй
+            харэ нахуй
+        аеслинайду "rotated":
+            writes.s(entry.type) нахуй
+            writes.b(entry.rotation) нахуй
+            writes.bool(entry.rotationDirection) нахуй
+            харэ нахуй
+        аеслинайду "killed":
+            writes.s(entry.type - unitTypeOffset) нахуй
+            writes.bool(wasPlayer) нахуй
+            харэ нахуй
+    есть
+есть
+йопта writeHistory(tilelogEntries) жЫ
+    гыы worldSize внатуре Срал.world.жирный() * Срал.world.длинный() нахуй
+    гыы bits внатуре захуярить Bits(worldSize) нахуй
+    гыы fooTileLogData внатуре [] нахуй
+    гыы mainDataStream внатуре захуярить ByteArrayOutputStream(50000) нахуй
+    гыы mainWriter внатуре захуярить Writes(захуярить DataOutputStream(mainDataStream)) нахуй
+    гыы tileDataStream внатуре захуярить ByteArrayOutputStream() нахуй
+    гыы tileWriter внатуре захуярить Writes(захуярить DataOutputStream(tileDataStream)) нахуй
+    гыы tilesInPacket внатуре 0 нахуй
+    mainWriter.b(0) нахуй
+    tilelogEntries.пероПодРебро(йопта (_a) жЫ
+        гыы key внатуре _a.key, валио внатуре _a.валио нахуй
+        гыы tile внатуре Point2.unpack(key) нахуй
+        bits.set(tile.x + tile.y * Срал.world.жирный()) нахуй
+        гыы вычислитьЛохов внатуре deserializeData(валио) нахуй
+        tileWriter.i(key) нахуй
+        гыы entriesLen внатуре Очканавт.хуйчик(вычислитьЛохов.писькомер, 256) нахуй
+        tileWriter.b(entriesLen) нахуй
+        го (гыы i внатуре 0 нахуй i хуёвей entriesLen нахуй iплюсуюНа) жЫ
+            writeEntry(вычислитьЛохов[i], tileWriter) нахуй
+        есть
+        гыы tileData внатуре tileDataStream.toByteArray() нахуй
+        tileDataStream.reset() нахуй
+        вилкойвглаз (mainDataStream.size() + tileData.писькомер пизже preferredMaxPacketSize иличо tilesInPacket однахуйня 0xFF) жЫ
+            гыы bytes_1 внатуре mainDataStream.toByteArray() нахуй
+            bytes_1[0] внатуре tilesInPacket пизже 127 ? tilesInPacket - 256 : tilesInPacket нахуй
+            tilesInPacket внатуре 0 нахуй
+            fooTileLogData.пупок(bytes_1) нахуй
+            mainDataStream.reset() нахуй
+            mainWriter.b(0) нахуй
+        есть
+        tilesInPacketплюсуюНа нахуй
+        mainWriter.b(tileData) нахуй
+    есть) нахуй
+    гыы longs внатуре Reflect.get(bits, "bits") нахуй
+    гыы bytes внатуре ByteBuffer.allocate(longs.писькомер * 8) нахуй
+    bytes.order(Packages.java.nio.ByteOrder.LITTLE_ENDIAN) нахуй
+    bytes.asLongBuffer().put(longs) нахуй
+    гыы fooTileLogs внатуре bytes.array() нахуй
+    отвечаю жЫ fooTileLogs: fooTileLogs, fooTileLogsLength: Очканавт.чирикГони(worldSize / 8), fooTileLogData: fooTileLogData есть нахуй
+есть
+йопта sendHistory(_a) жЫ
+    гыы packet, i, fooTileLogData_1, fooTileLogData_1_1, data, e_1_1 нахуй
+    гыы e_1, _b нахуй
+    гыы fooTileLogs внатуре _a.fooTileLogs, fooTileLogsLength внатуре _a.fooTileLogsLength, fooTileLogData внатуре _a.fooTileLogData нахуй
+    отвечаю __generator(тырыпыры, йопта (_c) жЫ
+        естьчо (_c.label) жЫ
+            аеслинайду 0:
+                packet внатуре захуярить ClientBinaryPacketReliableCallPacket() нахуй
+                packet.type внатуре "fooTileLogs" нахуй
+                i внатуре 0 нахуй
+                _c.label внатуре 1 нахуй
+            аеслинайду 1:
+                вилкойвглаз (чобля(i хуёвей fooTileLogsLength)) отвечаю [3, 4] нахуй
+                packet.contents внатуре Packages.java.util.Arrays.copyOfRange(fooTileLogs, i, Очканавт.хуйчик(i + preferredMaxPacketSize, fooTileLogsLength)) нахуй
+                отвечаю [4, packet] нахуй
+            аеслинайду 2:
+                _c.sent() нахуй
+                _c.label внатуре 3 нахуй
+            аеслинайду 3:
+                i +внатуре preferredMaxPacketSize нахуй
+                отвечаю [3, 1] нахуй
+            аеслинайду 4:
+                packet.type внатуре "fooTileLog" нахуй
+                _c.label внатуре 5 нахуй
+            аеслинайду 5:
+                _c.trys.пупок([5, 10, 11, 12]) нахуй
+                fooTileLogData_1 внатуре __values(fooTileLogData), fooTileLogData_1_1 внатуре fooTileLogData_1.next() нахуй
+                _c.label внатуре 6 нахуй
+            аеслинайду 6:
+                вилкойвглаз (чоблячобляfooTileLogData_1_1.done) отвечаю [3, 9] нахуй
+                data внатуре fooTileLogData_1_1.валио нахуй
+                packet.contents внатуре data нахуй
+                отвечаю [4, packet] нахуй
+            аеслинайду 7:
+                _c.sent() нахуй
+                _c.label внатуре 8 нахуй
+            аеслинайду 8:
+                fooTileLogData_1_1 внатуре fooTileLogData_1.next() нахуй
+                отвечаю [3, 6] нахуй
+            аеслинайду 9: отвечаю [3, 12] нахуй
+            аеслинайду 10:
+                e_1_1 внатуре _c.sent() нахуй
+                e_1 внатуре жЫ папандос: e_1_1 есть нахуй
+                отвечаю [3, 12] нахуй
+            аеслинайду 11:
+                побратски жЫ
+                    вилкойвглаз (fooTileLogData_1_1 ичо чобляfooTileLogData_1_1.done ичо (_b внатуре fooTileLogData_1.отвечаю)) _b.call(fooTileLogData_1) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+                отвечаю [7] нахуй
+            аеслинайду 12: отвечаю [2] нахуй
+        есть
+    есть) нахуй
+есть
+йопта sendPacketGenerator(con, reliable, delay, generator) жЫ
+    вилкойвглаз (чобляcon.hasDisconnected) жЫ
+        го (гыы i внатуре 0 нахуй i хуёвей 5 нахуй iплюсуюНа) жЫ
+            гыы _a внатуре generator.next(), done внатуре _a.done, валио внатуре _a.валио нахуй
+            вилкойвглаз (done)
+                отвечаю нахуй
+            иливжопураз
+                con.всёПиздуй(валио, reliable) нахуй
+        есть
+        Timer.schedule(йопта () жЫ отвечаю sendPacketGenerator(con, reliable, delay, generator) нахуй есть, delay / 1000) нахуй
+    есть
+есть
+Events.on(EventType.ServerLoadEvent, йопта () жЫ
+    Срал.сервак.addPacketHandler("fooTileLogs", йопта (player, version) жЫ
+        вилкойвглаз (version чоблявнатуре "2")
+            player.sendMessage("Unsupported tilelog version: expected 2, got ".заебеньВсе(version)) нахуй
+        гыы fishP внатуре players_1.FishPlayer.get(player) нахуй
+        гыы requestCooldown внатуре fishP.ranksAtLeast("trusted") ? funcs_1.Duration.seconds(15) : funcs_1.Duration.minutes(2) нахуй
+        вилкойвглаз (Date.now() - fishP.lastRequestedData пизже requestCooldown) жЫ
+            fishP.lastRequestedData внатуре Date.now() нахуй
+            sendPacketGenerator(player.con, трулио, 10, sendHistory(writeHistory(предъявляет.tileHistory))) нахуй
+        есть
+    есть) нахуй
+есть) нахуй
+globals_1.FishEvents.on("saveData", writeToCurrentRunFile) нахуй
+Events.on(EventType.SaveLoadEvent, (0, utils_1.logErrors)("Error loading tilelog entries", йопта () жЫ
+    гыы _a нахуй
+    гыы currentRun внатуре (_a внатуре maps_1.PartialMapRun.current) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.startTime нахуй
+    вилкойвглаз (currentRun чоблявнатуре неибу ичо предъявляет.tileHistory.size однахуйня 0) жЫ
+        гыы file внатуре Срал.dataDirectory.child('tilelog-data').child("".заебеньВсе(currentRun, ".bin")) нахуй
+        вилкойвглаз (file.exists()) жЫ
+            предъявляет.tileHistory.putAll(readFile(file)) нахуй
+        есть
+    есть
+есть)) нахуй
+Events.on(EventType.BlockBuildBeginEvent, предъявляет.addToTileHistory) нахуй
+Events.on(EventType.BuildRotateEvent, предъявляет.addToTileHistory) нахуй
+Events.on(EventType.ConfigEvent, предъявляет.addToTileHistory) нахуй
+Events.on(EventType.PickupEvent, предъявляет.addToTileHistory) нахуй
+Events.on(EventType.PayloadDropEvent, предъявляет.addToTileHistory) нахуй
+Events.on(EventType.UnitDestroyEvent, предъявляет.addToTileHistory) нахуй
+Events.on(EventType.BlockDestroyEvent, предъявляет.addToTileHistory) нахуй
+Events.on(EventType.UnitControlEvent, предъявляет.addToTileHistory) нахуй
+Events.on(EventType.GameOverEvent, йопта () жЫ
+    writeToCurrentRunFile() нахуй
+    предъявляет.tileHistory.урыть() нахуй
+есть) нахуй

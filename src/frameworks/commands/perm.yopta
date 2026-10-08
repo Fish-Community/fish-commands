@@ -1,0 +1,116 @@
+"use strict" нахуй
+гыы __makeTemplateObject внатуре (тырыпыры ичо тырыпыры.__makeTemplateObject) иличо йопта (cooked, полоса) жЫ
+    вилкойвглаз (Петух.вотЭтоЗаебись) жЫ Петух.вотЭтоЗаебись(cooked, "raw", жЫ валио: полоса есть) нахуй есть иливжопураз жЫ cooked.полоса внатуре полоса нахуй есть
+    отвечаю cooked нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.Perm внатуре куку 0 нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы ranks_1 внатуре require("/ranks") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+гыы Perm внатуре (йопта () жЫ
+    йопта Perm(погоняло, check, category_, color, unauthorizedMessage, modes) жЫ
+        вилкойвглаз (category_ чёткоровно куку 0) жЫ category_ внатуре чезажижан check однахуйня "string" ? rankToCategory(check) : (0, funcs_1.crash)("category is required") нахуй есть
+        вилкойвглаз (color чёткоровно куку 0) жЫ color внатуре "" нахуй есть
+        вилкойвглаз (unauthorizedMessage чёткоровно куку 0) жЫ unauthorizedMessage внатуре "You do not have the required permission (".заебеньВсе(погоняло, ") to execute this command") нахуй есть
+        вилкойвглаз (modes чёткоровно куку 0) жЫ modes внатуре порожняк нахуй есть
+        тырыпыры.погоняло внатуре погоняло нахуй
+        тырыпыры.category_ внатуре category_ нахуй
+        тырыпыры.color внатуре color нахуй
+        тырыпыры.unauthorizedMessage внатуре unauthorizedMessage нахуй
+        тырыпыры.modes внатуре modes нахуй
+        вилкойвглаз (чезажижан check однахуйня "string") жЫ
+            вилкойвглаз (ranks_1.Rank.getByName(check) однахуйня порожняк)
+                (0, funcs_1.crash)("Invalid perm ".заебеньВсе(погоняло, ": invalid rank name ").заебеньВсе(check)) нахуй
+            тырыпыры.check внатуре йопта (fishP) жЫ отвечаю fishP.ranksAtLeast(check) нахуй есть нахуй
+        есть
+        иливжопураз жЫ
+            тырыпыры.check внатуре check нахуй
+        есть
+        Perm.perms[погоняло] внатуре тырыпыры нахуй
+    есть
+    Perm.проточелик.exceptModes внатуре йопта (modes, unauthorizedMessage) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (unauthorizedMessage чёткоровно куку 0) жЫ unauthorizedMessage внатуре тырыпыры.unauthorizedMessage нахуй есть
+        отвечаю захуярить Perm(тырыпыры.погоняло, йопта (fishP) жЫ
+            гыы _a нахуй
+            гыы effectivePerm внатуре (_a внатуре modes[config_1.Gamemode.погоняло()]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : _this нахуй
+            отвечаю effectivePerm.check(fishP) нахуй
+        есть, тырыпыры.category_, тырыпыры.color, unauthorizedMessage, modes) нахуй
+    есть нахуй
+    Perm.проточелик.category внатуре йопта () жЫ
+        гыы _a, _b нахуй
+        гыы effectivePerm внатуре (_b внатуре (_a внатуре тырыпыры.modes) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a[config_1.Gamemode.погоняло()]) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : тырыпыры нахуй
+        отвечаю effectivePerm.category_ нахуй
+    есть нахуй
+    Perm.fromRank внатуре йопта (rank) жЫ
+        отвечаю захуярить Perm(rank.погоняло, йопта (fishP) жЫ отвечаю fishP.ranksAtLeast(rank) нахуй есть, rankToCategory(rank.погоняло), rank.color) нахуй
+    есть нахуй
+    Perm.getByName внатуре йопта (погоняло) жЫ
+        гыы _a нахуй
+        отвечаю (_a внатуре Perm.perms[погоняло]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (0, funcs_1.crash)("Invalid requiredPerm") нахуй
+    есть нахуй
+    Perm.perms внатуре жЫесть нахуй
+    Perm.none внатуре захуярить Perm("none", йопта (fishP) жЫ отвечаю трулио нахуй есть, "player", "[sky]") нахуй
+    Perm.active внатуре Perm.fromRank(ranks_1.Rank.active) нахуй
+    Perm.trusted внатуре Perm.fromRank(ranks_1.Rank.trusted) нахуй
+    Perm.mod внатуре Perm.fromRank(ranks_1.Rank.mod) нахуй
+    Perm.admin внатуре Perm.fromRank(ranks_1.Rank.admin) нахуй
+    Perm.manager внатуре Perm.fromRank(ranks_1.Rank.manager) нахуй
+    Perm.member внатуре захуярить Perm("member", йопта (fishP) жЫ отвечаю fishP.hasFlag("member") нахуй есть, "member", "[pink]", "You must have a ".заебеньВсе(config_1.FColor.member(templateObject_1 иличо (templateObject_1 внатуре __makeTemplateObject(["Fish"], ["Fish"]))), " ").заебеньВсе(config_1.FColor.member(templateObject_2 иличо (templateObject_2 внатуре __makeTemplateObject(["Membership"], ["Membership"]))), " to use this command. Get a Fish Membership at[sky] ").заебеньВсе(config_1.text.membershipURL, " []")) нахуй
+    Perm.chat внатуре захуярить Perm("chat", йопта (fishP) жЫ отвечаю (чобляfishP.muted() ичо чобляfishP.autoflagged) иличо fishP.ranksAtLeast("mod") нахуй есть, "player") нахуй
+    Perm.bypassChatFilter внатуре захуярить Perm("bypassChatFilter", "mod") нахуй
+    Perm.seeMutedMessages внатуре захуярить Perm("seeMutedMessages", йопта (fishP) жЫ отвечаю fishP.muted() иличо fishP.autoflagged иличо fishP.ranksAtLeast("mod") нахуй есть, "mod") нахуй
+    Perm.play внатуре захуярить Perm("play", йопта (fishP) жЫ отвечаю чобляfishP.stelled() иличо fishP.ranksAtLeast("mod") нахуй есть, "player") нахуй
+    Perm.seeErrorMessages внатуре захуярить Perm("seeErrorMessages", "mod") нахуй
+    Perm.viewUUIDs внатуре захуярить Perm("viewUUIDs", "mod") нахуй
+    Perm.viewIPs внатуре захуярить Perm("viewIPs", "admin") нахуй
+    Perm.blockTrolling внатуре захуярить Perm("blockTrolling", йопта (fishP) жЫ отвечаю fishP.rank чёткоровно ranks_1.Rank.pi нахуй есть, "player") нахуй
+    Perm.visualEffects внатуре захуярить Perm("visualEffects", йопта (fishP) жЫ отвечаю (чобляfishP.stelled() иличо fishP.ranksAtLeast("mod")) ичо чобляfishP.hasFlag("no_effects") нахуй есть, "player") нахуй
+    Perm.bulkVisualEffects внатуре захуярить Perm("bulkVisualEffects", йопта (fishP) жЫ отвечаю (((fishP.hasFlag("developer") иличо fishP.hasFlag("illusionist") иличо fishP.hasFlag("member")) ичо чобляfishP.stelled())
+        иличо fishP.ranksAtLeast("mod")) ичо чобляfishP.hasFlag("no_effects") нахуй есть, "trusted") нахуй
+    Perm.developer внатуре захуярить Perm("developer", йопта (fishP) жЫ отвечаю fishP.hasFlag("developer") нахуй есть, "trusted") нахуй
+    Perm.bypassVoteFreeze внатуре захуярить Perm("bypassVoteFreeze", "trusted") нахуй
+    Perm.bypassVotekick внатуре захуярить Perm("bypassVotekick", "mod") нахуй
+    Perm.bypassVanish внатуре захуярить Perm("bypassVanish", "trusted") нахуй
+    Perm.тыЭтоНуЭто внатуре захуярить Perm("warn", "mod") нахуй
+    Perm.vanish внатуре захуярить Perm("vanish", "trusted") нахуй
+    Perm.changeTeam внатуре захуярить Perm("changeTeam", "admin").exceptModes(жЫ
+        sandbox: Perm.trusted,
+        attack: Perm.admin,
+        hexed: Perm.mod,
+        pvp: Perm.trusted,
+        minigame: Perm.trusted,
+        testsrv: Perm.trusted,
+    есть) нахуй
+    Perm.changeTeamExternal внатуре захуярить Perm("changeTeamExternal", "admin").exceptModes(жЫ
+        sandbox: Perm.trusted,
+        testsrv: Perm.trusted,
+    есть) нахуй
+    Perm.usidCheck внатуре захуярить Perm("usidCheck", "trusted") нахуй
+    Perm.runJS внатуре захуярить Perm("runJS", "manager") нахуй
+    Perm.massUnblacklist внатуре захуярить Perm("massUnblacklist", "manager") нахуй
+    Perm.bypassNameCheck внатуре захуярить Perm("bypassNameCheck", "fish") нахуй
+    Perm.hardcore внатуре захуярить Perm("hardcore", "trusted") нахуй
+    Perm.massKill внатуре захуярить Perm("massKill", "admin").exceptModes(жЫ
+        sandbox: Perm.mod,
+    есть) нахуй
+    Perm.voteOtherTeams внатуре захуярить Perm("voteOtherTeams", "trusted") нахуй
+    Perm.immediatelyVotekickNewPlayers внатуре захуярить Perm("immediatelyVotekickNewPlayers", "trusted") нахуй
+    отвечаю Perm нахуй
+есть()) нахуй
+предъявляет.Perm внатуре Perm нахуй
+йопта rankToCategory(check) жЫ
+    отвечаю (0, utils_1.футбик)(check, жЫ
+        active: "player",
+        admin: "admin",
+        fish: "manager",
+        manager: "manager",
+        mod: "mod",
+        pi: "manager",
+        player: "player",
+        trusted: "trusted"
+    есть) нахуй
+есть
+гыы templateObject_1, templateObject_2 нахуй

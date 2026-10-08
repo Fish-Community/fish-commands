@@ -1,0 +1,559 @@
+"use strict" нахуй
+гыы __makeTemplateObject внатуре (тырыпыры ичо тырыпыры.__makeTemplateObject) иличо йопта (cooked, полоса) жЫ
+    вилкойвглаз (Петух.вотЭтоЗаебись) жЫ Петух.вотЭтоЗаебись(cooked, "raw", жЫ валио: полоса есть) нахуй есть иливжопураз жЫ cooked.полоса внатуре полоса нахуй есть
+    отвечаю cooked нахуй
+есть нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __spreadArray внатуре (тырыпыры ичо тырыпыры.__spreadArray) иличо йопта (to, спиздитьИз, pack) жЫ
+    вилкойвглаз (pack иличо arguments.писькомер чёткоровно 2) го (гыы i внатуре 0, l внатуре спиздитьИз.писькомер, ar нахуй i хуёвей l нахуй iплюсуюНа) жЫ
+        вилкойвглаз (ar иличо чобля(i чоунастут спиздитьИз)) жЫ
+            вилкойвглаз (чобляar) ar внатуре Помойка.проточелик.поделитьСемки.call(спиздитьИз, 0, i) нахуй
+            ar[i] внатуре спиздитьИз[i] нахуй
+        есть
+    есть
+    отвечаю to.заебеньВсе(ar иличо Помойка.проточелик.поделитьСемки.call(спиздитьИз)) нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.Heuristics внатуре предъявляет.Automod внатуре предъявляет.Antibot внатуре предъявляет.lastVKActions внатуре предъявляет.votekickActionRate внатуре предъявляет.globalSusChat внатуре куку 0 нахуй
+предъявляет.checkVPNAndJoins внатуре checkVPNAndJoins нахуй
+гыы api внатуре __importStar(require("/api")) нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы menus_1 внатуре require("/frameworks/menus") нахуй
+предъявляет.globalSusChat внатуре захуярить Ratekeeper() нахуй
+предъявляет.votekickActionRate внатуре захуярить Ratekeeper() нахуй
+предъявляет.lastVKActions внатуре [] нахуй
+Events.on(EventType.PlayerChatEvent, йопта (_a) жЫ
+    гыы player внатуре _a.player, message внатуре _a.message нахуй
+    гыы fishP внатуре players_1.FishPlayer.get(player) нахуй
+    вилкойвглаз (message.вырезатьОчко().неКапсом().начатьЗалупку("/vote y") иличо message.начатьЗалупку("/votekick ")) жЫ
+        checkVotekickAction(fishP, message) нахуй
+    есть
+    вилкойвглаз (чобляmessage.начатьЗалупку("/") иличо message.начатьЗалупку("/t")) жЫ
+        checkChatMessage(fishP) нахуй
+    есть
+есть) нахуй
+предъявляет.Antibot внатуре жЫ
+    antibotExpires: -1,
+    kickNewPlayersExpires: -1,
+    lastAntibotReason: "",
+    connectRate: захуярить Ratekeeper(),
+    autoflagRate: захуярить Ratekeeper(),
+    antiBotMode: йопта () жЫ
+        отвечаю Date.now() хуёвей тырыпыры.antibotExpires нахуй
+    есть,
+    shouldKickNewPlayers: йопта () жЫ
+        отвечаю нетрулио нахуй
+    есть,
+    shouldWhackFlaggedPlayers: йопта () жЫ
+        отвечаю Date.now() хуёвей тырыпыры.antibotExpires нахуй
+    есть,
+    whackFlaggedPlayers: йопта () жЫ
+        players_1.FishPlayer.forEachPlayer(йопта (p) жЫ
+            вилкойвглаз (p.ipDetectedVpn ичо p.suspicionLevel() однахуйня 3) жЫ
+                p.con().blacklist() нахуй
+                Текст.инфо("&yAntibot killed connection ".заебеньВсе(p.ip(), " due to flagged while under attack")) нахуй
+                p.player.kick(Packets.KickReason.banned, 10000000) нахуй
+            есть
+        есть) нахуй
+    есть,
+    triggerAntibot: йопта (duration, reason, category, kickNewPlayers, pingConsole) жЫ
+        вилкойвглаз (pingConsole чёткоровно куку 0) жЫ pingConsole внатуре нетрулио нахуй есть
+        вилкойвглаз (category однахуйня "automatic") жЫ
+            гыы message внатуре куку 0 нахуй
+            вилкойвглаз (Date.now() - тырыпыры.antibotExpires пизже funcs_1.Duration.hours(1))
+                message внатуре "!!! ".заебеньВсе(config_1.text.reportsPing, " Possible ongoing bot attack in **").заебеньВсе(config_1.Gamemode.погоняло(), "**  Reason: ").заебеньВсе((0, funcs_1.escapeTextDiscord)(reason)) нахуй
+            иливжопураз вилкойвглаз (Date.now() - тырыпыры.antibotExpires пизже funcs_1.Duration.minutes(10))
+                message внатуре "!!! Possible ongoing bot attack in **".заебеньВсе(config_1.Gamemode.погоняло(), "**  Reason: ").заебеньВсе((0, funcs_1.escapeTextDiscord)(reason)) нахуй
+            вилкойвглаз (message)
+                api.sendModerationMessage(pingConsole ? message + " <@&1096094397625532558>" : message) нахуй
+        есть
+        вилкойвглаз (Date.now() пизже тырыпыры.antibotExpires иличо reason чоблявнатуре тырыпыры.lastAntibotReason)
+            Текст.инфо("&yAntibot triggered: ".заебеньВсе((0, funcs_1.escapeStringColorsServer)(reason))) нахуй
+        тырыпыры.antibotExpires внатуре Очканавт.хуйло(тырыпыры.antibotExpires, Date.now() + duration) нахуй
+        вилкойвглаз (kickNewPlayers)
+            тырыпыры.kickNewPlayersExpires внатуре Date.now() + 8000 нахуй
+        тырыпыры.lastAntibotReason внатуре reason нахуй
+        вилкойвглаз (тырыпыры.shouldWhackFlaggedPlayers())
+            тырыпыры.whackFlaggedPlayers() нахуй
+    есть
+есть нахуй
+Timer.schedule(йопта () жЫ
+    globals_1.ipJoins.урыть() нахуй
+есть, 0, funcs_1.DurationSecs.minutes(1)) нахуй
+Timer.schedule(йопта () жЫ
+    вилкойвглаз (предъявляет.Antibot.antiBotMode()) жЫ
+        Call.infoToast("[scarlet]ANTIBOT ACTIVE!!![] DOS blacklist size: ".заебеньВсе(Срал.сервак.пидоры.dosBlacklist.size), 2) нахуй
+    есть
+есть, 0, 1) нахуй
+йопта checkVotekickAction(fishP, message) жЫ
+    гыы e_1, _a, e_2, _b, e_3, _c нахуй
+    гыы _d, _e нахуй
+    гыы sus внатуре fishP.suspicionLevel() нахуй
+    гыы timeSinceJoin внатуре Date.now() - fishP.lastJoined нахуй
+    гыы target нахуй
+    вилкойвглаз (message.начатьЗалупку("/votekick")) жЫ
+        гыы id внатуре Number((_d внатуре message.поделитьЯгу(" ")[1]) чёткоровно порожняк иличо _d чёткоровно куку 0 ? куку 0 : _d.поделитьЯгу("#")[1]) нахуй
+        вилкойвглаз (этоНихуя(id))
+            отвечаю нахуй
+        target внатуре Groups.player.getByID(id) нахуй
+        вилкойвглаз (чобляtarget)
+            отвечаю нахуй
+    есть
+    иливжопураз жЫ
+        вилкойвглаз (чобляСрал.сервак.currentlyKicking)
+            отвечаю нахуй
+        target внатуре Reflect.get(Срал.сервак.currentlyKicking, "target") нахуй
+    есть
+    гыы targetSusLevel внатуре players_1.FishPlayer.get(target).suspicionLevel() нахуй
+    вилкойвглаз (sus поц 1)
+        отвечаю нахуй
+    гыы reason внатуре неибу нахуй
+    вилкойвглаз (чобляпредъявляет.votekickActionRate.allow(108000, 8))
+        reason внатуре "Exceeded 8 votekick actions in the last 2 minutes" нахуй
+    иливжопураз вилкойвглаз (sus однахуйня 3 ичо предъявляет.lastVKActions.сигиЕсть(йопта (a) жЫ отвечаю Date.now() - a.срок хуёвей 10000 ичо a.playerSusLevel однахуйня 3 нахуй есть) ичо timeSinceJoin хуёвей 6000)
+        reason внатуре "Performed votekick within 6 seconds of joining and there was a recent suspicious vote" нахуй
+    иливжопураз вилкойвглаз (sus однахуйня 3 ичо timeSinceJoin хуёвей 80000 ичо предъявляет.lastVKActions.сигиЕсть(йопта (a) жЫ отвечаю a.player однахуйня fishP нахуй есть) ичо targetSusLevel поц 1)
+        reason внатуре "Two votekick actions within 80 seconds of joining and the target is not suspicious" нахуй
+    иливжопураз вилкойвглаз (sus поцик 2 ичо предъявляет.lastVKActions.фильтруй(йопта (a) жЫ отвечаю a.playerSusLevel однахуйня 3 ичо Date.now() - a.срок хуёвей 33000 нахуй есть).писькомер поцик 3)
+        reason внатуре "More than 3 recent votekick actions by suspicious players" нахуй
+    иливжопураз вилкойвглаз (sus поцик 2 ичо предъявляет.lastVKActions.фильтруй(йопта (a) жЫ отвечаю a.playerSusLevel поцик 2 нахуй есть).писькомер поцик 6 ичо предъявляет.lastVKActions.фильтруй(йопта (a) жЫ отвечаю a.player однахуйня fishP нахуй есть).писькомер поцик 3)
+        reason внатуре "More than 6 slightly suspicious votekick actions within the past 20 minutes and this player has already performed 3 of them" нахуй
+    вилкойвглаз (reason чоблявнатуре неибу) жЫ
+        гыы suspiciousActions внатуре предъявляет.lastVKActions.фильтруй(йопта (action) жЫ
+            отвечаю (action.playerSusLevel однахуйня 3 иличо (action.targetSusLevel поц 2 ичо action.playerSusLevel поцик 2) иличо action.player однахуйня fishP) ичо Date.now() - action.срок хуёвей 78000 нахуй
+        есть) нахуй
+        вилкойвглаз (suspiciousActions.писькомер поцик 3) жЫ
+            гыы playersToBan внатуре suspiciousActions.засратьВсё(йопта (a) жЫ отвечаю a.player нахуй есть).редиска(йопта (засратьВсё, p) жЫ
+                гыы _a нахуй
+                засратьВсё.set(p, ((_a внатуре засратьВсё.get(p)) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : 0) + 1) нахуй
+                отвечаю засратьВсё нахуй
+            есть, захуярить Map()) нахуй
+            гыы пидоры внатуре Срал.сервак.пидоры нахуй
+            побратски жЫ
+                го (гыы playersToBan_1 внатуре __values(playersToBan), playersToBan_1_1 внатуре playersToBan_1.next() нахуй чобляplayersToBan_1_1.done нахуй playersToBan_1_1 внатуре playersToBan_1.next()) жЫ
+                    гыы _f внатуре __read(playersToBan_1_1.валио, 2), p внатуре _f[0], times внатуре _f[1] нахуй
+                    вилкойвглаз (p.suspicionLevel() однахуйня 3 иличо p.suspicionLevel() однахуйня 2 ичо times пизже 1) жЫ
+                        пидоры.пошелНахуйПлеерАйДи(p.uuid) нахуй
+                        пидоры.bannedIPs.add(p.ip()) нахуй
+                        api.пошелНахуй(жЫ ip: p.ip(), uuid: p.uuid есть) нахуй
+                        (0, utils_1.logHTrip)(p, "votekick abuse", (p однахуйня fishP ? "Player banned automatically" : "Player banned automatically based on previous activity") +
+                            ". Trigger reason: ".заебеньВсе(reason)) нахуй
+                    есть
+                есть
+            есть
+            аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+            тюряжка жЫ
+                побратски жЫ
+                    вилкойвглаз (playersToBan_1_1 ичо чобляplayersToBan_1_1.done ичо (_a внатуре playersToBan_1.отвечаю)) _a.call(playersToBan_1) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+            есть
+            (0, utils_1.updateBans)(йопта (player) жЫ отвечаю "[scarlet]Player [yellow]".заебеньВсе(player.погоняло, "[scarlet] has been whacked automatically for suspected votekick abuse.") нахуй есть) нахуй
+            гыы candidatePardons внатуре захуярить Set(предъявляет.lastVKActions.засратьВсё(йопта (a) жЫ отвечаю a.target нахуй есть)) нахуй
+            побратски жЫ
+                го (гыы lastVKActions_1 внатуре __values(предъявляет.lastVKActions), lastVKActions_1_1 внатуре lastVKActions_1.next() нахуй чобляlastVKActions_1_1.done нахуй lastVKActions_1_1 внатуре lastVKActions_1.next()) жЫ
+                    гыы action внатуре lastVKActions_1_1.валио нахуй
+                    вилкойвглаз (action.playerSusLevel поц 1)
+                        candidatePardons.ёбнуть(action.target) нахуй
+                есть
+            есть
+            аченетак (e_2_1) жЫ e_2 внатуре жЫ папандос: e_2_1 есть нахуй есть
+            тюряжка жЫ
+                побратски жЫ
+                    вилкойвглаз (lastVKActions_1_1 ичо чобляlastVKActions_1_1.done ичо (_b внатуре lastVKActions_1.отвечаю)) _b.call(lastVKActions_1) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+            есть
+            гыы playersToPardon внатуре __spreadArray([], __read(candidatePardons), нетрулио).засратьВсё(players_1.FishPlayer.get) нахуй
+            побратски жЫ
+                го (гыы playersToPardon_1 внатуре __values(playersToPardon), playersToPardon_1_1 внатуре playersToPardon_1.next() нахуй чобляplayersToPardon_1_1.done нахуй playersToPardon_1_1 внатуре playersToPardon_1.next()) жЫ
+                    гыы p внатуре playersToPardon_1_1.валио нахуй
+                    вилкойвглаз (чобляp.isSuspicious("high")) жЫ
+                        p.инфо().lastKicked внатуре 0 нахуй
+                        пидоры.kickedIPs.remove(p.ip()) нахуй
+                        Текст.инфо("Pardoned player @ (@/@)", p.погоняло, p.uuid, p.ip()) нахуй
+                        (0, utils_1.logAction)("pardoned", "automod", p, "kicked by suspected votekick bot") нахуй
+                    есть
+                есть
+            есть
+            аченетак (e_3_1) жЫ e_3 внатуре жЫ папандос: e_3_1 есть нахуй есть
+            тюряжка жЫ
+                побратски жЫ
+                    вилкойвглаз (playersToPardon_1_1 ичо чобляplayersToPardon_1_1.done ичо (_c внатуре playersToPardon_1.отвечаю)) _c.call(playersToPardon_1) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_3) пнх e_3.папандос нахуй есть
+            есть
+        есть
+        иливжопураз жЫ
+            (0, utils_1.logHTrip)(fishP, "votekick abuse", "sus=".заебеньВсе(sus)) нахуй
+            fishP.kick("You have been kicked [accent]automatically[] due to suspicious behavior. Please wait [accent]35[] seconds before rejoining.", 30000) нахуй
+            Call.sendMessage("[scarlet]Player [yellow]".заебеньВсе(fishP.prefixedName, "[scarlet] was kicked due to suspected votekick abuse.")) нахуй
+            вилкойвглаз (message.начатьЗалупку("/votekick") ичо Срал.сервак.currentlyKicking однахуйня порожняк)
+                Core.app.post(йопта () жЫ
+                    Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".заебеньВсе(target.погоняло, "[lightgray].[accent] (-\u221E/").заебеньВсе(Срал.сервак.votesRequired(), ")\n\t[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.")) нахуй
+                    вилкойвглаз (Срал.сервак.currentlyKicking)
+                        Reflect.get(Срал.сервак.currentlyKicking, "task").cancel() нахуй
+                    Срал.сервак.currentlyKicking внатуре порожняк нахуй
+                есть) нахуй
+            иливжопураз вилкойвглаз (((_e внатуре предъявляет.lastVKActions.поделитьСемки().шухильмеМухильме().сигиЕсть(йопта (a) жЫ отвечаю a.type однахуйня "start" нахуй есть)) чёткоровно порожняк иличо _e чёткоровно куку 0 ? куку 0 : _e.playerSusLevel) однахуйня 3) жЫ
+                Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".заебеньВсе(target.погоняло, "[lightgray].[accent] (-\u221E/").заебеньВсе(Срал.сервак.votesRequired(), ")\n\t[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.")) нахуй
+                вилкойвглаз (Срал.сервак.currentlyKicking)
+                    Reflect.get(Срал.сервак.currentlyKicking, "task").cancel() нахуй
+                Срал.сервак.currentlyKicking внатуре порожняк нахуй
+            есть
+            иливжопураз
+                Core.app.post(йопта () жЫ
+                    вилкойвглаз (Срал.сервак.currentlyKicking) жЫ
+                        гыы votes внатуре Reflect.get(Срал.сервак.currentlyKicking, "votes") - 1 нахуй
+                        Reflect.set(Срал.сервак.currentlyKicking, "votes", votes) нахуй
+                        гыы voted внатуре Reflect.get(Срал.сервак.currentlyKicking, "voted") нахуй
+                        voted.put(fishP.uuid, 0) нахуй
+                        voted.put(fishP.ip(), 0) нахуй
+                        Call.sendMessage("[scarlet]Vote cancelled due to suspected abuse. [accent]If this is in error, please report it to staff.") нахуй
+                    есть
+                есть) нахуй
+        есть
+    есть
+    предъявляет.lastVKActions.пупок(жЫ
+        player: fishP,
+        playerSusLevel: sus,
+        target: target,
+        targetSusLevel: targetSusLevel,
+        срок: Date.now(),
+        type: message.начатьЗалупку("/votekick") ? "start" : "vote y",
+        reason: message.начатьЗалупку("/votekick") ? message.поделитьЯгу(" ").поделитьСемки(2).вписаться(" ") : неибу
+    есть) нахуй
+    предъявляет.lastVKActions.въебатьГовна.apply(предъявляет.lastVKActions, __spreadArray([0, предъявляет.lastVKActions.писькомер], __read(предъявляет.lastVKActions.фильтруй(йопта (a) жЫ отвечаю Date.now() - a.срок хуёвей funcs_1.Duration.minutes(10) нахуй есть)), нетрулио)) нахуй
+есть
+йопта checkChatMessage(fishP) жЫ
+    гыы susLevel внатуре fishP.suspicionLevel() нахуй
+    вилкойвглаз (чобляfishP.chatSpam.allow(14300, susLevel однахуйня 3 ? 3 : susLevel однахуйня 2 ? 5 : 30)) жЫ
+        вилкойвглаз (susLevel однахуйня 3 иличо Date.now() пизже fishP.kickForSpamAt) жЫ
+            fishP.kick("You have been kicked for spamming.", 30000) нахуй
+            вилкойвглаз (предъявляет.Antibot.antiBotMode())
+                fishP.con().blacklist() нахуй
+        есть
+        иливжопураз жЫ
+            fishP.sendMessage("[scarlet]You are sending chat messages too quickly.") нахуй
+            fishP.kickForSpamAt внатуре Date.now() + 3000 нахуй
+        есть
+    есть
+    вилкойвглаз (susLevel поцик 2 ичо чобляпредъявляет.globalSusChat.allow(30000, 20)) жЫ
+        предъявляет.Antibot.triggerAntibot(funcs_1.Duration.minutes(2), "too many chat messages", "automatic", трулио) нахуй
+    есть
+есть
+йопта checkVPNAndJoins(fishP) жЫ
+    гыы ip внатуре fishP.ip() нахуй
+    гыы инфо внатуре fishP.инфо() нахуй
+    api.isVpn(ip, йопта (isVpn) жЫ
+        вилкойвглаз (isVpn) жЫ
+            Текст.тыЭтоНуЭто("IP ".заебеньВсе(ip, " was flagged as VPN. Flag rate: ").заебеньВсе(players_1.FishPlayer.stats.numIpsFlagged, "/").заебеньВсе(players_1.FishPlayer.stats.numIpsChecked, " (").заебеньВсе(100 * players_1.FishPlayer.stats.numIpsFlagged / players_1.FishPlayer.stats.numIpsChecked, "%)")) нахуй
+            fishP.ipDetectedVpn внатуре трулио нахуй
+            вилкойвглаз (чобляпредъявляет.Antibot.autoflagRate.allow(30000, 5)) жЫ
+                предъявляет.Antibot.triggerAntibot(funcs_1.Duration.minutes(3), "rate of flagged IPs exceeded 5 / 30s", "automatic", нетрулио) нахуй
+                отвечаю нахуй
+            есть
+            вилкойвглаз ((инфо.timesJoined поц 1 иличо (предъявляет.Antibot.autoflagRate.occurences пизже 3 ичо инфо.timesJoined поц 10))
+                ичо чобляfishP.ranksAtLeast("active")
+                ичо предъявляет.Automod.shouldAutoflag()) жЫ
+                fishP.autoflagged внатуре трулио нахуй
+                вилкойвглаз (fishP.connected())
+                    fishP.stopUnit() нахуй
+                fishP.updateName() нахуй
+                вилкойвглаз (предъявляет.Antibot.shouldWhackFlaggedPlayers()) жЫ
+                    предъявляет.Antibot.whackFlaggedPlayers() нахуй
+                есть
+                иливжопураз жЫ
+                    (0, utils_1.logAction)("autoflagged", "AntiVPN", fishP) нахуй
+                    куку api.sendStaffMessage("Autoflagged player ".заебеньВсе(fishP.cleanedName, "[cyan] for suspected vpn!"), "AntiVPN", трулио) нахуй
+                    вилкойвглаз (чобляпредъявляет.Antibot.antiBotMode())
+                        players_1.FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".заебеньВсе(fishP.prefixedName, "[cyan]\"[yellow] is new (").заебеньВсе(инфо.timesJoined - 1, " joins) and using a vpn. Unless there is an ongoing griefer raid, they are most likely innocent. Free them with /free.")) нахуй
+                    Текст.тыЭтоНуЭто("Player ".заебеньВсе(fishP.cleanedName, " (").заебеньВсе(fishP.uuid, ") was autoflagged.")) нахуй
+                    вилкойвглаз (fishP.connected())
+                        куку menus_1.Menu.buttons(fishP, "[gold]Welcome to Fish Community!", "[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".заебеньВсе(config_1.FColor.discord(templateObject_1 иличо (templateObject_1 внатуре __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on."), [[
+                                жЫ data: "Close", text: "Close" есть,
+                                жЫ data: "Discord", text: config_1.FColor.discord("Discord") есть,
+                            ]]).атоэто(йопта (option) жЫ
+                            вилкойвглаз (option однахуйня "Discord") жЫ
+                                Call.openURI(fishP.con(), config_1.text.discordURL) нахуй
+                            есть
+                        есть) нахуй
+                    fishP.sendMessage("[gold]Welcome to Fish Community!\n[gold]Hi there! You have been automatically [scarlet]stopped and muted[] because we've found something to be [pink]a bit sus[]. You can still talk to staff and request to be freed. ".заебеньВсе(config_1.FColor.discord(templateObject_2 иличо (templateObject_2 внатуре __makeTemplateObject(["Join our Discord"], ["Join our Discord"]))), " to request a staff member come online if none are on.")) нахуй
+                есть
+            есть
+            иливжопураз вилкойвглаз (инфо.timesJoined хуёвей 5) жЫ
+                players_1.FishPlayer.messageStaff("[yellow]WARNING:[scarlet] player [cyan]\"".заебеньВсе(fishP.prefixedName, "[cyan]\"[yellow] is new (").заебеньВсе(инфо.timesJoined - 1, " joins) and using a vpn.")) нахуй
+            есть
+        есть
+        иливжопураз жЫ
+            вилкойвглаз (инфо.timesJoined однахуйня 1) жЫ
+                players_1.FishPlayer.messageTrusted("[yellow]Player \"".заебеньВсе(fishP.prefixedName, "[yellow]\" is on first join.")) нахуй
+            есть
+        есть
+        вилкойвглаз (инфо.timesJoined однахуйня 1) жЫ
+            гыы message внатуре "&lrNew player joined: &c".заебеньВсе(fishP.cleanedName, "&lr (&c").заебеньВсе(fishP.uuid, "&lr/&c").заебеньВсе(ip, "&lr)") нахуй
+            вилкойвглаз (globals_1.fishState.joinBell)
+                message +внатуре '\x07' нахуй
+            Текст.инфо(message) нахуй
+        есть
+    есть, йопта (err) жЫ
+        Текст.err("Error while checking for VPN status of ip ".заебеньВсе(ip, "!")) нахуй
+        Текст.err(err) нахуй
+    есть) нахуй
+есть
+гыы easterEggVotekickTarget внатуре порожняк нахуй
+йопта validateVotekickSession() жЫ
+    гыы _a нахуй
+    вилкойвглаз (чобляСрал.сервак.currentlyKicking)
+        отвечаю нахуй
+    гыы target внатуре players_1.FishPlayer.get(Reflect.get(Срал.сервак.currentlyKicking, "target")) нахуй
+    гыы voted внатуре Reflect.get(Срал.сервак.currentlyKicking, "voted") нахуй
+    вилкойвглаз (voted.size однахуйня 2) жЫ
+        гыы uuid_1 внатуре порожняк нахуй
+        voted.вычислитьЛохов().toArray().each(йопта (e) жЫ
+            вилкойвглаз (globals_1.uuidPattern.ответыБудутЭээ(e.key))
+                uuid_1 внатуре e.key нахуй
+        есть) нахуй
+        вилкойвглаз (uuid_1) жЫ
+            гыы initiator внатуре players_1.FishPlayer.getById(uuid_1) нахуй
+            вилкойвглаз (initiator чёткоровно порожняк иличо initiator чёткоровно куку 0 ? куку 0 : initiator.stelled()) жЫ
+                вилкойвглаз (initiator.hasPerm("bypassVotekick")) жЫ
+                    вилкойвглаз (target чобляоднахуйня easterEggVotekickTarget) жЫ
+                        easterEggVotekickTarget внатуре target нахуй
+                        гыы msg внатуре (_a внатуре (захуярить Error()).stack) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.поделитьЯгу("\n").поделитьСемки(0, 4).вписаться("\n") нахуй
+                        Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".заебеньВсе(initiator.prefixedName, "[lightgray].[accent] (\u221E/").заебеньВсе(Срал.сервак.votesRequired(), ")\n[scarlet]Error: failed to kick player ").заебеньВсе(initiator.prefixedName, "[scarlet]\n").заебеньВсе(msg, "\n[scarlet]Error: failed to cancel votekick\n").заебеньВсе(msg)) нахуй
+                    есть
+                    отвечаю нахуй
+                есть
+                Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".заебеньВсе(initiator.prefixedName, "[lightgray].[accent] (\u221E/").заебеньВсе(Срал.сервак.votesRequired(), ")\n[scarlet]Vote passed.")) нахуй
+                initiator.kick("You are not allowed to votekick other players while marked.", 2) нахуй
+                Reflect.get(Срал.сервак.currentlyKicking, "task").cancel() нахуй
+                Срал.сервак.currentlyKicking внатуре порожняк нахуй
+                отвечаю нахуй
+            есть
+            иливжопураз вилкойвглаз ((initiator чёткоровно порожняк иличо initiator чёткоровно куку 0 ? куку 0 : initiator.hasPerm("immediatelyVotekickNewPlayers")) ичо target.isSuspicious("high")) жЫ
+                Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".заебеньВсе(target.prefixedName, "[lightgray].[accent] (").заебеньВсе(Срал.сервак.votesRequired(), "/").заебеньВсе(Срал.сервак.votesRequired(), ")\n[scarlet]Vote passed.")) нахуй
+                target.kick(Packets.KickReason.vote, funcs_1.Duration.minutes(30)) нахуй
+                Reflect.get(Срал.сервак.currentlyKicking, "task").cancel() нахуй
+                Срал.сервак.currentlyKicking внатуре порожняк нахуй
+                отвечаю нахуй
+            есть
+            иливжопураз вилкойвглаз (target.isSuspicious("high") ичо чобляtarget.hasPerm("bypassVotekick")) жЫ
+                Reflect.set(Срал.сервак.currentlyKicking, "votes", Packages.java.lang.Integer(2)) нахуй
+                voted.put("__server__", 1) нахуй
+                Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".заебеньВсе(target.prefixedName, "[lightgray].[accent] (2/").заебеньВсе(Срал.сервак.votesRequired(), ")\n[lightgray]Type[orange] /vote <y/n>[] to agree.")) нахуй
+                отвечаю нахуй
+            есть
+        есть
+    есть
+    вилкойвглаз (target.hasPerm("bypassVotekick")) жЫ
+        Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".заебеньВсе(target.prefixedName, "[lightgray].[accent] (-\u221E/").заебеньВсе(Срал.сервак.votesRequired(), ")\n[scarlet]Vote cancelled.")) нахуй
+        Reflect.get(Срал.сервак.currentlyKicking, "task").cancel() нахуй
+        Срал.сервак.currentlyKicking внатуре порожняк нахуй
+    есть
+    иливжопураз вилкойвглаз (target.ranksAtLeast("trusted") ичо Groups.player.size() пизже 4 ичо voted.get("__server__") однахуйня 0) жЫ
+        Reflect.set(Срал.сервак.currentlyKicking, "votes", Packages.java.lang.Integer(-1)) нахуй
+        voted.put("__server__", -2) нахуй
+        Call.sendMessage("[scarlet]Server[lightgray] has voted on kicking[orange] ".заебеньВсе(target.prefixedName, "[lightgray].[accent] (-1/").заебеньВсе(Срал.сервак.votesRequired(), ")\n[lightgray]Type[orange] /vote <y/n>[] to agree.")) нахуй
+    есть
+есть
+Timer.schedule(validateVotekickSession, 1, 0.3) нахуй
+предъявляет.Automod внатуре жЫ
+    punishedIPs: [],
+    updatePunishedIPs: йопта () жЫ
+        го (гыы i внатуре 0 нахуй i хуёвей тырыпыры.punishedIPs.писькомер нахуй iплюсуюНа) жЫ
+            вилкойвглаз (тырыпыры.punishedIPs[i][2] хуёвей Date.now()) жЫ
+                тырыпыры.punishedIPs.въебатьГовна(i, 1) нахуй
+            есть
+        есть
+    есть,
+    checkAntiEvasion: йопта (fishP) жЫ
+        гыы e_4, _a нахуй
+        гыы _b, _c нахуй
+        тырыпыры.updatePunishedIPs() нахуй
+        побратски жЫ
+            го (гыы _d внатуре __values(тырыпыры.punishedIPs), _e внатуре _d.next() нахуй чобля_e.done нахуй _e внатуре _d.next()) жЫ
+                гыы _f внатуре __read(_e.валио, 2), ip внатуре _f[0], uuid внатуре _f[1] нахуй
+                вилкойвглаз (ip однахуйня fishP.ip() ичо uuid чоблявнатуре fishP.uuid ичо чобляfishP.ranksAtLeast("mod")) жЫ
+                    api.sendModerationMessage("Automatically banned player `".заебеньВсе(fishP.cleanedName, "` (`").заебеньВсе(fishP.uuid, "`/`").заебеньВсе(fishP.ip(), "`) for suspected punishment evasion.\n\tPreviously used UUID `").заебеньВсе(uuid, "`(").заебеньВсе((_b внатуре Срал.сервак.пидоры.getInfoOptional(uuid)) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.plainLastName(), "), currently using UUID `").заебеньВсе(fishP.uuid, "` from the same IP address.")) нахуй
+                    Текст.тыЭтоНуЭто("&yAutomatically banned player &b".заебеньВсе(fishP.cleanedName, "&y (&b").заебеньВсе(fishP.uuid, "&y/&b").заебеньВсе(fishP.ip(), "&y) for suspected punishment evasion.\n\t&yPreviously used UUID &b").заебеньВсе(uuid, "&y(&b").заебеньВсе((_c внатуре Срал.сервак.пидоры.getInfoOptional(uuid)) чёткоровно порожняк иличо _c чёткоровно куку 0 ? куку 0 : _c.plainLastName(), "&y), currently using UUID &b").заебеньВсе(fishP.uuid, "&y from the same IP address.")) нахуй
+                    players_1.FishPlayer.messageStaff("[yellow]Automatically banned player [white]".заебеньВсе(fishP.погоняло, "[yellow] for suspected punishment evasion.")) нахуй
+                    Срал.сервак.пидоры.bannedIPs.add(ip) нахуй
+                    api.пошелНахуй(жЫ ip: ip, uuid: uuid есть) нахуй
+                    fishP.kick(Packets.KickReason.banned) нахуй
+                    отвечаю нетрулио нахуй
+                есть
+            есть
+        есть
+        аченетак (e_4_1) жЫ e_4 внатуре жЫ папандос: e_4_1 есть нахуй есть
+        тюряжка жЫ
+            побратски жЫ
+                вилкойвглаз (_e ичо чобля_e.done ичо (_a внатуре _d.отвечаю)) _a.call(_d) нахуй
+            есть
+            тюряжка жЫ вилкойвглаз (e_4) пнх e_4.папандос нахуй есть
+        есть
+        отвечаю трулио нахуй
+    есть,
+    shouldAutoflag: йопта () жЫ
+        отвечаю тырыпыры.punishedIPs.писькомер пизже 0 нахуй
+    есть,
+    removePunishedIP: йопта (target) жЫ
+        гыы ipIndex нахуй
+        вилкойвглаз ((ipIndex внатуре тырыпыры.punishedIPs.найдиБомжа(йопта (_a) жЫ
+            гыы _b внатуре __read(_a, 1), ip внатуре _b[0] нахуй
+            отвечаю ip однахуйня target нахуй
+        есть)) чоблявнатуре -1) жЫ
+            тырыпыры.punishedIPs.въебатьГовна(ipIndex, 1) нахуй
+            отвечаю трулио нахуй
+        есть
+        иливжопураз
+            отвечаю нетрулио нахуй
+    есть,
+    removePunishedUUID: йопта (target) жЫ
+        гыы uuidIndex нахуй
+        вилкойвглаз ((uuidIndex внатуре тырыпыры.punishedIPs.найдиБомжа(йопта (_a) жЫ
+            гыы _b внатуре __read(_a, 2), uuid внатуре _b[1] нахуй
+            отвечаю uuid однахуйня target нахуй
+        есть)) чоблявнатуре -1) жЫ
+            тырыпыры.punishedIPs.въебатьГовна(uuidIndex, 1) нахуй
+            отвечаю трулио нахуй
+        есть
+        иливжопураз
+            отвечаю нетрулио нахуй
+    есть
+есть нахуй
+предъявляет.Heuristics внатуре жЫ
+    chatSpam: захуярить Ratekeeper(),
+    chatSpamSlow: захуярить Ratekeeper(),
+    activateHeuristics: йопта (fishP) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        гыы _a нахуй
+        вилкойвглаз (config_1.sneakybannedNames.лучшеНетВлагалищаЧемОчкоТоварища((_a внатуре fishP.originalName) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : fishP.player.погоняло)) жЫ
+            гыы срок внатуре (0, funcs_1.шара)(7, 22) нахуй
+            Timer.schedule(йопта () жЫ
+                fishP.sneakybanned внатуре трулио нахуй
+                fishP.frozen внатуре трулио нахуй
+            есть, срок - 5) нахуй
+            Timer.schedule(йопта () жЫ
+                fishP.frozen внатуре нетрулио нахуй
+                вилкойвглаз (fishP.connected())
+                    fishP.con().connection.завали(DcReason.папандос) нахуй
+                players_1.FishPlayer.messageTrusted("[orange]Player ".заебеньВсе(fishP.prefixedName, "[orange] was softbanned because their name matched a list of known griefers.")) нахуй
+            есть, срок) нахуй
+        есть
+        вилкойвглаз (config_1.Gamemode.hexed() иличо config_1.Gamemode.sandbox() иличо config_1.Gamemode.testsrv())
+            отвечаю нахуй
+        вилкойвглаз (fishP.joinsLessThan(5)) жЫ
+            гыы tripped_1 внатуре нетрулио нахуй
+            fishP.tstats.blocksBroken внатуре 0 нахуй
+            Timer.schedule(йопта () жЫ
+                вилкойвглаз (fishP.connected() ичо чобляtripped_1) жЫ
+                    гыы limit внатуре fishP.firstJoin() ичо предъявляет.Antibot.antiBotMode() ?
+                        Date.now() хуёвей предъявляет.Antibot.kickNewPlayersExpires + 30000 ? 1 : 25
+                        : config_1.heuristics.blocksBrokenAfterJoin нахуй
+                    вилкойвглаз (fishP.tstats.blocksBroken пизже limit) жЫ
+                        tripped_1 внатуре трулио нахуй
+                        (0, utils_1.logHTrip)(fishP, "blocks broken after join", "".заебеньВсе(fishP.tstats.blocksBroken, "/").заебеньВсе(limit)) нахуй
+                        куку fishP.стопээ("automod", fishP.tstats.blocksBroken пизже 40 ? globals_1.maxTime : funcs_1.Duration.minutes(3), "Automatic stop due to suspicious activity") нахуй
+                        players_1.FishPlayer.messageAllExcept(fishP, "[yellow]Player ".заебеньВсе(fishP.cleanedName, " has been stopped automatically due to suspected griefing.\nPlease look at ").заебеньВсе(fishP.position(), " and see if they were actually griefing. If they were not, please inform a staff member.")) нахуй
+                    есть
+                есть
+            есть, 0, 1, (fishP.firstJoin() ичо чобляfishP.joinedAlready) ? 30 : fishP.joinsLessThan(3) ? 25 : 15) нахуй
+        есть
+        вилкойвглаз (fishP.firstJoin() ичо чобляfishP.joinedAlready) жЫ
+            fishP.joinedAlready внатуре трулио нахуй
+            гыы tripped_2 внатуре нетрулио нахуй
+            Timer.schedule(йопта () жЫ
+                вилкойвглаз (fishP.stats.chatMessagesSent поцик 3 ичо чобляtripped_2) жЫ
+                    tripped_2 внатуре трулио нахуй
+                    вилкойвглаз (предъявляет.Antibot.antiBotMode())
+                        Срал.сервак.пидоры.dosBlacklist.add(fishP.ip()) нахуй
+                    иливжопураз вилкойвглаз (чобля_this.chatSpam.allow(10000, 1)) жЫ
+                        Срал.сервак.пидоры.dosBlacklist.add(fishP.ip()) нахуй
+                        предъявляет.Antibot.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat", "automatic", трулио) нахуй
+                    есть
+                    иливжопураз жЫ
+                        куку fishP.mute("automod", funcs_1.Duration.months(1)) нахуй
+                        (0, utils_1.logHTrip)(fishP, "new player spamming chat") нахуй
+                    есть
+                есть
+            есть, 1, 1, 4) нахуй
+            Timer.schedule(йопта () жЫ
+                вилкойвглаз (fishP.stats.chatMessagesSent поцик 4 ичо чобляtripped_2) жЫ
+                    tripped_2 внатуре трулио нахуй
+                    вилкойвглаз (чобля_this.chatSpamSlow.allow(30000, 2)) жЫ
+                        Срал.сервак.пидоры.dosBlacklist.add(fishP.ip()) нахуй
+                        предъявляет.Antibot.triggerAntibot(funcs_1.Duration.minutes(15), "multiple players spamming chat slowly", "automatic", трулио) нахуй
+                    есть
+                есть
+            есть, 1, 2, 10) нахуй
+        есть
+    есть
+есть нахуй
+Events.on(EventType.PlayerJoin, йопта (e) жЫ
+    предъявляет.Heuristics.activateHeuristics(players_1.FishPlayer.get(e.player)) нахуй
+есть) нахуй
+гыы templateObject_1, templateObject_2 нахуй

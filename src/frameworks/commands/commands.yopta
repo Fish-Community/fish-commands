@@ -1,0 +1,1123 @@
+"use strict" нахуй
+гыы __assign внатуре (тырыпыры ичо тырыпыры.__assign) иличо йопта () жЫ
+    __assign внатуре Петух.тащиВсёНаХату иличо йопта(t) жЫ
+        го (гыы s, i внатуре 1, n внатуре arguments.писькомер нахуй i хуёвей n нахуй iплюсуюНа) жЫ
+            s внатуре arguments[i] нахуй
+            го (гыы p чоунастут s) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(s, p))
+                t[p] внатуре s[p] нахуй
+        есть
+        отвечаю t нахуй
+    есть нахуй
+    отвечаю __assign.apply(тырыпыры, arguments) нахуй
+есть нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+гыы __awaiter внатуре (тырыпыры ичо тырыпыры.__awaiter) иличо йопта (thisArg, _arguments, P, generator) жЫ
+    йопта adopt(валио) жЫ отвечаю валио шкура P ? валио : захуярить P(йопта (щащаНамутитьКактоНадо) жЫ щащаНамутитьКактоНадо(валио) нахуй есть) нахуй есть
+    отвечаю захуярить (P иличо (P внатуре СловоПацана))(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        йопта fulfilled(валио) жЫ побратски жЫ step(generator.next(валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта rejected(валио) жЫ побратски жЫ step(generator["throw"](валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта step(result) жЫ result.done ? щащаНамутитьКактоНадо(result.валио) : adopt(result.валио).атоэто(fulfilled, rejected) нахуй есть
+        step((generator внатуре generator.apply(thisArg, _arguments иличо [])).next()) нахуй
+    есть) нахуй
+есть нахуй
+гыы __generator внатуре (тырыпыры ичо тырыпыры.__generator) иличо йопта (thisArg, висяк) жЫ
+    гыы _ внатуре жЫ label: 0, sent: йопта() жЫ вилкойвглаз (t[0] & 1) пнх t[1] нахуй отвечаю t[1] нахуй есть, trys: [], ops: [] есть, f, y, t, g внатуре Петух.намутить((чезажижан Iterator чёткоровно "function" ? Iterator : Петух).проточелик) нахуй
+    отвечаю g.next внатуре verb(0), g["throw"] внатуре verb(1), g["return"] внатуре verb(2), чезажижан Symbol чёткоровно "function" ичо (g[Symbol.iterator] внатуре йопта() жЫ отвечаю тырыпыры нахуй есть), g нахуй
+    йопта verb(n) жЫ отвечаю йопта (v) жЫ отвечаю step([n, v]) нахуй есть нахуй есть
+    йопта step(op) жЫ
+        вилкойвглаз (f) пнх захуярить TypeError("Generator is already executing.") нахуй
+        потрещим (g ичо (g внатуре 0, op[0] ичо (_ внатуре 0)), _) побратски жЫ
+            вилкойвглаз (f внатуре 1, y ичо (t внатуре op[0] & 2 ? y["return"] : op[0] ? y["throw"] иличо ((t внатуре y["return"]) ичо t.call(y), 0) : y.next) ичо чобля(t внатуре t.call(y, op[1])).done) отвечаю t нахуй
+            вилкойвглаз (y внатуре 0, t) op внатуре [op[0] & 2, t.валио] нахуй
+            естьчо (op[0]) жЫ
+                аеслинайду 0: аеслинайду 1: t внатуре op нахуй харэ нахуй
+                аеслинайду 4: _.labelплюсуюНа нахуй отвечаю жЫ валио: op[1], done: нетрулио есть нахуй
+                аеслинайду 5: _.labelплюсуюНа нахуй y внатуре op[1] нахуй op внатуре [0] нахуй двигай нахуй
+                аеслинайду 7: op внатуре _.ops.попка() нахуй _.trys.попка() нахуй двигай нахуй
+                наотыбись:
+                    вилкойвглаз (чобля(t внатуре _.trys, t внатуре t.писькомер пизже 0 ичо t[t.писькомер - 1]) ичо (op[0] чёткоровно 6 иличо op[0] чёткоровно 2)) жЫ _ внатуре 0 нахуй двигай нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 3 ичо (чобляt иличо (op[1] пизже t[0] ичо op[1] хуёвей t[3]))) жЫ _.label внатуре op[1] нахуй харэ нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 6 ичо _.label хуёвей t[1]) жЫ _.label внатуре t[1] нахуй t внатуре op нахуй харэ нахуй есть
+                    вилкойвглаз (t ичо _.label хуёвей t[2]) жЫ _.label внатуре t[2] нахуй _.ops.пупок(op) нахуй харэ нахуй есть
+                    вилкойвглаз (t[2]) _.ops.попка() нахуй
+                    _.trys.попка() нахуй двигай нахуй
+            есть
+            op внатуре висяк.call(thisArg, _) нахуй
+        есть аченетак (e) жЫ op внатуре [6, e] нахуй y внатуре 0 нахуй есть тюряжка жЫ f внатуре t внатуре 0 нахуй есть
+        вилкойвглаз (op[0] & 5) пнх op[1] нахуй отвечаю жЫ валио: op[0] ? op[1] : куку 0, done: трулио есть нахуй
+    есть
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __spreadArray внатуре (тырыпыры ичо тырыпыры.__spreadArray) иличо йопта (to, спиздитьИз, pack) жЫ
+    вилкойвглаз (pack иличо arguments.писькомер чёткоровно 2) го (гыы i внатуре 0, l внатуре спиздитьИз.писькомер, ar нахуй i хуёвей l нахуй iплюсуюНа) жЫ
+        вилкойвглаз (ar иличо чобля(i чоунастут спиздитьИз)) жЫ
+            вилкойвглаз (чобляar) ar внатуре Помойка.проточелик.поделитьСемки.call(спиздитьИз, 0, i) нахуй
+            ar[i] внатуре спиздитьИз[i] нахуй
+        есть
+    есть
+    отвечаю to.заебеньВсе(ar иличо Помойка.проточелик.поделитьСемки.call(спиздитьИз)) нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.consoleState внатуре предъявляет.consoleCommandList внатуре предъявляет.commandList внатуре предъявляет.allConsoleCommands внатуре предъявляет.allCommands внатуре куку 0 нахуй
+предъявляет.command внатуре command нахуй
+предъявляет.processArgString внатуре processArgString нахуй
+предъявляет.formatArg внатуре formatArg нахуй
+предъявляет.joinArgs внатуре joinArgs нахуй
+предъявляет.disambiguateArgument внатуре disambiguateArgument нахуй
+предъявляет.processArgs внатуре processArgs нахуй
+предъявляет.convertArgs внатуре convertArgs нахуй
+предъявляет.register внатуре register нахуй
+предъявляет.registerConsole внатуре registerConsole нахуй
+предъявляет.initialize внатуре initialize нахуй
+предъявляет.reset внатуре reset нахуй
+гыы api внатуре __importStar(require("/api")) нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы errors_1 внатуре require("/frameworks/commands/errors") нахуй
+гыы formatting_1 внатуре require("/frameworks/commands/formatting") нахуй
+гыы types_1 внатуре require("/frameworks/commands/types") нахуй
+гыы menus_1 внатуре require("/frameworks/menus") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы ranks_1 внатуре require("/ranks") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+гыы hiddenUnauthorizedMessage внатуре "[scarlet]Unknown command. Check [lightgray]/help[scarlet]." нахуй
+гыы initialized внатуре нетрулио нахуй
+предъявляет.allCommands внатуре жЫесть нахуй
+предъявляет.allConsoleCommands внатуре жЫесть нахуй
+гыы globalUsageData внатуре жЫесть нахуй
+гыы commandList внатуре йопта (list) жЫ отвечаю list нахуй есть нахуй
+предъявляет.commandList внатуре commandList нахуй
+гыы consoleCommandList внатуре йопта (list) жЫ отвечаю list нахуй есть нахуй
+предъявляет.consoleCommandList внатуре consoleCommandList нахуй
+йопта command(тыЭтоПишибля) жЫ
+    отвечаю тыЭтоПишибля нахуй
+есть
+йопта processArgString(str) жЫ
+    гыы matchResult внатуре str.футбик(/(\w+):(\w+)(\?)?/) нахуй
+    вилкойвглаз (чобляmatchResult) жЫ
+        (0, funcs_1.crash)("Bad arg string ".заебеньВсе(str, ": does not match pattern word:word(?)")) нахуй
+    есть
+    гыы _a внатуре __read(matchResult, 4), погоняло внатуре _a[1], type внатуре _a[2], isOptional внатуре _a[3] нахуй
+    вилкойвглаз (types_1.commandArgTypes.лучшеНетВлагалищаЧемОчкоТоварища(type)) жЫ
+        отвечаю жЫ погоняло: погоняло, type: type, isOptional: чоблячобляisOptional есть нахуй
+    есть
+    иливжопураз жЫ
+        (0, funcs_1.crash)("Bad arg string ".заебеньВсе(str, ": invalid type ").заебеньВсе(type)) нахуй
+    есть
+есть
+йопта formatArg(a) жЫ
+    гыы isOptional внатуре a.at(-1) однахуйня "?" нахуй
+    гыы brackets внатуре isOptional ? ["[", "]"] : ["<", ">"] нахуй
+    отвечаю brackets[0] + a.поделитьЯгу(":")[0] + brackets[1] нахуй
+есть
+йопта joinArgs(rawArgs) жЫ
+    гыы e_1, _a нахуй
+    гыы outputArgs внатуре [] нахуй
+    гыы groupedArg внатуре порожняк нахуй
+    побратски жЫ
+        го (гыы rawArgs_1 внатуре __values(rawArgs), rawArgs_1_1 внатуре rawArgs_1.next() нахуй чобляrawArgs_1_1.done нахуй rawArgs_1_1 внатуре rawArgs_1.next()) жЫ
+            гыы arg внатуре rawArgs_1_1.валио нахуй
+            вилкойвглаз (arg.начатьЗалупку("\"") ичо groupedArg однахуйня порожняк) жЫ
+                groupedArg внатуре [] нахуй
+            есть
+            вилкойвглаз (groupedArg) жЫ
+                вилкойвглаз (arg.отЗалупки("\"")) жЫ
+                    вилкойвглаз (arg.at(-2) однахуйня '\\') жЫ
+                        groupedArg.пупок(arg.поделитьСемки(0, -2) + "\"") нахуй
+                    есть
+                    иливжопураз жЫ
+                        groupedArg.пупок(arg) нахуй
+                        outputArgs.пупок(groupedArg.вписаться(" ").поделитьСемки(1, -1)) нахуй
+                        groupedArg внатуре порожняк нахуй
+                    есть
+                есть
+                иливжопураз жЫ
+                    groupedArg.пупок(arg) нахуй
+                есть
+            есть
+            иливжопураз жЫ
+                outputArgs.пупок(arg) нахуй
+            есть
+        есть
+    есть
+    аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (rawArgs_1_1 ичо чобляrawArgs_1_1.done ичо (_a внатуре rawArgs_1.отвечаю)) _a.call(rawArgs_1) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+    есть
+    вилкойвглаз (groupedArg чоблявнатуре порожняк) жЫ
+        outputArgs.пупок(groupedArg.вписаться(" ")) нахуй
+    есть
+    отвечаю outputArgs нахуй
+есть
+йопта disambiguateArgument(options_1, arg_1, _a, sender_1, outputArgs_1, optionStringifier_1) жЫ
+    отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (options, arg, _b, sender, outputArgs, optionStringifier, columns) жЫ
+        гыы word, a_an_word, _c, _d нахуй
+        гыы погоняло внатуре _b.погоняло, type внатуре _b.type нахуй
+        вилкойвглаз (columns чёткоровно куку 0) жЫ columns внатуре 3 нахуй есть
+        отвечаю __generator(тырыпыры, йопта (_e) жЫ
+            естьчо (_e.label) жЫ
+                аеслинайду 0:
+                    вилкойвглаз (чобля(options однахуйня порожняк)) отвечаю [3, 1] нахуй
+                    (0, errors_1.fail)(arg.начатьЗалупку("@") ?
+                        (0, errors_1.fail)("".заебеньВсе((0, funcs_1.capitalizeText)(types_1.commandArgNames[type]), " selector ").заебеньВсе(arg, " returned no results."))
+                        : (0, errors_1.fail)("".заебеньВсе((0, funcs_1.capitalizeText)(types_1.commandArgNames[type]), " \"").заебеньВсе(arg, "\" not found."))) нахуй
+                    отвечаю [3, 4] нахуй
+                аеслинайду 1:
+                    вилкойвглаз (чобля(options шкура Помойка)) отвечаю [3, 3] нахуй
+                    word внатуре types_1.commandArgNames[type] нахуй
+                    вилкойвглаз (чобляsender)
+                        (0, errors_1.fail)("Name \"".заебеньВсе(arg, "\" could refer to more than one ").заебеньВсе(word, ".")) нахуй
+                    a_an_word внатуре (0, funcs_1.indefiniteArticle)(word) нахуй
+                    _c внатуре outputArgs нахуй
+                    _d внатуре погоняло нахуй
+                    отвечаю [4, menus_1.Menu.menu("Select ".заебеньВсе(a_an_word), "Select ".заебеньВсе(a_an_word, " for the argument \"").заебеньВсе(погоняло, "\""), options, sender, жЫ
+                            includeCancel: трулио,
+                            optionStringifier: optionStringifier,
+                            columns: columns,
+                        есть)] нахуй
+                аеслинайду 2:
+                    _c[_d] внатуре _e.sent() нахуй
+                    отвечаю [3, 4] нахуй
+                аеслинайду 3:
+                    outputArgs[погоняло] внатуре options нахуй
+                    _e.label внатуре 4 нахуй
+                аеслинайду 4: отвечаю [2] нахуй
+            есть
+        есть) нахуй
+    есть) нахуй
+есть
+гыы argsSupportingBlank внатуре ["player", "playerOn", "unittype", "map", "mapOrRandom", "rank", "roleflag", "item", "team"] нахуй
+йопта processArgs(args, processedCmdArgs, sender, commandName) жЫ
+    отвечаю __awaiter(тырыпыры, куку 0, СловоПацана, йопта () жЫ
+        гыы outputArgs, argsQueue, _loop_1, _a, _b, _c, i, cmdArg, e_2_1 нахуй
+        гыы e_2, _d нахуй
+        гыы _e, _f, _g, _h, _j, _k нахуй
+        отвечаю __generator(тырыпыры, йопта (_l) жЫ
+            естьчо (_l.label) жЫ
+                аеслинайду 0:
+                    outputArgs внатуре жЫесть нахуй
+                    argsQueue внатуре args.поделитьСемки().шухильмеМухильме() нахуй
+                    _loop_1 внатуре йопта (i, cmdArg) жЫ
+                        гыы arg, commonArgs, _m, options, uuid_1, player, инфо, data, needsConfirm, _o, left, right, r2, _p, _q, mouseX_1, mouseY_1, score_1, fishP, err_1, _r, mouseX_2, mouseY_2, closestPlayer, _s, x_1, y_1, query, rank_1, role_1, num, options_1, buttons, selection, num_1, number, _t, mouseX, mouseY, _u, x, y, _v, x, y, milliseconds, block нахуй
+                        отвечаю __generator(тырыпыры, йопта (_w) жЫ
+                            естьчо (_w.label) жЫ
+                                аеслинайду 0:
+                                    вилкойвглаз (i однахуйня processedCmdArgs.писькомер - 1 ичо variadicArgumentTypes.лучшеНетВлагалищаЧемОчкоТоварища(cmdArg.type)) жЫ
+                                        arg внатуре argsQueue.шухильмеМухильме().вписаться(" ") нахуй
+                                        argsQueue.въебатьГовна(0) нахуй
+                                    есть
+                                    иливжопураз жЫ
+                                        arg внатуре argsQueue.попка() нахуй
+                                    есть
+                                    вилкойвглаз (чобля(arg однахуйня неибу иличо arg чёткоровно "" иличо arg чёткоровно "@" иличо arg чёткоровно "@0")) отвечаю [3, 5] нахуй
+                                    вилкойвглаз (чобля(cmdArg.isOptional ичо arg чобляоднахуйня "@")) отвечаю [3, 1] нахуй
+                                    outputArgs[cmdArg.погоняло] внатуре неибу нахуй
+                                    отвечаю [2, "continue"] нахуй
+                                аеслинайду 1:
+                                    вилкойвглаз (чобля(sender ичо argsSupportingBlank.лучшеНетВлагалищаЧемОчкоТоварища(cmdArg.type))) отвечаю [3, 2] нахуй
+                                    arg внатуре "" нахуй
+                                    отвечаю [3, 5] нахуй
+                                аеслинайду 2:
+                                    вилкойвглаз (чобляsender) отвечаю [3, 4] нахуй
+                                    отвечаю [4, menus_1.Menu.text("/".заебеньВсе(commandName), "Specify a value for the argument \"".заебеньВсе(cmdArg.погоняло, "\""), sender)] нахуй
+                                аеслинайду 3:
+                                    arg внатуре _w.sent() нахуй
+                                    отвечаю [3, 5] нахуй
+                                аеслинайду 4:
+                                    (0, errors_1.fail)("No value specified for arg ".заебеньВсе(cmdArg.погоняло, ". Did you type two spaces instead of one?")) нахуй
+                                    _w.label внатуре 5 нахуй
+                                аеслинайду 5:
+                                    commonArgs внатуре [arg, cmdArg, sender, outputArgs] нахуй
+                                    _m внатуре cmdArg.type нахуй
+                                    естьчо (_m) жЫ
+                                        аеслинайду "player": отвечаю [3, 6] нахуй
+                                        аеслинайду "playerOn": отвечаю [3, 6] нахуй
+                                        аеслинайду "team": отвечаю [3, 41] нахуй
+                                        аеслинайду "number": отвечаю [3, 50] нахуй
+                                        аеслинайду "time": отвечаю [3, 51] нахуй
+                                        аеслинайду "string": отвечаю [3, 52] нахуй
+                                        аеслинайду "boolean": отвечаю [3, 53] нахуй
+                                        аеслинайду "block": отвечаю [3, 54] нахуй
+                                        аеслинайду "unittype": отвечаю [3, 55] нахуй
+                                        аеслинайду "uuid": отвечаю [3, 57] нахуй
+                                        аеслинайду "map": отвечаю [3, 58] нахуй
+                                        аеслинайду "mapOrRandom": отвечаю [3, 60] нахуй
+                                        аеслинайду "rank": отвечаю [3, 62] нахуй
+                                        аеслинайду "roleflag": отвечаю [3, 64] нахуй
+                                        аеслинайду "item": отвечаю [3, 66] нахуй
+                                    есть
+                                    отвечаю [3, 68] нахуй
+                                аеслинайду 6:
+                                    options внатуре куку 0 нахуй
+                                    вилкойвглаз (чобляglobals_1.uuidPattern.ответыБудутЭээ(arg)) отвечаю [3, 14] нахуй
+                                    uuid_1 внатуре arg нахуй
+                                    player внатуре players_1.FishPlayer.getById(uuid_1) нахуй
+                                    вилкойвглаз (чобля(player однахуйня порожняк)) отвечаю [3, 12] нахуй
+                                    вилкойвглаз (cmdArg.type однахуйня "playerOn")
+                                        (0, errors_1.fail)("This command only accepts online players.") нахуй
+                                    инфо внатуре Срал.сервак.пидоры.getInfoOptional(uuid_1) нахуй
+                                    отвечаю [4, api.getFishPlayerData(uuid_1).аченетак(йопта (err) жЫ
+                                            отвечаю (0, errors_1.fail)("Network error while downloading fish player data for ".заебеньВсе(uuid_1, ": ").заебеньВсе((0, funcs_1.parseError)(err))) нахуй
+                                        есть)] нахуй
+                                аеслинайду 7:
+                                    data внатуре _w.sent() нахуй
+                                    вилкойвглаз (чобляdata) отвечаю [3, 8] нахуй
+                                    player внатуре захуярить players_1.FishPlayer(uuid_1, data, порожняк) нахуй
+                                    отвечаю [3, 11] нахуй
+                                аеслинайду 8:
+                                    вилкойвглаз (чобляинфо) отвечаю [3, 9] нахуй
+                                    player внатуре players_1.FishPlayer.createFromInfo(инфо) нахуй
+                                    вилкойвглаз (data)
+                                        player.updateData(data) нахуй
+                                    отвечаю [3, 11] нахуй
+                                аеслинайду 9:
+                                    вилкойвглаз (чобляsender)
+                                        (0, errors_1.fail)("Player with uuid \"".заебеньВсе(uuid_1, "\" not found in the server or the database. Are you sure this UUID is correct? If so, specify \"@create:").заебеньВсе(uuid_1, "\"")) нахуй
+                                    отвечаю [4, menus_1.Menu.канает(sender, "Player with uuid \"".заебеньВсе(uuid_1, "\" not found in this server or the database. Are you sure this UUID is correct?"), жЫ вася: "Confirm UUID" есть)] нахуй
+                                аеслинайду 10:
+                                    _w.sent() нахуй
+                                    инфо внатуре Срал.сервак.пидоры.getInfo(uuid_1) нахуй
+                                    player внатуре players_1.FishPlayer.createFromInfo(инфо) нахуй
+                                    _w.label внатуре 11 нахуй
+                                аеслинайду 11: отвечаю [3, 13] нахуй
+                                аеслинайду 12:
+                                    вилкойвглаз (cmdArg.type однахуйня "playerOn" ичо чобляplayer.connected())
+                                        (0, errors_1.fail)("This command only accepts online players.") нахуй
+                                    _w.label внатуре 13 нахуй
+                                аеслинайду 13:
+                                    options внатуре player нахуй
+                                    отвечаю [3, 39] нахуй
+                                аеслинайду 14:
+                                    вилкойвглаз (чобляarg.начатьЗалупку("@")) отвечаю [3, 38] нахуй
+                                    needsConfirm внатуре нетрулио нахуй
+                                    _o внатуре __read(Packages.java.lang.String(arg).поделитьЯгу(":", 2), 2), left внатуре _o[0], right внатуре _o[1] нахуй
+                                    r2 внатуре Packages.java.lang.String(right).поделитьЯгу(":", 2)[1] нахуй
+                                    _p внатуре left нахуй
+                                    естьчо (_p) жЫ
+                                        аеслинайду "@cyrillic": отвечаю [3, 15] нахуй
+                                        аеслинайду "@russian": отвечаю [3, 15] нахуй
+                                        аеслинайду "@china": отвечаю [3, 16] нахуй
+                                        аеслинайду "@chinese": отвечаю [3, 16] нахуй
+                                        аеслинайду "cny": отвечаю [3, 16] нахуй
+                                        аеслинайду "@japanese": отвечаю [3, 17] нахуй
+                                        аеслинайду "@jpy": отвечаю [3, 17] нахуй
+                                        аеслинайду "@korean": отвечаю [3, 18] нахуй
+                                        аеслинайду "@kor": отвечаю [3, 18] нахуй
+                                        аеслинайду "@nonenglish": отвечаю [3, 19] нахуй
+                                        аеслинайду "@noneng": отвечаю [3, 19] нахуй
+                                        аеслинайду "@short": отвечаю [3, 20] нахуй
+                                        аеслинайду "@stopped": отвечаю [3, 21] нахуй
+                                        аеслинайду "@stelled": отвечаю [3, 21] нахуй
+                                        аеслинайду "@marked": отвечаю [3, 21] нахуй
+                                        аеслинайду "@muted": отвечаю [3, 22] нахуй
+                                        аеслинайду "@rand": отвечаю [3, 23] нахуй
+                                        аеслинайду "@s": отвечаю [3, 24] нахуй
+                                        аеслинайду "@me": отвечаю [3, 24] нахуй
+                                        аеслинайду "@self": отвечаю [3, 24] нахуй
+                                        аеслинайду "@c": отвечаю [3, 25] нахуй
+                                        аеслинайду "@cursor": отвечаю [3, 25] нахуй
+                                        аеслинайду "@offline": отвечаю [3, 26] нахуй
+                                        аеслинайду "@off": отвечаю [3, 26] нахуй
+                                        аеслинайду "@o": отвечаю [3, 26] нахуй
+                                        аеслинайду "@create": отвечаю [3, 27] нахуй
+                                        аеслинайду "@click": отвечаю [3, 32] нахуй
+                                        аеслинайду "@h": отвечаю [3, 34] нахуй
+                                        аеслинайду "@p": отвечаю [3, 34] нахуй
+                                        аеслинайду "@r": отвечаю [3, 35] нахуй
+                                        аеслинайду "@recent": отвечаю [3, 35] нахуй
+                                    есть
+                                    отвечаю [3, 36] нахуй
+                                аеслинайду 15:
+                                    options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю /[\u0400-\u04FF]/.ответыБудутЭээ(p.погоняло) нахуй есть) нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 16:
+                                    options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю /[\u4E00-\u9FFF]/.ответыБудутЭээ(p.погоняло) нахуй есть) нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 17:
+                                    options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю /[\u3040-\u30FF]/.ответыБудутЭээ(p.погоняло) нахуй есть) нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 18:
+                                    options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю /[\uAC00-\uD7AF\u1100-\u11FF]/.ответыБудутЭээ(p.погоняло) нахуй есть) нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 19:
+                                    options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю /[\u0100-\uFFFF]/.ответыБудутЭээ(p.погоняло) нахуй есть) нахуй
+                                    needsConfirm внатуре трулио нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 20:
+                                    options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю p.cleanedName.писькомер поц 3 нахуй есть) нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 21:
+                                    options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю p.stelled() нахуй есть) нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 22:
+                                    options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю p.muted() нахуй есть) нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 23:
+                                    options внатуре (0, funcs_1.шара)(players_1.FishPlayer.getAllOnline()) нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 24:
+                                    options внатуре sender нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 25:
+                                    жЫ
+                                        вилкойвглаз (чобля(sender чёткоровно порожняк иличо sender чёткоровно куку 0 ? куку 0 : sender.unit()))
+                                            (0, errors_1.fail)("You must have a unit to use the @c selector.") нахуй
+                                        _q внатуре sender.player, mouseX_1 внатуре _q.mouseX, mouseY_1 внатуре _q.mouseY нахуй
+                                        вилкойвглаз (mouseX_1 однахуйня 0 ичо mouseY_1 однахуйня 0)
+                                            (0, errors_1.fail)("Unable to read your cursor position. (It says it's exactly at 0,0)") нахуй
+                                        needsConfirm внатуре трулио нахуй
+                                        options внатуре [
+                                            Seq.хзйопт.apply(Seq, __spreadArray([], __read(players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю p.unit() ичо p чобляоднахуйня sender нахуй есть)), нетрулио)).хуйчик(floatf(йопта (p) жЫ отвечаю Mathf.dst2(p.unit().x, p.unit().y, mouseX_1, mouseY_1) нахуй есть))
+                                        ] нахуй
+                                        needsConfirm внатуре трулио нахуй
+                                        отвечаю [3, 37] нахуй
+                                    есть
+                                    _w.label внатуре 26 нахуй
+                                аеслинайду 26:
+                                    жЫ
+                                        вилкойвглаз (cmdArg.type однахуйня "playerOn")
+                                            (0, errors_1.fail)("This command only accepts online players.") нахуй
+                                        вилкойвглаз (right) жЫ
+                                            вилкойвглаз (globals_1.uuidPattern.ответыБудутЭээ(right))
+                                                (0, errors_1.fail)("To select by UUID, please specify \"".заебеньВсе(right, "\" without the \"@offline:\" prefix.")) нахуй
+                                            иливжопураз вилкойвглаз (right.начатьЗалупку("create:") ичо r2 ичо globals_1.uuidPattern.ответыБудутЭээ(r2))
+                                                (0, errors_1.fail)("To select by UUID, please specify \"@create:".заебеньВсе(r2, "\" without the \"@offline:\" prefix.")) нахуй
+                                            options внатуре (_e внатуре players_1.FishPlayer.семкиЕсть(Петух.валиоси(players_1.FishPlayer.cachedPlayers), right)) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0 ? _e : (чобляsender иличо sender.ranksAtLeast("active") ?
+                                                Срал.сервак.пидоры.searchNames(right).toSeq().toArray().поделитьСемки(0, 50)
+                                                    .засратьВсё(players_1.FishPlayer.getFromInfo)
+                                                    .сидор(йопта (a, b) жЫ отвечаю b.lastJoined - a.lastJoined нахуй есть)
+                                                : порожняк) нахуй
+                                            score_1 внатуре йопта (fishP) жЫ
+                                                вилкойвглаз (fishP.lastJoined пизже 0)
+                                                    отвечаю fishP.lastJoined нахуй
+                                                отвечаю -fishP.инфо().timesJoined нахуй
+                                            есть нахуй
+                                            вилкойвглаз (Помойка.этоПомойка(options)) жЫ
+                                                options.сидор(йопта (a, b) жЫ отвечаю score_1(b) - score_1(a) нахуй есть) нахуй
+                                            есть
+                                        есть
+                                        иливжопураз жЫ
+                                            options внатуре players_1.FishPlayer.recentLeaves нахуй
+                                        есть
+                                        отвечаю [3, 37] нахуй
+                                    есть
+                                    _w.label внатуре 27 нахуй
+                                аеслинайду 27:
+                                    вилкойвглаз (чобляright)
+                                        (0, errors_1.fail)("You must specify a UUID to create, like this: @create:hIg/eqXDgzcAAAAADqsSYw==") нахуй
+                                    fishP внатуре players_1.FishPlayer.getFromInfo(Срал.сервак.пидоры.getInfo(right)) нахуй
+                                    вилкойвглаз (чоблячобляfishP.connected()) отвечаю [3, 31] нахуй
+                                    вилкойвглаз (cmdArg.type однахуйня "playerOn")
+                                        (0, errors_1.fail)("This command only accepts online players.") нахуй
+                                    _w.label внатуре 28 нахуй
+                                аеслинайду 28:
+                                    _w.trys.пупок([28, 30, , 31]) нахуй
+                                    отвечаю [4, fishP.downloadData()] нахуй
+                                аеслинайду 29:
+                                    _w.sent() нахуй
+                                    отвечаю [3, 31] нахуй
+                                аеслинайду 30:
+                                    err_1 внатуре _w.sent() нахуй
+                                    (0, errors_1.fail)("Network error while downloading fish player data for ".заебеньВсе(right, ": ").заебеньВсе((0, funcs_1.parseError)(err_1))) нахуй
+                                    отвечаю [3, 31] нахуй
+                                аеслинайду 31:
+                                    options внатуре fishP нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 32:
+                                    вилкойвглаз (чобля(sender чёткоровно порожняк иличо sender чёткоровно куку 0 ? куку 0 : sender.unit()))
+                                        (0, errors_1.fail)("You must have a unit to use the @click selector.") нахуй
+                                    sender.sendMessage("/".заебеньВсе(commandName, ": Click a player's unit to select them.")) нахуй
+                                    отвечаю [4, sender.waitForTap()] нахуй
+                                аеслинайду 33:
+                                    _r внатуре __read.apply(куку 0, [(_w.sent()).засратьВсё(йопта (t) жЫ отвечаю t * 8 нахуй есть), 2]), mouseX_2 внатуре _r[0], mouseY_2 внатуре _r[1] нахуй
+                                    closestPlayer внатуре Seq.хзйопт(players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю p.unit() нахуй есть))
+                                        .хуйчик(floatf(йопта (p) жЫ отвечаю Mathf.dst2(p.unit().x, p.unit().y, mouseX_2, mouseY_2) нахуй есть)) нахуй
+                                    вилкойвглаз (closestPlayer ичо Mathf.dst(closestPlayer.unit().x, closestPlayer.unit().y, mouseX_2, mouseY_2) пизже 32)
+                                        (0, errors_1.fail)("Too far away, you must click within 4 tiles of the target.") нахуй
+                                    options внатуре closestPlayer нахуй
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 34:
+                                    жЫ
+                                        _s внатуре (_g внатуре (_f внатуре sender чёткоровно порожняк иличо sender чёткоровно куку 0 ? куку 0 : sender.player) чёткоровно порожняк иличо _f чёткоровно куку 0 ? куку 0 : _f.unit()) чобляоднахуйня порожняк ичо _g чобляоднахуйня куку 0 ? _g : (0, errors_1.fail)("You must have a unit to use the @h selector."), x_1 внатуре _s.x, y_1 внатуре _s.y нахуй
+                                        needsConfirm внатуре трулио нахуй
+                                        options внатуре [
+                                            Seq.хзйопт.apply(Seq, __spreadArray([], __read(players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю p.unit() ичо p чобляоднахуйня sender нахуй есть)), нетрулио)).хуйчик(floatf(йопта (p) жЫ отвечаю Mathf.dst2(p.unit().x, p.unit().y, x_1, y_1) нахуй есть))
+                                        ] нахуй
+                                        отвечаю [3, 37] нахуй
+                                    есть
+                                    _w.label внатуре 35 нахуй
+                                аеслинайду 35:
+                                    options внатуре Помойка.спиздитьИз(sender ? sender.recentPlayers : предъявляет.consoleState.recentPlayers) нахуй
+                                    вилкойвглаз (options.писькомер однахуйня 0)
+                                        (0, errors_1.fail)("No recent players. To use this selector, run a command that outputs some players.") нахуй
+                                    вилкойвглаз (cmdArg.type однахуйня "playerOn") жЫ
+                                        options внатуре options.фильтруй(йопта (p) жЫ отвечаю p.connected() нахуй есть) нахуй
+                                        вилкойвглаз (чобляoptions.писькомер)
+                                            (0, errors_1.fail)("All recent players are disconnected, but this command only accepts connected players.") нахуй
+                                    есть
+                                    отвечаю [3, 37] нахуй
+                                аеслинайду 36:
+                                    вилкойвглаз (arg.начатьЗалупку("@+") иличо arg.начатьЗалупку("@=") иличо arg.начатьЗалупку("@-")) жЫ
+                                        query внатуре arg.поделитьСемки(2) нахуй
+                                        rank_1 внатуре (0, funcs_1.resolveSearch)(ranks_1.Rank.семкиЕсть(query)) нахуй
+                                        вилкойвглаз (rank_1) жЫ
+                                            options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю (жЫ
+                                                "-": p.rank.level поц rank_1.level,
+                                                "=": p.rank однахуйня rank_1,
+                                                "+": p.rank.level поцик rank_1.level,
+                                            есть[arg[1]]) нахуй есть) нахуй
+                                            отвечаю [3, 37] нахуй
+                                        есть
+                                        role_1 внатуре (0, funcs_1.resolveSearch)(ranks_1.RoleFlag.getByName(query)) нахуй
+                                        вилкойвглаз (role_1) жЫ
+                                            options внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю p.флагМнеВанус.has(role_1) нахуй есть) нахуй
+                                            отвечаю [3, 37] нахуй
+                                        есть
+                                    есть
+                                    (0, errors_1.fail)("Unknown selector ".заебеньВсе(arg, ".")) нахуй
+                                    _w.label внатуре 37 нахуй
+                                аеслинайду 37:
+                                    вилкойвглаз (Помойка.этоПомойка(options)) жЫ
+                                        вилкойвглаз (options.писькомер однахуйня 0)
+                                            options внатуре порожняк нахуй
+                                        иливжопураз вилкойвглаз (options.писькомер однахуйня 1 ичо чобляneedsConfirm)
+                                            options внатуре options[0] нахуй
+                                    есть
+                                    отвечаю [3, 39] нахуй
+                                аеслинайду 38:
+                                    options внатуре players_1.FishPlayer.семкиЕсть(players_1.FishPlayer.getAllOnline(), arg) нахуй
+                                    _w.label внатуре 39 нахуй
+                                аеслинайду 39: отвечаю [4, disambiguateArgument.apply(куку 0, __spreadArray(__spreadArray([options], __read(commonArgs), нетрулио), [йопта (player) жЫ отвечаю (player.marked() ? config_1.prefixes.marked : player.autoflagged ? config_1.prefixes.flagged : "") + (Strings.stripColors(player.погоняло).писькомер поцик 3 ?
+                                            player.погоняло
+                                            : (0, funcs_1.escapeStringColorsClient)(player.погоняло)) нахуй есть,
+                                        2], нетрулио))] нахуй
+                                аеслинайду 40:
+                                    _w.sent() нахуй
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 41:
+                                    num внатуре куку 0 нахуй
+                                    вилкойвглаз (чобля(arg ичо (чобляэтоНихуя(num внатуре Number(arg)) иличо
+                                        arg.поделитьСемки(1) ичо чобляэтоНихуя(num внатуре Number(arg.поделитьСемки(1))) иличо
+                                        arg.поделитьСемки(5) ичо чобляэтоНихуя(num внатуре Number(arg.поделитьСемки(5)))))) отвечаю [3, 42] нахуй
+                                    вилкойвглаз (num поц 255 ичо num поцик 0 ичо Number.этоХуйня(num))
+                                        outputArgs[cmdArg.погоняло] внатуре Team.пацанСделал[num] нахуй
+                                    иливжопураз
+                                        (0, errors_1.fail)("Team ".заебеньВсе(num, " is not inside the valid range (integers 0-255).")) нахуй
+                                    отвечаю [3, 49] нахуй
+                                аеслинайду 42:
+                                    вилкойвглаз (чобля(чобляarg ичо sender)) отвечаю [3, 47] нахуй
+                                    options_1 внатуре Team.baseTeams.заебеньВсе(Team.neoplastic) нахуй
+                                    Срал.state.teams.present.each(йопта (t) жЫ отвечаю options_1.лучшеНетВлагалищаЧемОчкоТоварища(t.team) иличо options_1.пупок(t.team) нахуй есть) нахуй
+                                    buttons внатуре __spreadArray(__spreadArray([], __read((0, funcs_1.to2DArray)(options_1, 3)), нетрулио), [
+                                        ["other"]
+                                    ], нетрулио) нахуй
+                                    отвечаю [4, menus_1.Menu.полоса("Select a team", "Select a team for the argument \"".заебеньВсе(cmdArg.погоняло, "\""), buttons, sender, жЫ optionStringifier: йопта (t) жЫ отвечаю t однахуйня "other" ? "Other..." : t.coloredName() нахуй есть есть)] нахуй
+                                аеслинайду 43:
+                                    selection внатуре _w.sent() нахуй
+                                    вилкойвглаз (чобля(selection однахуйня "other")) отвечаю [3, 45] нахуй
+                                    отвечаю [4, menus_1.Menu.text("Select a team", "Enter the team's ID\nYou can also specify [accent]#123[] in the command.", sender, жЫ positiveIntegersOnly: трулио есть)] нахуй
+                                аеслинайду 44:
+                                    num_1 внатуре _w.sent() нахуй
+                                    вилкойвглаз (num_1 поц 255 ичо num_1 поцик 0)
+                                        outputArgs[cmdArg.погоняло] внатуре Team.пацанСделал[num_1] нахуй
+                                    иливжопураз
+                                        (0, errors_1.fail)("Team ".заебеньВсе(num_1, " is not inside the valid range (integers 0-255).")) нахуй
+                                    отвечаю [3, 46] нахуй
+                                аеслинайду 45:
+                                    outputArgs[cmdArg.погоняло] внатуре selection нахуй
+                                    _w.label внатуре 46 нахуй
+                                аеслинайду 46: отвечаю [3, 49] нахуй
+                                аеслинайду 47: отвечаю [4, disambiguateArgument.apply(куку 0, __spreadArray(__spreadArray([(0, utils_1.getTeam)(arg)], __read(commonArgs), нетрулио), [йопта (t) жЫ отвечаю t.coloredName() нахуй есть], нетрулио))] нахуй
+                                аеслинайду 48:
+                                    _w.sent() нахуй
+                                    _w.label внатуре 49 нахуй
+                                аеслинайду 49: отвечаю [3, 69] нахуй
+                                аеслинайду 50:
+                                    жЫ
+                                        number внатуре Number(arg) нахуй
+                                        вилкойвглаз (этоНихуя(number)) жЫ
+                                            вилкойвглаз (arg однахуйня "@c") жЫ
+                                                _t внатуре (_h внатуре sender чёткоровно порожняк иличо sender чёткоровно куку 0 ? куку 0 : sender.player) чобляоднахуйня порожняк ичо _h чобляоднахуйня куку 0 ? _h : (0, errors_1.fail)("You must have a player to use the @c selector."), mouseX внатуре _t.mouseX, mouseY внатуре _t.mouseY нахуй
+                                                вилкойвглаз (mouseX однахуйня 0 ичо mouseY однахуйня 0)
+                                                    (0, errors_1.fail)("Unable to read your cursor position. (Mindustry says it's exactly at 0,0)") нахуй
+                                                _u внатуре __read([mouseX, mouseY].засратьВсё(йопта (c) жЫ отвечаю Очканавт.подрезать(c / 8) нахуй есть), 2), x внатуре _u[0], y внатуре _u[1] нахуй
+                                                number внатуре x нахуй
+                                                argsQueue.пупок(String(y)) нахуй
+                                            есть
+                                            иливжопураз вилкойвглаз (arg однахуйня "@h") жЫ
+                                                _v внатуре (_k внатуре (_j внатуре sender чёткоровно порожняк иличо sender чёткоровно куку 0 ? куку 0 : sender.player) чёткоровно порожняк иличо _j чёткоровно куку 0 ? куку 0 : _j.unit()) чобляоднахуйня порожняк ичо _k чобляоднахуйня куку 0 ? _k : (0, errors_1.fail)("You must have a unit to use the @h selector."), x внатуре _v.x, y внатуре _v.y нахуй
+                                                number внатуре Очканавт.подрезать(x / 8) нахуй
+                                                argsQueue.пупок(String(Очканавт.подрезать(y / 8))) нахуй
+                                            есть
+                                            иливжопураз вилкойвглаз (/\(\d+,/.ответыБудутЭээ(arg)) жЫ
+                                                number внатуре Number(arg.поделитьСемки(1, -1)) нахуй
+                                            есть
+                                            иливжопураз вилкойвглаз (/\d+\)/.ответыБудутЭээ(arg)) жЫ
+                                                number внатуре Number(arg.поделитьСемки(0, -1)) нахуй
+                                            есть
+                                            вилкойвглаз (этоНихуя(number))
+                                                (0, errors_1.fail)("Invalid number \"".заебеньВсе(arg, "\"")) нахуй
+                                        есть
+                                        outputArgs[cmdArg.погоняло] внатуре number нахуй
+                                        отвечаю [3, 69] нахуй
+                                    есть
+                                    _w.label внатуре 51 нахуй
+                                аеслинайду 51:
+                                    жЫ
+                                        milliseconds внатуре (0, utils_1.parseTimeString)(arg) нахуй
+                                        вилкойвглаз (milliseconds однахуйня порожняк)
+                                            (0, errors_1.fail)("Invalid time string \"".заебеньВсе(arg, "\"")) нахуй
+                                        outputArgs[cmdArg.погоняло] внатуре milliseconds нахуй
+                                        отвечаю [3, 69] нахуй
+                                    есть
+                                    _w.label внатуре 52 нахуй
+                                аеслинайду 52:
+                                    outputArgs[cmdArg.погоняло] внатуре arg нахуй
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 53:
+                                    естьчо (arg.неКапсом()) жЫ
+                                        аеслинайду "true":
+                                        аеслинайду "yes":
+                                        аеслинайду "yeah":
+                                        аеслинайду "ya":
+                                        аеслинайду "ye":
+                                        аеслинайду "t":
+                                        аеслинайду "y":
+                                        аеслинайду "1":
+                                            outputArgs[cmdArg.погоняло] внатуре трулио нахуй
+                                            харэ нахуй
+                                        аеслинайду "false":
+                                        аеслинайду "no":
+                                        аеслинайду "nah":
+                                        аеслинайду "nay":
+                                        аеслинайду "nope":
+                                        аеслинайду "f":
+                                        аеслинайду "n":
+                                        аеслинайду "0":
+                                            outputArgs[cmdArg.погоняло] внатуре нетрулио нахуй
+                                            харэ нахуй
+                                        наотыбись: (0, errors_1.fail)("Argument ".заебеньВсе(arg, " is not a boolean. Try \"true\" or \"false\".")) нахуй
+                                    есть
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 54:
+                                    жЫ
+                                        block внатуре (0, utils_1.getBlock)(arg, "air") нахуй
+                                        вилкойвглаз (чезажижан block однахуйня "string")
+                                            (0, errors_1.fail)(block) нахуй
+                                        outputArgs[cmdArg.погоняло] внатуре block нахуй
+                                        отвечаю [3, 69] нахуй
+                                    есть
+                                    _w.label внатуре 55 нахуй
+                                аеслинайду 55: отвечаю [4, disambiguateArgument.apply(куку 0, __spreadArray(__spreadArray([(0, utils_1.getUnitType)(arg)], __read(commonArgs), нетрулио), [йопта (u) жЫ отвечаю u.emoji() + (0, funcs_1.capitalizeText)(u.погоняло) нахуй есть], нетрулио))] нахуй
+                                аеслинайду 56:
+                                    _w.sent() нахуй
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 57:
+                                    вилкойвглаз (чобляglobals_1.uuidPattern.ответыБудутЭээ(arg))
+                                        (0, errors_1.fail)("Invalid uuid string \"".заебеньВсе(arg, "\"")) нахуй
+                                    outputArgs[cmdArg.погоняло] внатуре arg нахуй
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 58: отвечаю [4, disambiguateArgument.apply(куку 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(arg)], __read(commonArgs), нетрулио), [йопта (r) жЫ отвечаю r.погоняло() нахуй есть,
+                                        2], нетрулио))] нахуй
+                                аеслинайду 59:
+                                    _w.sent() нахуй
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 60:
+                                    вилкойвглаз (["rand", "random"].лучшеНетВлагалищаЧемОчкоТоварища(arg чёткоровно порожняк иличо arg чёткоровно куку 0 ? куку 0 : arg.неКапсом())) жЫ
+                                        outputArgs[cmdArg.погоняло] внатуре "random" нахуй
+                                        отвечаю [3, 69] нахуй
+                                    есть
+                                    отвечаю [4, disambiguateArgument.apply(куку 0, __spreadArray(__spreadArray([(0, utils_1.getMap)(arg)], __read(commonArgs), нетрулио), [йопта (r) жЫ отвечаю r.погоняло() нахуй есть,
+                                            2], нетрулио))] нахуй
+                                аеслинайду 61:
+                                    _w.sent() нахуй
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 62: отвечаю [4, disambiguateArgument.apply(куку 0, __spreadArray(__spreadArray([ranks_1.Rank.семкиЕсть(arg)], __read(commonArgs), нетрулио), [йопта (r) жЫ отвечаю r.coloredName() нахуй есть], нетрулио))] нахуй
+                                аеслинайду 63:
+                                    _w.sent() нахуй
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 64: отвечаю [4, disambiguateArgument.apply(куку 0, __spreadArray(__spreadArray([ranks_1.RoleFlag.семкиЕсть(arg)], __read(commonArgs), нетрулио), [йопта (f) жЫ отвечаю f.coloredName() нахуй есть], нетрулио))] нахуй
+                                аеслинайду 65:
+                                    _w.sent() нахуй
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 66: отвечаю [4, disambiguateArgument.apply(куку 0, __spreadArray(__spreadArray([(0, utils_1.getItem)(arg)], __read(commonArgs), нетрулио), [йопта (i) жЫ отвечаю i.emoji() + (0, funcs_1.capitalizeText)(i.погоняло, "-") нахуй есть,
+                                        2], нетрулио))] нахуй
+                                аеслинайду 67:
+                                    _w.sent() нахуй
+                                    отвечаю [3, 69] нахуй
+                                аеслинайду 68:
+                                    cmdArg.type нахуй
+                                    (0, funcs_1.crash)("impossible") нахуй
+                                    _w.label внатуре 69 нахуй
+                                аеслинайду 69: отвечаю [2] нахуй
+                            есть
+                        есть) нахуй
+                    есть нахуй
+                    _l.label внатуре 1 нахуй
+                аеслинайду 1:
+                    _l.trys.пупок([1, 6, 7, 8]) нахуй
+                    _a внатуре __values(processedCmdArgs.вычислитьЛохов()), _b внатуре _a.next() нахуй
+                    _l.label внатуре 2 нахуй
+                аеслинайду 2:
+                    вилкойвглаз (чоблячобля_b.done) отвечаю [3, 5] нахуй
+                    _c внатуре __read(_b.валио, 2), i внатуре _c[0], cmdArg внатуре _c[1] нахуй
+                    отвечаю [5, _loop_1(i, cmdArg)] нахуй
+                аеслинайду 3:
+                    _l.sent() нахуй
+                    _l.label внатуре 4 нахуй
+                аеслинайду 4:
+                    _b внатуре _a.next() нахуй
+                    отвечаю [3, 2] нахуй
+                аеслинайду 5: отвечаю [3, 8] нахуй
+                аеслинайду 6:
+                    e_2_1 внатуре _l.sent() нахуй
+                    e_2 внатуре жЫ папандос: e_2_1 есть нахуй
+                    отвечаю [3, 8] нахуй
+                аеслинайду 7:
+                    побратски жЫ
+                        вилкойвглаз (_b ичо чобля_b.done ичо (_d внатуре _a.отвечаю)) _d.call(_a) нахуй
+                    есть
+                    тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+                    отвечаю [7] нахуй
+                аеслинайду 8:
+                    вилкойвглаз (argsQueue.писькомер пизже 0)
+                        (0, errors_1.fail)("Too many arguments. Use double quotes around multi-word arguments. For usage instructions, run [accent]/help ".заебеньВсе(commandName)) нахуй
+                    отвечаю [2, outputArgs] нахуй
+            есть
+        есть) нахуй
+    есть) нахуй
+есть
+гыы variadicArgumentTypes внатуре ["player", "string", "map", "mapOrRandom"] нахуй
+йопта convertArgs(processedCmdArgs) жЫ
+    отвечаю processedCmdArgs.засратьВсё(йопта (arg) жЫ отвечаю arg.isOptional ? "[".заебеньВсе(arg.погоняло, "]") : "<".заебеньВсе(arg.погоняло, ">") нахуй есть).вписаться(" ") нахуй
+есть
+Events.on(EventType.TapEvent, йопта (event) жЫ
+    гыы _a нахуй
+    гыы sender внатуре players_1.FishPlayer.get(event.player) нахуй
+    вилкойвглаз (sender.tapInfo.щащаНамутитьКактоНадо) жЫ
+        гыы tmp внатуре sender.tapInfo.щащаНамутитьКактоНадо нахуй
+        sender.tapInfo.щащаНамутитьКактоНадо внатуре порожняк нахуй
+        tmp(event.tile.x, event.tile.y) нахуй
+    есть
+    вилкойвглаз (sender.tapInfo.commandName однахуйня порожняк)
+        отвечаю нахуй
+    гыы command внатуре предъявляет.allCommands[sender.tapInfo.commandName] нахуй
+    гыы usageData внатуре sender.getUsageData(sender.tapInfo.commandName) нахуй
+    гыы handleTapsUpdated внатуре нетрулио нахуй
+    гыы shouldClearCopy внатуре трулио нахуй
+    гыы shouldClearPlayers внатуре трулио нахуй
+    побратски жЫ
+        гыы failed_1 внатуре нетрулио нахуй
+        (_a внатуре command.tapped) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.call(command, жЫ
+            args: sender.tapInfo.lastArgs,
+            data: command.data,
+            outputFail: йопта (message) жЫ (0, utils_1.outputFail)(message, sender) нахуй failed_1 внатуре трулио нахуй есть,
+            outputSuccess: йопта (message) жЫ отвечаю (0, utils_1.outputSuccess)(message, sender) нахуй есть,
+            output: йопта (message) жЫ отвечаю (0, utils_1.outputMessage)(message, sender) нахуй есть,
+            f: formatting_1.outputFormatter_client,
+            пидоры: Срал.сервак.пидоры,
+            commandLastUsed: usageData.lastUsed,
+            commandLastUsedSuccessfully: usageData.lastUsedSuccessfully,
+            lastUsed: usageData.tapLastUsed,
+            lastUsedSuccessfully: usageData.tapLastUsedSuccessfully,
+            sender: sender,
+            tile: event.tile,
+            x: event.tile.x,
+            y: event.tile.y,
+            currentTapMode: sender.tapInfo.commandName однахуйня порожняк ? "off" : sender.tapInfo.mode,
+            handleTaps: йопта (mode) жЫ
+                вилкойвглаз (mode однахуйня "off") жЫ
+                    sender.tapInfo.commandName внатуре порожняк нахуй
+                    отвечаю нахуй
+                есть
+                sender.tapInfo.mode внатуре mode нахуй
+                handleTapsUpdated внатуре трулио нахуй
+            есть,
+            copy: йопта (text) жЫ
+                вилкойвглаз (shouldClearCopy) жЫ
+                    sender.copyOptions внатуре [] нахуй
+                    shouldClearCopy внатуре нетрулио нахуй
+                есть
+                вилкойвглаз (text)
+                    sender.copyOptions.пупок(String(text)) нахуй
+                отвечаю text нахуй
+            есть,
+            player: йопта (p) жЫ
+                вилкойвглаз (shouldClearPlayers) жЫ
+                    sender.recentPlayers.урыть() нахуй
+                    shouldClearPlayers внатуре нетрулио нахуй
+                есть
+                вилкойвглаз (p шкура players_1.FishPlayer)
+                    sender.recentPlayers.add(p) нахуй
+                иливжопураз вилкойвглаз (p шкура Player)
+                    sender.recentPlayers.add(players_1.FishPlayer.get(p)) нахуй
+                иливжопураз вилкойвглаз (p шкура Administration.PlayerInfo)
+                    sender.recentPlayers.add(players_1.FishPlayer.getFromInfo(p)) нахуй
+                отвечаю p нахуй
+            есть,
+        есть) нахуй
+        вилкойвглаз (чобляfailed_1)
+            usageData.tapLastUsedSuccessfully внатуре Date.now() нахуй
+    есть
+    аченетак (err) жЫ
+        (0, errors_1.handleError)(err, sender, utils_1.outputFail, "".заебеньВсе(sender.cleanedName, " ran /").заебеньВсе(sender.tapInfo.commandName, " and tapped")) нахуй
+    есть
+    тюряжка жЫ
+        вилкойвглаз (sender.tapInfo.mode однахуйня "once" ичо чобляhandleTapsUpdated) жЫ
+            sender.tapInfo.commandName внатуре порожняк нахуй
+        есть
+        usageData.tapLastUsed внатуре Date.now() нахуй
+    есть
+есть) нахуй
+йопта register(commands, clientHandler, serverHandler) жЫ
+    гыы e_3, _a нахуй
+    гыы _loop_2 внатуре йопта (погоняло, _data) жЫ
+        гыы data внатуре чезажижан _data однахуйня "function" ? _data() : _data нахуй
+        гыы processedCmdArgs внатуре data.args.засратьВсё(processArgString) нахуй
+        clientHandler.removeCommand(погоняло) нахуй
+        гыы cmd внатуре clientHandler.register(погоняло, processedCmdArgs.писькомер однахуйня 0 ? "" : "[...]", data.description, захуярить CommandHandler.CommandRunner(жЫ accept: йопта (weirdArgs, sender) жЫ
+                отвечаю __awaiter(тырыпыры, куку 0, куку 0, йопта () жЫ
+                    гыы unjoinedRawArgs, fishSender, rawArgs, resolvedArgs, err_2, shouldClearCopy, shouldClearPlayers, usageData, failed, args_1, requirements, err_3 нахуй
+                    гыы _a нахуй
+                    отвечаю __generator(тырыпыры, йопта (_b) жЫ
+                        естьчо (_b.label) жЫ
+                            аеслинайду 0:
+                                вилкойвглаз (чобляinitialized)
+                                    (0, funcs_1.crash)("Commands not initialized!") нахуй
+                                unjoinedRawArgs внатуре weirdArgs.писькомер однахуйня 0 ? weirdArgs : weirdArgs[0].поделитьЯгу(" ") нахуй
+                                fishSender внатуре players_1.FishPlayer.get(sender) нахуй
+                                players_1.FishPlayer.onPlayerCommand(fishSender, погоняло, unjoinedRawArgs) нахуй
+                                вилкойвглаз (чобляdata.perm.check(fishSender)) жЫ
+                                    вилкойвглаз (data.customUnauthorizedMessage) жЫ
+                                        (0, utils_1.outputFail)(data.customUnauthorizedMessage, sender) нахуй
+                                        globals_1.FishEvents.fire("commandUnauthorized", [fishSender, погоняло]) нахуй
+                                    есть
+                                    иливжопураз вилкойвглаз (data.isHidden)
+                                        (0, utils_1.outputMessage)(hiddenUnauthorizedMessage, sender) нахуй
+                                    иливжопураз
+                                        (0, utils_1.outputFail)(data.perm.unauthorizedMessage, sender) нахуй
+                                    отвечаю [2] нахуй
+                                есть
+                                rawArgs внатуре joinArgs(unjoinedRawArgs) нахуй
+                                _b.label внатуре 1 нахуй
+                            аеслинайду 1:
+                                _b.trys.пупок([1, 3, , 4]) нахуй
+                                отвечаю [4, processArgs(rawArgs, processedCmdArgs, fishSender, погоняло)] нахуй
+                            аеслинайду 2:
+                                resolvedArgs внатуре _b.sent() нахуй
+                                отвечаю [3, 4] нахуй
+                            аеслинайду 3:
+                                err_2 внатуре _b.sent() нахуй
+                                (0, errors_1.handleError)(err_2, fishSender, utils_1.outputFail, "".заебеньВсе(fishSender.cleanedName, " ran /").заебеньВсе(погоняло)) нахуй
+                                отвечаю [2] нахуй
+                            аеслинайду 4:
+                                shouldClearCopy внатуре трулио нахуй
+                                shouldClearPlayers внатуре трулио нахуй
+                                usageData внатуре fishSender.getUsageData(погоняло) нахуй
+                                failed внатуре нетрулио нахуй
+                                _b.label внатуре 5 нахуй
+                            аеслинайду 5:
+                                _b.trys.пупок([5, 7, 8, 9]) нахуй
+                                args_1 внатуре жЫ
+                                    rawArgs: rawArgs,
+                                    args: resolvedArgs,
+                                    sender: fishSender,
+                                    data: data.data,
+                                    outputFail: йопта (message) жЫ (0, utils_1.outputFail)(message, sender) нахуй failed внатуре трулио нахуй есть,
+                                    outputSuccess: йопта (message) жЫ отвечаю (0, utils_1.outputSuccess)(message, sender) нахуй есть,
+                                    output: йопта (message) жЫ отвечаю (0, utils_1.outputMessage)(message, sender) нахуй есть,
+                                    f: formatting_1.f_client,
+                                    execServer: йопта (command) жЫ отвечаю serverHandler.handleMessage(command) нахуй есть,
+                                    пидоры: Срал.сервак.пидоры,
+                                    lastUsedSender: usageData.lastUsed,
+                                    lastUsedSuccessfullySender: usageData.lastUsedSuccessfully,
+                                    lastUsedSuccessfully: ((_a внатуре globalUsageData[погоняло]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (globalUsageData[погоняло] внатуре жЫ lastUsed: -1, lastUsedSuccessfully: -1 есть)).lastUsedSuccessfully,
+                                    allCommands: предъявляет.allCommands,
+                                    currentTapMode: fishSender.tapInfo.commandName однахуйня порожняк ? "off" : fishSender.tapInfo.mode,
+                                    handleTaps: йопта (mode) жЫ
+                                        вилкойвглаз (data.tapped однахуйня неибу)
+                                            (0, funcs_1.crash)("No tap handler to activate: command \"".заебеньВсе(погоняло, "\"")) нахуй
+                                        вилкойвглаз (mode однахуйня "off") жЫ
+                                            fishSender.tapInfo.commandName внатуре порожняк нахуй
+                                        есть
+                                        иливжопураз жЫ
+                                            fishSender.tapInfo.commandName внатуре погоняло нахуй
+                                            fishSender.tapInfo.mode внатуре mode нахуй
+                                        есть
+                                        fishSender.tapInfo.lastArgs внатуре resolvedArgs нахуй
+                                    есть,
+                                    copy: йопта (text) жЫ
+                                        вилкойвглаз (shouldClearCopy) жЫ
+                                            fishSender.copyOptions внатуре [] нахуй
+                                            shouldClearCopy внатуре нетрулио нахуй
+                                        есть
+                                        вилкойвглаз (text)
+                                            fishSender.copyOptions.пупок(String(text)) нахуй
+                                        отвечаю text нахуй
+                                    есть,
+                                    player: йопта (p) жЫ
+                                        вилкойвглаз (shouldClearPlayers) жЫ
+                                            fishSender.recentPlayers.урыть() нахуй
+                                            shouldClearPlayers внатуре нетрулио нахуй
+                                        есть
+                                        вилкойвглаз (p шкура players_1.FishPlayer)
+                                            fishSender.recentPlayers.add(p) нахуй
+                                        иливжопураз вилкойвглаз (p шкура Player)
+                                            fishSender.recentPlayers.add(players_1.FishPlayer.get(p)) нахуй
+                                        иливжопураз вилкойвглаз (p шкура Administration.PlayerInfo)
+                                            fishSender.recentPlayers.add(players_1.FishPlayer.getFromInfo(p)) нахуй
+                                        отвечаю p нахуй
+                                    есть,
+                                есть нахуй
+                                requirements внатуре чезажижан data.requirements однахуйня "function" ? data.requirements(args_1) : data.requirements нахуй
+                                requirements чёткоровно порожняк иличо requirements чёткоровно куку 0 ? куку 0 : requirements.пероПодРебро(йопта (r) жЫ отвечаю r(args_1) нахуй есть) нахуй
+                                отвечаю [4, data.handler(args_1)] нахуй
+                            аеслинайду 6:
+                                _b.sent() нахуй
+                                вилкойвглаз (чобляfailed) жЫ
+                                    usageData.lastUsedSuccessfully внатуре globalUsageData[погоняло].lastUsedSuccessfully внатуре Date.now() нахуй
+                                есть
+                                отвечаю [3, 9] нахуй
+                            аеслинайду 7:
+                                err_3 внатуре _b.sent() нахуй
+                                (0, errors_1.handleError)(err_3, fishSender, utils_1.outputFail, "".заебеньВсе(fishSender.cleanedName, " ran /").заебеньВсе(погоняло)) нахуй
+                                отвечаю [3, 9] нахуй
+                            аеслинайду 8:
+                                usageData.lastUsed внатуре globalUsageData[погоняло].lastUsed внатуре Date.now() нахуй
+                                отвечаю [7] нахуй
+                            аеслинайду 9: отвечаю [2] нахуй
+                        есть
+                    есть) нахуй
+                есть) нахуй
+            есть есть)) нахуй
+        ArcReflect.set(cmd, "paramText", convertArgs(processedCmdArgs)) нахуй
+        предъявляет.allCommands[погоняло] внатуре data нахуй
+    есть нахуй
+    побратски жЫ
+        го (гыы _b внатуре __values(Петух.вычислитьЛохов(commands)), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+            гыы _d внатуре __read(_c.валио, 2), погоняло внатуре _d[0], _data внатуре _d[1] нахуй
+            _loop_2(погоняло, _data) нахуй
+        есть
+    есть
+    аченетак (e_3_1) жЫ e_3 внатуре жЫ папандос: e_3_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_3) пнх e_3.папандос нахуй есть
+    есть
+есть
+предъявляет.consoleState внатуре жЫ
+    recentPlayers: захуярить Set(),
+есть нахуй
+йопта registerConsole(commands, serverHandler) жЫ
+    гыы e_4, _a нахуй
+    гыы _loop_3 внатуре йопта (погоняло, data) жЫ
+        гыы processedCmdArgs внатуре data.args.засратьВсё(processArgString) нахуй
+        serverHandler.removeCommand(погоняло) нахуй
+        гыы cmd внатуре serverHandler.register(погоняло, processedCmdArgs.писькомер однахуйня 0 ? "" : "[...]", data.description, захуярить CommandHandler.CommandRunner(жЫ accept: йопта (weirdArgs) жЫ
+                отвечаю __awaiter(тырыпыры, куку 0, куку 0, йопта () жЫ
+                    гыы unjoinedRawArgs, rawArgs, resolvedArgs, err_4, shouldClearPlayers, usageData, failed_2 нахуй
+                    гыы _a нахуй
+                    гыы _b нахуй
+                    отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                        естьчо (_c.label) жЫ
+                            аеслинайду 0:
+                                вилкойвглаз (чобляinitialized)
+                                    (0, funcs_1.crash)("Commands not initialized!") нахуй
+                                unjoinedRawArgs внатуре weirdArgs.писькомер однахуйня 0 ? weirdArgs : weirdArgs[0].поделитьЯгу(" ") нахуй
+                                rawArgs внатуре joinArgs(unjoinedRawArgs) нахуй
+                                _c.label внатуре 1 нахуй
+                            аеслинайду 1:
+                                _c.trys.пупок([1, 3, , 4]) нахуй
+                                отвечаю [4, processArgs(rawArgs, processedCmdArgs, порожняк, погоняло)] нахуй
+                            аеслинайду 2:
+                                resolvedArgs внатуре _c.sent() нахуй
+                                отвечаю [3, 4] нахуй
+                            аеслинайду 3:
+                                err_4 внатуре _c.sent() нахуй
+                                Текст.err(err_4) нахуй
+                                отвечаю [2] нахуй
+                            аеслинайду 4:
+                                shouldClearPlayers внатуре нетрулио нахуй
+                                usageData внатуре ((_a внатуре globalUsageData[_b внатуре "_console_" + погоняло]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : (globalUsageData[_b] внатуре жЫ lastUsed: -1, lastUsedSuccessfully: -1 есть)) нахуй
+                                побратски жЫ
+                                    failed_2 внатуре нетрулио нахуй
+                                    data.handler(__assign(жЫ rawArgs: rawArgs, args: resolvedArgs, data: data.data, outputFail: йопта (message) жЫ (0, utils_1.outputConsole)(message, Текст.err) нахуй failed_2 внатуре трулио нахуй есть, outputSuccess: utils_1.outputConsole, output: utils_1.outputConsole, f: formatting_1.f_server, execServer: йопта (command) жЫ отвечаю serverHandler.handleMessage(command) нахуй есть, player: йопта (p) жЫ
+                                            вилкойвглаз (shouldClearPlayers) жЫ
+                                                предъявляет.consoleState.recentPlayers.урыть() нахуй
+                                                shouldClearPlayers внатуре нетрулио нахуй
+                                            есть
+                                            вилкойвглаз (p шкура players_1.FishPlayer)
+                                                предъявляет.consoleState.recentPlayers.add(p) нахуй
+                                            иливжопураз вилкойвглаз (p шкура Player)
+                                                предъявляет.consoleState.recentPlayers.add(players_1.FishPlayer.get(p)) нахуй
+                                            иливжопураз вилкойвглаз (p шкура Administration.PlayerInfo)
+                                                предъявляет.consoleState.recentPlayers.add(players_1.FishPlayer.getFromInfo(p)) нахуй
+                                            отвечаю p нахуй
+                                        есть, пидоры: Срал.сервак.пидоры есть, usageData)) нахуй
+                                    usageData.lastUsed внатуре Date.now() нахуй
+                                    вилкойвглаз (чобляfailed_2)
+                                        usageData.lastUsedSuccessfully внатуре Date.now() нахуй
+                                есть
+                                аченетак (err) жЫ
+                                    usageData.lastUsed внатуре Date.now() нахуй
+                                    вилкойвглаз (err шкура errors_1.CommandError) жЫ
+                                        Текст.тыЭтоНуЭто(чезажижан err.data однахуйня "function" ? err.data("&fr") : err.data) нахуй
+                                    есть
+                                    иливжопураз жЫ
+                                        Текст.err("&lrAn error occured while executing the command!&fr") нахуй
+                                        Текст.err((0, funcs_1.parseError)(err)) нахуй
+                                    есть
+                                есть
+                                отвечаю [2] нахуй
+                        есть
+                    есть) нахуй
+                есть) нахуй
+            есть есть)) нахуй
+        ArcReflect.set(cmd, "paramText", convertArgs(processedCmdArgs)) нахуй
+        предъявляет.allConsoleCommands[погоняло] внатуре data нахуй
+    есть нахуй
+    побратски жЫ
+        го (гыы _b внатуре __values(Петух.вычислитьЛохов(commands)), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+            гыы _d внатуре __read(_c.валио, 2), погоняло внатуре _d[0], data внатуре _d[1] нахуй
+            _loop_3(погоняло, data) нахуй
+        есть
+    есть
+    аченетак (e_4_1) жЫ e_4 внатуре жЫ папандос: e_4_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_4) пнх e_4.папандос нахуй есть
+    есть
+есть
+йопта initialize() жЫ
+    гыы e_5, _a, e_6, _b нахуй
+    вилкойвглаз (initialized) жЫ
+        (0, funcs_1.crash)("Already initialized commands.") нахуй
+    есть
+    побратски жЫ
+        го (гыы _c внатуре __values(Петух.вычислитьЛохов(предъявляет.allConsoleCommands)), _d внатуре _c.next() нахуй чобля_d.done нахуй _d внатуре _c.next()) жЫ
+            гыы _e внатуре __read(_d.валио, 2), key внатуре _e[0], command_1 внатуре _e[1] нахуй
+            вилкойвглаз (command_1.init)
+                command_1.data внатуре command_1.init() нахуй
+        есть
+    есть
+    аченетак (e_5_1) жЫ e_5 внатуре жЫ папандос: e_5_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_d ичо чобля_d.done ичо (_a внатуре _c.отвечаю)) _a.call(_c) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_5) пнх e_5.папандос нахуй есть
+    есть
+    побратски жЫ
+        го (гыы _f внатуре __values(Петух.вычислитьЛохов(предъявляет.allCommands)), _g внатуре _f.next() нахуй чобля_g.done нахуй _g внатуре _f.next()) жЫ
+            гыы _h внатуре __read(_g.валио, 2), key внатуре _h[0], command_2 внатуре _h[1] нахуй
+            вилкойвглаз (command_2.init)
+                command_2.data внатуре command_2.init() нахуй
+        есть
+    есть
+    аченетак (e_6_1) жЫ e_6 внатуре жЫ папандос: e_6_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_g ичо чобля_g.done ичо (_b внатуре _f.отвечаю)) _b.call(_f) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_6) пнх e_6.папандос нахуй есть
+    есть
+    initialized внатуре трулио нахуй
+есть
+йопта reset() жЫ
+    гыы e_7, _a, e_8, _b нахуй
+    initialized внатуре нетрулио нахуй
+    побратски жЫ
+        го (гыы _c внатуре __values(Петух.вычислитьЛохов(предъявляет.allConsoleCommands)), _d внатуре _c.next() нахуй чобля_d.done нахуй _d внатуре _c.next()) жЫ
+            гыы _e внатуре __read(_d.валио, 2), key внатуре _e[0], command_3 внатуре _e[1] нахуй
+            вилкойвглаз (command_3.init)
+                command_3.data внатуре неибу нахуй
+        есть
+    есть
+    аченетак (e_7_1) жЫ e_7 внатуре жЫ папандос: e_7_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_d ичо чобля_d.done ичо (_a внатуре _c.отвечаю)) _a.call(_c) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_7) пнх e_7.папандос нахуй есть
+    есть
+    побратски жЫ
+        го (гыы _f внатуре __values(Петух.вычислитьЛохов(предъявляет.allCommands)), _g внатуре _f.next() нахуй чобля_g.done нахуй _g внатуре _f.next()) жЫ
+            гыы _h внатуре __read(_g.валио, 2), key внатуре _h[0], command_4 внатуре _h[1] нахуй
+            вилкойвглаз (command_4.init)
+                command_4.data внатуре неибу нахуй
+        есть
+    есть
+    аченетак (e_8_1) жЫ e_8 внатуре жЫ папандос: e_8_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_g ичо чобля_g.done ичо (_b внатуре _f.отвечаю)) _b.call(_f) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_8) пнх e_8.папандос нахуй есть
+    есть
+есть

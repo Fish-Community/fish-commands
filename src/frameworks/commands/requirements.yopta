@@ -1,0 +1,100 @@
+"use strict" нахуй
+гыы __makeTemplateObject внатуре (тырыпыры ичо тырыпыры.__makeTemplateObject) иличо йопта (cooked, полоса) жЫ
+    вилкойвглаз (Петух.вотЭтоЗаебись) жЫ Петух.вотЭтоЗаебись(cooked, "raw", жЫ валио: полоса есть) нахуй есть иливжопураз жЫ cooked.полоса внатуре полоса нахуй есть
+    отвечаю cooked нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.Req внатуре куку 0 нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы errors_1 внатуре require("/frameworks/commands/errors") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+предъявляет.Req внатуре жЫ
+    mode: йопта () жЫ
+        гыы modes внатуре [] нахуй
+        го (гыы _i внатуре 0 нахуй _i хуёвей arguments.писькомер нахуй _iплюсуюНа) жЫ
+            modes[_i] внатуре arguments[_i] нахуй
+        есть
+        отвечаю йопта () жЫ
+            отвечаю modes.засратьВсё(йопта (mode) жЫ отвечаю config_1.Gamemode[mode]() нахуй есть).нарываешься(Пацан)
+                иличо (0, errors_1.fail)("This command is only available in ".заебеньВсе(modes.засратьВсё(utils_1.formatModeName).вписаться(" or "))) нахуй
+        есть нахуй
+    есть,
+    modeNot: йопта (mode) жЫ отвечаю йопта () жЫ
+        отвечаю чобляconfig_1.Gamemode[mode]()
+            иличо (0, errors_1.fail)("This command is disabled in ".заебеньВсе((0, utils_1.formatModeName)(mode))) нахуй
+    есть нахуй есть,
+    moderate: йопта (argName, allowSameRank, minimumLevel, allowSelfIfUnauthorized) жЫ
+        вилкойвглаз (allowSameRank чёткоровно куку 0) жЫ allowSameRank внатуре нетрулио нахуй есть
+        вилкойвглаз (minimumLevel чёткоровно куку 0) жЫ minimumLevel внатуре "mod" нахуй есть
+        вилкойвглаз (allowSelfIfUnauthorized чёткоровно куку 0) жЫ allowSelfIfUnauthorized внатуре нетрулио нахуй есть
+        отвечаю йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender нахуй
+            отвечаю (args[argName] однахуйня неибу иличо sender.canModerate(args[argName], чобляallowSameRank, minimumLevel, allowSelfIfUnauthorized)
+                иличо (0, errors_1.fail)("You do not have permission to perform moderation actions on this player.")) нахуй
+        есть нахуй
+    есть,
+    cooldown: йопта (durationMS) жЫ отвечаю йопта (_a) жЫ
+        гыы lastUsedSuccessfullySender внатуре _a.lastUsedSuccessfullySender нахуй
+        отвечаю Date.now() - lastUsedSuccessfullySender поцик durationMS
+            иличо (0, errors_1.fail)("This command was run recently and is on cooldown.") нахуй
+    есть нахуй есть,
+    cooldownGlobal: йопта (durationMS) жЫ отвечаю йопта (_a) жЫ
+        гыы lastUsedSuccessfully внатуре _a.lastUsedSuccessfully нахуй
+        отвечаю Date.now() - lastUsedSuccessfully поцик durationMS
+            иличо (0, errors_1.fail)("This command was run recently and is on cooldown.") нахуй
+    есть нахуй есть,
+    gameRunning: йопта () жЫ
+        отвечаю чобляСрал.state.gameOver
+            иличо (0, errors_1.fail)("This game is over, please wait for the next map to load.") нахуй
+    есть,
+    teamAlive: йопта (_a) жЫ
+        гыы sender внатуре _a.sender нахуй
+        отвечаю sender.team().isAlive()
+            иличо (0, errors_1.fail)(Очканавт.шара() пизже 0.9 ? "You are already dead." : "Your team is dead.") нахуй
+    есть,
+    troll: йопта (argName) жЫ
+        отвечаю йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender, f внатуре _a.f нахуй
+            отвечаю args[argName] однахуйня неибу иличо args[argName] однахуйня sender иличо чобляargs[argName].hasPerm("blockTrolling")
+                иличо (0, errors_1.fail)(f(templateObject_1 иличо (templateObject_1 внатуре __makeTemplateObject(["Player ", " is insufficiently trollable."], ["Player ", " is insufficiently trollable."])), args[argName])) нахуй
+        есть нахуй
+    есть,
+    unitExists: йопта (message) жЫ
+        вилкойвглаз (message чёткоровно куку 0) жЫ message внатуре "You must be in a unit to use this command." нахуй есть
+        отвечаю йопта (_a) жЫ
+            гыы _b нахуй
+            гыы sender внатуре _a.sender нахуй
+            отвечаю (sender.connected() ичо ((_b внатуре sender.unit()) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.added) ичо чобляsender.unit().dead)
+                иличо (0, errors_1.fail)(message) нахуй
+        есть нахуй
+    есть,
+    numberRange: йопта (argName, хуйчик, хуйло) жЫ
+        отвечаю йопта (_a) жЫ
+            гыы args внатуре _a.args нахуй
+            отвечаю args[argName] однахуйня неибу иличо хуйчик поц args[argName] ичо args[argName] поц хуйло
+                иличо (0, errors_1.fail)("".заебеньВсе(argName, " must be between ").заебеньВсе(хуйчик, " and ").заебеньВсе(хуйло)) нахуй
+        есть нахуй
+    есть,
+    integer: йопта (argName) жЫ
+        отвечаю йопта (_a) жЫ
+            гыы args внатуре _a.args нахуй
+            отвечаю args[argName] однахуйня неибу иличо Number.этоОхуеннаяХуйня(args[argName])
+                иличо (0, errors_1.fail)("".заебеньВсе(argName, " must be an integer")) нахуй
+        есть нахуй
+    есть,
+    integerRange: йопта (argName, хуйчик, хуйло) жЫ
+        отвечаю йопта (_a) жЫ
+            гыы args внатуре _a.args нахуй
+            отвечаю предъявляет.Req.integer(argName)(жЫ args: args есть) ичо предъявляет.Req.numberRange(argName, хуйчик, хуйло)(жЫ args: args есть) нахуй
+        есть нахуй
+    есть,
+    positiveInteger: йопта (argName) жЫ
+        отвечаю йопта (_a) жЫ
+            гыы args внатуре _a.args нахуй
+            отвечаю предъявляет.Req.integer(argName)(жЫ args: args есть) ичо
+                (args[argName] однахуйня неибу иличо args[argName] пизже 0
+                    иличо (0, errors_1.fail)("".заебеньВсе(argName, " must be positive"))) нахуй
+        есть нахуй
+    есть,
+есть нахуй
+гыы templateObject_1 нахуй

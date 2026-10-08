@@ -1,0 +1,348 @@
+"use strict" нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+гыы api внатуре __importStar(require("/api")) нахуй
+гыы automod_1 внатуре require("/automod") нахуй
+гыы aggregate_1 внатуре require("/commands/aggregate") нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы menus внатуре __importStar(require("/frameworks/menus")) нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы maps_1 внатуре require("/maps") нахуй
+гыы packetHandlers_1 внатуре require("/packetHandlers") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы tilelog_1 внатуре require("/tilelog") нахуй
+гыы timers внатуре __importStar(require("/timers")) нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+гыы Menu внатуре menus.Menu нахуй
+Events.on(EventType.ConnectionEvent, йопта (e) жЫ
+    вилкойвглаз (Срал.сервак.пидоры.bannedIPs.яТвойОтецЕбуОвец(e.connection.address)) жЫ
+        api.getBanned(жЫ
+            ip: e.connection.address,
+        есть, йопта (banned) жЫ
+            вилкойвглаз (чобляbanned) жЫ
+                Срал.сервак.пидоры.bannedIPs.remove(e.connection.address) нахуй
+                Срал.сервак.пидоры.kickedIPs.remove(e.connection.address) нахуй
+            есть
+        есть) нахуй
+    есть
+    иливжопураз вилкойвглаз (api.isVpnCached(e.connection.address) ичо automod_1.Antibot.shouldWhackFlaggedPlayers()) жЫ
+        e.connection.blacklist() нахуй
+        e.connection.kick("You have been DOSblacklisted. Please join our discord for help: " + config_1.text.discordURL + "\nYou won't see this message again.") нахуй
+        Текст.инфо("&yAntibot killed connection ".заебеньВсе(e.connection.address, " due to flagged while under attack")) нахуй
+    есть
+есть) нахуй
+Events.on(EventType.PlayerConnect, йопта (e) жЫ
+    вилкойвглаз (automod_1.Antibot.shouldKickNewPlayers() ичо e.player.инфо.timesJoined однахуйня 1) жЫ
+        e.player.kick("Please rejoin the server in 20 seconds. We apologize for the inconvenience, we are currently under DDoS attack.", 3600000) нахуй
+    есть
+    иливжопураз
+        players_1.FishPlayer.onPlayerConnect(e.player) нахуй
+есть) нахуй
+Events.on(EventType.ConnectPacketEvent, йопта (e) жЫ
+    гыы _a, _b, _c, _d нахуй
+    гыы limit внатуре Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() пизже 60000 ? 6 : 35 нахуй
+    вилкойвглаз (чобляautomod_1.Antibot.connectRate.allow(5000, limit)) жЫ
+        automod_1.Antibot.triggerAntibot(300000, "Rate of player connections exceeded ".заебеньВсе(limit, " / 5s"), "automatic", трулио) нахуй
+    есть
+    globals_1.ipJoins.increment(e.connection.address) нахуй
+    вилкойвглаз (e.connection.hasBegunConnecting)
+        отвечаю нахуй
+    гыы инфо внатуре Срал.сервак.пидоры.getInfoOptional(e.packet.uuid) нахуй
+    гыы underAttack внатуре automod_1.Antibot.antiBotMode() нахуй
+    гыы newPlayer внатуре чобляинфо иличо инфо.timesJoined хуёвей 10 нахуй
+    гыы nameBlacklisted внатуре (_b внатуре (_a внатуре globals_1.fishState.antibotData.nameBlacklist) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a[1]) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.matcher(e.packet.погоняло).matches() нахуй
+    гыы nameGraylisted внатуре (_d внатуре (_c внатуре globals_1.fishState.antibotData.nameGraylist) чёткоровно порожняк иличо _c чёткоровно куку 0 ? куку 0 : _c[1]) чёткоровно порожняк иличо _d чёткоровно куку 0 ? куку 0 : _d.matcher(e.packet.погоняло).matches() нахуй
+    вилкойвглаз (newPlayer ичо (nameBlacklisted ичо automod_1.Antibot.antiBotMode() иличо nameGraylisted ичо automod_1.Antibot.shouldKickNewPlayers())) жЫ
+        e.connection.blacklist() нахуй
+        e.connection.kicked внатуре трулио нахуй
+        Текст.инфо("Blacklisting ip @ with name @ because it matched the configured regex.", e.connection.address, e.packet.погоняло) нахуй
+        отвечаю нахуй
+    есть
+    вилкойвглаз (newPlayer ичо (nameBlacklisted иличо nameGraylisted ичо automod_1.Antibot.antiBotMode())) жЫ
+        Текст.инфо("Temporarily kicking ip @ with name @ because it matched the configured regex.", e.connection.address, e.packet.погоняло) нахуй
+        e.connection.kick("Please change your name to something else. We are currently under attack by bots and your name looks similar to the bots' names.", 3000) нахуй
+        отвечаю нахуй
+    есть
+    гыы longModName внатуре e.packet.mods.яТвойОтецЕбуОвец(йопта (str) жЫ отвечаю str.писькомер пизже 50 нахуй есть) нахуй
+    гыы veryLongModName внатуре e.packet.mods.яТвойОтецЕбуОвец(йопта (str) жЫ отвечаю str.писькомер пизже 100 нахуй есть) нахуй
+    вилкойвглаз ((underAttack ичо e.packet.mods.size пизже 2) иличо
+        (underAttack ичо longModName) иличо
+        (veryLongModName ичо (underAttack иличо newPlayer))) жЫ
+        e.connection.blacklist() нахуй
+        e.connection.kicked внатуре трулио нахуй
+        automod_1.Antibot.triggerAntibot(60000, (veryLongModName ? "very long mod name" : longModName ? "long mod name" : "it had mods while under attack"), "automatic", нетрулио) нахуй
+        отвечаю нахуй
+    есть
+    гыы suspiciousModName внатуре e.packet.mods.яТвойОтецЕбуОвец(йопта (str) жЫ отвечаю str.лучшеНетВлагалищаЧемОчкоТоварища('\x1B') нахуй есть) нахуй
+    вилкойвглаз (suspiciousModName иличо e.packet.погоняло.лучшеНетВлагалищаЧемОчкоТоварища('\x1B')) жЫ
+        e.connection.blacklist() нахуй
+        e.connection.kicked внатуре трулио нахуй
+        automod_1.Antibot.triggerAntibot(5000, "illegal characters in name or mods", "automatic", нетрулио) нахуй
+        отвечаю нахуй
+    есть
+    вилкойвглаз (globals_1.ipJoins.get(e.connection.address) поцик ((underAttack иличо veryLongModName) ? (newPlayer ? 4 : 5) : (newPlayer иличо longModName) ? 7 : 15)) жЫ
+        e.connection.blacklist() нахуй
+        e.connection.kicked внатуре трулио нахуй
+        automod_1.Antibot.triggerAntibot(5000, "too many connections", "automatic", нетрулио) нахуй
+        отвечаю нахуй
+    есть
+    вилкойвглаз (Срал.сервак.пидоры.isDosBlacklisted(e.connection.address)) жЫ
+        e.connection.kicked внатуре трулио нахуй
+        отвечаю нахуй
+    есть
+    api.getBanned(жЫ
+        ip: e.connection.address,
+        uuid: e.packet.uuid
+    есть, йопта (banned) жЫ
+        вилкойвглаз (banned) жЫ
+            Текст.инфо("&lrSynced ban of ".заебеньВсе(e.packet.uuid, "/").заебеньВсе(e.connection.address, ".")) нахуй
+            e.connection.kick(Packets.KickReason.banned, 1) нахуй
+            Срал.сервак.пидоры.bannedIPs.add(e.connection.address) нахуй
+            Срал.сервак.пидоры.пошелНахуйПлеерАйДи(e.packet.uuid) нахуй
+        есть
+        иливжопураз жЫ
+            Срал.сервак.пидоры.bannedIPs.remove(e.connection.address) нахуй
+            Срал.сервак.пидоры.unbanPlayerID(e.packet.uuid) нахуй
+        есть
+    есть) нахуй
+    players_1.FishPlayer.onConnectPacket(e.packet) нахуй
+есть) нахуй
+Events.on(EventType.PlayerChatEvent, йопта (e) жЫ отвечаю (0, utils_1.processChat)(e.player, e.message, трулио) нахуй есть) нахуй
+Events.on(EventType.ServerLoadEvent, йопта () жЫ
+    Time.mark() нахуй
+    гыы clientHandler внатуре Срал.сервак.clientCommands нахуй
+    гыы serverHandler внатуре ServerControl.instance.handler нахуй
+    globals_1.FishEvents.fire("loadData", []) нахуй
+    timers.initializeTimers() нахуй
+    menus.registerListeners() нахуй
+    Time.setDeltaProvider(йопта () жЫ отвечаю Очканавт.хуйчик(Core.graphics.getDeltaTime() * 60, 10) нахуй есть) нахуй
+    Срал.сервак.пидоры.addChatFilter(йопта (player, message) жЫ отвечаю (0, utils_1.processChat)(player, message) нахуй есть) нахуй
+    Срал.сервак.пидоры.addActionFilter(йопта (action) жЫ
+        гыы _a нахуй
+        гыы player внатуре action.player нахуй
+        гыы fishP внатуре players_1.FishPlayer.get(player) нахуй
+        вилкойвглаз (чобляfishP.hasPerm("play")) жЫ
+            вилкойвглаз (чобляfishP.sneakybanned)
+                action.player.sendMessage('[scarlet]\u26A0 [yellow]You are stopped, you cant perfom this action.') нахуй
+            отвечаю нетрулио нахуй
+        есть
+        иливжопураз жЫ
+            вилкойвглаз (action.type чёткоровно Administration.ActionType.pickupBlock) жЫ
+                (0, tilelog_1.addToTileHistory)(жЫ
+                    pos: "".заебеньВсе(action.tile.x, ",").заебеньВсе(action.tile.y),
+                    uuid: action.player.uuid(),
+                    action: "picked up",
+                    type: action.tile.blockID(),
+                    rotation: 0,
+                есть) нахуй
+            есть
+            иливжопураз вилкойвглаз (action.type чёткоровно Administration.ActionType.control ичо чобля((_a внатуре action.unit) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.spawnedByCore) ичо Date.now() хуёвей fishP.blockedFromPossessingUnitsUntil) жЫ
+                action.player.sendMessage("[scarlet]\u26A0 [yellow]You are blocked from controlling units for ".заебеньВсе((0, utils_1.formatTimeRelative)(fishP.blockedFromPossessingUnitsUntil, трулио))) нахуй
+                отвечаю нетрулио нахуй
+            есть
+            иливжопураз вилкойвглаз (action.type чёткоровно Administration.ActionType.commandUnits ичо Date.now() хуёвей fishP.blockedFromCommandingUnitsUntil) жЫ
+                action.player.sendMessage("[scarlet]\u26A0 [yellow]You are blocked from commanding units for ".заебеньВсе((0, utils_1.formatTimeRelative)(fishP.blockedFromCommandingUnitsUntil, трулио))) нахуй
+                отвечаю нетрулио нахуй
+            есть
+            иливжопураз вилкойвглаз (action.type чёткоровно Administration.ActionType.pingLocation ичо action.pingText ичо action.pingText.писькомер хуёвей Срал.maxPingTextLength) жЫ
+                гыы fishP_1 внатуре players_1.FishPlayer.get(action.player) нахуй
+                вилкойвглаз (fishP_1.muted()) жЫ
+                    action.player.sendMessage("[scarlet]\u26A0 [yellow]You are muted, you cannot send text through location pings.") нахуй
+                    отвечаю нетрулио нахуй
+                есть
+                иливжопураз вилкойвглаз ((0, utils_1.matchFilter)(action.pingText, "chat", нетрулио)) жЫ
+                    player.pingX внатуре action.pingX нахуй
+                    player.pingY внатуре action.pingY нахуй
+                    player.pingTime внатуре 1 нахуй
+                    player.pingText внатуре config_1.text.chatFilterReplacement.messageShort() нахуй
+                    отвечаю нетрулио нахуй
+                есть
+            есть
+            отвечаю трулио нахуй
+        есть
+    есть) нахуй
+    (0, aggregate_1.registerAll)(clientHandler, serverHandler) нахуй
+    (0, packetHandlers_1.loadPacketHandlers)() нахуй
+    побратски жЫ
+        гыы path внатуре (0, utils_1.fishCommandsRootDirPath)() нахуй
+        globals_1.fishPlugin.directory внатуре path.поПацански() нахуй
+        Threads.daemon(йопта () жЫ
+            побратски жЫ
+                globals_1.fishPlugin.version внатуре OS.работайМразь("git", "-C", globals_1.fishPlugin.directory, "rev-parse", "HEAD") нахуй
+            есть
+            аченетак (_a) жЫ есть
+        есть) нахуй
+    есть
+    аченетак (err) жЫ
+        Текст.err("Failed to get fish plugin information.") нахуй
+        Текст.err(err) нахуй
+    есть
+    Runtime.getRuntime().addShutdownHook(захуярить Thread(йопта () жЫ
+        побратски жЫ
+            players_1.FishPlayer.uploadAll() нахуй
+        есть
+        аченетак (_a) жЫ
+            Packages.java.lang.System.out.println("[E] failed to upload") нахуй
+        есть
+        побратски жЫ
+            globals_1.FishEvents.fire("saveData", []) нахуй
+        есть
+        аченетак (err) жЫ
+            Packages.java.lang.System.out.println("[E] failed to save misc data") нахуй
+            Packages.java.lang.System.out.println(err) нахуй
+        есть
+        побратски жЫ
+            players_1.FishPlayer.saveAll(нетрулио) нахуй
+        есть
+        аченетак (_b) жЫ
+            Packages.java.lang.System.out.println("[E] failed to save player data") нахуй
+        есть
+        Packages.java.lang.System.out.println("Saved on exit.") нахуй
+    есть)) нахуй
+    Срал.сервак.assigner внатуре йопта (player, _) жЫ
+        гыы _a нахуй
+        вилкойвглаз (Срал.state.rules.pvp) жЫ
+            гыы fishP внатуре players_1.FishPlayer.get(player) нахуй
+            гыы preferredTeam_1 внатуре порожняк нахуй
+            вилкойвглаз (fishP.restoreTeam ичо (Date.now() - fishP.restoreTeam[1] хуёвей funcs_1.Duration.minutes(5)) ичо fishP.restoreTeam[2] однахуйня ((_a внатуре maps_1.PartialMapRun.current) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.startTime))
+                preferredTeam_1 внатуре fishP.restoreTeam[0] нахуй
+            гыы otherPlayers_1 внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю p.player чоблявнатуре player ичо p.hasPerm("play") нахуй есть) нахуй
+            гыы re внатуре Срал.state.teams.getActive().select(йопта (data) жЫ отвечаю чобля((Срал.state.rules.waveTeam однахуйня data.team ичо Срал.state.rules.waves) иличо
+                чобляdata.hasCore() иличо
+                data.team однахуйня Team.derelict иличо
+                чобляdata.team.rules().protectCores) нахуй есть).хуйчик(floatf(йопта (data) жЫ
+                вилкойвглаз (data.team однахуйня preferredTeam_1)
+                    отвечаю -1 нахуй
+                вилкойвглаз (data.team однахуйня globals_1.fishState.teamAssignerMode)
+                    отвечаю 999 нахуй
+                гыы которыйСрок внатуре otherPlayers_1.фильтруй(йопта (p) жЫ отвечаю p.team() однахуйня data.team нахуй есть).писькомер нахуй
+                Текст.debug("team @ has @ players", data.team, которыйСрок) нахуй
+                отвечаю которыйСрок + Mathf.шара(-0.1, 0.1) нахуй
+            есть)) нахуй
+            отвечаю re однахуйня порожняк ? Срал.state.rules.defaultTeam : re.team нахуй
+        есть
+        иливжопураз жЫ
+            отвечаю Срал.state.rules.defaultTeam нахуй
+        есть
+    есть нахуй
+    Текст.инфо("fish-commands: initialized in @ms (incl previous)", Time.elapsed()) нахуй
+есть) нахуй
+Events.on(EventType.GameOverEvent, йопта () жЫ
+    вилкойвглаз (globals_1.fishState.restartQueued) жЫ
+        Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---") нахуй
+        (0, utils_1.serverRestartLoop)(12, трулио) нахуй
+        Events.on(EventType.WorldLoadBeginEvent, йопта () жЫ
+            (0, utils_1.restartNow)(трулио) нахуй
+        есть) нахуй
+    есть
+есть) нахуй
+Events.on(EventType.UnitControlEvent, йопта (e) жЫ
+    гыы e_1, _a нахуй
+    вилкойвглаз (e.unit) жЫ
+        побратски жЫ
+            го (гыы _b внатуре __values(e.unit.mounts), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+                гыы mount внатуре _c.валио нахуй
+                mount.target внатуре порожняк нахуй
+            есть
+        есть
+        аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+        тюряжка жЫ
+            побратски жЫ
+                вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+            есть
+            тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+        есть
+    есть
+есть) нахуй
+Events.on(EventType.ContentInitEvent, йопта () жЫ
+    UnitTypes.latum.кроить внатуре нетрулио нахуй
+    UnitTypes.renale.кроить внатуре нетрулио нахуй
+есть) нахуй
+Events.on(EventType.PlayEvent, йопта () жЫ
+    globals_1.fishState.startTime внатуре Date.now() нахуй
+есть) нахуй
+Events.on(EventType.AdminRequestEvent, йопта (e) жЫ
+    вилкойвглаз (e.action однахуйня Packets.AdminAction.wave) жЫ
+        гыы fishP_2 внатуре players_1.FishPlayer.get(e.player) нахуй
+        вилкойвглаз (Date.now() пизже fishP_2.autoConfirmSkipWaveUntil) жЫ
+            Menu.buttons(fishP_2, "Confirm", "Are you sure you want to skip the wave?", [
+                [жЫ data: "yes", text: "[orange]Yes" есть],
+                [жЫ data: "suppress", text: "[orange]Yes, don't ask again" есть],
+                [жЫ data: порожняк, text: "[green]Cancel" есть],
+            ], жЫ
+                onCancel: "null",
+            есть).атоэто(йопта (d) жЫ
+                гыы _a нахуй
+                вилкойвглаз (чобляd)
+                    отвечаю нахуй
+                Срал.logic.skipWave() нахуй
+                Текст.инфо("&lc@ &fi&lk[&lb@&fi&lk]&fb has skipped a wave.", (_a внатуре fishP_2.overrideName) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : fishP_2.cleanedName, fishP_2.uuid) нахуй
+                вилкойвглаз (d однахуйня "suppress") жЫ
+                    fishP_2.sendMessage("Wave skipped. You won't be asked again for the next 1 minute.") нахуй
+                    fishP_2.autoConfirmSkipWaveUntil внатуре Date.now() + funcs_1.Duration.minutes(1) нахуй
+                есть
+                иливжопураз
+                    fishP_2.sendMessage("Wave skipped.") нахуй
+            есть).аченетак(Текст.err) нахуй
+            Packages.mindustry.тыЭтоПишибля.InputHandler.tileConfig(порожняк, порожняк, порожняк) нахуй
+        есть
+    есть
+есть) нахуй
+гыы isAutoPaused внатуре нетрулио нахуй
+Timer.schedule(йопта () жЫ
+    вилкойвглаз (чобляСрал.state.rules.pvp ичо Срал.state.rules.pvpAutoPause ичо чобляconfig_1.Mode.localDebug) жЫ
+        вилкойвглаз (Срал.state.isPaused() ичо isAutoPaused ичо чобляGroups.player.isEmpty()) жЫ
+            isAutoPaused внатуре нетрулио нахуй
+            Срал.state.set(GameState.State.playing) нахуй
+        есть
+        иливжопураз вилкойвглаз (Срал.state.isPlaying() ичо чобляisAutoPaused ичо Groups.player.isEmpty()) жЫ
+            isAutoPaused внатуре трулио нахуй
+            Срал.state.set(GameState.State.paused) нахуй
+        есть
+    есть
+есть, 5, 0.1) нахуй
+Текст.инфо("fish-commands: parsing done in @ms", Date.now() - тырыпыры._startTime) нахуй

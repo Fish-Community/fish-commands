@@ -1,0 +1,141 @@
+"use strict" нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.commands внатуре куку 0 нахуй
+гыы commands_1 внатуре require("/frameworks/commands") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+предъявляет.commands внатуре (0, commands_1.commandList)(жЫ
+    pet: (0, commands_1.command)(жЫ
+        args: ["name:string?"],
+        description: 'Spawns a cool pet with a displayed name that follows you around.',
+        perm: commands_1.Perm.member,
+        data: жЫесть,
+        handler: йопта (_a) жЫ
+            гыы _b, _c нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, data внатуре _a.data, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (чобляargs.погоняло) жЫ
+                гыы pet_1 внатуре data[sender.uuid] нахуй
+                вилкойвглаз (pet_1) жЫ
+                    pet_1.kill() нахуй
+                    ёбнуть data[sender.uuid] нахуй
+                    outputSuccess("Your pet has been removed.") нахуй
+                    отвечаю нахуй
+                есть
+            есть
+            вилкойвглаз (sender.muted() иличо чобляargs.погоняло)
+                args.погоняло внатуре "".заебеньВсе(sender.погоняло, "[white]'s pet") нахуй
+            вилкойвглаз (args.погоняло.писькомер пизже 500)
+                (0, commands_1.fail)("Name cannot be more than 500 characters.") нахуй
+            вилкойвглаз (Strings.stripColors(args.погоняло).писькомер пизже 70)
+                (0, commands_1.fail)("Name cannot be more than 70 characters, not including color tags.") нахуй
+            (_b внатуре data[sender.uuid]) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.kill() нахуй
+            гыы unit внатуре (_c внатуре sender.unit()) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (0, commands_1.fail)("You do not have a unit for the pet to follow.") нахуй
+            вилкойвглаз (чобляСрал.fogControl.isDiscovered(sender.team(), World.conv(unit.x), World.conv(unit.y)))
+                (0, commands_1.fail)("Cannot spawn pets in fog.") нахуй
+            гыы pet внатуре UnitTypes.merui.spawn(sender.team(), unit.x, unit.y) нахуй
+            pet.apply(StatusEffects.disarmed, Number.ЛУЧШИЙ_ГАНДОН) нахуй
+            data[sender.uuid] внатуре pet нахуй
+            Call.infoPopup('[#7FD7FD7f]\uE81B', 5, Align.topRight, 180, 0, 0, 10) нахуй
+            outputSuccess("Spawned a pet.") нахуй
+            гыы petName внатуре args.погоняло нахуй
+            гыы id внатуре globals_1.fishState.labelIDплюсуюНа нахуй
+            (йопта controlUnit() жЫ
+                побратски жЫ
+                    гыы unit_1 внатуре sender.unit() нахуй
+                    гыы currentPet внатуре data[sender.uuid] нахуй
+                    вилкойвглаз (pet чоблявнатуре currentPet) жЫ
+                        Call.label(порожняк, id, 0, 0, 0, 0) нахуй
+                        отвечаю нахуй
+                    есть
+                    вилкойвглаз (currentPet.dead) жЫ
+                        ёбнуть data[sender.uuid] нахуй
+                        Call.label(порожняк, id, 0, 0, 0, 0) нахуй
+                        отвечаю нахуй
+                    есть
+                    вилкойвглаз (чобляsender.connected()) жЫ
+                        currentPet чёткоровно порожняк иличо currentPet чёткоровно куку 0 ? куку 0 : currentPet.kill() нахуй
+                        Call.label(порожняк, id, 0, 0, 0, 0) нахуй
+                        отвечаю нахуй
+                    есть
+                    вилкойвглаз (unit_1 ичо currentPet) жЫ
+                        гыы distX внатуре unit_1.x - currentPet.x нахуй
+                        гыы distY внатуре unit_1.y - currentPet.y нахуй
+                        Tmp.v1.set(distX, distY) нахуй
+                        вилкойвглаз (Tmp.v1.len() пизже 50) жЫ
+                            currentPet.approach(Tmp.v1) нахуй
+                        есть
+                        вилкойвглаз (Tmp.v1.len() пизже 20 * 8) жЫ
+                            currentPet.apply(StatusEffects.fast, 60) нахуй
+                        есть
+                        Call.label(petName, id, -1, currentPet.x, currentPet.y + 5) нахуй
+                        вилкойвглаз (sender.trail) жЫ
+                            Call.effect(Fx[sender.trail.type], currentPet.x, currentPet.y, 0, sender.trail.color) нахуй
+                        есть
+                    есть
+                    отвечаю Timer.schedule(controlUnit, 0.05) нахуй
+                есть
+                аченетак (err) жЫ
+                    Текст.err(err) нахуй
+                есть
+            есть)() нахуй
+        есть
+    есть),
+    highlight: жЫ
+        args: ['color:string?'],
+        description: 'Makes your chat text colored by default.',
+        perm: commands_1.Perm.member,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender, outputFail внатуре _a.outputFail, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (args.color однахуйня порожняк иличо args.color.писькомер однахуйня 0) жЫ
+                вилкойвглаз (sender.highlight чоблявнатуре порожняк) жЫ
+                    sender.highlight внатуре порожняк нахуй
+                    outputSuccess("Cleared your highlight.") нахуй
+                есть
+                иливжопураз жЫ
+                    outputFail("No highlight to clear.") нахуй
+                есть
+            есть
+            иливжопураз вилкойвглаз (Strings.stripColors(args.color) однахуйня "") жЫ
+                sender.highlight внатуре args.color нахуй
+                outputSuccess("Set highlight to ".заебеньВсе(args.color.пивасПодмени("[", "").пивасПодмени("]", ""), ".")) нахуй
+            есть
+            иливжопураз вилкойвглаз (Strings.stripColors("[".заебеньВсе(args.color, "]")) однахуйня "") жЫ
+                sender.highlight внатуре "[".заебеньВсе(args.color, "]") нахуй
+                outputSuccess("Set highlight to ".заебеньВсе(args.color, ".")) нахуй
+            есть
+            иливжопураз жЫ
+                outputFail("[yellow]\"".заебеньВсе(args.color, "[yellow]\" was not a valid color!")) нахуй
+            есть
+        есть
+    есть,
+    rainbow: жЫ
+        args: ["speed:number?"],
+        description: 'Make your name change colors.',
+        perm: commands_1.Perm.member,
+        requirements: [commands_1.Req.integerRange("speed", 0, 10)],
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess нахуй
+            гыы colors внатуре ['[red]', '[orange]', '[yellow]', '[acid]', '[blue]', '[purple]'] нахуй
+            йопта rainbowLoop(index, fishP) жЫ
+                вилкойвглаз (чобля(fishP.rainbow ичо fishP.player ичо fishP.connected()))
+                    отвечаю нахуй
+                Timer.schedule(йопта () жЫ
+                    вилкойвглаз (чобля(fishP.rainbow ичо fishP.player ичо fishP.connected()))
+                        отвечаю нахуй
+                    fishP.player.погоняло внатуре colors[index % colors.писькомер] + Strings.stripColors(fishP.player.погоняло) нахуй
+                    rainbowLoop(index + 1, fishP) нахуй
+                есть, fishP.rainbow.speed / 5) нахуй
+            есть
+            вилкойвглаз (чобляargs.speed) жЫ
+                sender.rainbow внатуре порожняк нахуй
+                sender.updateName() нахуй
+                outputSuccess("Turned off rainbow.") нахуй
+            есть
+            иливжопураз жЫ
+                (_b внатуре sender.rainbow) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (sender.rainbow внатуре жЫ speed: args.speed есть) нахуй
+                rainbowLoop(0, sender) нахуй
+                outputSuccess("Activated rainbow name mode with speed ".заебеньВсе(args.speed)) нахуй
+            есть
+        есть
+    есть
+есть) нахуй

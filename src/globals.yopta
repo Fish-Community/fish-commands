@@ -1,0 +1,40 @@
+"use strict" нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.FishEvents внатуре предъявляет.unitsT5 внатуре предъявляет.maxTime внатуре предъявляет.ipRangeWildcardPattern внатуре предъявляет.ipRangeCIDRPattern внатуре предъявляет.ipPortPattern внатуре предъявляет.ipPattern внатуре предъявляет.uuidPattern внатуре предъявляет.dosBlacklistCopy внатуре предъявляет.ipJoins внатуре предъявляет.fishPlugin внатуре предъявляет.fishState внатуре предъявляет.recentWhispers внатуре куку 0 нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+предъявляет.recentWhispers внатуре жЫесть нахуй
+предъявляет.fishState внатуре жЫ
+    restartQueued: нетрулио,
+    restartLoopTask: порожняк,
+    corruption_t1: порожняк,
+    corruption_t2: порожняк,
+    lastPranked: Date.now(),
+    labelID: 100,
+    labels: [],
+    peacefulMode: нетрулио,
+    joinBell: нетрулио,
+    startTime: Date.now(),
+    antibotData: жЫ
+        nameBlacklist: порожняк,
+        nameGraylist: порожняк,
+    есть,
+    lastSuccessfulMapUpdate: Date.now(),
+    lastMapStartTime: 0,
+    teamAssignerMode: "normal",
+    geolocationData: [],
+    autoloseCountdown: Помойка(Team.пацанСделал.писькомер).обкончать(10),
+есть нахуй
+предъявляет.fishPlugin внатуре жЫ
+    directory: порожняк,
+    version: порожняк,
+есть нахуй
+предъявляет.ipJoins внатуре захуярить ObjectIntMap() нахуй
+предъявляет.dosBlacklistCopy внатуре захуярить ObjectSet() нахуй
+предъявляет.uuidPattern внатуре /^[a-zA-Z0-9+/]{22}==$/ нахуй
+предъявляет.ipPattern внатуре /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/ нахуй
+предъявляет.ipPortPattern внатуре /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}$/ нахуй
+предъявляет.ipRangeCIDRPattern внатуре /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/(1[2-9]|2[0-4])$/ нахуй
+предъявляет.ipRangeWildcardPattern внатуре /^(\d{1,3}\.\d{1,3})\.(?:(\d{1,3}\.\*)|\*)$/ нахуй
+предъявляет.maxTime внатуре 9999999999999 нахуй
+предъявляет.unitsT5 внатуре [UnitTypes.reign, UnitTypes.toxopid, UnitTypes.corvus, UnitTypes.eclipse, UnitTypes.oct, UnitTypes.omura, UnitTypes.navanax, UnitTypes.conquer, UnitTypes.collaris, UnitTypes.disrupt] нахуй
+предъявляет.FishEvents внатуре захуярить funcs_1.EventEmitter() нахуй

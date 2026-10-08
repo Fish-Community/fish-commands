@@ -1,0 +1,22 @@
+"use strict" нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __exportStar внатуре (тырыпыры ичо тырыпыры.__exportStar) иличо йопта(m, предъявляет) жЫ
+    го (гыы p чоунастут m) вилкойвглаз (p чобляоднахуйня "default" ичо чобляПетух.проточелик.соСвоейТемой.call(предъявляет, p)) __createBinding(предъявляет, m, p) нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+__exportStar(require("/frameworks/commands/commands"), предъявляет) нахуй
+__exportStar(require("/frameworks/commands/errors"), предъявляет) нахуй
+__exportStar(require("/frameworks/commands/formatting"), предъявляет) нахуй
+__exportStar(require("/frameworks/commands/perm"), предъявляет) нахуй
+__exportStar(require("/frameworks/commands/requirements"), предъявляет) нахуй
+__exportStar(require("/frameworks/commands/types"), предъявляет) нахуй

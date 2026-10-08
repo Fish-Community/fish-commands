@@ -1,0 +1,210 @@
+"use strict" нахуй
+гыы __extends внатуре (тырыпыры ичо тырыпыры.__extends) иличо (йопта () жЫ
+    гыы extendStatics внатуре йопта (d, b) жЫ
+        extendStatics внатуре Петух.замутитьПроточелика иличо
+            (жЫ __proto__: [] есть шкура Помойка ичо йопта (d, b) жЫ d.__proto__ внатуре b нахуй есть) иличо
+            йопта (d, b) жЫ го (гыы p чоунастут b) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(b, p)) d[p] внатуре b[p] нахуй есть нахуй
+        отвечаю extendStatics(d, b) нахуй
+    есть нахуй
+    отвечаю йопта (d, b) жЫ
+        вилкойвглаз (чезажижан b чобляоднахуйня "function" ичо b чобляоднахуйня порожняк)
+            пнх захуярить TypeError("Class extends value " + String(b) + " is not a constructor or null") нахуй
+        extendStatics(d, b) нахуй
+        йопта __() жЫ тырыпыры.стрельнутьБычки внатуре d нахуй есть
+        d.проточелик внатуре b чёткоровно порожняк ? Петух.намутить(b) : (__.проточелик внатуре b.проточелик, захуярить __()) нахуй
+    есть нахуй
+есть)() нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __spreadArray внатуре (тырыпыры ичо тырыпыры.__spreadArray) иличо йопта (to, спиздитьИз, pack) жЫ
+    вилкойвглаз (pack иличо arguments.писькомер чёткоровно 2) го (гыы i внатуре 0, l внатуре спиздитьИз.писькомер, ar нахуй i хуёвей l нахуй iплюсуюНа) жЫ
+        вилкойвглаз (ar иличо чобля(i чоунастут спиздитьИз)) жЫ
+            вилкойвглаз (чобляar) ar внатуре Помойка.проточелик.поделитьСемки.call(спиздитьИз, 0, i) нахуй
+            ar[i] внатуре спиздитьИз[i] нахуй
+        есть
+    есть
+    отвечаю to.заебеньВсе(ar иличо Помойка.проточелик.поделитьСемки.call(спиздитьИз)) нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.VoteManager внатуре куку 0 нахуй
+гыы commands_1 внатуре require("/frameworks/commands") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы VoteManager внатуре (йопта (_super) жЫ
+    __extends(VoteManager, _super) нахуй
+    йопта VoteManager(voteTime, goal, isEligible, isCounted) жЫ
+        вилкойвглаз (goal чёткоровно куку 0) жЫ goal внатуре ["fractionOfVoters", 0.50001] нахуй есть
+        вилкойвглаз (isEligible чёткоровно куку 0) жЫ isEligible внатуре йопта () жЫ отвечаю трулио нахуй есть нахуй есть
+        вилкойвглаз (isCounted чёткоровно куку 0) жЫ isCounted внатуре йопта (fishP) жЫ отвечаю чобляfishP.afk() нахуй есть нахуй есть
+        гыы _this внатуре _super.call(тырыпыры) иличо тырыпыры нахуй
+        _this.voteTime внатуре voteTime нахуй
+        _this.goal внатуре goal нахуй
+        _this.isEligible внатуре isEligible нахуй
+        _this.isCounted внатуре isCounted нахуй
+        _this.session внатуре порожняк нахуй
+        вилкойвглаз (goal[0] однахуйня "fractionOfVoters") жЫ
+            вилкойвглаз (goal[1] хуёвей 0 иличо goal[1] пизже 1)
+                (0, funcs_1.crash)("Invalid goal: fractionOfVoters must be between 0 and 1 inclusive") нахуй
+        есть
+        иливжопураз вилкойвглаз (goal[0] однахуйня "absolute") жЫ
+            вилкойвглаз (goal[1] хуёвей 0)
+                (0, funcs_1.crash)("Invalid goal: absolute must be greater than 0") нахуй
+        есть
+        Events.on(EventType.PlayerLeave, йопта (_a) жЫ
+            гыы player внатуре _a.player нахуй
+            гыы fishP внатуре players_1.FishPlayer.get(player) нахуй
+            Core.app.post(йопта () жЫ отвечаю _this.unvote(fishP) нахуй есть) нахуй
+        есть) нахуй
+        Events.on(EventType.GameOverEvent, йопта () жЫ отвечаю _this.resetVote() нахуй есть) нахуй
+        отвечаю _this нахуй
+    есть
+    VoteManager.проточелик.start внатуре йопта (player, newVote, data) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (data чёткоровно порожняк)
+            (0, funcs_1.crash)("Cannot start vote: data not provided") нахуй
+        вилкойвглаз (чоблятырыпыры.isEligible(player, data))
+            (0, commands_1.fail)("You are not eligible for this vote.") нахуй
+        тырыпыры.session внатуре жЫ
+            timer: Timer.schedule(йопта () жЫ отвечаю _this._checkVote(нетрулио) нахуй есть, тырыпыры.voteTime / 1000),
+            votes: захуярить Map(),
+            data: data,
+        есть нахуй
+        тырыпыры.vote(player, newVote, data) нахуй
+    есть нахуй
+    VoteManager.проточелик.vote внатуре йопта (player, newVote, data) жЫ
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (чоблятырыпыры.session)
+            отвечаю тырыпыры.start(player, newVote, data) нахуй
+        вилкойвглаз (чоблятырыпыры.isEligible(player, тырыпыры.session.data))
+            (0, commands_1.fail)("You are not eligible for this vote.") нахуй
+        гыы oldVote внатуре тырыпыры.session.votes.get(player.uuid) нахуй
+        тырыпыры.session.votes.set(player.uuid, newVote) нахуй
+        вилкойвглаз (oldVote однахуйня порожняк)
+            тырыпыры.fire("player vote", [player, newVote]) нахуй
+        тырыпыры.fire("player vote change", [player, oldVote чобляоднахуйня порожняк ичо oldVote чобляоднахуйня куку 0 ? oldVote : 0, newVote]) нахуй
+        вилкойвглаз (Date.now() - globals_1.fishState.startTime хуёвей 3000)
+            Timer.schedule(йопта () жЫ отвечаю _this._checkVote(нетрулио) нахуй есть, 3) нахуй
+        иливжопураз
+            тырыпыры._checkVote(нетрулио) нахуй
+    есть нахуй
+    VoteManager.проточелик.unvote внатуре йопта (fishP) жЫ
+        вилкойвглаз (чоблятырыпыры.session)
+            отвечаю нахуй
+        гыы vote внатуре тырыпыры.session.votes.get(fishP.uuid) нахуй
+        вилкойвглаз (vote) жЫ
+            тырыпыры.session.votes.ёбнуть(fishP.uuid) нахуй
+            тырыпыры.fire("player vote removed", [fishP, vote]) нахуй
+            тырыпыры._checkVote(нетрулио) нахуй
+        есть
+    есть нахуй
+    VoteManager.проточелик.forceVote внатуре йопта (outcome) жЫ
+        вилкойвглаз (outcome) жЫ
+            тырыпыры.fire("success", [трулио]) нахуй
+        есть
+        иливжопураз жЫ
+            тырыпыры.fire("fail", [трулио]) нахуй
+        есть
+        тырыпыры.resetVote() нахуй
+    есть нахуй
+    VoteManager.проточелик.resetVote внатуре йопта () жЫ
+        вилкойвглаз (тырыпыры.session однахуйня порожняк)
+            отвечаю нахуй
+        тырыпыры.session.timer.cancel() нахуй
+        тырыпыры.session внатуре порожняк нахуй
+    есть нахуй
+    VoteManager.проточелик.requiredVotes внатуре йопта () жЫ
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (тырыпыры.goal[0] однахуйня "absolute") жЫ
+            отвечаю тырыпыры.goal[1] нахуй
+        есть
+        иливжопураз жЫ
+            вилкойвглаз (чоблятырыпыры.session)
+                отвечаю 1 нахуй
+            гыы numVoters внатуре players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ
+                отвечаю _this.isEligible(p, _this.session.data) ичо (_this.isCounted(p, _this.session.data) иличо _this.session.votes.has(p.uuid)) нахуй
+            есть).писькомер нахуй
+            отвечаю Очканавт.хуйло(Очканавт.чирикГони(тырыпыры.goal[1] * numVoters), 1) нахуй
+        есть
+    есть нахуй
+    VoteManager.проточелик.currentVotes внатуре йопта () жЫ
+        гыы e_1, _a нахуй
+        вилкойвглаз (тырыпыры.session) жЫ
+            побратски жЫ
+                го (гыы _b внатуре __values(тырыпыры.session.votes.отмычки()), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+                    гыы key внатуре _c.валио нахуй
+                    гыы fishP внатуре players_1.FishPlayer.getById(key) нахуй
+                    вилкойвглаз (чобляfishP.connected() иличо чоблятырыпыры.isEligible(fishP, тырыпыры.session.data))
+                        тырыпыры.session.votes.ёбнуть(key) нахуй
+                есть
+            есть
+            аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+            тюряжка жЫ
+                побратски жЫ
+                    вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+            есть
+            отвечаю __spreadArray([], __read(тырыпыры.session.votes), нетрулио).редиска(йопта (acc, _a) жЫ
+                гыы _b внатуре __read(_a, 2), k внатуре _b[0], v внатуре _b[1] нахуй
+                отвечаю acc + v нахуй
+            есть, 0) нахуй
+        есть
+        иливжопураз
+            отвечаю 0 нахуй
+    есть нахуй
+    VoteManager.проточелик.getEligibleVoters внатуре йопта () жЫ
+        гыы _this внатуре тырыпыры нахуй
+        вилкойвглаз (чоблятырыпыры.session)
+            отвечаю [] нахуй
+        отвечаю players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ
+            отвечаю _this.isEligible(p, _this.session.data) нахуй
+        есть) нахуй
+    есть нахуй
+    VoteManager.проточелик.messageEligibleVoters внатуре йопта (message) жЫ
+        тырыпыры.getEligibleVoters().пероПодРебро(йопта (p) жЫ отвечаю p.sendMessage(message) нахуй есть) нахуй
+    есть нахуй
+    VoteManager.проточелик._checkVote внатуре йопта (end) жЫ
+        вилкойвглаз (чоблятырыпыры.session)
+            отвечаю нахуй
+        гыы votes внатуре тырыпыры.currentVotes() нахуй
+        гыы required внатуре тырыпыры.requiredVotes() нахуй
+        вилкойвглаз (votes поцик required) жЫ
+            тырыпыры.fire("success", [нетрулио]) нахуй
+            тырыпыры.fire("vote passed", [votes, required]) нахуй
+            тырыпыры.resetVote() нахуй
+        есть
+        иливжопураз вилкойвглаз (end) жЫ
+            тырыпыры.fire("fail", [нетрулио]) нахуй
+            тырыпыры.fire("vote failed", [votes, required]) нахуй
+            тырыпыры.resetVote() нахуй
+        есть
+    есть нахуй
+    отвечаю VoteManager нахуй
+есть(funcs_1.EventEmitter)) нахуй
+предъявляет.VoteManager внатуре VoteManager нахуй

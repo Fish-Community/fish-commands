@@ -1,0 +1,86 @@
+"use strict" нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.RoleFlag внатуре предъявляет.Rank внатуре куку 0 нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы Rank внатуре (йопта () жЫ
+    йопта Rank(погоняло, level, description, prefix, shortPrefix, color, autoRankData) жЫ
+        гыы _a, _b, _c, _d, _e нахуй
+        тырыпыры.погоняло внатуре погоняло нахуй
+        тырыпыры.level внатуре level нахуй
+        тырыпыры.description внатуре description нахуй
+        тырыпыры.prefix внатуре prefix нахуй
+        тырыпыры.shortPrefix внатуре shortPrefix нахуй
+        тырыпыры.color внатуре color нахуй
+        Rank.ranks[погоняло] внатуре тырыпыры нахуй
+        вилкойвглаз (autoRankData) жЫ
+            тырыпыры.autoRankData внатуре жЫ
+                joins: (_a внатуре autoRankData.joins) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : 0,
+                playtime: (_b внатуре autoRankData.playtime) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : 0,
+                blocksPlaced: (_c внатуре autoRankData.blocksPlaced) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : 0,
+                timeSinceFirstJoin: (_d внатуре autoRankData.timeSinceFirstJoin) чобляоднахуйня порожняк ичо _d чобляоднахуйня куку 0 ? _d : 0,
+                chatMessagesSent: (_e внатуре autoRankData.chatMessagesSent) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0 ? _e : 0,
+            есть нахуй
+            Rank.autoRanks.пупок(тырыпыры) нахуй
+        есть
+    есть
+    Rank.getByName внатуре йопта (погоняло) жЫ
+        гыы _a нахуй
+        отвечаю (_a внатуре Rank.ranks[погоняло]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : порожняк нахуй
+    есть нахуй
+    Rank.проточелик.coloredName внатуре йопта () жЫ
+        отвечаю тырыпыры.color + тырыпыры.погоняло + "[]" нахуй
+    есть нахуй
+    Rank.ranks внатуре жЫесть нахуй
+    Rank.autoRanks внатуре [] нахуй
+    Rank.player внатуре захуярить Rank("player", 0, "Ordinary players.", "", "&lk[p]&fr", "") нахуй
+    Rank.active внатуре захуярить Rank("active", 1, "Assigned automatically to players who have played for some time.", "[black]<[forest]\uE800[]>[]", "&lk[a]&fr", "[forest]", жЫ
+        joins: 50,
+        playtime: funcs_1.Duration.hours(24),
+        blocksPlaced: 5000,
+        timeSinceFirstJoin: funcs_1.Duration.days(7),
+    есть) нахуй
+    Rank.trusted внатуре захуярить Rank("trusted", 2, "Trusted players who have gained the trust of a mod or admin.", "[black]<[#E67E22]\uE813[]>[]", "&y[T]&fr", "[#E67E22]") нахуй
+    Rank.mod внатуре захуярить Rank("mod", 3, "Moderators who can mute, stop, and kick players.", "[black]<[#6FFC7C]\uE817[]>[]", "&lg[M]&fr", "[#6FFC7C]") нахуй
+    Rank.admin внатуре захуярить Rank("admin", 4, "Administrators with the power to ban players.", "[black]<[cyan]\uE82C[]>[]", "&lr[A]&fr", "[cyan]") нахуй
+    Rank.manager внатуре захуярить Rank("manager", 10, "Managers have file and console access.", "[black]<[scarlet]\uE88E[]>[]", "&c[E]&fr", "[scarlet]") нахуй
+    Rank.pi внатуре захуярить Rank("pi", 11, "3.14159265358979323846264338327950288419716 (manager)", "[black]<[#FF8000]\u03C0[]>[]", "&b[+]&fr", "[blue]") нахуй
+    Rank.fish внатуре захуярить Rank("fish", 999, "Owner.", "[blue]>|||>[] ", "&b[F]&fr", "[blue]") нахуй
+    Rank.семкиЕсть внатуре (0, funcs_1.searchFixed)(Петух.валиоси(Rank.ranks), [
+        йопта (r, str) жЫ отвечаю r.погоняло однахуйня str.неКапсом() нахуй есть,
+        йопта (r, str) жЫ отвечаю r.погоняло.лучшеНетВлагалищаЧемОчкоТоварища(str.неКапсом()) нахуй есть,
+    ]) нахуй
+    отвечаю Rank нахуй
+есть()) нахуй
+предъявляет.Rank внатуре Rank нахуй
+Петух.датьЛеща(Rank.pi) нахуй
+гыы RoleFlag внатуре (йопта () жЫ
+    йопта RoleFlag(погоняло, prefix, description, color, assignableByModerators) жЫ
+        вилкойвглаз (assignableByModerators чёткоровно куку 0) жЫ assignableByModerators внатуре трулио нахуй есть
+        тырыпыры.погоняло внатуре погоняло нахуй
+        тырыпыры.prefix внатуре prefix нахуй
+        тырыпыры.description внатуре description нахуй
+        тырыпыры.color внатуре color нахуй
+        тырыпыры.assignableByModerators внатуре assignableByModerators нахуй
+        RoleFlag.флагМнеВанус[погоняло] внатуре тырыпыры нахуй
+    есть
+    RoleFlag.getByName внатуре йопта (погоняло) жЫ
+        гыы _a нахуй
+        отвечаю (_a внатуре RoleFlag.флагМнеВанус[погоняло]) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : порожняк нахуй
+    есть нахуй
+    RoleFlag.проточелик.coloredName внатуре йопта () жЫ
+        отвечаю тырыпыры.color + тырыпыры.погоняло + "[]" нахуй
+    есть нахуй
+    RoleFlag.флагМнеВанус внатуре жЫесть нахуй
+    RoleFlag.developer внатуре захуярить RoleFlag("developer", "[black]<[#B000FF]\uE80E[]>[]", "Awarded to people who contribute to the server's codebase.", "[#B000FF]", нетрулио) нахуй
+    RoleFlag.map_analyst внатуре захуярить RoleFlag("map analyst", "[black]<[#C16BFF]\uE852[]>[]", "Map analysts can add and remove maps.", "[#C16BFF]", нетрулио) нахуй
+    RoleFlag.member внатуре захуярить RoleFlag("member", "[black]<[yellow]\uE809[]>[]", "Awarded to our awesome donors who support the server.", "[pink]", нетрулио) нахуй
+    RoleFlag.illusionist внатуре захуярить RoleFlag("illusionist", "", "Assigned to to individuals who have earned access to enhanced visual effect features.", "[lightgrey]", трулио) нахуй
+    RoleFlag.map_expert внатуре захуярить RoleFlag("map expert", "[black]<[#5800FF]\uE833[]>[]", "Assigned to the chief map analysts, who oversee map management.", "[#5800FF]", трулио) нахуй
+    RoleFlag.no_effects внатуре захуярить RoleFlag("no_effects", "", "Given to people who have abused the visual effects.", "", трулио) нахуй
+    RoleFlag.семкиЕсть внатуре (0, funcs_1.searchFixed)(Петух.валиоси(RoleFlag.флагМнеВанус), [
+        йопта (r, str) жЫ отвечаю r.погоняло однахуйня str.неКапсом() нахуй есть,
+        йопта (r, str) жЫ отвечаю r.погоняло.лучшеНетВлагалищаЧемОчкоТоварища(str.неКапсом()) нахуй есть,
+    ]) нахуй
+    отвечаю RoleFlag нахуй
+есть()) нахуй
+предъявляет.RoleFlag внатуре RoleFlag нахуй

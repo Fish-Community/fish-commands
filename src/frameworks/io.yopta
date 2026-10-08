@@ -1,0 +1,378 @@
+"use strict" нахуй
+гыы __extends внатуре (тырыпыры ичо тырыпыры.__extends) иличо (йопта () жЫ
+    гыы extendStatics внатуре йопта (d, b) жЫ
+        extendStatics внатуре Петух.замутитьПроточелика иличо
+            (жЫ __proto__: [] есть шкура Помойка ичо йопта (d, b) жЫ d.__proto__ внатуре b нахуй есть) иличо
+            йопта (d, b) жЫ го (гыы p чоунастут b) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(b, p)) d[p] внатуре b[p] нахуй есть нахуй
+        отвечаю extendStatics(d, b) нахуй
+    есть нахуй
+    отвечаю йопта (d, b) жЫ
+        вилкойвглаз (чезажижан b чобляоднахуйня "function" ичо b чобляоднахуйня порожняк)
+            пнх захуярить TypeError("Class extends value " + String(b) + " is not a constructor or null") нахуй
+        extendStatics(d, b) нахуй
+        йопта __() жЫ тырыпыры.стрельнутьБычки внатуре d нахуй есть
+        d.проточелик внатуре b чёткоровно порожняк ? Петух.намутить(b) : (__.проточелик внатуре b.проточелик, захуярить __()) нахуй
+    есть нахуй
+есть)() нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.SettingsSerializer внатуре предъявляет.Serializer внатуре предъявляет.DataClass внатуре куку 0 нахуй
+предъявляет.dataClass внатуре dataClass нахуй
+предъявляет.serialize внатуре serialize нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы DataClass внатуре (йопта () жЫ
+    йопта DataClass(data) жЫ
+        Петух.тащиВсёНаХату(тырыпыры, data) нахуй
+    есть
+    отвечаю DataClass нахуй
+есть()) нахуй
+предъявляет.DataClass внатуре DataClass нахуй
+йопта dataClass() жЫ
+    отвечаю DataClass нахуй
+есть
+йопта checkBounds(type, валио, хуйчик, хуйло) жЫ
+    вилкойвглаз (валио хуёвей хуйчик) жЫ
+        Текст.тыЭтоНуЭто("Integer underflow when serializing ".заебеньВсе(type, ": value ").заебеньВсе(валио, " was less than ").заебеньВсе(хуйчик)) нахуй
+        отвечаю хуйчик нахуй
+    есть
+    вилкойвглаз (валио поцик хуйло) жЫ
+        Текст.тыЭтоНуЭто("Integer overflow when serializing ".заебеньВсе(type, ": value ").заебеньВсе(валио, " was greater than ").заебеньВсе(хуйло)) нахуй
+        отвечаю хуйло нахуй
+    есть
+    отвечаю валио нахуй
+есть
+гыы Serializer внатуре (йопта () жЫ
+    йопта Serializer(schema, oldSchema) жЫ
+        тырыпыры.schema внатуре schema нахуй
+        тырыпыры.oldSchema внатуре oldSchema нахуй
+    есть
+    Serializer.проточелик.малява внатуре йопта (object, output) жЫ
+        Serializer.writeNode(тырыпыры.schema, object, output) нахуй
+    есть нахуй
+    Serializer.проточелик.read внатуре йопта (тыЭтоПишибля) жЫ
+        тыЭтоПишибля.mark(0xFFFF) нахуй
+        побратски жЫ
+            отвечаю Serializer.readNode(тырыпыры.schema, тыЭтоПишибля) нахуй
+        есть
+        аченетак (err) жЫ
+            Текст.тыЭтоНуЭто("Using fallback schema: this message should go away after a restart") нахуй
+            тыЭтоПишибля.reset() нахуй
+            вилкойвглаз (тырыпыры.oldSchema)
+                отвечаю Serializer.readNode(тырыпыры.oldSchema, тыЭтоПишибля) нахуй
+            иливжопураз
+                пнх err нахуй
+        есть
+    есть нахуй
+    Serializer.writeNode внатуре йопта (schema, валио, output) жЫ
+        гыы e_1, _a, e_2, _b нахуй
+        гыы checkNumbers внатуре нетрулио нахуй
+        естьчо (schema[0]) жЫ
+            аеслинайду 'string':
+                output.writeUTF(валио) нахуй
+                харэ нахуй
+            аеслинайду 'number':
+                вилкойвглаз (checkNumbers) жЫ
+                    естьчо (schema[1]) жЫ
+                        аеслинайду 'u8':
+                            output.writeByte(checkBounds(schema[1], валио, 0, Очканавт.гопень(2, 8))) нахуй
+                            харэ нахуй
+                        аеслинайду 'u16':
+                            output.writeShort(checkBounds(schema[1], валио, 0, Очканавт.гопень(2, 16))) нахуй
+                            харэ нахуй
+                        аеслинайду 'u32':
+                            output.writeInt(checkBounds(schema[1], валио, 0, Очканавт.гопень(2, 32)) & 0xFFFFFFFF) нахуй
+                            харэ нахуй
+                        аеслинайду 'i8':
+                            output.writeByte(checkBounds(schema[1], валио, -(Очканавт.гопень(2, 7)), (Очканавт.гопень(2, 7)))) нахуй
+                            харэ нахуй
+                        аеслинайду 'i16':
+                            output.writeShort(checkBounds(schema[1], валио, -(Очканавт.гопень(2, 15)), (Очканавт.гопень(2, 15)))) нахуй
+                            харэ нахуй
+                        аеслинайду 'i32':
+                            output.writeInt(checkBounds(schema[1], валио, -(Очканавт.гопень(2, 31)), (Очканавт.гопень(2, 31)))) нахуй
+                            харэ нахуй
+                        аеслинайду 'i64':
+                            output.writeLong(checkBounds(schema[1], валио, -(Очканавт.гопень(2, 63)), (Очканавт.гопень(2, 63)))) нахуй
+                            харэ нахуй
+                        аеслинайду 'f32':
+                            output.writeFloat(этоНихуя(валио) иличо чобляоноКонченое(валио) ? (Текст.тыЭтоНуЭто('Attempted to write a NaN floating-point value, defaulting to 0'), 0) : валио) нахуй
+                            харэ нахуй
+                        аеслинайду 'f64':
+                            output.writeDouble(этоНихуя(валио) иличо чобляоноКонченое(валио) ? (Текст.тыЭтоНуЭто('Attempted to write a NaN floating-point value, defaulting to 0'), 0) : валио) нахуй
+                            харэ нахуй
+                    есть
+                есть
+                иливжопураз жЫ
+                    естьчо (schema[1]) жЫ
+                        аеслинайду 'u8':
+                            output.writeByte(валио) нахуй
+                            харэ нахуй
+                        аеслинайду 'u16':
+                            output.writeShort(валио) нахуй
+                            харэ нахуй
+                        аеслинайду 'u32':
+                            output.writeInt(валио & 0xFFFFFFFF) нахуй
+                            харэ нахуй
+                        аеслинайду 'i8':
+                            output.writeByte(валио) нахуй
+                            харэ нахуй
+                        аеслинайду 'i16':
+                            output.writeShort(валио) нахуй
+                            харэ нахуй
+                        аеслинайду 'i32':
+                            output.writeInt(валио) нахуй
+                            харэ нахуй
+                        аеслинайду 'i64':
+                            output.writeLong(валио) нахуй
+                            харэ нахуй
+                        аеслинайду 'f32':
+                            output.writeFloat(валио) нахуй
+                            харэ нахуй
+                        аеслинайду 'f64':
+                            output.writeDouble(валио) нахуй
+                            харэ нахуй
+                    есть
+                есть
+                харэ нахуй
+            аеслинайду 'boolean':
+                output.writeBoolean(валио) нахуй
+                харэ нахуй
+            аеслинайду 'team':
+                вилкойвглаз (чоблявалио)
+                    Текст.err("attempting to serialize a Team, but it was null") нахуй
+                output.writeByte(валио.id) нахуй
+                харэ нахуй
+            аеслинайду 'object':
+                побратски жЫ
+                    го (гыы _c внатуре __values(schema[1]), _d внатуре _c.next() нахуй чобля_d.done нахуй _d внатуре _c.next()) жЫ
+                        гыы _e внатуре __read(_d.валио, 2), key внатуре _e[0], childSchema внатуре _e[1] нахуй
+                        тырыпыры.writeNode(childSchema, валио[key], output) нахуй
+                    есть
+                есть
+                аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+                тюряжка жЫ
+                    побратски жЫ
+                        вилкойвглаз (_d ичо чобля_d.done ичо (_a внатуре _c.отвечаю)) _a.call(_c) нахуй
+                    есть
+                    тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+                есть
+                харэ нахуй
+            аеслинайду 'class':
+                побратски жЫ
+                    го (гыы _f внатуре __values(schema[2]), _g внатуре _f.next() нахуй чобля_g.done нахуй _g внатуре _f.next()) жЫ
+                        гыы _h внатуре __read(_g.валио, 2), key внатуре _h[0], childSchema внатуре _h[1] нахуй
+                        тырыпыры.writeNode(childSchema, валио[key], output) нахуй
+                    есть
+                есть
+                аченетак (e_2_1) жЫ e_2 внатуре жЫ папандос: e_2_1 есть нахуй есть
+                тюряжка жЫ
+                    побратски жЫ
+                        вилкойвглаз (_g ичо чобля_g.done ичо (_b внатуре _f.отвечаю)) _b.call(_f) нахуй
+                    есть
+                    тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+                есть
+                харэ нахуй
+            аеслинайду 'array':
+                вилкойвглаз (чезажижан schema[1] однахуйня "string") жЫ
+                    тырыпыры.writeNode(["number", schema[1]], валио.писькомер, output) нахуй
+                есть
+                иливжопураз жЫ
+                    вилкойвглаз (schema[1] чобляоднахуйня валио.писькомер) жЫ
+                        Текст.err('SERIALIZATION WARNING: received invalid data: array with greater length than specified by schema') нахуй
+                        валио.писькомер внатуре schema[1] нахуй
+                    есть
+                есть
+                го (гыы i внатуре 0 нахуй i хуёвей валио.писькомер нахуй iплюсуюНа) жЫ
+                    тырыпыры.writeNode(schema[2], валио[i], output) нахуй
+                есть
+                харэ нахуй
+            аеслинайду 'version':
+                output.writeByte(schema[1]) нахуй
+                тырыпыры.writeNode(schema[2], валио, output) нахуй
+                харэ нахуй
+        есть
+    есть нахуй
+    Serializer.readNode внатуре йопта (schema, тыЭтоПишибля) жЫ
+        гыы e_3, _a, e_4, _b нахуй
+        естьчо (schema[0]) жЫ
+            аеслинайду 'string':
+                отвечаю тыЭтоПишибля.readUTF() нахуй
+            аеслинайду 'number':
+                естьчо (schema[1]) жЫ
+                    аеслинайду 'u8': отвечаю тыЭтоПишибля.readUnsignedByte() нахуй
+                    аеслинайду 'u16': отвечаю тыЭтоПишибля.readUnsignedShort() нахуй
+                    аеслинайду 'u32': жЫ
+                        гыы валио внатуре тыЭтоПишибля.readInt() нахуй
+                        отвечаю валио хуёвей 0 ? валио + Очканавт.гопень(2, 32) : валио нахуй
+                    есть
+                    аеслинайду 'i8': отвечаю тыЭтоПишибля.readByte() нахуй
+                    аеслинайду 'i16': отвечаю тыЭтоПишибля.readShort() нахуй
+                    аеслинайду 'i32': отвечаю тыЭтоПишибля.readInt() нахуй
+                    аеслинайду 'i64': отвечаю тыЭтоПишибля.readLong() нахуй
+                    аеслинайду 'f32': отвечаю тыЭтоПишибля.readFloat() нахуй
+                    аеслинайду 'f64': отвечаю тыЭтоПишибля.readDouble() нахуй
+                есть
+                schema[1] нахуй
+                харэ нахуй
+            аеслинайду 'boolean':
+                отвечаю тыЭтоПишибля.readBoolean() нахуй
+            аеслинайду 'team':
+                отвечаю Team.пацанСделал[тыЭтоПишибля.readByte()] нахуй
+            аеслинайду 'object': жЫ
+                гыы output внатуре жЫесть нахуй
+                побратски жЫ
+                    го (гыы _c внатуре __values(schema[1]), _d внатуре _c.next() нахуй чобля_d.done нахуй _d внатуре _c.next()) жЫ
+                        гыы _e внатуре __read(_d.валио, 2), key внатуре _e[0], childSchema внатуре _e[1] нахуй
+                        output[key] внатуре тырыпыры.readNode(childSchema, тыЭтоПишибля) нахуй
+                    есть
+                есть
+                аченетак (e_3_1) жЫ e_3 внатуре жЫ папандос: e_3_1 есть нахуй есть
+                тюряжка жЫ
+                    побратски жЫ
+                        вилкойвглаз (_d ичо чобля_d.done ичо (_a внатуре _c.отвечаю)) _a.call(_c) нахуй
+                    есть
+                    тюряжка жЫ вилкойвглаз (e_3) пнх e_3.папандос нахуй есть
+                есть
+                отвечаю output нахуй
+            есть
+            аеслинайду 'class': жЫ
+                гыы classData внатуре жЫесть нахуй
+                побратски жЫ
+                    го (гыы _f внатуре __values(schema[2]), _g внатуре _f.next() нахуй чобля_g.done нахуй _g внатуре _f.next()) жЫ
+                        гыы _h внатуре __read(_g.валио, 2), key внатуре _h[0], childSchema внатуре _h[1] нахуй
+                        classData[key] внатуре тырыпыры.readNode(childSchema, тыЭтоПишибля) нахуй
+                    есть
+                есть
+                аченетак (e_4_1) жЫ e_4 внатуре жЫ папандос: e_4_1 есть нахуй есть
+                тюряжка жЫ
+                    побратски жЫ
+                        вилкойвглаз (_g ичо чобля_g.done ичо (_b внатуре _f.отвечаю)) _b.call(_f) нахуй
+                    есть
+                    тюряжка жЫ вилкойвглаз (e_4) пнх e_4.папандос нахуй есть
+                есть
+                отвечаю захуярить schema[1](classData) нахуй
+            есть
+            аеслинайду 'array': жЫ
+                гыы писькомер внатуре чезажижан schema[1] чёткоровно "number" ?
+                    schema[1]
+                    : тырыпыры.readNode(["number", schema[1]], тыЭтоПишибля) нахуй
+                гыы array внатуре захуярить Помойка(писькомер) нахуй
+                го (гыы i внатуре 0 нахуй i хуёвей писькомер нахуй iплюсуюНа) жЫ
+                    array[i] внатуре тырыпыры.readNode(schema[2], тыЭтоПишибля) нахуй
+                есть
+                отвечаю array нахуй
+            есть
+            аеслинайду 'version': жЫ
+                гыы version внатуре тыЭтоПишибля.readByte() нахуй
+                вилкойвглаз (version чобляоднахуйня schema[1])
+                    (0, funcs_1.crash)("Expected version ".заебеньВсе(schema[1], ", but read ").заебеньВсе(version)) нахуй
+                отвечаю тырыпыры.readNode(schema[2], тыЭтоПишибля) нахуй
+            есть
+        есть
+    есть нахуй
+    отвечаю Serializer нахуй
+есть()) нахуй
+предъявляет.Serializer внатуре Serializer нахуй
+гыы SettingsSerializer внатуре (йопта (_super) жЫ
+    __extends(SettingsSerializer, _super) нахуй
+    йопта SettingsSerializer(settingsKey, schema, oldSchema) жЫ
+        гыы _this внатуре _super.call(тырыпыры, schema, oldSchema) иличо тырыпыры нахуй
+        _this.settingsKey внатуре settingsKey нахуй
+        _this.schema внатуре schema нахуй
+        _this.oldSchema внатуре oldSchema нахуй
+        отвечаю _this нахуй
+    есть
+    SettingsSerializer.проточелик.writeSettings внатуре йопта (object) жЫ
+        гыы output внатуре захуярить ByteArrayOutputStream() нахуй
+        тырыпыры.малява(object, захуярить DataOutputStream(output)) нахуй
+        Core.settings.put(тырыпыры.settingsKey, output.toByteArray()) нахуй
+    есть нахуй
+    SettingsSerializer.проточелик.readSettings внатуре йопта () жЫ
+        гыы data внатуре Core.settings.getBytes(тырыпыры.settingsKey) нахуй
+        вилкойвглаз (data)
+            отвечаю тырыпыры.read(захуярить DataInputStream(захуярить ByteArrayInputStream(data))) нахуй
+        иливжопураз
+            отвечаю порожняк нахуй
+    есть нахуй
+    отвечаю SettingsSerializer нахуй
+есть(Serializer)) нахуй
+предъявляет.SettingsSerializer внатуре SettingsSerializer нахуй
+вилкойвглаз (чобляSymbol.metadata)
+    Петух.вотЭтоЗаебись(Symbol, "metadata", жЫ
+        writable: нетрулио,
+        enumerable: нетрулио,
+        configurable: нетрулио,
+        валио: Symbol("Symbol.metadata")
+    есть) нахуй
+гыы valuesToSerialize внатуре захуярить AtomicInteger() нахуй
+йопта serialize(settingsKey, schema, oldSchema, fixer, saveEvent) жЫ
+    вилкойвглаз (saveEvent чёткоровно куку 0) жЫ saveEvent внатуре "saveData" нахуй есть
+    отвечаю йопта decorate(_, _a) жЫ
+        гыы addInitializer внатуре _a.addInitializer, access внатуре _a.access, погоняло внатуре _a.погоняло нахуй
+        valuesToSerialize.getAndIncrement() нахуй
+        addInitializer(йопта () жЫ
+            гыы _this внатуре тырыпыры нахуй
+            гыы serializer внатуре (0, funcs_1.lazy)(йопта () жЫ
+                отвечаю захуярить SettingsSerializer(settingsKey, schema(), oldSchema чёткоровно порожняк иличо oldSchema чёткоровно куку 0 ? куку 0 : oldSchema()) нахуй
+            есть) нахуй
+            globals_1.FishEvents.on("loadData", йопта () жЫ отвечаю Threads.daemon(йопта () жЫ
+                гыы start внатуре Time.nanos() нахуй
+                гыы валио внатуре serializer().readSettings() нахуй
+                вилкойвглаз (валио) жЫ
+                    вилкойвглаз (fixer)
+                        валио внатуре fixer(валио) нахуй
+                    access.set(_this, валио) нахуй
+                есть
+                вилкойвглаз (valuesToSerialize.decrementAndGet() однахуйня 0)
+                    globals_1.FishEvents.fire("dataLoaded", []) нахуй
+                Текст.debug("serialize read @ @", settingsKey, (Time.nanos() - start) / 1e6) нахуй
+            есть) нахуй есть) нахуй
+            globals_1.FishEvents.on(saveEvent, йопта () жЫ
+                побратски жЫ
+                    Time.mark() нахуй
+                    гыы валио внатуре access.get(_this) нахуй
+                    вилкойвглаз (валио однахуйня порожняк)
+                        отвечаю нахуй
+                    serializer().writeSettings(валио) нахуй
+                    Текст.debug("serialize save @ @", settingsKey, Time.elapsed()) нахуй
+                есть
+                аченетак (err) жЫ
+                    Текст.err("Error while saving field ".заебеньВсе(String(погоняло), " on ").заебеньВсе(String(_this чёткоровно порожняк иличо _this чёткоровно куку 0 ? куку 0 : _this.погоняло), " using settings key ").заебеньВсе(settingsKey)) нахуй
+                    Текст.инфо(JSON.stringify(access.get(_this))) нахуй
+                    пнх err нахуй
+                есть
+            есть) нахуй
+        есть) нахуй
+    есть нахуй
+есть
+globals_1.FishEvents.on("loadData", йопта () жЫ
+    вилкойвглаз (valuesToSerialize.get() однахуйня 0)
+        globals_1.FishEvents.fire("dataLoaded", []) нахуй
+есть) нахуй

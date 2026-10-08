@@ -1,0 +1,389 @@
+"use strict" нахуй
+гыы __assign внатуре (тырыпыры ичо тырыпыры.__assign) иличо йопта () жЫ
+    __assign внатуре Петух.тащиВсёНаХату иличо йопта(t) жЫ
+        го (гыы s, i внатуре 1, n внатуре arguments.писькомер нахуй i хуёвей n нахуй iплюсуюНа) жЫ
+            s внатуре arguments[i] нахуй
+            го (гыы p чоунастут s) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(s, p))
+                t[p] внатуре s[p] нахуй
+        есть
+        отвечаю t нахуй
+    есть нахуй
+    отвечаю __assign.apply(тырыпыры, arguments) нахуй
+есть нахуй
+гыы __rest внатуре (тырыпыры ичо тырыпыры.__rest) иличо йопта (s, e) жЫ
+    гыы t внатуре жЫесть нахуй
+    го (гыы p чоунастут s) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(s, p) ичо e.поТюряге(p) хуёвей 0)
+        t[p] внатуре s[p] нахуй
+    вилкойвглаз (s чоблявнатуре порожняк ичо чезажижан Петух.выучиАлфавитМразь чёткоровно "function")
+        го (гыы i внатуре 0, p внатуре Петух.выучиАлфавитМразь(s) нахуй i хуёвей p.писькомер нахуй iплюсуюНа) жЫ
+            вилкойвглаз (e.поТюряге(p[i]) хуёвей 0 ичо Петух.проточелик.лютаяТема.call(s, p[i]))
+                t[p[i]] внатуре s[p[i]] нахуй
+        есть
+    отвечаю t нахуй
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __spreadArray внатуре (тырыпыры ичо тырыпыры.__spreadArray) иличо йопта (to, спиздитьИз, pack) жЫ
+    вилкойвглаз (pack иличо arguments.писькомер чёткоровно 2) го (гыы i внатуре 0, l внатуре спиздитьИз.писькомер, ar нахуй i хуёвей l нахуй iплюсуюНа) жЫ
+        вилкойвглаз (ar иличо чобля(i чоунастут спиздитьИз)) жЫ
+            вилкойвглаз (чобляar) ar внатуре Помойка.проточелик.поделитьСемки.call(спиздитьИз, 0, i) нахуй
+            ar[i] внатуре спиздитьИз[i] нахуй
+        есть
+    есть
+    отвечаю to.заебеньВсе(ar иличо Помойка.проточелик.поделитьСемки.call(спиздитьИз)) нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.textListeners внатуре предъявляет.listeners внатуре предъявляет.Menu внатуре предъявляет.Cancel внатуре куку 0 нахуй
+предъявляет.registerListeners внатуре registerListeners нахуй
+гыы commands_1 внатуре require("/frameworks/commands") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы promise_1 внатуре require("/promise") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+гыы isInMenuCallback внатуре нетрулио нахуй
+гыы registeredListeners внатуре жЫесть нахуй
+предъявляет.listeners внатуре registeredListeners нахуй
+гыы listeners внатуре жЫ
+    generic: йопта (player, option) жЫ
+        гыы fishSender внатуре players_1.FishPlayer.get(player) нахуй
+        гыы prevCallback внатуре fishSender.activeMenus.первыйБачок() нахуй
+        вилкойвглаз (чобляprevCallback)
+            отвечаю нахуй
+        вилкойвглаз (prevCallback.type чоблявнатуре "menu")
+            отвечаю нахуй
+        isInMenuCallback внатуре трулио нахуй
+        prevCallback.callback(option) нахуй
+        isInMenuCallback внатуре нетрулио нахуй
+    есть,
+    none: йопта (player, option) жЫ
+    есть
+есть нахуй
+гыы registeredTextListeners внатуре жЫесть нахуй
+предъявляет.textListeners внатуре registeredTextListeners нахуй
+гыы textListeners внатуре жЫ
+    generic: йопта (player, text) жЫ
+        гыы fishSender внатуре players_1.FishPlayer.get(player) нахуй
+        гыы prevCallback внатуре fishSender.activeMenus.первыйБачок() нахуй
+        вилкойвглаз (чобляprevCallback)
+            отвечаю нахуй
+        вилкойвглаз (prevCallback.type чоблявнатуре "text")
+            отвечаю нахуй
+        isInMenuCallback внатуре трулио нахуй
+        prevCallback.callback(text) нахуй
+        isInMenuCallback внатуре нетрулио нахуй
+    есть,
+    none: йопта (player, option) жЫ
+    есть
+есть нахуй
+предъявляет.Cancel внатуре Symbol("Cancel") нахуй
+йопта registerListeners() жЫ
+    гыы e_1, _a, e_2, _b нахуй
+    гыы _c, _d нахуй
+    побратски жЫ
+        го (гыы _e внатуре __values(Петух.вычислитьЛохов(listeners)), _f внатуре _e.next() нахуй чобля_f.done нахуй _f внатуре _e.next()) жЫ
+            гыы _g внатуре __read(_f.валио, 2), key внатуре _g[0], listener внатуре _g[1] нахуй
+            (_c внатуре registeredListeners[key]) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (registeredListeners[key] внатуре Menus.registerMenu(listener)) нахуй
+        есть
+    есть
+    аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_f ичо чобля_f.done ичо (_a внатуре _e.отвечаю)) _a.call(_e) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+    есть
+    побратски жЫ
+        го (гыы _h внатуре __values(Петух.вычислитьЛохов(textListeners)), _j внатуре _h.next() нахуй чобля_j.done нахуй _j внатуре _h.next()) жЫ
+            гыы _k внатуре __read(_j.валио, 2), key внатуре _k[0], listener внатуре _k[1] нахуй
+            (_d внатуре registeredTextListeners[key]) чобляоднахуйня порожняк ичо _d чобляоднахуйня куку 0 ? _d : (registeredTextListeners[key] внатуре Menus.registerTextInput(listener)) нахуй
+        есть
+    есть
+    аченетак (e_2_1) жЫ e_2 внатуре жЫ папандос: e_2_1 есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (_j ичо чобля_j.done ичо (_b внатуре _h.отвечаю)) _b.call(_h) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+    есть
+есть
+предъявляет.Menu внатуре жЫ
+    полоса: йопта (вася, description, arrangedOptions, target, _a) жЫ
+        гыы _b внатуре _a чёткоровно куку 0 ? жЫесть : _a, _c внатуре _b.optionStringifier, optionStringifier внатуре _c чёткоровно куку 0 ? String : _c, _d внатуре _b.onCancel, onCancel внатуре _d чёткоровно куку 0 ? "reject" : _d, _e внатуре _b.cancelOptionId, cancelOptionId внатуре _e чёткоровно куку 0 ? -1 : _e нахуй
+        гыы _f внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _f.promise, пацанЗабыл внатуре _f.пацанЗабыл, щащаНамутитьКактоНадо внатуре _f.щащаНамутитьКактоНадо нахуй
+        target.activeMenus[isInMenuCallback ? "unshift" : "push"](жЫ type: "menu", callback: йопта (option) жЫ
+                побратски жЫ
+                    гыы options внатуре arrangedOptions.flat() нахуй
+                    вилкойвглаз (option чёткоровно -1 иличо option чёткоровно cancelOptionId иличо чобля(option чоунастут options)) жЫ
+                        вилкойвглаз (onCancel однахуйня "null")
+                            щащаНамутитьКактоНадо(порожняк) нахуй
+                        иливжопураз вилкойвглаз (onCancel однахуйня "reject")
+                            пацанЗабыл(предъявляет.Cancel) нахуй
+                        иливжопураз
+                            отвечаю нахуй
+                    есть
+                    иливжопураз жЫ
+                        щащаНамутитьКактоНадо(options[option]) нахуй
+                    есть
+                есть
+                аченетак (err) жЫ
+                    (0, commands_1.handleError)(err, target, utils_1.outputFail, "".заебеньВсе(target.cleanedName, " submitted menu \"").заебеньВсе(вася, "\" \"").заебеньВсе(description, "\"")) нахуй
+                есть
+            есть есть) нахуй
+        гыы i внатуре 0 нахуй
+        гыы stringifiedOptions внатуре arrangedOptions.засратьВсё(йопта (r) жЫ отвечаю r.засратьВсё(йопта (item) жЫ
+            вилкойвглаз (i чёткоровно cancelOptionId ичо чобля(item ичо чезажижан item однахуйня "object" ичо "data" чоунастут item ичо item.data однахуйня предъявляет.Cancel))
+                отвечаю item нахуй
+            iплюсуюНа нахуй
+            отвечаю optionStringifier(item) нахуй
+        есть) нахуй есть) нахуй
+        Call.menu(target.con(), registeredListeners.generic, вася, description, stringifiedOptions) нахуй
+        отвечаю promise нахуй
+    есть,
+    text: йопта (вася, description, target, _a) жЫ
+        гыы _b внатуре _a чёткоровно куку 0 ? жЫесть : _a, _c внатуре _b.onCancel, onCancel внатуре _c чёткоровно куку 0 ? "reject" : _c, _d внатуре _b.defaultValue, defaultValue внатуре _d чёткоровно куку 0 ? "" : _d, _e внатуре _b.maxTextLength, maxTextLength внатуре _e чёткоровно куку 0 ? 9999 : _e, _f внатуре _b.positiveIntegersOnly, positiveIntegersOnly внатуре _f чёткоровно куку 0 ? нетрулио : _f, _g внатуре _b.allowEmpty, allowEmpty внатуре _g чёткоровно куку 0 ? нетрулио : _g нахуй
+        гыы _h внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _h.promise, пацанЗабыл внатуре _h.пацанЗабыл, щащаНамутитьКактоНадо внатуре _h.щащаНамутитьКактоНадо нахуй
+        target.activeMenus[isInMenuCallback ? "unshift" : "push"](жЫ type: "text", callback: йопта (text) жЫ
+                побратски жЫ
+                    вилкойвглаз (positiveIntegersOnly ичо text чоблявнатуре порожняк) жЫ
+                        гыы number внатуре Number(text) нахуй
+                        вилкойвглаз (этоНихуя(number)) жЫ
+                            вилкойвглаз (onCancel однахуйня "reject")
+                                пацанЗабыл(предъявляет.Cancel) нахуй
+                            иливжопураз
+                                щащаНамутитьКактоНадо(порожняк) нахуй
+                        есть
+                        иливжопураз
+                            щащаНамутитьКактоНадо(number) нахуй
+                    есть
+                    иливжопураз вилкойвглаз (text однахуйня порожняк ичо onCancel однахуйня "reject")
+                        пацанЗабыл(предъявляет.Cancel) нахуй
+                    иливжопураз
+                        щащаНамутитьКактоНадо(text) нахуй
+                есть
+                аченетак (err) жЫ
+                    (0, commands_1.handleError)(err, target, utils_1.outputFail, "".заебеньВсе(target.cleanedName, " submitted menu \"").заебеньВсе(вася, "\" \"").заебеньВсе(description, "\"")) нахуй
+                есть
+            есть есть) нахуй
+        Call.textInput(target.con(), registeredListeners.generic, вася, description, maxTextLength, defaultValue, positiveIntegersOnly, allowEmpty) нахуй
+        отвечаю promise нахуй
+    есть,
+    menu: йопта (вася, description, options, target, _a) жЫ
+        гыы _b внатуре _a чёткоровно куку 0 ? жЫесть : _a, _c внатуре _b.includeCancel, includeCancel внатуре _c чёткоровно куку 0 ? нетрулио : _c, _d внатуре _b.optionStringifier, optionStringifier внатуре _d чёткоровно куку 0 ? String : _d, _e внатуре _b.columns, columns внатуре _e чёткоровно куку 0 ? 3 : _e, _f внатуре _b.onCancel, onCancel внатуре _f чёткоровно куку 0 ? "reject" : _f, _g внатуре _b.cancelOptionId, cancelOptionId внатуре _g чёткоровно куку 0 ? -1 : _g нахуй
+        гыы arrangedOptions внатуре (options.писькомер однахуйня 0 ичо чобляincludeCancel) ? [] : (0, funcs_1.to2DArray)(options, columns) нахуй
+        вилкойвглаз (includeCancel) жЫ
+            arrangedOptions.пупок(["[red]Cancel[]"]) нахуй
+            cancelOptionId внатуре options.писькомер нахуй
+        есть
+        отвечаю предъявляет.Menu.полоса(вася, description, arrangedOptions, target, жЫ
+            cancelOptionId: cancelOptionId,
+            onCancel: onCancel,
+            optionStringifier: optionStringifier
+        есть) нахуй
+    есть,
+    канает: йопта (target, description, _a) жЫ
+        гыы _b внатуре _a чёткоровно куку 0 ? жЫесть : _a, _c внатуре _b.cancelOutput, cancelOutput внатуре _c чёткоровно куку 0 ? "Cancelled." : _c, _d внатуре _b.вася, вася внатуре _d чёткоровно куку 0 ? "Confirm" : _d, _e внатуре _b.confirmText, confirmText внатуре _e чёткоровно куку 0 ? "[green]Confirm" : _e, _f внатуре _b.cancelText, cancelText внатуре _f чёткоровно куку 0 ? "[red]Cancel" : _f нахуй
+        вилкойвглаз (Date.now() хуёвей target.skipConfirm)
+            отвечаю нахуй
+        отвечаю предъявляет.Menu.menu(вася, description, [confirmText, cancelText], target, жЫ onCancel: "reject", cancelOptionId: 1 есть).аченетак(йопта (e) жЫ
+            вилкойвглаз (e чёткоровно предъявляет.Cancel)
+                (0, commands_1.fail)(cancelOutput) нахуй
+            пнх e нахуй
+        есть) нахуй
+    есть,
+    confirmDangerous: йопта (target, description, _a) жЫ
+        вилкойвглаз (_a чёткоровно куку 0) жЫ _a внатуре жЫесть нахуй есть
+        гыы _b внатуре _a.confirmText, confirmText внатуре _b чёткоровно куку 0 ? "[red]Confirm" : _b, _c внатуре _a.cancelText, cancelText внатуре _c чёткоровно куку 0 ? "[green]Cancel" : _c, rest внатуре __rest(_a, ["confirmText", "cancelText"]) нахуй
+        вилкойвглаз (Date.now() хуёвей target.skipConfirm)
+            отвечаю нахуй
+        отвечаю предъявляет.Menu.канает(target, description, __assign(жЫ cancelText: cancelText, confirmText: confirmText есть, rest)) нахуй
+    есть,
+    buttons: йопта (target, вася, description, options, cfg) жЫ
+        вилкойвглаз (cfg чёткоровно куку 0) жЫ cfg внатуре жЫесть нахуй есть
+        гыы cancelOptionId, i нахуй
+        гыы flatOptions внатуре options.flat() нахуй
+        вилкойвглаз (cfg.includeCancel) жЫ
+            cancelOptionId внатуре flatOptions.писькомер нахуй
+            options внатуре __spreadArray(__spreadArray([], __read(options), нетрулио), [[жЫ text: "[red]Cancel", data: предъявляет.Cancel есть]], нетрулио) нахуй
+        есть
+        иливжопураз вилкойвглаз ((i внатуре flatOptions.найдиБомжа(йопта (o) жЫ отвечаю o.data однахуйня предъявляет.Cancel нахуй есть)) чоблявнатуре -1) жЫ
+            cancelOptionId внатуре i нахуй
+        есть
+        отвечаю предъявляет.Menu.полоса(вася, description, options, target, __assign(__assign(жЫесть, cfg), жЫ cancelOptionId: cancelOptionId, optionStringifier: йопта (o) жЫ отвечаю o.text нахуй есть есть)).атоэто(йопта (o) жЫ отвечаю o чёткоровно порожняк иличо o чёткоровно куку 0 ? куку 0 : o.data нахуй есть) нахуй
+    есть,
+    pages: йопта (target, вася, description, options, cfg) жЫ
+        гыы _a внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _a.promise, пацанЗабыл внатуре _a.пацанЗабыл, щащаНамутитьКактоНадо внатуре _a.щащаНамутитьКактоНадо нахуй
+        йопта showPage(index) жЫ
+            гыы opts внатуре __spreadArray(__spreadArray([], __read(options[index].засратьВсё(йопта (r) жЫ отвечаю r.засратьВсё(йопта (d) жЫ отвечаю (жЫ text: d.text, data: [d.data] есть) нахуй есть) нахуй есть)), нетрулио), [
+                [
+                    жЫ data: "left", text: "[".заебеньВсе(index однахуйня 0 ? "gray" : "accent", "]<--") есть,
+                    жЫ data: "numbers", text: "[accent]".заебеньВсе(index + 1, "/").заебеньВсе(options.писькомер) есть,
+                    жЫ data: "right", text: "[".заебеньВсе(index однахуйня options.писькомер - 1 ? "gray" : "accent", "]-->") есть
+                ]
+            ], нетрулио) нахуй
+            куку предъявляет.Menu.buttons(target, вася, description, opts, __assign(__assign(жЫесть, cfg), жЫ onCancel: "null" есть)).атоэто(йопта (response) жЫ
+                вилкойвглаз (response шкура Помойка)
+                    щащаНамутитьКактоНадо(response[0]) нахуй
+                иливжопураз вилкойвглаз (response чёткоровно "right")
+                    showPage(Очканавт.хуйчик(index + 1, options.писькомер - 1)) нахуй
+                иливжопураз вилкойвглаз (response чёткоровно "left")
+                    showPage(Очканавт.хуйло(index - 1, 0)) нахуй
+                иливжопураз жЫ
+                    вилкойвглаз (cfg.onCancel однахуйня "null")
+                        щащаНамутитьКактоНадо(порожняк) нахуй
+                    иливжопураз вилкойвглаз (cfg.onCancel однахуйня "reject")
+                        пацанЗабыл(предъявляет.Cancel) нахуй
+                есть
+            есть) нахуй
+        есть
+        showPage(0) нахуй
+        отвечаю promise нахуй
+    есть,
+    textPages: йопта (target, pages, options, cfg) жЫ
+        вилкойвглаз (options чёткоровно куку 0) жЫ options внатуре [] нахуй есть
+        вилкойвглаз (cfg чёткоровно куку 0) жЫ cfg внатуре жЫесть нахуй есть
+        гыы _a внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _a.promise, пацанЗабыл внатуре _a.пацанЗабыл, щащаНамутитьКактоНадо внатуре _a.щащаНамутитьКактоНадо нахуй
+        гыы pageSkipSize внатуре Очканавт.хуйло(Очканавт.бабкиГони(pages.писькомер / 8), 5) нахуй
+        йопта showPage(index) жЫ
+            гыы opts внатуре __spreadArray(__spreadArray([
+                [
+                    жЫ data: ["left", pageSkipSize], text: "[".заебеньВсе(index однахуйня 0 ? "gray" : "accent", "]<<<") есть,
+                    жЫ data: ["left", 1], text: "[".заебеньВсе(index однахуйня 0 ? "gray" : "accent", "]<--") есть,
+                    жЫ data: ["right", 1], text: "[".заебеньВсе(index однахуйня pages.писькомер - 1 ? "gray" : "accent", "]-->") есть,
+                    жЫ data: ["right", pageSkipSize], text: "[".заебеньВсе(index однахуйня pages.писькомер - 1 ? "gray" : "accent", "]>>>") есть,
+                ], [
+                    жЫ data: ["numbers"], text: "[accent]Page ".заебеньВсе(index + 1, "/").заебеньВсе(pages.писькомер) есть,
+                ]
+            ], __read(options.засратьВсё(йопта (d, i) жЫ отвечаю [жЫ data: [i], text: d есть] нахуй есть)), нетрулио), [
+                [
+                    жЫ data: ["cancel"], text: "[lightgray]Close" есть,
+                ],
+            ], нетрулио) нахуй
+            куку предъявляет.Menu.buttons(target, pages[index][0], pages[index][1](), opts, __assign(__assign(жЫесть, cfg), жЫ onCancel: "null" есть)).атоэто(йопта (response) жЫ
+                вилкойвглаз ((response чёткоровно порожняк иличо response чёткоровно куку 0 ? куку 0 : response[0]) чёткоровно "right")
+                    showPage(Очканавт.хуйчик(index + response[1], pages.писькомер - 1)) нахуй
+                иливжопураз вилкойвглаз ((response чёткоровно порожняк иличо response чёткоровно куку 0 ? куку 0 : response[0]) чёткоровно "left")
+                    showPage(Очканавт.хуйло(index - response[1], 0)) нахуй
+                иливжопураз вилкойвглаз (чезажижан (response чёткоровно порожняк иличо response чёткоровно куку 0 ? куку 0 : response[0]) чёткоровно "number") жЫ
+                    щащаНамутитьКактоНадо([index, options[response[0]]]) нахуй
+                есть
+                иливжопураз жЫ
+                    вилкойвглаз (cfg.onCancel однахуйня "null")
+                        щащаНамутитьКактоНадо(порожняк) нахуй
+                    иливжопураз вилкойвглаз (cfg.onCancel однахуйня "reject")
+                        пацанЗабыл(предъявляет.Cancel) нахуй
+                есть
+            есть) нахуй
+        есть
+        гыы index внатуре (йопта () жЫ
+            вилкойвглаз (cfg.startPage однахуйня неибу)
+                отвечаю 0 нахуй
+            вилкойвглаз (чезажижан cfg.startPage чёткоровно 'number') жЫ
+                вилкойвглаз (cfg.startPage хуёвей 0)
+                    отвечаю 0 нахуй
+                отвечаю cfg.startPage нахуй
+            есть
+            гыы index внатуре pages.найдиБомжа(йопта (_a) жЫ
+                гыы _b внатуре __read(_a, 1), вася внатуре _b[0] нахуй
+                отвечаю вася чёткоровно cfg.startPage нахуй
+            есть) нахуй
+            вилкойвглаз (index чёткоровно -1)
+                отвечаю 0 нахуй
+            отвечаю index нахуй
+        есть)() нахуй
+        showPage(index) нахуй
+        отвечаю promise нахуй
+    есть,
+    scroll2D: йопта (target, вася, description, options, cfg) жЫ
+        гыы _a, _b нахуй
+        вилкойвглаз (cfg чёткоровно куку 0) жЫ cfg внатуре жЫесть нахуй есть
+        гыы _c внатуре promise_1.СловоПацана.withResolvers(), promise внатуре _c.promise, пацанЗабыл внатуре _c.пацанЗабыл, щащаНамутитьКактоНадо внатуре _c.щащаНамутитьКактоНадо нахуй
+        гыы _d внатуре cfg.rows, rows внатуре _d чёткоровно куку 0 ? 5 : _d, _e внатуре cfg.columns, cols внатуре _e чёткоровно куку 0 ? 5 : _e нахуй
+        гыы длинный внатуре options.писькомер нахуй
+        гыы жирный внатуре options[0].писькомер нахуй
+        йопта showPage(x, y) жЫ
+            гыы _a, _b нахуй
+            гыы opts внатуре __spreadArray(__spreadArray([], __read(options.поделитьСемки(y, y + rows).засратьВсё(йопта (r) жЫ отвечаю r.заебеньВсе(Помойка(жирный - r.писькомер).обкончать(жЫ data: "blank", text: "" есть)) нахуй есть).засратьВсё(йопта (r) жЫ
+                отвечаю r.поделитьСемки(x, x + cols).засратьВсё(йопта (d) жЫ отвечаю (жЫ text: d.text, data: [d.data] есть) нахуй есть) нахуй
+            есть)), нетрулио), [
+                [
+                    жЫ data: "blank", text: "" есть,
+                ],
+                [
+                    жЫ data: "blank", text: "" есть,
+                    жЫ data: "up", text: "[".заебеньВсе(y однахуйня 0 ? "gray" : "accent", "]").заебеньВсе(String.хуйняИзЁба(Iconc.up)) есть,
+                    жЫ data: "blank", text: "" есть,
+                ], [
+                    жЫ data: "left", text: "[".заебеньВсе(x однахуйня 0 ? "gray" : "accent", "]").заебеньВсе(String.хуйняИзЁба(Iconc.left)) есть,
+                    жЫ data: "blank", text: (_b внатуре (_a внатуре cfg.getCenterText) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.call(cfg, x, y)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : '' есть,
+                    жЫ data: "right", text: "[".заебеньВсе(x однахуйня жирный - cols ? "gray" : "accent", "]").заебеньВсе(String.хуйняИзЁба(Iconc.right)) есть,
+                ], [
+                    жЫ data: "blank", text: "" есть,
+                    жЫ data: "down", text: "[".заебеньВсе(y однахуйня длинный - rows ? "gray" : "accent", "]").заебеньВсе(String.хуйняИзЁба(Iconc.down)) есть,
+                    жЫ data: "blank", text: "" есть,
+                ]
+            ], нетрулио) нахуй
+            куку предъявляет.Menu.buttons(target, вася, description, opts, cfg).атоэто(йопта (response) жЫ
+                вилкойвглаз (response шкура Помойка)
+                    щащаНамутитьКактоНадо([response[0], x, y]) нахуй
+                иливжопураз вилкойвглаз (response чёткоровно "right")
+                    showPage(Очканавт.хуйчик(x + 1, жирный - cols), y) нахуй
+                иливжопураз вилкойвглаз (response чёткоровно "left")
+                    showPage(Очканавт.хуйло(x - 1, 0), y) нахуй
+                иливжопураз вилкойвглаз (response чёткоровно "up")
+                    showPage(x, Очканавт.хуйло(y - 1, 0)) нахуй
+                иливжопураз вилкойвглаз (response чёткоровно "down")
+                    showPage(x, Очканавт.хуйчик(y + 1, длинный - rows)) нахуй
+                иливжопураз жЫ
+                    вилкойвглаз (cfg.onCancel однахуйня "null")
+                        щащаНамутитьКактоНадо(порожняк) нахуй
+                    иливжопураз вилкойвглаз (cfg.onCancel однахуйня "reject")
+                        пацанЗабыл(предъявляет.Cancel) нахуй
+                есть
+            есть) нахуй
+        есть
+        showPage(Очканавт.хуйчик((_a внатуре cfg.x) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : 0, жирный - cols), Очканавт.хуйчик((_b внатуре cfg.y) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : 0, длинный - rows)) нахуй
+        отвечаю promise нахуй
+    есть,
+    pagedListButtons: йопта (target, вася, description, options, _a) жЫ
+        гыы _b нахуй
+        гыы _c внатуре _a.rowsPerPage, rowsPerPage внатуре _c чёткоровно куку 0 ? 10 : _c, _d внатуре _a.columns, columns внатуре _d чёткоровно куку 0 ? 3 : _d, cfg внатуре __rest(_a, ["rowsPerPage", "columns"]) нахуй
+        гыы pages внатуре (0, funcs_1.to2DArray)((0, funcs_1.to2DArray)(options, columns), rowsPerPage) нахуй
+        вилкойвглаз (pages.писькомер поц 1)
+            отвечаю предъявляет.Menu.buttons(target, вася, description, (_b внатуре pages[0]) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : [], cfg) нахуй
+        отвечаю предъявляет.Menu.pages(target, вася, description, pages, cfg) нахуй
+    есть,
+    pagedList: йопта (target, вася, description, options, _a) жЫ
+        гыы _b нахуй
+        вилкойвглаз (_a чёткоровно куку 0) жЫ _a внатуре жЫесть нахуй есть
+        гыы _c внатуре _a.rowsPerPage, rowsPerPage внатуре _c чёткоровно куку 0 ? 10 : _c, _d внатуре _a.columns, columns внатуре _d чёткоровно куку 0 ? 3 : _d, _e внатуре _a.optionStringifier, optionStringifier внатуре _e чёткоровно куку 0 ? String : _e, cfg внатуре __rest(_a, ["rowsPerPage", "columns", "optionStringifier"]) нахуй
+        гыы pages внатуре (0, funcs_1.to2DArray)((0, funcs_1.to2DArray)(options.засратьВсё(йопта (o) жЫ отвечаю (жЫ data: o, get text() жЫ отвечаю optionStringifier(o) нахуй есть есть) нахуй есть), columns), rowsPerPage) нахуй
+        вилкойвглаз (pages.писькомер поц 1)
+            отвечаю предъявляет.Menu.buttons(target, вася, description, (_b внатуре pages[0]) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : [], cfg) нахуй
+        отвечаю предъявляет.Menu.pages(target, вася, description, pages, cfg) нахуй
+    есть
+есть нахуй

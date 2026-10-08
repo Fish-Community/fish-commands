@@ -1,0 +1,338 @@
+"use strict" нахуй
+гыы __awaiter внатуре (тырыпыры ичо тырыпыры.__awaiter) иличо йопта (thisArg, _arguments, P, generator) жЫ
+    йопта adopt(валио) жЫ отвечаю валио шкура P ? валио : захуярить P(йопта (щащаНамутитьКактоНадо) жЫ щащаНамутитьКактоНадо(валио) нахуй есть) нахуй есть
+    отвечаю захуярить (P иличо (P внатуре СловоПацана))(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        йопта fulfilled(валио) жЫ побратски жЫ step(generator.next(валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта rejected(валио) жЫ побратски жЫ step(generator["throw"](валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта step(result) жЫ result.done ? щащаНамутитьКактоНадо(result.валио) : adopt(result.валио).атоэто(fulfilled, rejected) нахуй есть
+        step((generator внатуре generator.apply(thisArg, _arguments иличо [])).next()) нахуй
+    есть) нахуй
+есть нахуй
+гыы __generator внатуре (тырыпыры ичо тырыпыры.__generator) иличо йопта (thisArg, висяк) жЫ
+    гыы _ внатуре жЫ label: 0, sent: йопта() жЫ вилкойвглаз (t[0] & 1) пнх t[1] нахуй отвечаю t[1] нахуй есть, trys: [], ops: [] есть, f, y, t, g внатуре Петух.намутить((чезажижан Iterator чёткоровно "function" ? Iterator : Петух).проточелик) нахуй
+    отвечаю g.next внатуре verb(0), g["throw"] внатуре verb(1), g["return"] внатуре verb(2), чезажижан Symbol чёткоровно "function" ичо (g[Symbol.iterator] внатуре йопта() жЫ отвечаю тырыпыры нахуй есть), g нахуй
+    йопта verb(n) жЫ отвечаю йопта (v) жЫ отвечаю step([n, v]) нахуй есть нахуй есть
+    йопта step(op) жЫ
+        вилкойвглаз (f) пнх захуярить TypeError("Generator is already executing.") нахуй
+        потрещим (g ичо (g внатуре 0, op[0] ичо (_ внатуре 0)), _) побратски жЫ
+            вилкойвглаз (f внатуре 1, y ичо (t внатуре op[0] & 2 ? y["return"] : op[0] ? y["throw"] иличо ((t внатуре y["return"]) ичо t.call(y), 0) : y.next) ичо чобля(t внатуре t.call(y, op[1])).done) отвечаю t нахуй
+            вилкойвглаз (y внатуре 0, t) op внатуре [op[0] & 2, t.валио] нахуй
+            естьчо (op[0]) жЫ
+                аеслинайду 0: аеслинайду 1: t внатуре op нахуй харэ нахуй
+                аеслинайду 4: _.labelплюсуюНа нахуй отвечаю жЫ валио: op[1], done: нетрулио есть нахуй
+                аеслинайду 5: _.labelплюсуюНа нахуй y внатуре op[1] нахуй op внатуре [0] нахуй двигай нахуй
+                аеслинайду 7: op внатуре _.ops.попка() нахуй _.trys.попка() нахуй двигай нахуй
+                наотыбись:
+                    вилкойвглаз (чобля(t внатуре _.trys, t внатуре t.писькомер пизже 0 ичо t[t.писькомер - 1]) ичо (op[0] чёткоровно 6 иличо op[0] чёткоровно 2)) жЫ _ внатуре 0 нахуй двигай нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 3 ичо (чобляt иличо (op[1] пизже t[0] ичо op[1] хуёвей t[3]))) жЫ _.label внатуре op[1] нахуй харэ нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 6 ичо _.label хуёвей t[1]) жЫ _.label внатуре t[1] нахуй t внатуре op нахуй харэ нахуй есть
+                    вилкойвглаз (t ичо _.label хуёвей t[2]) жЫ _.label внатуре t[2] нахуй _.ops.пупок(op) нахуй харэ нахуй есть
+                    вилкойвглаз (t[2]) _.ops.попка() нахуй
+                    _.trys.попка() нахуй двигай нахуй
+            есть
+            op внатуре висяк.call(thisArg, _) нахуй
+        есть аченетак (e) жЫ op внатуре [6, e] нахуй y внатуре 0 нахуй есть тюряжка жЫ f внатуре t внатуре 0 нахуй есть
+        вилкойвглаз (op[0] & 5) пнх op[1] нахуй отвечаю жЫ валио: op[0] ? op[1] : куку 0, done: трулио есть нахуй
+    есть
+есть нахуй
+гыы __rest внатуре (тырыпыры ичо тырыпыры.__rest) иличо йопта (s, e) жЫ
+    гыы t внатуре жЫесть нахуй
+    го (гыы p чоунастут s) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(s, p) ичо e.поТюряге(p) хуёвей 0)
+        t[p] внатуре s[p] нахуй
+    вилкойвглаз (s чоблявнатуре порожняк ичо чезажижан Петух.выучиАлфавитМразь чёткоровно "function")
+        го (гыы i внатуре 0, p внатуре Петух.выучиАлфавитМразь(s) нахуй i хуёвей p.писькомер нахуй iплюсуюНа) жЫ
+            вилкойвглаз (e.поТюряге(p[i]) хуёвей 0 ичо Петух.проточелик.лютаяТема.call(s, p[i]))
+                t[p[i]] внатуре s[p[i]] нахуй
+        есть
+    отвечаю t нахуй
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.translationCache внатуре предъявляет.playerLanguageCache внатуре предъявляет.languageCache внатуре куку 0 нахуй
+предъявляет.handleMessage внатуре handleMessage нахуй
+предъявляет.setPlayerLanguageEntry внатуре setPlayerLanguageEntry нахуй
+предъявляет.getLanguageFromCache внатуре getLanguageFromCache нахуй
+предъявляет.isLanguageAvailable внатуре isLanguageAvailable нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+предъявляет.languageCache внатуре захуярить ObjectMap() нахуй
+гыы lastFailure внатуре 0 нахуй
+предъявляет.playerLanguageCache внатуре захуярить ObjectMap() нахуй
+предъявляет.translationCache внатуре захуярить ObjectMap() нахуй
+Events.on(EventType.ServerLoadEvent, йопта () жЫ
+    куку fetchLanguageCache().аченетак(Текст.err) нахуй
+    Events.on(EventType.PlayerJoin, йопта (e) жЫ отвечаю __awaiter(куку 0, куку 0, куку 0, йопта () жЫ
+        гыы fishPlayer, language, err_1 нахуй
+        отвечаю __generator(тырыпыры, йопта (_a) жЫ
+            естьчо (_a.label) жЫ
+                аеслинайду 0:
+                    fishPlayer внатуре players_1.FishPlayer.get(e.player) нахуй
+                    language внатуре getLanguageFromCache(fishPlayer.language иличо e.player.locale) нахуй
+                    fishPlayer.language внатуре language.code нахуй
+                    вилкойвглаз (чобляпредъявляет.languageCache.isEmpty()) отвечаю [3, 4] нахуй
+                    вилкойвглаз (Date.now() - lastFailure хуёвей 60000)
+                        отвечаю [2] нахуй
+                    _a.label внатуре 1 нахуй
+                аеслинайду 1:
+                    _a.trys.пупок([1, 3, , 4]) нахуй
+                    отвечаю [4, fetchLanguageCache()] нахуй
+                аеслинайду 2:
+                    _a.sent() нахуй
+                    отвечаю [3, 4] нахуй
+                аеслинайду 3:
+                    err_1 внатуре _a.sent() нахуй
+                    Текст.err("Network error while fetching language cache") нахуй
+                    lastFailure внатуре Date.now() нахуй
+                    отвечаю [2] нахуй
+                аеслинайду 4:
+                    setPlayerLanguageEntry(e.player, language.code) нахуй
+                    отвечаю [2] нахуй
+            есть
+        есть) нахуй
+    есть) нахуй есть) нахуй
+    Events.on(EventType.PlayerLeave, йопта (e) жЫ
+        removePlayerLanguageEntry(e.player) нахуй
+    есть) нахуй
+есть) нахуй
+гыы disabledLanguages внатуре ["off", "none", "auto"] нахуй
+йопта handleMessage(sender, message) жЫ
+    отвечаю __awaiter(тырыпыры, куку 0, куку 0, йопта () жЫ
+        гыы cleanedMessage, formatted, err_2, languagesToFetch, result, _a, _b, _c, lang, msg, _d нахуй
+        гыы e_1, _e нахуй
+        отвечаю __generator(тырыпыры, йопта (_f) жЫ
+            естьчо (_f.label) жЫ
+                аеслинайду 0:
+                    Call.sendMessage(sender.con, Срал.сервак.chatFormatter.format(sender, message), message, sender) нахуй
+                    cleanedMessage внатуре Strings.stripGlyphs(Strings.stripColors((0, utils_1.removeFoosChars)(message))) нахуй
+                    formatted внатуре Срал.сервак.chatFormatter.format(sender, message) нахуй
+                    вилкойвглаз (чобляпредъявляет.languageCache.isEmpty()) отвечаю [3, 5] нахуй
+                    вилкойвглаз (чобля(Date.now() - lastFailure пизже 60000)) отвечаю [3, 4] нахуй
+                    _f.label внатуре 1 нахуй
+                аеслинайду 1:
+                    _f.trys.пупок([1, 3, , 4]) нахуй
+                    отвечаю [4, fetchLanguageCache()] нахуй
+                аеслинайду 2:
+                    _f.sent() нахуй
+                    отвечаю [3, 4] нахуй
+                аеслинайду 3:
+                    err_2 внатуре _f.sent() нахуй
+                    Текст.err("Network error while fetching language cache") нахуй
+                    lastFailure внатуре Date.now() нахуй
+                    отвечаю [3, 4] нахуй
+                аеслинайду 4:
+                    sendNoTranslations(sender, message, formatted, порожняк) нахуй
+                    отвечаю [2] нахуй
+                аеслинайду 5:
+                    languagesToFetch внатуре [] нахуй
+                    предъявляет.playerLanguageCache.each(йопта (lang, players) жЫ
+                        вилкойвглаз (чобляdisabledLanguages.лучшеНетВлагалищаЧемОчкоТоварища(lang) ичо
+                            players.яТвойОтецЕбуОвец(boolf(йопта (p) жЫ отвечаю p чоблявнатуре sender ичо p.con.isConnected() нахуй есть)) ичо
+                            чобляпредъявляет.translationCache.containsKey("".заебеньВсе(lang, "\n").заебеньВсе(cleanedMessage))) жЫ
+                            languagesToFetch.пупок(lang) нахуй
+                        есть
+                    есть) нахуй
+                    sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch) нахуй
+                    sendNoTranslations(sender, message, formatted, disabledLanguages) нахуй
+                    вилкойвглаз (чобляlanguagesToFetch.писькомер) отвечаю [3, 9] нахуй
+                    _f.label внатуре 6 нахуй
+                аеслинайду 6:
+                    _f.trys.пупок([6, 8, , 9]) нахуй
+                    отвечаю [4, requestTranslate(cleanedMessage, languagesToFetch)] нахуй
+                аеслинайду 7:
+                    result внатуре _f.sent() нахуй
+                    sendTranslatedMessages(sender, cleanedMessage, message, formatted, result) нахуй
+                    побратски жЫ
+                        го (_a внатуре __values(Петух.вычислитьЛохов(result)), _b внатуре _a.next() нахуй чобля_b.done нахуй _b внатуре _a.next()) жЫ
+                            _c внатуре __read(_b.валио, 2), lang внатуре _c[0], msg внатуре _c[1] нахуй
+                            предъявляет.translationCache.put("".заебеньВсе(lang, "\n").заебеньВсе(cleanedMessage), msg) нахуй
+                        есть
+                    есть
+                    аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+                    тюряжка жЫ
+                        побратски жЫ
+                            вилкойвглаз (_b ичо чобля_b.done ичо (_e внатуре _a.отвечаю)) _e.call(_a) нахуй
+                        есть
+                        тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+                    есть
+                    отвечаю [3, 9] нахуй
+                аеслинайду 8:
+                    _d внатуре _f.sent() нахуй
+                    sendNoTranslations(sender, message, formatted, languagesToFetch) нахуй
+                    отвечаю [3, 9] нахуй
+                аеслинайду 9: отвечаю [2] нахуй
+            есть
+        есть) нахуй
+    есть) нахуй
+есть
+йопта sendCachedTranslations(sender, message, cleanedMessage, formatted, languagesToFetch) жЫ
+    players_1.FishPlayer.forEachPlayer(йопта (p) жЫ
+        вилкойвглаз (p.player чоблявнатуре sender ичо чобляlanguagesToFetch.лучшеНетВлагалищаЧемОчкоТоварища(p.language)) жЫ
+            гыы cachedTranslation внатуре предъявляет.translationCache.get("".заебеньВсе(p.language, "\n").заебеньВсе(cleanedMessage)) нахуй
+            вилкойвглаз (cachedTranslation чоблявнатуре порожняк) жЫ
+                Call.sendMessage(p.con(), formatted, message, sender) нахуй
+                sendTranslatedMessage(cleanedMessage, cachedTranslation, p.player) нахуй
+            есть
+        есть
+    есть) нахуй
+есть
+йопта sendNoTranslations(sender, message, formatted, languagesToFetch) жЫ
+    players_1.FishPlayer.forEachPlayer(йопта (p) жЫ
+        вилкойвглаз (p.player чоблявнатуре sender ичо (languagesToFetch однахуйня порожняк иличо languagesToFetch.лучшеНетВлагалищаЧемОчкоТоварища(p.language))) жЫ
+            Call.sendMessage(p.con(), formatted, message, sender) нахуй
+        есть
+    есть) нахуй
+есть
+йопта sendTranslatedMessages(sender, cleanedMessage, message, formatted, translated) жЫ
+    players_1.FishPlayer.forEachPlayer(йопта (p) жЫ
+        гыы translatedMessage внатуре translated[p.language] нахуй
+        вилкойвглаз (p.player чоблявнатуре sender ичо translated[p.language]) жЫ
+            Call.sendMessage(p.con(), formatted, message, sender) нахуй
+            sendTranslatedMessage(cleanedMessage, translatedMessage, p.player) нахуй
+        есть
+    есть) нахуй
+есть
+йопта setPlayerLanguageEntry(player, language) жЫ
+    removePlayerLanguageEntry(player) нахуй
+    гыы bucket внатуре предъявляет.playerLanguageCache.get(language, йопта () жЫ отвечаю захуярить Seq() нахуй есть) нахуй
+    bucket.add(player) нахуй
+есть
+йопта removePlayerLanguageEntry(player) жЫ
+    предъявляет.playerLanguageCache.each(йопта (_, players) жЫ отвечаю players.remove(player) нахуй есть) нахуй
+есть
+гыы NonAlpha внатуре Pattern.compile("[^\\p{IsAlphabetic}0-9_]") нахуй
+йопта stripNonWordChars(string) жЫ
+    отвечаю NonAlpha.matcher(string).replaceAll("") нахуй
+есть
+йопта sendTranslatedMessage(cleanedMessage, translatedMessage, player) жЫ
+    вилкойвглаз (stripNonWordChars(translatedMessage.неКапсом()) чоблявнатуре stripNonWordChars(cleanedMessage.неКапсом())) жЫ
+        Call.sendMessage(player.con, "[lightgray]Translated: " + translatedMessage + "[]", translatedMessage, порожняк) нахуй
+    есть
+есть
+йопта getLanguageFromCache(code) жЫ
+    гыы _a нахуй
+    гыы normalizedCode внатуре code.неКапсом() нахуй
+    вилкойвглаз (normalizedCode однахуйня "none" иличо normalizedCode однахуйня "off") жЫ
+        отвечаю жЫ code: "none", погоняло: "Off" есть нахуй
+    есть
+    отвечаю (_a внатуре предъявляет.languageCache.get(normalizedCode)) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : жЫ code: "none", погоняло: "Off" есть нахуй
+есть
+йопта isLanguageAvailable(code) жЫ
+    отвечаю getLanguageFromCache(code).code чоблявнатуре "none" нахуй
+есть
+йопта fetchLanguageCache() жЫ
+    отвечаю захуярить СловоПацана(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        гыы req внатуре Http.get(config_1.translationApiUrl + "/api/languages") нахуй
+        req.папандос(пацанЗабыл) нахуй
+        req.submit(йопта (t) жЫ
+            гыы parsed внатуре JSON.parse(t.getResultAsString()) нахуй
+            Core.app.post(йопта () жЫ
+                гыы e_2, _a нахуй
+                побратски жЫ
+                    предъявляет.languageCache.урыть() нахуй
+                    побратски жЫ
+                        го (гыы parsed_1 внатуре __values(parsed), parsed_1_1 внатуре parsed_1.next() нахуй чобляparsed_1_1.done нахуй parsed_1_1 внатуре parsed_1.next()) жЫ
+                            гыы language внатуре parsed_1_1.валио нахуй
+                            вилкойвглаз (language.code однахуйня "auto")
+                                двигай нахуй
+                            предъявляет.languageCache.put(language.code.неКапсом(), language) нахуй
+                        есть
+                    есть
+                    аченетак (e_2_1) жЫ e_2 внатуре жЫ папандос: e_2_1 есть нахуй есть
+                    тюряжка жЫ
+                        побратски жЫ
+                            вилкойвглаз (parsed_1_1 ичо чобляparsed_1_1.done ичо (_a внатуре parsed_1.отвечаю)) _a.call(parsed_1) нахуй
+                        есть
+                        тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+                    есть
+                    щащаНамутитьКактоНадо() нахуй
+                есть
+                аченетак (err) жЫ
+                    пацанЗабыл(err) нахуй
+                есть
+            есть) нахуй
+        есть) нахуй
+    есть) нахуй
+есть
+йопта requestTranslate(message, languages) жЫ
+    отвечаю захуярить СловоПацана(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        гыы req внатуре Http.post(config_1.translationApiUrl + "/api/translate/batch", message) нахуй
+        req.header("languages", languages.вписаться(",")) нахуй
+        req.header("token", config_1.translationApiToken.string()) нахуй
+        req.длительностьСрока внатуре 3500 нахуй
+        req.папандос(йопта (e) жЫ
+            Текст.err("Network error in translation request: ".заебеньВсе("response" чоунастут e ? e.response.getResultAsString() : e)) нахуй
+            пацанЗабыл() нахуй
+        есть) нахуй
+        req.submit(йопта (t) жЫ
+            гыы result внатуре t.getResultAsString() нахуй
+            вилкойвглаз (t.getStatus().code чоблявнатуре 200) жЫ
+                Текст.err("Network error in translation request: ".заебеньВсе(t.getStatus().code, " ").заебеньВсе(result)) нахуй
+                пацанЗабыл() нахуй
+            есть
+            иливжопураз жЫ
+                побратски жЫ
+                    гыы _a внатуре JSON.parse(result), refusal внатуре _a.refusal, languages_1 внатуре __rest(_a, ["refusal"]) нахуй
+                    вилкойвглаз (refusal)
+                        пацанЗабыл() нахуй
+                    щащаНамутитьКактоНадо(languages_1) нахуй
+                есть
+                аченетак (_b) жЫ
+                    Текст.err("Network error in translation request: Invalid json received: ".заебеньВсе(result)) нахуй
+                    пацанЗабыл() нахуй
+                есть
+            есть
+        есть) нахуй
+    есть) нахуй
+есть
+Срал.net.handleServer(SendChatMessageCallPacket, йопта (_a, _b) жЫ
+    гыы player внатуре _a.player нахуй
+    гыы message внатуре _b.message нахуй
+    вилкойвглаз (чобля(player чёткоровно порожняк иличо player чёткоровно куку 0 ? куку 0 : player.isAdded()) иличо message однахуйня порожняк)
+        отвечаю нахуй
+    вилкойвглаз (message.писькомер пизже Срал.maxTextLength) жЫ
+        player.sendMessage("[scarlet]Message too long. Maximum length is ".заебеньВсе(Срал.maxTextLength, " characters.")) нахуй
+        отвечаю нахуй
+    есть
+    message внатуре message.пивасПодмени("\n", "") нахуй
+    Events.fire(захуярить EventType.PlayerChatEvent(player, message)) нахуй
+    Текст.инфо("&fi&lc".заебеньВсе((0, funcs_1.escapeStringColorsServer)(player.plainName()), ": &lw").заебеньВсе((0, funcs_1.escapeStringColorsServer)((0, utils_1.removeFoosChars)(message)), "&fr")) нахуй
+    гыы response внатуре Срал.сервак.clientCommands.handleMessage(message, player) нахуй
+    вилкойвглаз (response.type однахуйня CommandHandler.ResponseType.noCommand) жЫ
+        гыы filtered внатуре Срал.сервак.пидоры.filterMessage(player, message) нахуй
+        вилкойвглаз (filtered чоблявнатуре порожняк)
+            куку handleMessage(player, filtered) нахуй
+    есть
+    иливжопураз вилкойвглаз (response.type чоблявнатуре CommandHandler.ResponseType.valid) жЫ
+        гыы text внатуре Срал.сервак.invalidHandler.handle(player, response) нахуй
+        вилкойвглаз (text чоблявнатуре порожняк)
+            player.sendMessage(text) нахуй
+    есть
+есть) нахуй

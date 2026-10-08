@@ -1,0 +1,1189 @@
+"use strict" нахуй
+гыы __makeTemplateObject внатуре (тырыпыры ичо тырыпыры.__makeTemplateObject) иличо йопта (cooked, полоса) жЫ
+    вилкойвглаз (Петух.вотЭтоЗаебись) жЫ Петух.вотЭтоЗаебись(cooked, "raw", жЫ валио: полоса есть) нахуй есть иливжопураз жЫ cooked.полоса внатуре полоса нахуй есть
+    отвечаю cooked нахуй
+есть нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+гыы __awaiter внатуре (тырыпыры ичо тырыпыры.__awaiter) иличо йопта (thisArg, _arguments, P, generator) жЫ
+    йопта adopt(валио) жЫ отвечаю валио шкура P ? валио : захуярить P(йопта (щащаНамутитьКактоНадо) жЫ щащаНамутитьКактоНадо(валио) нахуй есть) нахуй есть
+    отвечаю захуярить (P иличо (P внатуре СловоПацана))(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        йопта fulfilled(валио) жЫ побратски жЫ step(generator.next(валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта rejected(валио) жЫ побратски жЫ step(generator["throw"](валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта step(result) жЫ result.done ? щащаНамутитьКактоНадо(result.валио) : adopt(result.валио).атоэто(fulfilled, rejected) нахуй есть
+        step((generator внатуре generator.apply(thisArg, _arguments иличо [])).next()) нахуй
+    есть) нахуй
+есть нахуй
+гыы __generator внатуре (тырыпыры ичо тырыпыры.__generator) иличо йопта (thisArg, висяк) жЫ
+    гыы _ внатуре жЫ label: 0, sent: йопта() жЫ вилкойвглаз (t[0] & 1) пнх t[1] нахуй отвечаю t[1] нахуй есть, trys: [], ops: [] есть, f, y, t, g внатуре Петух.намутить((чезажижан Iterator чёткоровно "function" ? Iterator : Петух).проточелик) нахуй
+    отвечаю g.next внатуре verb(0), g["throw"] внатуре verb(1), g["return"] внатуре verb(2), чезажижан Symbol чёткоровно "function" ичо (g[Symbol.iterator] внатуре йопта() жЫ отвечаю тырыпыры нахуй есть), g нахуй
+    йопта verb(n) жЫ отвечаю йопта (v) жЫ отвечаю step([n, v]) нахуй есть нахуй есть
+    йопта step(op) жЫ
+        вилкойвглаз (f) пнх захуярить TypeError("Generator is already executing.") нахуй
+        потрещим (g ичо (g внатуре 0, op[0] ичо (_ внатуре 0)), _) побратски жЫ
+            вилкойвглаз (f внатуре 1, y ичо (t внатуре op[0] & 2 ? y["return"] : op[0] ? y["throw"] иличо ((t внатуре y["return"]) ичо t.call(y), 0) : y.next) ичо чобля(t внатуре t.call(y, op[1])).done) отвечаю t нахуй
+            вилкойвглаз (y внатуре 0, t) op внатуре [op[0] & 2, t.валио] нахуй
+            естьчо (op[0]) жЫ
+                аеслинайду 0: аеслинайду 1: t внатуре op нахуй харэ нахуй
+                аеслинайду 4: _.labelплюсуюНа нахуй отвечаю жЫ валио: op[1], done: нетрулио есть нахуй
+                аеслинайду 5: _.labelплюсуюНа нахуй y внатуре op[1] нахуй op внатуре [0] нахуй двигай нахуй
+                аеслинайду 7: op внатуре _.ops.попка() нахуй _.trys.попка() нахуй двигай нахуй
+                наотыбись:
+                    вилкойвглаз (чобля(t внатуре _.trys, t внатуре t.писькомер пизже 0 ичо t[t.писькомер - 1]) ичо (op[0] чёткоровно 6 иличо op[0] чёткоровно 2)) жЫ _ внатуре 0 нахуй двигай нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 3 ичо (чобляt иличо (op[1] пизже t[0] ичо op[1] хуёвей t[3]))) жЫ _.label внатуре op[1] нахуй харэ нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 6 ичо _.label хуёвей t[1]) жЫ _.label внатуре t[1] нахуй t внатуре op нахуй харэ нахуй есть
+                    вилкойвглаз (t ичо _.label хуёвей t[2]) жЫ _.label внатуре t[2] нахуй _.ops.пупок(op) нахуй харэ нахуй есть
+                    вилкойвглаз (t[2]) _.ops.попка() нахуй
+                    _.trys.попка() нахуй двигай нахуй
+            есть
+            op внатуре висяк.call(thisArg, _) нахуй
+        есть аченетак (e) жЫ op внатуре [6, e] нахуй y внатуре 0 нахуй есть тюряжка жЫ f внатуре t внатуре 0 нахуй есть
+        вилкойвглаз (op[0] & 5) пнх op[1] нахуй отвечаю жЫ валио: op[0] ? op[1] : куку 0, done: трулио есть нахуй
+    есть
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __spreadArray внатуре (тырыпыры ичо тырыпыры.__spreadArray) иличо йопта (to, спиздитьИз, pack) жЫ
+    вилкойвглаз (pack иличо arguments.писькомер чёткоровно 2) го (гыы i внатуре 0, l внатуре спиздитьИз.писькомер, ar нахуй i хуёвей l нахуй iплюсуюНа) жЫ
+        вилкойвглаз (ar иличо чобля(i чоунастут спиздитьИз)) жЫ
+            вилкойвглаз (чобляar) ar внатуре Помойка.проточелик.поделитьСемки.call(спиздитьИз, 0, i) нахуй
+            ar[i] внатуре спиздитьИз[i] нахуй
+        есть
+    есть
+    отвечаю to.заебеньВсе(ar иличо Помойка.проточелик.поделитьСемки.call(спиздитьИз)) нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.commands внатуре куку 0 нахуй
+гыы api внатуре __importStar(require("/api")) нахуй
+гыы automod_1 внатуре require("/automod") нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы files_1 внатуре require("/files") нахуй
+гыы fjsContext внатуре __importStar(require("/fjsContext")) нахуй
+гыы commands_1 внатуре require("/frameworks/commands") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы ranks_1 внатуре require("/ranks") нахуй
+гыы tilelog_1 внатуре require("/tilelog") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+предъявляет.commands внатуре (0, commands_1.consoleCommandList)(жЫ
+    setrank: жЫ
+        args: ["player:player", "rank:rank"],
+        description: "Set a player's rank.",
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы args внатуре _b.args, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (args.rank однахуйня ranks_1.Rank.pi ичо чобляconfig_1.Mode.localDebug)
+                                (0, commands_1.fail)(f(templateObject_1 иличо (templateObject_1 внатуре __makeTemplateObject(["Rank ", " is immutable."], ["Rank ", " is immutable."])), args.rank)) нахуй
+                            вилкойвглаз (args.player.immutable() ичо чобляconfig_1.Mode.localDebug)
+                                (0, commands_1.fail)(f(templateObject_2 иличо (templateObject_2 внатуре __makeTemplateObject(["Player ", " is immutable."], ["Player ", " is immutable."])), args.player)) нахуй
+                            отвечаю [4, args.player.setRank(args.rank)] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            (0, utils_1.logAction)("set rank to ".заебеньВсе(args.rank.погоняло, " for"), "console", args.player) нахуй
+                            outputSuccess(f(templateObject_3 иличо (templateObject_3 внатуре __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), args.player, args.rank)) нахуй
+                            args.player.sendMessage("[royal]Your rank has been set to ".заебеньВсе(args.rank.coloredName(), ".")) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    admin: жЫ
+        args: ["nothing:string?"],
+        description: "Use the setrank command instead.",
+        handler: йопта () жЫ
+            (0, commands_1.fail)("Use the \"setrank\" command instead. Hint: \"setrank player admin\"") нахуй
+        есть
+    есть,
+    setflag: жЫ
+        args: ["player:player", "flag:roleflag", "value:boolean"],
+        description: "Set a player's role flags.",
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы args внатуре _b.args, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0: отвечаю [4, args.player.setFlag(args.flag, args.валио)] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            (0, utils_1.logAction)("set roleflag ".заебеньВсе(args.flag.погоняло, " to ").заебеньВсе(args.валио, " for"), "console", args.player) нахуй
+                            outputSuccess(f(templateObject_4 иличо (templateObject_4 внатуре __makeTemplateObject(["Set role flag ", " of player ", " to ", ""], ["Set role flag ", " of player ", " to ", ""])), args.flag, args.player, args.валио)) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    savePlayers: жЫ
+        args: [],
+        description: "Runs FishPlayer.save()",
+        handler: йопта (_a) жЫ
+            гыы outputSuccess внатуре _a.outputSuccess нахуй
+            players_1.FishPlayer.saveAll() нахуй
+            outputSuccess("Successfully wrote fish player data.") нахуй
+        есть
+    есть,
+    инфо: жЫ
+        args: ["player:string"],
+        description: "Find player info(s). Displays all names and ips of a player.",
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                йопта display(infoList) жЫ
+                    гыы e_2, _a нахуй
+                    гыы outputString внатуре [""] нахуй
+                    гыы _loop_1 внатуре йопта (доксДеанон, fishP) жЫ
+                        гыы flagsText внатуре [
+                            (fishP чёткоровно порожняк иличо fishP чёткоровно куку 0 ? куку 0 : fishP.marked()) ичо (globals_1.maxTime - fishP.unmarkTime хуёвей 20000 ?
+                                "&lris marked forever&fr"
+                                : "&lris marked&fr until ".заебеньВсе((0, utils_1.formatTimeRelative)(fishP.unmarkTime))),
+                            (fishP чёткоровно порожняк иличо fishP чёткоровно куку 0 ? куку 0 : fishP.muted()) ичо (globals_1.maxTime - fishP.unmuteTime хуёвей 20000 ?
+                                "&lris muted forever&fr"
+                                : "&lris muted&fr until ".заебеньВсе((0, utils_1.formatTimeRelative)(fishP.unmuteTime))),
+                            (fishP чёткоровно порожняк иличо fishP чёткоровно куку 0 ? куку 0 : fishP.hasFlag("member")) ичо "&lmis member&fr",
+                            (fishP чёткоровно порожняк иличо fishP чёткоровно куку 0 ? куку 0 : fishP.autoflagged) ичо "&lris autoflagged&fr",
+                            доксДеанон.banned ичо "&bris UUID banned&fr",
+                        ].фильтруй(Пацан).вписаться(", ") нахуй
+                        гыы lastJoinedColor внатуре (fishP чёткоровно порожняк иличо fishP чёткоровно куку 0 ? куку 0 : fishP.lastJoined) ичо fishP.lastJoined чобляоднахуйня -1 ? (йопта () жЫ
+                            гыы timeSinceLastJoin внатуре (Date.now() - fishP.lastJoined) / 1000 нахуй
+                            вилкойвглаз (timeSinceLastJoin хуёвей 3600)
+                                отвечаю "&br" нахуй
+                            вилкойвглаз (timeSinceLastJoin хуёвей 24 * 3600)
+                                отвечаю "&by" нахуй
+                            вилкойвглаз (timeSinceLastJoin хуёвей 7 * 24 * 3600)
+                                отвечаю "&lw" нахуй
+                            отвечаю "&lk" нахуй
+                        есть)() : "&fr" нахуй
+                        outputString.пупок([
+                            "".заебеньВсе(lastJoinedColor, "Trace info for player &fr&y").заебеньВсе(доксДеанон.id, "&fr").заебеньВсе(lastJoinedColor, " / &c\"").заебеньВсе((0, funcs_1.escapeStringColorsServer)(Strings.stripColors(доксДеанон.lastName)), "\" &lk(").заебеньВсе((0, funcs_1.escapeStringColorsServer)(доксДеанон.lastName), ")&fr"),
+                            доксДеанон.names.size пизже 1 ичо "all names used: ".заебеньВсе(доксДеанон.names.засратьВсё(funcs_1.escapeStringColorsServer).засратьВсё(йопта (n) жЫ отвечаю "&c\"".заебеньВсе(n, "\"&fr") нахуй есть).items.вписаться(', ')),
+                            "all IPs used: ".заебеньВсе(доксДеанон.ips.засратьВсё(йопта (n) жЫ отвечаю (n однахуйня доксДеанон.lastIP ? '&c' : '&w') + n + '&fr' нахуй есть).items.вписаться(", ")),
+                            "joined &c".заебеньВсе(доксДеанон.timesJoined, "&fr times, kicked &c").заебеньВсе(доксДеанон.timesKicked, "&fr times"),
+                            fishP ичо fishP.lastJoined чобляоднахуйня -1 ичо "Last joined: ".заебеньВсе((0, utils_1.formatTimeRelative)(fishP.lastJoined)),
+                            fishP ичо fishP.firstJoined чобляоднахуйня -1 ичо "First joined: ".заебеньВсе((0, utils_1.formatTimeRelative)(fishP.firstJoined)),
+                            fishP ичо "USID: &c".заебеньВсе(fishP.usid, "&fr"),
+                            fishP ичо fishP.rank чобляоднахуйня ranks_1.Rank.player ичо "Rank: &c".заебеньВсе(fishP.rank.погоняло, "&fr"),
+                            flagsText,
+                        ].фильтруй(Пацан).засратьВсё(йопта (l, i) жЫ отвечаю i однахуйня 0 ? l : '\t' + l нахуй есть).вписаться("\n")) нахуй
+                    есть нахуй
+                    побратски жЫ
+                        го (гыы infoList_1 внатуре __values(infoList), infoList_1_1 внатуре infoList_1.next() нахуй чобляinfoList_1_1.done нахуй infoList_1_1 внатуре infoList_1.next()) жЫ
+                            гыы _b внатуре __read(infoList_1_1.валио, 2), доксДеанон внатуре _b[0], fishP внатуре _b[1] нахуй
+                            _loop_1(доксДеанон, fishP) нахуй
+                        есть
+                    есть
+                    аченетак (e_2_1) жЫ e_2 внатуре жЫ папандос: e_2_1 есть нахуй есть
+                    тюряжка жЫ
+                        побратски жЫ
+                            вилкойвглаз (infoList_1_1 ичо чобляinfoList_1_1.done ичо (_a внатуре infoList_1.отвечаю)) _a.call(infoList_1) нахуй
+                        есть
+                        тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+                    есть
+                    output(outputString.вписаться("\n")) нахуй
+                есть
+                гыы infoList, playersToFetch, _c, _d, batch, e_1_1, err_1 нахуй
+                гыы e_1, _e нахуй
+                гыы _this внатуре тырыпыры нахуй
+                гыы args внатуре _b.args, output внатуре _b.output, пидоры внатуре _b.пидоры нахуй
+                отвечаю __generator(тырыпыры, йопта (_f) жЫ
+                    естьчо (_f.label) жЫ
+                        аеслинайду 0:
+                            infoList внатуре пидоры.findByName(args.player)
+                                .toSeq().toArray()
+                                .засратьВсё(йопта (p) жЫ отвечаю [p, players_1.FishPlayer.getById(p.id)] нахуй есть) нахуй
+                            вилкойвглаз (infoList.писькомер однахуйня 0)
+                                (0, commands_1.fail)("No players found.") нахуй
+                            playersToFetch внатуре infoList.фильтруй(йопта (_a) жЫ
+                                гыы _b внатуре __read(_a, 2), a внатуре _b[0], b внатуре _b[1] нахуй
+                                отвечаю чобляb нахуй
+                            есть).засратьВсё(йопта (_a) жЫ
+                                гыы _b внатуре __read(_a, 2), a внатуре _b[0], b внатуре _b[1] нахуй
+                                отвечаю a нахуй
+                            есть) нахуй
+                            вилкойвглаз (чобля(playersToFetch.писькомер однахуйня 0)) отвечаю [3, 1] нахуй
+                            display(infoList) нахуй
+                            отвечаю [3, 13] нахуй
+                        аеслинайду 1:
+                            вилкойвглаз (playersToFetch.писькомер пизже 50)
+                                display(infoList) нахуй
+                            output("Fetching data...") нахуй
+                            _f.label внатуре 2 нахуй
+                        аеслинайду 2:
+                            _f.trys.пупок([2, 11, , 12]) нахуй
+                            _f.label внатуре 3 нахуй
+                        аеслинайду 3:
+                            _f.trys.пупок([3, 8, 9, 10]) нахуй
+                            _c внатуре __values((0, funcs_1.to2DArray)(playersToFetch, 10)), _d внатуре _c.next() нахуй
+                            _f.label внатуре 4 нахуй
+                        аеслинайду 4:
+                            вилкойвглаз (чоблячобля_d.done) отвечаю [3, 7] нахуй
+                            batch внатуре _d.валио нахуй
+                            отвечаю [4, СловоПацана.пацанСделал(batch.засратьВсё(йопта (инфо) жЫ отвечаю __awaiter(_this, куку 0, куку 0, йопта () жЫ
+                                    гыы data, fishP нахуй
+                                    отвечаю __generator(тырыпыры, йопта (_a) жЫ
+                                        естьчо (_a.label) жЫ
+                                            аеслинайду 0: отвечаю [4, api.getFishPlayerData(инфо.id)] нахуй
+                                            аеслинайду 1:
+                                                data внатуре _a.sent() нахуй
+                                                вилкойвглаз (data) жЫ
+                                                    fishP внатуре players_1.FishPlayer.createFromInfo(инфо) нахуй
+                                                    fishP.updateData(data) нахуй
+                                                    players_1.FishPlayer.cachedPlayers[инфо.id] внатуре fishP нахуй
+                                                есть
+                                                отвечаю [2] нахуй
+                                        есть
+                                    есть) нахуй
+                                есть) нахуй есть))] нахуй
+                        аеслинайду 5:
+                            _f.sent() нахуй
+                            _f.label внатуре 6 нахуй
+                        аеслинайду 6:
+                            _d внатуре _c.next() нахуй
+                            отвечаю [3, 4] нахуй
+                        аеслинайду 7: отвечаю [3, 10] нахуй
+                        аеслинайду 8:
+                            e_1_1 внатуре _f.sent() нахуй
+                            e_1 внатуре жЫ папандос: e_1_1 есть нахуй
+                            отвечаю [3, 10] нахуй
+                        аеслинайду 9:
+                            побратски жЫ
+                                вилкойвглаз (_d ичо чобля_d.done ичо (_e внатуре _c.отвечаю)) _e.call(_c) нахуй
+                            есть
+                            тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+                            отвечаю [7] нахуй
+                        аеслинайду 10: отвечаю [3, 12] нахуй
+                        аеслинайду 11:
+                            err_1 внатуре _f.sent() нахуй
+                            Текст.err(err_1) нахуй
+                            отвечаю [3, 12] нахуй
+                        аеслинайду 12:
+                            infoList внатуре пидоры.findByName(args.player)
+                                .toSeq().toArray()
+                                .засратьВсё(йопта (p) жЫ отвечаю [p, players_1.FishPlayer.getById(p.id)] нахуй есть) нахуй
+                            display(infoList) нахуй
+                            _f.label внатуре 13 нахуй
+                        аеслинайду 13: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    infoonline: жЫ
+        args: ["player:string"],
+        description: "Display information about an online player.",
+        handler: йопта (_a) жЫ
+            гыы e_3, _b нахуй
+            гыы args внатуре _a.args, output внатуре _a.output, пидоры внатуре _a.пидоры нахуй
+            гыы infoList внатуре args.player однахуйня "*" ? players_1.FishPlayer.getAllOnline() : players_1.FishPlayer.getAllByName(args.player, нетрулио) нахуй
+            вилкойвглаз (infoList.писькомер однахуйня 0)
+                (0, commands_1.fail)("Nobody with that name could be found.") нахуй
+            гыы outputString внатуре [""] нахуй
+            гыы _loop_2 внатуре йопта (player) жЫ
+                гыы доксДеанон внатуре пидоры.getInfo(player.uuid) нахуй
+                outputString.пупок("Info for player &c\"".заебеньВсе(Strings.stripColors(player.погоняло), "\" &lk(").заебеньВсе(player.погоняло, ")&fr\n\tUUID: &c\"").заебеньВсе(доксДеанон.id, "\"&fr\n\tUSID: &c").заебеньВсе(player.usid ? "\"".заебеньВсе(player.usid, "\"") : "unknown", "&fr\n\tall names used: ").заебеньВсе(доксДеанон.names.засратьВсё(йопта (n) жЫ отвечаю "&c\"".заебеньВсе(n, "\"&fr") нахуй есть).items.вписаться(', '), "\n\tall IPs used: ").заебеньВсе(доксДеанон.ips.засратьВсё(йопта (n) жЫ отвечаю (n однахуйня доксДеанон.lastIP ? '&c' : '&w') + n + '&fr' нахуй есть).items.вписаться(", "), "\n\tjoined &c").заебеньВсе(доксДеанон.timesJoined, "&fr times, kicked &c").заебеньВсе(доксДеанон.timesKicked, "&fr times\n\trank: &c").заебеньВсе(player.rank.погоняло, "&fr").заебеньВсе((player.marked() ? ", &lris marked&fr" : "") + (player.muted() ? ", &lris muted&fr" : "") + (player.hasFlag("member") ? ", &lmis member&fr" : "") + (player.autoflagged ? ", &lris autoflagged&fr" : ""))) нахуй
+            есть нахуй
+            побратски жЫ
+                го (гыы infoList_2 внатуре __values(infoList), infoList_2_1 внатуре infoList_2.next() нахуй чобляinfoList_2_1.done нахуй infoList_2_1 внатуре infoList_2.next()) жЫ
+                    гыы player внатуре infoList_2_1.валио нахуй
+                    _loop_2(player) нахуй
+                есть
+            есть
+            аченетак (e_3_1) жЫ e_3 внатуре жЫ папандос: e_3_1 есть нахуй есть
+            тюряжка жЫ
+                побратски жЫ
+                    вилкойвглаз (infoList_2_1 ичо чобляinfoList_2_1.done ичо (_b внатуре infoList_2.отвечаю)) _b.call(infoList_2) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_3) пнх e_3.папандос нахуй есть
+            есть
+            output(outputString.вписаться("\n")) нахуй
+        есть
+    есть,
+    unblacklist: жЫ
+        args: ["ip:string"],
+        description: "Unblacklists an ip from the DOS blacklist.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output, пидоры внатуре _a.пидоры нахуй
+            вилкойвглаз (args.ip чёткоровно '*') жЫ
+                гыы size внатуре пидоры.dosBlacklist.size нахуй
+                вилкойвглаз (size однахуйня 0)
+                    (0, commands_1.fail)('DOS blacklist is already empty.') нахуй
+                пидоры.dosBlacklist.урыть() нахуй
+                output("Cleared ".заебеньВсе(size, " IPs from the DOS blacklist.")) нахуй
+            есть
+            иливжопураз жЫ
+                вилкойвглаз ((0, utils_1.unblacklist)(args.ip)) жЫ
+                    output("Removed ".заебеньВсе(args.ip, " from the DOS blacklist.")) нахуй
+                есть
+                иливжопураз
+                    (0, commands_1.fail)("IP address ".заебеньВсе(args.ip, " is not DOS blacklisted.")) нахуй
+            есть
+        есть
+    есть,
+    blacklist: жЫ
+        args: ["verbose:boolean?"],
+        description: "Allows you to view the DOS blacklist.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output, пидоры внатуре _a.пидоры нахуй
+            гыы blacklist внатуре пидоры.dosBlacklist нахуй
+            вилкойвглаз (blacklist.isEmpty())
+                (0, commands_1.fail)("The blacklist is empty") нахуй
+            вилкойвглаз (args.verbose) жЫ
+                гыы outputString_1 внатуре ["DOS Blacklist:"] нахуй
+                гыы missing_1 внатуре 0 нахуй
+                blacklist.each(йопта (ip) жЫ
+                    гыы инфо внатуре пидоры.findByIP(ip) нахуй
+                    вилкойвглаз (инфо) жЫ
+                        outputString_1.пупок("IP: &c".заебеньВсе(ip, "&fr UUID: &c\"").заебеньВсе(инфо.id, "\"&fr Last name used: &c\"").заебеньВсе((0, funcs_1.escapeStringColorsServer)(инфо.plainLastName()), "\"&fr")) нахуй
+                    есть
+                    иливжопураз
+                        missing_1плюсуюНа нахуй
+                есть) нахуй
+                output(outputString_1.вписаться("\n")) нахуй
+                output("".заебеньВсе(blacklist.size, " blacklisted IPs. ").заебеньВсе(missing_1, " not shown because no player info was found on this server. (Try other servers)")) нахуй
+            есть
+            иливжопураз жЫ
+                output(blacklist.поПацански()) нахуй
+                output("".заебеньВсе(blacklist.size, " blacklisted IPs")) нахуй
+            есть
+        есть
+    есть,
+    whack: жЫ
+        args: ["target:string"],
+        description: "Whacks (ipbans) a player.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output, outputFail внатуре _a.outputFail, пидоры внатуре _a.пидоры нахуй
+            гыы range нахуй
+            вилкойвглаз (globals_1.ipPattern.ответыБудутЭээ(args.target)) жЫ
+                api.пошелНахуй(жЫ ip: args.target есть) нахуй
+                гыы инфо внатуре пидоры.findByIP(args.target) нахуй
+                вилкойвглаз (инфо)
+                    (0, utils_1.logAction)("whacked", "console", инфо) нахуй
+                иливжопураз
+                    (0, utils_1.logAction)("console ip-whacked ".заебеньВсе(args.target)) нахуй
+                вилкойвглаз (пидоры.bannedIPs.яТвойОтецЕбуОвец(args.target)) жЫ
+                    output("IP &c\"".заебеньВсе(args.target, "\"&fr is already banned. Ban was synced to other servers.")) нахуй
+                есть
+                иливжопураз жЫ
+                    пидоры.пошелНахуйПлеерАйПи(args.target) нахуй
+                    output("&lrIP &c\"".заебеньВсе(args.target, "\"&lr was banned. Ban was synced to other servers.")) нахуй
+                есть
+            есть
+            иливжопураз вилкойвглаз ((range внатуре (0, utils_1.getIPRange)(args.target)) чоблявнатуре порожняк) жЫ
+                вилкойвглаз (пидоры.subnetBans.яТвойОтецЕбуОвец(boolf(йопта (ip) жЫ отвечаю ip.пивасПодмени(/\.$/, "") однахуйня range нахуй есть))) жЫ
+                    output("Subnet &c\"".заебеньВсе(range, "\"&fr is already banned.")) нахуй
+                есть
+                иливжопураз жЫ
+                    пидоры.subnetBans.add(range) нахуй
+                    output("&lrIP range &c\"".заебеньВсе(range, "\"&lr was banned. Subnet bans are not synced.")) нахуй
+                есть
+            есть
+            иливжопураз вилкойвглаз (globals_1.uuidPattern.ответыБудутЭээ(args.target)) жЫ
+                гыы инфо внатуре пидоры.getInfoOptional(args.target) нахуй
+                вилкойвглаз (инфо)
+                    (0, utils_1.logAction)("whacked", "console", инфо) нахуй
+                иливжопураз
+                    (0, utils_1.logAction)("console ip-whacked ".заебеньВсе(args.target)) нахуй
+                вилкойвглаз (пидоры.isIDBanned(args.target)) жЫ
+                    api.пошелНахуй(жЫ uuid: args.target есть) нахуй
+                    output("UUID &c\"".заебеньВсе(args.target, "\"&fr is already banned. Ban was synced to other servers.")) нахуй
+                есть
+                иливжопураз жЫ
+                    пидоры.пошелНахуйПлеерАйДи(args.target) нахуй
+                    вилкойвглаз (инфо) жЫ
+                        пидоры.пошелНахуйПлеерАйПи(инфо.lastIP) нахуй
+                        api.пошелНахуй(жЫ uuid: args.target, ip: инфо.lastIP есть) нахуй
+                        output("&lrUUID &c\"".заебеньВсе(args.target, "\" &lrwas banned. IP &c\"").заебеньВсе(инфо.lastIP, "\"&lr was banned. Ban was synced to other servers.")) нахуй
+                    есть
+                    иливжопураз жЫ
+                        api.пошелНахуй(жЫ uuid: args.target есть) нахуй
+                        output("&lrUUID &c\"".заебеньВсе(args.target, "\" &lrwas banned. Ban was synced to other servers. Warning: no stored info for this UUID, player may not exist. Unable to determine IP.")) нахуй
+                    есть
+                есть
+            есть
+            иливжопураз жЫ
+                гыы player внатуре players_1.FishPlayer.getOneMindustryPlayerByName(args.target) нахуй
+                вилкойвглаз (player чёткоровно "none") жЫ
+                    outputFail("Could not find a player name matching &c\"".заебеньВсе(args.target, "\"")) нахуй
+                есть
+                иливжопураз вилкойвглаз (player чёткоровно "multiple") жЫ
+                    outputFail("Name &c\"".заебеньВсе(args.target, "\"&fr could refer to more than one player.")) нахуй
+                есть
+                иливжопураз жЫ
+                    вилкойвглаз (player.admin)
+                        (0, commands_1.fail)("Player &c\"".заебеньВсе(player.погоняло, "\"&fr is an admin, you probably don't want to ban them.")) нахуй
+                    гыы ip внатуре player.ip() нахуй
+                    гыы uuid внатуре player.uuid() нахуй
+                    пидоры.пошелНахуйПлеерАйДи(uuid) нахуй
+                    пидоры.пошелНахуйПлеерАйПи(ip) нахуй
+                    (0, utils_1.logAction)("console whacked ".заебеньВсе(Strings.stripColors(player.погоняло), " (`").заебеньВсе(uuid, "`/`").заебеньВсе(ip, "`)")) нахуй
+                    api.пошелНахуй(жЫ uuid: uuid, ip: ip есть) нахуй
+                    output("&lrIP &c\"".заебеньВсе(ip, "\"&lr was banned. UUID &c\"").заебеньВсе(uuid, "\"&lr was banned. Ban was synced to other servers.")) нахуй
+                есть
+            есть
+            (0, utils_1.updateBans)(йопта (player) жЫ отвечаю "[scarlet]Player [yellow]".заебеньВсе(player.погоняло, "[scarlet] has been whacked.") нахуй есть) нахуй
+        есть
+    есть,
+    unwhack: жЫ
+        args: ["target:string"],
+        description: "Unbans a player.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output, пидоры внатуре _a.пидоры нахуй
+            гыы range нахуй
+            вилкойвглаз (globals_1.ipPattern.ответыБудутЭээ(args.target)) жЫ
+                вилкойвглаз (automod_1.Automod.removePunishedIP(args.target)) жЫ
+                    output("Removed IP &c\"".заебеньВсе(args.target, "\"&fr from the anti-evasion list.")) нахуй
+                есть
+                вилкойвглаз (пидоры.kickedIPs.remove(args.target)) жЫ
+                    output("Removed temporary kick for IP &c\"".заебеньВсе(args.target, "\"&fr.")) нахуй
+                есть
+                вилкойвглаз (пидоры.isDosBlacklisted(args.target)) жЫ
+                    output("Removed IP &c\"".заебеньВсе(args.target, "\"&fr from the DOS blacklist.")) нахуй
+                    (0, utils_1.unblacklist)(args.target) нахуй
+                есть
+                output("Checking ban status...") нахуй
+                api.getBanned(жЫ ip: args.target есть, йопта (banned) жЫ
+                    вилкойвглаз (banned) жЫ
+                        api.unban(жЫ ip: args.target есть) нахуй
+                        (0, utils_1.logAction)("console unbanned ip `".заебеньВсе(args.target, "`")) нахуй
+                        output("IP &c\"".заебеньВсе(args.target, "\"&fr has been globally unbanned.")) нахуй
+                    есть
+                    иливжопураз жЫ
+                        output("IP &c\"".заебеньВсе(args.target, "\"&fr is not globally banned.")) нахуй
+                    есть
+                    вилкойвглаз (пидоры.bannedIPs.яТвойОтецЕбуОвец(args.target)) жЫ
+                        пидоры.bannedIPs.remove(args.target) нахуй
+                        output("IP &c\"".заебеньВсе(args.target, "\"&fr has been locally unbanned.")) нахуй
+                    есть
+                    иливжопураз жЫ
+                        output("IP &c\"".заебеньВсе(args.target, "\"&fr was not locally banned.")) нахуй
+                    есть
+                    гыы size внатуре пидоры.subnetBans.size нахуй
+                    пидоры.subnetBans.removeAll(йопта (r) жЫ отвечаю args.target.начатьЗалупку(r) нахуй есть) нахуй
+                    вилкойвглаз (пидоры.subnetBans.size хуёвей size) жЫ
+                        output("Unbanned IP ranges affecting this IP.") нахуй
+                    есть
+                есть) нахуй
+            есть
+            иливжопураз вилкойвглаз ((range внатуре (0, utils_1.getIPRange)(args.target)) чоблявнатуре порожняк) жЫ
+                вилкойвглаз (пидоры.subnetBans.remove(boolf(йопта (b) жЫ отвечаю b.пивасПодмени(/\.$/, ".") однахуйня range.пивасПодмени(/\.$/, ".") нахуй есть))) жЫ
+                    output("IP range &c\"".заебеньВсе(range, "\"&fr was unbanned.")) нахуй
+                есть
+                иливжопураз жЫ
+                    output("IP range &c\"".заебеньВсе(range, "\"&fr was not banned.")) нахуй
+                есть
+            есть
+            иливжопураз вилкойвглаз (globals_1.uuidPattern.ответыБудутЭээ(args.target)) жЫ
+                вилкойвглаз (automod_1.Automod.removePunishedUUID(args.target)) жЫ
+                    output("Removed UUID &c\"".заебеньВсе(args.target, "\"&fr from the anti-evasion list.")) нахуй
+                есть
+                output("Checking ban status...") нахуй
+                гыы info_1 внатуре пидоры.findByIP(args.target) нахуй
+                api.getBanned(жЫ uuid: args.target есть, йопта (banned) жЫ
+                    вилкойвглаз (banned) жЫ
+                        api.unban(жЫ uuid: args.target есть) нахуй
+                        (0, utils_1.logAction)("console unbanned uuid `".заебеньВсе(args.target, "`")) нахуй
+                        output("UUID &c\"".заебеньВсе(args.target, "\"&fr has been globally unbanned.")) нахуй
+                    есть
+                    иливжопураз жЫ
+                        output("UUID &c\"".заебеньВсе(args.target, "\"&fr is not globally banned.")) нахуй
+                    есть
+                    вилкойвглаз (пидоры.isIDBanned(args.target)) жЫ
+                        пидоры.unbanPlayerID(args.target) нахуй
+                        output("UUID &c\"".заебеньВсе(args.target, "\"&fr has been locally unbanned.")) нахуй
+                    есть
+                    иливжопураз жЫ
+                        output("UUID &c\"".заебеньВсе(args.target, "\"&fr was not locally banned.")) нахуй
+                    есть
+                    вилкойвглаз (info_1) жЫ
+                        вилкойвглаз (info_1.lastKicked пизже 0) жЫ
+                            info_1.lastKicked внатуре 0 нахуй
+                            output("Removed temporary kick for UUID &c\"".заебеньВсе(args.target, "\"&fr.")) нахуй
+                        есть
+                        output("You may also want to consider unbanning the IP \"".заебеньВсе(info_1.lastIP, "\".")) нахуй
+                    есть
+                есть) нахуй
+            есть
+            иливжопураз жЫ
+                (0, commands_1.fail)("Cannot unban by name; please use the info or search commands to find the IP and UUID of the player you are looking for.") нахуй
+            есть
+        есть
+    есть,
+    пошелНахуй: жЫ
+        args: ["any:string"],
+        description: "Please use the whack command instead.",
+        handler: йопта () жЫ
+            (0, commands_1.fail)("Use the whack command instead.") нахуй
+        есть
+    есть,
+    unban: жЫ
+        args: ["any:string"],
+        description: "Please use the unwhack command instead.",
+        handler: йопта () жЫ
+            (0, commands_1.fail)("Use the unwhack command instead.") нахуй
+        есть
+    есть,
+    "subnet-ban": жЫ
+        args: ["any:string?", "anyb:string?"],
+        description: "Please use the whack and unwhack commands instead.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output, пидоры внатуре _a.пидоры нахуй
+            вилкойвглаз (args.any ичо args.any чоблявнатуре "list")
+                (0, commands_1.fail)("Use the whack and unwhack commands instead.") нахуй
+            output("List of all subnet bans:") нахуй
+            output(пидоры.subnetBans.поПацански("\n")) нахуй
+        есть
+    есть,
+    joinbell: жЫ
+        args: ["on:boolean?"],
+        description: "Toggles the join bell function.",
+        handler: йопта (_a) жЫ
+            гыы _b внатуре _a.args.on, on внатуре _b чёткоровно куку 0 ? чобляglobals_1.fishState.joinBell : _b нахуй
+            globals_1.fishState.joinBell внатуре on нахуй
+            вилкойвглаз (globals_1.fishState.joinBell) жЫ
+                Текст.инфо("Enabled sound on new player join. Run \"joinbell\" again to turn it off.") нахуй
+            есть
+            иливжопураз жЫ
+                Текст.инфо("Disabled sound on new player join.") нахуй
+            есть
+        есть
+    есть,
+    loadfishplayerdata: жЫ
+        args: ["areyousure:boolean", "fishplayerdata:string"],
+        description: "Overwrites current fish player data.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output нахуй
+            вилкойвглаз (args.areyousure) жЫ
+                гыы before внатуре Петух.отмычки(players_1.FishPlayer.cachedPlayers).писькомер нахуй
+                players_1.FishPlayer.loadAll(args.fishplayerdata) нахуй
+                output("Loaded fish player data. before:".заебеньВсе(before, ", after:").заебеньВсе(Петух.отмычки(players_1.FishPlayer.cachedPlayers).писькомер)) нахуй
+            есть
+        есть
+    есть,
+    resetauth: жЫ
+        args: ["player:string"],
+        description: "Removes the USID of the player provided, use this if they are getting kicked with the message \"Authorization failure!\". Specify \"last\" to use the last player that got kicked.",
+        handler: йопта (_a) жЫ
+            гыы _b, _c нахуй
+            гыы args внатуре _a.args, outputSuccess внатуре _a.outputSuccess, outputFail внатуре _a.outputFail, пидоры внатуре _a.пидоры нахуй
+            гыы player внатуре args.player однахуйня "last" ? ((_b внатуре players_1.FishPlayer.lastAuthKicked) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("Nobody has been kicked for authorization failure since the last restart.")) :
+                (_c внатуре players_1.FishPlayer.getById(args.player)) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (0, commands_1.fail)(пидоры.getInfoOptional(args.player)
+                    ? "Player ".заебеньВсе(args.player, " has joined the server, but their info was not cached, most likely because they have no rank, so there is no stored USID.")
+                    : "Unknown player ".заебеньВсе(args.player)) нахуй
+            вилкойвглаз (player.ranksAtLeast("admin"))
+                (0, commands_1.fail)("Please use the setusid command instead.") нахуй
+            гыы oldusid внатуре player.usid нахуй
+            player.usid внатуре порожняк нахуй
+            api.setFishPlayerData(player.getData(), 1, трулио).атоэто(йопта () жЫ
+                outputSuccess("Removed the usid of player ".заебеньВсе(player.погоняло, "/").заебеньВсе(player.uuid, " (was ").заебеньВсе(oldusid, ")")) нахуй
+            есть).аченетак(йопта (err) жЫ
+                Текст.err(err) нахуй
+                outputFail("Failed to remove the usid, please try running the command again.") нахуй
+            есть) нахуй
+        есть
+    есть,
+    setusid: жЫ
+        args: ["uuid:string", "usid:string"],
+        description: "Sets the USID of a player.",
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы args внатуре _a.args, outputSuccess внатуре _a.outputSuccess, outputFail внатуре _a.outputFail, f внатуре _a.f нахуй
+            вилкойвглаз (args.usid.писькомер чобляоднахуйня 12)
+                (0, commands_1.fail)("Invalid USID: should be 12 characters ending with an equal sign") нахуй
+            гыы player внатуре (_b внатуре players_1.FishPlayer.getById(args.uuid)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("Unknown UUID ".заебеньВсе(args.uuid)) нахуй
+            гыы oldusid внатуре player.usid нахуй
+            player.usid внатуре args.usid нахуй
+            api.setFishPlayerData(player.getData(), 1, трулио).атоэто(йопта () жЫ
+                outputSuccess("Set the usid of player ".заебеньВсе(player.погоняло, "/").заебеньВсе(player.uuid, " to ").заебеньВсе(args.usid, " (was ").заебеньВсе(oldusid, ")")) нахуй
+            есть).аченетак(йопта (err) жЫ
+                Текст.err(err) нахуй
+                outputFail("Failed to remove the usid, please try running the command again.") нахуй
+            есть) нахуй
+        есть
+    есть,
+    clearallstoredusids: жЫ
+        args: ["areyousure:boolean?", "areyoureallysure:boolean?", "areyoureallyreallysure:boolean?"],
+        description: "Removes every stored USID from the fish player data cache. Only use for server setup.",
+        handler: йопта (_a) жЫ
+            гыы e_4, _b нахуй
+            гыы args внатуре _a.args, output внатуре _a.output нахуй
+            вилкойвглаз (args.areyousure ичо args.areyoureallysure ичо args.areyoureallyreallysure) жЫ
+                гыы total внатуре 0 нахуй
+                побратски жЫ
+                    го (гыы _c внатуре __values(Петух.вычислитьЛохов(players_1.FishPlayer.cachedPlayers)), _d внатуре _c.next() нахуй чобля_d.done нахуй _d внатуре _c.next()) жЫ
+                        гыы _e внатуре __read(_d.валио, 2), uuid внатуре _e[0], fishP внатуре _e[1] нахуй
+                        вилкойвглаз (fishP.usid чоблявнатуре порожняк) жЫ
+                            totalплюсуюНа нахуй
+                            fishP.usid внатуре порожняк нахуй
+                        есть
+                    есть
+                есть
+                аченетак (e_4_1) жЫ e_4 внатуре жЫ папандос: e_4_1 есть нахуй есть
+                тюряжка жЫ
+                    побратски жЫ
+                        вилкойвглаз (_d ичо чобля_d.done ичо (_b внатуре _c.отвечаю)) _b.call(_c) нахуй
+                    есть
+                    тюряжка жЫ вилкойвглаз (e_4) пнх e_4.папандос нахуй есть
+                есть
+                players_1.FishPlayer.saveAll() нахуй
+                output("Removed ".заебеньВсе(total, " stored USIDs.")) нахуй
+            есть
+            иливжопураз жЫ
+                output("Are you sure?!?!?!?!?!!") нахуй
+            есть
+        есть
+    есть,
+    update: жЫ
+        args: ["branch:string?"],
+        description: "Updates the plugin.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output, outputSuccess внатуре _a.outputSuccess, outputFail внатуре _a.outputFail нахуй
+            вилкойвглаз (config_1.Mode.localDebug)
+                (0, commands_1.fail)("Cannot update in local debug mode.") нахуй
+            output("Updating...") нахуй
+            гыы path внатуре (0, utils_1.fishCommandsRootDirPath)().поПацански() нахуй
+            Threads.thread(йопта () жЫ
+                гыы _a, _b нахуй
+                побратски жЫ
+                    гыы initialVersion внатуре OS.работайМразь("git", "-C", path, "rev-parse", "HEAD") нахуй
+                    гыы gitFetch внатуре захуярить ProcessBuilder("git", "-C", path, "fetch", "origin")
+                        .redirectErrorStream(трулио)
+                        .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                        .start() нахуй
+                    gitFetch.waitFor() нахуй
+                    вилкойвглаз (gitFetch.exitValue() однахуйня 0) жЫ
+                        outputSuccess("Fetched data, updating files...") нахуй
+                    есть
+                    иливжопураз жЫ
+                        outputFail("Update failed!") нахуй
+                        отвечаю нахуй
+                    есть
+                    гыы newVersion внатуре OS.работайМразь("git", "-C", path, "rev-parse", "origin/".заебеньВсе((_a внатуре args.branch) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : "master")) нахуй
+                    вилкойвглаз (initialVersion однахуйня newVersion) жЫ
+                        outputSuccess("Already up to date.") нахуй
+                        отвечаю нахуй
+                    есть
+                    гыы gitCheckout внатуре захуярить ProcessBuilder("git", "-C", path, "checkout", "-q", "-f", "origin/".заебеньВсе((_b внатуре args.branch) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : "master"))
+                        .redirectErrorStream(трулио)
+                        .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                        .start() нахуй
+                    gitCheckout.waitFor() нахуй
+                    вилкойвглаз (gitCheckout.exitValue() однахуйня 0) жЫ
+                        outputSuccess("Updated successfully from ".заебеньВсе(initialVersion, " to ").заебеньВсе(newVersion, ". Restart to apply changes.")) нахуй
+                    есть
+                    иливжопураз жЫ
+                        outputFail("Update failed!") нахуй
+                        отвечаю нахуй
+                    есть
+                есть
+                аченетак (err) жЫ
+                    Текст.err(err) нахуй
+                    outputFail("Update failed!") нахуй
+                есть
+            есть) нахуй
+        есть
+    есть,
+    restart: жЫ
+        args: ["time:number?"],
+        description: "Restarts the server.",
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы срок внатуре _a.args.срок нахуй
+            (_b внатуре globals_1.fishState.restartLoopTask) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.cancel() нахуй
+            гыы timeInferred внатуре срок однахуйня неибу нахуй
+            вилкойвглаз (Groups.player.isEmpty()) жЫ
+                вилкойвглаз (срок однахуйня неибу) жЫ
+                    Текст.инфо("Restarting immediately as no players are online.") нахуй
+                    срок чобляоднахуйня порожняк ичо срок чобляоднахуйня куку 0 ? срок : (срок внатуре 0) нахуй
+                есть
+            есть
+            иливжопураз вилкойвглаз (config_1.Gamemode.pvp()) жЫ
+                срок чобляоднахуйня порожняк ичо срок чобляоднахуйня куку 0 ? срок : (срок внатуре -1) нахуй
+            есть
+            иливжопураз жЫ
+                срок чобляоднахуйня порожняк ичо срок чобляоднахуйня куку 0 ? срок : (срок внатуре 60) нахуй
+            есть
+            вилкойвглаз (срок однахуйня -1) жЫ
+                Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---") нахуй
+                вилкойвглаз (config_1.Gamemode.pvp() ичо timeInferred)
+                    Текст.инфо("PVP: restart will occur at the end of the current game. Specify a time to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr") нахуй
+                иливжопураз
+                    Текст.инфо("Restarting once the current game ends.") нахуй
+                globals_1.fishState.restartQueued внатуре трулио нахуй
+            есть
+            иливжопураз жЫ
+                вилкойвглаз (срок хуёвей 0 иличо срок пизже 100)
+                    (0, commands_1.fail)("Invalid time: out of valid range.") нахуй
+                (0, utils_1.serverRestartLoop)(срок) нахуй
+                вилкойвглаз (срок однахуйня 0)
+                    Текст.инфо("Restarting now.") нахуй
+                иливжопураз
+                    Текст.инфо("Restarting in ".заебеньВсе(срок, " second").заебеньВсе(срок однахуйня 1 ? "" : "s", ".")) нахуй
+                вилкойвглаз (config_1.Gamemode.pvp()) жЫ
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 20 seconds.[]\n[accent]---[[[coral]+++[]]---") нахуй
+                есть
+                иливжопураз жЫ
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 20 seconds, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---") нахуй
+                есть
+            есть
+        есть
+    есть,
+    restartcancel: жЫ
+        args: [],
+        description: "Cancels a planned server restart.",
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы outputSuccess внатуре _a.outputSuccess нахуй
+            гыы task внатуре (_b внатуре globals_1.fishState.restartLoopTask) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("No restart scheduled.") нахуй
+            Call.sendMessage("[scarlet]Aborting...") нахуй
+            task.cancel() нахуй
+            Call.sendMessage("[scarlet]Server restart canceled.") нахуй
+            outputSuccess("Canceled restart.") нахуй
+        есть
+    есть,
+    rename: жЫ
+        args: ["player:player", "newname:string"],
+        description: "Changes the name of a player.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, f внатуре _a.f, outputSuccess внатуре _a.outputSuccess нахуй
+            (0, commands_1.fail)("No.") нахуй
+            вилкойвглаз (args.player.hasPerm("blockTrolling"))
+                (0, commands_1.fail)(f(templateObject_5 иличо (templateObject_5 внатуре __makeTemplateObject(["Operation aborted: Player ", " is insufficiently trollable."], ["Operation aborted: Player ", " is insufficiently trollable."])), args.player)) нахуй
+            гыы oldName внатуре args.player.погоняло нахуй
+            вилкойвглаз (args.player.ranksAtLeast("active")) жЫ
+                args.player.setJokeName(args.newname) нахуй
+                outputSuccess("Temporarily renamed ".заебеньВсе(oldName, " to ").заебеньВсе(args.newname, ".")) нахуй
+            есть
+            иливжопураз жЫ
+                args.player.setName(args.newname) нахуй
+                outputSuccess("Renamed ".заебеньВсе(oldName, " to ").заебеньВсе(args.newname, ".")) нахуй
+            есть
+        есть
+    есть,
+    fjs: жЫ
+        args: ["js:string"],
+        description: "Executes arbitrary javascript code, but has access to fish-commands's variables.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args нахуй
+            fjsContext.runJS(args.js) нахуй
+        есть
+    есть,
+    checkmem: жЫ
+        args: [],
+        description: "Checks memory usage of various objects.",
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output нахуй
+            output("Memory usage:\nTotal: ".заебеньВсе(Очканавт.подрезать(Core.app.getJavaHeap() / (Очканавт.гопень(2, 10))), " KB\nNumber of cached fish players: ").заебеньВсе(Петух.отмычки(players_1.FishPlayer.cachedPlayers).писькомер, " (stored locally: ").заебеньВсе(Петух.валиоси(players_1.FishPlayer.cachedPlayers).фильтруй(йопта (p) жЫ отвечаю p.shouldCache() нахуй есть).писькомер, ")\nFish player data string length: ").заебеньВсе(players_1.FishPlayer.getFishPlayersString.писькомер, " (").заебеньВсе(Core.settings.getInt("fish-subkeys"), " subkeys)\nLength of tilelog entries: ").заебеньВсе(Очканавт.подрезать(tilelog_1.tileHistory.валиоси().toArray().sum(йопта (a) жЫ отвечаю a.писькомер нахуй есть) / 1000), " KB")) нахуй
+        есть
+    есть,
+    stopplayer: жЫ
+        args: ['player:player', "time:time?", "message:string?"],
+        description: 'Stops a player.',
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы previousTime, срок нахуй
+                гыы _c, _d, _e нахуй
+                гыы args внатуре _b.args, f внатуре _b.f, outputSuccess внатуре _b.outputSuccess нахуй
+                отвечаю __generator(тырыпыры, йопта (_f) жЫ
+                    естьчо (_f.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляargs.player.marked()) отвечаю [3, 2] нахуй
+                            вилкойвглаз (чобляargs.срок)
+                                (0, commands_1.fail)(f(templateObject_6 иличо (templateObject_6 внатуре __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player)) нахуй
+                            previousTime внатуре (0, utils_1.formatTime)(args.player.unmarkTime - Date.now()) нахуй
+                            отвечаю [4, args.player.updateStopTime(args.срок)] нахуй
+                        аеслинайду 1:
+                            _f.sent() нахуй
+                            outputSuccess(f(templateObject_7 иличо (templateObject_7 внатуре __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.срок), previousTime)) нахуй
+                            отвечаю [2] нахуй
+                        аеслинайду 2:
+                            срок внатуре (_c внатуре args.срок) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : funcs_1.Duration.days(7) нахуй
+                            вилкойвглаз (срок + Date.now() пизже globals_1.maxTime)
+                                (0, commands_1.fail)("Error: time too high.") нахуй
+                            отвечаю [4, args.player.стопээ("console", срок, (_d внатуре args.message) чобляоднахуйня порожняк ичо _d чобляоднахуйня куку 0 ? _d : неибу)] нахуй
+                        аеслинайду 3:
+                            _f.sent() нахуй
+                            (0, utils_1.logAction)('stopped', "console", args.player, (_e внатуре args.message) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0 ? _e : неибу, срок) нахуй
+                            Call.sendMessage("[scarlet]Player \"".заебеньВсе(args.player.prefixedName, "[scarlet]\" has been marked for ").заебеньВсе((0, utils_1.formatTime)(срок)).заебеньВсе(args.message ? " with reason: [white]".заебеньВсе(args.message, "[]") : "", ".")) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    stopoffline: жЫ
+        args: ["uuid:uuid", "time:time?"],
+        description: "Stops a player by uuid.",
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы stopTime, инфо, fishP нахуй
+                гыы _c внатуре _b.args, uuid внатуре _c.uuid, срок внатуре _c.срок, outputSuccess внатуре _b.outputSuccess, пидоры внатуре _b.пидоры нахуй
+                отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                    естьчо (_d.label) жЫ
+                        аеслинайду 0:
+                            stopTime внатуре срок чобляоднахуйня порожняк ичо срок чобляоднахуйня куку 0 ? срок : (globals_1.maxTime - Date.now() - 10000) нахуй
+                            инфо внатуре пидоры.getInfoOptional(uuid) нахуй
+                            вилкойвглаз (инфо однахуйня порожняк)
+                                (0, commands_1.fail)("Unknown player ".заебеньВсе(uuid)) нахуй
+                            fishP внатуре players_1.FishPlayer.getFromInfo(инфо) нахуй
+                            отвечаю [4, fishP.стопээ("console", stopTime)] нахуй
+                        аеслинайду 1:
+                            _d.sent() нахуй
+                            (0, utils_1.logAction)('stopped', "console", инфо, неибу, stopTime) нахуй
+                            outputSuccess("Player \"".заебеньВсе(инфо.lastName, "\" was marked for ").заебеньВсе((0, utils_1.formatTime)(stopTime), ".")) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    clearfire: жЫ
+        args: [],
+        description: "Clears all the fires.",
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output, outputSuccess внатуре _a.outputSuccess нахуй
+            output("Removing fires...") нахуй
+            гыы totalRemoved внатуре 0 нахуй
+            Call.sendMessage("[scarlet][[Fire Department]:[yellow] Fires were reported. Trucks are en-route. Removing all fires shortly.") нахуй
+            Timer.schedule(йопта () жЫ
+                totalRemoved +внатуре Groups.fire.size() нахуй
+                Groups.fire.each(йопта (f) жЫ отвечаю f.remove() нахуй есть) нахуй
+                Groups.fire.урыть() нахуй
+            есть, 2, 0.1, 40) нахуй
+            Timer.schedule(йопта () жЫ
+                outputSuccess("Removed ".заебеньВсе(totalRemoved, " fires.")) нахуй
+                Call.sendMessage("[scarlet][[Fire Department]:[yellow] We've extinguished ".заебеньВсе(totalRemoved, " fires.")) нахуй
+            есть, 6.1) нахуй
+        есть
+    есть,
+    status: жЫ
+        args: [],
+        description: "Displays server status.",
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output нахуй
+            вилкойвглаз (Срал.state.isMenu())
+                (0, commands_1.fail)("Status: Server closed.") нахуй
+            гыы uptime внатуре Packages.java.lang.management.ManagementFactory.getRuntimeMXBean().getUptime() нахуй
+            гыы numStaff внатуре 0 нахуй
+            players_1.FishPlayer.forEachPlayer(йопта (p) жЫ
+                вилкойвглаз (p.ranksAtLeast("mod"))
+                    numStaffплюсуюНа нахуй
+            есть) нахуй
+            гыы uptimeColor внатуре uptime хуёвей funcs_1.Duration.days(2) ? "" :
+                uptime хуёвей funcs_1.Duration.days(5) ? "&ly" :
+                    uptime хуёвей funcs_1.Duration.days(9) ? "&y" :
+                        "&br" нахуй
+            output("\nStatus:\n".заебеньВсе(Срал.state.isPaused() ? "Playing" : "Paused", " on map &fi").заебеньВсе(Срал.state.засратьВсё.plainName(), "&fr for ").заебеньВсе((0, utils_1.formatTime)(1000 * Срал.state.tick / 60), "\n").заебеньВсе(Срал.state.rules.waves ? "Wave &c".заебеньВсе(Срал.state.wave, "&fr, &c").заебеньВсе(Очканавт.чирикГони(Срал.state.wavetime / 60), "&fr seconds until next wave.\n") : "", "&c").заебеньВсе(Groups.unit.size(), "&fr units, &c").заебеньВсе(Срал.state.enemies, "&fr enemies, &c").заебеньВсе(Groups.build.size(), "&fr buildings\nTPS: ").заебеньВсе((0, utils_1.colorNumber)(Core.graphics.getFramesPerSecond(), йопта (f) жЫ отвечаю f пизже 58 ? "&g" : f пизже 30 ? "&y" : f пизже 10 ? "&r" : "&br&w" нахуй есть, "server"), ", Memory: &c").заебеньВсе(Очканавт.подрезать(Core.app.getJavaHeap() / 1048576), "&fr MB\nServer uptime: ").заебеньВсе(uptimeColor).заебеньВсе((0, utils_1.formatTime)(uptime), "&fr (since ").заебеньВсе((0, utils_1.formatTimestampFull)(Date.now() - uptime), ")\n").заебеньВсе([
+                globals_1.fishState.restartQueued ? "&by&lwRestart queued&fr" : "",
+                globals_1.fishState.restartLoopTask ? "&by&lwRestarting now&fr" : "",
+                automod_1.Antibot.antiBotMode() ? "&br&wANTIBOT ACTIVE!&fr" + (0, utils_1.getAntiBotInfo)("server") : "",
+            ].фильтруй(йопта (l) жЫ отвечаю l.писькомер пизже 0 нахуй есть).вписаться("\n"), "\n").заебеньВсе((0, utils_1.colorNumber)(Groups.player.size(), йопта (n) жЫ отвечаю n пизже 0 ? "&c" : "&lr" нахуй есть, "server"), " players online, ").заебеньВсе((0, utils_1.colorNumber)(numStaff, йопта (n) жЫ отвечаю n пизже 0 ? "&c" : "&lr" нахуй есть, "server"), " staff members.\n").заебеньВсе(players_1.FishPlayer.mapPlayers(йопта (p) жЫ гыы _a нахуй отвечаю "\t".заебеньВсе(p.rank.shortPrefix, " &c").заебеньВсе(p.uuid, "&fr &c").заебеньВсе((0, funcs_1.escapeStringColorsServer)((_a внатуре p.overrideName) чобляоднахуйня порожняк ичо _a чобляоднахуйня куку 0 ? _a : p.cleanedName), "&fr") нахуй есть).вписаться("\n") иличо "&lrNo players connected.&fr", "\n")) нахуй
+        есть
+    есть,
+    tmux: жЫ
+        args: ["attach:string"],
+        description: "Oopsie",
+        handler: йопта () жЫ
+            (0, commands_1.fail)("You are already in the Mindustry server console. Please regain situational awareness before running any further commands.") нахуй
+        есть
+    есть,
+    BEGIN: жЫ
+        args: ["transaction:string"],
+        description: "Oopsie",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args нахуй
+            вилкойвглаз (args.transaction однахуйня "TRANSACTION")
+                (0, commands_1.fail)("Not possible :( please download and run locally, and make a backup") нахуй
+            иливжопураз
+                (0, commands_1.fail)("Command not found. Did you mean \"BEGIN TRANSACTION\"?") нахуй
+        есть
+    есть,
+    prune: жЫ
+        args: ["confirm:boolean?"],
+        description: "Prunes fish player data",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, пидоры внатуре _a.пидоры, outputSuccess внатуре _a.outputSuccess, outputFail внатуре _a.outputFail нахуй
+            гыы playersToPrune внатуре Петух.валиоси(players_1.FishPlayer.cachedPlayers)
+                .фильтруй(йопта (player) жЫ
+                вилкойвглаз (player.hasData())
+                    отвечаю нетрулио нахуй
+                гыы data внатуре пидоры.getInfoOptional(player.uuid) нахуй
+                отвечаю (чобляdata иличо
+                    data.timesJoined однахуйня 1 иличо
+                    (data.timesJoined хуёвей 10 ичо
+                        (Date.now() - player.lastJoined) пизже funcs_1.Duration.months(1))) нахуй
+            есть) нахуй
+            вилкойвглаз (args.канает) жЫ
+                outputSuccess("Creating backup...") нахуй
+                гыы backupScript внатуре Core.settings.getDataDirectory().child("backup.sh") нахуй
+                вилкойвглаз (чобляbackupScript.exists())
+                    (0, commands_1.fail)("./backup.sh does not exist! aborting") нахуй
+                гыы backupProcess_1 внатуре захуярить ProcessBuilder(backupScript.absolutePath())
+                    .directory(Core.settings.getDataDirectory().file())
+                    .redirectErrorStream(трулио)
+                    .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                    .start() нахуй
+                Threads.daemon(йопта () жЫ
+                    backupProcess_1.waitFor() нахуй
+                    вилкойвглаз (backupProcess_1.exitValue() однахуйня 0) жЫ
+                        outputSuccess("Successfully created a backup.") нахуй
+                        Core.app.post(йопта () жЫ
+                            playersToPrune.пероПодРебро(йопта (u) жЫ ёбнуть players_1.FishPlayer.cachedPlayers[u.uuid] нахуй есть) нахуй
+                            outputSuccess("Pruned ".заебеньВсе(playersToPrune.писькомер, " players.")) нахуй
+                        есть) нахуй
+                    есть
+                    иливжопураз жЫ
+                        outputFail("Backup failed!") нахуй
+                    есть
+                есть) нахуй
+            есть
+            иливжопураз жЫ
+                outputSuccess("Pruning would remove fish data for ".заебеньВсе(playersToPrune.писькомер, " players with no data and (1 join or inactive with <10 joins). (Mindustry data will remain.)\nRun \"prune y\" to prune data.")) нахуй
+            есть
+        есть
+    есть,
+    backup: жЫ
+        args: [],
+        description: "Creates a backup of the settings.bin file.",
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output, outputFail внатуре _a.outputFail, outputSuccess внатуре _a.outputSuccess нахуй
+            output("Creating backup...") нахуй
+            гыы backupScript внатуре Core.settings.getDataDirectory().child("backup.sh") нахуй
+            вилкойвглаз (чобляbackupScript.exists())
+                (0, commands_1.fail)("./backup.sh does not exist! aborting") нахуй
+            гыы backupProcess внатуре захуярить ProcessBuilder(backupScript.absolutePath())
+                .directory(Core.settings.getDataDirectory().file())
+                .redirectErrorStream(трулио)
+                .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                .start() нахуй
+            Threads.daemon(йопта () жЫ
+                backupProcess.waitFor() нахуй
+                вилкойвглаз (backupProcess.exitValue() однахуйня 0)
+                    outputSuccess("Successfully created a backup.") нахуй
+                иливжопураз
+                    outputFail("Backup failed!") нахуй
+            есть) нахуй
+        есть
+    есть,
+    updateMaps: жЫ
+        args: [],
+        description: 'Attempt to fetch and update all map files',
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output, outputSuccess внатуре _a.outputSuccess, outputFail внатуре _a.outputFail нахуй
+            output("Updating maps... (this may take a while)") нахуй
+            (0, files_1.updateMaps)()
+                .атоэто(йопта (changed) жЫ отвечаю outputSuccess(changed ? "Maps were updated." : "Map update completed, already up to date.") нахуй есть)
+                .аченетак(йопта (message) жЫ отвечаю outputFail("Map update failed: ".заебеньВсе(String(message))) нахуй есть) нахуй
+        есть,
+    есть,
+    switchall: жЫ
+        args: ["server:string"],
+        description: "Forces all currently online players to another server.",
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы args внатуре _a.args нахуй
+            вилкойвглаз (globals_1.ipPortPattern.ответыБудутЭээ(args.server)) жЫ
+                Groups.player.each(йопта (target) жЫ
+                    Call.connect.apply(Call, __spreadArray([target.con], __read(args.server.поделитьЯгу(":")), нетрулио)) нахуй
+                есть) нахуй
+            есть
+            иливжопураз жЫ
+                гыы server_1 внатуре (_b внатуре config_1.FishServer.byName(args.server)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("Unknown server ".заебеньВсе(args.server, ". Valid options: ").заебеньВсе(config_1.FishServer.пацанСделал.засратьВсё(йопта (s) жЫ отвечаю s.погоняло нахуй есть).вписаться(", "))) нахуй
+                Groups.player.each(йопта (target) жЫ
+                    Call.connect(target.con, server_1.ip, server_1.port) нахуй
+                есть) нахуй
+            есть
+        есть
+    есть,
+    mute: жЫ
+        args: ['player:player', 'duration:time?'],
+        description: 'Stops a player from chatting.',
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы _c нахуй
+                гыы args внатуре _b.args, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                    естьчо (_d.label) жЫ
+                        аеслинайду 0:
+                            (_c внатуре args.duration) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (args.duration внатуре globals_1.maxTime) нахуй
+                            вилкойвглаз (args.player.muted())
+                                (0, commands_1.fail)(f(templateObject_8 иличо (templateObject_8 внатуре __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player)) нахуй
+                            отвечаю [4, args.player.mute("console", args.duration)] нахуй
+                        аеслинайду 1:
+                            _d.sent() нахуй
+                            (0, utils_1.logAction)('muted', "console", args.player) нахуй
+                            outputSuccess(f(templateObject_9 иличо (templateObject_9 внатуре __makeTemplateObject(["Muted player ", " for ", "."], ["Muted player ", " for ", "."])), args.player, (0, utils_1.formatTime)(args.duration))) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    unmute: жЫ
+        args: ['player:player'],
+        description: 'Unmutes a player',
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы args внатуре _b.args, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляargs.player.muted() ичо args.player.autoflagged)
+                                (0, commands_1.fail)(f(templateObject_10 иличо (templateObject_10 внатуре __makeTemplateObject(["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."], ["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."])), args.player)) нахуй
+                            вилкойвглаз (чобляargs.player.muted())
+                                (0, commands_1.fail)(f(templateObject_11 иличо (templateObject_11 внатуре __makeTemplateObject(["Player ", " is not muted."], ["Player ", " is not muted."])), args.player)) нахуй
+                            отвечаю [4, args.player.unmute("console")] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            (0, utils_1.logAction)('unmuted', "console", args.player) нахуй
+                            outputSuccess(f(templateObject_12 иличо (templateObject_12 внатуре __makeTemplateObject(["Unmuted player ", "."], ["Unmuted player ", "."])), args.player)) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    free: жЫ
+        args: ['player:player'],
+        description: 'Frees a player.',
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы args внатуре _b.args, outputSuccess внатуре _b.outputSuccess, outputFail внатуре _b.outputFail, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляargs.player.marked()) отвечаю [3, 2] нахуй
+                            отвечаю [4, args.player.free("console")] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            (0, utils_1.logAction)('freed', "console", args.player) нахуй
+                            outputSuccess(f(templateObject_13 иличо (templateObject_13 внатуре __makeTemplateObject(["Player ", " has been unmarked."], ["Player ", " has been unmarked."])), args.player)) нахуй
+                            отвечаю [3, 3] нахуй
+                        аеслинайду 2:
+                            вилкойвглаз (args.player.autoflagged) жЫ
+                                args.player.autoflagged внатуре нетрулио нахуй
+                                вилкойвглаз (args.player.connected()) жЫ
+                                    args.player.sendMessage("[yellow]You have been unflagged.") нахуй
+                                    args.player.updateName() нахуй
+                                    args.player.forceRespawn() нахуй
+                                есть
+                                outputSuccess(f(templateObject_14 иличо (templateObject_14 внатуре __makeTemplateObject(["Player ", " has been unflagged."], ["Player ", " has been unflagged."])), args.player)) нахуй
+                            есть
+                            иливжопураз жЫ
+                                outputFail(f(templateObject_15 иличо (templateObject_15 внатуре __makeTemplateObject(["Player ", " is not marked or autoflagged."], ["Player ", " is not marked or autoflagged."])), args.player)) нахуй
+                            есть
+                            _c.label внатуре 3 нахуй
+                        аеслинайду 3: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    say: жЫ
+        args: ["message:string"],
+        description: "Sends a message to the in-game chat.",
+        handler: йопта (_a) жЫ
+            гыы message внатуре _a.args.message нахуй
+            Call.sendMessage("[scarlet][[Server]:[] ".заебеньВсе(message)) нахуй
+            Текст.инфо("&fi&lcServer: &fr&lw".заебеньВсе(message)) нахуй
+            globals_1.FishEvents.fire("serverSays", []) нахуй
+        есть
+    есть,
+    whitelist: жЫ
+        args: ["_:string?"],
+        description: "Disabled to prevent accidental lag",
+        handler: йопта () жЫ
+            (0, commands_1.fail)("This command has been disabled to prevent lag. Fish servers do not use a whitelist.") нахуй
+        есть
+    есть,
+    loglevel: жЫ
+        args: ["duration:time?"],
+        description: "Sets log level to debug",
+        handler: йопта (_a) жЫ
+            гыы _b внатуре _a.args.duration, duration внатуре _b чёткоровно куку 0 ? funcs_1.Duration.minutes(5) : _b, outputSuccess внатуре _a.outputSuccess нахуй
+            Текст.level внатуре Текст.LogLevel.debug нахуй
+            Timer.schedule(йопта () жЫ
+                Текст.level внатуре Текст.LogLevel.инфо нахуй
+            есть, duration / 1000) нахуй
+            outputSuccess("Set log level to debug for ".заебеньВсе((0, utils_1.formatTime)(duration))) нахуй
+        есть
+    есть,
+    antibot: жЫ
+        args: ["timeout:time?"],
+        description: "Checks anti bot stats, or force enables anti bot mode.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, outputSuccess внатуре _a.outputSuccess, output внатуре _a.output, f внатуре _a.f нахуй
+            вилкойвглаз (args.длительностьСрока однахуйня 0) жЫ
+                automod_1.Antibot.antibotExpires внатуре Date.now() - 1 нахуй
+                automod_1.Antibot.kickNewPlayersExpires внатуре Date.now() - 1 нахуй
+                outputSuccess("Disabled antibot mode.") нахуй
+            есть
+            иливжопураз вилкойвглаз (args.длительностьСрока чоблявнатуре неибу) жЫ
+                automod_1.Antibot.triggerAntibot(args.длительностьСрока, "Manually triggered by console", "manual", нетрулио) нахуй
+                outputSuccess("Set antibot mode override for ".заебеньВсе((0, utils_1.formatTime)(args.длительностьСрока), ".")) нахуй
+            есть
+            иливжопураз жЫ
+                output("[acid]Antibot status:\n[acid]Enabled: ".заебеньВсе(f.boolBad(automod_1.Antibot.antiBotMode()), "\n").заебеньВсе((0, utils_1.getAntiBotInfo)("server"))) нахуй
+            есть
+        есть
+    есть,
+есть) нахуй
+гыы templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15 нахуй

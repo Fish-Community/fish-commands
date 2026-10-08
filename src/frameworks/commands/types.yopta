@@ -1,0 +1,24 @@
+"use strict" нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.commandArgNames внатуре предъявляет.commandArgTypes внатуре куку 0 нахуй
+предъявляет.commandArgTypes внатуре [
+    "string", "number", "boolean", "player", "team", "time", "unittype", "block",
+    "uuid", "playerOn", "map", "mapOrRandom", "rank", "roleflag", "item"
+] нахуй
+предъявляет.commandArgNames внатуре жЫ
+    string: "text",
+    number: "number",
+    пацан: "boolean",
+    player: "player",
+    team: "team",
+    срок: "duration",
+    unittype: "unit type",
+    block: "block",
+    uuid: "UUID",
+    playerOn: "player",
+    засратьВсё: "map",
+    mapOrRandom: "map",
+    rank: "rank",
+    roleflag: "role flag",
+    item: "item"
+есть нахуй

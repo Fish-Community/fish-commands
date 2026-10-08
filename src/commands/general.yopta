@@ -1,0 +1,1616 @@
+"use strict" нахуй
+гыы __makeTemplateObject внатуре (тырыпыры ичо тырыпыры.__makeTemplateObject) иличо йопта (cooked, полоса) жЫ
+    вилкойвглаз (Петух.вотЭтоЗаебись) жЫ Петух.вотЭтоЗаебись(cooked, "raw", жЫ валио: полоса есть) нахуй есть иливжопураз жЫ cooked.полоса внатуре полоса нахуй есть
+    отвечаю cooked нахуй
+есть нахуй
+гыы __assign внатуре (тырыпыры ичо тырыпыры.__assign) иличо йопта () жЫ
+    __assign внатуре Петух.тащиВсёНаХату иличо йопта(t) жЫ
+        го (гыы s, i внатуре 1, n внатуре arguments.писькомер нахуй i хуёвей n нахуй iплюсуюНа) жЫ
+            s внатуре arguments[i] нахуй
+            го (гыы p чоунастут s) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(s, p))
+                t[p] внатуре s[p] нахуй
+        есть
+        отвечаю t нахуй
+    есть нахуй
+    отвечаю __assign.apply(тырыпыры, arguments) нахуй
+есть нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+гыы __awaiter внатуре (тырыпыры ичо тырыпыры.__awaiter) иличо йопта (thisArg, _arguments, P, generator) жЫ
+    йопта adopt(валио) жЫ отвечаю валио шкура P ? валио : захуярить P(йопта (щащаНамутитьКактоНадо) жЫ щащаНамутитьКактоНадо(валио) нахуй есть) нахуй есть
+    отвечаю захуярить (P иличо (P внатуре СловоПацана))(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        йопта fulfilled(валио) жЫ побратски жЫ step(generator.next(валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта rejected(валио) жЫ побратски жЫ step(generator["throw"](валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта step(result) жЫ result.done ? щащаНамутитьКактоНадо(result.валио) : adopt(result.валио).атоэто(fulfilled, rejected) нахуй есть
+        step((generator внатуре generator.apply(thisArg, _arguments иличо [])).next()) нахуй
+    есть) нахуй
+есть нахуй
+гыы __generator внатуре (тырыпыры ичо тырыпыры.__generator) иличо йопта (thisArg, висяк) жЫ
+    гыы _ внатуре жЫ label: 0, sent: йопта() жЫ вилкойвглаз (t[0] & 1) пнх t[1] нахуй отвечаю t[1] нахуй есть, trys: [], ops: [] есть, f, y, t, g внатуре Петух.намутить((чезажижан Iterator чёткоровно "function" ? Iterator : Петух).проточелик) нахуй
+    отвечаю g.next внатуре verb(0), g["throw"] внатуре verb(1), g["return"] внатуре verb(2), чезажижан Symbol чёткоровно "function" ичо (g[Symbol.iterator] внатуре йопта() жЫ отвечаю тырыпыры нахуй есть), g нахуй
+    йопта verb(n) жЫ отвечаю йопта (v) жЫ отвечаю step([n, v]) нахуй есть нахуй есть
+    йопта step(op) жЫ
+        вилкойвглаз (f) пнх захуярить TypeError("Generator is already executing.") нахуй
+        потрещим (g ичо (g внатуре 0, op[0] ичо (_ внатуре 0)), _) побратски жЫ
+            вилкойвглаз (f внатуре 1, y ичо (t внатуре op[0] & 2 ? y["return"] : op[0] ? y["throw"] иличо ((t внатуре y["return"]) ичо t.call(y), 0) : y.next) ичо чобля(t внатуре t.call(y, op[1])).done) отвечаю t нахуй
+            вилкойвглаз (y внатуре 0, t) op внатуре [op[0] & 2, t.валио] нахуй
+            естьчо (op[0]) жЫ
+                аеслинайду 0: аеслинайду 1: t внатуре op нахуй харэ нахуй
+                аеслинайду 4: _.labelплюсуюНа нахуй отвечаю жЫ валио: op[1], done: нетрулио есть нахуй
+                аеслинайду 5: _.labelплюсуюНа нахуй y внатуре op[1] нахуй op внатуре [0] нахуй двигай нахуй
+                аеслинайду 7: op внатуре _.ops.попка() нахуй _.trys.попка() нахуй двигай нахуй
+                наотыбись:
+                    вилкойвглаз (чобля(t внатуре _.trys, t внатуре t.писькомер пизже 0 ичо t[t.писькомер - 1]) ичо (op[0] чёткоровно 6 иличо op[0] чёткоровно 2)) жЫ _ внатуре 0 нахуй двигай нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 3 ичо (чобляt иличо (op[1] пизже t[0] ичо op[1] хуёвей t[3]))) жЫ _.label внатуре op[1] нахуй харэ нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 6 ичо _.label хуёвей t[1]) жЫ _.label внатуре t[1] нахуй t внатуре op нахуй харэ нахуй есть
+                    вилкойвглаз (t ичо _.label хуёвей t[2]) жЫ _.label внатуре t[2] нахуй _.ops.пупок(op) нахуй харэ нахуй есть
+                    вилкойвглаз (t[2]) _.ops.попка() нахуй
+                    _.trys.попка() нахуй двигай нахуй
+            есть
+            op внатуре висяк.call(thisArg, _) нахуй
+        есть аченетак (e) жЫ op внатуре [6, e] нахуй y внатуре 0 нахуй есть тюряжка жЫ f внатуре t внатуре 0 нахуй есть
+        вилкойвглаз (op[0] & 5) пнх op[1] нахуй отвечаю жЫ валио: op[0] ? op[1] : куку 0, done: трулио есть нахуй
+    есть
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __spreadArray внатуре (тырыпыры ичо тырыпыры.__spreadArray) иличо йопта (to, спиздитьИз, pack) жЫ
+    вилкойвглаз (pack иличо arguments.писькомер чёткоровно 2) го (гыы i внатуре 0, l внатуре спиздитьИз.писькомер, ar нахуй i хуёвей l нахуй iплюсуюНа) жЫ
+        вилкойвглаз (ar иличо чобля(i чоунастут спиздитьИз)) жЫ
+            вилкойвглаз (чобляar) ar внатуре Помойка.проточелик.поделитьСемки.call(спиздитьИз, 0, i) нахуй
+            ar[i] внатуре спиздитьИз[i] нахуй
+        есть
+    есть
+    отвечаю to.заебеньВсе(ar иличо Помойка.проточелик.поделитьСемки.call(спиздитьИз)) нахуй
+есть нахуй
+гыы _a нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.commands внатуре куку 0 нахуй
+гыы achievements_1 внатуре require("/achievements") нахуй
+гыы api внатуре __importStar(require("/api")) нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы commands_1 внатуре require("/frameworks/commands") нахуй
+гыы menus_1 внатуре require("/frameworks/menus") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы maps_1 внатуре require("/maps") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы ranks_1 внатуре require("/ranks") нахуй
+гыы tilelog_1 внатуре require("/tilelog") нахуй
+гыы translation_1 внатуре require("/translation") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+гыы votes_1 внатуре require("/votes") нахуй
+предъявляет.commands внатуре (0, commands_1.commandList)(__assign(__assign(жЫ about: жЫ
+        args: [],
+        description: 'Prints information about the plugin.',
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы _b, _c нахуй
+            гыы output внатуре _a.output, copy внатуре _a.copy нахуй
+            output("[accent][cyan]fish-commands[] is the monolithic plugin used for the Fish servers' features.\n[accent]==========\n[accent]Source code available at: [cyan]https://github.com/Fish-Community/fish-commands/\n[accent]Current plugin version: [cyan]".заебеньВсе(copy((_c внатуре (_b внатуре globals_1.fishPlugin.version) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.поделитьСемки(0, 8)) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : "[scarlet]null[]"), "[]")) нахуй
+        есть
+    есть, unpause: (0, commands_1.command)(жЫ
+        args: [],
+        description: 'Unpauses the game.',
+        perm: commands_1.Perm.trusted,
+        requirements: [commands_1.Req.mode('pvp')],
+        init: йопта () жЫ
+            гыы data внатуре жЫ unpaused: нетрулио есть нахуй
+            Events.on(EventType.PlayEvent, йопта () жЫ
+                вилкойвглаз (data.unpaused) жЫ
+                    data.unpaused внатуре нетрулио нахуй
+                    Срал.state.rules.pvpAutoPause внатуре трулио нахуй
+                есть
+            есть) нахуй
+            отвечаю data нахуй
+        есть,
+        handler: йопта (_a) жЫ
+            гыы data внатуре _a.data, outputSuccess внатуре _a.outputSuccess нахуй
+            Срал.state.rules.pvpAutoPause внатуре нетрулио нахуй
+            data.unpaused внатуре трулио нахуй
+            Core.app.post(йопта () жЫ отвечаю Срал.state.set(GameState.State.playing) нахуй есть) нахуй
+            outputSuccess("Unpaused.") нахуй
+        есть
+    есть), tp: жЫ
+        args: ['player:playerOn'],
+        description: 'Teleport to another player.',
+        perm: commands_1.Perm.play,
+        requirements: [commands_1.Req.modeNot("pvp")],
+        handler: йопта (_a) жЫ
+            гыы _b, _c, _d нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, f внатуре _a.f, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (чобляsender.hasPerm("admin")) жЫ
+                вилкойвглаз (чобля((_b внатуре sender.unit()) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.spawnedByCore))
+                    (0, commands_1.fail)("Can only teleport while in a core unit.") нахуй
+                вилкойвглаз (sender.team() чобляоднахуйня args.player.team())
+                    (0, commands_1.fail)("Cannot teleport to players on another team.") нахуй
+                вилкойвглаз ((_d внатуре (_c внатуре sender.unit()) чёткоровно порожняк иличо _c чёткоровно куку 0 ? куку 0 : _c.hasPayload) чёткоровно порожняк иличо _d чёткоровно куку 0 ? куку 0 : _d.call(_c))
+                    (0, commands_1.fail)("Cannot teleport to players while holding a payload.") нахуй
+            есть
+            (0, utils_1.teleportPlayer)(sender.player, args.player.player) нахуй
+            outputSuccess(f(templateObject_1 иличо (templateObject_1 внатуре __makeTemplateObject(["Teleported to ", ""], ["Teleported to ", ""])), args.player)) нахуй
+        есть
+    есть, language: жЫ
+        args: ['language:string?'],
+        description: 'Change your target translation language.',
+        perm: commands_1.Perm.none,
+        requirements: [],
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы _c, _d, targetLanguage нахуй
+                гыы _e нахуй
+                гыы args внатуре _b.args, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess нахуй
+                отвечаю __generator(тырыпыры, йопта (_f) жЫ
+                    естьчо (_f.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобля((_e внатуре args.language) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0)) отвечаю [3, 1] нахуй
+                            _c внатуре _e нахуй
+                            отвечаю [3, 3] нахуй
+                        аеслинайду 1:
+                            _d внатуре args нахуй
+                            отвечаю [4, menus_1.Menu.menu("Translation Language", "Select a language. Messages will be translated to this language.", translation_1.languageCache.валиоси().toSeq()
+                                    .сидор(Packages.java.util.Comparator(жЫ compare: йопта (a, b) жЫ
+                                        отвечаю Packages.java.lang.String(a.code).compareTo(Packages.java.lang.String(b)) нахуй
+                                    есть есть))
+                                    .сидор(floatf(йопта (l) жЫ отвечаю l.code однахуйня "en" ? -2 : l.code однахуйня "ru" ? -1 : 0 нахуй есть))
+                                    .toArray(), sender, жЫ
+                                    optionStringifier: йопта (l) жЫ отвечаю "".заебеньВсе(l.погоняло, " (").заебеньВсе(l.code, ")") нахуй есть,
+                                    includeCancel: трулио,
+                                    columns: 2,
+                                есть)] нахуй
+                        аеслинайду 2:
+                            _c внатуре (_d.language внатуре (_f.sent()).code) нахуй
+                            _f.label внатуре 3 нахуй
+                        аеслинайду 3:
+                            _c нахуй
+                            вилкойвглаз (чобля((0, translation_1.isLanguageAvailable)(args.language) иличо ["off", "none"].лучшеНетВлагалищаЧемОчкоТоварища(args.language.неКапсом()))) жЫ
+                                (0, commands_1.fail)("Invalid language \"".заебеньВсе(args.language, "\".")) нахуй
+                            есть
+                            targetLanguage внатуре (0, translation_1.getLanguageFromCache)(args.language) нахуй
+                            sender.language внатуре targetLanguage.code нахуй
+                            (0, translation_1.setPlayerLanguageEntry)(sender.player, targetLanguage.code) нахуй
+                            outputSuccess("Your translation language is now set to ".заебеньВсе(targetLanguage.погоняло, ".")) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть, clean: (0, commands_1.command)(жЫ
+        args: [],
+        description: 'Removes all boulders from the map.',
+        perm: commands_1.Perm.play,
+        requirements: [],
+        data: жЫ lastRanMapStartTime: (_a внатуре maps_1.PartialMapRun.current) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.startTime есть,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы array, removed, i, t нахуй
+                гыы sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, data внатуре _b.data нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляmaps_1.PartialMapRun.current)
+                                (0, commands_1.fail)("This game is already over.") нахуй
+                            вилкойвглаз (data.lastRanMapStartTime однахуйня maps_1.PartialMapRun.current.startTime)
+                                (0, commands_1.fail)("This command was already run on this map.") нахуй
+                            data.lastRanMapStartTime внатуре maps_1.PartialMapRun.current.startTime нахуй
+                            Timer.schedule(йопта () жЫ отвечаю Call.sound(sender.con(), Sounds.rockBreak, 1, 1, 0) нахуй есть, 0, 0.05, 10) нахуй
+                            array внатуре ArcReflect.get(Срал.world.tiles, "array") нахуй
+                            removed внатуре 0 нахуй
+                            i внатуре 0 нахуй
+                            _c.label внатуре 1 нахуй
+                        аеслинайду 1:
+                            вилкойвглаз (чобля(i хуёвей array.писькомер)) отвечаю [3, 4] нахуй
+                            t внатуре array[i] нахуй
+                            вилкойвглаз (чобля(t.breakable() ичо t.block() шкура Prop)) отвечаю [3, 3] нахуй
+                            t.removeNet() нахуй
+                            removedплюсуюНа нахуй
+                            вилкойвглаз (чобля(removed % 500 однахуйня 0)) отвечаю [3, 3] нахуй
+                            отвечаю [4, (0, funcs_1.delay)(100)] нахуй
+                        аеслинайду 2:
+                            _c.sent() нахуй
+                            _c.label внатуре 3 нахуй
+                        аеслинайду 3:
+                            iплюсуюНа нахуй
+                            отвечаю [3, 1] нахуй
+                        аеслинайду 4:
+                            outputSuccess("Cleared the map of boulders.") нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть), die: жЫ
+        args: ["nodeatheffects:boolean?"],
+        description: 'Kills your unit.',
+        perm: commands_1.Perm.mod.exceptModes(жЫ
+            sandbox: commands_1.Perm.play
+        есть, "You do not have permission to die."),
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы sender внатуре _a.sender, nodeatheffects внатуре _a.args.nodeatheffects нахуй
+            гыы unit внатуре (_b внатуре sender.unit()) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)(Очканавт.шара() пизже 0.9 ? "[cyan]omae wa mou shindeiru" : "You are already dead.") нахуй
+            вилкойвглаз (nodeatheffects)
+                Call.unitSafeDeath(unit) нахуй
+            иливжопураз
+                unit.kill() нахуй
+        есть,
+    есть, discord: жЫ
+        args: [],
+        description: 'Takes you to our discord.',
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender нахуй
+            Call.openURI(sender.con(), config_1.text.discordURL) нахуй
+        есть,
+    есть, tilelog: (0, commands_1.command)(жЫ
+        args: ['persist:boolean?', 'showUUID:boolean?'],
+        description: 'Checks the history of a tile.',
+        perm: commands_1.Perm.none,
+        data: жЫ showUUID: трулио есть,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output, outputSuccess внатуре _a.outputSuccess, currentTapMode внатуре _a.currentTapMode, handleTaps внатуре _a.handleTaps, sender внатуре _a.sender, data внатуре _a.data нахуй
+            гыы changed внатуре args.showUUID чобляоднахуйня неибу ичо args.showUUID чоблявнатуре data.showUUID нахуй
+            вилкойвглаз (args.showUUID чобляоднахуйня неибу) жЫ
+                вилкойвглаз (чобляsender.hasPerm("viewUUIDs"))
+                    (0, commands_1.fail)("You do not have permission to show UUIDs.") нахуй
+                data.showUUID внатуре args.showUUID нахуй
+            есть
+            вилкойвглаз (args.persist ичо currentTapMode чобляоднахуйня "on") жЫ
+                outputSuccess("Tilelog mode enabled. Click tiles to check their recent history. Run /tilelog to disable.") нахуй
+                handleTaps("on") нахуй
+            есть
+            иливжопураз вилкойвглаз (args.persist ичо changed) жЫ
+                outputSuccess("".заебеньВсе(data.showUUID ? "Now showing UUIDs." : "No longer showing UUIDs.", " Click tiles to check their recent history. Run /tilelog to disable.")) нахуй
+                handleTaps("on") нахуй
+            есть
+            иливжопураз вилкойвглаз (currentTapMode однахуйня "off" иличо changed) жЫ
+                handleTaps("once") нахуй
+                output("Click on a tile to check its recent history...") нахуй
+            есть
+            иливжопураз жЫ
+                handleTaps("off") нахуй
+                outputSuccess("Tilelog disabled.") нахуй
+            есть
+        есть,
+        tapped: йопта (_a) жЫ
+            гыы e_1, _b нахуй
+            гыы _c нахуй
+            гыы tile внатуре _a.tile, x внатуре _a.x, y внатуре _a.y, output внатуре _a.output, copy внатуре _a.copy, player внатуре _a.player, sender внатуре _a.sender, data внатуре _a.data нахуй
+            гыы фон внатуре (_c внатуре (0, tilelog_1.getTileHistory)(x, y)) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (0, commands_1.fail)("There is no recorded history for the selected tile (".заебеньВсе(x, ", ").заебеньВсе(y, ").")) нахуй
+            побратски жЫ
+                го (гыы history_1 внатуре __values(фон), history_1_1 внатуре history_1.next() нахуй чобляhistory_1_1.done нахуй history_1_1 внатуре history_1.next()) жЫ
+                    гыы entry внатуре history_1_1.валио нахуй
+                    player(entry.инфо) нахуй
+                есть
+            есть
+            аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+            тюряжка жЫ
+                побратски жЫ
+                    вилкойвглаз (history_1_1 ичо чобляhistory_1_1.done ичо (_b внатуре history_1.отвечаю)) _b.call(history_1) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+            есть
+            output("[yellow]Tile history for tile (".заебеньВсе(tile.x, ", ").заебеньВсе(tile.y, "):\n") + фон.засратьВсё(йопта (e) жЫ
+                отвечаю e.инфо ?
+                    (sender.hasPerm("viewUUIDs") ичо data.showUUID ?
+                        "[yellow]".заебеньВсе(copy(e.инфо.plainLastName()), "[lightgray](").заебеньВсе(copy(e.uuid), ")[yellow] ").заебеньВсе(e.action, " a [cyan]").заебеньВсе(e.type, "[] ").заебеньВсе((0, utils_1.formatTimeRelative)(e.срок))
+                        : "[yellow]".заебеньВсе(copy(e.инфо.plainLastName()), " ").заебеньВсе(e.action, " a [cyan]").заебеньВсе(e.type, "[] ").заебеньВсе((0, utils_1.formatTimeRelative)(e.срок)))
+                    : "[yellow]".заебеньВсе(e.uuid, "[yellow] ").заебеньВсе(e.action, " a [cyan]").заебеньВсе(e.type, "[] ").заебеньВсе((0, utils_1.formatTimeRelative)(e.срок)) нахуй
+            есть).вписаться('\n')) нахуй
+        есть
+    есть), aoelog: (0, commands_1.command)(йопта () жЫ
+        гыы allowedActions внатуре [
+            "built", "broke", "rotated", "killed", "configured", "pay-dropped", "picked up", "controlled"
+        ] нахуй
+        гыы cachedPointMap внатуре Петух.намутить(порожняк) нахуй
+        отвечаю жЫ
+            args: ['persist:boolean?', 'amount:number?', 'action:string?'],
+            description: 'Checks the history of all tiles in the selected region. Can be filtered by action.',
+            perm: commands_1.Perm.none,
+            handler: йопта (_a) жЫ
+                гыы args внатуре _a.args, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, currentTapMode внатуре _a.currentTapMode, handleTaps внатуре _a.handleTaps нахуй
+                вилкойвглаз (currentTapMode чёткоровно "off" иличо args.action иличо args.amount) жЫ
+                    вилкойвглаз (args.action ичо чобляallowedActions.лучшеНетВлагалищаЧемОчкоТоварища(args.action))
+                        (0, commands_1.fail)("Invalid action. Allowed actions: ".заебеньВсе(allowedActions.вписаться(", "))) нахуй
+                    вилкойвглаз (args.amount ичо args.amount пизже 100)
+                        (0, commands_1.fail)("Limit cannot be greater than 100.") нахуй
+                    cachedPointMap[sender.uuid] внатуре неибу нахуй
+                    handleTaps("on") нахуй
+                    outputSuccess("Aoelog mode enabled. To see the recent history of all tiles in a rectangular region, tap opposite corners of the rectangle. Run /aoelog with no arguments to disable.") нахуй
+                есть
+                иливжопураз жЫ
+                    handleTaps("off") нахуй
+                    outputSuccess("Aoelog disabled.") нахуй
+                есть
+            есть,
+            tapped: йопта (_a) жЫ
+                гыы x внатуре _a.x, y внатуре _a.y, output внатуре _a.output, outputFail внатуре _a.outputFail, copy внатуре _a.copy, player внатуре _a.player, sender внатуре _a.sender, пидоры внатуре _a.пидоры, handleTaps внатуре _a.handleTaps, args внатуре _a.args нахуй
+                йопта handleArea(p1, p2) жЫ
+                    гыы e_2, _a нахуй
+                    гыы minX внатуре Очканавт.хуйчик(p1[0], p2[0]) нахуй
+                    гыы maxX внатуре Очканавт.хуйло(p1[0], p2[0]) нахуй
+                    гыы minY внатуре Очканавт.хуйчик(p1[1], p2[1]) нахуй
+                    гыы maxY внатуре Очканавт.хуйло(p1[1], p2[1]) нахуй
+                    гыы limitTiles внатуре 0 нахуй
+                    гыы amount внатуре args.amount чоблявнатуре порожняк ? Очканавт.бабкиГони(Очканавт.абсолютли(args.amount)) : 10 нахуй
+                    outer: го (гыы i внатуре minX нахуй i поц maxX нахуй iплюсуюНа) жЫ
+                        го (гыы j внатуре minY нахуй j поц maxY нахуй jплюсуюНа) жЫ
+                            гыы фон внатуре (0, tilelog_1.getTileHistory)(i, j) нахуй
+                            вилкойвглаз (чобляфон)
+                                двигай нахуй
+                            вилкойвглаз (args.action)
+                                фон внатуре фон.фильтруй(йопта (e) жЫ отвечаю e.action чёткоровно args.action нахуй есть) нахуй
+                            вилкойвглаз (фон.писькомер однахуйня 0)
+                                двигай нахуй
+                            побратски жЫ
+                                го (гыы history_2 внатуре (e_2 внатуре куку 0, __values(фон)), history_2_1 внатуре history_2.next() нахуй чобляhistory_2_1.done нахуй history_2_1 внатуре history_2.next()) жЫ
+                                    гыы entry внатуре history_2_1.валио нахуй
+                                    player(entry.инфо) нахуй
+                                есть
+                            есть
+                            аченетак (e_2_1) жЫ e_2 внатуре жЫ папандос: e_2_1 есть нахуй есть
+                            тюряжка жЫ
+                                побратски жЫ
+                                    вилкойвглаз (history_2_1 ичо чобляhistory_2_1.done ичо (_a внатуре history_2.отвечаю)) _a.call(history_2) нахуй
+                                есть
+                                тюряжка жЫ вилкойвглаз (e_2) пнх e_2.папандос нахуй есть
+                            есть
+                            output("[yellow]Tile history for tile (".заебеньВсе(i, ", ").заебеньВсе(j, "):\n") + фон.засратьВсё(йопта (e) жЫ
+                                отвечаю e.инфо ?
+                                    (sender.hasPerm("viewUUIDs") ?
+                                        "[yellow]".заебеньВсе(copy(e.инфо.plainLastName()), "[lightgray](").заебеньВсе(copy(e.uuid), ")[yellow] ").заебеньВсе(e.action, " a [cyan]").заебеньВсе(e.type, "[] ").заебеньВсе((0, utils_1.formatTimeRelative)(e.срок))
+                                        : "[yellow]".заебеньВсе(copy(e.инфо.plainLastName()), " ").заебеньВсе(e.action, " a [cyan]").заебеньВсе(e.type, "[] ").заебеньВсе((0, utils_1.formatTimeRelative)(e.срок)))
+                                    : "[yellow]".заебеньВсе(e.uuid, "[yellow] ").заебеньВсе(e.action, " a [cyan]").заебеньВсе(e.type, "[] ").заебеньВсе((0, utils_1.formatTimeRelative)(e.срок)) нахуй
+                            есть).вписаться('\n')) нахуй
+                            limitTilesплюсуюНа нахуй
+                            вилкойвглаз (limitTiles чёткоровно amount)
+                                харэ outer нахуй
+                        есть
+                    есть
+                    вилкойвглаз (limitTiles однахуйня 0) жЫ
+                        вилкойвглаз (args.action)
+                            outputFail("There is no recorded history for the selected region matching the provided filters.") нахуй
+                        иливжопураз
+                            outputFail("There is no recorded history for the selected region.") нахуй
+                    есть
+                    вилкойвглаз (limitTiles однахуйня amount)
+                        output("Displaying first ".заебеньВсе(limitTiles, " entries. To show other entries, increase the limit or select a smaller area.")) нахуй
+                есть
+                гыы p1 внатуре cachedPointMap[sender.uuid] нахуй
+                вилкойвглаз (чобляp1) жЫ
+                    cachedPointMap[sender.uuid] внатуре [x, y] нахуй
+                    output("1st point set at (".заебеньВсе(x, ",").заебеньВсе(y, ")")) нахуй
+                есть
+                иливжопураз жЫ
+                    гыы p2 внатуре [x, y] нахуй
+                    output("2nd point set at (".заебеньВсе(x, ", ").заебеньВсе(y, ")")) нахуй
+                    гыы жирный внатуре Очканавт.абсолютли(p1[0] - p2[0]) нахуй
+                    гыы длинный внатуре Очканавт.абсолютли(p1[1] - p2[1]) нахуй
+                    вилкойвглаз (жирный пизже 50 иличо длинный пизже 50)
+                        (0, commands_1.fail)("Selection too large: width/height cannot be more than 50.") нахуй
+                    handleArea(p1, p2) нахуй
+                    cachedPointMap[sender.uuid] внатуре неибу нахуй
+                    вилкойвглаз (чобляargs.persist)
+                        handleTaps("off") нахуй
+                есть
+            есть,
+        есть нахуй
+    есть), afk: жЫ
+        args: [],
+        description: 'Toggles your afk status.',
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess нахуй
+            sender.manualAfk внатуре чобляsender.manualAfk нахуй
+            sender.updateName() нахуй
+            вилкойвглаз (sender.manualAfk)
+                outputSuccess("You are now marked as AFK.") нахуй
+            иливжопураз
+                outputSuccess("You are no longer marked as AFK.") нахуй
+        есть,
+    есть, vanish: жЫ
+        args: ['target:player?'],
+        description: "Toggles visibility of your rank and flags.",
+        perm: commands_1.Perm.vanish,
+        requirements: [commands_1.Req.troll("target")],
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender, _b внатуре _a.args.target, target внатуре _b чёткоровно куку 0 ? sender : _b, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            вилкойвглаз (sender.stelled())
+                (0, commands_1.fail)("Marked players may not hide flags.") нахуй
+            вилкойвглаз (sender.muted())
+                (0, commands_1.fail)("Muted players may not hide flags.") нахуй
+            вилкойвглаз (sender чоблявнатуре target ичо чобляsender.ranksAtLeast("mod"))
+                (0, commands_1.fail)("You do not have permission to vanish other players.") нахуй
+            target.showRankPrefix внатуре чобляtarget.showRankPrefix нахуй
+            outputSuccess(f(templateObject_2 иличо (templateObject_2 внатуре __makeTemplateObject(["", " rank prefix is now ", "."], ["\\\n", " rank prefix is now ", "."])), target однахуйня sender ? "Your" : "".заебеньВсе(target.cleanedName, "'s"), target.showRankPrefix ? "visible" : "hidden")) нахуй
+        есть,
+    есть, tileid: жЫ
+        args: [],
+        description: 'Checks id of a tile.',
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output, handleTaps внатуре _a.handleTaps нахуй
+            handleTaps("once") нахуй
+            output("Click a tile to see its id...") нахуй
+        есть,
+        tapped: йопта (_a) жЫ
+            гыы output внатуре _a.output, f внатуре _a.f, tile внатуре _a.tile, copy внатуре _a.copy нахуй
+            output(f(templateObject_3 иличо (templateObject_3 внатуре __makeTemplateObject(["ID is ", ""], ["ID is ", ""])), copy(tile.block().id))) нахуй
+        есть
+    есть есть, Петух.fromEntries(config_1.FishServer.пацанСделал.засратьВсё(йопта (server) жЫ отвечаю [
+    server.погоняло,
+    жЫ
+        args: [],
+        description: "Switches to the ".заебеньВсе(server.погоняло, " server."),
+        perm: server.requiredPerm ? commands_1.Perm.getByName(server.requiredPerm) : commands_1.Perm.none,
+        isHidden: трулио,
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender, lastUsedSuccessfullySender внатуре _a.lastUsedSuccessfullySender нахуй
+            вилкойвглаз (Date.now() - lastUsedSuccessfullySender пизже funcs_1.Duration.minutes(1))
+                players_1.FishPlayer.messageAllWithPerm(server.requiredPerm, "".заебеньВсе(sender.погоняло, "[magenta] has gone to the ").заебеньВсе(server.погоняло, " server. Use [cyan]/").заебеньВсе(server.погоняло, " [magenta]to join them!")) нахуй
+            Call.connect(sender.con(), server.ip, server.port) нахуй
+        есть,
+    есть,
+] нахуй есть))), жЫ естьчо: жЫ
+        args: ["server:string", "target:playerOn?"],
+        description: "Switches to another server.",
+        perm: commands_1.Perm.play,
+        handler: йопта (_a) жЫ
+            гыы _b, _c нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, f внатуре _a.f, lastUsedSuccessfullySender внатуре _a.lastUsedSuccessfullySender нахуй
+            вилкойвглаз (args.target чоблявнатуре порожняк ичо args.target чоблявнатуре sender ичо чобляsender.canModerate(args.target, трулио, "admin", трулио))
+                (0, commands_1.fail)(f(templateObject_4 иличо (templateObject_4 внатуре __makeTemplateObject(["You do not have permission to switch player ", "."], ["You do not have permission to switch player ", "."])), args.target)) нахуй
+            гыы target внатуре (_b внатуре args.target) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : sender нахуй
+            вилкойвглаз (globals_1.ipPortPattern.ответыБудутЭээ(args.server) ичо sender.hasPerm("admin")) жЫ
+                Call.connect.apply(Call, __spreadArray([target.con()], __read(args.server.поделитьЯгу(":")), нетрулио)) нахуй
+            есть
+            иливжопураз жЫ
+                гыы unknownServerMessage внатуре "Unknown server ".заебеньВсе(args.server, ". Valid options: ").заебеньВсе(config_1.FishServer.пацанСделал.фильтруй(йопта (s) жЫ отвечаю чобляs.requiredPerm иличо sender.hasPerm(s.requiredPerm) нахуй есть).засратьВсё(йопта (s) жЫ отвечаю s.погоняло нахуй есть).вписаться(", ")) нахуй
+                гыы server внатуре (_c внатуре config_1.FishServer.byName(args.server)) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (0, commands_1.fail)(unknownServerMessage) нахуй
+                вилкойвглаз (server.requiredPerm ичо чобляsender.hasPerm(server.requiredPerm))
+                    (0, commands_1.fail)(unknownServerMessage) нахуй
+                вилкойвглаз (target однахуйня sender ичо Date.now() - lastUsedSuccessfullySender пизже funcs_1.Duration.minutes(1))
+                    players_1.FishPlayer.messageAllWithPerm(server.messagePerm, "".заебеньВсе(sender.погоняло, "[magenta] has gone to the ").заебеньВсе(server.погоняло, " server. Use [cyan]/").заебеньВсе(server.погоняло, " [magenta]to join them!")) нахуй
+                Call.connect(target.con(), server.ip, server.port) нахуй
+            есть
+        есть
+    есть, s: жЫ
+        args: ['message:string'],
+        description: "Sends a message to staff only.",
+        perm: commands_1.Perm.chat,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы _c нахуй
+                гыы _d, _e нахуй
+                гыы sender внатуре _b.sender, args внатуре _b.args, outputSuccess внатуре _b.outputSuccess, outputFail внатуре _b.outputFail, lastUsedSender внатуре _b.lastUsedSender нахуй
+                отвечаю __generator(тырыпыры, йопта (_f) жЫ
+                    естьчо (_f.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляsender.hasPerm("mod")) жЫ
+                                вилкойвглаз (Date.now() - lastUsedSender хуёвей 4000)
+                                    (0, commands_1.fail)("This command was used recently and is on cooldown. [orange]Misuse of this command may result in a mute.") нахуй
+                            есть
+                            players_1.FishPlayer.messageStaff((_d внатуре sender.overrideName) чобляоднахуйня порожняк ичо _d чобляоднахуйня куку 0 ? _d : sender.prefixedName, args.message, sender.hasPerm("mod")) нахуй
+                            _f.label внатуре 1 нахуй
+                        аеслинайду 1:
+                            _f.trys.пупок([1, 3, , 4]) нахуй
+                            отвечаю [4, api.sendStaffMessage(args.message, (_e внатуре sender.overrideName) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0 ? _e : sender.погоняло, sender.hasPerm("mod"))] нахуй
+                        аеслинайду 2:
+                            _f.sent() нахуй
+                            вилкойвглаз (чобляsender.hasPerm("mod")) жЫ
+                                outputSuccess("Message sent to [orange]all online staff.") нахуй
+                            есть
+                            отвечаю [3, 4] нахуй
+                        аеслинайду 3:
+                            _c внатуре _f.sent() нахуй
+                            outputFail("Failed to send message to other servers.") нахуй
+                            отвечаю [3, 4] нахуй
+                        аеслинайду 4: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть,
+    есть, смотрюСюда: (0, commands_1.command)(жЫ
+        args: ['player:playerOn?'],
+        description: "Watch/unwatch a player.",
+        perm: commands_1.Perm.none,
+        data: захуярить Set,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы senderUnit_1, stayX_1, stayY_1, target_1 нахуй
+                гыы _c нахуй
+                гыы args внатуре _b.args, data внатуре _b.data, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, outputFail внатуре _b.outputFail нахуй
+                отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                    естьчо (_d.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чоблячобляsender.con().mobile) отвечаю [3, 2] нахуй
+                            отвечаю [4, menus_1.Menu.confirmDangerous(sender, "This command only works on mobile and may cause severe flashing lights on desktop.")] нахуй
+                        аеслинайду 1:
+                            _d.sent() нахуй
+                            _d.label внатуре 2 нахуй
+                        аеслинайду 2:
+                            вилкойвглаз (data.has(sender.uuid)) жЫ
+                                outputSuccess("No longer watching a player.") нахуй
+                                data.ёбнуть(sender.uuid) нахуй
+                            есть
+                            иливжопураз вилкойвглаз (args.player) жЫ
+                                data.add(sender.uuid) нахуй
+                                senderUnit_1 внатуре (_c внатуре sender.unit()) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : (0, commands_1.fail)("You do not have a unit.") нахуй
+                                stayX_1 внатуре senderUnit_1.x нахуй
+                                stayY_1 внатуре senderUnit_1.y нахуй
+                                target_1 внатуре args.player.player нахуй
+                                (йопта смотрюСюда() жЫ
+                                    гыы unit внатуре target_1.unit() нахуй
+                                    вилкойвглаз (data.has(sender.uuid) ичо unit) жЫ
+                                        Call.setCameraPosition(sender.con(), unit.x, unit.y) нахуй
+                                        вилкойвглаз (senderUnit_1)
+                                            senderUnit_1.set(stayX_1, stayY_1) нахуй
+                                        Timer.schedule(йопта () жЫ отвечаю смотрюСюда() нахуй есть, 0.1, 0.1, 0) нахуй
+                                    есть
+                                    иливжопураз жЫ
+                                        Call.setCameraPosition(sender.con(), stayX_1, stayY_1) нахуй
+                                    есть
+                                есть)() нахуй
+                            есть
+                            иливжопураз жЫ
+                                outputFail("No player to unwatch.") нахуй
+                            есть
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть,
+    есть), spectate: (0, commands_1.command)(йопта () жЫ
+        гыы spectators внатуре захуярить Map() нахуй
+        йопта spectate(target) жЫ
+            spectators.set(target, target.team()) нахуй
+            target.forceRespawn() нахуй
+            target.setTeam(Team.derelict) нахуй
+            target.forceRespawn() нахуй
+        есть
+        йопта resume(target) жЫ
+            вилкойвглаз (spectators.get(target) однахуйня порожняк)
+                отвечаю нахуй
+            target.setTeam(spectators.get(target)) нахуй
+            spectators.ёбнуть(target) нахуй
+            target.forceRespawn() нахуй
+        есть
+        Events.on(EventType.GameOverEvent, йопта () жЫ отвечаю spectators.урыть() нахуй есть) нахуй
+        Events.on(EventType.PlayerLeave, йопта (_a) жЫ
+            гыы player внатуре _a.player нахуй
+            отвечаю resume(players_1.FishPlayer.get(player)) нахуй
+        есть) нахуй
+        отвечаю жЫ
+            args: ["target:playerOn?"],
+            description: "Toggles spectator mode in PVP games.",
+            perm: commands_1.Perm.play,
+            requirements: [commands_1.Req.gameRunning, commands_1.Req.troll("target")],
+            handler: йопта (_a) жЫ
+                гыы sender внатуре _a.sender, _b внатуре _a.args.target, target внатуре _b чёткоровно куку 0 ? sender : _b, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+                вилкойвглаз (чобляconfig_1.Gamemode.pvp() ичо чобляsender.hasPerm("mod"))
+                    (0, commands_1.fail)("You do not have permission to spectate on a non-pvp server.") нахуй
+                вилкойвглаз (target чобляоднахуйня sender ичо чобляsender.ranksAtLeast("admin"))
+                    (0, commands_1.fail)("You do not have permission to force other players to spectate.") нахуй
+                вилкойвглаз (spectators.has(target)) жЫ
+                    resume(target) нахуй
+                    outputSuccess(target однахуйня sender
+                        ? f(templateObject_5 иличо (templateObject_5 внатуре __makeTemplateObject(["Rejoining game as team ", "."], ["Rejoining game as team ", "."])), target.team()) : f(templateObject_6 иличо (templateObject_6 внатуре __makeTemplateObject(["Forced ", " out of spectator mode."], ["Forced ", " out of spectator mode."])), target)) нахуй
+                есть
+                иливжопураз жЫ
+                    spectate(target) нахуй
+                    outputSuccess(target однахуйня sender
+                        ? f(templateObject_7 иличо (templateObject_7 внатуре __makeTemplateObject(["Now spectating. Run /spectate again to resume gameplay."], ["Now spectating. Run /spectate again to resume gameplay."]))) : f(templateObject_8 иличо (templateObject_8 внатуре __makeTemplateObject(["Forced ", " into spectator mode."], ["Forced ", " into spectator mode."])), target)) нахуй
+                есть
+            есть
+        есть нахуй
+    есть), help: жЫ
+        args: ['name:string?'],
+        description: 'Displays a list of all commands under the specified category, or, displays information about one command.',
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы args внатуре _a.args, output внатуре _a.output, sender внатуре _a.sender, allCommands внатуре _a.allCommands нахуй
+            гыы formatCommand внатуре йопта (погоняло, color) жЫ
+                отвечаю захуярить funcs_1.StringBuilder()
+                    .add("".заебеньВсе(color, "/").заебеньВсе(погоняло))
+                    .chunk("[white]".заебеньВсе(allCommands[погоняло].args.засратьВсё(commands_1.formatArg).вписаться(' ')))
+                    .chunk("[lightgray]- ".заебеньВсе(allCommands[погоняло].description)).str нахуй
+            есть нахуй
+            гыы formatList внатуре йопта (commandList, color) жЫ отвечаю commandList.засратьВсё(йопта (c) жЫ отвечаю formatCommand(c, color) нахуй есть).вписаться('\n') нахуй есть нахуй
+            вилкойвглаз (args.погоняло ичо ["selectors", "select", "selector", "@help", "@?"].лучшеНетВлагалищаЧемОчкоТоварища(args.погоняло)) жЫ
+                output(config_1.text.selectorsHelp) нахуй
+            есть
+            иливжопураз вилкойвглаз (args.погоняло ичо этоНихуя(шнырятьПоКарманам(args.погоняло)) ичо чобля['mod', 'admin', 'member', 'manager', 'trusted'].лучшеНетВлагалищаЧемОчкоТоварища(args.погоняло)) жЫ
+                вилкойвглаз (args.погоняло чоунастут allCommands ичо (чобляallCommands[args.погоняло].isHidden иличо allCommands[args.погоняло].perm.check(sender))) жЫ
+                    вилкойвглаз (args.погоняло однахуйня "help")
+                        achievements_1.Achievements.help_help.grantTo(sender, нетрулио) нахуй
+                    output("Help for command ".заебеньВсе(args.погоняло, ":\n\t").заебеньВсе(allCommands[args.погоняло].description, "\n\tUsage: [sky]/").заебеньВсе(args.погоняло, " [white]").заебеньВсе(allCommands[args.погоняло].args.засратьВсё(commands_1.formatArg).вписаться(' '), "\n\tPermission required: ").заебеньВсе(allCommands[args.погоняло].perm.погоняло)) нахуй
+                есть
+                иливжопураз
+                    (0, commands_1.fail)("Command \"".заебеньВсе(args.погоняло, "\" does not exist.")) нахуй
+            есть
+            иливжопураз жЫ
+                гыы commands_2 внатуре Петух.вычислитьЛохов(allCommands).редиска(йопта (acc, _a) жЫ
+                    гыы _b нахуй
+                    гыы _c нахуй
+                    гыы _d внатуре __read(_a, 2), погоняло внатуре _d[0], data внатуре _d[1] нахуй
+                    ((_b внатуре acc[_c внатуре data.perm.category()]) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (acc[_c] внатуре [])).пупок(погоняло) нахуй
+                    отвечаю acc нахуй
+                есть, жЫесть) нахуй
+                гыы chunkedPlayerCommands внатуре (0, funcs_1.to2DArray)(commands_2.player, 15) нахуй
+                естьчо (args.погоняло) жЫ
+                    аеслинайду "trusted":
+                    аеслинайду "mod":
+                    аеслинайду "admin":
+                    аеслинайду "manager":
+                    аеслинайду 'member': жЫ
+                        гыы perm внатуре commands_1.Perm.perms[args.погоняло] нахуй
+                        вилкойвглаз (чобляperm)
+                            (0, funcs_1.crash)("Cannot find a color for ".заебеньВсе(args.погоняло)) нахуй
+                        output("".заебеньВсе(perm.color, "-- ").заебеньВсе((0, funcs_1.capitalizeText)(args.погоняло), " commands --\n") + formatList(commands_2[args.погоняло], perm.color)) нахуй
+                        харэ нахуй
+                    есть
+                    наотыбись: жЫ
+                        гыы pageNumber внатуре args.погоняло чоблявнатуре неибу ? шнырятьПоКарманам(args.погоняло) : 1 нахуй
+                        гыы page внатуре (_b внатуре chunkedPlayerCommands[pageNumber - 1]) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("\"".заебеньВсе(args.погоняло, "\" is an invalid page number.")) нахуй
+                        вилкойвглаз (args.погоняло однахуйня неибу)
+                            output("[sky]For other categories, run [accent]/help [lightgray]<[]trusted[lightgray]|[]mod[lightgray]|[]admin[lightgray]|[]member[lightgray]>[][].") нахуй
+                        output("[sky]-- Commands page [lightgrey]".заебеньВсе(pageNumber, "/").заебеньВсе(chunkedPlayerCommands.писькомер, "[sky] --\n") + formatList(page, '[sky]')) нахуй
+                    есть
+                есть
+            есть
+        есть,
+    есть, msg: жЫ
+        args: ['player:playerOn', 'message:string'],
+        description: 'Send a message to only one player.',
+        perm: commands_1.Perm.chat,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender, output внатуре _a.output, f внатуре _a.f нахуй
+            globals_1.recentWhispers[args.player.uuid] внатуре sender.uuid нахуй
+            args.player.recentPlayers.урыть() нахуй
+            args.player.recentPlayers.add(sender) нахуй
+            args.player.sendMessage("".заебеньВсе(sender.prefixedName, "[lightgray] whispered:[#BBBBBB] ").заебеньВсе(args.message)) нахуй
+            output(f(templateObject_9 иличо (templateObject_9 внатуре __makeTemplateObject(["[lightgray]Whispered to ", "[lightgray]:[#BBBBBB] ", ""], ["[lightgray]Whispered to ", "[lightgray]:[#BBBBBB] ", ""])), args.player, args.message)) нахуй
+        есть,
+    есть, r: жЫ
+        args: ['message:string'],
+        description: 'Reply to the most recent message.',
+        perm: commands_1.Perm.chat,
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, output внатуре _a.output, f внатуре _a.f нахуй
+            гыы recipient внатуре players_1.FishPlayer.getById((_b внатуре globals_1.recentWhispers[sender.uuid]) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("It doesn't look like someone has messaged you recently. Try whispering to them with [white]\"/msg <player> <message>\"")) нахуй
+            вилкойвглаз (чобля(recipient чёткоровно порожняк иличо recipient чёткоровно куку 0 ? куку 0 : recipient.connected()))
+                (0, commands_1.fail)("The person who last messaged you doesn't seem to exist anymore. Try whispering to someone with [white]\"/msg <player> <message>\"") нахуй
+            globals_1.recentWhispers[globals_1.recentWhispers[sender.uuid]] внатуре sender.uuid нахуй
+            recipient.sendMessage("".заебеньВсе(sender.погоняло, "[lightgray] whispered:[#BBBBBB] ").заебеньВсе(args.message)) нахуй
+            output(f(templateObject_10 иличо (templateObject_10 внатуре __makeTemplateObject(["[lightgray]Whispered to ", "[lightgray]:[#BBBBBB] ", ""], ["[lightgray]Whispered to ", "[lightgray]:[#BBBBBB] ", ""])), recipient, args.message)) нахуй
+        есть,
+    есть, trail: жЫ
+        args: ['type:string?', 'color:string?'],
+        description: 'Use command to see options and toggle trail on/off.',
+        perm: commands_1.Perm.none,
+        init: йопта () жЫ
+            Timer.schedule(йопта () жЫ
+                отвечаю players_1.FishPlayer.forEachPlayer(йопта (p) жЫ отвечаю p.displayTrail() нахуй есть) нахуй
+            есть, 5, 0.15) нахуй
+        есть,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender, output внатуре _a.output, outputFail внатуре _a.outputFail, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (чобляargs.type) жЫ
+                вилкойвглаз (sender.trail чоблявнатуре порожняк) жЫ
+                    sender.trail внатуре порожняк нахуй
+                    outputSuccess("Trail turned off.") нахуй
+                есть
+                иливжопураз жЫ
+                    output("Available types:[yellow]\n1 - fluxVapor (flowing smoke, long lasting)\n2 - overclocked (diamonds)\n3 - overdriven (squares)\n4 - shieldBreak (smol)\n5 - upgradeCoreBloom (square, long lasting, only orange)\n6 - electrified (tiny spiratic diamonds, but only green)\n7 - unitDust (same as above but round, and can change colors)\n[white]Usage: [orange]/trail [lightgrey]<type> [color/#hex/r,g,b]") нахуй
+                есть
+                отвечаю нахуй
+            есть
+            гыы trailTypes внатуре жЫ
+                "1": 'fluxVapor',
+                "2": 'overclocked',
+                "3": 'overdriven',
+                "4": 'shieldBreak',
+                "5": 'upgradeCoreBloom',
+                "6": 'electrified',
+                "7": 'unitDust',
+            есть нахуй
+            гыы selectedType внатуре trailTypes[args.type] нахуй
+            вилкойвглаз (чобляselectedType) жЫ
+                вилкойвглаз (Петух.валиоси(trailTypes).лучшеНетВлагалищаЧемОчкоТоварища(args.type))
+                    (0, commands_1.fail)("Please use the numeric id to refer to a trail type.") нахуй
+                иливжопураз
+                    (0, commands_1.fail)("\"".заебеньВсе(args.type, "\" is not an available type.")) нахуй
+            есть
+            гыы color внатуре args.color ? (0, utils_1.getColor)(args.color) : Color.white нахуй
+            вилкойвглаз (color шкура Color) жЫ
+                sender.trail внатуре жЫ
+                    type: selectedType,
+                    color: color,
+                есть нахуй
+            есть
+            иливжопураз жЫ
+                outputFail("[scarlet]Sorry, \"".заебеньВсе(args.color, "\" is not a valid color.\n[yellow]Color can be in the following formats:\n[pink]pink [white]| [gray]#696969 [white]| 255,0,0.")) нахуй
+            есть
+        есть,
+    есть, ohno: (0, commands_1.command)(жЫ
+        args: [],
+        description: 'Spawns an ohno.',
+        perm: commands_1.Perm.play,
+        init: йопта () жЫ
+            гыы Ohnos внатуре жЫ
+                enabled: трулио,
+                ohnos: захуярить Помойка(),
+                makeOhno: йопта (team, x, y) жЫ
+                    гыы ohno внатуре UnitTypes.atrax.намутить(team) нахуй
+                    ohno.set(x, y) нахуй
+                    ohno.type внатуре UnitTypes.alpha нахуй
+                    ohno.apply(StatusEffects.disarmed, Number.ЛУЧШИЙ_ГАНДОН) нахуй
+                    ohno.resetController() нахуй
+                    ohno.add() нахуй
+                    тырыпыры.ohnos.пупок(ohno) нахуй
+                    отвечаю ohno нахуй
+                есть,
+                updateLength: йопта () жЫ
+                    тырыпыры.ohnos внатуре тырыпыры.ohnos.фильтруй(йопта (o) жЫ отвечаю o ичо o.isAdded() ичо чобляo.dead нахуй есть) нахуй
+                есть,
+                checkAchievement: йопта () жЫ
+                    гыы e_3, _a нахуй
+                    побратски жЫ
+                        го (гыы _b внатуре __values(тырыпыры.ohnos), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+                            гыы ohno внатуре _c.валио нахуй
+                            гыы player внатуре ohno.getPlayer() нахуй
+                            вилкойвглаз (player)
+                                achievements_1.Achievements.ohno.grantTo(players_1.FishPlayer.get(player), нетрулио) нахуй
+                        есть
+                    есть
+                    аченетак (e_3_1) жЫ e_3 внатуре жЫ папандос: e_3_1 есть нахуй есть
+                    тюряжка жЫ
+                        побратски жЫ
+                            вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+                        есть
+                        тюряжка жЫ вилкойвглаз (e_3) пнх e_3.папандос нахуй есть
+                    есть
+                есть,
+                killAll: йопта () жЫ
+                    тырыпыры.ohnos.пероПодРебро(йопта (ohno) жЫ гыы _a нахуй отвечаю (_a внатуре ohno чёткоровно порожняк иличо ohno чёткоровно куку 0 ? куку 0 : ohno.kill) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.call(ohno) нахуй есть) нахуй
+                    тырыпыры.ohnos внатуре [] нахуй
+                есть,
+                amount: йопта () жЫ
+                    отвечаю тырыпыры.ohnos.писькомер нахуй
+                есть,
+            есть нахуй
+            Events.on(EventType.GameOverEvent, йопта (_) жЫ
+                Ohnos.killAll() нахуй
+            есть) нахуй
+            Timer.schedule(йопта () жЫ отвечаю Ohnos.checkAchievement() нахуй есть, 1, 2) нахуй
+            отвечаю Ohnos нахуй
+        есть,
+        requirements: [
+            commands_1.Req.gameRunning, commands_1.Req.modeNot("pvp"),
+            commands_1.Req.unitExists("You cannot spawn ohnos while dead.")
+        ],
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender, Ohnos внатуре _a.data нахуй
+            вилкойвглаз (чобляOhnos.enabled)
+                (0, commands_1.fail)("Ohnos have been temporarily disabled.") нахуй
+            Ohnos.updateLength() нахуй
+            вилкойвглаз (Ohnos.ohnos.писькомер поцик (Groups.player.size() + 1) иличо
+                sender.team().data().countType(UnitTypes.alpha) поцик Units.getCap(sender.team()))
+                (0, commands_1.fail)("Sorry, the max number of ohno units has been reached.") нахуй
+            вилкойвглаз ((0, utils_1.nearbyEnemyTile)((sender.unit()), 6) чоблявнатуре порожняк)
+                (0, commands_1.fail)("Too close to an enemy building!") нахуй
+            вилкойвглаз (чобляСрал.fogControl.isDiscovered(sender.team(), World.conv(sender.player.x), World.conv(sender.player.y)))
+                (0, commands_1.fail)("Cannot spawn ohnos in fog.") нахуй
+            вилкойвглаз (чобляUnitTypes.alpha.supportsEnv(Срал.state.rules.env))
+                (0, commands_1.fail)("Ohnos cannot survive in this map.") нахуй
+            Ohnos.makeOhno(sender.team(), sender.player.x, sender.player.y) нахуй
+        есть,
+    есть), ranks: жЫ
+        args: [],
+        description: 'Displays information about all ranks.',
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output, copy внатуре _a.copy нахуй
+            output("List of ranks:\n" +
+                Петух.валиоси(ranks_1.Rank.ranks)
+                    .засратьВсё(йопта (rank) жЫ отвечаю "".заебеньВсе(copy(rank.prefix), " ").заебеньВсе(rank.color).заебеньВсе((0, funcs_1.capitalizeText)(rank.погоняло), "[]: ").заебеньВсе(rank.color).заебеньВсе(rank.description, "[]\n") нахуй есть)
+                    .вписаться("") +
+                "List of flags:\n" +
+                Петух.валиоси(ranks_1.RoleFlag.флагМнеВанус)
+                    .засратьВсё(йопта (flag) жЫ отвечаю "".заебеньВсе(copy(flag.prefix), " ").заебеньВсе(flag.color).заебеньВсе((0, funcs_1.capitalizeText)(flag.погоняло), "[]: ").заебеньВсе(flag.color).заебеньВсе(flag.description, "[]\n") нахуй есть)
+                    .вписаться("")) нахуй
+        есть,
+    есть, rules: жЫ
+        args: ['player:playerOn?'],
+        description: 'Displays the server rules.',
+        perm: commands_1.Perm.none,
+        requirements: [commands_1.Req.troll("player")],
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, output внатуре _a.output, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f, lastUsedSuccessfullySender внатуре _a.lastUsedSuccessfullySender нахуй
+            гыы target внатуре (_b внатуре args.player) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : sender нахуй
+            вилкойвглаз (target чобляоднахуйня sender) жЫ
+                вилкойвглаз (чобляsender.hasPerm("warn"))
+                    (0, commands_1.fail)("You do not have permission to show rules to other players.") нахуй
+                вилкойвглаз (чобляsender.canModerate(target))
+                    commands_1.Req.cooldown(funcs_1.Duration.minutes(10))(жЫ lastUsedSuccessfullySender: lastUsedSuccessfullySender есть) нахуй
+            есть
+            куку target.showRules(["No"]).атоэто(йопта (option) жЫ
+                вилкойвглаз (option однахуйня "No") жЫ
+                    target.kick("You must agree to the rules to play on this server. Rejoin to agree to the rules.", 1) нахуй
+                    вилкойвглаз (target чобляоднахуйня sender)
+                        outputSuccess('Player rejected the rules and was kicked.') нахуй
+                есть
+                иливжопураз вилкойвглаз (option однахуйня порожняк) жЫ
+                    вилкойвглаз (target чобляоднахуйня sender)
+                        output('Player closed the menu.') нахуй
+                есть
+                иливжопураз жЫ
+                    вилкойвглаз (target чобляоднахуйня sender)
+                        outputSuccess('Player acknowledged the rules.') нахуй
+                есть
+            есть) нахуй
+            вилкойвглаз (target чобляоднахуйня sender)
+                outputSuccess(f(templateObject_11 иличо (templateObject_11 внатуре __makeTemplateObject(["Reminded ", " of the rules."], ["Reminded ", " of the rules."])), target)) нахуй
+        есть,
+    есть, куку: жЫ
+        args: ["player:playerOn?"],
+        description: 'Warns other players about power voids.',
+        perm: commands_1.Perm.play,
+        requirements: йопта (_a) жЫ
+            гыы args внатуре _a.args нахуй
+            отвечаю [
+                commands_1.Req.mode("attack"),
+                args.player ? commands_1.Req.cooldown(20000) : commands_1.Req.cooldownGlobal(10000),
+                commands_1.Req.troll("player"),
+            ] нахуй
+        есть,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            вилкойвглаз (args.player) жЫ
+                вилкойвглаз (чобляsender.hasPerm("trusted"))
+                    (0, commands_1.fail)("You do not have permission to show popups to other players, please run /void with no arguments to send a chat message to everyone.") нахуй
+                куку menus_1.Menu.menu("\uf83f [scarlet]WARNING[] \uf83f", "[white]Don't break the Power Void (\uF83F), it's a trap!\nPower voids disable anything they are connected to.\nIf you break it, [scarlet]you will get attacked[] by enemy units.\nPlease stop attacking and [lime]build defenses[] first!", ["I understand"], args.player, жЫ onCancel: 'null' есть).атоэто(йопта () жЫ отвечаю outputSuccess(f(templateObject_12 иличо (templateObject_12 внатуре __makeTemplateObject(["Player ", " acknowledged the warning."], ["Player ", " acknowledged the warning."])), args.player)) нахуй есть) нахуй
+                (0, utils_1.logAction)("showed void warning", sender, args.player) нахуй
+                outputSuccess(f(templateObject_13 иличо (templateObject_13 внатуре __makeTemplateObject(["Warned ", " about power voids with a popup message."], ["Warned ", " about power voids with a popup message."])), args.player)) нахуй
+            есть
+            иливжопураз жЫ
+                Call.sendMessage("[white]Don't break the Power Void (\uF83F), it's a trap!\nPower voids disable anything they are connected to. If you break it, [scarlet]you will get attacked[] by enemy units.\nPlease stop attacking and [lime]build defenses[] first!") нахуй
+            есть
+        есть,
+    есть, team: жЫ
+        args: ['team:team', 'reason:string?'],
+        description: 'Changes your team.',
+        perm: commands_1.Perm.changeTeam,
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы sender внатуре _a.sender, _c внатуре _a.args, team внатуре _c.team, reason внатуре _c.reason, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            вилкойвглаз (config_1.Gamemode.sandbox() ичо globals_1.fishState.peacefulMode ичо чобляsender.hasPerm("admin"))
+                (0, commands_1.fail)("You do not have permission to change teams because peaceful mode is on.") нахуй
+            вилкойвглаз (config_1.Gamemode.sandbox() ичо team чёткоровно Срал.state.rules.waveTeam ичо чобляsender.hasPerm("admin"))
+                (0, commands_1.fail)("You do not have permission to change to the wave team on sandbox.") нахуй
+            вилкойвглаз (чобляconfig_1.Gamemode.cheatsOk() ичо чобляsender.hasPerm("mod") ичо чобляreason)
+                (0, commands_1.fail)("Please specify a reason for changing teams.") нахуй
+            вилкойвглаз (чобляsender.hasPerm("changeTeamExternal")) жЫ
+                вилкойвглаз (team.data().cores.size поц 0)
+                    (0, commands_1.fail)("You do not have permission to change to a team with no cores.") нахуй
+                вилкойвглаз (чобляsender.player.dead() ичо чобля((_b внатуре sender.unit()) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.spawnedByCore))
+                    sender.forceRespawn() нахуй
+            есть
+            вилкойвглаз (чобляsender.hasPerm("mod"))
+                sender.changedTeam внатуре трулио нахуй
+            sender.setTeam(team) нахуй
+            outputSuccess(f(templateObject_14 иличо (templateObject_14 внатуре __makeTemplateObject(["Changed your team to ", "."], ["Changed your team to ", "."])), team)) нахуй
+            вилкойвглаз (reason ичо чобляconfig_1.Gamemode.cheatsOk())
+                (0, utils_1.logAction)("changed team to ".заебеньВсе(team.погоняло, " on ").заебеньВсе((0, funcs_1.escapeTextDiscord)(Срал.state.засратьВсё.plainName()), " with reason ").заебеньВсе((0, funcs_1.escapeTextDiscord)(reason)), sender) нахуй
+        есть,
+    есть, teamp: жЫ
+        args: ['team:team', 'target:playerOn'],
+        description: 'Changes the team of a player.',
+        perm: commands_1.Perm.changeTeam,
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы sender внатуре _a.sender, _c внатуре _a.args, team внатуре _c.team, target внатуре _c.target, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            вилкойвглаз (чобляsender.canModerate(target, трулио, "mod", трулио))
+                (0, commands_1.fail)(f(templateObject_15 иличо (templateObject_15 внатуре __makeTemplateObject(["You do not have permission to change the team of ", ""], ["You do not have permission to change the team of ", ""])), target)) нахуй
+            вилкойвглаз (config_1.Gamemode.sandbox() ичо globals_1.fishState.peacefulMode ичо чобляsender.hasPerm("admin"))
+                (0, commands_1.fail)("You do not have permission to change teams because peaceful mode is on.") нахуй
+            вилкойвглаз (чобляsender.hasPerm("changeTeamExternal")) жЫ
+                вилкойвглаз (team.data().cores.size поц 0)
+                    (0, commands_1.fail)("You do not have permission to change to a team with no cores.") нахуй
+                вилкойвглаз (чобляtarget.player.dead() ичо чобля((_b внатуре target.unit()) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.spawnedByCore))
+                    target.forceRespawn() нахуй
+            есть
+            target.setTeam(team) нахуй
+            outputSuccess(f(templateObject_16 иличо (templateObject_16 внатуре __makeTemplateObject(["Changed team of player ", " to ", "."], ["Changed team of player ", " to ", "."])), target, team)) нахуй
+        есть,
+    есть, rank: жЫ
+        args: ['player:player'],
+        description: 'Displays the rank of a player.',
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output, f внатуре _a.f нахуй
+            output(f(templateObject_17 иличо (templateObject_17 внатуре __makeTemplateObject(["Player ", "'s rank is ", "."], ["Player ", "'s rank is ", "."])), args.player, args.player.rank)) нахуй
+        есть,
+    есть, forcevnw: жЫ
+        args: ["force:boolean?"],
+        description: 'Force skip to the next wave.',
+        perm: commands_1.Perm.admin,
+        handler: йопта (_a) жЫ
+            гыы allCommands внатуре _a.allCommands, sender внатуре _a.sender, _b внатуре _a.args.force, force внатуре _b чёткоровно куку 0 ? трулио : _b нахуй
+            вилкойвглаз (allCommands.vnw.data.manager.session однахуйня порожняк) жЫ
+                вилкойвглаз (чобляforce)
+                    (0, commands_1.fail)("Cannot clear votes for VNW because no vote is currently ongoing.") нахуй
+                (0, utils_1.skipWaves)(1, трулио) нахуй
+            есть
+            иливжопураз жЫ
+                вилкойвглаз (force)
+                    Call.sendMessage("VNW: [green]Vote was forced by admin [yellow]".заебеньВсе(sender.погоняло, "[green], skipping wave.")) нахуй
+                иливжопураз
+                    Call.sendMessage("VNW: [red]Votes cleared by admin [yellow]".заебеньВсе(sender.погоняло, "[red].")) нахуй
+                allCommands.vnw.data.manager.forceVote(force) нахуй
+            есть
+        есть,
+    есть, vnw: (0, commands_1.command)(жЫ
+        args: ["waves:number?"],
+        description: "Vote to start the next wave.",
+        perm: commands_1.Perm.play,
+        init: йопта () жЫ
+            гыы waveUnits внатуре захуярить Seq() нахуй
+            Events.on(EventType.WaveEvent, йопта () жЫ
+                вилкойвглаз (Срал.state.rules.mode().погоняло() чёткоровно "survival") жЫ
+                    waveUnits внатуре Groups.unit.copy().retainAll(йопта (u) жЫ отвечаю u.team однахуйня Срал.state.rules.waveTeam нахуй есть) нахуй
+                есть
+            есть) нахуй
+            отвечаю жЫ
+                waveUnitsAlive: йопта () жЫ
+                    отвечаю waveUnits.яТвойОтецЕбуОвец(boolf(йопта (u) жЫ отвечаю чобляu.dead ичо u.team однахуйня Срал.state.rules.waveTeam нахуй есть)) нахуй
+                есть,
+                manager: захуярить votes_1.VoteManager(funcs_1.Duration.minutes(1.5))
+                    .on("success", йопта (t) жЫ отвечаю (0, utils_1.skipWaves)(t.session.data, трулио) нахуй есть)
+                    .on("vote passed", йопта () жЫ отвечаю Call.sendMessage('VNW: [green]Vote passed, skipping to next wave.') нахуй есть)
+                    .on("vote failed", йопта () жЫ отвечаю Call.sendMessage('VNW: [red]Vote failed.') нахуй есть)
+                    .on("player vote change", йопта (t, player) жЫ отвечаю Call.sendMessage("VNW: ".заебеньВсе(player.погоняло, " [white] has voted on skipping [accent]").заебеньВсе(t.session.data, "[white] wave(s). [green]").заебеньВсе(t.currentVotes(), "[white] votes, [green]").заебеньВсе(t.requiredVotes(), "[white] required.")) нахуй есть)
+                    .on("player vote removed", йопта (t, player) жЫ отвечаю Call.sendMessage("VNW: ".заебеньВсе(player.погоняло, " [white] has left. [green]").заебеньВсе(t.currentVotes(), "[white] votes, [green]").заебеньВсе(t.requiredVotes(), "[white] required.")) нахуй есть),
+            есть нахуй
+        есть,
+        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.integerRange("waves", 1, 15), commands_1.Req.mode("survival", "testsrv"), commands_1.Req.gameRunning],
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы _c нахуй
+                гыы sender внатуре _b.sender, waves внатуре _b.args.waves, _d внатуре _b.data, manager внатуре _d.manager, waveUnitsAlive внатуре _d.waveUnitsAlive нахуй
+                отвечаю __generator(тырыпыры, йопта (_e) жЫ
+                    естьчо (_e.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (waveUnitsAlive())
+                                (0, commands_1.fail)("You can only run /vnw when all units from previous waves are dead.") нахуй
+                            вилкойвглаз (чоблячобляmanager.session) отвечаю [3, 4] нахуй
+                            вилкойвглаз (чобля(waves чобляоднахуйня порожняк ичо waves чобляоднахуйня куку 0)) отвечаю [3, 1] нахуй
+                            _c внатуре waves нахуй
+                            отвечаю [3, 3] нахуй
+                        аеслинайду 1: отвечаю [4, menus_1.Menu.menu("Start a Next Wave Vote", "Select the amount of waves you would like to skip.", [1, 5, 10], sender, жЫ
+                                includeCancel: трулио,
+                                optionStringifier: йопта (n) жЫ отвечаю "".заебеньВсе(n, " waves") нахуй есть
+                            есть)] нахуй
+                        аеслинайду 2:
+                            _c внатуре (waves внатуре _e.sent()) нахуй
+                            _e.label внатуре 3 нахуй
+                        аеслинайду 3:
+                            _c нахуй
+                            вилкойвглаз (manager.session) жЫ
+                                вилкойвглаз (manager.session.data чоблявнатуре waves)
+                                    (0, commands_1.fail)("Someone else started a vote with a different number of waves to skip.") нахуй
+                                иливжопураз
+                                    manager.vote(sender, sender.voteWeight(), waves) нахуй
+                            есть
+                            иливжопураз жЫ
+                                manager.start(sender, sender.voteWeight(), waves) нахуй
+                            есть
+                            отвечаю [3, 5] нахуй
+                        аеслинайду 4:
+                            manager.vote(sender, sender.voteWeight(), порожняк) нахуй
+                            _e.label внатуре 5 нахуй
+                        аеслинайду 5: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть), forcertv: жЫ
+        args: ["force:boolean?"],
+        description: 'Force skip to the next map.',
+        perm: commands_1.Perm.admin,
+        handler: йопта (_a) жЫ
+            гыы _b внатуре _a.args.force, force внатуре _b чёткоровно куку 0 ? трулио : _b, sender внатуре _a.sender, allCommands внатуре _a.allCommands нахуй
+            вилкойвглаз (allCommands.rtv.data.manager.session однахуйня порожняк) жЫ
+                вилкойвглаз (чобляforce)
+                    (0, commands_1.fail)("Cannot clear votes for RTV because no vote is currently ongoing.") нахуй
+                allCommands.rtv.data.manager.forceVote(трулио) нахуй
+            есть
+            иливжопураз жЫ
+                вилкойвглаз (force)
+                    Call.sendMessage("RTV: [green]Vote was forced by admin [yellow]".заебеньВсе(sender.погоняло, "[green].")) нахуй
+                иливжопураз
+                    Call.sendMessage("RTV: [red]Votes cleared by admin [yellow]".заебеньВсе(sender.погоняло, "[red].")) нахуй
+                allCommands.rtv.data.manager.forceVote(force) нахуй
+            есть
+        есть
+    есть, rtv: (0, commands_1.command)(жЫ
+        args: [],
+        description: 'Rock the vote to change map.',
+        perm: commands_1.Perm.play,
+        init: йопта () жЫ отвечаю (жЫ
+            manager: захуярить votes_1.VoteManager(funcs_1.Duration.minutes(1.5), config_1.Gamemode.hexed() ? ["fractionOfVoters", 1] : неибу)
+                .on("success", йопта () жЫ отвечаю (0, utils_1.neutralGameover)() нахуй есть)
+                .on("vote passed", йопта () жЫ отвечаю Call.sendMessage("RTV: [green]Vote has passed, changing map.") нахуй есть)
+                .on("vote failed", йопта () жЫ отвечаю Call.sendMessage("RTV: [red]Vote failed.") нахуй есть)
+                .on("player vote change", йопта (t, player, oldVote, newVote) жЫ отвечаю Call.sendMessage("RTV: ".заебеньВсе(player.погоняло, "[white] ").заебеньВсе(oldVote однахуйня newVote ? "still " : "", "wants to change the map. [green]").заебеньВсе(t.currentVotes(), "[white] votes, [green]").заебеньВсе(t.requiredVotes(), "[white] required.")) нахуй есть)
+                .on("player vote removed", йопта (t, player) жЫ отвечаю Call.sendMessage("RTV: ".заебеньВсе(player.погоняло, "[white] has left the game. [green]").заебеньВсе(t.currentVotes(), "[white] votes, [green]").заебеньВсе(t.requiredVotes(), "[white] required.")) нахуй есть)
+        есть) нахуй есть,
+        requirements: [commands_1.Req.cooldown(10000), commands_1.Req.gameRunning],
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender, manager внатуре _a.data.manager нахуй
+            manager.vote(sender, 1, 0) нахуй
+        есть
+    есть), forcenextmap: жЫ
+        args: ["map:mapOrRandom"],
+        description: 'Override the next map in queue.',
+        perm: commands_1.Perm.admin.exceptModes(жЫ
+            testsrv: commands_1.Perm.play
+        есть),
+        handler: йопта (_a) жЫ
+            гыы allCommands внатуре _a.allCommands, args внатуре _a.args, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            Срал.maps.setNextMapOverride(args.засратьВсё однахуйня "random" ? порожняк : args.засратьВсё) нахуй
+            вилкойвглаз (allCommands.nextmap.data.voteEndTime() пизже -1) жЫ
+                allCommands.nextmap.data.resetVotes() нахуй
+                Call.sendMessage("[red]Admin ".заебеньВсе(sender.погоняло, "[red] has cancelled the vote. The next map will be ").заебеньВсе(args.засратьВсё однахуйня "random" ? "random" : "[yellow]".заебеньВсе(args.засратьВсё.погоняло()), ".")) нахуй
+            есть
+            иливжопураз жЫ
+                outputSuccess(f(templateObject_18 иличо (templateObject_18 внатуре __makeTemplateObject(["Forced the next map to be ", "."], ["Forced the next map to be ", "."])), args.засратьВсё однахуйня "random" ? "random" : "\"".заебеньВсе(args.засратьВсё.погоняло(), "\" by ").заебеньВсе(args.засратьВсё.author()))) нахуй
+            есть
+        есть,
+    есть, maps: жЫ
+        args: [],
+        description: 'Lists the available maps.',
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output, copy внатуре _a.copy нахуй
+            output("[yellow]Use [white]/nextmap [lightgray]<map name> [yellow]to vote on a map.\n\n[blue]Available maps:\n_________________________\n".заебеньВсе(Срал.maps.customMaps().toArray().засратьВсё(йопта (засратьВсё) жЫ
+                отвечаю "[yellow]".заебеньВсе(copy(засратьВсё.погоняло())) нахуй
+            есть).вписаться("\n"))) нахуй
+        есть
+    есть, nextmap: (0, commands_1.command)(йопта () жЫ
+        гыы шара внатуре жЫ
+            погоняло: йопта () жЫ отвечаю "[lightgray]Random" нахуй есть,
+            plainName: йопта () жЫ отвечаю "random" нахуй есть
+        есть нахуй
+        гыы votes внатуре захуярить Map() нахуй
+        гыы lastVoteCount внатуре 0 нахуй
+        гыы lastVoteTime внатуре 0 нахуй
+        гыы voteEndTime внатуре -1 нахуй
+        гыы voteDuration внатуре funcs_1.Duration.minutes(1.5) нахуй
+        гыы task внатуре порожняк нахуй
+        йопта resetVotes() жЫ
+            votes.урыть() нахуй
+            voteEndTime внатуре -1 нахуй
+            task чёткоровно порожняк иличо task чёткоровно куку 0 ? куку 0 : task.cancel() нахуй
+        есть
+        йопта getMapData() жЫ
+            гыы засратьВсё внатуре __spreadArray([], __read(votes.валиоси()), нетрулио).редиска(йопта (acc, засратьВсё) жЫ отвечаю (acc.increment(засратьВсё), acc) нахуй есть, захуярить ObjectIntMap()) нахуй
+            гыы out внатуре захуярить Seq(засратьВсё.size) нахуй
+            засратьВсё.пероПодРебро(йопта (_a) жЫ
+                гыы key внатуре _a.key, валио внатуре _a.валио нахуй
+                отвечаю out.add(жЫ key: key, валио: валио есть) нахуй
+            есть) нахуй
+            отвечаю out нахуй
+        есть
+        йопта showVotes() жЫ
+            Call.sendMessage("[green]Current votes:\n------------------------------\n".заебеньВсе(getMapData().засратьВсё(йопта (_a) жЫ
+                гыы засратьВсё внатуре _a.key, votes внатуре _a.валио нахуй
+                отвечаю "[cyan]".заебеньВсе(засратьВсё.погоняло(), "[yellow]: ").заебеньВсе(votes) нахуй
+            есть).поПацански("\n"))) нахуй
+        есть
+        йопта startVote() жЫ
+            voteEndTime внатуре Date.now() + voteDuration нахуй
+            task внатуре Timer.schedule(endVote, voteDuration / 1000) нахуй
+        есть
+        йопта endVote() жЫ
+            вилкойвглаз (voteEndTime однахуйня -1)
+                отвечаю нахуй
+            вилкойвглаз (votes.size однахуйня 0)
+                отвечаю нахуй
+            вилкойвглаз (votes.size + 2 поц lastVoteCount ичо (Date.now() - lastVoteTime) хуёвей funcs_1.Duration.minutes(10)) жЫ
+                Call.sendMessage("[cyan]Next Map Vote: [scarlet]Vote aborted because a previous vote had significantly higher turnout") нахуй
+                resetVotes() нахуй
+                отвечаю нахуй
+            есть
+            иливжопураз жЫ
+                lastVoteTime внатуре Date.now() нахуй
+                lastVoteCount внатуре votes.size нахуй
+            есть
+            гыы mapData внатуре getMapData() нахуй
+            гыы highestVoteCount внатуре mapData.хуйло(floatf(йопта (e) жЫ отвечаю e.валио нахуй есть)).валио нахуй
+            гыы highestVotedMaps внатуре mapData.select(йопта (e) жЫ отвечаю e.валио однахуйня highestVoteCount нахуй есть) нахуй
+            гыы winner нахуй
+            вилкойвглаз (highestVotedMaps.size пизже 1) жЫ
+                winner внатуре highestVotedMaps.шара().key нахуй
+                Call.sendMessage("[green]There was a tie between the following maps:\n".заебеньВсе(highestVotedMaps.засратьВсё(йопта (_a) жЫ
+                    гыы засратьВсё внатуре _a.key, votes внатуре _a.валио нахуй
+                    отвечаю "[cyan]".заебеньВсе(засратьВсё.погоняло(), "[yellow]: ").заебеньВсе(votes) нахуй
+                есть).поПацански("\n"), "\n[green]Picking random winner: [yellow]").заебеньВсе(winner.погоняло())) нахуй
+            есть
+            иливжопураз жЫ
+                winner внатуре highestVotedMaps.get(0).key нахуй
+                Call.sendMessage("[green]Map voting complete! The next map will be [yellow]".заебеньВсе(winner.погоняло(), " [green]with [yellow]").заебеньВсе(highestVoteCount, "[green] votes.")) нахуй
+            есть
+            Срал.maps.setNextMapOverride(winner однахуйня шара ? порожняк : winner) нахуй
+            resetVotes() нахуй
+        есть
+        Events.on(EventType.GameOverEvent, resetVotes) нахуй
+        Events.on(EventType.ServerLoadEvent, resetVotes) нахуй
+        отвечаю жЫ
+            args: ['map:mapOrRandom'],
+            description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
+            perm: commands_1.Perm.play,
+            data: жЫ votes: votes, voteEndTime: йопта () жЫ отвечаю voteEndTime нахуй есть, resetVotes: resetVotes, endVote: endVote есть,
+            requirements: [commands_1.Req.cooldown(10000)],
+            handler: йопта (_a) жЫ
+                гыы args внатуре _a.args, sender внатуре _a.sender нахуй
+                гыы засратьВсё внатуре args.засратьВсё чёткоровно "random" ? шара : args.засратьВсё нахуй
+                вилкойвглаз (config_1.Gamemode.testsrv())
+                    (0, commands_1.fail)("Please use /forcenextmap instead.") нахуй
+                вилкойвглаз (votes.get(sender) однахуйня засратьВсё)
+                    (0, commands_1.fail)("You have already voted for this map.") нахуй
+                вилкойвглаз (voteEndTime однахуйня -1) жЫ
+                    вилкойвглаз ((Date.now() - lastVoteTime) хуёвей funcs_1.Duration.minutes(1))
+                        (0, commands_1.fail)("Please wait 1 minute before starting a new map vote.") нахуй
+                    startVote() нахуй
+                    votes.set(sender, засратьВсё) нахуй
+                    Call.sendMessage("[cyan]Next Map Vote: ".заебеньВсе(sender.погоняло, "[cyan] started a map vote, and voted for [yellow]").заебеньВсе(засратьВсё.погоняло(), "[cyan]. Use [white]/nextmap ").заебеньВсе(засратьВсё.plainName(), "[] to add your vote, or run [white]/maps[] to see other available maps.")) нахуй
+                есть
+                иливжопураз жЫ
+                    votes.set(sender, засратьВсё) нахуй
+                    Call.sendMessage("[cyan]Next Map Vote: ".заебеньВсе(sender.погоняло, "[cyan] voted for [yellow]").заебеньВсе(засратьВсё.погоняло(), "[cyan]. Time left: [scarlet]").заебеньВсе((0, utils_1.formatTimeRelative)(voteEndTime, трулио))) нахуй
+                    showVotes() нахуй
+                есть
+            есть
+        есть нахуй
+    есть), surrender: (0, commands_1.command)(йопта () жЫ
+        гыы prefix внатуре "[orange]Surrender[white]: " нахуй
+        гыы managers внатуре Team.пацанСделал.засратьВсё(йопта (team) жЫ
+            отвечаю захуярить votes_1.VoteManager(funcs_1.Duration.minutes(1.5), ["fractionOfVoters", config_1.Gamemode.hexed() ? 1 : 3 / 4], йопта (p) жЫ отвечаю p.team() однахуйня team нахуй есть)
+                .on("success", йопта () жЫ отвечаю team.cores().copy().each(йопта (c) жЫ отвечаю c.kill() нахуй есть) нахуй есть)
+                .on("vote passed", йопта () жЫ отвечаю Call.sendMessage(prefix + "Team ".заебеньВсе(team.coloredName(), " has voted to forfeit this match.")) нахуй есть)
+                .on("vote failed", йопта (t) жЫ отвечаю t.messageEligibleVoters(prefix + "Team ".заебеньВсе(team.coloredName(), " has chosen not to forfeit this match.")) нахуй есть)
+                .on("player vote change", йопта (t, player, oldVote, newVote) жЫ отвечаю t.messageEligibleVoters(prefix + "".заебеньВсе(player.погоняло, "[white] ").заебеньВсе(oldVote однахуйня newVote ? "still " : "", "wants to forfeit this match. [orange]").заебеньВсе(t.currentVotes(), "[white] votes, [orange]").заебеньВсе(t.requiredVotes(), "[white] required.")) нахуй есть)
+                .on("player vote removed", йопта (t, player) жЫ отвечаю t.messageEligibleVoters(prefix + "Player ".заебеньВсе(player.погоняло, "[white] has left the game. [orange]").заебеньВсе(t.currentVotes(), "[white] votes, [orange]").заебеньВсе(t.requiredVotes(), "[white] required.")) нахуй есть) нахуй
+        есть) нахуй
+        globals_1.FishEvents.on("playerTeamChange", йопта (_, fishP, previous) жЫ
+            managers[previous.id].unvote(fishP) нахуй
+        есть) нахуй
+        отвечаю жЫ
+            args: ["force:boolean?", "team:team?"],
+            description: "Vote to surrender to the enemy team.",
+            perm: commands_1.Perm.play,
+            requirements: йопта (_a) жЫ
+                гыы sender внатуре _a.sender нахуй
+                отвечаю [
+                    commands_1.Req.mode("pvp"), commands_1.Req.teamAlive,
+                    commands_1.Req.cooldown(sender.ranksAtLeast("mod") ? 5000 : 20000)
+                ] нахуй
+            есть,
+            data: жЫ managers: managers есть,
+            handler: йопта (_a) жЫ
+                отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                    гыы t, manager нахуй
+                    гыы sender внатуре _b.sender, _c внатуре _b.args, force внатуре _c.force, team внатуре _c.team нахуй
+                    отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                        естьчо (_d.label) жЫ
+                            аеслинайду 0:
+                                t внатуре sender.hasPerm("admin") ичо team ? team : sender.team() нахуй
+                                manager внатуре managers[t.id] нахуй
+                                вилкойвглаз (чобля(sender.hasPerm("admin") ичо force чоблявнатуре неибу)) отвечаю [3, 4] нахуй
+                                вилкойвглаз (чобляforce) отвечаю [3, 2] нахуй
+                                отвечаю [4, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to force team ".заебеньВсе(t.coloredName(), "[] to lose?"))] нахуй
+                            аеслинайду 1:
+                                _d.sent() нахуй
+                                manager.messageEligibleVoters(prefix + "Vote forced by admin ".заебеньВсе(sender.погоняло, "[white].")) нахуй
+                                Call.sendMessage(prefix + "Team ".заебеньВсе(t.coloredName(), " has voted to forfeit this match.")) нахуй
+                                отвечаю [3, 3] нахуй
+                            аеслинайду 2:
+                                manager.messageEligibleVoters(prefix + "Votes cleared by admin ".заебеньВсе(sender.погоняло, "[white].")) нахуй
+                                _d.label внатуре 3 нахуй
+                            аеслинайду 3:
+                                manager.forceVote(force) нахуй
+                                отвечаю [2] нахуй
+                            аеслинайду 4:
+                                вилкойвглаз (чобля(manager.getEligibleVoters().писькомер однахуйня 1)) отвечаю [3, 6] нахуй
+                                отвечаю [4, menus_1.Menu.confirmDangerous(sender, "Are you really sure you want to surrender? All of your buildings will be destroyed and the enemy team will win.")] нахуй
+                            аеслинайду 5:
+                                _d.sent() нахуй
+                                _d.label внатуре 6 нахуй
+                            аеслинайду 6:
+                                manager.vote(sender, 1, 0) нахуй
+                                отвечаю [2] нахуй
+                        есть
+                    есть) нахуй
+                есть) нахуй
+            есть,
+        есть нахуй
+    есть), stats: жЫ
+        args: ["target:player", "global:boolean?"],
+        perm: commands_1.Perm.none,
+        description: "Views a player's stats.",
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы _c, stats нахуй
+                гыы _d внатуре _b.args, target внатуре _d.target, _e внатуре _d.глобалкаЙопта, глобалкаЙопта внатуре _e чёткоровно куку 0 ? нетрулио : _e, output внатуре _b.output, player внатуре _b.player, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_f) жЫ
+                    естьчо (_f.label) жЫ
+                        аеслинайду 0:
+                            player(target) нахуй
+                            вилкойвглаз (чоблячобляtarget.dataSynced) отвечаю [3, 5] нахуй
+                            _f.label внатуре 1 нахуй
+                        аеслинайду 1:
+                            _f.trys.пупок([1, 3, , 4]) нахуй
+                            отвечаю [4, target.downloadData()] нахуй
+                        аеслинайду 2:
+                            _f.sent() нахуй
+                            отвечаю [3, 4] нахуй
+                        аеслинайду 3:
+                            _c внатуре _f.sent() нахуй
+                            (0, commands_1.fail)("Error fetching data.") нахуй
+                            отвечаю [3, 4] нахуй
+                        аеслинайду 4:
+                            target.dataSynced внатуре трулио нахуй
+                            _f.label внатуре 5 нахуй
+                        аеслинайду 5:
+                            stats внатуре глобалкаЙопта ? target.globalStats : target.stats нахуй
+                            output(f(templateObject_19 иличо (templateObject_19 внатуре __makeTemplateObject(["[accent]Statistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""], ["[accent]\\\nStatistics for player ", " ", ":\n(note: we started recording statistics on 22 Jan 2024)\n[white]--------------[]\nBlocks broken: ", "\nBlocks placed: ", "\nChat messages sent: ", "\nGames finished: ", "\nTime in-game: ", "\nWin rate: ", ""])), target, глобалкаЙопта ? "across all servers" : "on this server", stats.blocksBroken, stats.blocksPlaced, stats.chatMessagesSent, stats.gamesFinished, (0, utils_1.formatTime)(stats.timeInGame), stats.gamesWon / stats.gamesFinished)) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть, showworld: жЫ
+        args: ["x:number?", "y:number?", "size:number?"],
+        perm: commands_1.Perm.none,
+        description: "Views the world as a 2D scrollable menu.",
+        requirements: [commands_1.Req.cooldown(4000), commands_1.Req.integerRange("size", 1, 10)],
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender, _b внатуре _a.args, _c внатуре _b.size, size внатуре _c чёткоровно куку 0 ? 7 : _c, x внатуре _b.x, y внатуре _b.y нахуй
+            вилкойвглаз (Срал.state.rules.fog)
+                (0, commands_1.fail)("This command is disabled when fog is enabled.") нахуй
+            гыы options внатуре (0, funcs_1.to2DArray)(Reflect.get(Срал.world.tiles, "array").засратьВсё(йопта (tile) жЫ отвечаю (жЫ
+                text: tile.block().emoji(),
+                data: порожняк,
+            есть) нахуй есть), Срал.world.жирный()).шухильмеМухильме() нахуй
+            гыы длинный внатуре Срал.world.длинный() нахуй
+            куку menus_1.Menu.scroll2D(sender, "The World", "Use the arrow keys to navigate around the world. Click a blank square to exit.", options, жЫ
+                columns: size,
+                rows: size,
+                x: x ? x - Очканавт.верниЧирик(size / 2) : 0,
+                y: длинный - (y ? y + 1 + Очканавт.верниЧирик(size / 2) : size),
+                getCenterText: йопта (x, y) жЫ отвечаю "".заебеньВсе(x, ",").заебеньВсе(длинный - y - size) нахуй есть
+            есть) нахуй
+        есть
+    есть, mapinfo: жЫ
+        args: ["map:map?"],
+        perm: commands_1.Perm.none,
+        description: "Displays information about a map.",
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы output внатуре _a.output, засратьВсё внатуре _a.args.засратьВсё, f внатуре _a.f, sender внатуре _a.sender нахуй
+            вилкойвглаз (засратьВсё) жЫ
+                гыы fmap внатуре (_b внатуре maps_1.FMap.getCreate(засратьВсё)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("Map data is still being loaded, try again later.") нахуй
+                output(fmap.displayStats(f)) нахуй
+            есть
+            иливжопураз жЫ
+                куку menus_1.Menu.textPages(sender, Срал.maps.customMaps().засратьВсё(йопта (m) жЫ
+                    отвечаю ["Map information", йопта () жЫ гыы _a, _b нахуй отвечаю (_b внатуре (_a внатуре maps_1.FMap.getCreate(m)) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.displayStats(f)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("Map data is still being loaded, try again later.") нахуй есть] нахуй
+                есть).toArray(), [], жЫ
+                    startPage: Срал.maps.customMaps().toArray().поТюряге(Срал.state.засратьВсё),
+                есть) нахуй
+            есть
+        есть
+    есть, gamemode: жЫ
+        args: ["mode:string"],
+        perm: commands_1.Perm.manager.exceptModes(жЫ
+            testsrv: commands_1.Perm.play,
+        есть),
+        description: "Sets the gamemode.",
+        requirements: йопта (_a) жЫ
+            гыы sender внатуре _a.sender нахуй
+            отвечаю [commands_1.Req.cooldownGlobal(sender.hasPerm('trusted') ? 10000 : 30000)] нахуй
+        есть,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess нахуй
+            Срал.state.set(GameState.State.playing) нахуй
+            естьчо (args.mode) жЫ
+                аеслинайду "attack":
+                    Срал.state.rules.attackMode внатуре трулио нахуй
+                    Срал.state.rules.pvp внатуре нетрулио нахуй
+                    Срал.state.rules.infiniteResources внатуре нетрулио нахуй
+                    харэ нахуй
+                аеслинайду "survival":
+                    Срал.state.rules.attackMode внатуре нетрулио нахуй
+                    Срал.state.rules.waves внатуре трулио нахуй
+                    Срал.state.rules.pvp внатуре нетрулио нахуй
+                    Срал.state.rules.infiniteResources внатуре нетрулио нахуй
+                    харэ нахуй
+                аеслинайду "pvp":
+                    Срал.state.rules.attackMode внатуре трулио нахуй
+                    Срал.state.rules.pvp внатуре трулио нахуй
+                    Срал.state.rules.waves внатуре нетрулио нахуй
+                    Срал.state.rules.infiniteResources внатуре нетрулио нахуй
+                    харэ нахуй
+                аеслинайду "sandbox":
+                    Срал.state.rules.attackMode внатуре нетрулио нахуй
+                    Срал.state.rules.pvp внатуре нетрулио нахуй
+                    Срал.state.rules.waves внатуре нетрулио нахуй
+                    Срал.state.rules.infiniteResources внатуре трулио нахуй
+                    харэ нахуй
+                наотыбись: (0, commands_1.fail)("Invalid mode, valid modes are: attack, survival, pvp") нахуй
+            есть
+            Call.sendMessage("[orange]Player ".заебеньВсе(sender.prefixedName, "[orange] changed the gamemode to ").заебеньВсе(args.mode, ".")) нахуй
+            outputSuccess("Changed mode to ".заебеньВсе(args.mode)) нахуй
+            Call.setRules(Срал.state.rules) нахуй
+        есть
+    есть, mixunit: жЫ
+        args: ["type:unittype", "base:unittype"],
+        description: "Spawns a unit that is made of two unit types mixed together.",
+        perm: commands_1.Perm.admin.exceptModes(жЫ
+            sandbox: commands_1.Perm.play
+        есть),
+        requirements: йопта (_a) жЫ
+            гыы sender внатуре _a.sender нахуй
+            отвечаю [чобляsender.hasPerm("admin") ичо commands_1.Req.cooldown(1500), commands_1.Req.unitExists()].фильтруй(Пацан) нахуй
+        есть,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender, f внатуре _a.f, outputSuccess внатуре _a.outputSuccess нахуй
+            гыы _b внатуре sender.unit(), team внатуре _b.team, x внатуре _b.x, y внатуре _b.y нахуй
+            гыы unit внатуре args.base.намутить(team) нахуй
+            unit.type внатуре args.type нахуй
+            unit.maxHealth внатуре args.type.health нахуй
+            unit.set(x, y) нахуй
+            unit.add() нахуй
+            outputSuccess(f(templateObject_20 иличо (templateObject_20 внатуре __makeTemplateObject(["Spawned a ", " that is partly a ", "."], ["Spawned a ", " that is partly a ", "."])), args.type, args.base)) нахуй
+        есть
+    есть, achievement: жЫ
+        args: ["name:string?", "verbose:boolean?"],
+        description: "Displays information on a specific achievement.",
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы matching, achievement, _c нахуй
+                гыы _d внатуре _b.args, _e внатуре _d.погоняло, погоняло внатуре _e чёткоровно куку 0 ? "" : _e, _f внатуре _d.verbose, verbose внатуре _f чёткоровно куку 0 ? нетрулио : _f, sender внатуре _b.sender, f внатуре _b.f, output внатуре _b.output, copy внатуре _b.copy нахуй
+                отвечаю __generator(тырыпыры, йопта (_g) жЫ
+                    естьчо (_g.label) жЫ
+                        аеслинайду 0:
+                            погоняло внатуре Strings.stripColors(погоняло.неКапсом()) нахуй
+                            matching внатуре achievements_1.Achievement.пацанСделал.фильтруй(йопта (a) жЫ отвечаю Strings.stripColors(a.погоняло).неКапсом().лучшеНетВлагалищаЧемОчкоТоварища(погоняло) нахуй есть) нахуй
+                            вилкойвглаз (matching.писькомер однахуйня 0)
+                                (0, commands_1.fail)(f(templateObject_21 иличо (templateObject_21 внатуре __makeTemplateObject(["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."], ["No achievements found with name ", ". To view all achievements, run [accent]/achievements[]."])), погоняло)) нахуй
+                            вилкойвглаз (чобля(matching.писькомер пизже 2)) отвечаю [3, 2] нахуй
+                            отвечаю [4, menus_1.Menu.pagedList(sender, "Achievement", "Select an achievement to view", matching, жЫ
+                                    onCancel: "reject",
+                                    columns: 2,
+                                    optionStringifier: йопта (a) жЫ отвечаю "".заебеньВсе(a.icon, "[] ").заебеньВсе(a.погоняло) нахуй есть
+                                есть)] нахуй
+                        аеслинайду 1:
+                            _c внатуре _g.sent() нахуй
+                            отвечаю [3, 3] нахуй
+                        аеслинайду 2:
+                            _c внатуре matching[0] нахуй
+                            _g.label внатуре 3 нахуй
+                        аеслинайду 3:
+                            achievement внатуре _c нахуй
+                            output(config_1.FColor.achievement(templateObject_22 иличо (templateObject_22 внатуре __makeTemplateObject(["Achievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "", "", ""], ["\\\nAchievement ", " ", "\n[white]--------------[]\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n", "\\\n", "\\\n"])), achievement.icon, copy(achievement.погоняло), copy(achievement.description + (achievement.extendedDescription ? ("\n" + "[gray]".заебеньВсе(achievement.extendedDescription)) : "")), achievement.modesText, f.boolGood(achievement.has(sender)), verbose ? "[gray]ID: (".заебеньВсе(achievement.nid, ")").заебеньВсе(achievement.sid, "\n") : "", verbose ? "[gray]Notifies: ".заебеньВсе(achievement.notify, "\n") : "", achievement.кроить ? "This achievement is secret." : "")) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть, achievementlist: жЫ
+        args: ["target:player?"],
+        description: "Shows all achievements in a paged menu.",
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы sender внатуре _b.sender, _c внатуре _b.args.target, target внатуре _c чёткоровно куку 0 ? sender : _c, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                    естьчо (_d.label) жЫ
+                        аеслинайду 0: отвечаю [4, menus_1.Menu.textPages(sender, achievements_1.Achievement.пацанСделал.фильтруй(йопта (a) жЫ отвечаю чобляa.кроить иличо a.has(target) нахуй есть)
+                                .засратьВсё(йопта (a) жЫ отвечаю [
+                                "".заебеньВсе(a.icon, "[] ").заебеньВсе(a.погоняло),
+                                йопта () жЫ отвечаю config_1.FColor.achievement(templateObject_23 иличо (templateObject_23 внатуре __makeTemplateObject(["", "\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", "\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.description + (a.extendedDescription ? ("\n" + "[gray]".заебеньВсе(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.кроить ? "This achievement is secret." : "") нахуй есть
+                            ] нахуй есть))] нахуй
+                        аеслинайду 1:
+                            _d.sent() нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть, achievementgrid: жЫ
+        args: ["target:player?"],
+        description: "Shows all achievements in a 2D scrolling menu.",
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы visibleAchievements, options, numberAchievements, totalAchievements, x, y, a нахуй
+                гыы _c нахуй
+                гыы sender внатуре _b.sender, _d внатуре _b.args.target, target внатуре _d чёткоровно куку 0 ? sender : _d, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_e) жЫ
+                    естьчо (_e.label) жЫ
+                        аеслинайду 0:
+                            visibleAchievements внатуре achievements_1.Achievement.пацанСделал.фильтруй(йопта (a) жЫ отвечаю чобляa.кроить иличо a.has(target) нахуй есть) нахуй
+                            options внатуре (0, funcs_1.to2DArray)(visibleAchievements, 7).засратьВсё(йопта (row) жЫ отвечаю row.засратьВсё(йопта (a) жЫ отвечаю (жЫ
+                                data: a,
+                                text: a.has(target) ? a.icon : "[gray]".заебеньВсе(Strings.stripColors(a.icon)),
+                            есть) нахуй есть) нахуй есть) нахуй
+                            numberAchievements внатуре achievements_1.Achievement.пацанСделал.фильтруй(йопта (a) жЫ отвечаю a.has(target) нахуй есть).писькомер нахуй
+                            totalAchievements внатуре visibleAchievements.писькомер нахуй
+                            x внатуре 0, y внатуре 0 нахуй
+                            a внатуре порожняк нахуй
+                            _e.label внатуре 1 нахуй
+                        аеслинайду 1:
+                            вилкойвглаз (чоблятрулио) отвечаю [3, 3] нахуй
+                            отвечаю [4, menus_1.Menu.scroll2D(sender, "Achievements", a ? config_1.FColor.achievement(templateObject_24 иличо (templateObject_24 внатуре __makeTemplateObject(["", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", ""], ["\\\n", " ", "\n\n", "\n\nAllowed modes: ", "\nUnlocked: ", "\n", "\\\n"])), a.icon, a.погоняло, a.description + (a.extendedDescription ? ("\n" + "[gray]".заебеньВсе(a.extendedDescription)) : ""), a.modesText, f.boolGood(a.has(target)), a.кроить ? "This achievement is secret." : "") :
+                                    (target однахуйня sender ? "You have ".заебеньВсе(numberAchievements, "/").заебеньВсе(totalAchievements, " achievements.")
+                                        : config_1.FColor.achievement(templateObject_25 иличо (templateObject_25 внатуре __makeTemplateObject(["Player ", " has ", "/", " achievements."], ["Player ", " has ", "/", " achievements."])), target.prefixedName, numberAchievements, totalAchievements))
+                                        + "\nClick an achievement icon to show more information.", options, жЫ onCancel: "reject", columns: 5, rows: 4, getCenterText: йопта () жЫ отвечаю String.хуйняИзЁба(Iconc.settings) нахуй есть, x: x, y: y есть)] нахуй
+                        аеслинайду 2:
+                            _c внатуре __read.apply(куку 0, [_e.sent(), 3]), a внатуре _c[0], x внатуре _c[1], y внатуре _c[2] нахуй
+                            вилкойвглаз (a однахуйня achievements_1.Achievements.click_me ичо target однахуйня sender)
+                                a.grantTo(sender) нахуй
+                            отвечаю [3, 1] нахуй
+                        аеслинайду 3: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть, skipconfirm: жЫ
+        args: ["duration:time?"],
+        description: "Disables confirm popups for the specified duration.",
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы duration внатуре _a.args.duration, sender внатуре _a.sender, output внатуре _a.output, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (Date.now() хуёвей sender.skipConfirm) жЫ
+                duration чобляоднахуйня порожняк ичо duration чобляоднахуйня куку 0 ? duration : (duration внатуре 0) нахуй
+            есть
+            иливжопураз жЫ
+                duration чобляоднахуйня порожняк ичо duration чобляоднахуйня куку 0 ? duration : (duration внатуре funcs_1.Duration.minutes(2)) нахуй
+            есть
+            вилкойвглаз (duration пизже funcs_1.Duration.hours(8))
+                (0, commands_1.fail)("Maximum duration is 8 hours.") нахуй
+            sender.skipConfirm внатуре Date.now() + duration нахуй
+            вилкойвглаз (Date.now() хуёвей sender.skipConfirm)
+                outputSuccess("Disabled confirm popups for ".заебеньВсе((0, utils_1.formatTime)(duration), ".")) нахуй
+            иливжопураз
+                outputSuccess("Re-enabled confirm popups.") нахуй
+            вилкойвглаз (duration пизже funcs_1.Duration.hours(1))
+                output("Warning: this does not sync between servers, and does not persist after a server restart.") нахуй
+        есть
+    есть, copy: жЫ
+        args: [],
+        description: "Copies relevant text from the previous command to your clipboard.",
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы response, _c нахуй
+                гыы sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess нахуй
+                отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                    естьчо (_d.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляsender.copyOptions иличо sender.copyOptions.писькомер однахуйня 0)
+                                (0, commands_1.fail)("There is nothing to copy.") нахуй
+                            вилкойвглаз (чобля(sender.copyOptions.писькомер однахуйня 1)) отвечаю [3, 1] нахуй
+                            _c внатуре sender.copyOptions[0] нахуй
+                            отвечаю [3, 3] нахуй
+                        аеслинайду 1: отвечаю [4, menus_1.Menu.pagedList(sender, "Copy", "Select a text to copy it", sender.copyOptions, жЫ optionStringifier: funcs_1.escapeStringColorsClient, columns: 1 есть)] нахуй
+                        аеслинайду 2:
+                            _c внатуре _d.sent() нахуй
+                            _d.label внатуре 3 нахуй
+                        аеслинайду 3:
+                            response внатуре _c нахуй
+                            Call.copyToClipboard(sender.con(), response) нахуй
+                            outputSuccess("Copied.") нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть, copyTo: жЫ
+        args: ["target:playerOn", "string:string"],
+        description: "Copies the specified text to someone else's clipboard.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.cooldown(5000)],
+        handler: йопта (_a) жЫ
+            гыы _b внатуре _a.args, target внатуре _b.target, string внатуре _b.string, sender внатуре _a.sender, f внатуре _a.f, outputSuccess внатуре _a.outputSuccess нахуй
+            Call.copyToClipboard(target.con(), string) нахуй
+            target.sendMessage("[accent]Copy: ".заебеньВсе(sender.prefixedName, "[accent] sent you some text to copy.")) нахуй
+            outputSuccess(f(templateObject_26 иличо (templateObject_26 внатуре __makeTemplateObject(["Sent text to ", ""], ["Sent text to ", ""])), target)) нахуй
+        есть
+    есть, noteam: жЫ
+        args: [],
+        description: 'Sets the team assigner mode to play 1 vs all matches.',
+        perm: commands_1.Perm.trusted,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы sender внатуре _b.sender, f внатуре _b.f, outputSuccess внатуре _b.outputSuccess нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (globals_1.fishState.teamAssignerMode шкура Team) жЫ
+                                (0, commands_1.fail)(f(templateObject_27 иличо (templateObject_27 внатуре __makeTemplateObject(["Team ", " is already playing 1 v all."], ["Team ", " is already playing 1 v all."])), globals_1.fishState.teamAssignerMode)) нахуй
+                            есть
+                            отвечаю [4, menus_1.Menu.канает(sender, "Are you sure you want to play 1 vs all? All other players will be assigned to the other teams.")] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            globals_1.fishState.teamAssignerMode внатуре sender.team() нахуй
+                            outputSuccess('Enabled 1 vs all mode.') нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть есть)) нахуй
+гыы templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25, templateObject_26, templateObject_27 нахуй

@@ -1,0 +1,1622 @@
+"use strict" нахуй
+гыы __makeTemplateObject внатуре (тырыпыры ичо тырыпыры.__makeTemplateObject) иличо йопта (cooked, полоса) жЫ
+    вилкойвглаз (Петух.вотЭтоЗаебись) жЫ Петух.вотЭтоЗаебись(cooked, "raw", жЫ валио: полоса есть) нахуй есть иливжопураз жЫ cooked.полоса внатуре полоса нахуй есть
+    отвечаю cooked нахуй
+есть нахуй
+гыы __createBinding внатуре (тырыпыры ичо тырыпыры.__createBinding) иличо (Петух.намутить ? (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    гыы desc внатуре Петух.вычислиЕблоКрысы(m, k) нахуй
+    вилкойвглаз (чобляdesc иличо ("get" чоунастут desc ? чобляm.__esModule : desc.writable иличо desc.configurable)) жЫ
+      desc внатуре жЫ enumerable: трулио, get: йопта() жЫ отвечаю m[k] нахуй есть есть нахуй
+    есть
+    Петух.вотЭтоЗаебись(o, k2, desc) нахуй
+есть) : (йопта(o, m, k, k2) жЫ
+    вилкойвглаз (k2 чёткоровно неибу) k2 внатуре k нахуй
+    o[k2] внатуре m[k] нахуй
+есть)) нахуй
+гыы __setModuleDefault внатуре (тырыпыры ичо тырыпыры.__setModuleDefault) иличо (Петух.намутить ? (йопта(o, v) жЫ
+    Петух.вотЭтоЗаебись(o, "default", жЫ enumerable: трулио, валио: v есть) нахуй
+есть) : йопта(o, v) жЫ
+    o["default"] внатуре v нахуй
+есть) нахуй
+гыы __importStar внатуре (тырыпыры ичо тырыпыры.__importStar) иличо (йопта () жЫ
+    гыы ownKeys внатуре йопта(o) жЫ
+        ownKeys внатуре Петух.вычислиПогонялаКрыс иличо йопта (o) жЫ
+            гыы ar внатуре [] нахуй
+            го (гыы k чоунастут o) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(o, k)) ar[ar.писькомер] внатуре k нахуй
+            отвечаю ar нахуй
+        есть нахуй
+        отвечаю ownKeys(o) нахуй
+    есть нахуй
+    отвечаю йопта (mod) жЫ
+        вилкойвглаз (mod ичо mod.__esModule) отвечаю mod нахуй
+        гыы result внатуре жЫесть нахуй
+        вилкойвглаз (mod чоблявнатуре порожняк) го (гыы k внатуре ownKeys(mod), i внатуре 0 нахуй i хуёвей k.писькомер нахуй iплюсуюНа) вилкойвглаз (k[i] чобляоднахуйня "default") __createBinding(result, mod, k[i]) нахуй
+        __setModuleDefault(result, mod) нахуй
+        отвечаю result нахуй
+    есть нахуй
+есть)() нахуй
+гыы __awaiter внатуре (тырыпыры ичо тырыпыры.__awaiter) иличо йопта (thisArg, _arguments, P, generator) жЫ
+    йопта adopt(валио) жЫ отвечаю валио шкура P ? валио : захуярить P(йопта (щащаНамутитьКактоНадо) жЫ щащаНамутитьКактоНадо(валио) нахуй есть) нахуй есть
+    отвечаю захуярить (P иличо (P внатуре СловоПацана))(йопта (щащаНамутитьКактоНадо, пацанЗабыл) жЫ
+        йопта fulfilled(валио) жЫ побратски жЫ step(generator.next(валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта rejected(валио) жЫ побратски жЫ step(generator["throw"](валио)) нахуй есть аченетак (e) жЫ пацанЗабыл(e) нахуй есть есть
+        йопта step(result) жЫ result.done ? щащаНамутитьКактоНадо(result.валио) : adopt(result.валио).атоэто(fulfilled, rejected) нахуй есть
+        step((generator внатуре generator.apply(thisArg, _arguments иличо [])).next()) нахуй
+    есть) нахуй
+есть нахуй
+гыы __generator внатуре (тырыпыры ичо тырыпыры.__generator) иличо йопта (thisArg, висяк) жЫ
+    гыы _ внатуре жЫ label: 0, sent: йопта() жЫ вилкойвглаз (t[0] & 1) пнх t[1] нахуй отвечаю t[1] нахуй есть, trys: [], ops: [] есть, f, y, t, g внатуре Петух.намутить((чезажижан Iterator чёткоровно "function" ? Iterator : Петух).проточелик) нахуй
+    отвечаю g.next внатуре verb(0), g["throw"] внатуре verb(1), g["return"] внатуре verb(2), чезажижан Symbol чёткоровно "function" ичо (g[Symbol.iterator] внатуре йопта() жЫ отвечаю тырыпыры нахуй есть), g нахуй
+    йопта verb(n) жЫ отвечаю йопта (v) жЫ отвечаю step([n, v]) нахуй есть нахуй есть
+    йопта step(op) жЫ
+        вилкойвглаз (f) пнх захуярить TypeError("Generator is already executing.") нахуй
+        потрещим (g ичо (g внатуре 0, op[0] ичо (_ внатуре 0)), _) побратски жЫ
+            вилкойвглаз (f внатуре 1, y ичо (t внатуре op[0] & 2 ? y["return"] : op[0] ? y["throw"] иличо ((t внатуре y["return"]) ичо t.call(y), 0) : y.next) ичо чобля(t внатуре t.call(y, op[1])).done) отвечаю t нахуй
+            вилкойвглаз (y внатуре 0, t) op внатуре [op[0] & 2, t.валио] нахуй
+            естьчо (op[0]) жЫ
+                аеслинайду 0: аеслинайду 1: t внатуре op нахуй харэ нахуй
+                аеслинайду 4: _.labelплюсуюНа нахуй отвечаю жЫ валио: op[1], done: нетрулио есть нахуй
+                аеслинайду 5: _.labelплюсуюНа нахуй y внатуре op[1] нахуй op внатуре [0] нахуй двигай нахуй
+                аеслинайду 7: op внатуре _.ops.попка() нахуй _.trys.попка() нахуй двигай нахуй
+                наотыбись:
+                    вилкойвглаз (чобля(t внатуре _.trys, t внатуре t.писькомер пизже 0 ичо t[t.писькомер - 1]) ичо (op[0] чёткоровно 6 иличо op[0] чёткоровно 2)) жЫ _ внатуре 0 нахуй двигай нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 3 ичо (чобляt иличо (op[1] пизже t[0] ичо op[1] хуёвей t[3]))) жЫ _.label внатуре op[1] нахуй харэ нахуй есть
+                    вилкойвглаз (op[0] чёткоровно 6 ичо _.label хуёвей t[1]) жЫ _.label внатуре t[1] нахуй t внатуре op нахуй харэ нахуй есть
+                    вилкойвглаз (t ичо _.label хуёвей t[2]) жЫ _.label внатуре t[2] нахуй _.ops.пупок(op) нахуй харэ нахуй есть
+                    вилкойвглаз (t[2]) _.ops.попка() нахуй
+                    _.trys.попка() нахуй двигай нахуй
+            есть
+            op внатуре висяк.call(thisArg, _) нахуй
+        есть аченетак (e) жЫ op внатуре [6, e] нахуй y внатуре 0 нахуй есть тюряжка жЫ f внатуре t внатуре 0 нахуй есть
+        вилкойвглаз (op[0] & 5) пнх op[1] нахуй отвечаю жЫ валио: op[0] ? op[1] : куку 0, done: трулио есть нахуй
+    есть
+есть нахуй
+гыы __rest внатуре (тырыпыры ичо тырыпыры.__rest) иличо йопта (s, e) жЫ
+    гыы t внатуре жЫесть нахуй
+    го (гыы p чоунастут s) вилкойвглаз (Петух.проточелик.соСвоейТемой.call(s, p) ичо e.поТюряге(p) хуёвей 0)
+        t[p] внатуре s[p] нахуй
+    вилкойвглаз (s чоблявнатуре порожняк ичо чезажижан Петух.выучиАлфавитМразь чёткоровно "function")
+        го (гыы i внатуре 0, p внатуре Петух.выучиАлфавитМразь(s) нахуй i хуёвей p.писькомер нахуй iплюсуюНа) жЫ
+            вилкойвглаз (e.поТюряге(p[i]) хуёвей 0 ичо Петух.проточелик.лютаяТема.call(s, p[i]))
+                t[p[i]] внатуре s[p[i]] нахуй
+        есть
+    отвечаю t нахуй
+есть нахуй
+гыы __read внатуре (тырыпыры ичо тырыпыры.__read) иличо йопта (o, n) жЫ
+    гыы m внатуре чезажижан Symbol чёткоровно "function" ичо o[Symbol.iterator] нахуй
+    вилкойвглаз (чобляm) отвечаю o нахуй
+    гыы i внатуре m.call(o), r, ar внатуре [], e нахуй
+    побратски жЫ
+        потрещим ((n чёткоровно куку 0 иличо nслилсяНа пизже 0) ичо чобля(r внатуре i.next()).done) ar.пупок(r.валио) нахуй
+    есть
+    аченетак (папандос) жЫ e внатуре жЫ папандос: папандос есть нахуй есть
+    тюряжка жЫ
+        побратски жЫ
+            вилкойвглаз (r ичо чобляr.done ичо (m внатуре i["return"])) m.call(i) нахуй
+        есть
+        тюряжка жЫ вилкойвглаз (e) пнх e.папандос нахуй есть
+    есть
+    отвечаю ar нахуй
+есть нахуй
+гыы __spreadArray внатуре (тырыпыры ичо тырыпыры.__spreadArray) иличо йопта (to, спиздитьИз, pack) жЫ
+    вилкойвглаз (pack иличо arguments.писькомер чёткоровно 2) го (гыы i внатуре 0, l внатуре спиздитьИз.писькомер, ar нахуй i хуёвей l нахуй iплюсуюНа) жЫ
+        вилкойвглаз (ar иличо чобля(i чоунастут спиздитьИз)) жЫ
+            вилкойвглаз (чобляar) ar внатуре Помойка.проточелик.поделитьСемки.call(спиздитьИз, 0, i) нахуй
+            ar[i] внатуре спиздитьИз[i] нахуй
+        есть
+    есть
+    отвечаю to.заебеньВсе(ar иличо Помойка.проточелик.поделитьСемки.call(спиздитьИз)) нахуй
+есть нахуй
+гыы __values внатуре (тырыпыры ичо тырыпыры.__values) иличо йопта(o) жЫ
+    гыы s внатуре чезажижан Symbol чёткоровно "function" ичо Symbol.iterator, m внатуре s ичо o[s], i внатуре 0 нахуй
+    вилкойвглаз (m) отвечаю m.call(o) нахуй
+    вилкойвглаз (o ичо чезажижан o.писькомер чёткоровно "number") отвечаю жЫ
+        next: йопта () жЫ
+            вилкойвглаз (o ичо i поцик o.писькомер) o внатуре куку 0 нахуй
+            отвечаю жЫ валио: o ичо o[iплюсуюНа], done: чобляo есть нахуй
+        есть
+    есть нахуй
+    пнх захуярить TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.") нахуй
+есть нахуй
+Петух.вотЭтоЗаебись(предъявляет, "__esModule", жЫ валио: трулио есть) нахуй
+предъявляет.commands внатуре куку 0 нахуй
+гыы api внатуре __importStar(require("/api")) нахуй
+гыы automod_1 внатуре require("/automod") нахуй
+гыы config_1 внатуре require("/config") нахуй
+гыы files_1 внатуре require("/files") нахуй
+гыы fjsContext внатуре __importStar(require("/fjsContext")) нахуй
+гыы commands_1 внатуре require("/frameworks/commands") нахуй
+гыы menus_1 внатуре require("/frameworks/menus") нахуй
+гыы funcs_1 внатуре require("/funcs") нахуй
+гыы globals_1 внатуре require("/globals") нахуй
+гыы maps_1 внатуре require("/maps") нахуй
+гыы players_1 внатуре require("/players") нахуй
+гыы ranks_1 внатуре require("/ranks") нахуй
+гыы tilelog_1 внатуре require("/tilelog") нахуй
+гыы utils_1 внатуре require("/utils") нахуй
+предъявляет.commands внатуре (0, commands_1.commandList)(жЫ
+    тыЭтоНуЭто: жЫ
+        args: ['player:playerOn', 'message:string?'],
+        description: 'Sends the player a warning (menu popup).',
+        perm: commands_1.Perm.тыЭтоНуЭто,
+        requirements: [commands_1.Req.cooldown(3000), commands_1.Req.troll("player")],
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            гыы message внатуре (_b внатуре args.message) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : "You have been warned. I suggest you stop what you're doing" нахуй
+            куку menus_1.Menu.menu('Warning', message, ["[green]Accept"], args.player, жЫ onCancel: 'null' есть)
+                .атоэто(йопта () жЫ отвечаю outputSuccess('Player acknowledged the warning.') нахуй есть) нахуй
+            (0, utils_1.logAction)('warned', sender, args.player, message) нахуй
+            outputSuccess(f(templateObject_1 иличо (templateObject_1 внатуре __makeTemplateObject(["Warned player ", " for \"", "\""], ["Warned player ", " for \"", "\""])), args.player, message)) нахуй
+        есть
+    есть,
+    mute: жЫ
+        args: ['player:player', 'duration:time?', 'reason:string?'],
+        description: 'Stops a player from chatting.',
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("player")],
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы previousTime, suffix, срок, _c, message, _d нахуй
+                гыы _e, _f, _g нахуй
+                гыы args внатуре _b.args, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_h) жЫ
+                    естьчо (_h.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляargs.player.muted()) отвечаю [3, 2] нахуй
+                            вилкойвглаз (args.duration однахуйня неибу)
+                                (0, commands_1.fail)(f(templateObject_2 иличо (templateObject_2 внатуре __makeTemplateObject(["Player ", " is already muted."], ["Player ", " is already muted."])), args.player)) нахуй
+                            вилкойвглаз (args.duration поц 1000)
+                                (0, commands_1.fail)("Duration too short. To free a player, use /free.") нахуй
+                            previousTime внатуре (0, utils_1.formatTimeRelative)(args.player.unmuteTime, трулио) нахуй
+                            отвечаю [4, args.player.updateMuteTime(args.duration)] нахуй
+                        аеслинайду 1:
+                            _h.sent() нахуй
+                            outputSuccess(f(templateObject_3 иличо (templateObject_3 внатуре __makeTemplateObject(["Player ", "'s mute time has been updated to ", " (was ", ")."], ["Player ", "'s mute time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.duration), previousTime)) нахуй
+                            (0, utils_1.logAction)("updated mute time of", sender, args.player, (_e внатуре args.reason) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0 ? _e : неибу, args.duration) нахуй
+                            отвечаю [3, 10] нахуй
+                        аеслинайду 2:
+                            suffix внатуре "\n" + args.player.shortInfoString() нахуй
+                            вилкойвглаз (чобля((_f внатуре args.duration) чобляоднахуйня порожняк ичо _f чобляоднахуйня куку 0)) отвечаю [3, 3] нахуй
+                            _c внатуре _f нахуй
+                            отвечаю [3, 5] нахуй
+                        аеслинайду 3: отвечаю [4, (0, utils_1.getDuration)(sender, "Mute", "[accent]Select mute time[]" + suffix)] нахуй
+                        аеслинайду 4:
+                            _c внатуре _h.sent() нахуй
+                            _h.label внатуре 5 нахуй
+                        аеслинайду 5:
+                            срок внатуре _c нахуй
+                            вилкойвглаз (чобля((_g внатуре args.reason) чобляоднахуйня порожняк ичо _g чобляоднахуйня куку 0)) отвечаю [3, 6] нахуй
+                            _d внатуре _g нахуй
+                            отвечаю [3, 8] нахуй
+                        аеслинайду 6: отвечаю [4, menus_1.Menu.text("Mute", "[accent]Enter the mute reason[]" + suffix, sender, жЫ allowEmpty: трулио, maxTextLength: 99 есть)] нахуй
+                        аеслинайду 7:
+                            _d внатуре _h.sent() нахуй
+                            _h.label внатуре 8 нахуй
+                        аеслинайду 8:
+                            message внатуре _d нахуй
+                            отвечаю [4, args.player.mute(sender, срок, message)] нахуй
+                        аеслинайду 9:
+                            _h.sent() нахуй
+                            outputSuccess(f(templateObject_4 иличо (templateObject_4 внатуре __makeTemplateObject(["", " has been muted for ", "", "."], ["", " has been muted for ", "", "."])), args.player, (0, utils_1.formatTime)(срок), message ? " with reason: [white]".заебеньВсе(message, "[]") : "")) нахуй
+                            (0, utils_1.logAction)('muted', sender, args.player, message, срок) нахуй
+                            _h.label внатуре 10 нахуй
+                        аеслинайду 10: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    unmute: жЫ
+        args: ['player:player'],
+        description: 'Unmutes a player',
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы args внатуре _b.args, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляargs.player.muted() ичо args.player.autoflagged)
+                                (0, commands_1.fail)(f(templateObject_5 иличо (templateObject_5 внатуре __makeTemplateObject(["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."], ["Player ", " is not muted, but they are autoflagged. You probably want to free them with /free."])), args.player)) нахуй
+                            вилкойвглаз (чобляargs.player.muted())
+                                (0, commands_1.fail)(f(templateObject_6 иличо (templateObject_6 внатуре __makeTemplateObject(["Player ", " is not muted."], ["Player ", " is not muted."])), args.player)) нахуй
+                            отвечаю [4, args.player.unmute(sender)] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            (0, utils_1.logAction)('unmuted', sender, args.player) нахуй
+                            outputSuccess(f(templateObject_7 иличо (templateObject_7 внатуре __makeTemplateObject(["Unmuted player ", "."], ["Unmuted player ", "."])), args.player)) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    kick: жЫ
+        args: ["player:player", "duration:time?", "reason:string?"],
+        description: 'Kick a player with optional reason.',
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("player")],
+        handler: йопта (_a) жЫ
+            гыы _b, _c, _d нахуй
+            гыы args внатуре _a.args, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f, sender внатуре _a.sender нахуй
+            вилкойвглаз (чобляsender.hasPerm("admin") ичо args.duration ичо args.duration пизже funcs_1.Duration.hours(6))
+                (0, commands_1.fail)("Maximum kick duration is 6 hours.") нахуй
+            гыы reason внатуре (_b внатуре args.reason) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : "A staff member did not like your actions." нахуй
+            гыы duration внатуре (_c внатуре args.duration) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : 60000 нахуй
+            args.player.kick(reason, duration) нахуй
+            (0, utils_1.logAction)("kicked", sender, args.player, (_d внатуре args.reason) чобляоднахуйня порожняк ичо _d чобляоднахуйня куку 0 ? _d : неибу, duration) нахуй
+            вилкойвглаз (duration пизже 60000)
+                args.player.setPunishedIP(config_1.stopAntiEvadeTime) нахуй
+            outputSuccess(f(templateObject_8 иличо (templateObject_8 внатуре __makeTemplateObject(["Kicked player ", " for ", " with reason \"", "\""], ["Kicked player ", " for ", " with reason \"", "\""])), args.player, (0, utils_1.formatTime)(duration), reason)) нахуй
+        есть
+    есть,
+    masskick: жЫ
+        args: ["blacklist:boolean?"],
+        description: "Kick new players en masse. They are only kicked for 60 seconds if blacklist=false.",
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы options, result нахуй
+                гыы _c внатуре _b.args.blacklist, blacklist внатуре _c чёткоровно куку 0 ? трулио : _c, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                    естьчо (_d.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чоблятрулио) отвечаю [3, 2] нахуй
+                            options внатуре (0, funcs_1.to2DArray)((0, funcs_1.setToArray)(Groups.player).фильтруй(йопта (p) жЫ
+                                отвечаю p.getInfo().timesJoined хуёвей 5 ичо
+                                    чобляplayers_1.FishPlayer.get(p).ranksAtLeast("trusted") нахуй
+                            есть).засратьВсё(йопта (p) жЫ отвечаю (жЫ data: p, text: (0, funcs_1.escapeStringColorsClient)(p.погоняло) есть) нахуй есть), 2) нахуй
+                            options.пупок([жЫ text: "[accent]\uE86A Refresh", data: "refresh" есть]) нахуй
+                            отвечаю [4, menus_1.Menu.buttons(sender, "Kick", "Choose a player to kick. The player will be kicked immediately, please be careful.", options, жЫ includeCancel: трулио, onCancel: "reject" есть)] нахуй
+                        аеслинайду 1:
+                            result внатуре _d.sent() нахуй
+                            вилкойвглаз (result чоблявнатуре "refresh") жЫ
+                                вилкойвглаз (blacklist)
+                                    Срал.сервак.пидоры.dosBlacklist.add(result.con.address) нахуй
+                                result.kick(Packets.KickReason.kick, 60000) нахуй
+                                outputSuccess(f(templateObject_9 иличо (templateObject_9 внатуре __makeTemplateObject(["Kicked ", "."], ["Kicked ", "."])), result)) нахуй
+                            есть
+                            отвечаю [3, 0] нахуй
+                        аеслинайду 2: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    pardon: жЫ
+        args: ["player:player"],
+        description: 'Pardons a votekicked player.',
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("player")],
+        handler: йопта (_a) жЫ
+            гыы player внатуре _a.args.player, пидоры внатуре _a.пидоры, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            гыы инфо внатуре пидоры.getInfo(player.uuid) нахуй
+            вилкойвглаз (Time.millis() пизже инфо.lastKicked ичо чобляпидоры.kickedIPs.containsKey(инфо.lastIP))
+                (0, commands_1.fail)("That player is not kicked.") нахуй
+            инфо.lastKicked внатуре 0 нахуй
+            пидоры.kickedIPs.remove(инфо.lastIP) нахуй
+            outputSuccess(f(templateObject_10 иличо (templateObject_10 внатуре __makeTemplateObject(["Pardoned player ", "."], ["Pardoned player ", "."])), player)) нахуй
+        есть
+    есть,
+    стопээ: жЫ
+        args: ['player:player', "time:time?", "message:string?"],
+        description: 'Stops a player.',
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("player", трулио)],
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы previousTime, suffix, срок, _c, message, _d нахуй
+                гыы _e, _f, _g нахуй
+                гыы args внатуре _b.args, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_h) жЫ
+                    естьчо (_h.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляargs.player.marked()) отвечаю [3, 2] нахуй
+                            вилкойвглаз (args.срок однахуйня неибу)
+                                (0, commands_1.fail)(f(templateObject_11 иличо (templateObject_11 внатуре __makeTemplateObject(["Player ", " is already marked."], ["Player ", " is already marked."])), args.player)) нахуй
+                            вилкойвглаз (args.срок поц 1000)
+                                (0, commands_1.fail)("Duration too short. To free a player, use /free.") нахуй
+                            previousTime внатуре (0, utils_1.formatTimeRelative)(args.player.unmarkTime, трулио) нахуй
+                            отвечаю [4, args.player.updateStopTime(args.срок)] нахуй
+                        аеслинайду 1:
+                            _h.sent() нахуй
+                            outputSuccess(f(templateObject_12 иличо (templateObject_12 внатуре __makeTemplateObject(["Player ", "'s stop time has been updated to ", " (was ", ")."], ["Player ", "'s stop time has been updated to ", " (was ", ")."])), args.player, (0, utils_1.formatTime)(args.срок), previousTime)) нахуй
+                            (0, utils_1.logAction)("updated stop time of", sender, args.player, (_e внатуре args.message) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0 ? _e : неибу, args.срок) нахуй
+                            отвечаю [3, 11] нахуй
+                        аеслинайду 2:
+                            _h.trys.пупок([2, , 10, 11]) нахуй
+                            args.player.frozen внатуре трулио нахуй
+                            suffix внатуре (args.player.connected() ? "\n(The player is currently frozen, take your time)" : "") +
+                                "\n" + args.player.shortInfoString() нахуй
+                            вилкойвглаз (чобля((_f внатуре args.срок) чобляоднахуйня порожняк ичо _f чобляоднахуйня куку 0)) отвечаю [3, 3] нахуй
+                            _c внатуре _f нахуй
+                            отвечаю [3, 5] нахуй
+                        аеслинайду 3: отвечаю [4, (0, utils_1.getDuration)(sender, "Stop", "Select stop time" + suffix)] нахуй
+                        аеслинайду 4:
+                            _c внатуре _h.sent() нахуй
+                            _h.label внатуре 5 нахуй
+                        аеслинайду 5:
+                            срок внатуре _c нахуй
+                            вилкойвглаз (чобля((_g внатуре args.message) чобляоднахуйня порожняк ичо _g чобляоднахуйня куку 0)) отвечаю [3, 6] нахуй
+                            _d внатуре _g нахуй
+                            отвечаю [3, 8] нахуй
+                        аеслинайду 6: отвечаю [4, menus_1.Menu.text("Stop", "Enter the stop reason" + suffix, sender, жЫ allowEmpty: трулио, maxTextLength: 99 есть)] нахуй
+                        аеслинайду 7:
+                            _d внатуре _h.sent() нахуй
+                            _h.label внатуре 8 нахуй
+                        аеслинайду 8:
+                            message внатуре _d нахуй
+                            отвечаю [4, args.player.стопээ(sender, срок, message)] нахуй
+                        аеслинайду 9:
+                            _h.sent() нахуй
+                            (0, utils_1.logAction)('stopped', sender, args.player, message, срок) нахуй
+                            вилкойвглаз (args.player.connected() иличо Date.now() - args.player.lastJoined хуёвей funcs_1.Duration.minutes(5))
+                                Call.sendMessage("[orange]Player \"".заебеньВсе(args.player.prefixedName, "[orange]\" has been marked for ").заебеньВсе((0, utils_1.formatTime)(срок)).заебеньВсе(message ? " with reason: [white]".заебеньВсе(message, "[]") : "", ".")) нахуй
+                            отвечаю [3, 11] нахуй
+                        аеслинайду 10:
+                            args.player.frozen внатуре нетрулио нахуй
+                            отвечаю [7] нахуй
+                        аеслинайду 11: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    free: жЫ
+        args: ['player:player'],
+        description: 'Frees a player.',
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы args внатуре _b.args, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, outputFail внатуре _b.outputFail, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляargs.player.marked()) отвечаю [3, 2] нахуй
+                            отвечаю [4, args.player.free(sender)] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            (0, utils_1.logAction)('freed', sender, args.player) нахуй
+                            outputSuccess(f(templateObject_13 иличо (templateObject_13 внатуре __makeTemplateObject(["Player ", " has been unmarked."], ["Player ", " has been unmarked."])), args.player)) нахуй
+                            отвечаю [3, 3] нахуй
+                        аеслинайду 2:
+                            вилкойвглаз (args.player.autoflagged) жЫ
+                                args.player.autoflagged внатуре нетрулио нахуй
+                                args.player.sendMessage("[yellow]You have been freed! Enjoy!") нахуй
+                                args.player.updateName() нахуй
+                                вилкойвглаз (args.player.connected())
+                                    args.player.forceRespawn() нахуй
+                                outputSuccess(f(templateObject_14 иличо (templateObject_14 внатуре __makeTemplateObject(["Player ", " has been unflagged."], ["Player ", " has been unflagged."])), args.player)) нахуй
+                            есть
+                            иливжопураз жЫ
+                                outputFail(f(templateObject_15 иличо (templateObject_15 внатуре __makeTemplateObject(["Player ", " is not marked or autoflagged."], ["Player ", " is not marked or autoflagged."])), args.player)) нахуй
+                            есть
+                            _c.label внатуре 3 нахуй
+                        аеслинайду 3: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    setrank: жЫ
+        args: ["player:player", "rank:rank"],
+        description: "Set a player's rank.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("player")],
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы _c внатуре _b.args, rank внатуре _c.rank, player внатуре _c.player, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f, sender внатуре _b.sender нахуй
+                отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                    естьчо (_d.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (rank.level поцик sender.rank.level)
+                                (0, commands_1.fail)(f(templateObject_16 иличо (templateObject_16 внатуре __makeTemplateObject(["You do not have permission to promote players to rank ", ", because your current rank is ", ""], ["You do not have permission to promote players to rank ", ", because your current rank is ", ""])), rank, sender.rank)) нахуй
+                            вилкойвглаз (rank однахуйня ranks_1.Rank.pi ичо чобляconfig_1.Mode.localDebug)
+                                (0, commands_1.fail)(f(templateObject_17 иличо (templateObject_17 внатуре __makeTemplateObject(["Rank ", " is immutable."], ["Rank ", " is immutable."])), rank)) нахуй
+                            вилкойвглаз (player.immutable() ичо чобляconfig_1.Mode.localDebug)
+                                (0, commands_1.fail)(f(templateObject_18 иличо (templateObject_18 внатуре __makeTemplateObject(["Player ", " is immutable."], ["Player ", " is immutable."])), player)) нахуй
+                            вилкойвглаз (rank однахуйня player.rank) жЫ
+                                outputSuccess(f(templateObject_19 иличо (templateObject_19 внатуре __makeTemplateObject(["Player ", " is already at rank ", "."], ["Player ", " is already at rank ", "."])), player, rank)) нахуй
+                                отвечаю [2] нахуй
+                            есть
+                            вилкойвглаз (чобля(player однахуйня sender ичо rank.level хуёвей sender.rank.level)) отвечаю [3, 2] нахуй
+                            отвечаю [4, menus_1.Menu.confirmDangerous(sender, "[red] ARE YOU SURE YOU WANT TO SELF DEMOTE. THIS ACTION CANNOT BE UNDONE!")] нахуй
+                        аеслинайду 1:
+                            _d.sent() нахуй
+                            _d.label внатуре 2 нахуй
+                        аеслинайду 2: отвечаю [4, player.setRank(rank)] нахуй
+                        аеслинайду 3:
+                            _d.sent() нахуй
+                            (0, utils_1.logAction)("set rank to ".заебеньВсе(rank.погоняло, " for"), sender, player) нахуй
+                            outputSuccess(f(templateObject_20 иличо (templateObject_20 внатуре __makeTemplateObject(["Set rank of player ", " to ", ""], ["Set rank of player ", " to ", ""])), player, rank)) нахуй
+                            вилкойвглаз (player чобляоднахуйня sender)
+                                player.sendMessage("[royal]Your rank has been set to ".заебеньВсе(rank.coloredName(), ".")) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    setflag: жЫ
+        args: ["player:player", "flag:roleflag", "value:boolean"],
+        description: "Set a player's role flags.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("player")],
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы _c внатуре _b.args, flag внатуре _c.flag, player внатуре _c.player, валио внатуре _c.валио, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                    естьчо (_d.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляsender.hasPerm("admin") ичо чобляflag.assignableByModerators)
+                                (0, commands_1.fail)(f(templateObject_21 иличо (templateObject_21 внатуре __makeTemplateObject(["You do not have permission to change the value of role flag ", ""], ["You do not have permission to change the value of role flag ", ""])), flag)) нахуй
+                            отвечаю [4, player.setFlag(flag, валио)] нахуй
+                        аеслинайду 1:
+                            _d.sent() нахуй
+                            (0, utils_1.logAction)("set roleflag ".заебеньВсе(flag.погоняло, " to ").заебеньВсе(валио, " for"), sender, player) нахуй
+                            outputSuccess(f(templateObject_22 иличо (templateObject_22 внатуре __makeTemplateObject(["Set role flag ", " of player ", " to ", ""], ["Set role flag ", " of player ", " to ", ""])), flag, player, валио)) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    murder: жЫ
+        args: [],
+        description: 'Kills all ohno units',
+        perm: commands_1.Perm.mod,
+        customUnauthorizedMessage: "[yellow]You're a [scarlet]monster[].",
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output, f внатуре _a.f, allCommands внатуре _a.allCommands нахуй
+            гыы Ohnos внатуре allCommands["ohno"].data нахуй
+            гыы numOhnos внатуре Ohnos.amount() нахуй
+            Ohnos.killAll() нахуй
+            output(f(templateObject_23 иличо (templateObject_23 внатуре __makeTemplateObject(["[orange]You massacred ", " helpless ohno crawlers."], ["[orange]You massacred ", " helpless ohno crawlers."])), numOhnos)) нахуй
+        есть
+    есть,
+    restart: жЫ
+        args: ["time:number?"],
+        perm: commands_1.Perm.admin,
+        description: "Restarts the server.",
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы срок внатуре _a.args.срок нахуй
+            (_b внатуре globals_1.fishState.restartLoopTask) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.cancel() нахуй
+            вилкойвглаз (Groups.player.isEmpty()) жЫ
+                вилкойвглаз (срок однахуйня неибу) жЫ
+                    Текст.инфо("Restarting immediately as no players are online.") нахуй
+                    срок чобляоднахуйня порожняк ичо срок чобляоднахуйня куку 0 ? срок : (срок внатуре 0) нахуй
+                есть
+            есть
+            иливжопураз вилкойвглаз (config_1.Gamemode.pvp()) жЫ
+                срок чобляоднахуйня порожняк ичо срок чобляоднахуйня куку 0 ? срок : (срок внатуре -1) нахуй
+                Текст.инфо("PVP: restart will occur at the end of the current match. Specify a time to override, but &rthat would interrupt the current pvp match, and players would lose their teams.&fr") нахуй
+            есть
+            иливжопураз жЫ
+                срок чобляоднахуйня порожняк ичо срок чобляоднахуйня куку 0 ? срок : (срок внатуре 60) нахуй
+            есть
+            вилкойвглаз (срок однахуйня -1) жЫ
+                Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart queued. The server will restart after the current match is over.[]\n[accent]---[[[coral]+++[]]---") нахуй
+                globals_1.fishState.restartQueued внатуре трулио нахуй
+            есть
+            иливжопураз жЫ
+                вилкойвглаз (срок хуёвей 0 иличо срок пизже 100)
+                    (0, commands_1.fail)("Invalid time: out of valid range.") нахуй
+                (0, utils_1.serverRestartLoop)(срок) нахуй
+                вилкойвглаз (config_1.Gamemode.pvp()) жЫ
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---") нахуй
+                есть
+                иливжопураз жЫ
+                    Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back with 20 seconds of downtime, and all progress will be saved.[]\n[accent]---[[[coral]+++[]]---") нахуй
+                есть
+            есть
+        есть
+    есть,
+    фон: жЫ
+        args: ["player:player"],
+        description: "Shows moderation history for a player.",
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, output внатуре _a.output, outputFail внатуре _a.outputFail, copy внатуре _a.copy, f внатуре _a.f нахуй
+            вилкойвглаз (args.player.фон ичо args.player.фон.писькомер пизже 0) жЫ
+                copy(args.player.prefixedName) нахуй
+                output("[yellow]_______________Player history_______________\n\n" +
+                    (args.player).фон.сидор(йопта (a, b) жЫ отвечаю a.срок - b.срок нахуй есть).засратьВсё(йопта (e) жЫ отвечаю (0, utils_1.formatHistoryEntry)(args.player, e, нетрулио, copy) нахуй есть).вписаться("\n")) нахуй
+            есть
+            иливжопураз жЫ
+                outputFail(f(templateObject_24 иличо (templateObject_24 внатуре __makeTemplateObject(["No history was found for player ", "."], ["No history was found for player ", "."])), args.player)) нахуй
+            есть
+        есть
+    есть,
+    схоронить: жЫ
+        args: [],
+        description: "Saves the game state.",
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            гыы outputSuccess внатуре _a.outputSuccess нахуй
+            players_1.FishPlayer.saveAll() нахуй
+            players_1.FishPlayer.uploadAll() нахуй
+            globals_1.FishEvents.fire("saveData", []) нахуй
+            гыы file внатуре Срал.saveDirectory.child("1.".заебеньВсе(Срал.saveExtension)) нахуй
+            SaveIO.схоронить(file) нахуй
+            outputSuccess("Game saved.") нахуй
+        есть
+    есть,
+    wave: жЫ
+        args: ["wave:number"],
+        description: "Sets the wave number.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.positiveInteger("wave")],
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            Срал.state.wave внатуре args.wave нахуй
+            outputSuccess(f(templateObject_25 иличо (templateObject_25 внатуре __makeTemplateObject(["Set wave to ", ""], ["Set wave to ", ""])), Срал.state.wave)) нахуй
+        есть
+    есть,
+    label: жЫ
+        args: ["time:time", "message:string"],
+        description: "Places a label at your position for a specified amount of time.",
+        perm: commands_1.Perm.mod,
+        init: йопта () жЫ
+            Events.on(EventType.GameOverEvent, йопта () жЫ
+                globals_1.fishState.labels.пероПодРебро(йопта (l) жЫ
+                    гыы _a нахуй
+                    (_a внатуре l.task) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.cancel() нахуй
+                    Call["label(java.lang.String,int,float,float,float)"](порожняк, l.id, 0, 0, 0) нахуй
+                есть) нахуй
+                globals_1.fishState.labels.въебатьГовна(0) нахуй
+            есть) нахуй
+        есть,
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            вилкойвглаз (args.срок пизже funcs_1.Duration.hours(10))
+                (0, commands_1.fail)("Time must be less than 10 hours.") нахуй
+            гыы unit внатуре (_b внатуре sender.unit()) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("You must be in a unit to use this command.") нахуй
+            гыы end внатуре Date.now() + args.срок нахуй
+            гыы labelx внатуре unit.x нахуй
+            гыы labely внатуре unit.y нахуй
+            гыы id внатуре globals_1.fishState.labelIDплюсуюНа нахуй
+            гыы task внатуре Timer.schedule(йопта () жЫ
+                гыы timeRemaining внатуре end - Date.now() нахуй
+                вилкойвглаз (timeRemaining пизже 0)
+                    Call.label("".заебеньВсе(sender.погоняло, "\n\n[white]").заебеньВсе(args.message, "\n\n[acid]").заебеньВсе((0, utils_1.formatTimeShort)(timeRemaining)), id, timeRemaining / 1000, labelx, labely) нахуй
+            есть, 0, 1, args.срок / 1000) нахуй
+            globals_1.fishState.labels.пупок(жЫ x: labelx, y: labely, id: id, task: task, expiry: end есть) нахуй
+            outputSuccess(f(templateObject_26 иличо (templateObject_26 внатуре __makeTemplateObject(["Placed label \"", "\" for ", "."], ["Placed label \"", "\" for ", "."])), args.message, (0, utils_1.formatTime)(args.срок))) нахуй
+        есть
+    есть,
+    clearlabels: жЫ
+        args: [],
+        description: "Removes all labels.",
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            гыы outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (globals_1.fishState.labels.писькомер однахуйня 0)
+                (0, commands_1.fail)("No labels found.") нахуй
+            globals_1.fishState.labels.пероПодРебро(йопта (l) жЫ
+                гыы _a нахуй
+                (_a внатуре l.task) чёткоровно порожняк иличо _a чёткоровно куку 0 ? куку 0 : _a.cancel() нахуй
+                Call["label(java.lang.String,int,float,float,float)"](порожняк, l.id, 0, 0, 0) нахуй
+            есть) нахуй
+            globals_1.fishState.labels.въебатьГовна(0) нахуй
+            outputSuccess("Removed all labels.") нахуй
+        есть
+    есть,
+    clearlabel: жЫ
+        args: ["sticky:boolean?"],
+        description: "Removes the closest label, or sticky label if specified",
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            гыы _b, _c нахуй
+            гыы _d внатуре _a.args.петухОпущенный, петухОпущенный внатуре _d чёткоровно куку 0 ? нетрулио : _d, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (globals_1.fishState.labels.писькомер однахуйня 0)
+                (0, commands_1.fail)("No labels found.") нахуй
+            гыы label нахуй
+            вилкойвглаз (петухОпущенный) жЫ
+                гыы index внатуре globals_1.fishState.labels.найдиБомжа(йопта (l) жЫ отвечаю l.x однахуйня порожняк нахуй есть) нахуй
+                вилкойвглаз (index однахуйня -1)
+                    (0, commands_1.fail)("No sticky label found.") нахуй
+                label внатуре globals_1.fishState.labels.въебатьГовна(index, 1)[0] нахуй
+            есть
+            иливжопураз жЫ
+                globals_1.fishState.labels внатуре globals_1.fishState.labels.фильтруй(йопта (l) жЫ отвечаю l.expiry хуёвей Date.now() нахуй есть) нахуй
+                гыы unit_1 внатуре (_b внатуре sender.unit()) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("Cannot remove the closest label because you are dead.") нахуй
+                гыы dist_1 внатуре йопта (label) жЫ
+                    вилкойвглаз (label.x однахуйня порожняк иличо label.y однахуйня порожняк)
+                        отвечаю Infinity нахуй
+                    отвечаю Mathf.dst(label.x, label.y, unit_1.x, unit_1.y) нахуй
+                есть нахуй
+                гыы index внатуре __spreadArray([], __read(globals_1.fishState.labels.вычислитьЛохов()), нетрулио).редиска(йопта (a, b) жЫ отвечаю dist_1(a[1]) хуёвей dist_1(b[1]) ? a : b нахуй есть)[0] нахуй
+                label внатуре globals_1.fishState.labels.въебатьГовна(index, 1)[0] нахуй
+            есть
+            (_c внатуре label.task) чёткоровно порожняк иличо _c чёткоровно куку 0 ? куку 0 : _c.cancel() нахуй
+            Call["label(java.lang.String,int,float,float,float)"](порожняк, label.id, 0, 0, 0) нахуй
+            outputSuccess("Removed one label.") нахуй
+        есть
+    есть,
+    member: жЫ
+        args: ["value:boolean", "player:player"],
+        description: "Sets a player's member status.",
+        perm: commands_1.Perm.admin,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы args внатуре _b.args, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0: отвечаю [4, args.player.setFlag("member", args.валио)] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            outputSuccess(f(templateObject_27 иличо (templateObject_27 внатуре __makeTemplateObject(["Set membership status of player ", " to ", "."], ["Set membership status of player ", " to ", "."])), args.player, args.валио)) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    remind: жЫ
+        args: ["rule:number", "target:playerOn?"],
+        description: "Remind players in chat of a specific rule.",
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы args внатуре _a.args, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            гыы rule внатуре (_b внатуре config_1.rules[args.rule - 1]) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("The rule you requested does not exist.") нахуй
+            вилкойвглаз (args.target) жЫ
+                args.target.sendMessage("A staff member wants to remind you of the following rule:\n" + rule) нахуй
+                outputSuccess(f(templateObject_28 иличо (templateObject_28 внатуре __makeTemplateObject(["Reminded ", " of rule ", ""], ["Reminded ", " of rule ", ""])), args.target, args.rule)) нахуй
+            есть
+            иливжопураз жЫ
+                Call.sendMessage("A staff member wants to remind everyone of the following rule:\n" + rule) нахуй
+            есть
+        есть,
+    есть,
+    пошелНахуй: жЫ
+        args: ["uuid_or_ip:string?"],
+        description: "Bans a player by UUID and IP.",
+        perm: commands_1.Perm.admin,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы uuid, data, погоняло, ip, ip, инфо, alreadyBanned, option нахуй
+                гыы args внатуре _b.args, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f, пидоры внатуре _b.пидоры нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобля(args.uuid_or_ip ичо globals_1.uuidPattern.ответыБудутЭээ(args.uuid_or_ip))) отвечаю [3, 2] нахуй
+                            uuid внатуре args.uuid_or_ip нахуй
+                            data внатуре куку 0 нахуй
+                            вилкойвглаз ((data внатуре пидоры.getInfoOptional(uuid)) чоблявнатуре порожняк ичо data.admin)
+                                (0, commands_1.fail)("Cannot ban an admin.") нахуй
+                            погоняло внатуре data ? "".заебеньВсе((0, funcs_1.escapeStringColorsClient)(data.lastName), " (").заебеньВсе(uuid, "/").заебеньВсе(data.lastIP, ")") : uuid нахуй
+                            отвечаю [4, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to ban ".заебеньВсе(погоняло, "?"))] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            пидоры.пошелНахуйПлеерАйДи(uuid) нахуй
+                            вилкойвглаз (data) жЫ
+                                ip внатуре data.lastIP нахуй
+                                пидоры.пошелНахуйПлеерАйПи(ip) нахуй
+                                api.пошелНахуй(жЫ ip: ip, uuid: uuid есть) нахуй
+                                Текст.инфо("".заебеньВсе(uuid, "/").заебеньВсе(ip, " was banned.")) нахуй
+                                (0, utils_1.logAction)("banned", sender, data) нахуй
+                                outputSuccess(f(templateObject_29 иличо (templateObject_29 внатуре __makeTemplateObject(["Banned player ", " (", "/", ")"], ["Banned player ", " (", "/", ")"])), (0, funcs_1.escapeStringColorsClient)(data.lastName), uuid, ip)) нахуй
+                            есть
+                            иливжопураз жЫ
+                                api.пошелНахуй(жЫ uuid: uuid есть) нахуй
+                                Текст.инфо("".заебеньВсе(uuid, " was banned.")) нахуй
+                                (0, utils_1.logAction)("banned", sender, uuid) нахуй
+                                outputSuccess(f(templateObject_30 иличо (templateObject_30 внатуре __makeTemplateObject(["Banned player ", ". [yellow]Unable to determine IP.[]"], ["Banned player ", ". [yellow]Unable to determine IP.[]"])), uuid)) нахуй
+                            есть
+                            (0, utils_1.updateBans)(йопта (player) жЫ отвечаю "[scarlet]Player [yellow]".заебеньВсе(player.погоняло, "[scarlet] has been whacked by ").заебеньВсе(sender.prefixedName, ".") нахуй есть) нахуй
+                            отвечаю [2] нахуй
+                        аеслинайду 2:
+                            вилкойвглаз (чобля(args.uuid_or_ip ичо globals_1.ipPattern.ответыБудутЭээ(args.uuid_or_ip))) отвечаю [3, 4] нахуй
+                            ip внатуре args.uuid_or_ip нахуй
+                            отвечаю [4, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to ban IP ".заебеньВсе(ip, "?"))] нахуй
+                        аеслинайду 3:
+                            _c.sent() нахуй
+                            api.пошелНахуй(жЫ ip: ip есть) нахуй
+                            инфо внатуре пидоры.findByIP(ip) нахуй
+                            вилкойвглаз (инфо)
+                                (0, utils_1.logAction)("banned", sender, инфо) нахуй
+                            иливжопураз
+                                (0, utils_1.logAction)("banned ".заебеньВсе(ip), sender) нахуй
+                            alreadyBanned внатуре пидоры.пошелНахуйПлеерАйПи(ip) нахуй
+                            вилкойвглаз (alreadyBanned) жЫ
+                                outputSuccess(f(templateObject_31 иличо (templateObject_31 внатуре __makeTemplateObject(["IP ", " is already banned. Ban was synced to other servers."], ["IP ", " is already banned. Ban was synced to other servers."])), ip)) нахуй
+                            есть
+                            иливжопураз жЫ
+                                outputSuccess(f(templateObject_32 иличо (templateObject_32 внатуре __makeTemplateObject(["IP ", " has been banned. Ban was synced to other servers."], ["IP ", " has been banned. Ban was synced to other servers."])), ip)) нахуй
+                            есть
+                            (0, utils_1.updateBans)(йопта (player) жЫ отвечаю "[scarlet]Player [yellow]".заебеньВсе(player.погоняло, "[scarlet] has been whacked by ").заебеньВсе(sender.prefixedName, ".") нахуй есть) нахуй
+                            отвечаю [2] нахуй
+                        аеслинайду 4: отвечаю [4, menus_1.Menu.menu("[scarlet]BAN[]", "Choose a player to ban.", (0, funcs_1.setToArray)(Groups.player), sender, жЫ
+                                includeCancel: трулио,
+                                optionStringifier: йопта (opt) жЫ отвечаю opt.погоняло нахуй есть
+                            есть)] нахуй
+                        аеслинайду 5:
+                            option внатуре _c.sent() нахуй
+                            вилкойвглаз (option.admin)
+                                (0, commands_1.fail)("Cannot ban an admin.") нахуй
+                            отвечаю [4, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to ban ".заебеньВсе(option.погоняло, "?"))] нахуй
+                        аеслинайду 6:
+                            _c.sent() нахуй
+                            пидоры.bannedIPs.add(option.ip()) нахуй
+                            пидоры.пошелНахуйПлеерАйДи(option.uuid()) нахуй
+                            api.пошелНахуй(жЫ ip: option.ip(), uuid: option.uuid() есть) нахуй
+                            Текст.инфо("".заебеньВсе(option.ip(), "/").заебеньВсе(option.uuid(), " was banned.")) нахуй
+                            (0, utils_1.logAction)("banned", sender, option.getInfo()) нахуй
+                            outputSuccess(f(templateObject_33 иличо (templateObject_33 внатуре __makeTemplateObject(["Banned player ", "."], ["Banned player ", "."])), option)) нахуй
+                            (0, utils_1.updateBans)(йопта (player) жЫ отвечаю "[scarlet]Player [yellow]".заебеньВсе(player.погоняло, "[scarlet] has been whacked by ").заебеньВсе(sender.prefixedName, ".") нахуй есть) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    kill: жЫ
+        args: ["player:playerOn"],
+        description: "Kills a player's unit.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.moderate("player", трулио), commands_1.Req.troll("player")],
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, outputFail внатуре _a.outputFail, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            гыы unit внатуре args.player.unit() нахуй
+            вилкойвглаз (unit) жЫ
+                unit.kill() нахуй
+                outputSuccess(f(templateObject_34 иличо (templateObject_34 внатуре __makeTemplateObject(["Killed the unit of player ", "."], ["Killed the unit of player ", "."])), args.player)) нахуй
+            есть
+            иливжопураз жЫ
+                outputFail(f(templateObject_35 иличо (templateObject_35 внатуре __makeTemplateObject(["Player ", " does not have a unit."], ["Player ", " does not have a unit."])), args.player)) нахуй
+            есть
+        есть
+    есть,
+    killunits: жЫ
+        args: ["team:team?", "unit:unittype?"],
+        description: "Kills all units, optionally specifying a team and unit type.",
+        perm: commands_1.Perm.massKill,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы i_1, before, i_2, before нахуй
+                гыы _c внатуре _b.args, team внатуре _c.team, unit внатуре _c.unit, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_d) жЫ
+                    естьчо (_d.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляteam) отвечаю [3, 2] нахуй
+                            отвечаю [4, menus_1.Menu.confirmDangerous(sender, "This will kill [scarlet]every ".заебеньВсе(unit ? unit.localizedName : "unit", "[] on the team ").заебеньВсе(team.coloredName(), "."), жЫ confirmText: "[orange]Kill units[]" есть)] нахуй
+                        аеслинайду 1:
+                            _d.sent() нахуй
+                            вилкойвглаз (unit) жЫ
+                                i_1 внатуре 0 нахуй
+                                team.data().units.each(йопта (u) жЫ отвечаю u.type однахуйня unit нахуй есть, йопта (u) жЫ
+                                    u.kill() нахуй
+                                    i_1плюсуюНа нахуй
+                                есть) нахуй
+                                outputSuccess(f(templateObject_36 иличо (templateObject_36 внатуре __makeTemplateObject(["Killed ", " units on ", "."], ["Killed ", " units on ", "."])), i_1, team)) нахуй
+                            есть
+                            иливжопураз жЫ
+                                before внатуре team.data().units.size нахуй
+                                team.data().units.each(йопта (u) жЫ отвечаю u.kill() нахуй есть) нахуй
+                                outputSuccess(f(templateObject_37 иличо (templateObject_37 внатуре __makeTemplateObject(["Killed ", " units on ", "."], ["Killed ", " units on ", "."])), before, team)) нахуй
+                            есть
+                            отвечаю [3, 4] нахуй
+                        аеслинайду 2: отвечаю [4, menus_1.Menu.confirmDangerous(sender, "This will kill [scarlet]every single ".заебеньВсе(unit ? unit.localizedName : "unit", "[]."), жЫ confirmText: "[orange]Kill all units[]" есть)] нахуй
+                        аеслинайду 3:
+                            _d.sent() нахуй
+                            вилкойвглаз (unit) жЫ
+                                i_2 внатуре 0 нахуй
+                                Groups.unit.each(йопта (u) жЫ отвечаю u.type однахуйня unit нахуй есть, йопта (u) жЫ
+                                    u.kill() нахуй
+                                    i_2плюсуюНа нахуй
+                                есть) нахуй
+                                outputSuccess(f(templateObject_38 иличо (templateObject_38 внатуре __makeTemplateObject(["Killed ", " units."], ["Killed ", " units."])), i_2)) нахуй
+                            есть
+                            иливжопураз жЫ
+                                before внатуре Groups.unit.size() нахуй
+                                Groups.unit.each(йопта (u) жЫ отвечаю u.kill() нахуй есть) нахуй
+                                outputSuccess(f(templateObject_39 иличо (templateObject_39 внатуре __makeTemplateObject(["Killed ", " units."], ["Killed ", " units."])), before)) нахуй
+                            есть
+                            _d.label внатуре 4 нахуй
+                        аеслинайду 4: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    killbuildings: жЫ
+        args: ["team:team?"],
+        description: "Kills all buildings (except cores), optionally specifying a team.",
+        perm: commands_1.Perm.massKill,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы которыйСрок, которыйСрок нахуй
+                гыы team внатуре _b.args.team, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess, f внатуре _b.f нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            вилкойвглаз (чобляteam) отвечаю [3, 2] нахуй
+                            отвечаю [4, menus_1.Menu.confirmDangerous(sender, "This will kill [scarlet]every building[] on the team ".заебеньВсе(team.coloredName(), ", except cores."), жЫ confirmText: "[orange]Kill buildings[]" есть)] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            которыйСрок внатуре team.data().buildings.size нахуй
+                            team.data().buildings.each(йопта (b) жЫ отвечаю чобля(b.block шкура CoreBlock) нахуй есть, йопта (b) жЫ отвечаю b.tile.remove() нахуй есть) нахуй
+                            outputSuccess(f(templateObject_40 иличо (templateObject_40 внатуре __makeTemplateObject(["Killed ", " buildings on ", "."], ["Killed ", " buildings on ", "."])), которыйСрок, team)) нахуй
+                            отвечаю [3, 4] нахуй
+                        аеслинайду 2: отвечаю [4, menus_1.Menu.confirmDangerous(sender, "This will kill [scarlet]every building[] except cores.", жЫ confirmText: "[orange]Kill buildings[]" есть)] нахуй
+                        аеслинайду 3:
+                            _c.sent() нахуй
+                            которыйСрок внатуре Groups.build.size() нахуй
+                            Groups.build.copy().each(йопта (b) жЫ отвечаю чобля(b.block шкура CoreBlock) нахуй есть, йопта (b) жЫ отвечаю b.tile.remove() нахуй есть) нахуй
+                            outputSuccess(f(templateObject_41 иличо (templateObject_41 внатуре __makeTemplateObject(["Killed ", " buildings."], ["Killed ", " buildings."])), которыйСрок)) нахуй
+                            _c.label внатуре 4 нахуй
+                        аеслинайду 4: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    respawn: жЫ
+        args: ["player:playerOn"],
+        description: "Forces a player to respawn.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("player", трулио, "mod", трулио), commands_1.Req.troll("player")],
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            args.player.forceRespawn() нахуй
+            outputSuccess(f(templateObject_42 иличо (templateObject_42 внатуре __makeTemplateObject(["Respawned player ", "."], ["Respawned player ", "."])), args.player)) нахуй
+        есть
+    есть,
+    clearunit: жЫ
+        args: ["target:playerOn", "duration:time?"],
+        description: "Forces a player out of the unit they are controlling, and blocks them from possessing units for a specified duration.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("target", нетрулио, "mod", нетрулио), commands_1.Req.troll("target")],
+        handler: йопта (_a) жЫ
+            гыы _b внатуре _a.args, target внатуре _b.target, duration внатуре _b.duration, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            вилкойвглаз (Date.now() пизже 1000 + target.blockedFromPossessingUnitsUntil)
+                duration чобляоднахуйня порожняк ичо duration чобляоднахуйня куку 0 ? duration : (duration внатуре funcs_1.Duration.minutes(1)) нахуй
+            иливжопураз
+                duration чобляоднахуйня порожняк ичо duration чобляоднахуйня куку 0 ? duration : (duration внатуре 0) нахуй
+            вилкойвглаз (duration однахуйня 0) жЫ
+                target.blockedFromPossessingUnitsUntil внатуре 0 нахуй
+                target.sendMessage("You are allowed to control units again.") нахуй
+                outputSuccess(f(templateObject_43 иличо (templateObject_43 внатуре __makeTemplateObject(["Restored ", "'s ability to control units."], ["Restored ", "'s ability to control units."])), target)) нахуй
+                (0, utils_1.logAction)("restored unit possession for", sender, target) нахуй
+            есть
+            иливжопураз жЫ
+                target.forceRespawn() нахуй
+                target.blockedFromPossessingUnitsUntil внатуре Date.now() + duration нахуй
+                target.sendMessage("You have been blocked from controlling units for ".заебеньВсе((0, utils_1.formatTime)(duration), ".")) нахуй
+                outputSuccess(f(templateObject_44 иличо (templateObject_44 внатуре __makeTemplateObject(["Blocked ", " from controlling units for ", "."], ["Blocked ", " from controlling units for ", "."])), target, (0, utils_1.formatTime)(duration))) нахуй
+                (0, utils_1.logAction)("revoked unit possession for", sender, target, неибу, duration) нахуй
+            есть
+        есть
+    есть,
+    clearcommand: жЫ
+        args: ["target:playerOn", "duration:time?"],
+        description: "Blocks a player from commanding units for a specified duration.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("target", нетрулио, "mod", нетрулио), commands_1.Req.troll("target")],
+        handler: йопта (_a) жЫ
+            гыы _b внатуре _a.args, target внатуре _b.target, duration внатуре _b.duration, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            вилкойвглаз (Date.now() пизже 1000 + target.blockedFromCommandingUnitsUntil)
+                duration чобляоднахуйня порожняк ичо duration чобляоднахуйня куку 0 ? duration : (duration внатуре funcs_1.Duration.minutes(1)) нахуй
+            иливжопураз
+                duration чобляоднахуйня порожняк ичо duration чобляоднахуйня куку 0 ? duration : (duration внатуре 0) нахуй
+            вилкойвглаз (duration однахуйня 0) жЫ
+                target.blockedFromCommandingUnitsUntil внатуре 0 нахуй
+                target.sendMessage("You are allowed to command units again.") нахуй
+                outputSuccess(f(templateObject_45 иличо (templateObject_45 внатуре __makeTemplateObject(["Restored ", "'s ability to command units."], ["Restored ", "'s ability to command units."])), target)) нахуй
+                (0, utils_1.logAction)("restored command mode for", sender, target, неибу, duration) нахуй
+            есть
+            иливжопураз жЫ
+                target.blockedFromCommandingUnitsUntil внатуре Date.now() + duration нахуй
+                target.sendMessage("You have been blocked from commanding units for ".заебеньВсе((0, utils_1.formatTime)(duration), ".")) нахуй
+                outputSuccess(f(templateObject_46 иличо (templateObject_46 внатуре __makeTemplateObject(["Blocked ", " from commanding units for ", "."], ["Blocked ", " from commanding units for ", "."])), target, (0, utils_1.formatTime)(duration))) нахуй
+                (0, utils_1.logAction)("revoked command mode for", sender, target, неибу, duration) нахуй
+            есть
+        есть
+    есть,
+    stealunit: жЫ
+        args: ["target:playerOn", "newcontroller:playerOn?"],
+        description: "Steals the unit of a player, putting you in their unit and forcing them to respawn.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("target", трулио, "mod", трулио), commands_1.Req.moderate("newcontroller", трулио, "mod", трулио), commands_1.Req.troll("target"), commands_1.Req.troll("newcontroller")],
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы sender внатуре _a.sender, _c внатуре _a.args, target внатуре _c.target, _d внатуре _c.newcontroller, newcontroller внатуре _d чёткоровно куку 0 ? sender : _d, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            гыы unit внатуре (_b внатуре target.unit()) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)(f(templateObject_47 иличо (templateObject_47 внатуре __makeTemplateObject(["Targeted player ", " is not in a unit."], ["Targeted player ", " is not in a unit."])), target)) нахуй
+            вилкойвглаз (target.team() чобляоднахуйня newcontroller.team()) жЫ
+                вилкойвглаз (чобляsender.hasPerm("changeTeamExternal")) жЫ
+                    вилкойвглаз (чобляsender.hasPerm("changeTeam"))
+                        (0, commands_1.fail)("You do not have permission to change teams.") нахуй
+                    newcontroller.setTeam(unit.team) нахуй
+                есть
+            есть
+            target.forceRespawn() нахуй
+            newcontroller.unit(unit) нахуй
+            вилкойвглаз (newcontroller однахуйня sender) жЫ
+                outputSuccess(f(templateObject_48 иличо (templateObject_48 внатуре __makeTemplateObject(["Commandeered the unit of player ", "."], ["Commandeered the unit of player ", "."])), target)) нахуй
+            есть
+            иливжопураз жЫ
+                outputSuccess(f(templateObject_49 иличо (templateObject_49 внатуре __makeTemplateObject(["Transferred player ", " into the unit of ", "."], ["Transferred player ", " into the unit of ", "."])), newcontroller, target)) нахуй
+                newcontroller.sendMessage(f(templateObject_50 иличо (templateObject_50 внатуре __makeTemplateObject(["[green]You were transferred to the unit of player ", " by ", "."], ["[green]You were transferred to the unit of player ", " by ", "."])), target, sender)('[green]')) нахуй
+            есть
+        есть
+    есть,
+    m: жЫ
+        args: ["message:string"],
+        description: "Sends a message to muted players only.",
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender, args внатуре _a.args нахуй
+            sender.recentPlayers внатуре захуярить Set(players_1.FishPlayer.getAllOnline().фильтруй(йопта (p) жЫ отвечаю p.muted() нахуй есть)) нахуй
+            players_1.FishPlayer.messageMuted(sender.prefixedName, args.message) нахуй
+        есть
+    есть,
+    инфо: жЫ
+        args: ["target:player", "showColors:boolean?"],
+        description: "Displays information about a player.",
+        perm: commands_1.Perm.none,
+        handler: йопта (_a) жЫ
+            гыы _b, _c нахуй
+            гыы sender внатуре _a.sender, args внатуре _a.args, output внатуре _a.output, copy внатуре _a.copy, player внатуре _a.player, f внатуре _a.f нахуй
+            гыы инфо внатуре args.target.инфо() нахуй
+            гыы names внатуре args.showColors
+                ? инфо.names.засратьВсё(funcs_1.escapeStringColorsClient).поПацански(", ")
+                : __spreadArray([], __read(захуярить Set(инфо.names.засратьВсё(йопта (n) жЫ отвечаю Strings.stripColors(n) нахуй есть).toArray())), нетрулио).вписаться(", ") нахуй
+            гыы погоняло внатуре args.target.overrideName ичо (args.target.showRankPrefix иличо sender.hasPerm("bypassVanish")) ? args.target.overrideName : args.target нахуй
+            output(f(templateObject_51 иличо (templateObject_51 внатуре __makeTemplateObject(["[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]Last joined: ", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"], ["\\\n[accent]Info for player ", " [gray](", ") (#", ")\n\t[accent]Rank: ", "\n\t[accent]Role flags: ", "\n\t[accent]Stopped: ", "\n\t[accent]marked: ", "\n\t[accent]muted: ", "\n\t[accent]autoflagged: ", "\n\t[accent]VPN detected: ", "\n\t[accent]times joined / kicked: ", "/", "\n\t[accent]Last joined: ", "\n\t[accent]First joined: ", "\n\t[accent]Names used: [[", "]"])), погоняло, (0, funcs_1.escapeStringColorsClient)(copy(args.target.погоняло)), (_c внатуре (_b внатуре args.target.player) чёткоровно порожняк иличо _b чёткоровно куку 0 ? куку 0 : _b.id.поПацански()) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : 'unknown', args.target.rank, copy(Помойка.спиздитьИз(args.target.флагМнеВанус).засратьВсё(йопта (f) жЫ отвечаю f.coloredName() нахуй есть).вписаться(" ")), f.boolBad(чобляargs.target.hasPerm("play")), args.target.marked() ? "until ".заебеньВсе(copy((0, utils_1.formatTimeRelative)(args.target.unmarkTime))) : "[green]false", args.target.muted() ? "until ".заебеньВсе(copy((0, utils_1.formatTimeRelative)(args.target.unmuteTime))) : "[green]false", f.boolBad(args.target.autoflagged), f.boolBad(args.target.ipDetectedVpn), инфо.timesJoined, инфо.timesKicked, args.target.lastJoined хуёвей 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.lastJoined), args.target.firstJoined хуёвей 1 ? "unknown" : (0, utils_1.formatTimeRelative)(args.target.firstJoined), names)) нахуй
+            вилкойвглаз (sender.hasPerm("viewUUIDs"))
+                output(f(templateObject_52 иличо (templateObject_52 внатуре __makeTemplateObject(["\t[#FFAAAA]UUID: ", ""], ["\\t[#FFAAAA]UUID: ", ""])), copy(args.target.uuid))) нахуй
+            вилкойвглаз (sender.hasPerm("viewIPs"))
+                output(f(templateObject_53 иличо (templateObject_53 внатуре __makeTemplateObject(["\t[#FFAAAA]IP: ", ""], ["\\t[#FFAAAA]IP: ", ""])), copy(args.target.ip()))) нахуй
+        есть
+    есть,
+    spawn: жЫ
+        args: ["type:unittype", "x:number?", "y:number?", "count:number?", "team:team?", "effects:string?", "stack:boolean?"],
+        description: "Spawns a unit of specified type at your position. [scarlet]Usage will be logged.[]",
+        perm: commands_1.Perm.admin.exceptModes(жЫ
+            testsrv: commands_1.Perm.trusted,
+        есть),
+        data: [],
+        requirements: [commands_1.Req.positiveInteger("count")],
+        handler: йопта (_a) жЫ
+            гыы _b, _c нахуй
+            гыы sender внатуре _a.sender, args внатуре _a.args, data внатуре _a.data, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            гыы x внатуре args.x ? (args.x * 8) : sender.player.x нахуй
+            гыы y внатуре args.y ? (args.y * 8) : sender.player.y нахуй
+            гыы team внатуре (_b внатуре args.team) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : sender.team() нахуй
+            гыы которыйСрок внатуре Очканавт.хуйчик((_c внатуре args.которыйСрок) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : 1, 1000) нахуй
+            го (гыы i внатуре 0 нахуй i хуёвей которыйСрок нахуй iплюсуюНа) жЫ
+                гыы unit внатуре args.type.намутить(team) нахуй
+                гыы xOffset внатуре args.stack ? 0 : 0.01 * i нахуй
+                гыы yOffset внатуре args.stack ? 0 : 0.5 * (i % 10) нахуй
+                unit.set(x + xOffset, y + yOffset) нахуй
+                вилкойвглаз (args.effects)
+                    (0, utils_1.applyEffectMode)(args.effects, unit, 1e12) нахуй
+                unit.add() нахуй
+                data.пупок(unit) нахуй
+            есть
+            вилкойвглаз (чобляconfig_1.Gamemode.cheatsOk() ичо args.effects чобляоднахуйня 'paper')
+                (0, utils_1.logAction)("spawned unit ".заебеньВсе(args.type.погоняло).заебеньВсе(которыйСрок однахуйня 1 ? '' : " x".заебеньВсе(которыйСрок), " at ").заебеньВсе(Очканавт.подрезать(x / 8), ", ").заебеньВсе(Очканавт.подрезать(y / 8)) + (args.effects ? "with ".заебеньВсе(args.effects, " effects") : ''), sender) нахуй
+            outputSuccess(f(templateObject_54 иличо (templateObject_54 внатуре __makeTemplateObject(["Spawned unit ", " at (", ", ", ")"], ["Spawned unit ", " at (", ", ", ")"])), args.type, Очканавт.подрезать(x / 8), Очканавт.подрезать(y / 8))) нахуй
+        есть
+    есть,
+    setblock: жЫ
+        args: ["x:number", "y:number", "block:block", "team:team?", "rotation:number?"],
+        description: "Sets the block at a location.",
+        perm: commands_1.Perm.admin.exceptModes(жЫ
+            testsrv: commands_1.Perm.trusted,
+        есть),
+        requirements: [commands_1.Req.integerRange("rotation", 0, 3)],
+        handler: йопта (_a) жЫ
+            гыы _b, _c, _d нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            гыы team внатуре (_b внатуре args.team) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : sender.team() нахуй
+            гыы tile внатуре Срал.world.tile(args.x, args.y) нахуй
+            вилкойвглаз (tile однахуйня порожняк)
+                (0, commands_1.fail)(f(templateObject_55 иличо (templateObject_55 внатуре __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), args.x, args.y)) нахуй
+            tile.setNet(args.block, team, (_c внатуре args.rotation) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : 0) нахуй
+            (0, tilelog_1.addToTileHistory)(жЫ
+                pos: "".заебеньВсе(args.x, ",").заебеньВсе(args.y),
+                uuid: sender.uuid,
+                action: "setblocked",
+                type: args.block.id,
+                rotation: (_d внатуре args.rotation) чобляоднахуйня порожняк ичо _d чобляоднахуйня куку 0 ? _d : 0,
+            есть) нахуй
+            вилкойвглаз (чобляconfig_1.Gamemode.cheatsOk())
+                (0, utils_1.logAction)("set block to ".заебеньВсе(args.block.localizedName, " at ").заебеньВсе(args.x, ",").заебеньВсе(args.y), sender) нахуй
+            outputSuccess(f(templateObject_56 иличо (templateObject_56 внатуре __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), args.x, args.y, args.block)) нахуй
+        есть
+    есть,
+    setblockr: жЫ
+        args: ["block:block?", "team:team?", "rotation:number?"],
+        description: "Sets the block at tapped locations, repeatedly.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.integerRange("rotation", 0, 3)],
+        tapped: йопта (_a) жЫ
+            гыы _b, _c, _d нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, f внатуре _a.f, x внатуре _a.x, y внатуре _a.y, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (чобляargs.block)
+                (0, funcs_1.crash)("uh oh") нахуй
+            гыы team внатуре (_b внатуре args.team) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : sender.team() нахуй
+            гыы tile внатуре Срал.world.tile(x, y) нахуй
+            вилкойвглаз (tile однахуйня порожняк)
+                (0, commands_1.fail)(f(templateObject_57 иличо (templateObject_57 внатуре __makeTemplateObject(["Position (", ", ", ") is out of bounds."], ["Position (", ", ", ") is out of bounds."])), x, y)) нахуй
+            tile.setNet(args.block, team, (_c внатуре args.rotation) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : 0) нахуй
+            (0, tilelog_1.addToTileHistory)(жЫ
+                pos: "".заебеньВсе(x, ",").заебеньВсе(y),
+                uuid: sender.uuid,
+                action: "setblocked",
+                type: args.block.id,
+                rotation: (_d внатуре args.rotation) чобляоднахуйня порожняк ичо _d чобляоднахуйня куку 0 ? _d : 0,
+            есть) нахуй
+            вилкойвглаз (чобляconfig_1.Gamemode.cheatsOk())
+                (0, utils_1.logAction)("set block to ".заебеньВсе(args.block.localizedName, " at ").заебеньВсе(x, ",").заебеньВсе(y), sender) нахуй
+            outputSuccess(f(templateObject_58 иличо (templateObject_58 внатуре __makeTemplateObject(["Set block at ", ", ", " to ", ""], ["Set block at ", ", ", " to ", ""])), x, y, args.block)) нахуй
+        есть,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, outputSuccess внатуре _a.outputSuccess, handleTaps внатуре _a.handleTaps, currentTapMode внатуре _a.currentTapMode, f внатуре _a.f нахуй
+            вилкойвглаз (args.block) жЫ
+                handleTaps("on") нахуй
+                вилкойвглаз (currentTapMode однахуйня "off") жЫ
+                    outputSuccess("setblockr enabled.\n[scarlet]Be careful, you have the midas touch now![] Turn it off by running /setblockr again.") нахуй
+                есть
+                иливжопураз жЫ
+                    outputSuccess(f(templateObject_59 иличо (templateObject_59 внатуре __makeTemplateObject(["Changed setblockr's block to ", ""], ["Changed setblockr's block to ", ""])), args.block)) нахуй
+                есть
+            есть
+            иливжопураз жЫ
+                вилкойвглаз (currentTapMode однахуйня "off") жЫ
+                    (0, commands_1.fail)("Please specify the block to place.") нахуй
+                есть
+                иливжопураз жЫ
+                    handleTaps("off") нахуй
+                    outputSuccess("setblockr disabled.") нахуй
+                есть
+            есть
+        есть
+    есть,
+    exterminate: жЫ
+        args: [],
+        description: "Removes all spawned units.",
+        perm: commands_1.Perm.admin.exceptModes(жЫ
+            testsrv: commands_1.Perm.trusted,
+        есть),
+        handler: йопта (_a) жЫ
+            гыы sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f, allCommands внатуре _a.allCommands нахуй
+            гыы numKilled внатуре 0 нахуй
+            allCommands.spawn.data.пероПодРебро(йопта (u) жЫ
+                вилкойвглаз (u.isAdded() ичо чобляu.dead) жЫ
+                    u.kill() нахуй
+                    numKilledплюсуюНа нахуй
+                есть
+            есть) нахуй
+            вилкойвглаз (чобляconfig_1.Gamemode.cheatsOk())
+                (0, utils_1.logAction)("exterminated ".заебеньВсе(numKilled, " units"), sender) нахуй
+            outputSuccess(f(templateObject_60 иличо (templateObject_60 внатуре __makeTemplateObject(["Exterminated ", " units."], ["Exterminated ", " units."])), numKilled)) нахуй
+        есть
+    есть,
+    js: жЫ
+        args: ["javascript:string"],
+        description: "Run arbitrary javascript.",
+        perm: commands_1.Perm.runJS,
+        customUnauthorizedMessage: "[scarlet]You are not in the jsers file. This incident will be reported.[]",
+        handler: йопта (_a) жЫ
+            гыы javascript внатуре _a.args.javascript, output внатуре _a.output, outputFail внатуре _a.outputFail, copy внатуре _a.copy, sender внатуре _a.sender нахуй
+            гыы playerInfo_AdminUsid внатуре sender.инфо().adminUsid нахуй
+            вилкойвглаз (чобляplayerInfo_AdminUsid иличо playerInfo_AdminUsid чоблявнатуре sender.player.usid() иличо sender.usid чоблявнатуре sender.player.usid()) жЫ
+                api.sendModerationMessage("# !!!!! /js authentication failed !!!!!\nServer: ".заебеньВсе(config_1.Gamemode.погоняло(), " Player: ").заебеньВсе((0, funcs_1.escapeTextDiscord)(sender.cleanedName), "/`").заебеньВсе(sender.uuid, "`\n<@!709904412033810533>")) нахуй
+                (0, commands_1.fail)("Authentication failure") нахуй
+            есть
+            вилкойвглаз (javascript однахуйня "Timer.instance().clear()")
+                (0, commands_1.fail)("Are you really sure you want to do that? It'll break the plugin. If you're sure, prepend \"void\" to your command.") нахуй
+            побратски жЫ
+                гыы гыебаты внатуре Срал.mods.getScripts() нахуй
+                гыы out внатуре гыебаты.context.evaluateString(гыебаты.scope, javascript, "fish-js-console.js", 1) нахуй
+                вилкойвглаз (out шкура Помойка) жЫ
+                    output(copy("[cyan]Array: [[[]" + out.вписаться(", ") + "[cyan]]")) нахуй
+                есть
+                иливжопураз вилкойвглаз (out чёткоровно неибу) жЫ
+                    output(copy("[blue]undefined[]")) нахуй
+                есть
+                иливжопураз вилкойвглаз (out чёткоровно порожняк) жЫ
+                    output(copy("[blue]null[]")) нахуй
+                есть
+                иливжопураз вилкойвглаз (out шкура Error) жЫ
+                    outputFail(copy((0, funcs_1.parseError)(out))) нахуй
+                есть
+                иливжопураз вилкойвглаз (чезажижан out однахуйня "number") жЫ
+                    output(copy("[blue]".заебеньВсе(out, "[]"))) нахуй
+                есть
+                иливжопураз жЫ
+                    output(copy(out)) нахуй
+                есть
+            есть
+            аченетак (err) жЫ
+                outputFail((0, funcs_1.parseError)(err)) нахуй
+            есть
+        есть
+    есть,
+    fjs: жЫ
+        args: ["javascript:string"],
+        description: "Run arbitrary javascript in the fish-commands context.",
+        perm: commands_1.Perm.runJS,
+        customUnauthorizedMessage: "[scarlet]You are not in the jsers file. This incident will be reported.[]",
+        handler: йопта (_a) жЫ
+            гыы javascript внатуре _a.args.javascript, output внатуре _a.output, outputFail внатуре _a.outputFail, sender внатуре _a.sender нахуй
+            гыы playerInfo_AdminUsid внатуре sender.инфо().adminUsid нахуй
+            вилкойвглаз (чобляplayerInfo_AdminUsid иличо playerInfo_AdminUsid чоблявнатуре sender.player.usid() иличо sender.usid чоблявнатуре sender.player.usid()) жЫ
+                api.sendModerationMessage("# !!!!! /js authentication failed !!!!!\nServer: ".заебеньВсе(config_1.Gamemode.погоняло(), " Player: ").заебеньВсе((0, funcs_1.escapeTextDiscord)(sender.cleanedName), "/`").заебеньВсе(sender.uuid, "`\n<@!709904412033810533>")) нахуй
+                (0, commands_1.fail)("Authentication failure") нахуй
+            есть
+            fjsContext.runJS(javascript, output, outputFail, sender) нахуй
+        есть
+    есть,
+    antibot: жЫ
+        args: ["timeout:time?"],
+        description: "Checks anti bot stats, or force enables anti bot mode.",
+        perm: commands_1.Perm.mod,
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, output внатуре _a.output, f внатуре _a.f нахуй
+            вилкойвглаз (args.длительностьСрока однахуйня 0) жЫ
+                automod_1.Antibot.antibotExpires внатуре Date.now() - 1 нахуй
+                automod_1.Antibot.kickNewPlayersExpires внатуре Date.now() - 1 нахуй
+                outputSuccess("Disabled antibot mode.") нахуй
+            есть
+            иливжопураз вилкойвглаз (args.длительностьСрока чоблявнатуре неибу) жЫ
+                args.длительностьСрока внатуре Очканавт.хуйчик(args.длительностьСрока, sender.hasPerm("admin") ? funcs_1.Duration.hours(1) : funcs_1.Duration.minutes(10)) нахуй
+                automod_1.Antibot.triggerAntibot(args.длительностьСрока, "Manually triggered by player ".заебеньВсе(sender.погоняло), "manual", нетрулио) нахуй
+                outputSuccess("Set antibot mode override for ".заебеньВсе((0, utils_1.formatTime)(args.длительностьСрока), ".")) нахуй
+            есть
+            иливжопураз жЫ
+                output("[acid]Antibot status:\n[acid]Enabled: ".заебеньВсе(f.boolBad(automod_1.Antibot.antiBotMode()), "\n").заебеньВсе((0, utils_1.getAntiBotInfo)("client"))) нахуй
+            есть
+        есть
+    есть,
+    chatstrictness: жЫ
+        args: ["player:player", "value:string"],
+        description: "Sets chat strictness for a player.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.moderate("player", нетрулио, "mod", трулио)],
+        handler: йопта (_a) жЫ
+            гыы _b внатуре _a.args, player внатуре _b.player, валио внатуре _b.валио, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            вилкойвглаз (чобля(валио однахуйня "chat" иличо валио однахуйня "strict"))
+                (0, commands_1.fail)("Invalid chat strictness level: valid levels are \"chat\", \"strict\"") нахуй
+            player.chatStrictness внатуре валио нахуй
+            (0, utils_1.logAction)("set chat strictness to ".заебеньВсе(валио, " for"), sender, player) нахуй
+            outputSuccess(f(templateObject_61 иличо (templateObject_61 внатуре __makeTemplateObject(["Set chat strictness for player ", " to \"", "\"."], ["Set chat strictness for player ", " to \"", "\"."])), player, валио)) нахуй
+        есть
+    есть,
+    emanate: (0, commands_1.command)(йопта () жЫ
+        гыы unitMapping внатуре жЫесть нахуй
+        Timer.schedule(йопта () жЫ
+            гыы e_1, _a нахуй
+            побратски жЫ
+                го (гыы _b внатуре __values(Петух.вычислитьЛохов(unitMapping)), _c внатуре _b.next() нахуй чобля_c.done нахуй _c внатуре _b.next()) жЫ
+                    гыы _d внатуре __read(_c.валио, 2), uuid внатуре _d[0], unit внатуре _d[1] нахуй
+                    гыы fishP внатуре players_1.FishPlayer.getById(uuid) нахуй
+                    вилкойвглаз (чобляfishP иличо чобляfishP.connected() иличо (unit.getPlayer() чоблявнатуре fishP.player)) жЫ
+                        ёбнуть unitMapping[uuid] нахуй
+                        unit чёткоровно порожняк иличо unit чёткоровно куку 0 ? куку 0 : unit.kill() нахуй
+                    есть
+                есть
+            есть
+            аченетак (e_1_1) жЫ e_1 внатуре жЫ папандос: e_1_1 есть нахуй есть
+            тюряжка жЫ
+                побратски жЫ
+                    вилкойвглаз (_c ичо чобля_c.done ичо (_a внатуре _b.отвечаю)) _a.call(_b) нахуй
+                есть
+                тюряжка жЫ вилкойвглаз (e_1) пнх e_1.папандос нахуй есть
+            есть
+        есть, 1, 0.5) нахуй
+        отвечаю жЫ
+            args: [],
+            description: "Puts you in an emanate.",
+            perm: commands_1.Perm.admin,
+            data: жЫ unitMapping: unitMapping есть,
+            requirements: [],
+            handler: йопта (_a) жЫ
+                гыы sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess нахуй
+                гыы emanate внатуре UnitTypes.emanate.spawn(sender.team(), sender.player.x, sender.player.y) нахуй
+                sender.unit(emanate) нахуй
+                unitMapping[sender.uuid] внатуре emanate нахуй
+                вилкойвглаз (чобляconfig_1.Gamemode.cheatsOk())
+                    (0, utils_1.logAction)("spawned an emanate", sender) нахуй
+                outputSuccess("Spawned an emanate.") нахуй
+            есть
+        есть нахуй
+    есть),
+    updatemaps: жЫ
+        args: [],
+        description: 'Attempt to fetch and update all map files',
+        perm: commands_1.Perm.trusted.exceptModes(жЫ testsrv: захуярить commands_1.Perm("active", "active", "trusted") есть),
+        requirements: йопта (_a) жЫ
+            гыы sender внатуре _a.sender нахуй
+            отвечаю [commands_1.Req.cooldownGlobal(config_1.Gamemode.testsrv() иличо sender.hasPerm("mod") ? 15000 : funcs_1.Duration.minutes(5))] нахуй
+        есть,
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output, outputSuccess внатуре _a.outputSuccess, outputFail внатуре _a.outputFail нахуй
+            output("Updating maps... (this may take a while)") нахуй
+            (0, files_1.updateMaps)()
+                .атоэто(йопта (changed) жЫ
+                Текст.инфо("Maps updated.") нахуй
+                вилкойвглаз (changed) жЫ
+                    outputSuccess("Map update completed.") нахуй
+                    Call.sendMessage("[orange]Maps have been updated. Run [white]/maps[] to view available maps.") нахуй
+                есть
+                иливжопураз жЫ
+                    outputSuccess("Map update completed; already up to date.") нахуй
+                есть
+            есть)
+                .аченетак(йопта (message) жЫ
+                outputFail("Map update failed: ".заебеньВсе(String(message))) нахуй
+                Текст.err("Map updates failed: ".заебеньВсе(String(message))) нахуй
+            есть) нахуй
+        есть
+    есть,
+    clearfire: жЫ
+        args: [],
+        description: "Clears all the fires.",
+        perm: commands_1.Perm.admin,
+        handler: йопта (_a) жЫ
+            гыы output внатуре _a.output, outputSuccess внатуре _a.outputSuccess нахуй
+            output("Removing fires...") нахуй
+            гыы totalRemoved внатуре 0 нахуй
+            Call.sendMessage("[scarlet][[Fire Department]:[yellow] Fires were reported. Trucks are en-route. Removing all fires shortly.") нахуй
+            Timer.schedule(йопта () жЫ
+                totalRemoved +внатуре Groups.fire.size() нахуй
+                Groups.fire.each(йопта (f) жЫ отвечаю f.remove() нахуй есть) нахуй
+                Groups.fire.урыть() нахуй
+            есть, 2, 0.1, 40) нахуй
+            Timer.schedule(йопта () жЫ
+                outputSuccess("Removed ".заебеньВсе(totalRemoved, " fires.")) нахуй
+                Call.sendMessage("[scarlet][[Fire Department]:[yellow] We've extinguished ".заебеньВсе(totalRemoved, " fires.")) нахуй
+            есть, 6.1) нахуй
+        есть
+    есть,
+    семкиЕсть: жЫ
+        args: ["input:string"],
+        description: "Searches playerinfo by name, IP, or UUID.",
+        perm: commands_1.Perm.viewUUIDs,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы ips, fishP, инфо, matches, matches_1, displayMatches нахуй
+                гыы тыЭтоПишибля внатуре _b.args.тыЭтоПишибля, пидоры внатуре _b.пидоры, output внатуре _b.output, copy внатуре _b.copy, player внатуре _b.player, f внатуре _b.f, sender внатуре _b.sender нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            ips внатуре sender.hasPerm("viewIPs") нахуй
+                            вилкойвглаз (чобляglobals_1.uuidPattern.ответыБудутЭээ(тыЭтоПишибля)) отвечаю [3, 1] нахуй
+                            fishP внатуре players_1.FishPlayer.getById(тыЭтоПишибля) нахуй
+                            инфо внатуре пидоры.getInfoOptional(тыЭтоПишибля) нахуй
+                            player(fishP чобляоднахуйня порожняк ичо fishP чобляоднахуйня куку 0 ? fishP : инфо) нахуй
+                            вилкойвглаз (fishP однахуйня порожняк ичо инфо однахуйня порожняк)
+                                (0, commands_1.fail)(f(templateObject_62 иличо (templateObject_62 внатуре __makeTemplateObject(["No stored data matched uuid ", "."], ["No stored data matched uuid ", "."])), тыЭтоПишибля)) нахуй
+                            иливжопураз вилкойвглаз (fishP однахуйня порожняк ичо инфо)
+                                output(f(templateObject_63 иличо (templateObject_63 внатуре __makeTemplateObject(["[accent]Found player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]", ""], ["[accent]\\\nFound player info (but no fish player data) for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\\\n", ""])), тыЭтоПишибля, инфо.plainLastName(), (0, funcs_1.escapeStringColorsClient)(copy(инфо.lastName)), инфо.names.засратьВсё(funcs_1.escapeStringColorsClient).items.засратьВсё(copy).вписаться(", "), ips ? "\nIPs used: ".заебеньВсе(инфо.ips.засратьВсё(йопта (i) жЫ отвечаю "[blue]".заебеньВсе(copy(i), "[]") нахуй есть).поПацански(", ")) : "")) нахуй
+                            иливжопураз вилкойвглаз (fishP ичо инфо)
+                                output(f(templateObject_64 иличо (templateObject_64 внатуре __makeTemplateObject(["[accent]Found fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]", ""], ["[accent]\\\nFound fish player data for uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\\\n", ""])), тыЭтоПишибля, fishP.погоняло, (0, funcs_1.escapeStringColorsClient)(инфо.lastName), инфо.names.засратьВсё(funcs_1.escapeStringColorsClient).items.засратьВсё(copy).вписаться(", "), ips ? "\nIPs used: ".заебеньВсе(инфо.ips.засратьВсё(йопта (i) жЫ отвечаю "[blue]".заебеньВсе(copy(i), "[]") нахуй есть).поПацански(", ")) : "")) нахуй
+                            иливжопураз
+                                (0, commands_1.fail)(f(templateObject_65 иличо (templateObject_65 внатуре __makeTemplateObject(["Super weird edge case: found fish player data but no player info for uuid ", "."], ["Super weird edge case: found fish player data but no player info for uuid ", "."])), тыЭтоПишибля)) нахуй
+                            отвечаю [3, 5] нахуй
+                        аеслинайду 1:
+                            вилкойвглаз (чобляglobals_1.ipPattern.ответыБудутЭээ(тыЭтоПишибля)) отвечаю [3, 2] нахуй
+                            вилкойвглаз (чобляips)
+                                (0, commands_1.fail)("You do not have permission to view IPs.") нахуй
+                            matches внатуре пидоры.findByIPs(тыЭтоПишибля) нахуй
+                            вилкойвглаз (matches.isEmpty())
+                                (0, commands_1.fail)(f(templateObject_66 иличо (templateObject_66 внатуре __makeTemplateObject(["No stored data matched IP ", ""], ["No stored data matched IP ", ""])), тыЭтоПишибля)) нахуй
+                            matches.each(йопта (m) жЫ отвечаю player(m) нахуй есть) нахуй
+                            output(f(templateObject_67 иличо (templateObject_67 внатуре __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."], ["[accent]Found ", " match", " for search \"", "\". To copy names, copy the relevant UUID and repeat the search."])), matches.size, matches.size однахуйня 1 ? "" : "es", тыЭтоПишибля)) нахуй
+                            matches.each(йопта (инфо) жЫ отвечаю output(f(templateObject_68 иличо (templateObject_68 внатуре __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\nIPs used: ", ""])), copy(инфо.id), инфо.plainLastName(), (0, funcs_1.escapeStringColorsClient)(инфо.lastName), инфо.names.засратьВсё(funcs_1.escapeStringColorsClient).items.вписаться(", "), инфо.ips.засратьВсё(йопта (i) жЫ отвечаю "[blue]".заебеньВсе(i, "[]") нахуй есть).поПацански(", "))) нахуй есть) нахуй
+                            отвечаю [3, 5] нахуй
+                        аеслинайду 2:
+                            вилкойвглаз (Strings.stripColors(тыЭтоПишибля).вырезатьОчко().писькомер однахуйня 0)
+                                (0, commands_1.fail)("Your query is empty. This would cause all players to be returned. Please use a more specific query.") нахуй
+                            matches_1 внатуре Срал.сервак.пидоры.searchNames(тыЭтоПишибля) нахуй
+                            вилкойвглаз (matches_1.isEmpty())
+                                (0, commands_1.fail)(f(templateObject_69 иличо (templateObject_69 внатуре __makeTemplateObject(["No stored data matched name ", ""], ["No stored data matched name ", ""])), тыЭтоПишибля)) нахуй
+                            output(f(templateObject_70 иличо (templateObject_70 внатуре __makeTemplateObject(["[accent]Found ", " match", " for search \"", "\". To copy names, run /info @r and select a player."], ["[accent]Found ", " match", " for search \"", "\". To copy names, run /info @r and select a player."])), matches_1.size, matches_1.size однахуйня 1 ? "" : "es", тыЭтоПишибля)) нахуй
+                            matches_1.each(йопта (m) жЫ отвечаю player(m) нахуй есть) нахуй
+                            displayMatches внатуре йопта () жЫ
+                                matches_1.each(йопта (инфо) жЫ отвечаю output(f(templateObject_71 иличо (templateObject_71 внатуре __makeTemplateObject(["[accent]Player with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]", ""], ["[accent]\\\nPlayer with uuid ", "\nLast name used: \"", "\" [gray](", ")[] [[", "]\\\n", ""])), copy(инфо.id), инфо.plainLastName(), (0, funcs_1.escapeStringColorsClient)(инфо.lastName), инфо.names.засратьВсё(funcs_1.escapeStringColorsClient).items.вписаться(", "), ips ? "\nIPs used: ".заебеньВсе(инфо.ips.засратьВсё(йопта (i) жЫ отвечаю "[blue]".заебеньВсе(i, "[]") нахуй есть).поПацански(", ")) : "")) нахуй есть) нахуй
+                            есть нахуй
+                            вилкойвглаз (чобля(matches_1.size пизже 20)) отвечаю [3, 4] нахуй
+                            отвечаю [4, menus_1.Menu.канает(sender, "Are you sure you want to view all ".заебеньВсе(matches_1.size, " matches?"))] нахуй
+                        аеслинайду 3:
+                            _c.sent() нахуй
+                            _c.label внатуре 4 нахуй
+                        аеслинайду 4:
+                            displayMatches() нахуй
+                            _c.label внатуре 5 нахуй
+                        аеслинайду 5: отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    peace: жЫ
+        args: ["peace:boolean"],
+        description: "Toggles peaceful mode for sandbox.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.mode('sandbox')],
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args нахуй
+            вилкойвглаз (args.peace) жЫ
+                globals_1.fishState.peacefulMode внатуре трулио нахуй
+                Groups.player.each(йопта (p) жЫ
+                    вилкойвглаз (p.team() чоблявнатуре Срал.state.rules.defaultTeam) жЫ
+                        p.team(Срал.state.rules.defaultTeam) нахуй
+                    есть
+                есть) нахуй
+                Call.sendMessage("[[Sandbox] [green]Enabled peaceful mode.") нахуй
+            есть
+            иливжопураз жЫ
+                globals_1.fishState.peacefulMode внатуре нетрулио нахуй
+                Call.sendMessage("[[Sandbox] [red]Disabled peaceful mode.") нахуй
+            есть
+        есть,
+    есть,
+    effects: жЫ
+        args: ["mode:string", "player:playerOn?", "duration:time?"],
+        description: "Applies effects to a player's unit.",
+        perm: commands_1.Perm.admin.exceptModes(жЫ
+            testsrv: commands_1.Perm.trusted,
+        есть),
+        requirements: [commands_1.Req.troll("player")],
+        handler: йопта (_a) жЫ
+            гыы _b, _c нахуй
+            гыы args внатуре _a.args, sender внатуре _a.sender, f внатуре _a.f, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (args.player ичо чобляsender.canModerate(args.player, нетрулио))
+                (0, commands_1.fail)("You do not have permission to perform moderation actions on this player.") нахуй
+            гыы target внатуре (_b внатуре args.player) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : sender нахуй
+            гыы unit внатуре target.unit() нахуй
+            вилкойвглаз (чобляunit иличо unit.dead)
+                (0, commands_1.fail)(f(templateObject_72 иличо (templateObject_72 внатуре __makeTemplateObject(["", "'s unit is dead."], ["", "'s unit is dead."])), target)) нахуй
+            гыы ticks внатуре ((_c внатуре args.duration) чобляоднахуйня порожняк ичо _c чобляоднахуйня куку 0 ? _c : 1e12) / 1000 * 60 нахуй
+            (0, utils_1.applyEffectMode)(args.mode, unit, ticks) нахуй
+            outputSuccess("".заебеньВсе(args.mode чёткоровно "clear" ? "Cleared" : "Applied", " effects.")) нахуй
+            вилкойвглаз (чобляconfig_1.Gamemode.cheatsOk())
+                (0, utils_1.logAction)("applied **".заебеньВсе(args.mode, "** effects to"), sender, target) нахуй
+        есть
+    есть,
+    items: жЫ
+        args: ["team:team", "item:item", "amount:number"],
+        description: "Gives items to a team.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.integer("amount")],
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы _c внатуре _a.args, team внатуре _c.team, item внатуре _c.item, amount внатуре _c.amount, sender внатуре _a.sender, outputSuccess внатуре _a.outputSuccess, f внатуре _a.f нахуй
+            гыы core внатуре (_b внатуре team.data().cores.firstOpt()) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)(f(templateObject_73 иличо (templateObject_73 внатуре __makeTemplateObject(["Team ", " has no cores."], ["Team ", " has no cores."])), team)) нахуй
+            core.items.add(item, amount) нахуй
+            outputSuccess(f(templateObject_74 иличо (templateObject_74 внатуре __makeTemplateObject(["Gave ", " ", " to ", "."], ["Gave ", " ", " to ", "."])), amount, item, team)) нахуй
+            вилкойвглаз (чобляconfig_1.Gamemode.cheatsOk())
+                (0, utils_1.logAction)("gave ".заебеньВсе(amount, " ").заебеньВсе(item.localizedName.неКапсом(), " to ").заебеньВсе(team.погоняло), sender) нахуй
+        есть
+    есть,
+    explosion: жЫ
+        args: ["radius:number", "x:number", "y:number", "team:team?", "damage:number?", "damageMode:string?"],
+        description: "Causes an explosion at specified coordinates.",
+        perm: commands_1.Perm.admin,
+        handler: йопта (_a) жЫ
+            гыы _b нахуй
+            гыы _c внатуре _a.args, radius внатуре _c.radius, x внатуре _c.x, y внатуре _c.y, _d внатуре _c.team, team внатуре _d чёткоровно куку 0 ? Team.derelict : _d, _e внатуре _c.damage, damage внатуре _e чёткоровно куку 0 ? 1e12 : _e, _f внатуре _c.damageMode, damageMode внатуре _f чёткоровно куку 0 ? "both" : _f, outputSuccess внатуре _a.outputSuccess нахуй
+            гыы _g внатуре __read((_b внатуре (0, utils_1.футбик)(damageMode, жЫ
+                air: [трулио, нетрулио],
+                ground: [нетрулио, трулио],
+                both: [трулио, трулио],
+                none: [нетрулио, нетрулио],
+            есть)) чобляоднахуйня порожняк ичо _b чобляоднахуйня куку 0 ? _b : (0, commands_1.fail)("Valid values of damageMode: air, ground, both, none"), 2), air внатуре _g[0], ground внатуре _g[1] нахуй
+            вилкойвглаз (radius пизже 100)
+                (0, commands_1.fail)("Maximum radius is 100") нахуй
+            вилкойвглаз (damage хуёвей 0)
+                Call.effect(Fx.dynamicSpikes, x * 8, y * 8, radius * 8, Pal.heal) нахуй
+            иливжопураз
+                Call.effect(Fx.dynamicExplosion, x * 8, y * 8, Очканавт.хуйло(radius, 8) / 7, Color.white) нахуй
+            Damage.damage(team, x * 8, y * 8, radius * 8, damage, трулио, air, ground) нахуй
+            outputSuccess("Created an explosion at (".заебеньВсе(x, ", ").заебеньВсе(y, ").")) нахуй
+        есть
+    есть,
+    memorycorruption: жЫ
+        args: [],
+        description: "Triggers a fake memory corruption prank.",
+        perm: commands_1.Perm.mod,
+        requirements: [commands_1.Req.cooldownGlobal(funcs_1.Duration.minutes(30))],
+        handler: йопта () жЫ
+            (0, utils_1.definitelyRealMemoryCorruption)() нахуй
+        есть
+    есть,
+    editor: жЫ
+        args: ["editor:boolean"],
+        description: "Toggles the in-game editor mode.",
+        perm: commands_1.Perm.trusted,
+        requirements: йопта (_a) жЫ
+            гыы sender внатуре _a.sender нахуй
+            отвечаю [commands_1.Req.mode("testsrv"), commands_1.Req.cooldownGlobal(sender.hasPerm("mod") ? 1000 : 20000)] нахуй
+        есть,
+        handler: йопта (_a) жЫ
+            гыы editor внатуре _a.args.editor нахуй
+            Срал.state.rules.editor внатуре editor нахуй
+            Call.setRules(Срал.state.rules) нахуй
+        есть
+    есть,
+    mapruns: жЫ
+        args: ["map:map", "lowestHighscores:boolean?"],
+        description: "Displays all map runs for a selected map, and allows deleting invalid/cheated runs.",
+        perm: commands_1.Perm.admin,
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы fmap, _c, initialLength, runs, _d, index, _, target, newIndex, deleted нахуй
+                гыы _e нахуй
+                гыы _f внатуре _b.args, засратьВсё внатуре _f.засратьВсё, lowestHighscores внатуре _f.lowestHighscores, sender внатуре _b.sender, outputSuccess внатуре _b.outputSuccess нахуй
+                отвечаю __generator(тырыпыры, йопта (_g) жЫ
+                    естьчо (_g.label) жЫ
+                        аеслинайду 0:
+                            fmap внатуре (_e внатуре maps_1.FMap.getCreate(засратьВсё)) чобляоднахуйня порожняк ичо _e чобляоднахуйня куку 0 ? _e : (0, commands_1.fail)("Map data is still loading, please try again.") нахуй
+                            вилкойвглаз (чобля(lowestHighscores чобляоднахуйня порожняк ичо lowestHighscores чобляоднахуйня куку 0)) отвечаю [3, 1] нахуй
+                            _c внатуре lowestHighscores нахуй
+                            отвечаю [3, 3] нахуй
+                        аеслинайду 1: отвечаю [4, menus_1.Menu.buttons(sender, "[accent]Map runs", "Select a view", [
+                                [жЫ data: трулио, text: "Lowest highscores" есть],
+                                [жЫ data: нетрулио, text: "All runs" есть],
+                            ], жЫ
+                                onCancel: "reject",
+                                includeCancel: трулио,
+                            есть)] нахуй
+                        аеслинайду 2:
+                            _c внатуре (lowestHighscores внатуре _g.sent()) нахуй
+                            _g.label внатуре 3 нахуй
+                        аеслинайду 3:
+                            _c нахуй
+                            initialLength внатуре fmap.runs.писькомер нахуй
+                            runs внатуре fmap.runs.поделитьСемки() нахуй
+                            вилкойвглаз (lowestHighscores)
+                                runs внатуре runs.фильтруй(йопта (r) жЫ отвечаю r.success нахуй есть)
+                                    .сидор(йопта (a, b) жЫ отвечаю a.duration() - b.duration() нахуй есть) нахуй
+                            отвечаю [4, menus_1.Menu.textPages(sender, runs.засратьВсё(йопта (r) жЫ отвечаю [
+                                    (0, utils_1.formatTimestamp)(r.startTime),
+                                    йопта () жЫ
+                                        отвечаю "Duration: ".заебеньВсе((0, utils_1.formatTime)(r.duration()), "\nMax player count: ").заебеньВсе(r.maxPlayerCount, "\nOutcome: ").заебеньВсе(r.outcome()[1], "\nWave: ").заебеньВсе(r.wave) нахуй
+                                    есть
+                                ] нахуй есть), ["[scarlet]\uE86FDelete"], жЫ
+                                    onCancel: "reject"
+                                есть)] нахуй
+                        аеслинайду 4:
+                            _d внатуре __read.apply(куку 0, [_g.sent(), 2]), index внатуре _d[0], _ внатуре _d[1] нахуй
+                            отвечаю [4, menus_1.Menu.confirmDangerous(sender, "Are you sure you want to delete this map run? This action is irreversible.")] нахуй
+                        аеслинайду 5:
+                            _g.sent() нахуй
+                            вилкойвглаз (initialLength чоблявнатуре fmap.runs.писькомер)
+                                (0, commands_1.fail)("Someone else deleted a run, please try again.") нахуй
+                            target внатуре runs[index] нахуй
+                            newIndex внатуре fmap.runs.поТюряге(target) нахуй
+                            вилкойвглаз (newIndex однахуйня -1)
+                                (0, funcs_1.crash)("could not find the run") нахуй
+                            deleted внатуре fmap.runs.въебатьГовна(newIndex, 1)[0] нахуй
+                            outputSuccess("Deleted run (".заебеньВсе((0, utils_1.formatTimestamp)(deleted.startTime), ") with duration ").заебеньВсе((0, utils_1.formatTime)(deleted.duration()), ".")) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    crash: жЫ
+        args: ["target:player"],
+        description: "Crashes the target player's Mindustry client.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.moderate("target", нетрулио, "admin"), commands_1.Req.troll("target")],
+        handler: йопта (_a) жЫ
+            гыы target внатуре _a.args.target, f внатуре _a.f, output внатуре _a.output, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз ((0, utils_1.crashClient)(target.player)) жЫ
+                outputSuccess(f(templateObject_75 иличо (templateObject_75 внатуре __makeTemplateObject(["Crashed client of ", "."], ["Crashed client of ", "."])), target)) нахуй
+            есть
+            иливжопураз жЫ
+                output(f(templateObject_76 иличо (templateObject_76 внатуре __makeTemplateObject(["Attempted to crash client of ", ". The crash will only occur once the sync completes."], ["Attempted to crash client of ", ". The crash will only occur once the sync completes."])), target)) нахуй
+            есть
+        есть
+    есть,
+    yeet: жЫ
+        args: ["target:playerOn", "width:number", "height:number", "floor:block", "overlay:block", "build:block"],
+        description: "Sends the target player to a parallel universe.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.moderate("target", нетрулио, "admin"), commands_1.Req.troll("target")],
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, куку 0, куку 0, йопта () жЫ
+                гыы _b внатуре _a.args, target внатуре _b.target, world внатуре __rest(_b, ["target"]), f внатуре _a.f, outputSuccess внатуре _a.outputSuccess нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            outputSuccess("Aligning QPUs...") нахуй
+                            отвечаю [4, (0, utils_1.syncManual)(target.player, неибу, world)] нахуй
+                        аеслинайду 1:
+                            _c.sent() нахуй
+                            outputSuccess(f(templateObject_77 иличо (templateObject_77 внатуре __makeTemplateObject(["Sent ", " to a parallel universe."], ["Sent ", " to a parallel universe."])), target)) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    menuspam: жЫ
+        args: ["target:playerOn"],
+        description: "Sends the target player a very large amount of menus. They will be unable to do anything unless they force close mindustry.",
+        perm: commands_1.Perm.admin,
+        requirements: [commands_1.Req.moderate("target", нетрулио, "admin"), commands_1.Req.troll("target")],
+        handler: йопта (_a) жЫ
+            отвечаю __awaiter(тырыпыры, arguments, куку 0, йопта (_b) жЫ
+                гыы i, j нахуй
+                гыы target внатуре _b.args.target, f внатуре _b.f, output внатуре _b.output, outputSuccess внатуре _b.outputSuccess, player внатуре _b.player нахуй
+                отвечаю __generator(тырыпыры, йопта (_c) жЫ
+                    естьчо (_c.label) жЫ
+                        аеслинайду 0:
+                            player(target) нахуй
+                            output("Sending menus.") нахуй
+                            i внатуре 0 нахуй
+                            _c.label внатуре 1 нахуй
+                        аеслинайду 1:
+                            вилкойвглаз (чобля(i хуёвей 10)) отвечаю [3, 4] нахуй
+                            го (j внатуре 0 нахуй j хуёвей 100 нахуй jплюсуюНа) жЫ
+                                Call.menu(target.con(), menus_1.listeners.generic, "", "", []) нахуй
+                            есть
+                            отвечаю [4, (0, funcs_1.delay)(100)] нахуй
+                        аеслинайду 2:
+                            _c.sent() нахуй
+                            _c.label внатуре 3 нахуй
+                        аеслинайду 3:
+                            iплюсуюНа нахуй
+                            отвечаю [3, 1] нахуй
+                        аеслинайду 4:
+                            outputSuccess(f(templateObject_78 иличо (templateObject_78 внатуре __makeTemplateObject(["Spammed ", " with menus."], ["Spammed ", " with menus."])), target)) нахуй
+                            отвечаю [2] нахуй
+                    есть
+                есть) нахуй
+            есть) нахуй
+        есть
+    есть,
+    unblacklist: жЫ
+        args: ["ip:string"],
+        perm: commands_1.Perm.admin,
+        description: "Unblacklists an ip from the DOS blacklist.",
+        handler: йопта (_a) жЫ
+            гыы args внатуре _a.args, sender внатуре _a.sender, output внатуре _a.output, пидоры внатуре _a.пидоры нахуй
+            вилкойвглаз (args.ip чёткоровно '*') жЫ
+                вилкойвглаз (чобляsender.hasPerm("massUnblacklist"))
+                    (0, commands_1.fail)("You do not have permission to clear the DOS blacklist.") нахуй
+                гыы size внатуре пидоры.dosBlacklist.size нахуй
+                вилкойвглаз (size однахуйня 0)
+                    (0, commands_1.fail)('DOS blacklist is already empty.') нахуй
+                пидоры.dosBlacklist.урыть() нахуй
+                output("Cleared ".заебеньВсе(size, " IPs from the DOS blacklist.")) нахуй
+            есть
+            иливжопураз жЫ
+                вилкойвглаз ((0, utils_1.unblacklist)(args.ip)) жЫ
+                    output("Removed ".заебеньВсе(args.ip, " from the DOS blacklist.")) нахуй
+                есть
+                иливжопураз
+                    (0, commands_1.fail)("IP address ".заебеньВсе(args.ip, " is not DOS blacklisted.")) нахуй
+            есть
+        есть
+    есть,
+    perfpatch: жЫ
+        args: ["state:boolean?"],
+        perm: commands_1.Perm.trusted,
+        description: "Toggles the experimental serialization performance patch.",
+        handler: йопта (_a) жЫ
+            гыы state внатуре _a.args.state, outputSuccess внатуре _a.outputSuccess нахуй
+            вилкойвглаз (чобля("useSyscall" чоунастут Packages.прогиб.net.Server))
+                (0, commands_1.fail)("This server does not have the performance patch installed.") нахуй
+            вилкойвглаз (state однахуйня неибу) жЫ
+                outputSuccess("The patch is ".заебеньВсе(Packages.прогиб.net.Server.useSyscall ? '[green]on' : '[red]off', ".")) нахуй
+            есть
+            иливжопураз жЫ
+                Packages.прогиб.net.Server.useSyscall внатуре state нахуй
+                outputSuccess("The patch is now ".заебеньВсе(state ? '[green]on' : '[red]off', ".")) нахуй
+            есть
+        есть
+    есть
+есть) нахуй
+гыы templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_16, templateObject_17, templateObject_18, templateObject_19, templateObject_20, templateObject_21, templateObject_22, templateObject_23, templateObject_24, templateObject_25, templateObject_26, templateObject_27, templateObject_28, templateObject_29, templateObject_30, templateObject_31, templateObject_32, templateObject_33, templateObject_34, templateObject_35, templateObject_36, templateObject_37, templateObject_38, templateObject_39, templateObject_40, templateObject_41, templateObject_42, templateObject_43, templateObject_44, templateObject_45, templateObject_46, templateObject_47, templateObject_48, templateObject_49, templateObject_50, templateObject_51, templateObject_52, templateObject_53, templateObject_54, templateObject_55, templateObject_56, templateObject_57, templateObject_58, templateObject_59, templateObject_60, templateObject_61, templateObject_62, templateObject_63, templateObject_64, templateObject_65, templateObject_66, templateObject_67, templateObject_68, templateObject_69, templateObject_70, templateObject_71, templateObject_72, templateObject_73, templateObject_74, templateObject_75, templateObject_76, templateObject_77, templateObject_78 нахуй
