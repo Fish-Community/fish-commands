@@ -798,13 +798,21 @@ exports.commands = (0, commands_1.consoleCommandList)({
         args: [],
         description: "Cancels a planned server restart.",
         handler: function (_a) {
-            var _b;
             var outputSuccess = _a.outputSuccess;
-            var task = (_b = globals_1.fishState.restartLoopTask) !== null && _b !== void 0 ? _b : (0, commands_1.fail)("No restart scheduled.");
-            Call.sendMessage("[scarlet]Aborting...");
-            task.cancel();
-            Call.sendMessage("[scarlet]Server restart canceled.");
-            outputSuccess("Canceled restart.");
+            if (globals_1.fishState.restartQueued) {
+                globals_1.fishState.restartQueued = false;
+                Call.sendMessage("[scarlet]Server restart canceled.");
+                outputSuccess("Canceled restart.");
+            }
+            else if (globals_1.fishState.restartLoopTask) {
+                Call.sendMessage("[scarlet]Aborting...");
+                globals_1.fishState.restartLoopTask.cancel();
+                Call.sendMessage("[scarlet]Server restart canceled.");
+                outputSuccess("Canceled restart.");
+                globals_1.fishState.restartImminent = false;
+            }
+            else
+                (0, commands_1.fail)("No restart scheduled.");
         }
     },
     rename: {
