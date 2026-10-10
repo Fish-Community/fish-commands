@@ -295,12 +295,14 @@ Events.on(EventType.GameOverEvent, function () {
     if (globals_1.fishState.restartQueued) {
         //restart
         Call.sendMessage("[accent]---[[[coral]+++[]]---\n[accent]Server restart imminent. [green]We'll be back after 15 seconds.[]\n[accent]---[[[coral]+++[]]---");
-        (0, utils_1.serverRestartLoop)(12, true);
-        Events.on(EventType.WorldLoadBeginEvent, function () {
-            //Remove save
-            (0, utils_1.restartNow)(true);
-        });
+        (0, utils_1.serverRestartLoop)(12, true); //this doesn't trigger the restart, only the timer
+        globals_1.fishState.restartImminent = true;
     }
+});
+Events.on(EventType.WorldLoadBeginEvent, function () {
+    //Remove save
+    if (globals_1.fishState.restartImminent)
+        (0, utils_1.restartNow)(true);
 });
 //Patch for Anuken/Mindustry#12521
 Events.on(EventType.UnitControlEvent, function (e) {

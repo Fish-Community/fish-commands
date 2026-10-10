@@ -10,6 +10,7 @@ import { Label } from "/types";
 export const recentWhispers:Record<string, string> = {};
 export const fishState = {
 	restartQueued: false,
+	restartImminent: false,
 	restartLoopTask: null as null | TimerTask,
 	corruption_t1: null as null | TimerTask,
 	corruption_t2: null as null | TimerTask,

@@ -9,6 +9,7 @@ var funcs_1 = require("/funcs");
 exports.recentWhispers = {};
 exports.fishState = {
     restartQueued: false,
+    restartImminent: false,
     restartLoopTask: null,
     corruption_t1: null,
     corruption_t2: null,

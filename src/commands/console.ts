@@ -520,11 +520,17 @@ export const commands = consoleCommandList({
 		args: [],
 		description: "Cancels a planned server restart.",
 		handler({outputSuccess}){
-			const task = fishState.restartLoopTask ?? fail(`No restart scheduled.`);
-			Call.sendMessage(`[scarlet]Aborting...`);
-			task.cancel();
-			Call.sendMessage(`[scarlet]Server restart canceled.`);
-			outputSuccess("Canceled restart.");
+			if(fishState.restartQueued){
+				fishState.restartQueued = false;
+				Call.sendMessage(`[scarlet]Server restart canceled.`);
+				outputSuccess("Canceled restart.");
+			} else if(fishState.restartLoopTask){
+				Call.sendMessage(`[scarlet]Aborting...`);
+				fishState.restartLoopTask.cancel();
+				Call.sendMessage(`[scarlet]Server restart canceled.`);
+				outputSuccess("Canceled restart.");
+				fishState.restartImminent = false;
+			} else fail(`No restart scheduled.`);
 		}
 	},
 	rename: {
