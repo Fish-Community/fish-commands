@@ -135,7 +135,7 @@ export const Achievements = {
 	messages_4: new Achievement(["yellow", Iconc.chat], "Chat 4", ["Send 2000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
 		checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 2000
 	}),
-	messages_5: new Achievement(["lime", Iconc.chat], "Chat 4", ["Send 5000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
+	messages_5: new Achievement(["lime", Iconc.chat], "Chat 5", ["Send 5000 chat messages.", "Warning: you will be kicked if you spam the chat."], {
 		checkPlayerInfrequent: p => p.globalStats.chatMessagesSent >= 5000,
 		notify: "everyone"
 	}),

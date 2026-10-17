@@ -170,6 +170,7 @@ export const commands = commandList({
 					//TODO outputGlobal()
 					if(args.player.connected() || Date.now() - args.player.lastJoined < Duration.minutes(5))
 						Call.sendMessage(`[orange]Player "${args.player.prefixedName}[orange]" has been marked for ${formatTime(time)}${message ? ` with reason: [white]${message}[]` : ""}.`);
+					else outputSuccess(f`Player ${args.player} has been marked for ${formatTime(time)}.`);
 				} finally {
 					args.player.frozen = false;
 				}
