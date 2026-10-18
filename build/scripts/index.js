@@ -289,6 +289,9 @@ Events.on(EventType.ServerLoadEvent, function () {
             return Vars.state.rules.defaultTeam;
         }
     };
+    Events.on(EventType.GameOverEvent, function () {
+        globals_1.fishState.teamAssignerMode = "normal";
+    });
     Log.info("fish-commands: initialized in @ms (incl previous)", Time.elapsed());
 });
 Events.on(EventType.GameOverEvent, function () {
