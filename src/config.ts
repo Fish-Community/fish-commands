@@ -421,12 +421,12 @@ export const rules = [
 	`# 1: [#FF3F3F]No griefing. This refers to intentionally hurting your own team in any way.`,
 	`# 2: [orange]False votekicking isn't allowed. Avoid votekicking if there's an active staff member in the server.`,
 	`# 3: [yellow]Treat beginners with politeness, this is not a ranked server.`,
-	`# 4: [#3FFF3F]Gore, pornography, suggestive content and jokes, and flashing images aren't allowed here. Being horny and a creep in chat will result in a ban.`,
-	`# 5: [#3FFFBF]Do not harass other people. We have zero tolerance for any bigotry. Please respect everyone.`,
-	`# 6: [#3FBFFF]Spamming is prohibited. Be reasonable with messaging staff in-game. Misuse may result in a mute.`,
+	`# 4: [#3FFF3F]Gore and sexual content are not allowed here. You can't send pornography, act horny or make suggestive references.`,
+	`# 5: [#3FFFBF]Do not discriminate, harass, insult, ragebait or spam ping people. If someone tells you to stop, then stop. Bigoted slurs are banned.`,
+	`# 6: [#3FBFFF]Spamming and doxxing are forbidden. Be reasonable with messaging staff in-game.`,
 	`# 7: [#3F3FFF]Impersonating people or ranks is prohibited.`,
-	`# 8: [#BF3FFF]Talking about controversial or sensitive topics is not allowed in-game. Hate symbols, such as swastikas, are not permitted.`,
-	`# 9: [#FF3FBF]Do not ragebait people. If someone tells you they are uncomfortable, respect it.`,
+	`# 8: [#BF3FFF]Controversial and sensitive topics are allowed as long as you remain civilized. Hate speech and symbols such as swastikas are not allowed.`,
+	`# 9: [#FF3FBF]DO NOT joke about suicide or self-harm.`,
 	`Failure to follow these rules may result in a ${prefixes.marked} tag blocking you from playing, a mute for broken chat rules, and bans for repeated offenses or bypasses.`
 ].map(r => `[white]${r}`);
 export const automaticNames = {
