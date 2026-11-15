@@ -969,9 +969,10 @@ ${Vars.maps.customMaps().toArray().map(map =>
 		const voteDuration = Duration.minutes(1.5);
 		let task: TimerTask | null = null;
 
-		function resetVotes(){
+		function resetVotes(clearPreviousTurnoutData = false){
 			votes.clear();
 			voteEndTime = -1;
+			if(clearPreviousTurnoutData) lastVoteTime = 0;
 			task?.cancel();
 		}
 
@@ -1035,8 +1036,8 @@ ${highestVotedMaps.map(({key:map, value:votes}) =>
 			resetVotes();
 		}
 
-		Events.on(EventType.GameOverEvent, resetVotes);
-		Events.on(EventType.ServerLoadEvent, resetVotes);
+		Events.on(EventType.GameOverEvent, () => resetVotes(true));
+		Events.on(EventType.ServerLoadEvent, () => resetVotes(true));
 
 		return {
 			args: ['map:mapOrRandom'],

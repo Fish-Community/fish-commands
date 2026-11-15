@@ -250,6 +250,9 @@ Events.on(EventType.ServerLoadEvent, () => {
 			return Vars.state.rules.defaultTeam;
 		}
 	};
+	Events.on(EventType.GameOverEvent, () => {
+		fishState.teamAssignerMode = "normal";
+	});
 
 	Log.info("fish-commands: initialized in @ms (incl previous)", Time.elapsed());
 });

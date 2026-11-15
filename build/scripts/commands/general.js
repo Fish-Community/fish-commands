@@ -1193,9 +1193,12 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
         var voteEndTime = -1;
         var voteDuration = funcs_1.Duration.minutes(1.5);
         var task = null;
-        function resetVotes() {
+        function resetVotes(clearPreviousTurnoutData) {
+            if (clearPreviousTurnoutData === void 0) { clearPreviousTurnoutData = false; }
             votes.clear();
             voteEndTime = -1;
+            if (clearPreviousTurnoutData)
+                lastVoteTime = 0;
             task === null || task === void 0 ? void 0 : task.cancel();
         }
         function getMapData() {
@@ -1250,8 +1253,8 @@ exports.commands = (0, commands_1.commandList)(__assign(__assign({ about: {
             Vars.maps.setNextMapOverride(winner == random ? null : winner);
             resetVotes();
         }
-        Events.on(EventType.GameOverEvent, resetVotes);
-        Events.on(EventType.ServerLoadEvent, resetVotes);
+        Events.on(EventType.GameOverEvent, function () { return resetVotes(true); });
+        Events.on(EventType.ServerLoadEvent, function () { return resetVotes(true); });
         return {
             args: ['map:mapOrRandom'],
             description: 'Allows you to vote for the next map. Use /maps to see all available maps.',
