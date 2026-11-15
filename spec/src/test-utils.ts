@@ -23,8 +23,9 @@ export class MockCommandHandler implements ClientCommandHandler, ServerCommandHa
 		description: string;
 		runner: CommandRunner<mindustryPlayer | null>;
 	}> = {};
-	register(name: string, args: string, description: string, runner: CommandRunner<mindustryPlayer | null>){
+	register(name: string, args: string, description: string, runner: CommandRunner<mindustryPlayer | null>):Command {
 		this.commands[name] = { args, description, runner };
+		return new CommandHandler.Command();
 	}
 	removeCommand(name: string){
 		delete this.commands[name];

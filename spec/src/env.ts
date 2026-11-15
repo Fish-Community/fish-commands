@@ -63,6 +63,22 @@ class ObjectIntMap<K> {
 		});
 	}
 }
+class IntMap<V> {
+	map = new Map<number, V>;
+	get(key:number){ return this.map.get(key); }
+	set(key:number, value:V){ return this.map.set(key, value); }
+	get size(){ return this.map.size; }
+	clear(){ this.map.clear(); }
+	put(key:number, value:V){ this.map.set(key, value); }
+	entries(){
+		const entries = this.map.entries();
+		return Object.assign(entries, {
+			toArray(){
+				return new Seq([...entries].map(e => ({ key: e[0], value: e[1] })));
+			}
+		});
+	}
+}
 class ObjectSet<T> {
 	constructor(
 		public set = new Set<T>,
@@ -499,6 +515,7 @@ class CommandRunner<T> {
 		this.accept = accept;
 	}
 }
+class Command {}
 class CommandHandler {
 	commands = new Map<string, Command>();
 	constructor(public prefix: string){}
@@ -507,8 +524,10 @@ class CommandHandler {
 	}
 	register<T>(text:string, params:string, description:string, runner:CommandRunner<T>){
 		//empty
+		return new Command();
 	}
 	static CommandRunner = CommandRunner;
+	static Command = Command;
 }
 class Gamemode {
 	static all: Gamemode[] = [];
@@ -719,7 +738,7 @@ const Vars = {
 	},
 	tilesize: 8,
 	world: {
-
+		tiles: {},
 	},
 };
 class Settings {
@@ -1011,6 +1030,8 @@ const Http = {
 
 const Iconc = Object.fromEntries(["rotate", "modeSurvival", "power", "left", "redditAlien", "edit", "downOpen", "pencil", "file", "lockOpen", "right", "infoCircle", "pick", "settings", "spray1", "terrain", "exit", "wrench", "lock", "discord", "eye", "none", "play", "diagonal", "eraser", "trash", "liquid", "fileImage", "defense", "layers", "grid", "admin", "steam", "star", "chartBar", "chat", "android", "image", "map", "logic", "menu", "commandRally", "editor", "folder", "units", "commandAttack", "copy", "filter", "cancel", "terminal", "upload", "eyeOff", "save", "planeOutline", "fill", "distribution", "upOpen", "rightOpen", "modePvp", "download", "list", "flipX", "flipY", "effect", "paste", "planet", "waves", "up", "warning", "tree", "add", "down", "host", "spray", "info", "players", "resize", "refresh1", "production", "crafting", "pause", "googleplay", "hammer", "fileText", "modeAttack", "move", "zoom", "bookOpen", "refresh", "ok", "home", "githubSquare", "powerOld", "github", "undo", "box", "trello", "book", "export", "fileTextFill", "rightOpenOut", "turret", "leftOpen", "line", "itchio", "link", "filters", "redo"].map(n => [n, 0xFE60]));
 
+const ArcReflect = Reflect;
+
 const Packages = {
 	java: {
 		net: { NetworkInterface, Inet4Address },
@@ -1023,4 +1044,5 @@ const Packages = {
 		gen: { Map: MMap }
 	}
 };
-Object.assign(globalThis, {Pattern, ObjectIntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper, Runtime, Thread, Administration, ObjectSet, ObjectMap, SendChatMessageCallPacket, Http, AtomicInteger});
+
+Object.assign(globalThis, {Pattern, ArcReflect, ObjectIntMap, IntMap, Seq, Fi, Packages, Events, Trigger, Team, EventType, Timer, EffectCallPacket2, LabelReliableCallPacket, Vars, ServerControl, Core, Log, Menus, Time, CommandHandler, Gamemode, Fx, Effect, Vec2, Tmp, Paths, Path, Threads, CommandRunner, Strings, UnitTypes, Bits, Items, ItemStack, Iconc, Blocks, StatusEffects, Ratekeeper, Runtime, Thread, Administration, ObjectSet, ObjectMap, SendChatMessageCallPacket, Http, AtomicInteger});
